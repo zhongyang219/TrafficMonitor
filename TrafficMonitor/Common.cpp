@@ -263,8 +263,13 @@ wstring CCommon::GetExePath()
 	return current_path;
 }
 
-//bool CCommon::TaskBarExist()
-//{
-//	HWND hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL);
-//	return hTaskbar != NULL;
-//}
+void CCommon::DrawWindowText(CDC * pDC, CRect rect, LPCTSTR lpszString, COLORREF color, COLORREF back_color)
+{
+	pDC->SetTextColor(color);
+	//m_pDC->SetBkMode(TRANSPARENT);
+	//用背景色填充矩形区域
+	pDC->FillSolidRect(rect, back_color);
+	pDC->DrawText(lpszString, rect, DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
+
+}
+

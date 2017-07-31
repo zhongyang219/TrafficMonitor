@@ -24,10 +24,10 @@ CTaskBarDlg::~CTaskBarDlg()
 void CTaskBarDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_STATIC_UP1, m_disp_up);
-	DDX_Control(pDX, IDC_STATIC_DOWN1, m_disp_down);
-	DDX_Control(pDX, IDC_STATIC3, m_disp_cpu);
-	DDX_Control(pDX, IDC_STATIC4, m_disp_memory);
+	//DDX_Control(pDX, IDC_STATIC_UP1, m_disp_up);
+	//DDX_Control(pDX, IDC_STATIC_DOWN1, m_disp_down);
+	//DDX_Control(pDX, IDC_STATIC3, m_disp_cpu);
+	//DDX_Control(pDX, IDC_STATIC4, m_disp_memory);
 }
 
 
@@ -47,40 +47,91 @@ END_MESSAGE_MAP()
 
 void CTaskBarDlg::ShowInfo()
 {
-	if (this->m_hWnd == NULL) return;
+	if (this->m_hWnd == NULL || m_pDC == nullptr) return;
 	CString str;
 	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed);
 	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed);
-	int size = m_disp_cpu.GetString().GetLength();
-	if (size > 7 && theApp.m_cpu_usage < 100)
-		SetBackgroundColor(m_back_color);		//如果显示CPU利用率的字符串长度超过7，会在最右边留下残影，此时通过重新设置背景色清除字符
-
+	
+	//设置缓冲的DC
+	CDC MemDC;
+	CBitmap MemBitmap;
+	MemDC.CreateCompatibleDC(NULL);
+	int draw_width = (m_show_cpu_memory ? m_window_width : m_window_width_s);
+	MemBitmap.CreateCompatibleBitmap(m_pDC, draw_width, m_rect.Height());
+	MemDC.SelectObject(&MemBitmap);
+	//绘图
+	CRect tmp{ m_rect };
+	tmp.MoveToXY(0, 0);
+	MemDC.FillSolidRect(tmp, m_back_color);		//填充背景色
+	MemDC.SelectObject(&m_font);
+	//绘制上传速度
+	tmp.bottom = m_window_height / 2;
+	tmp.right = tmp.left + m_window_width_s;
 	if (!m_swap_up_down)
-	{
 		str.Format(_T("↑:%s/s"), out_speed.GetString());
-		m_disp_up.SetWindowTextEx(str);
-		str.Format(_T("↓:%s/s"), in_speed.GetString());
-		m_disp_down.SetWindowTextEx(str);
-	}
 	else
-	{
 		str.Format(_T("↓:%s/s"), in_speed.GetString());
-		m_disp_up.SetWindowTextEx(str);
+	CCommon::DrawWindowText(&MemDC, tmp, str, m_text_color, m_back_color);
+	//绘制下载速度
+	tmp.MoveToY(tmp.bottom);
+	if (!m_swap_up_down)
+		str.Format(_T("↓:%s/s"), in_speed.GetString());
+	else
 		str.Format(_T("↑:%s/s"), out_speed.GetString());
-		m_disp_down.SetWindowTextEx(str);
-	}
+	CCommon::DrawWindowText(&MemDC, tmp, str, m_text_color, m_back_color);
 	if (m_show_cpu_memory)
 	{
+		//绘制CPU利用率
+		if (!m_taskbar_on_side)
+		{
+			tmp.MoveToXY(m_window_width_s, 0);
+			tmp.right = tmp.left + (m_window_width - m_window_width_s);
+		}
+		else
+		{
+			tmp.MoveToY(m_window_height);
+			tmp.right = tmp.left + (m_window_width - m_window_width_s);
+		}
 		str.Format(_T("CPU:%d%%"), theApp.m_cpu_usage);
-		m_disp_cpu.SetWindowTextEx(str);
+		CCommon::DrawWindowText(&MemDC, tmp, str, m_text_color, m_back_color);
+		//绘制内存利用率
+		tmp.MoveToY(tmp.bottom);
 		str.Format(_T("内存:%d%%"), theApp.m_memory_usage);
-		m_disp_memory.SetWindowTextEx(str);
+		CCommon::DrawWindowText(&MemDC, tmp, str, m_text_color, m_back_color);
 	}
-	else
-	{
-		m_disp_cpu.SetWindowText(_T(""));
-		m_disp_memory.SetWindowText(_T(""));
-	}
+	//将缓冲区DC中的图像拷贝到屏幕中显示
+	m_pDC->BitBlt(0,0, draw_width, m_rect.Height(), &MemDC, 0, 0, SRCCOPY);
+	MemBitmap.DeleteObject();
+	MemDC.DeleteDC();
+
+
+
+	//if (!m_swap_up_down)
+	//{
+	//	str.Format(_T("↑:%s/s"), out_speed.GetString());
+	//	m_disp_up.SetWindowTextEx(str);
+	//	str.Format(_T("↓:%s/s"), in_speed.GetString());
+	//	m_disp_down.SetWindowTextEx(str);
+	//}
+	//else
+	//{
+	//	str.Format(_T("↓:%s/s"), in_speed.GetString());
+	//	m_disp_up.SetWindowTextEx(str);
+	//	str.Format(_T("↑:%s/s"), out_speed.GetString());
+	//	m_disp_down.SetWindowTextEx(str);
+	//}
+	//if (m_show_cpu_memory)
+	//{
+	//	str.Format(_T("CPU:%d%%"), theApp.m_cpu_usage);
+	//	m_disp_cpu.SetWindowTextEx(str);
+	//	str.Format(_T("内存:%d%%"), theApp.m_memory_usage);
+	//	m_disp_memory.SetWindowTextEx(str);
+	//}
+	//else
+	//{
+	//	m_disp_cpu.SetWindowText(_T(""));
+	//	m_disp_memory.SetWindowText(_T(""));
+	//}
 }
 
 
@@ -95,6 +146,9 @@ bool CTaskBarDlg::AdjustWindowPos()
 	::GetWindowRect(m_hMin, rcMin);	//获得最小化窗口的区域
 	if (rcMin.Width() >= rcMin.Height())		//如果任务栏的宽度大于高度，即任务栏在桌面顶部或底部时
 	{
+		//设置窗口大小
+		m_rect.right = m_rect.left + (m_show_cpu_memory ? m_window_width : m_window_width_s);
+		m_rect.bottom = m_rect.top + m_window_height;
 		if (rcMin.Width() != m_min_bar_width)	//如果最小化窗口的宽度改变了，重新设置任务栏窗口的位置
 		{
 			m_rcMin = rcMin;
@@ -112,9 +166,13 @@ bool CTaskBarDlg::AdjustWindowPos()
 				this->MoveWindow(rect);
 			}
 		}
+		m_taskbar_on_side = false;
 	}
 	else		//当任务栏在屏幕在左侧或右侧时
 	{
+		//设置窗口大小
+		m_rect.right = m_rect.left + m_window_width_s;
+		m_rect.bottom = m_rect.top + (m_show_cpu_memory ? (2 * m_window_height) : m_window_height);
 		if (rcMin.Height() != m_min_bar_height)	//如果最小化窗口的高度改变了，重新设置任务栏窗口的位置
 		{
 			m_rcMin = rcMin;
@@ -134,6 +192,7 @@ bool CTaskBarDlg::AdjustWindowPos()
 				this->MoveWindow(rect);
 			}
 		}
+		m_taskbar_on_side = true;
 	}
 	if (m_connot_insert_to_task_bar && ::GetForegroundWindow() == m_hTaskbar)	//在窗口无法嵌入任务栏时，如果焦点设置在了任务栏上，则让窗口置顶
 	{
@@ -142,35 +201,6 @@ bool CTaskBarDlg::AdjustWindowPos()
 	return true;
 }
 
-
-//void CTaskBarDlg::ShowCpuMemory()
-//{
-//	CRect wnd_rect, min_rect;
-//	GetWindowRect(wnd_rect);
-//	min_rect = m_rcMin;
-//	if (m_show_cpu_memory)
-//	{
-//		m_show_cpu_memory = false;
-//		wnd_rect.left = wnd_rect.right - m_window_width_s;		//设置窗口宽度
-//		//::SetParent(this->m_hWnd, m_hBar);
-//		this->MoveWindow(wnd_rect);
-//		//根据窗口宽度调整任务栏最小化窗口的宽度
-//		min_rect.right = min_rect.right - m_window_width_s;
-//		m_min_bar_width = min_rect.Width();
-//		::MoveWindow(m_hMin, 0, 0, min_rect.Width(), min_rect.Height(), TRUE);
-//	}
-//	else
-//	{
-//		m_show_cpu_memory = true;
-//		wnd_rect.left = wnd_rect.right - m_window_width;		//设置窗口宽度
-//		//::SetParent(this->m_hWnd, m_hBar);
-//		this->MoveWindow(wnd_rect);
-//		//根据窗口宽度调整任务栏最小化窗口的宽度
-//		min_rect.right = min_rect.right - m_window_width;
-//		m_min_bar_width = min_rect.Width();
-//		::MoveWindow(m_hMin, 0, 0, min_rect.Width(), min_rect.Height(), TRUE);
-//	}
-//}
 
 void CTaskBarDlg::SaveConfig()
 {
@@ -204,6 +234,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 	this->GetWindowRect(m_rect);
 	m_window_width = m_rect.Width();
 	m_window_width_s = static_cast<int>(m_rect.Width()*0.566f + 0.5f);
+	m_window_height = m_rect.Height();
 	if (!m_show_cpu_memory)
 	{
 		m_rect.right = m_rect.left + m_window_width_s;
@@ -241,6 +272,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 			m_connot_insert_to_task_bar = true;
 			MessageBox(_T("警告：窗口没有成功嵌入任务栏，可能已被安全软件阻止！"), NULL, MB_ICONWARNING);
 		}
+		m_taskbar_on_side = false;
 	}
 	else	//当任务栏在桌面左侧或右侧时
 	{
@@ -248,8 +280,8 @@ BOOL CTaskBarDlg::OnInitDialog()
 		if (left_pos < 0) left_pos = 0;
 		if (m_show_cpu_memory)	//将CPU和内存利用率放到网速的下面
 		{
-			m_disp_cpu.SetWindowPos(&CWnd::wndTop, 0, m_rect.Height(), 0, 0, SWP_NOSIZE);
-			m_disp_memory.SetWindowPos(&CWnd::wndTop, 0, m_rect.Height() * 3 / 2, 0, 0, SWP_NOSIZE);
+			//m_disp_cpu.SetWindowPos(&CWnd::wndTop, 0, m_rect.Height(), 0, 0, SWP_NOSIZE);
+			//m_disp_memory.SetWindowPos(&CWnd::wndTop, 0, m_rect.Height() * 3 / 2, 0, 0, SWP_NOSIZE);
 			m_rect.right = m_rect.left + m_window_width_s;
 			m_rect.bottom = m_rect.top + m_rect.Height() * 2;
 		}
@@ -276,28 +308,21 @@ BOOL CTaskBarDlg::OnInitDialog()
 			m_connot_insert_to_task_bar = true;
 			MessageBox(_T("警告：窗口没有成功嵌入任务栏，可能已被安全软件阻止！"), NULL, MB_ICONWARNING);
 		}
+		m_taskbar_on_side = true;
 	}
 
 	m_menu.LoadMenu(IDR_TASK_BAR_MENU);
 
-	//m_back_color = GetSysColor(COLOR_ACTIVECAPTION);
 	SetBackgroundColor(m_back_color);
 
-	//设置文字颜色
-	m_disp_cpu.SetTextColor(m_text_color);
-	m_disp_memory.SetTextColor(m_text_color);
-	m_disp_up.SetTextColor(m_text_color);
-	m_disp_down.SetTextColor(m_text_color);
 
 	//设置字体
 	m_font.CreatePointFont(m_font_size * 10, m_font_name);
-	m_disp_cpu.SetFont(&m_font);
-	m_disp_memory.SetFont(&m_font);
-	m_disp_up.SetFont(&m_font);
-	m_disp_down.SetFont(&m_font);
 
 	m_tool_tips.Create(this, TTS_ALWAYSTIP);
 	m_tool_tips.SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//设置提示信息总是置顶
+
+	m_pDC = GetDC();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -337,6 +362,7 @@ void CTaskBarDlg::OnSetBackgroundColor()
 		if (m_back_color == m_text_color)
 			MessageBox(_T("警告：背景色和文字颜色相同！"),NULL, MB_ICONWARNING);
 		SetBackgroundColor(m_back_color);
+		ShowInfo();
 		SaveConfig();
 	}
 }
@@ -350,10 +376,11 @@ void CTaskBarDlg::OnSetTextColor()
 		m_text_color = colorDlg.GetColor();
 		if (m_back_color == m_text_color)
 			MessageBox(_T("警告：文字颜色和背景色相同！"), NULL, MB_ICONWARNING);
-		m_disp_cpu.SetTextColor(m_text_color);
-		m_disp_memory.SetTextColor(m_text_color);
-		m_disp_up.SetTextColor(m_text_color);
-		m_disp_down.SetTextColor(m_text_color);
+		//m_disp_cpu.SetTextColor(m_text_color);
+		//m_disp_memory.SetTextColor(m_text_color);
+		//m_disp_up.SetTextColor(m_text_color);
+		//m_disp_down.SetTextColor(m_text_color);
+		ShowInfo();
 		SaveConfig();
 	}
 }
@@ -405,14 +432,11 @@ void CTaskBarDlg::OnSetFont()
 		}
 		//使用选定字体的LOGFONT创建新的字体
 		m_font.CreateFontIndirect(fontDlg.m_cf.lpLogFont);
-		//设置字体
-		m_disp_cpu.SetFont(&m_font);
-		m_disp_memory.SetFont(&m_font);
-		m_disp_up.SetFont(&m_font);
-		m_disp_down.SetFont(&m_font);
 		//获取字体信息
 		m_font_name = fontDlg.m_cf.lpLogFont->lfFaceName;
 		m_font_size = fontDlg.m_cf.iPointSize / 10;
+		//刷新界面信息
+		ShowInfo();
 		//将字体设置写入到ini文件
 		SaveConfig();
 	}

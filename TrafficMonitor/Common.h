@@ -73,13 +73,12 @@ public:
 	//判断一个文件是否存在
 	static bool FileExist(LPCTSTR file_name);
 
-	//判断任务栏是否存在
-//	static bool TaskBarExist();
-
 	//计算两个SYSTEMTIME结构时间的差（a-b，只保留时、分、秒）
 	static SYSTEMTIME CompareSystemTime(SYSTEMTIME a, SYSTEMTIME b);
 
 	static wstring GetExePath();
 
+	//在指定位置绘制文本
+	static void DrawWindowText(CDC* pDC, CRect rect, LPCTSTR lpszString, COLORREF color, COLORREF back_color);
 };
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "afxwin.h"
-#include "StaticEx.h"
+//#include "StaticEx.h"
 
 // CTaskBarDlg 对话框
 
@@ -49,16 +49,18 @@ protected:
 	CRect m_rect;		//当前窗口的矩形区域
 	int m_window_width;		//窗口宽度
 	int m_window_width_s;	//不显示CPU和内存利用率时的窗口宽度
+	int m_window_height;
 
 	int m_min_bar_width;	//最小化窗口缩小宽度后的宽度
 	int m_min_bar_height;	//最小化窗口缩小高度后的高度（用于任务栏在屏幕左侧或右侧时）
 
 	bool m_connot_insert_to_task_bar{ false };	//如果窗口无法嵌入任务栏，则为true
+	bool m_taskbar_on_side{ false };		//如果任务栏在屏幕左侧或右侧，则为ture
 
-	CStaticEx m_disp_up;	//显示上传速度的Static控件
-	CStaticEx m_disp_down;	//显示下载速度的Static控件
-	CStaticEx m_disp_cpu;	//显示CPU利用率的Static控件
-	CStaticEx m_disp_memory;	//显示内存利用率的Static控件
+	//CStaticEx m_disp_up;	//显示上传速度的Static控件
+	//CStaticEx m_disp_down;	//显示下载速度的Static控件
+	//CStaticEx m_disp_cpu;	//显示CPU利用率的Static控件
+	//CStaticEx m_disp_memory;	//显示内存利用率的Static控件
 
 	CMenu m_menu;	//右键菜单
 
@@ -69,6 +71,8 @@ protected:
 	int m_font_size;		//字体大小
 
 	bool m_swap_up_down{ false };		//交换上传和下载显示的位置
+
+	CDC* m_pDC{};
 
 	void SaveConfig();		//保存设置到ini文件
 	void LoadConfig();		//从ini文件载入设置
