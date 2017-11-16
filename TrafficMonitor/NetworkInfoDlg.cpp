@@ -177,6 +177,8 @@ void CNetworkInfoDlg::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(CNetworkInfoDlg, CDialog)
+	ON_COMMAND(ID_COPY_TEXT, &CNetworkInfoDlg::OnCopyText)
+	ON_NOTIFY(NM_RCLICK, IDC_INFO_LIST1, &CNetworkInfoDlg::OnNMRClickInfoList1)
 END_MESSAGE_MAP()
 
 
@@ -210,8 +212,40 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	//显示列表中的信息
 	ShowInfo();
 
-	SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//取消置顶
+	//SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//取消置顶
+	m_info_list.GetToolTips()->SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+
+	m_menu.LoadMenu(IDR_INFO_MENU); //装载右键菜单
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
+}
+
+
+void CNetworkInfoDlg::OnCopyText()
+{
+	// TODO: 在此添加命令处理程序代码
+	if (!CCommon::CopyStringToClipboard(wstring(m_selected_string)))
+		MessageBox(_T("复制到剪贴板失败！"), NULL, MB_ICONWARNING);
+}
+
+
+void CNetworkInfoDlg::OnNMRClickInfoList1(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: 在此添加控件通知处理程序代码
+
+	//获取鼠标点击处的文本
+	int item, sub_item;
+	item = pNMItemActivate->iItem;
+	sub_item = pNMItemActivate->iSubItem;
+	m_selected_string = m_info_list.GetItemText(item, sub_item);
+
+	//弹出右键菜单
+	CMenu* pContextMenu = m_menu.GetSubMenu(0);	//获取第一个弹出菜单
+	CPoint point1;	//定义一个用于确定光标位置的位置  
+	GetCursorPos(&point1);	//获取当前光标的位置，以便使得菜单可以跟随光标
+	pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
+
+	*pResult = 0;
 }

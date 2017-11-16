@@ -80,5 +80,26 @@ public:
 
 	//在指定位置绘制文本
 	static void DrawWindowText(CDC* pDC, CRect rect, LPCTSTR lpszString, COLORREF color, COLORREF back_color);
+
+	//为一个Static控件填充指定的颜色
+	static void FillStaticColor(CStatic& static_ctr, COLORREF color);
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	* 函数名称：IsForegroundFullscreen
+	* 功能说明：判断当前正在与用户交互的前台窗口是否是全屏的。
+	* 参数说明：无
+	* 返回说明：true：是。
+	false：否。
+	* 线程安全：是
+	* 调用样例：IsForegroundFullscreen ()，表示判断当前正在与用户交互的前台窗口是否是全屏的。
+	* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	static bool IsForegroundFullscreen();
+
+	//将一个字符串保存到剪贴板
+	static bool CopyStringToClipboard(const wstring& str);
+
+	//判断现在是否刚开机，在刚开机1分钟内返回true，否则返回false
+	static bool WhenStart();
+
 };
 

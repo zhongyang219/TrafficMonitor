@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\对话框类">
+      <UniqueIdentifier>{ab02c896-0397-42e2-b413-ccc7e470ec13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\对话框类">
+      <UniqueIdentifier>{296f91e9-59c8-4e1c-9281-b3a5aad240d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -33,9 +39,6 @@
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="NetworkInfoDlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Common.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -45,14 +48,26 @@
     <ClInclude Include="TaskBarDlg.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="SkinDlg.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="DonateDlg.h">
+      <Filter>头文件\对话框类</Filter>
     </ClInclude>
     <ClInclude Include="HistoryTrafficDlg.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\对话框类</Filter>
     </ClInclude>
-    <ClInclude Include="DonateDlg.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="NetworkInfoDlg.h">
+      <Filter>头文件\对话框类</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinDlg.h">
+      <Filter>头文件\对话框类</Filter>
+    </ClInclude>
+    <ClInclude Include="MainWndSettingsDlg.h">
+      <Filter>头文件\对话框类</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskBarSettingsDlg.h">
+      <Filter>头文件\对话框类</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsDlg.h">
+      <Filter>头文件\对话框类</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -65,9 +80,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="NetworkInfoDlg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Common.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -77,14 +89,26 @@
     <ClCompile Include="TaskBarDlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SkinDlg.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="DonateDlg.cpp">
+      <Filter>源文件\对话框类</Filter>
     </ClCompile>
     <ClCompile Include="HistoryTrafficDlg.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\对话框类</Filter>
     </ClCompile>
-    <ClCompile Include="DonateDlg.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="NetworkInfoDlg.cpp">
+      <Filter>源文件\对话框类</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinDlg.cpp">
+      <Filter>源文件\对话框类</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionsDlg.cpp">
+      <Filter>源文件\对话框类</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWndSettingsDlg.cpp">
+      <Filter>源文件\对话框类</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskBarSettingsDlg.cpp">
+      <Filter>源文件\对话框类</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -21,6 +21,7 @@ public:
 	wstring m_config_path;
 	wstring m_history_traffic_path;
 	wstring m_log_path;
+	wstring m_skin_path;
 
 	//以下数据定义为App类中的公共成员，以便于在主对话框和任务栏窗口中都能访问
 	unsigned int m_in_speed{};		//下载速度
@@ -35,7 +36,35 @@ public:
 	bool m_hide_main_window;	//隐藏主窗口
 	bool m_show_notify_icon{ true };	//显示通知区域图标
 
+	//选项设置数据
+	//主窗口
+	COLORREF m_text_color{};		//文字颜色
+	CString m_font_name;	//字体名称
+	int m_font_size;		//字体大小
+	wstring m_up_string;		//默认为“上传: ”
+	wstring m_down_string;		//默认为“下载: ”
+	wstring m_cpu_string;		//默认为“CPU: ”
+	wstring m_memory_string;		//默认为“内存: ”
+	bool m_swap_up_down{ false };		//交换上传和下载显示的位置
+	bool m_hide_main_wnd_when_fullscreen;		//有程序全屏运行时隐藏悬浮窗
+
+	//任务栏窗口
+	COLORREF m_tbar_back_color{ RGB(0,0,0) };	//背景颜色
+	COLORREF m_tbar_text_color{ RGB(255,255,255) };	//文字颜色
+	CString m_tbar_font_name;	//字体名称
+	int m_tbar_font_size;		//字体大小
+	wstring m_tbar_up_string;		//默认为“↑:”
+	wstring m_tbar_down_string;		//默认为“↓:”
+	wstring m_tbar_cpu_string;		//默认为“CPU:”
+	wstring m_tbar_memory_string;		//默认为“内存:”
+	bool m_tbar_swap_up_down{ false };		//交换上传和下载显示的位置
+
+	bool m_tbar_show_cpu_memory;	//任务栏窗口显示CPU和内存利用率
+
 	CTrafficMonitorApp();
+
+	//打开“选项”对话框的处理，参数为打开时切换的标签
+	//void _OnOptions(int tab);
 
 // 重写
 public:

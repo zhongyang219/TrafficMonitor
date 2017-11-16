@@ -36,17 +36,17 @@ void CSkinDlg::ShowPreview()
 {
 	//显示小尺寸的预览图
 	m_skin_preview_s.SetWindowPos(&CWnd::wndTop, 0, 0, m_skin_width, m_skin_height_s, SWP_NOMOVE);	//更改控件的宽和高
-	m_image = (HBITMAP)LoadImage(NULL, (m_skins[m_skin_selected]+ L"\\background.bmp").c_str(), IMAGE_BITMAP, m_skin_width, m_skin_height_s, LR_LOADFROMFILE);
+	m_image = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected]+ L"\\background.bmp").c_str(), IMAGE_BITMAP, m_skin_width, m_skin_height_s, LR_LOADFROMFILE);
 	m_skin_preview_s.SetBitmap(m_image);		//为CStatic控件设置图片
 	//显示大尺寸的预览图
 	m_skin_preview_l.SetWindowPos(&CWnd::wndTop, 0, 0, m_skin_width, m_skin_height_l, SWP_NOMOVE);
-	m_image = (HBITMAP)LoadImage(NULL, (m_skins[m_skin_selected] + L"\\background_l.bmp").c_str(), IMAGE_BITMAP, m_skin_width, m_skin_height_l, LR_LOADFROMFILE);
+	m_image = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background_l.bmp").c_str(), IMAGE_BITMAP, m_skin_width, m_skin_height_l, LR_LOADFROMFILE);
 	m_skin_preview_l.SetBitmap(m_image);
 	//获取当前皮肤的文字颜色
-	m_text_color =  GetPrivateProfileInt(_T("skin"), _T("text_color"), 0, (m_skins[m_skin_selected] + L"\\skin.ini").c_str());
+	m_text_color =  GetPrivateProfileInt(_T("skin"), _T("text_color"), 0, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini").c_str());
 	//获取皮肤作者
 	wchar_t buff[64];
-	GetPrivateProfileString(_T("skin"), _T("skin_author"), _T("unknow"), buff, 64, (m_skins[m_skin_selected] + L"\\skin.ini").c_str());
+	GetPrivateProfileString(_T("skin"), _T("skin_author"), _T("unknow"), buff, 64, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini").c_str());
 	SetDlgItemText(IDC_SKIN_INFO, (wstring(L"皮肤作者：") + buff).c_str());
 }
 

@@ -81,9 +81,11 @@ void CCommon::WriteLog(const char* str_text, LPCTSTR file_path)
 {
 	SYSTEMTIME cur_time;
 	GetLocalTime(&cur_time);
+	char buff[32];
+	sprintf_s(buff, "%d/%.2d/%.2d %.2d:%.2d:%.2d.%.3d: ", cur_time.wYear, cur_time.wMonth, cur_time.wDay,
+		cur_time.wHour, cur_time.wMinute, cur_time.wSecond, cur_time.wMilliseconds);
 	ofstream file{ file_path, std::ios::app };	//以追加的方式打开日志文件
-	file << cur_time.wYear << "/" << cur_time.wMonth << "/" << cur_time.wDay << " ";
-	file << cur_time.wHour << ":" << cur_time.wMinute << ":" << cur_time.wSecond << "." << cur_time.wMilliseconds << ": ";
+	file << buff;
 	file << str_text << std::endl;
 }
 
@@ -192,7 +194,6 @@ wstring CCommon::GetStartUpPath()
 	if (SHGetSpecialFolderLocation(NULL, CSIDL_STARTUP, &ppidl) == S_OK)
 	{
 		SHGetPathFromIDList(ppidl, pszStartUpPath);
-		//wcscat_s(pszStartUpPath, MAX_PATH, L"\\Startup");
 		CoTaskMemFree(ppidl);
 	}
 	return wstring(pszStartUpPath);
@@ -211,7 +212,8 @@ void CCommon::GetFiles(const wchar_t* path, vector<wstring>& files)
 		{
 			file_name.assign(fileinfo.name);
 			if (file_name != L"." && file_name != L"..")
-				files.push_back(wstring(path) + L"\\" + file_name);  //将文件名保存(忽略"."和"..")
+				//files.push_back(wstring(path) + L"\\" + file_name);  //将文件名保存(忽略"."和"..")
+				files.push_back(L"\\" + file_name);  //将文件名保存(忽略"."和"..")
 		} while (_wfindnext(hFile, &fileinfo) == 0);
 	}
 	_findclose(hFile);
@@ -273,3 +275,60 @@ void CCommon::DrawWindowText(CDC * pDC, CRect rect, LPCTSTR lpszString, COLORREF
 
 }
 
+void CCommon::FillStaticColor(CStatic & static_ctr, COLORREF color)
+{
+	CDC* pDC = static_ctr.GetDC();
+	CRect rect;
+	static_ctr.GetClientRect(&rect);
+	pDC->FillSolidRect(rect, color);
+}
+
+
+bool CCommon::IsForegroundFullscreen()
+{
+	bool bFullscreen{ false };		//用于指示前台窗口是否是全屏
+	HWND hWnd;
+	RECT rcApp;
+	RECT rcDesk;
+	hWnd = GetForegroundWindow();	//获取当前正在与用户交互的前台窗口句柄
+	TCHAR buff[256];
+	GetClassName(hWnd, buff, 256);		//获取前台窗口的类名
+	CString class_name{ buff };
+	if (hWnd != GetDesktopWindow() && class_name!=_T("WorkerW") && hWnd != GetShellWindow())//如果前台窗口不是桌面窗口，也不是控制台窗口
+	{
+		GetWindowRect(hWnd, &rcApp);	//获取前台窗口的坐标
+		GetWindowRect(GetDesktopWindow(), &rcDesk);	//根据桌面窗口句柄，获取整个屏幕的坐标
+		if (rcApp.left <= rcDesk.left && //如果前台窗口的坐标完全覆盖住桌面窗口，就表示前台窗口是全屏的
+			rcApp.top <= rcDesk.top &&
+			rcApp.right >= rcDesk.right &&
+			rcApp.bottom >= rcDesk.bottom)
+		{
+			bFullscreen = true;
+		}
+	}//如果前台窗口是桌面窗口，或者是控制台窗口，就直接返回不是全屏
+	return bFullscreen;
+}
+
+bool CCommon::CopyStringToClipboard(const wstring & str)
+{
+	if (OpenClipboard(NULL))
+	{
+		HGLOBAL clipbuffer;
+		EmptyClipboard();
+		size_t size = (str.size() + 1) * 2;
+		clipbuffer = GlobalAlloc(GMEM_DDESHARE, size);
+		memcpy_s(GlobalLock(clipbuffer), size, str.c_str(), size);
+		GlobalUnlock(clipbuffer);
+		if (SetClipboardData(CF_UNICODETEXT, clipbuffer) == NULL)
+			return false;
+		CloseClipboard();
+		return true;
+	}
+	else return false;
+}
+
+bool CCommon::WhenStart()
+{
+	int tick_count = GetTickCount();
+	return (tick_count < 60000);
+}

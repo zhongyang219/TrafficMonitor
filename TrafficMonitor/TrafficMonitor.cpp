@@ -29,6 +29,52 @@ CTrafficMonitorApp::CTrafficMonitorApp()
 	// 将所有重要的初始化放置在 InitInstance 中
 }
 
+//void CTrafficMonitorApp::_OnOptions(int tab)
+//{
+//	COptionsDlg optionsDlg(tab);
+//	//将选项设置数据传递给选项设置对话框
+//	optionsDlg.m_tab1_dlg.m_font_name = theApp.m_font_name;
+//	optionsDlg.m_tab1_dlg.m_font_size = theApp.m_font_size;
+//	optionsDlg.m_tab1_dlg.m_text_color = theApp.m_text_color;
+//	optionsDlg.m_tab1_dlg.m_up_string = theApp.m_up_string;
+//	optionsDlg.m_tab1_dlg.m_down_string = theApp.m_down_string;
+//	optionsDlg.m_tab1_dlg.m_cpu_string = theApp.m_cpu_string;
+//	optionsDlg.m_tab1_dlg.m_memory_string = theApp.m_memory_string;
+//	optionsDlg.m_tab1_dlg.m_swap_up_down = theApp.m_swap_up_down;
+//
+//	optionsDlg.m_tab2_dlg.m_font_name = theApp.m_tbar_font_name;
+//	optionsDlg.m_tab2_dlg.m_font_size = theApp.m_tbar_font_size;
+//	optionsDlg.m_tab2_dlg.m_text_color = theApp.m_tbar_text_color;
+//	optionsDlg.m_tab2_dlg.m_back_color = theApp.m_tbar_back_color;
+//	optionsDlg.m_tab2_dlg.m_up_string = theApp.m_tbar_up_string;
+//	optionsDlg.m_tab2_dlg.m_down_string = theApp.m_tbar_down_string;
+//	optionsDlg.m_tab2_dlg.m_cpu_string = theApp.m_tbar_cpu_string;
+//	optionsDlg.m_tab2_dlg.m_memory_string = theApp.m_tbar_memory_string;
+//	optionsDlg.m_tab2_dlg.m_swap_up_down = theApp.m_tbar_swap_up_down;
+//
+//	if (optionsDlg.DoModal() == IDOK)
+//	{
+//		theApp.m_font_name = optionsDlg.m_tab1_dlg.m_font_name;
+//		theApp.m_font_size = optionsDlg.m_tab1_dlg.m_font_size;
+//		theApp.m_text_color = optionsDlg.m_tab1_dlg.m_text_color;
+//		theApp.m_up_string = optionsDlg.m_tab1_dlg.m_up_string;
+//		theApp.m_down_string = optionsDlg.m_tab1_dlg.m_down_string;
+//		theApp.m_cpu_string = optionsDlg.m_tab1_dlg.m_cpu_string;
+//		theApp.m_memory_string = optionsDlg.m_tab1_dlg.m_memory_string;
+//		theApp.m_swap_up_down = optionsDlg.m_tab1_dlg.m_swap_up_down;
+//
+//		theApp.m_tbar_font_name = optionsDlg.m_tab2_dlg.m_font_name;
+//		theApp.m_tbar_font_size = optionsDlg.m_tab2_dlg.m_font_size;
+//		theApp.m_tbar_text_color = optionsDlg.m_tab2_dlg.m_text_color;
+//		theApp.m_tbar_back_color = optionsDlg.m_tab2_dlg.m_back_color;
+//		theApp.m_tbar_up_string = optionsDlg.m_tab2_dlg.m_up_string;
+//		theApp.m_tbar_down_string = optionsDlg.m_tab2_dlg.m_down_string;
+//		theApp.m_tbar_cpu_string = optionsDlg.m_tab2_dlg.m_cpu_string;
+//		theApp.m_tbar_memory_string = optionsDlg.m_tab2_dlg.m_memory_string;
+//		theApp.m_tbar_swap_up_down = optionsDlg.m_tab2_dlg.m_swap_up_down;
+//	}
+//}
+
 
 // 唯一的一个 CTrafficMonitorApp 对象
 
@@ -39,14 +85,23 @@ CTrafficMonitorApp theApp;
 
 BOOL CTrafficMonitorApp::InitInstance()
 {
-	//检查是否已有实例正在运行（在DEBUG模式下不检查）
 #ifndef _DEBUG
+	wstring cmd_line{ m_lpCmdLine };
+	bool is_restart{ cmd_line.find(L"RestartByRestartManager") != wstring::npos };		//如果命令行参数中含有字符串“RestartByRestartManager”则说明程序是被Windows重新启动的
+	if (is_restart && CCommon::WhenStart())		//如果在开机时程序被重新启动，则直接退出程序
+	{
+		//AfxMessageBox(_T("调试信息：程序已被Windows的重启管理器重新启动。"));
+		return FALSE;
+	}
+
+	//检查是否已有实例正在运行
 	HANDLE hMutex = ::CreateMutex(NULL, TRUE, _T("FirstName"));
 	if (hMutex != NULL)
 	{
 		if (GetLastError() == ERROR_ALREADY_EXISTS)
 		{
-			AfxMessageBox(_T("已经有一个程序正在运行。"));
+			if (!is_restart)
+				AfxMessageBox(_T("已经有一个程序正在运行。"));
 			return FALSE;
 		}
 	}
@@ -57,6 +112,7 @@ BOOL CTrafficMonitorApp::InitInstance()
 	m_config_path = exe_path + L"config.ini";
 	m_history_traffic_path = exe_path + L"history_traffic.dat";
 	m_log_path = exe_path + L"error.log";
+	m_skin_path = exe_path + L"skins";
 
 	// 如果一个运行在 Windows XP 上的应用程序清单指定要
 	// 使用 ComCtl32.dll 版本 6 或更高版本来启用可视化方式，
