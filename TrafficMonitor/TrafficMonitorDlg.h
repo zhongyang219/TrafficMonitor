@@ -102,6 +102,8 @@ protected:
 	int m_restart_cnt{ -1 };	//重新初始化次数
 	unsigned int m_timer_cnt{};		//定时器触发次数
 	int m_zero_speed_cnt{};	//如果检测不到网速，该变量就会自加
+	int m_insert_to_taskbar_cnt{};	//用来统计尝试嵌入任务栏的次数
+	int m_cannot_intsert_to_task_bar_warning{ true };	//指示是否会在无法嵌入任务栏时弹出提示框
 
 	static unsigned int m_WM_TASKBARCREATED;	//任务栏重启消息
 
@@ -116,9 +118,7 @@ protected:
 	CToolTipCtrl m_tool_tips;
 
 	bool m_connection_change_flag{ false };		//如果执行过IniConnection()函数，该flag会置为true
-
 	bool m_cannot_save_config_warning{ true };	//指示是否会在无法保存设置时弹出提示框
-
 	bool m_is_foreground_fullscreen{ false };	//指示前台窗口是否正在全局显示
 
 	//窗口中显示的4个项目的前导字符串

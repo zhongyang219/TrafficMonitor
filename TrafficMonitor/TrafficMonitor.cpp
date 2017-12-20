@@ -88,7 +88,8 @@ BOOL CTrafficMonitorApp::InitInstance()
 #ifndef _DEBUG
 	wstring cmd_line{ m_lpCmdLine };
 	bool is_restart{ cmd_line.find(L"RestartByRestartManager") != wstring::npos };		//如果命令行参数中含有字符串“RestartByRestartManager”则说明程序是被Windows重新启动的
-	if (is_restart && CCommon::WhenStart())		//如果在开机时程序被重新启动，则直接退出程序
+	bool when_start{ CCommon::WhenStart() };
+	if (is_restart && when_start)		//如果在开机时程序被重新启动，则直接退出程序
 	{
 		//AfxMessageBox(_T("调试信息：程序已被Windows的重启管理器重新启动。"));
 		return FALSE;
@@ -100,7 +101,7 @@ BOOL CTrafficMonitorApp::InitInstance()
 	{
 		if (GetLastError() == ERROR_ALREADY_EXISTS)
 		{
-			if (!is_restart)
+			if (!when_start)
 				AfxMessageBox(_T("已经有一个程序正在运行。"));
 			return FALSE;
 		}

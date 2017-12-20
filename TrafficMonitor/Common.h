@@ -98,8 +98,11 @@ public:
 	//将一个字符串保存到剪贴板
 	static bool CopyStringToClipboard(const wstring& str);
 
-	//判断现在是否刚开机，在刚开机1分钟内返回true，否则返回false
+	//判断现在是否刚开机，在刚开机3分钟内返回true，否则返回false
 	static bool WhenStart();
+
+	//显示鼠标提示
+	static CString GetMouseTipsInfo(__int64 today_traffic, int cpu_usage, int memory_usage, int used_memory, int total_memory, bool show_cpu_memory);
 
 };
 

@@ -258,6 +258,13 @@ void CTaskBarDlg::SetToolTipsTopMost()
 	m_tool_tips.SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 }
 
+void CTaskBarDlg::UpdateToolTips()
+{
+	CString tip_info;
+	tip_info = CCommon::GetMouseTipsInfo(theApp.m_today_traffic, theApp.m_cpu_usage, theApp.m_memory_usage, theApp.m_used_memory, theApp.m_total_memory, theApp.m_tbar_show_cpu_memory);
+	m_tool_tips.UpdateTipText(tip_info, this);
+}
+
 BOOL CTaskBarDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
@@ -315,7 +322,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 			rect.MoveToXY(rect.left + m_rcBar.left, rect.top + m_rcBar.top);
 			this->MoveWindow(rect);
 			m_connot_insert_to_task_bar = true;
-			MessageBox(_T("警告：窗口没有成功嵌入任务栏，可能已被安全软件阻止！"), NULL, MB_ICONWARNING);
+			//MessageBox(_T("警告：窗口没有成功嵌入任务栏，可能已被安全软件阻止！"), NULL, MB_ICONWARNING);
 		}
 	}
 	else	//当任务栏在桌面左侧或右侧时
@@ -348,7 +355,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 			rect.MoveToXY(rect.left + m_rcBar.left, rect.top + m_rcBar.top);
 			this->MoveWindow(rect);
 			m_connot_insert_to_task_bar = true;
-			MessageBox(_T("警告：窗口没有成功嵌入任务栏，可能已被安全软件阻止！"), NULL, MB_ICONWARNING);
+			//MessageBox(_T("警告：窗口没有成功嵌入任务栏，可能已被安全软件阻止！"), NULL, MB_ICONWARNING);
 		}
 	}
 
@@ -356,7 +363,10 @@ BOOL CTaskBarDlg::OnInitDialog()
 
 	SetBackgroundColor(theApp.m_tbar_back_color);
 
+	//初始化鼠标提示
 	m_tool_tips.Create(this, TTS_ALWAYSTIP);
+	m_tool_tips.SetMaxTipWidth(600);
+	m_tool_tips.AddTool(this, _T(""));
 	SetToolTipsTopMost();		//设置提示信息总是置顶
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -421,22 +431,6 @@ BOOL CTaskBarDlg::PreTranslateMessage(MSG* pMsg)
 void CTaskBarDlg::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	m_tool_tips.SetMaxTipWidth(600);
-	CString tip_info;
-	if (theApp.m_tbar_show_cpu_memory)
-	{
-		tip_info.Format(_T("今日已使用流量：%s\r\n内存使用：%s/%s"), CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_traffic / 1024)),
-			CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory));
-	}
-	else
-	{
-		tip_info.Format(_T("今日已使用流量：%s\r\nCPU使用：%d%%\r\n内存使用：%s/%s (%d%%)"), CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_traffic / 1024)),
-			theApp.m_cpu_usage,
-			CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory),
-			theApp.m_memory_usage);
-	}
-	m_tool_tips.AddTool(this, tip_info);
-	//m_tool_tips.SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//设置提示信息总是置顶
 
 	CDialogEx::OnMouseMove(nFlags, point);
 }

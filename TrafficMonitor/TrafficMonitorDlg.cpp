@@ -733,7 +733,10 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	//获取启动时的时间
 	GetLocalTime(&m_start_time);
 
+	//初始化鼠标提示
 	m_tool_tips.Create(this, TTS_ALWAYSTIP);
+	m_tool_tips.SetMaxTipWidth(600);
+	m_tool_tips.AddTool(this, _T(""));
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -958,6 +961,37 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 				//在任务栏窗口显示期间，随时调整任务栏窗口的位置，防止任务栏图标遮挡窗口
 				m_tBarDlg->AdjustWindowPos();
 				m_tBarDlg->ShowInfo();
+			}
+
+			//更新鼠标提示
+			CString tip_info;
+			tip_info = CCommon::GetMouseTipsInfo(theApp.m_today_traffic, theApp.m_cpu_usage, theApp.m_memory_usage, theApp.m_used_memory, theApp.m_total_memory, m_show_cpu_memory);
+			m_tool_tips.UpdateTipText(tip_info, this);
+			//更新任务栏窗口鼠标提示
+			if (m_tBarDlg != nullptr)
+				m_tBarDlg->UpdateToolTips();
+
+			//每隔10秒钟检测一次是否可以嵌入任务栏
+			if (m_tBarDlg != nullptr && m_timer_cnt % 10 == 1)
+			{
+				if (m_tBarDlg->GetCannotInsertToTaskBar() && m_insert_to_taskbar_cnt < MAX_INSERT_TO_TASKBAR_CNT)
+				{
+					CloseTaskBarWnd();
+					OpenTaskBarWnd();
+					m_insert_to_taskbar_cnt++;
+					if (m_insert_to_taskbar_cnt == MAX_INSERT_TO_TASKBAR_CNT)
+					{
+						if (m_cannot_intsert_to_task_bar_warning)		//确保提示信息只弹出一次
+						{
+							MessageBox(_T("警告：窗口没有成功嵌入任务栏，可能已被安全软件阻止！"), NULL, MB_ICONWARNING);
+							m_cannot_intsert_to_task_bar_warning = false;
+						}
+					}
+				}
+				if(!m_tBarDlg->GetCannotInsertToTaskBar())
+				{
+					m_insert_to_taskbar_cnt = 0;
+				}
 			}
 		}
 
@@ -1614,21 +1648,6 @@ void CTrafficMonitorDlg::OnTrafficHistory()
 void CTrafficMonitorDlg::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	m_tool_tips.SetMaxTipWidth(600);
-	CString tip_info;
-	if (m_show_cpu_memory)
-	{
-		tip_info.Format(_T("今日已使用流量：%s\r\n内存使用：%s/%s"), CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_traffic / 1024)),
-			CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory));
-	}
-	else
-	{
-		tip_info.Format(_T("今日已使用流量：%s\r\nCPU使用：%d%%\r\n内存使用：%s/%s (%d%%)"), CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_traffic / 1024)),
-			theApp.m_cpu_usage,
-			CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory),
-			theApp.m_memory_usage);
-	}
-	m_tool_tips.AddTool(this, tip_info);
 
 	CDialogEx::OnMouseMove(nFlags, point);
 }

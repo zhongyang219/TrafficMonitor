@@ -71,6 +71,10 @@ public:
 	void CalculateWindowWidth();		//计算窗口需要的宽度
 
 	void SetToolTipsTopMost();			//设置鼠标提示置顶
+	void UpdateToolTips();
+
+	bool GetCannotInsertToTaskBar() const { return m_connot_insert_to_task_bar; }
+
 	DECLARE_MESSAGE_MAP()
 
 public:

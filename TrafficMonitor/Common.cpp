@@ -330,5 +330,25 @@ bool CCommon::CopyStringToClipboard(const wstring & str)
 bool CCommon::WhenStart()
 {
 	int tick_count = GetTickCount();
-	return (tick_count < 60000);
+	return (tick_count < 180000);
+}
+
+CString CCommon::GetMouseTipsInfo(__int64 today_traffic, int cpu_usage, int memory_usage, int used_memory, int total_memory, bool show_cpu_memory)
+{
+	CString tip_info;
+	if (show_cpu_memory)
+	{
+		tip_info.Format(_T("今日已使用流量：%s\r\n内存使用：%s/%s"),
+			CCommon::KBytesToString(static_cast<unsigned int>(today_traffic / 1024)),
+			CCommon::KBytesToString(used_memory), CCommon::KBytesToString(total_memory));
+	}
+	else
+	{
+		tip_info.Format(_T("今日已使用流量：%s\r\nCPU使用：%d%%\r\n内存使用：%s/%s (%d%%)"),
+			CCommon::KBytesToString(static_cast<unsigned int>(today_traffic / 1024)),
+			cpu_usage,
+			CCommon::KBytesToString(used_memory), CCommon::KBytesToString(total_memory),
+			memory_usage);
+	}
+	return tip_info;
 }
