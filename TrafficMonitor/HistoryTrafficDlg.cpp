@@ -72,7 +72,8 @@ BOOL CHistoryTrafficDlg::OnInitDialog()
 		m_history_list.SetItemText(i, 1, k_bytes_str);
 
 	}
-
+	//LVITEMW item;
+	//m_history_list.GetSub;
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
 }

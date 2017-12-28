@@ -764,7 +764,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			if (theApp.m_hide_main_window)	//设置隐藏主窗口
 				ShowWindow(SW_HIDE);
 			
-			if (!CCommon::WhenStart())
+			if (!theApp.WhenStart())
 			{
 				if (m_show_task_bar_wnd && m_tBarDlg == nullptr)
 					OpenTaskBarWnd();
@@ -774,7 +774,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		}
 
 		//开机启动2秒后显示任务栏窗口，防止开机启动时由于任务栏还没有加载导致嵌入任务栏失败的问题
-		if (CCommon::WhenStart() && m_timer_cnt == 2)
+		if (theApp.WhenStart() && m_timer_cnt == 2)
 		{
 			if (m_show_task_bar_wnd && m_tBarDlg == nullptr)
 				OpenTaskBarWnd();

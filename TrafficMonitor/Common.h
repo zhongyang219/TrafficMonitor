@@ -98,11 +98,16 @@ public:
 	//将一个字符串保存到剪贴板
 	static bool CopyStringToClipboard(const wstring& str);
 
-	//判断现在是否刚开机，在刚开机3分钟内返回true，否则返回false
-	static bool WhenStart();
+	//判断现在是否刚开机，在刚开机的time毫秒内返回true，否则返回false
+	static bool WhenStart(int time, bool write_log = false);
 
 	//显示鼠标提示
 	static CString GetMouseTipsInfo(__int64 today_traffic, int cpu_usage, int memory_usage, int used_memory, int total_memory, bool show_cpu_memory);
 
+	//获取Windows版本
+	static void GetWindowsVersion(int& major_version, int& minor_version, int& build_number);
+
+	//判断当前Windows版本是否为Win10秋季创意者更新或更新的版本
+	static bool IsWindows10FallCreatorOrLater();
 };
 
