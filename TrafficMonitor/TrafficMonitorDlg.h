@@ -120,12 +120,7 @@ protected:
 	bool m_connection_change_flag{ false };		//如果执行过IniConnection()函数，该flag会置为true
 	bool m_cannot_save_config_warning{ true };	//指示是否会在无法保存设置时弹出提示框
 	bool m_is_foreground_fullscreen{ false };	//指示前台窗口是否正在全局显示
-
-	//窗口中显示的4个项目的前导字符串
-	//wstring m_up_string;		//默认为“上传: ”
-	//wstring m_down_string;		//默认为“下载: ”
-	//wstring m_cpu_string;		//默认为“CPU: ”
-	//wstring m_memory_string;		//默认为“内存: ”
+	bool m_menu_popuped{ false };				//指示当前是否有菜单处于弹出状态
 
 
 	void ShowInfo();		//将上传下载速度信息显示到窗口中
@@ -209,4 +204,6 @@ public:
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnOptions();
 	afx_msg void OnOptions2();
+protected:
+	afx_msg LRESULT OnExitmenuloop(WPARAM wParam, LPARAM lParam);
 };

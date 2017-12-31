@@ -283,6 +283,13 @@ void CCommon::FillStaticColor(CStatic & static_ctr, COLORREF color)
 	pDC->FillSolidRect(rect, color);
 }
 
+void CCommon::SetDrawArea(CDC * pDC, CRect rect)
+{
+	CRgn rgn;
+	rgn.CreateRectRgnIndirect(rect);
+	pDC->SelectClipRgn(&rgn);
+}
+
 
 bool CCommon::IsForegroundFullscreen()
 {
@@ -329,10 +336,6 @@ bool CCommon::CopyStringToClipboard(const wstring & str)
 
 bool CCommon::WhenStart(int time, bool write_log)
 {
-	//GetTickCount函数用于获取系统启动到现在的时间，但是如果在“控制面板\系统和安全\电源选项\选择电源按钮的功能”中
-	//勾选了“启用快速启动(推荐)”的话，这其实是一种混合休眠模式，这种情况下，开机时此函数获取到的值就不会被重置，
-	//也就是说此函数获取到的是上次完全关机后开机到现在的时间，或上次重启到现在的时间（重启就相当于完全关机一次）。
-	//由于Win10貌似默认开启快速启动功能，所以此函数不适合在Win10上使用，但是我目前还没有找到较好的方法获取开机时间。
 	int tick_count = GetTickCount();
 	if (write_log)
 	{
@@ -389,5 +392,11 @@ bool CCommon::IsWindows10FallCreatorOrLater()
 {
 	int major_version, minor_version, build_number;
 	GetWindowsVersion(major_version, minor_version, build_number);
-	return ((major_version == 10 && build_number >= 16299) || major_version > 10);
+	if (major_version > 10)
+		return true;
+	else if (major_version == 10 && minor_version > 0)
+		return true;
+	else if (major_version == 10 && minor_version == 0 && build_number >= 16299)
+		return true;
+	else return false;
 }

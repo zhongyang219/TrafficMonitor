@@ -170,6 +170,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialogEx)
 	ON_WM_LBUTTONDBLCLK()
 	ON_COMMAND(ID_OPTIONS, &CTrafficMonitorDlg::OnOptions)
 	ON_COMMAND(ID_OPTIONS2, &CTrafficMonitorDlg::OnOptions2)
+	ON_MESSAGE(WM_EXITMENULOOP, &CTrafficMonitorDlg::OnExitmenuloop)
 END_MESSAGE_MAP()
 
 
@@ -509,7 +510,7 @@ void CTrafficMonitorDlg::LoadHistoryTraffic()
 	{
 		while (!file.eof())
 		{
-			if (m_history_traffics.size() > 999) break;		//最多读取1000天的历史记录
+			if (m_history_traffics.size() > 9999) break;		//最多读取10000天的历史记录
 			std::getline(file, current_line);
 			if (current_line.size() < 12) continue;
 			temp = current_line.substr(0, 4);
@@ -764,21 +765,21 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			if (theApp.m_hide_main_window)	//设置隐藏主窗口
 				ShowWindow(SW_HIDE);
 			
-			if (!theApp.WhenStart())
-			{
-				if (m_show_task_bar_wnd && m_tBarDlg == nullptr)
-					OpenTaskBarWnd();
-			}
+			//if (!theApp.WhenStart())
+			//{
+			if (m_show_task_bar_wnd && m_tBarDlg == nullptr)
+				OpenTaskBarWnd();
+			//}
 
 			m_first_start = false;
 		}
 
-		//开机启动2秒后显示任务栏窗口，防止开机启动时由于任务栏还没有加载导致嵌入任务栏失败的问题
-		if (theApp.WhenStart() && m_timer_cnt == 2)
-		{
-			if (m_show_task_bar_wnd && m_tBarDlg == nullptr)
-				OpenTaskBarWnd();
-		}
+		////开机启动2秒后显示任务栏窗口，防止开机启动时由于任务栏还没有加载导致嵌入任务栏失败的问题
+		//if (theApp.WhenStart() && m_timer_cnt == 2)
+		//{
+		//	if (m_show_task_bar_wnd && m_tBarDlg == nullptr)
+		//		OpenTaskBarWnd();
+		//}
 
 		if (m_always_on_top)
 		{
@@ -802,123 +803,125 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			}
 		}
 
-		//程序启动后若干秒的时候根据设置重新执行“总是置顶”、“鼠标穿透”和“隐藏主窗口”的操作，防止设置没有生效
-		if (m_timer_cnt == 5 || m_timer_cnt == 9)
+		if (!m_menu_popuped)
 		{
-			if (!theApp.m_hide_main_window)
+			//程序启动后若干秒的时候根据设置重新执行“总是置顶”、“鼠标穿透”和“隐藏主窗口”的操作，防止设置没有生效
+			if (m_timer_cnt == 5 || m_timer_cnt == 9)
 			{
-				SetAlwaysOnTop();
-				SetMousePenetrate();
+				if (!theApp.m_hide_main_window)
+				{
+					SetAlwaysOnTop();
+					SetMousePenetrate();
+				}
+				else
+				{
+					ShowWindow(SW_HIDE);
+				}
 			}
-			else
+
+			if (m_timer_cnt % 300 == 299 && !theApp.m_hide_main_window && m_always_on_top)
 			{
-				ShowWindow(SW_HIDE);
+				SetAlwaysOnTop();		//每5分钟执行一次设置窗口置顶
 			}
 		}
 
-		if (m_timer_cnt % 300 == 299 && !theApp.m_hide_main_window && m_always_on_top)
+		//获取网络连接速度
+		int rtn = GetIfTable(m_pIfTable, &m_dwSize, FALSE);
+		m_in_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwInOctets;
+		m_out_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwOutOctets;
+
+		//如果发送和接收的字节数为0或上次发送和接收的字节数为0或当前连接已改变时，网速无效
+		if ((m_in_bytes == 0 && m_out_bytes == 0) || (m_last_in_bytes == 0 && m_last_out_bytes) || m_connection_change_flag)
 		{
-			SetAlwaysOnTop();		//每5分钟执行一次设置窗口置顶
+			theApp.m_in_speed = 0;
+			theApp.m_out_speed = 0;
+		}
+		else
+		{
+			theApp.m_in_speed = m_in_bytes - m_last_in_bytes;
+			theApp.m_out_speed = m_out_bytes - m_last_out_bytes;
+		}
+		//如果大于1GB/s，说明可能产生了异常，网速无效
+		if (theApp.m_in_speed > 1073741824)
+			theApp.m_in_speed = 0;
+		if (theApp.m_out_speed > 1073741824)
+			theApp.m_out_speed = 0;
+
+		m_connection_change_flag = false;	//清除连接发生变化的标志
+
+		m_last_in_bytes = m_in_bytes;
+		m_last_out_bytes = m_out_bytes;
+
+		//处于自动选择状态时，如果连续30秒没有网速，则可能自动选择的网络不对，此时执行一次自动选择
+		if (m_auto_select)
+		{
+			if (theApp.m_in_speed == 0 && theApp.m_out_speed == 0)
+				m_zero_speed_cnt++;
+			else
+				m_zero_speed_cnt = 0;
+			if (m_zero_speed_cnt >= 30)
+			{
+				AutoSelect();
+				m_zero_speed_cnt = 0;
+			}
+		}
+
+		//检测当前日期是否改变，如果已改变，就向历史流量列表插入一个新的日期
+		SYSTEMTIME current_time;
+		GetLocalTime(&current_time);
+		if (m_history_traffics[0].day != current_time.wDay)
+		{
+			HistoryTraffic traffic;
+			traffic.year = current_time.wYear;
+			traffic.month = current_time.wMonth;
+			traffic.day = current_time.wDay;
+			traffic.kBytes = 0;
+			m_history_traffics.push_front(traffic);
+			theApp.m_today_traffic = 0;
+		}
+
+		//统计今天已使用的流量
+		theApp.m_today_traffic += (theApp.m_in_speed + theApp.m_out_speed);
+		m_history_traffics[0].kBytes = static_cast<unsigned int>(theApp.m_today_traffic / 1024);
+		//每隔30秒保存一次流量历史记录
+		if (m_timer_cnt % 30 == 10)
+			SaveHistoryTraffic();
+
+		char buff[256];
+		if (rtn == ERROR_INSUFFICIENT_BUFFER)
+		{
+			IniConnection();
+			sprintf_s(buff, "用于储存连接信息的缓冲区大小不够，已重新初始化连接。(已重新初始化%d次)", m_restart_cnt);
+			CCommon::WriteLog(buff, theApp.m_log_path.c_str());
+		}
+
+		//统计当前已发送或已接收字节数不为0的连接个数
+		int connection_count{};
+		string descr;
+		for (unsigned int i{}; i < m_pIfTable->dwNumEntries; i++)
+		{
+			descr = (const char*)m_pIfTable->table[i].bDescr;
+			if (m_pIfTable->table[i].dwInOctets > 0 || m_pIfTable->table[i].dwOutOctets > 0 || descr == m_connection_name)
+				connection_count++;
+		}
+		if (connection_count == 0) connection_count = 1;
+		if (connection_count != m_connections.size())	//如果连接数发生变化，则重新初始化连接
+		{
+			sprintf_s(buff, "检测到连接数发生变化，已重新获取连接。先前连接数：%d，现在连接数：%d。(已重新初始化%d次)", m_connections.size(), connection_count, m_restart_cnt + 1);
+			IniConnection();
+			CCommon::WriteLog(buff, theApp.m_log_path.c_str());
+		}
+		descr = (const char*)m_pIfTable->table[m_connections[m_connection_selected].index].bDescr;
+		if (descr != m_connection_name)
+		{
+			IniConnection();
+			sprintf_s(buff, "可能出现了异常，当前选择的连接和期望的连接不一致，已重新获取连接。(已重新初始化%d次)", m_restart_cnt);
+			CCommon::WriteLog(buff, theApp.m_log_path.c_str());
 		}
 
 		//只有主窗口和任务栏窗口至少有一个显示时才执行下面的处理
 		if (!theApp.m_hide_main_window || m_show_task_bar_wnd)
 		{
-			//获取网络连接速度
-			int rtn = GetIfTable(m_pIfTable, &m_dwSize, FALSE);
-			m_in_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwInOctets;
-			m_out_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwOutOctets;
-
-			//如果发送和接收的字节数为0或上次发送和接收的字节数为0或当前连接已改变时，网速无效
-			if ((m_in_bytes == 0 && m_out_bytes == 0) || (m_last_in_bytes == 0 && m_last_out_bytes) || m_connection_change_flag)
-			{
-				theApp.m_in_speed = 0;
-				theApp.m_out_speed = 0;
-			}
-			else
-			{
-				theApp.m_in_speed = m_in_bytes - m_last_in_bytes;
-				theApp.m_out_speed = m_out_bytes - m_last_out_bytes;
-			}
-			//如果大于1GB/s，说明可能产生了异常，网速无效
-			if (theApp.m_in_speed > 1073741824)
-				theApp.m_in_speed = 0;
-			if (theApp.m_out_speed > 1073741824)
-				theApp.m_out_speed = 0;
-
-			m_connection_change_flag = false;	//清除连接发生变化的标志
-
-			m_last_in_bytes = m_in_bytes;
-			m_last_out_bytes = m_out_bytes;
-
-			//处于自动选择状态时，如果连续30秒没有网速，则可能自动选择的网络不对，此时执行一次自动选择
-			if (m_auto_select)
-			{
-				if (theApp.m_in_speed == 0 && theApp.m_out_speed == 0)
-					m_zero_speed_cnt++;
-				else
-					m_zero_speed_cnt = 0;
-				if (m_zero_speed_cnt >= 30)
-				{
-					AutoSelect();
-					m_zero_speed_cnt = 0;
-				}
-			}
-
-			//检测当前日期是否改变，如果已改变，就向历史流量列表插入一个新的日期
-			SYSTEMTIME current_time;
-			GetLocalTime(&current_time);
-			if (m_history_traffics[0].day != current_time.wDay)
-			{
-				HistoryTraffic traffic;
-				traffic.year = current_time.wYear;
-				traffic.month = current_time.wMonth;
-				traffic.day = current_time.wDay;
-				traffic.kBytes = 0;
-				m_history_traffics.push_front(traffic);
-				theApp.m_today_traffic = 0;
-			}
-
-			//统计今天已使用的流量
-			theApp.m_today_traffic += (theApp.m_in_speed + theApp.m_out_speed);
-			m_history_traffics[0].kBytes = static_cast<unsigned int>(theApp.m_today_traffic / 1024);
-			//每隔30秒保存一次流量历史记录
-			if (m_timer_cnt % 30 == 10)
-				SaveHistoryTraffic();
-
-			char buff[256];
-			if (rtn == ERROR_INSUFFICIENT_BUFFER)
-			{
-				IniConnection();
-				sprintf_s(buff, "用于储存连接信息的缓冲区大小不够，已重新初始化连接。(已重新初始化%d次)", m_restart_cnt);
-				CCommon::WriteLog(buff, theApp.m_log_path.c_str());
-			}
-
-			//统计当前已发送或已接收字节数不为0的连接个数
-			int connection_count{};
-			string descr;
-			for (unsigned int i{}; i < m_pIfTable->dwNumEntries; i++)
-			{
-				descr = (const char*)m_pIfTable->table[i].bDescr;
-				if (m_pIfTable->table[i].dwInOctets > 0 || m_pIfTable->table[i].dwOutOctets > 0 || descr == m_connection_name)
-					connection_count++;
-			}
-			if (connection_count == 0) connection_count = 1;
-			if (connection_count != m_connections.size())	//如果连接数发生变化，则重新初始化连接
-			{
-				sprintf_s(buff, "检测到连接数发生变化，已重新获取连接。先前连接数：%d，现在连接数：%d。(已重新初始化%d次)", m_connections.size(), connection_count, m_restart_cnt + 1);
-				IniConnection();
-				CCommon::WriteLog(buff, theApp.m_log_path.c_str());
-			}
-			descr = (const char*)m_pIfTable->table[m_connections[m_connection_selected].index].bDescr;
-			if (descr != m_connection_name)
-			{
-				IniConnection();
-				sprintf_s(buff, "可能出现了异常，当前选择的连接和期望的连接不一致，已重新获取连接。(已重新初始化%d次)", m_restart_cnt);
-				CCommon::WriteLog(buff, theApp.m_log_path.c_str());
-			}
-
-
 			if (m_show_cpu_memory || (m_tBarDlg != nullptr && theApp.m_tbar_show_cpu_memory))
 			{
 				//获取CPU利用率
@@ -955,14 +958,6 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
 			ShowInfo();		//刷新窗口信息
 	
-			//更新任务栏窗口信息
-			if (m_tBarDlg != nullptr)
-			{
-				//在任务栏窗口显示期间，随时调整任务栏窗口的位置，防止任务栏图标遮挡窗口
-				m_tBarDlg->AdjustWindowPos();
-				m_tBarDlg->ShowInfo();
-			}
-
 			//更新鼠标提示
 			CString tip_info;
 			tip_info = CCommon::GetMouseTipsInfo(theApp.m_today_traffic, theApp.m_cpu_usage, theApp.m_memory_usage, theApp.m_used_memory, theApp.m_total_memory, m_show_cpu_memory);
@@ -1229,6 +1224,8 @@ void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
 	CDialogEx::OnInitMenu(pMenu);
 
 	// TODO: 在此处添加消息处理程序代码
+	m_menu_popuped = true;
+
 	//设置“选择连接”子菜单项中各单选项的选择状态
 	if (m_auto_select)		//m_auto_select为true时为自动选择，选中菜单的第1项
 		m_select_connection_menu->CheckMenuRadioItem(0, m_connections.size(), 0, MF_BYPOSITION | MF_CHECKED);
@@ -1673,4 +1670,11 @@ void CTrafficMonitorDlg::OnOptions2()
 {
 	// TODO: 在此添加命令处理程序代码
 	_OnOptions(1);
+}
+
+
+afx_msg LRESULT CTrafficMonitorDlg::OnExitmenuloop(WPARAM wParam, LPARAM lParam)
+{
+	m_menu_popuped = false;
+	return 0;
 }

@@ -31,16 +31,13 @@ CTrafficMonitorApp::CTrafficMonitorApp()
 
 void CTrafficMonitorApp::LoadConfig()
 {
-	bool is_windows10_fall_creator = CCommon::IsWindows10FallCreatorOrLater();
-
-	m_no_multistart_warning_time = GetPrivateProfileInt(_T("other"), _T("no_multistart_warning_time"), 300000, m_config_path.c_str());
-	//如果当前Windows版本是Win10秋季创意者更新，则m_no_multistart_warning默认为true，否则默认为false
-	m_no_multistart_warning = (GetPrivateProfileInt(_T("other"), _T("no_multistart_warning"), is_windows10_fall_creator ? 1 : 0, m_config_path.c_str()) != 0);
+	//m_no_multistart_warning_time = GetPrivateProfileInt(_T("other"), _T("no_multistart_warning_time"), 300000, m_config_path.c_str());
+	m_no_multistart_warning = (GetPrivateProfileInt(_T("other"), _T("no_multistart_warning"), 0, m_config_path.c_str()) != 0);
 }
 
 void CTrafficMonitorApp::SaveConfig()
 {
-	CCommon::WritePrivateProfileIntW(_T("other"), _T("no_multistart_warning_time"), m_no_multistart_warning_time, m_config_path.c_str());
+	//CCommon::WritePrivateProfileIntW(_T("other"), _T("no_multistart_warning_time"), m_no_multistart_warning_time, m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(_T("other"), _T("no_multistart_warning"), m_no_multistart_warning, m_config_path.c_str());
 }
 
@@ -61,14 +58,16 @@ BOOL CTrafficMonitorApp::InitInstance()
 	m_log_path = exe_path + L"error.log";
 	m_skin_path = exe_path + L"skins";
 
+	bool is_windows10_fall_creator = CCommon::IsWindows10FallCreatorOrLater();
+
 	//从ini文件载入设置
 	LoadConfig();
 
 #ifndef _DEBUG
 	wstring cmd_line{ m_lpCmdLine };
 	bool is_restart{ cmd_line.find(L"RestartByRestartManager") != wstring::npos };		//如果命令行参数中含有字符串“RestartByRestartManager”则说明程序是被Windows重新启动的
-	bool when_start{ CCommon::WhenStart(m_no_multistart_warning_time) };
-	if (is_restart && when_start)		//如果在开机时程序被重新启动，则直接退出程序
+	//bool when_start{ CCommon::WhenStart(m_no_multistart_warning_time) };
+	if (is_restart && is_windows10_fall_creator)		//当前Windows版本是秋季创意者更新时，如果程序被重新启动，则直接退出程序
 	{
 		//AfxMessageBox(_T("调试信息：程序已被Windows的重启管理器重新启动。"));
 		return FALSE;
@@ -84,7 +83,7 @@ BOOL CTrafficMonitorApp::InitInstance()
 			//string cmd_line_str{ CCommon::UnicodeToStr(cmd_line.c_str()) };
 			//sprintf_s(buff, "when_start=%d, m_no_multistart_warning=%d, cmd_line=%s", when_start, m_no_multistart_warning, cmd_line_str.c_str());
 			//CCommon::WriteLog(buff, _T(".\\start.log"));
-			if (!when_start && !m_no_multistart_warning)
+			if (!m_no_multistart_warning)
 			{
 				AfxMessageBox(_T("已经有一个程序正在运行。"));
 			}

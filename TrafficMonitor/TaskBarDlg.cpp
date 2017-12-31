@@ -32,6 +32,7 @@ BEGIN_MESSAGE_MAP(CTaskBarDlg, CDialogEx)
 	ON_WM_INITMENU()
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONDBLCLK()
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -369,6 +370,8 @@ BOOL CTaskBarDlg::OnInitDialog()
 	m_tool_tips.AddTool(this, _T(""));
 	SetToolTipsTopMost();		//设置提示信息总是置顶
 
+	SetTimer(TASKBAR_TIMER, 100, NULL);
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
 }
@@ -441,4 +444,17 @@ void CTaskBarDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	SendMessage(WM_COMMAND,ID_NETWORK_INFO);		//双击后弹出“连接详情”对话框
 	CDialogEx::OnLButtonDblClk(nFlags, point);
+}
+
+
+void CTaskBarDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	if (nIDEvent == TASKBAR_TIMER)
+	{
+		AdjustWindowPos();
+		ShowInfo();
+	}
+
+	CDialogEx::OnTimer(nIDEvent);
 }

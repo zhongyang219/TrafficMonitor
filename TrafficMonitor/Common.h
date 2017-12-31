@@ -6,7 +6,7 @@ struct HistoryTraffic
 	int year;
 	int month;
 	int day;
-	unsigned kBytes;	//当天使用的流量（以KB为单位）
+	unsigned int kBytes;	//当天使用的流量（以KB为单位）
 
 	//比较两个HistoryTraffic对象的日期，如果a的时间大于b，则返回true
 	static bool DateGreater(const HistoryTraffic& a, const HistoryTraffic& b)
@@ -41,7 +41,7 @@ public:
 	//将一个int类型数据写入ini文件，如果成功则返回true
 	static bool WritePrivateProfileIntW(const wchar_t * AppName, const wchar_t * KeyName, int value, const wchar_t * Path);
 
-	//根据数据在大小转换成以KB、MB、GB为单位的字符串
+	//根据数据的大小转换成以KB、MB、GB为单位的字符串
 	static CString DataSizeToString(unsigned int size);
 
 	static CString KBytesToString(unsigned int kb_size);
@@ -84,6 +84,9 @@ public:
 	//为一个Static控件填充指定的颜色
 	static void FillStaticColor(CStatic& static_ctr, COLORREF color);
 
+	//设置绘图的剪辑区域
+	static void SetDrawArea(CDC* pDC, CRect rect);
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	* 函数名称：IsForegroundFullscreen
 	* 功能说明：判断当前正在与用户交互的前台窗口是否是全屏的。
@@ -98,7 +101,7 @@ public:
 	//将一个字符串保存到剪贴板
 	static bool CopyStringToClipboard(const wstring& str);
 
-	//判断现在是否刚开机，在刚开机的time毫秒内返回true，否则返回false
+	//判断现在是否刚开机，在刚开机的time毫秒内返回true，否则返回false（在启用了快速启动时，此函数可能会无法得到正确的结果）
 	static bool WhenStart(int time, bool write_log = false);
 
 	//显示鼠标提示

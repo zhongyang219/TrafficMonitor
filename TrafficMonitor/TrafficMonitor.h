@@ -63,12 +63,12 @@ public:
 
 	CTrafficMonitorApp();
 
-	bool WhenStart() const { return CCommon::WhenStart(m_no_multistart_warning_time); }
+	//bool WhenStart() const { return CCommon::WhenStart(m_no_multistart_warning_time); }
 	void LoadConfig();
 	void SaveConfig();
 
 private:
-	int m_no_multistart_warning_time{};		//用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示
+	//int m_no_multistart_warning_time{};		//用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示
 	bool m_no_multistart_warning{};			//如果为false，则永远都不会弹出“已经有一个程序正在运行”的警告提示
 
 // 重写

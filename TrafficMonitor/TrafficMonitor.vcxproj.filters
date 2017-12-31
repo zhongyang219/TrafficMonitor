@@ -69,6 +69,9 @@
     <ClInclude Include="OptionsDlg.h">
       <Filter>头文件\对话框类</Filter>
     </ClInclude>
+    <ClInclude Include="ListCtrlEx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TrafficMonitor.cpp">
@@ -109,6 +112,9 @@
     </ClCompile>
     <ClCompile Include="TaskBarSettingsDlg.cpp">
       <Filter>源文件\对话框类</Filter>
+    </ClCompile>
+    <ClCompile Include="ListCtrlEx.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
