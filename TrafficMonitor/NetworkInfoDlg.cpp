@@ -191,11 +191,6 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 
 	// TODO:  在此添加额外的初始化
 
-	//获取dpi设置
-	CWindowDC dc(this);
-	HDC hDC = dc.GetSafeHdc();
-	int dpi = GetDeviceCaps(hDC, LOGPIXELSY);
-
 	//获取IP地址
 	GetIPAddress();
 
@@ -205,7 +200,7 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	m_info_list.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
 	int width0, width1;
 	width0 = rect.Width() / 4;
-	width1 = rect.Width() - width0 - 21 * dpi / 96;
+	width1 = rect.Width() - width0 - theApp.DPI(21);
 	m_info_list.InsertColumn(0, _T("项目"), LVCFMT_LEFT, width0);		//插入第0列
 	m_info_list.InsertColumn(1, _T("值"), LVCFMT_LEFT, width1);		//插入第1列
 

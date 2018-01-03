@@ -36,6 +36,8 @@ public:
 	bool m_hide_main_window;	//隐藏主窗口
 	bool m_show_notify_icon{ true };	//显示通知区域图标
 
+	bool m_is_windows10_fall_creator;
+
 	//选项设置数据
 	//主窗口
 	COLORREF m_text_color{};		//文字颜色
@@ -67,9 +69,13 @@ public:
 	void LoadConfig();
 	void SaveConfig();
 
+	int DPI(int pixel);
+	void GetDPI(CWnd* pWnd);
+
 private:
 	//int m_no_multistart_warning_time{};		//用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示
 	bool m_no_multistart_warning{};			//如果为false，则永远都不会弹出“已经有一个程序正在运行”的警告提示
+	int m_dpi{ 96 };
 
 // 重写
 public:

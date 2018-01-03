@@ -41,6 +41,18 @@ void CTrafficMonitorApp::SaveConfig()
 	CCommon::WritePrivateProfileIntW(_T("other"), _T("no_multistart_warning"), m_no_multistart_warning, m_config_path.c_str());
 }
 
+int CTrafficMonitorApp::DPI(int pixel)
+{
+	return m_dpi * pixel / 96;
+}
+
+void CTrafficMonitorApp::GetDPI(CWnd* pWnd)
+{
+	CWindowDC dc(pWnd);
+	HDC hDC = dc.GetSafeHdc();
+	m_dpi = GetDeviceCaps(hDC, LOGPIXELSY);
+}
+
 
 // 唯一的一个 CTrafficMonitorApp 对象
 
@@ -58,7 +70,7 @@ BOOL CTrafficMonitorApp::InitInstance()
 	m_log_path = exe_path + L"error.log";
 	m_skin_path = exe_path + L"skins";
 
-	bool is_windows10_fall_creator = CCommon::IsWindows10FallCreatorOrLater();
+	m_is_windows10_fall_creator = CCommon::IsWindows10FallCreatorOrLater();
 
 	//从ini文件载入设置
 	LoadConfig();
@@ -67,7 +79,7 @@ BOOL CTrafficMonitorApp::InitInstance()
 	wstring cmd_line{ m_lpCmdLine };
 	bool is_restart{ cmd_line.find(L"RestartByRestartManager") != wstring::npos };		//如果命令行参数中含有字符串“RestartByRestartManager”则说明程序是被Windows重新启动的
 	//bool when_start{ CCommon::WhenStart(m_no_multistart_warning_time) };
-	if (is_restart && is_windows10_fall_creator)		//当前Windows版本是秋季创意者更新时，如果程序被重新启动，则直接退出程序
+	if (is_restart && m_is_windows10_fall_creator)		//当前Windows版本是秋季创意者更新时，如果程序被重新启动，则直接退出程序
 	{
 		//AfxMessageBox(_T("调试信息：程序已被Windows的重启管理器重新启动。"));
 		return FALSE;

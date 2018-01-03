@@ -106,7 +106,6 @@ CTrafficMonitorDlg::CTrafficMonitorDlg(CWnd* pParent /*=NULL*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	LoadConfig();	//启动时从ini文件载入设置
 	CTaskBarDlg::LoadConfig();
-	GetScreenSize();	//获取屏幕大小
 }
 
 CTrafficMonitorDlg::~CTrafficMonitorDlg()
@@ -652,6 +651,13 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	//设置隐藏任务栏图标
 	ModifyStyleEx(WS_EX_APPWINDOW, WS_EX_TOOLWINDOW);
 
+	theApp.GetDPI(this);
+	//获取屏幕大小
+	if (theApp.m_is_windows10_fall_creator)
+		GetScreenSize(theApp.DPI(23));
+	else
+		GetScreenSize();
+
 	//设置窗口透明度
 	SetTransparency();
 
@@ -922,8 +928,8 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		//只有主窗口和任务栏窗口至少有一个显示时才执行下面的处理
 		if (!theApp.m_hide_main_window || m_show_task_bar_wnd)
 		{
-			if (m_show_cpu_memory || (m_tBarDlg != nullptr && theApp.m_tbar_show_cpu_memory))
-			{
+			//if (m_show_cpu_memory || (m_tBarDlg != nullptr && theApp.m_tbar_show_cpu_memory))
+			//{
 				//获取CPU利用率
 				FILETIME idleTime;
 				FILETIME kernelTime;
@@ -954,7 +960,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 				theApp.m_memory_usage = statex.dwMemoryLoad;
 				theApp.m_used_memory = static_cast<int>((statex.ullTotalPhys - statex.ullAvailPhys) / 1024);
 				theApp.m_total_memory  = static_cast<int>(statex.ullTotalPhys / 1024);
-			}
+			//}
 
 			ShowInfo();		//刷新窗口信息
 	

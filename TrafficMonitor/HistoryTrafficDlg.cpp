@@ -58,18 +58,13 @@ BOOL CHistoryTrafficDlg::OnInitDialog()
 
 	LoadConfig();
 
-	//获取dpi设置
-	CWindowDC dc(this);
-	HDC hDC = dc.GetSafeHdc();
-	int dpi = GetDeviceCaps(hDC, LOGPIXELSY);
-
 	//初始化列表控件
 	CRect rect;
 	m_history_list.GetClientRect(rect);
 	m_history_list.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
 	int width0, width1;
 	width0 = rect.Width() / 3;
-	width1 = rect.Width() - 2 * width0 - 21 * dpi / 96;
+	width1 = rect.Width() - 2 * width0 - theApp.DPI(21);
 	m_history_list.InsertColumn(0, _T("日期"), LVCFMT_LEFT, width0);		//插入第0列
 	m_history_list.InsertColumn(1, _T("使用的流量（上传+下载）"), LVCFMT_LEFT, width0);		//插入第1列
 	m_history_list.InsertColumn(2, _T("图表"), LVCFMT_LEFT, width1);
@@ -83,7 +78,7 @@ BOOL CHistoryTrafficDlg::OnInitDialog()
 	}
 	m_history_list.EnableDrawItemRange();
 	m_history_list.SetDrawItemRangeRow(2);
-	m_history_list.SetDrawItemRangMargin(4 * dpi / 96);
+	m_history_list.SetDrawItemRangMargin(theApp.DPI(4));
 	m_history_list.SetDrawItemRangInLogScale(m_use_log_scale);
 
 	for (int i{}; i<m_history_traffics.size(); i++)
