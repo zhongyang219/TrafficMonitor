@@ -246,6 +246,8 @@ void CTrafficMonitorDlg::CheckWindowPos()
 {
 	CRect rect;
 	GetWindowRect(rect);
+	if (m_screen_width <= rect.Width() || m_screen_height <= rect.Height())
+		return;
 	if (rect.left < 0)
 	{
 		rect.MoveToX(0);
