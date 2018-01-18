@@ -789,7 +789,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		//		OpenTaskBarWnd();
 		//}
 
-		if (m_always_on_top)
+		if (m_always_on_top && !theApp.m_hide_main_window)
 		{
 			//每隔1秒钟就判断一下前台窗口是否全屏
 			m_is_foreground_fullscreen = CCommon::IsForegroundFullscreen();

@@ -209,19 +209,19 @@ void CTaskBarDlg::LoadConfig()
 	theApp.m_tbar_font_size = GetPrivateProfileInt(_T("task_bar"), _T("tack_bar_font_size"), 9, theApp.m_config_path.c_str());
 	
 	wchar_t buff[256];
-	GetPrivateProfileStringW(L"task_bar", L"up_string", L"↑:", buff, 256, theApp.m_config_path.c_str());
+	GetPrivateProfileStringW(L"task_bar", L"up_string", L"↑: $", buff, 256, theApp.m_config_path.c_str());
 	theApp.m_tbar_up_string = buff;
 	if (!theApp.m_tbar_up_string.empty() && theApp.m_tbar_up_string.back() == L'$')		//如果读取的字符串末尾有'$'，则把它删除，用于解决读取ini文件保存的字符串时无法赢取末尾的空格的问题，此时只要在末尾加上'$'即可
 		theApp.m_tbar_up_string.pop_back();
-	GetPrivateProfileStringW(L"task_bar", L"down_string", L"↓:", buff, 256, theApp.m_config_path.c_str());
+	GetPrivateProfileStringW(L"task_bar", L"down_string", L"↓: $", buff, 256, theApp.m_config_path.c_str());
 	theApp.m_tbar_down_string = buff;
 	if (!theApp.m_tbar_down_string.empty() && theApp.m_tbar_down_string.back() == L'$')
 		theApp.m_tbar_down_string.pop_back();
-	GetPrivateProfileStringW(L"task_bar", L"cpu_string", L"CPU:", buff, 256, theApp.m_config_path.c_str());
+	GetPrivateProfileStringW(L"task_bar", L"cpu_string", L"CPU: $", buff, 256, theApp.m_config_path.c_str());
 	theApp.m_tbar_cpu_string = buff;
 	if (!theApp.m_tbar_cpu_string.empty() && theApp.m_tbar_cpu_string.back() == L'$')
 		theApp.m_tbar_cpu_string.pop_back();
-	GetPrivateProfileStringW(L"task_bar", L"memory_string", L"内存:", buff, 256, theApp.m_config_path.c_str());
+	GetPrivateProfileStringW(L"task_bar", L"memory_string", L"内存: $", buff, 256, theApp.m_config_path.c_str());
 	theApp.m_tbar_memory_string = buff;
 	if (!theApp.m_tbar_memory_string.empty() && theApp.m_tbar_memory_string.back() == L'$')
 		theApp.m_tbar_memory_string.pop_back();
