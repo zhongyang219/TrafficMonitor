@@ -35,11 +35,14 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	afx_msg void OnStnClickedStaticDonate();
+//	afx_msg void OnStnClickedStaticDonate();
+protected:
+	afx_msg LRESULT OnLinkClicked(WPARAM wParam, LPARAM lParam);
 };
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
-	ON_STN_CLICKED(IDC_STATIC_DONATE, &CAboutDlg::OnStnClickedStaticDonate)
+	//ON_STN_CLICKED(IDC_STATIC_DONATE, &CAboutDlg::OnStnClickedStaticDonate)
+	ON_MESSAGE(WM_LINK_CLICKED, &CAboutDlg::OnLinkClicked)
 END_MESSAGE_MAP()
 
 CAboutDlg::CAboutDlg() : CDialog(IDD_ABOUTBOX)
@@ -66,12 +69,20 @@ BOOL CAboutDlg::OnInitDialog()
 	rect.bottom = rect.Height() * 2 / 5;	//图片高度占对话框高度的2/5
 	m_about_img.MoveWindow(rect);
 	m_mail.SetURL(_T("mailto:zhongyang219@hotmail.com"));	//设置超链接
-	m_check_update.SetURL(_T("http://pan.baidu.com/s/1c1LkPQ4"));
+	//m_check_update.SetURL(_T("http://pan.baidu.com/s/1c1LkPQ4"));
 	m_github.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor"));
+	m_donate.SetLinkEnable(false);
+	m_check_update.SetLinkEnable(false);
+
+	//设置版本信息
+	CString version_info;
+	GetDlgItemText(IDC_STATIC_VERSION, version_info);
+	version_info.Replace(_T("<version>"), VERSION);
+	SetDlgItemText(IDC_STATIC_VERSION, version_info);
 	
 	m_Mytip.Create(this, TTS_ALWAYSTIP | TTS_NOPREFIX);
 	m_Mytip.AddTool(&m_mail, _T("向作者发送电子邮件\r\nmailto:zhongyang219@hotmail.com"));
-	m_Mytip.AddTool(&m_check_update, _T("到百度网盘链接查看是否有更新\r\nhttp://pan.baidu.com/s/1c1LkPQ4"));
+	//m_Mytip.AddTool(&m_check_update, _T("到百度网盘链接查看是否有更新\r\nhttp://pan.baidu.com/s/1c1LkPQ4"));
 	m_Mytip.AddTool(&m_github, _T("转到此项目在GitHub上的页面\r\nhttps://github.com/zhongyang219/TrafficMonitor"));
 	m_Mytip.AddTool(&m_donate, _T("捐助作者"));
 	m_Mytip.SetDelayTime(300);	//设置延迟
@@ -89,11 +100,29 @@ BOOL CAboutDlg::PreTranslateMessage(MSG* pMsg)
 	return CDialog::PreTranslateMessage(pMsg);
 }
 
-void CAboutDlg::OnStnClickedStaticDonate()
+//void CAboutDlg::OnStnClickedStaticDonate()
+//{
+//	CDonateDlg donateDlg;
+//	donateDlg.DoModal();
+//}
+
+afx_msg LRESULT CAboutDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
 {
-	CDonateDlg donateDlg;
-	donateDlg.DoModal();
+	switch (::GetDlgCtrlID(((CWnd*)wParam)->m_hWnd))
+	{
+	case IDC_STATIC_DONATE:
+		{
+			CDonateDlg donateDlg;
+			donateDlg.DoModal();
+		}
+		break;
+	case IDC_STATIC_CHECK_UPDATE:
+		theApp.CheckUpdate();
+		break;
+	}
+	return 0;
 }
+
 
 // CTrafficMonitorDlg 对话框
 

@@ -53,6 +53,35 @@ void CTrafficMonitorApp::GetDPI(CWnd* pWnd)
 	m_dpi = GetDeviceCaps(hDC, LOGPIXELSY);
 }
 
+void CTrafficMonitorApp::CheckUpdate()
+{
+	CWaitCursor wait_cursor;
+	wstring version_info;
+	CCommon::GetURL(L"https://raw.githubusercontent.com/zhongyang219/TrafficMonitor/master/version.info", version_info);		//获取版本信息
+	size_t index, index1, index2, index3;
+	index = version_info.find(L"<version>");
+	index1 = version_info.find(L"</version>");
+	index2 = version_info.find(L"<link>");
+	index3 = version_info.find(L"</link>");
+	wstring version;
+	wstring link;
+	version = version_info.substr(index + 9, index1 - index - 9);
+	link = version_info.substr(index2 + 6, index3 - index2 - 6);
+	if (version > VERSION)		//如果服务器上的版本大于本地版本
+	{
+		CString info;
+		info.Format(_T("检测到新版本 V%s，是否前往更新？"), version.c_str());
+		if (AfxMessageBox(info, MB_YESNO | MB_ICONQUESTION) == IDYES)
+		{
+			ShellExecute(NULL, _T("open"), link.c_str(), NULL, NULL, SW_SHOW);		//转到下载链接
+		}
+	}
+	else
+	{
+		AfxMessageBox(_T("当前已经是最新版本。"), MB_OK | MB_ICONINFORMATION);
+	}
+}
+
 
 // 唯一的一个 CTrafficMonitorApp 对象
 
@@ -64,11 +93,11 @@ CTrafficMonitorApp theApp;
 BOOL CTrafficMonitorApp::InitInstance()
 {
 	//设置配置文件的路径
-	wstring exe_path{ CCommon::GetExePath() };
-	m_config_path = exe_path + L"config.ini";
-	m_history_traffic_path = exe_path + L"history_traffic.dat";
-	m_log_path = exe_path + L"error.log";
-	m_skin_path = exe_path + L"skins";
+	m_module_path = CCommon::GetExePath();
+	m_config_path = m_module_path + L"config.ini";
+	m_history_traffic_path = m_module_path + L"history_traffic.dat";
+	m_log_path = m_module_path + L"error.log";
+	m_skin_path = m_module_path + L"skins";
 
 	m_is_windows10_fall_creator = CCommon::IsWindows10FallCreatorOrLater();
 

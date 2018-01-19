@@ -48,6 +48,8 @@ using std::ofstream;
 #include<io.h>
 #include<algorithm>
 #include <cmath>
+#include <afxinet.h>	//用于支持使用网络相关的类
+
 
 
 #ifdef _UNICODE
@@ -74,3 +76,5 @@ using std::ofstream;
 #define TASKBAR_TIMER 1236
 
 #define MAX_INSERT_TO_TASKBAR_CNT 30		//尝试嵌入任务栏的最大次数
+
+#define VERSION L"1.65"

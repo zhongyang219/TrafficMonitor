@@ -18,6 +18,7 @@
 class CTrafficMonitorApp : public CWinApp
 {
 public:
+	wstring m_module_path;
 	wstring m_config_path;
 	wstring m_history_traffic_path;
 	wstring m_log_path;
@@ -71,6 +72,8 @@ public:
 
 	int DPI(int pixel);
 	void GetDPI(CWnd* pWnd);
+
+	void CheckUpdate();
 
 private:
 	//int m_no_multistart_warning_time{};		//用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示

@@ -11,14 +11,14 @@ CCommon::~CCommon()
 {
 }
 
-wstring CCommon::StrToUnicode(const char* str)
+wstring CCommon::StrToUnicode(const char* str, bool utf8)
 {
 	wstring result;
 	int size;
-	size = MultiByteToWideChar(CP_ACP, 0, str, -1, NULL, 0);
+	size = MultiByteToWideChar((utf8 ? CP_UTF8 : CP_ACP), 0, str, -1, NULL, 0);
 	if (size <= 0) return wstring();
 	wchar_t* str_unicode = new wchar_t[size + 1];
-	MultiByteToWideChar(CP_ACP, 0, str, -1, str_unicode, size);
+	MultiByteToWideChar((utf8 ? CP_UTF8 : CP_ACP), 0, str, -1, str_unicode, size);
 	result.assign(str_unicode);
 	delete[] str_unicode;
 	return result;
@@ -399,4 +399,42 @@ bool CCommon::IsWindows10FallCreatorOrLater()
 	else if (major_version == 10 && minor_version == 0 && build_number >= 16299)
 		return true;
 	else return false;
+}
+
+bool CCommon::GetURL(const wstring & url, wstring & result)
+{
+	bool sucessed{ false };
+	CInternetSession session{};
+	CHttpFile* pfile{};
+	try
+	{
+		pfile = (CHttpFile *)session.OpenURL(url.c_str());
+		DWORD dwStatusCode;
+		pfile->QueryInfoStatusCode(dwStatusCode);
+		if (dwStatusCode == HTTP_STATUS_OK)
+		{
+			CString content;
+			CString data;
+			while (pfile->ReadString(data))
+			{
+				content += data;
+			}
+			result = StrToUnicode((const char*)content.GetString());
+			sucessed = true;
+		}
+		pfile->Close();
+		delete pfile;
+		session.Close();
+	}
+	catch (CInternetException* e)
+	{
+		if (pfile != nullptr)
+		{
+			pfile->Close();
+			delete pfile;
+		}
+		session.Close();
+		sucessed = false;
+	}
+	return sucessed;
 }

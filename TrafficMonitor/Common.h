@@ -34,7 +34,7 @@ public:
 	CCommon();
 	~CCommon();
 	//将const char*字符串转换成宽字符字符串
-	static wstring StrToUnicode(const char* str);
+	static wstring StrToUnicode(const char* str, bool utf8 = false);
 
 	static string UnicodeToStr(const wchar_t* wstr);
 
@@ -112,5 +112,7 @@ public:
 
 	//判断当前Windows版本是否为Win10秋季创意者更新或更新的版本
 	static bool IsWindows10FallCreatorOrLater();
+
+	static bool GetURL(const wstring& url, wstring& result);
 };
 

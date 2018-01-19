@@ -100,11 +100,16 @@ void CStaticEx::OnLButtonUp(UINT nFlags, CPoint point)
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	if (m_isHyperLink)
 	{
-		if (m_strURL.IsEmpty())
+		if (m_linkEnable)
 		{
-			m_strURL = m_text;
+			if (m_strURL.IsEmpty())
+				m_strURL = m_text;
+			ShellExecute(NULL, _T("open"), m_strURL, NULL, NULL, SW_SHOW);	//打开超链接
 		}
-		ShellExecute(NULL, _T("open"), m_strURL, NULL, NULL, SW_SHOW);	//打开超链接
+		else
+		{
+			GetParent()->SendMessage(WM_LINK_CLICKED, (WPARAM)this);
+		}
 	}
 	else
 	{

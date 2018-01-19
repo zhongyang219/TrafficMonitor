@@ -2,6 +2,7 @@
 //以及解决设置了窗口背景图片时控件文字重叠的问题。
 #pragma once
 #include "afxwin.h"
+#define WM_LINK_CLICKED (WM_USER + 1002)
 class CStaticEx :
 	public CStatic
 {
@@ -16,11 +17,14 @@ public:
 	void SetURL(CString strURL);		//设置超链接
 	CString GetURL() const;			//获取超链接字符串
 
+	void SetLinkEnable(bool enable) { m_linkEnable = enable; }
+
 protected:
 	COLORREF m_TextColor;	//控件文字颜色
 	CString m_text;			//控件上的文本
 
 	bool m_isHyperLink{ false };	//如果要将控件作为超链接，则为true
+	bool m_linkEnable{ true };		//如果为true，点击后打开超链接，否则向父窗口发送一个点击消息
 	bool m_bHot{ false };			//当鼠标指向超链接时，则为true
 	CString m_strURL;				//超链接字符串
 
