@@ -113,6 +113,7 @@ public:
 	//判断当前Windows版本是否为Win10秋季创意者更新或更新的版本
 	static bool IsWindows10FallCreatorOrLater();
 
+	//获取URL的内容
 	static bool GetURL(const wstring& url, wstring& result);
 };
 

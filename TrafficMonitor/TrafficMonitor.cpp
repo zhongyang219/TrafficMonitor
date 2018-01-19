@@ -103,6 +103,53 @@ UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
 	return 0;
 }
 
+void CTrafficMonitorApp::SetAutoRun(bool auto_run)
+{
+	CRegKey key;
+	//在程序路径前后添加双引号
+	wstring module_path{ L'\"' };
+	module_path += m_module_path;
+	module_path += L'\"';
+	if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
+	{
+		AfxMessageBox(_T("无法实现开机自启动，在注册表中找不到相应的键值！"), MB_OK | MB_ICONWARNING);
+		return;
+	}
+	if (auto_run)
+	{
+		if (key.SetStringValue(_T("TrafficMonitor"), module_path.c_str()) != ERROR_SUCCESS)
+		{
+			AfxMessageBox(_T("注册表项写入失败，可能该键值没有权限访问！"), MB_OK | MB_ICONWARNING);
+			return;
+		}
+	}
+	else
+	{
+		if (key.DeleteValue(_T("TrafficMonitor")) != ERROR_SUCCESS)
+		{
+			AfxMessageBox(_T("注册表项删除失败，可能该键值没有权限访问！"), MB_OK | MB_ICONWARNING);
+			return;
+		}
+	}
+}
+
+bool CTrafficMonitorApp::GetAutoRun()
+{
+	CRegKey key;
+	if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
+	{
+		return false;
+	}
+	wchar_t buff[256];
+	ULONG size{ 256 };
+	if (key.QueryStringValue(_T("TrafficMonitor"), buff, &size) != ERROR_SUCCESS)
+	{
+		return false;
+	}
+	//只要找到了"TrafficMonitor"这个键，则返回true
+	return true;
+}
+
 
 // 唯一的一个 CTrafficMonitorApp 对象
 
@@ -114,11 +161,15 @@ CTrafficMonitorApp theApp;
 BOOL CTrafficMonitorApp::InitInstance()
 {
 	//设置配置文件的路径
-	m_module_path = CCommon::GetExePath();
-	m_config_path = m_module_path + L"config.ini";
-	m_history_traffic_path = m_module_path + L"history_traffic.dat";
-	m_log_path = m_module_path + L"error.log";
-	m_skin_path = m_module_path + L"skins";
+	wstring exe_path = CCommon::GetExePath();
+	m_config_path = exe_path + L"config.ini";
+	m_history_traffic_path = exe_path + L"history_traffic.dat";
+	m_log_path = exe_path + L"error.log";
+	m_skin_path = exe_path + L"skins";
+
+	wchar_t path[MAX_PATH];
+	GetModuleFileNameW(NULL, path, MAX_PATH);
+	m_module_path = path;
 
 	m_is_windows10_fall_creator = CCommon::IsWindows10FallCreatorOrLater();
 

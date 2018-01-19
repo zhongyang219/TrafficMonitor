@@ -54,13 +54,7 @@ protected:
 
 	CMenu m_menu;	//右键菜单
 
-	//COLORREF m_back_color{ RGB(0,0,0) };	//背景颜色
-	//COLORREF m_text_color{ RGB(255,255,255) };	//文字颜色
 	CFont m_font;			//字体
-	//CString m_font_name;	//字体名称
-	//int m_font_size;		//字体大小
-
-	//bool m_swap_up_down{ false };		//交换上传和下载显示的位置
 
 	CDC* m_pDC{};
 

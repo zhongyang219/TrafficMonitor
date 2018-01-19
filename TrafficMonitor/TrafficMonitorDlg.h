@@ -73,8 +73,8 @@ protected:
 	bool m_mouse_penetrate{ false };	//鼠标穿透
 	bool m_show_task_bar_wnd{ false };	//显示任务栏窗口
 	//bool m_swap_up_down{ false };		//交换上传和下载显示的位置
-	bool m_auto_run;				//是否开机自动运行
-	wstring m_start_up_path;		//开始菜单中的“启动”文件夹的路径
+	//bool m_auto_run;				//是否开机自动运行
+	//wstring m_start_up_path;		//开始菜单中的“启动”文件夹的路径
 
 	bool m_first_start{ true };		//初始时为true，在定时器第一次启动后置为flase
 
@@ -192,11 +192,11 @@ public:
 	afx_msg void OnUpdateShowTaskBarWnd(CCmdUI *pCmdUI);
 	afx_msg void OnAppAbout();
 	afx_msg void OnShowCpuMemory2();
-	afx_msg void OnAutoRunWhenStart();
+//	afx_msg void OnAutoRunWhenStart();
 	afx_msg void OnHideMainWnd();
 	afx_msg void OnUpdateHideMainWnd(CCmdUI *pCmdUI);
 	afx_msg void OnChangeSkin();
-	afx_msg void OnUpdateAutoRunWhenStart(CCmdUI *pCmdUI);
+//	afx_msg void OnUpdateAutoRunWhenStart(CCmdUI *pCmdUI);
 	afx_msg LRESULT OnTaskBarCreated(WPARAM wParam, LPARAM lParam);
 	//afx_msg void OnSetFont();
 	afx_msg void OnTrafficHistory();

@@ -187,11 +187,11 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_SHOW_TASK_BAR_WND, &CTrafficMonitorDlg::OnUpdateShowTaskBarWnd)
 	ON_COMMAND(ID_APP_ABOUT, &CTrafficMonitorDlg::OnAppAbout)
 	ON_COMMAND(ID_SHOW_CPU_MEMORY2, &CTrafficMonitorDlg::OnShowCpuMemory2)
-	ON_COMMAND(ID_AUTO_RUN_WHEN_START, &CTrafficMonitorDlg::OnAutoRunWhenStart)
+	//ON_COMMAND(ID_AUTO_RUN_WHEN_START, &CTrafficMonitorDlg::OnAutoRunWhenStart)
 	ON_COMMAND(ID_HIDE_MAIN_WND, &CTrafficMonitorDlg::OnHideMainWnd)
 	ON_UPDATE_COMMAND_UI(ID_HIDE_MAIN_WND, &CTrafficMonitorDlg::OnUpdateHideMainWnd)
 	ON_COMMAND(ID_CHANGE_SKIN, &CTrafficMonitorDlg::OnChangeSkin)
-	ON_UPDATE_COMMAND_UI(ID_AUTO_RUN_WHEN_START, &CTrafficMonitorDlg::OnUpdateAutoRunWhenStart)
+	//ON_UPDATE_COMMAND_UI(ID_AUTO_RUN_WHEN_START, &CTrafficMonitorDlg::OnUpdateAutoRunWhenStart)
 	ON_REGISTERED_MESSAGE(m_WM_TASKBARCREATED, &CTrafficMonitorDlg::OnTaskBarCreated)
 	ON_COMMAND(ID_TRAFFIC_HISTORY, &CTrafficMonitorDlg::OnTrafficHistory)
 	ON_WM_MOUSEMOVE()
@@ -616,6 +616,7 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 		}
 
 		theApp.m_general_data = optionsDlg.m_tab3_dlg.m_data;
+		theApp.SetAutoRun(theApp.m_general_data.auto_run);
 		theApp.SaveConfig();
 	}
 }
@@ -734,10 +735,10 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	m_disp_down.SetFont(&m_font);
 
 
-	//获取“启动”文件夹的路径
-	m_start_up_path = CCommon::GetStartUpPath();
-	//判断程序的自启动快捷方式是否存在
-	m_auto_run = CCommon::FileExist((m_start_up_path + L"\\TrafficMonitor.lnk").c_str());
+	////获取“启动”文件夹的路径
+	//m_start_up_path = CCommon::GetStartUpPath();
+	////判断程序的自启动快捷方式是否存在
+	//m_auto_run = CCommon::FileExist((m_start_up_path + L"\\TrafficMonitor.lnk").c_str());
 
 	//获取启动时的时间
 	GetLocalTime(&m_start_time);
@@ -1510,49 +1511,49 @@ void CTrafficMonitorDlg::OnAppAbout()
 
 
 
-void CTrafficMonitorDlg::OnAutoRunWhenStart()
-{
-	// TODO: 在此添加命令处理程序代码
-	if (!m_auto_run)
-	{
-		if (MessageBox(_T("是否要在“开始”菜单的“启动”目录下创建程序的快捷方式？"), NULL, MB_ICONQUESTION | MB_YESNO) == IDYES)
-		{
-			if (CCommon::CreateFileShortcut(m_start_up_path.c_str(), NULL, _T("TrafficMonitor.lnk")))
-			{
-				CString info;
-				info.Format(_T("已经在“%s”路径下创建了程序的快捷方式。"), m_start_up_path.c_str());
-				MessageBox(info, NULL, MB_ICONINFORMATION);
-				m_auto_run = true;
-			}
-			else
-			{
-				MessageBox(_T("快捷方式创建失败！"), NULL, MB_ICONWARNING);
-			}
-		}
-	}
-	else
-	{
-		if (MessageBox(_T("是否要在“开始”菜单的“启动”目录下删除程序的快捷方式？"), NULL, MB_ICONQUESTION | MB_YESNO) == IDYES)
-		{
-			if (DeleteFile((m_start_up_path + L"\\TrafficMonitor.lnk").c_str()))
-			{
-				MessageBox(_T("快捷方式删除成功！"), NULL, MB_ICONINFORMATION);
-				m_auto_run = false;
-			}
-			else
-			{
-				MessageBox(_T("快捷方式删除失败！"), NULL, MB_ICONWARNING);
-			}
-		}
-	}
-}
+//void CTrafficMonitorDlg::OnAutoRunWhenStart()
+//{
+//	// TODO: 在此添加命令处理程序代码
+//	if (!m_auto_run)
+//	{
+//		if (MessageBox(_T("是否要在“开始”菜单的“启动”目录下创建程序的快捷方式？"), NULL, MB_ICONQUESTION | MB_YESNO) == IDYES)
+//		{
+//			if (CCommon::CreateFileShortcut(m_start_up_path.c_str(), NULL, _T("TrafficMonitor.lnk")))
+//			{
+//				CString info;
+//				info.Format(_T("已经在“%s”路径下创建了程序的快捷方式。"), m_start_up_path.c_str());
+//				MessageBox(info, NULL, MB_ICONINFORMATION);
+//				m_auto_run = true;
+//			}
+//			else
+//			{
+//				MessageBox(_T("快捷方式创建失败！"), NULL, MB_ICONWARNING);
+//			}
+//		}
+//	}
+//	else
+//	{
+//		if (MessageBox(_T("是否要在“开始”菜单的“启动”目录下删除程序的快捷方式？"), NULL, MB_ICONQUESTION | MB_YESNO) == IDYES)
+//		{
+//			if (DeleteFile((m_start_up_path + L"\\TrafficMonitor.lnk").c_str()))
+//			{
+//				MessageBox(_T("快捷方式删除成功！"), NULL, MB_ICONINFORMATION);
+//				m_auto_run = false;
+//			}
+//			else
+//			{
+//				MessageBox(_T("快捷方式删除失败！"), NULL, MB_ICONWARNING);
+//			}
+//		}
+//	}
+//}
 
 
-void CTrafficMonitorDlg::OnUpdateAutoRunWhenStart(CCmdUI *pCmdUI)
-{
-	// TODO: 在此添加命令更新用户界面处理程序代码
-	pCmdUI->SetCheck(m_auto_run);
-}
+//void CTrafficMonitorDlg::OnUpdateAutoRunWhenStart(CCmdUI *pCmdUI)
+//{
+//	// TODO: 在此添加命令更新用户界面处理程序代码
+//	pCmdUI->SetCheck(m_auto_run);
+//}
 
 
 //当资源管理器重启时会触发此消息

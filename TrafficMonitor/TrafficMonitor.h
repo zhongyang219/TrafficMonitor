@@ -48,6 +48,7 @@ struct GeneralSettingData
 {
 	//常规设置
 	bool check_update_when_start{ true };
+	bool auto_run{ false };
 };
 
 class CTrafficMonitorApp : public CWinApp
@@ -92,6 +93,9 @@ public:
 	static void CheckUpdate(bool message);		//检查更新，如果message为true，则在检查时弹出提示信息
 	//启动时检查更新线程函数
 	static UINT CheckUpdateThreadFunc(LPVOID lpParam);
+
+	void SetAutoRun(bool auto_run);
+	bool GetAutoRun();
 
 private:
 	//int m_no_multistart_warning_time{};		//用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示

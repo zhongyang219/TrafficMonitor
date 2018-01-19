@@ -33,8 +33,6 @@ public:
 	afx_msg void OnEnChangeDownloadEdit();
 	afx_msg void OnEnChangeCpuEdit();
 	afx_msg void OnEnChangeMemoryEdit();
-//	afx_msg void OnTimer(UINT_PTR nIDEvent);
-//	afx_msg void OnStnClickedTextColorStatic();
 	afx_msg void OnBnClickedSetColorButton1();
 	afx_msg void OnBnClickedSetDefaultButton();
 	afx_msg void OnBnClickedSetFontButton();

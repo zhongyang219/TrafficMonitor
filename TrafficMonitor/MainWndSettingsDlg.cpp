@@ -38,8 +38,6 @@ BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_DOWNLOAD_EDIT, &CMainWndSettingsDlg::OnEnChangeDownloadEdit)
 	ON_EN_CHANGE(IDC_CPU_EDIT, &CMainWndSettingsDlg::OnEnChangeCpuEdit)
 	ON_EN_CHANGE(IDC_MEMORY_EDIT, &CMainWndSettingsDlg::OnEnChangeMemoryEdit)
-	//ON_WM_TIMER()
-	//ON_STN_CLICKED(IDC_TEXT_COLOR_STATIC, &CMainWndSettingsDlg::OnStnClickedTextColorStatic)
 	ON_BN_CLICKED(IDC_SET_COLOR_BUTTON1, &CMainWndSettingsDlg::OnBnClickedSetColorButton1)
 	ON_BN_CLICKED(IDC_SET_DEFAULT_BUTTON, &CMainWndSettingsDlg::OnBnClickedSetDefaultButton)
 	ON_BN_CLICKED(IDC_SET_FONT_BUTTON, &CMainWndSettingsDlg::OnBnClickedSetFontButton)
@@ -133,24 +131,6 @@ void CMainWndSettingsDlg::OnEnChangeMemoryEdit()
 	GetDlgItemText(IDC_MEMORY_EDIT, tmp);
 	m_data.memory_string = tmp;
 }
-
-
-//void CMainWndSettingsDlg::OnTimer(UINT_PTR nIDEvent)
-//{
-//	// TODO: 在此添加消息处理程序代码和/或调用默认值
-//	if (nIDEvent == 11)
-//	{
-//		CCommon::FillStaticColor(m_data.color_static, m_data.text_color);
-//		KillTimer(11);
-//	}
-//	CDialogEx::OnTimer(nIDEvent);
-//}
-
-
-//void CMainWndSettingsDlg::OnStnClickedTextColorStatic()
-//{
-//	// TODO: 在此添加控件通知处理程序代码
-//}
 
 
 void CMainWndSettingsDlg::OnBnClickedSetColorButton1()

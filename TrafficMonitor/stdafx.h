@@ -77,4 +77,4 @@ using std::ofstream;
 
 #define MAX_INSERT_TO_TASKBAR_CNT 30		//尝试嵌入任务栏的最大次数
 
-#define VERSION L"1.65"
+#define VERSION L"1.66"
