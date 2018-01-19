@@ -117,7 +117,7 @@ afx_msg LRESULT CAboutDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case IDC_STATIC_CHECK_UPDATE:
-		theApp.CheckUpdate();
+		theApp.CheckUpdate(true);
 		break;
 	}
 	return 0;

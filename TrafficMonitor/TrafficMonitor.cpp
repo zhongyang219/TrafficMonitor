@@ -53,11 +53,17 @@ void CTrafficMonitorApp::GetDPI(CWnd* pWnd)
 	m_dpi = GetDeviceCaps(hDC, LOGPIXELSY);
 }
 
-void CTrafficMonitorApp::CheckUpdate()
+void CTrafficMonitorApp::CheckUpdate(bool failed_message)
 {
 	CWaitCursor wait_cursor;
 	wstring version_info;
-	CCommon::GetURL(L"https://raw.githubusercontent.com/zhongyang219/TrafficMonitor/master/version.info", version_info);		//获取版本信息
+	if (!CCommon::GetURL(L"https://raw.githubusercontent.com/zhongyang219/TrafficMonitor/master/version.info", version_info))		//获取版本信息
+	{
+		if(failed_message)
+			AfxMessageBox(_T("检查更新失败，请检查你的网络连接！"), MB_OK | MB_ICONWARNING);
+		return;
+	}
+
 	size_t index, index1, index2, index3;
 	index = version_info.find(L"<version>");
 	index1 = version_info.find(L"</version>");
@@ -67,6 +73,12 @@ void CTrafficMonitorApp::CheckUpdate()
 	wstring link;
 	version = version_info.substr(index + 9, index1 - index - 9);
 	link = version_info.substr(index2 + 6, index3 - index2 - 6);
+	if (index == wstring::npos || index1 == wstring::npos || index2 == wstring::npos || index3 == wstring::npos || version.empty() || link.empty())
+	{
+		if (failed_message)
+			AfxMessageBox(_T("检查更新失败，从远程更新文件获取到了错误的信息，请联系作者！"), MB_OK | MB_ICONWARNING);
+		return;
+	}
 	if (version > VERSION)		//如果服务器上的版本大于本地版本
 	{
 		CString info;

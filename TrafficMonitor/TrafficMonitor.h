@@ -73,7 +73,7 @@ public:
 	int DPI(int pixel);
 	void GetDPI(CWnd* pWnd);
 
-	void CheckUpdate();
+	void CheckUpdate(bool failed_message);		//检查更新，如果failed_message为true，则在检查失败时弹出提示信息
 
 private:
 	//int m_no_multistart_warning_time{};		//用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示
