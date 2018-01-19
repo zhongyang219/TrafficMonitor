@@ -33,12 +33,14 @@ void CTrafficMonitorApp::LoadConfig()
 {
 	//m_no_multistart_warning_time = GetPrivateProfileInt(_T("other"), _T("no_multistart_warning_time"), 300000, m_config_path.c_str());
 	m_no_multistart_warning = (GetPrivateProfileInt(_T("other"), _T("no_multistart_warning"), 0, m_config_path.c_str()) != 0);
+	m_general_data.check_update_when_start = (GetPrivateProfileInt(_T("general"), _T("check_update_when_start"), 1, m_config_path.c_str()) != 0);
 }
 
 void CTrafficMonitorApp::SaveConfig()
 {
 	//CCommon::WritePrivateProfileIntW(_T("other"), _T("no_multistart_warning_time"), m_no_multistart_warning_time, m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(_T("other"), _T("no_multistart_warning"), m_no_multistart_warning, m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(_T("general"), _T("check_update_when_start"), m_general_data.check_update_when_start, m_config_path.c_str());
 }
 
 int CTrafficMonitorApp::DPI(int pixel)
@@ -53,13 +55,13 @@ void CTrafficMonitorApp::GetDPI(CWnd* pWnd)
 	m_dpi = GetDeviceCaps(hDC, LOGPIXELSY);
 }
 
-void CTrafficMonitorApp::CheckUpdate(bool failed_message)
+void CTrafficMonitorApp::CheckUpdate(bool message)
 {
 	CWaitCursor wait_cursor;
 	wstring version_info;
 	if (!CCommon::GetURL(L"https://raw.githubusercontent.com/zhongyang219/TrafficMonitor/master/version.info", version_info))		//获取版本信息
 	{
-		if(failed_message)
+		if(message)
 			AfxMessageBox(_T("检查更新失败，请检查你的网络连接！"), MB_OK | MB_ICONWARNING);
 		return;
 	}
@@ -75,7 +77,7 @@ void CTrafficMonitorApp::CheckUpdate(bool failed_message)
 	link = version_info.substr(index2 + 6, index3 - index2 - 6);
 	if (index == wstring::npos || index1 == wstring::npos || index2 == wstring::npos || index3 == wstring::npos || version.empty() || link.empty())
 	{
-		if (failed_message)
+		if (message)
 			AfxMessageBox(_T("检查更新失败，从远程更新文件获取到了错误的信息，请联系作者！"), MB_OK | MB_ICONWARNING);
 		return;
 	}
@@ -90,8 +92,15 @@ void CTrafficMonitorApp::CheckUpdate(bool failed_message)
 	}
 	else
 	{
-		AfxMessageBox(_T("当前已经是最新版本。"), MB_OK | MB_ICONINFORMATION);
+		if(message)
+			AfxMessageBox(_T("当前已经是最新版本。"), MB_OK | MB_ICONINFORMATION);
 	}
+}
+
+UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
+{
+	CheckUpdate(false);
+	return 0;
 }
 
 
@@ -177,6 +186,12 @@ BOOL CTrafficMonitorApp::InitInstance()
 	// TODO: 应适当修改该字符串，
 	// 例如修改为公司或组织名
 	SetRegistryKey(_T("应用程序向导生成的本地应用程序"));
+
+	//启动时检查更新
+	if (m_general_data.check_update_when_start)
+	{
+		m_pUpdateThread = AfxBeginThread(CheckUpdateThreadFunc, NULL);
+	}
 
 	CTrafficMonitorDlg dlg;
 	m_pMainWnd = &dlg;

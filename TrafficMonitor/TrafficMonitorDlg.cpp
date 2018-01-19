@@ -208,25 +208,25 @@ void CTrafficMonitorDlg::ShowInfo()
 	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed);
 	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed);
 
-	if (!theApp.m_swap_up_down)
+	if (!theApp.m_main_wnd_data.swap_up_down)
 	{
-		str.Format(_T("%s%s/s"), theApp.m_up_string.c_str(), out_speed.GetString());
+		str.Format(_T("%s%s/s"), theApp.m_main_wnd_data.up_string.c_str(), out_speed.GetString());
 		m_disp_up.SetWindowTextEx(str);
-		str.Format(_T("%s%s/s"), theApp.m_down_string.c_str(), in_speed.GetString());
+		str.Format(_T("%s%s/s"), theApp.m_main_wnd_data.down_string.c_str(), in_speed.GetString());
 		m_disp_down.SetWindowTextEx(str);
 	}
 	else		//交换上传和下载位置
 	{
-		str.Format(_T("%s%s/s"), theApp.m_down_string.c_str(), in_speed.GetString());
+		str.Format(_T("%s%s/s"), theApp.m_main_wnd_data.down_string.c_str(), in_speed.GetString());
 		m_disp_up.SetWindowTextEx(str);
-		str.Format(_T("%s%s/s"), theApp.m_up_string.c_str(), out_speed.GetString());
+		str.Format(_T("%s%s/s"), theApp.m_main_wnd_data.up_string.c_str(), out_speed.GetString());
 		m_disp_down.SetWindowTextEx(str);
 	}
 	if (m_show_cpu_memory)
 	{
-		str.Format(_T("%s%d%%"), theApp.m_cpu_string.c_str(), theApp.m_cpu_usage);
+		str.Format(_T("%s%d%%"), theApp.m_main_wnd_data.cpu_string.c_str(), theApp.m_cpu_usage);
 		m_disp_cpu.SetWindowTextEx(str);
-		str.Format(_T("%s%d%%"), theApp.m_memory_string.c_str(), theApp.m_memory_usage);
+		str.Format(_T("%s%d%%"), theApp.m_main_wnd_data.memory_string.c_str(), theApp.m_memory_usage);
 		m_disp_memory.SetWindowTextEx(str);
 	}
 	else
@@ -244,7 +244,7 @@ void CTrafficMonitorDlg::SetTransparency()
 
 void CTrafficMonitorDlg::SetAlwaysOnTop()
 {
-	if (!m_is_foreground_fullscreen || (m_is_foreground_fullscreen && !theApp.m_hide_main_wnd_when_fullscreen))
+	if (!m_is_foreground_fullscreen || (m_is_foreground_fullscreen && !theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen))
 	{
 		if (m_always_on_top)
 			SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);			//设置置顶
@@ -317,7 +317,7 @@ void CTrafficMonitorDlg::LoadConfig()
 	m_position_x = GetPrivateProfileInt(_T("config"), _T("position_x"), -1, theApp.m_config_path.c_str());
 	m_position_y = GetPrivateProfileInt(_T("config"), _T("position_y"), -1, theApp.m_config_path.c_str());
 	m_auto_select = (GetPrivateProfileInt(_T("connection"), _T("auto_select"), 1, theApp.m_config_path.c_str()) != 0);
-	theApp.m_text_color = GetPrivateProfileInt(_T("config"), _T("text_color"), 16384, theApp.m_config_path.c_str());
+	theApp.m_main_wnd_data.text_color = GetPrivateProfileInt(_T("config"), _T("text_color"), 16384, theApp.m_config_path.c_str());
 	theApp.m_hide_main_window = (GetPrivateProfileInt(_T("config"), _T("hide_main_window"), 0, theApp.m_config_path.c_str()) != 0);
 	wchar_t buff[256];
 	GetPrivateProfileStringW(L"connection", L"connection_name", L"", buff, 256, theApp.m_config_path.c_str());
@@ -327,28 +327,28 @@ void CTrafficMonitorDlg::LoadConfig()
 	m_skin_name = wbuff;
 	if (m_skin_name.substr(0, 8) == L".\\skins\\")		//如果读取到的皮肤名称前面有".\\skins\\"，则把它删除。（用于和前一个版本保持兼容性）
 		m_skin_name = m_skin_name.substr(7);
-	theApp.m_swap_up_down = (GetPrivateProfileInt(_T("config"), _T("swap_up_down"), 0, theApp.m_config_path.c_str()) != 0);
-	theApp.m_hide_main_wnd_when_fullscreen = (GetPrivateProfileInt(_T("config"), _T("hide_main_wnd_when_fullscreen"), 1, theApp.m_config_path.c_str()) != 0);
+	theApp.m_main_wnd_data.swap_up_down = (GetPrivateProfileInt(_T("config"), _T("swap_up_down"), 0, theApp.m_config_path.c_str()) != 0);
+	theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen = (GetPrivateProfileInt(_T("config"), _T("hide_main_wnd_when_fullscreen"), 1, theApp.m_config_path.c_str()) != 0);
 
-	GetPrivateProfileString(_T("config"), _T("font_name"), _T("微软雅黑"), theApp.m_font_name.GetBuffer(32), 32, theApp.m_config_path.c_str());
-	theApp.m_font_size = GetPrivateProfileInt(_T("config"), _T("font_size"), 10, theApp.m_config_path.c_str());
+	GetPrivateProfileString(_T("config"), _T("font_name"), _T("微软雅黑"), theApp.m_main_wnd_data.font_name.GetBuffer(32), 32, theApp.m_config_path.c_str());
+	theApp.m_main_wnd_data.font_size = GetPrivateProfileInt(_T("config"), _T("font_size"), 10, theApp.m_config_path.c_str());
 
 	GetPrivateProfileStringW(L"config", L"up_string", L"上传: $", buff, 256, theApp.m_config_path.c_str());
-	theApp.m_up_string = buff;
-	if (!theApp.m_up_string.empty() && theApp.m_up_string.back() == L'$')		//如果读取的字符串末尾有'$'，则把它删除，用于解决读取ini文件保存的字符串时无法赢取末尾的空格的问题，此时只要在末尾加上'$'即可
-		theApp.m_up_string.pop_back();
+	theApp.m_main_wnd_data.up_string = buff;
+	if (!theApp.m_main_wnd_data.up_string.empty() && theApp.m_main_wnd_data.up_string.back() == L'$')		//如果读取的字符串末尾有'$'，则把它删除，用于解决读取ini文件保存的字符串时无法赢取末尾的空格的问题，此时只要在末尾加上'$'即可
+		theApp.m_main_wnd_data.up_string.pop_back();
 	GetPrivateProfileStringW(L"config", L"down_string", L"下载: $", buff, 256, theApp.m_config_path.c_str());
-	theApp.m_down_string = buff;
-	if (!theApp.m_down_string.empty() && theApp.m_down_string.back() == L'$')
-		theApp.m_down_string.pop_back();
+	theApp.m_main_wnd_data.down_string = buff;
+	if (!theApp.m_main_wnd_data.down_string.empty() && theApp.m_main_wnd_data.down_string.back() == L'$')
+		theApp.m_main_wnd_data.down_string.pop_back();
 	GetPrivateProfileStringW(L"config", L"cpu_string", L"CPU: $", buff, 256, theApp.m_config_path.c_str());
-	theApp.m_cpu_string = buff;
-	if (!theApp.m_cpu_string.empty() && theApp.m_cpu_string.back() == L'$')
-		theApp.m_cpu_string.pop_back();
+	theApp.m_main_wnd_data.cpu_string = buff;
+	if (!theApp.m_main_wnd_data.cpu_string.empty() && theApp.m_main_wnd_data.cpu_string.back() == L'$')
+		theApp.m_main_wnd_data.cpu_string.pop_back();
 	GetPrivateProfileStringW(L"config", L"memory_string", L"内存: $", buff, 256, theApp.m_config_path.c_str());
-	theApp.m_memory_string = buff;
-	if (!theApp.m_memory_string.empty() && theApp.m_memory_string.back() == L'$')
-		theApp.m_memory_string.pop_back();
+	theApp.m_main_wnd_data.memory_string = buff;
+	if (!theApp.m_main_wnd_data.memory_string.empty() && theApp.m_main_wnd_data.memory_string.back() == L'$')
+		theApp.m_main_wnd_data.memory_string.pop_back();
 }
 
 void CTrafficMonitorDlg::SaveConfig()
@@ -374,21 +374,21 @@ void CTrafficMonitorDlg::SaveConfig()
 	CCommon::WritePrivateProfileIntW(L"config", L"position_x", m_position_x, theApp.m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(L"config", L"position_y", m_position_y, theApp.m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(L"connection", L"auto_select", m_auto_select, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"text_color", theApp.m_text_color, theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"config", L"text_color", theApp.m_main_wnd_data.text_color, theApp.m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(L"config", L"hide_main_window", theApp.m_hide_main_window, theApp.m_config_path.c_str());
 	m_connection_name = m_connections[m_connection_selected].description;
 	WritePrivateProfileStringW(L"connection", L"connection_name", CCommon::StrToUnicode(m_connection_name.c_str()).c_str(), theApp.m_config_path.c_str());
 	WritePrivateProfileString(_T("config"), _T("skin_selected"), m_skin_name.c_str(), theApp.m_config_path.c_str());
-	WritePrivateProfileString(_T("config"), _T("font_name"), theApp.m_font_name, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"font_size", theApp.m_font_size, theApp.m_config_path.c_str());
+	WritePrivateProfileString(_T("config"), _T("font_name"), theApp.m_main_wnd_data.font_name, theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"config", L"font_size", theApp.m_main_wnd_data.font_size, theApp.m_config_path.c_str());
 
-	CCommon::WritePrivateProfileIntW(L"config", L"swap_up_down", theApp.m_swap_up_down, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"hide_main_wnd_when_fullscreen", theApp.m_hide_main_wnd_when_fullscreen, theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"config", L"swap_up_down", theApp.m_main_wnd_data.swap_up_down, theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"config", L"hide_main_wnd_when_fullscreen", theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen, theApp.m_config_path.c_str());
 
-	WritePrivateProfileString(_T("config"), _T("up_string"), (theApp.m_up_string + L'$').c_str(), theApp.m_config_path.c_str());
-	WritePrivateProfileString(_T("config"), _T("down_string"), (theApp.m_down_string + L'$').c_str(), theApp.m_config_path.c_str());
-	WritePrivateProfileString(_T("config"), _T("cpu_string"), (theApp.m_cpu_string + L'$').c_str(), theApp.m_config_path.c_str());
-	WritePrivateProfileString(_T("config"), _T("memory_string"), (theApp.m_memory_string + L'$').c_str(), theApp.m_config_path.c_str());
+	WritePrivateProfileString(_T("config"), _T("up_string"), (theApp.m_main_wnd_data.up_string + L'$').c_str(), theApp.m_config_path.c_str());
+	WritePrivateProfileString(_T("config"), _T("down_string"), (theApp.m_main_wnd_data.down_string + L'$').c_str(), theApp.m_config_path.c_str());
+	WritePrivateProfileString(_T("config"), _T("cpu_string"), (theApp.m_main_wnd_data.cpu_string + L'$').c_str(), theApp.m_config_path.c_str());
+	WritePrivateProfileString(_T("config"), _T("memory_string"), (theApp.m_main_wnd_data.memory_string + L'$').c_str(), theApp.m_config_path.c_str());
 }
 
 void CTrafficMonitorDlg::AutoSelect()
@@ -595,49 +595,17 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 {
 	COptionsDlg optionsDlg(tab);
 	//将选项设置数据传递给选项设置对话框
-	optionsDlg.m_tab1_dlg.m_font_name = theApp.m_font_name;
-	optionsDlg.m_tab1_dlg.m_font_size = theApp.m_font_size;
-	optionsDlg.m_tab1_dlg.m_text_color = theApp.m_text_color;
-	optionsDlg.m_tab1_dlg.m_up_string = theApp.m_up_string;
-	optionsDlg.m_tab1_dlg.m_down_string = theApp.m_down_string;
-	optionsDlg.m_tab1_dlg.m_cpu_string = theApp.m_cpu_string;
-	optionsDlg.m_tab1_dlg.m_memory_string = theApp.m_memory_string;
-	optionsDlg.m_tab1_dlg.m_swap_up_down = theApp.m_swap_up_down;
-	optionsDlg.m_tab1_dlg.m_hide_main_wnd_when_fullscreen = theApp.m_hide_main_wnd_when_fullscreen;
-	
-	optionsDlg.m_tab2_dlg.m_font_name = theApp.m_tbar_font_name;
-	optionsDlg.m_tab2_dlg.m_font_size = theApp.m_tbar_font_size;
-	optionsDlg.m_tab2_dlg.m_text_color = theApp.m_tbar_text_color;
-	optionsDlg.m_tab2_dlg.m_back_color = theApp.m_tbar_back_color;
-	optionsDlg.m_tab2_dlg.m_up_string = theApp.m_tbar_up_string;
-	optionsDlg.m_tab2_dlg.m_down_string = theApp.m_tbar_down_string;
-	optionsDlg.m_tab2_dlg.m_cpu_string = theApp.m_tbar_cpu_string;
-	optionsDlg.m_tab2_dlg.m_memory_string = theApp.m_tbar_memory_string;
-	optionsDlg.m_tab2_dlg.m_swap_up_down = theApp.m_tbar_swap_up_down;
+	optionsDlg.m_tab1_dlg.m_data = theApp.m_main_wnd_data;
+	optionsDlg.m_tab2_dlg.m_data = theApp.m_taskbar_data;
+	optionsDlg.m_tab3_dlg.m_data = theApp.m_general_data;
 	
 	if (optionsDlg.DoModal() == IDOK)
 	{
-		theApp.m_font_name = optionsDlg.m_tab1_dlg.m_font_name;
-		theApp.m_font_size = optionsDlg.m_tab1_dlg.m_font_size;
-		theApp.m_text_color = optionsDlg.m_tab1_dlg.m_text_color;
-		theApp.m_up_string = optionsDlg.m_tab1_dlg.m_up_string;
-		theApp.m_down_string = optionsDlg.m_tab1_dlg.m_down_string;
-		theApp.m_cpu_string = optionsDlg.m_tab1_dlg.m_cpu_string;
-		theApp.m_memory_string = optionsDlg.m_tab1_dlg.m_memory_string;
-		theApp.m_swap_up_down = optionsDlg.m_tab1_dlg.m_swap_up_down;
-		theApp.m_hide_main_wnd_when_fullscreen = optionsDlg.m_tab1_dlg.m_hide_main_wnd_when_fullscreen;
+		theApp.m_main_wnd_data = optionsDlg.m_tab1_dlg.m_data;
 		ApplySettings();
 		SaveConfig();
 
-		theApp.m_tbar_font_name = optionsDlg.m_tab2_dlg.m_font_name;
-		theApp.m_tbar_font_size = optionsDlg.m_tab2_dlg.m_font_size;
-		theApp.m_tbar_text_color = optionsDlg.m_tab2_dlg.m_text_color;
-		theApp.m_tbar_back_color = optionsDlg.m_tab2_dlg.m_back_color;
-		theApp.m_tbar_up_string = optionsDlg.m_tab2_dlg.m_up_string;
-		theApp.m_tbar_down_string = optionsDlg.m_tab2_dlg.m_down_string;
-		theApp.m_tbar_cpu_string = optionsDlg.m_tab2_dlg.m_cpu_string;
-		theApp.m_tbar_memory_string = optionsDlg.m_tab2_dlg.m_memory_string;
-		theApp.m_tbar_swap_up_down = optionsDlg.m_tab2_dlg.m_swap_up_down;
+		theApp.m_taskbar_data = optionsDlg.m_tab2_dlg.m_data;
 		CTaskBarDlg::SaveConfig();
 		if (m_tBarDlg != nullptr)
 		{
@@ -646,20 +614,23 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 			CloseTaskBarWnd();
 			OpenTaskBarWnd();
 		}
+
+		theApp.m_general_data = optionsDlg.m_tab3_dlg.m_data;
+		theApp.SaveConfig();
 	}
 }
 
 void CTrafficMonitorDlg::ApplySettings()
 {
 	//应用文字颜色设置
-	m_disp_cpu.SetTextColor(theApp.m_text_color);
-	m_disp_memory.SetTextColor(theApp.m_text_color);
-	m_disp_up.SetTextColor(theApp.m_text_color);
-	m_disp_down.SetTextColor(theApp.m_text_color);
+	m_disp_cpu.SetTextColor(theApp.m_main_wnd_data.text_color);
+	m_disp_memory.SetTextColor(theApp.m_main_wnd_data.text_color);
+	m_disp_up.SetTextColor(theApp.m_main_wnd_data.text_color);
+	m_disp_down.SetTextColor(theApp.m_main_wnd_data.text_color);
 	//应用字体设置
 	if (m_font.m_hObject)	//如果m_font已经关联了一个字体资源对象，则释放它
 		m_font.DeleteObject();
-	m_font.CreatePointFont(theApp.m_font_size * 10, theApp.m_font_name);
+	m_font.CreatePointFont(theApp.m_main_wnd_data.font_size * 10, theApp.m_main_wnd_data.font_name);
 	m_disp_cpu.SetFont(&m_font);
 	m_disp_memory.SetFont(&m_font);
 	m_disp_up.SetFont(&m_font);
@@ -750,13 +721,13 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	SetBackgroundImage(m_back_img);
 
 	//设置文字颜色
-	m_disp_cpu.SetTextColor(theApp.m_text_color);
-	m_disp_memory.SetTextColor(theApp.m_text_color);
-	m_disp_up.SetTextColor(theApp.m_text_color);
-	m_disp_down.SetTextColor(theApp.m_text_color);
+	m_disp_cpu.SetTextColor(theApp.m_main_wnd_data.text_color);
+	m_disp_memory.SetTextColor(theApp.m_main_wnd_data.text_color);
+	m_disp_up.SetTextColor(theApp.m_main_wnd_data.text_color);
+	m_disp_down.SetTextColor(theApp.m_main_wnd_data.text_color);
 
 	//设置字体
-	m_font.CreatePointFont(theApp.m_font_size * 10, theApp.m_font_name);
+	m_font.CreatePointFont(theApp.m_main_wnd_data.font_size * 10, theApp.m_main_wnd_data.font_name);
 	m_disp_cpu.SetFont(&m_font);
 	m_disp_memory.SetFont(&m_font);
 	m_disp_up.SetFont(&m_font);
@@ -822,7 +793,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		{
 			//每隔1秒钟就判断一下前台窗口是否全屏
 			m_is_foreground_fullscreen = CCommon::IsForegroundFullscreen();
-			if (theApp.m_hide_main_wnd_when_fullscreen)		//当设置了全屏时隐藏悬浮窗时
+			if (theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen)		//当设置了全屏时隐藏悬浮窗时
 			{
 				if(m_is_foreground_fullscreen || theApp.m_hide_main_window)
 					ShowWindow(SW_HIDE);
@@ -1659,11 +1630,11 @@ void CTrafficMonitorDlg::OnChangeSkin()
 			m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background.bmp").c_str(), IMAGE_BITMAP, rect.Width(), m_window_height_s, LR_LOADFROMFILE);
 		SetBackgroundImage(m_back_img);
 		//获取皮肤的文字颜色，并设置文字颜色
-		theApp.m_text_color = skinDlg.GetTextColor();
-		m_disp_cpu.SetTextColor(theApp.m_text_color);
-		m_disp_memory.SetTextColor(theApp.m_text_color);
-		m_disp_up.SetTextColor(theApp.m_text_color);
-		m_disp_down.SetTextColor(theApp.m_text_color);
+		theApp.m_main_wnd_data.text_color = skinDlg.GetTextColor();
+		m_disp_cpu.SetTextColor(theApp.m_main_wnd_data.text_color);
+		m_disp_memory.SetTextColor(theApp.m_main_wnd_data.text_color);
+		m_disp_up.SetTextColor(theApp.m_main_wnd_data.text_color);
+		m_disp_down.SetTextColor(theApp.m_main_wnd_data.text_color);
 
 		SaveConfig();
 	}

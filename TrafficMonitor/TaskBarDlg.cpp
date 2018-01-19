@@ -56,23 +56,23 @@ void CTaskBarDlg::ShowInfo()
 	//绘图
 	CRect tmp{ m_rect };
 	tmp.MoveToXY(0, 0);
-	MemDC.FillSolidRect(tmp, theApp.m_tbar_back_color);		//填充背景色
+	MemDC.FillSolidRect(tmp, theApp.m_taskbar_data.back_color);		//填充背景色
 	MemDC.SelectObject(&m_font);
 	//绘制上传速度
 	tmp.bottom = m_window_height / 2;
 	tmp.right = tmp.left + m_window_width_s;
-	if (!theApp.m_tbar_swap_up_down)
-		str.Format(_T("%s%s/s"), theApp.m_tbar_up_string.c_str(), out_speed.GetString());
+	if (!theApp.m_taskbar_data.swap_up_down)
+		str.Format(_T("%s%s/s"), theApp.m_taskbar_data.up_string.c_str(), out_speed.GetString());
 	else
-		str.Format(_T("%s%s/s"), theApp.m_tbar_down_string.c_str(), in_speed.GetString());
-	CCommon::DrawWindowText(&MemDC, tmp, str, theApp.m_tbar_text_color, theApp.m_tbar_back_color);
+		str.Format(_T("%s%s/s"), theApp.m_taskbar_data.down_string.c_str(), in_speed.GetString());
+	CCommon::DrawWindowText(&MemDC, tmp, str, theApp.m_taskbar_data.text_color, theApp.m_taskbar_data.back_color);
 	//绘制下载速度
 	tmp.MoveToY(tmp.bottom);
-	if (!theApp.m_tbar_swap_up_down)
-		str.Format(_T("%s%s/s"), theApp.m_tbar_down_string.c_str(), in_speed.GetString());
+	if (!theApp.m_taskbar_data.swap_up_down)
+		str.Format(_T("%s%s/s"), theApp.m_taskbar_data.down_string.c_str(), in_speed.GetString());
 	else
-		str.Format(_T("%s%s/s"), theApp.m_tbar_up_string.c_str(), out_speed.GetString());
-	CCommon::DrawWindowText(&MemDC, tmp, str, theApp.m_tbar_text_color, theApp.m_tbar_back_color);
+		str.Format(_T("%s%s/s"), theApp.m_taskbar_data.up_string.c_str(), out_speed.GetString());
+	CCommon::DrawWindowText(&MemDC, tmp, str, theApp.m_taskbar_data.text_color, theApp.m_taskbar_data.back_color);
 	if (theApp.m_tbar_show_cpu_memory)
 	{
 		//绘制CPU利用率
@@ -86,12 +86,12 @@ void CTaskBarDlg::ShowInfo()
 			tmp.MoveToY(m_window_height);
 			tmp.right = tmp.left + (m_window_width - m_window_width_s);
 		}
-		str.Format(_T("%s%d%%"), theApp.m_tbar_cpu_string.c_str(), theApp.m_cpu_usage);
-		CCommon::DrawWindowText(&MemDC, tmp, str, theApp.m_tbar_text_color, theApp.m_tbar_back_color);
+		str.Format(_T("%s%d%%"), theApp.m_taskbar_data.cpu_string.c_str(), theApp.m_cpu_usage);
+		CCommon::DrawWindowText(&MemDC, tmp, str, theApp.m_taskbar_data.text_color, theApp.m_taskbar_data.back_color);
 		//绘制内存利用率
 		tmp.MoveToY(tmp.bottom);
-		str.Format(_T("%s%d%%"), theApp.m_tbar_memory_string.c_str(), theApp.m_memory_usage);
-		CCommon::DrawWindowText(&MemDC, tmp, str, theApp.m_tbar_text_color, theApp.m_tbar_back_color);
+		str.Format(_T("%s%d%%"), theApp.m_taskbar_data.memory_string.c_str(), theApp.m_memory_usage);
+		CCommon::DrawWindowText(&MemDC, tmp, str, theApp.m_taskbar_data.text_color, theApp.m_taskbar_data.back_color);
 	}
 	//将缓冲区DC中的图像拷贝到屏幕中显示
 	m_pDC->BitBlt(0,0, draw_width, m_rect.Height(), &MemDC, 0, 0, SRCCOPY);
@@ -186,45 +186,45 @@ bool CTaskBarDlg::IsTaskbarOnTopOrBottom()
 
 void CTaskBarDlg::SaveConfig()
 {
-	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_back_color", theApp.m_tbar_back_color, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_text_color", theApp.m_tbar_text_color, theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_back_color", theApp.m_taskbar_data.back_color, theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_text_color", theApp.m_taskbar_data.text_color, theApp.m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(L"task_bar", L"tack_bar_show_cpu_memory", theApp.m_tbar_show_cpu_memory, theApp.m_config_path.c_str());
-	WritePrivateProfileString(_T("task_bar"), _T("tack_bar_font_name"), theApp.m_tbar_font_name, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"task_bar", L"tack_bar_font_size", theApp.m_tbar_font_size, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_swap_up_down", theApp.m_tbar_swap_up_down, theApp.m_config_path.c_str());
+	WritePrivateProfileString(_T("task_bar"), _T("tack_bar_font_name"), theApp.m_taskbar_data.font_name, theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"task_bar", L"tack_bar_font_size", theApp.m_taskbar_data.font_size, theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_swap_up_down", theApp.m_taskbar_data.swap_up_down, theApp.m_config_path.c_str());
 
-	WritePrivateProfileString(_T("task_bar"), _T("up_string"), (theApp.m_tbar_up_string + L'$').c_str(), theApp.m_config_path.c_str());
-	WritePrivateProfileString(_T("task_bar"), _T("down_string"), (theApp.m_tbar_down_string + L'$').c_str(), theApp.m_config_path.c_str());
-	WritePrivateProfileString(_T("task_bar"), _T("cpu_string"), (theApp.m_tbar_cpu_string + L'$').c_str(), theApp.m_config_path.c_str());
-	WritePrivateProfileString(_T("task_bar"), _T("memory_string"), (theApp.m_tbar_memory_string + L'$').c_str(), theApp.m_config_path.c_str());
+	WritePrivateProfileString(_T("task_bar"), _T("up_string"), (theApp.m_taskbar_data.up_string + L'$').c_str(), theApp.m_config_path.c_str());
+	WritePrivateProfileString(_T("task_bar"), _T("down_string"), (theApp.m_taskbar_data.down_string + L'$').c_str(), theApp.m_config_path.c_str());
+	WritePrivateProfileString(_T("task_bar"), _T("cpu_string"), (theApp.m_taskbar_data.cpu_string + L'$').c_str(), theApp.m_config_path.c_str());
+	WritePrivateProfileString(_T("task_bar"), _T("memory_string"), (theApp.m_taskbar_data.memory_string + L'$').c_str(), theApp.m_config_path.c_str());
 }
 
 void CTaskBarDlg::LoadConfig()
 {
-	theApp.m_tbar_back_color = GetPrivateProfileInt(_T("task_bar"), _T("task_bar_back_color"), 0, theApp.m_config_path.c_str());
-	theApp.m_tbar_text_color = GetPrivateProfileInt(_T("task_bar"), _T("task_bar_text_color"), 0x00ffffffU, theApp.m_config_path.c_str());
+	theApp.m_taskbar_data.back_color = GetPrivateProfileInt(_T("task_bar"), _T("task_bar_back_color"), 0, theApp.m_config_path.c_str());
+	theApp.m_taskbar_data.text_color = GetPrivateProfileInt(_T("task_bar"), _T("task_bar_text_color"), 0x00ffffffU, theApp.m_config_path.c_str());
 	theApp.m_tbar_show_cpu_memory = (GetPrivateProfileInt(_T("task_bar"), _T("tack_bar_show_cpu_memory"), 1, theApp.m_config_path.c_str()) != 0);
-	theApp.m_tbar_swap_up_down = (GetPrivateProfileInt(_T("task_bar"), _T("task_bar_swap_up_down"), 0, theApp.m_config_path.c_str()) != 0);
-	GetPrivateProfileString(_T("task_bar"), _T("tack_bar_font_name"), _T("微软雅黑"), theApp.m_tbar_font_name.GetBuffer(32), 32, theApp.m_config_path.c_str());
-	theApp.m_tbar_font_size = GetPrivateProfileInt(_T("task_bar"), _T("tack_bar_font_size"), 9, theApp.m_config_path.c_str());
+	theApp.m_taskbar_data.swap_up_down = (GetPrivateProfileInt(_T("task_bar"), _T("task_bar_swap_up_down"), 0, theApp.m_config_path.c_str()) != 0);
+	GetPrivateProfileString(_T("task_bar"), _T("tack_bar_font_name"), _T("微软雅黑"), theApp.m_taskbar_data.font_name.GetBuffer(32), 32, theApp.m_config_path.c_str());
+	theApp.m_taskbar_data.font_size = GetPrivateProfileInt(_T("task_bar"), _T("tack_bar_font_size"), 9, theApp.m_config_path.c_str());
 	
 	wchar_t buff[256];
 	GetPrivateProfileStringW(L"task_bar", L"up_string", L"↑: $", buff, 256, theApp.m_config_path.c_str());
-	theApp.m_tbar_up_string = buff;
-	if (!theApp.m_tbar_up_string.empty() && theApp.m_tbar_up_string.back() == L'$')		//如果读取的字符串末尾有'$'，则把它删除，用于解决读取ini文件保存的字符串时无法赢取末尾的空格的问题，此时只要在末尾加上'$'即可
-		theApp.m_tbar_up_string.pop_back();
+	theApp.m_taskbar_data.up_string = buff;
+	if (!theApp.m_taskbar_data.up_string.empty() && theApp.m_taskbar_data.up_string.back() == L'$')		//如果读取的字符串末尾有'$'，则把它删除，用于解决读取ini文件保存的字符串时无法赢取末尾的空格的问题，此时只要在末尾加上'$'即可
+		theApp.m_taskbar_data.up_string.pop_back();
 	GetPrivateProfileStringW(L"task_bar", L"down_string", L"↓: $", buff, 256, theApp.m_config_path.c_str());
-	theApp.m_tbar_down_string = buff;
-	if (!theApp.m_tbar_down_string.empty() && theApp.m_tbar_down_string.back() == L'$')
-		theApp.m_tbar_down_string.pop_back();
+	theApp.m_taskbar_data.down_string = buff;
+	if (!theApp.m_taskbar_data.down_string.empty() && theApp.m_taskbar_data.down_string.back() == L'$')
+		theApp.m_taskbar_data.down_string.pop_back();
 	GetPrivateProfileStringW(L"task_bar", L"cpu_string", L"CPU: $", buff, 256, theApp.m_config_path.c_str());
-	theApp.m_tbar_cpu_string = buff;
-	if (!theApp.m_tbar_cpu_string.empty() && theApp.m_tbar_cpu_string.back() == L'$')
-		theApp.m_tbar_cpu_string.pop_back();
+	theApp.m_taskbar_data.cpu_string = buff;
+	if (!theApp.m_taskbar_data.cpu_string.empty() && theApp.m_taskbar_data.cpu_string.back() == L'$')
+		theApp.m_taskbar_data.cpu_string.pop_back();
 	GetPrivateProfileStringW(L"task_bar", L"memory_string", L"内存: $", buff, 256, theApp.m_config_path.c_str());
-	theApp.m_tbar_memory_string = buff;
-	if (!theApp.m_tbar_memory_string.empty() && theApp.m_tbar_memory_string.back() == L'$')
-		theApp.m_tbar_memory_string.pop_back();
+	theApp.m_taskbar_data.memory_string = buff;
+	if (!theApp.m_taskbar_data.memory_string.empty() && theApp.m_taskbar_data.memory_string.back() == L'$')
+		theApp.m_taskbar_data.memory_string.pop_back();
 }
 
 void CTaskBarDlg::ApplySettings()
@@ -235,7 +235,7 @@ void CTaskBarDlg::ApplySettings()
 		m_font.DeleteObject();
 	}
 	//创建新的字体
-	m_font.CreatePointFont(theApp.m_tbar_font_size * 10, theApp.m_tbar_font_name);
+	m_font.CreatePointFont(theApp.m_taskbar_data.font_size * 10, theApp.m_taskbar_data.font_name);
 
 	CalculateWindowWidth();
 }
@@ -245,16 +245,16 @@ void CTaskBarDlg::CalculateWindowWidth()
 	//计算显示上传下载部分所需要的宽度
 	CString str1, str2;
 	int width1, width2;
-	str1.Format(_T("%s8888.8KB/s"), theApp.m_tbar_up_string.c_str());
-	str2.Format(_T("%s8888.8KB/s"), theApp.m_tbar_down_string.c_str());
+	str1.Format(_T("%s8888.8KB/s"), theApp.m_taskbar_data.up_string.c_str());
+	str2.Format(_T("%s8888.8KB/s"), theApp.m_taskbar_data.down_string.c_str());
 	width1= m_pDC->GetTextExtent(str1).cx;		//计算使用当前字体显示文本需要的宽度值
 	width2= m_pDC->GetTextExtent(str2).cx;
 	m_window_width_s = max(width1, width2);
 
 	//计算显示CPU、内存部分所需要的宽度
 	int width_cpu_memory;
-	str1.Format(_T("%s100%%"), theApp.m_tbar_cpu_string.c_str());
-	str2.Format(_T("%s100%%"), theApp.m_tbar_memory_string.c_str());
+	str1.Format(_T("%s100%%"), theApp.m_taskbar_data.cpu_string.c_str());
+	str2.Format(_T("%s100%%"), theApp.m_taskbar_data.memory_string.c_str());
 	width1 = m_pDC->GetTextExtent(str1).cx;
 	width2 = m_pDC->GetTextExtent(str2).cx;
 	width_cpu_memory = max(width1, width2);
@@ -286,7 +286,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 	m_pDC = GetDC();
 
 	//设置字体
-	m_font.CreatePointFont(theApp.m_tbar_font_size * 10, theApp.m_tbar_font_name);
+	m_font.CreatePointFont(theApp.m_taskbar_data.font_size * 10, theApp.m_taskbar_data.font_name);
 	m_pDC->SelectObject(&m_font);
 
 	this->GetWindowRect(m_rect);
@@ -371,7 +371,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 
 	m_menu.LoadMenu(IDR_TASK_BAR_MENU);
 
-	SetBackgroundColor(theApp.m_tbar_back_color);
+	SetBackgroundColor(theApp.m_taskbar_data.back_color);
 
 	//初始化鼠标提示
 	m_tool_tips.Create(this, TTS_ALWAYSTIP);

@@ -1,6 +1,7 @@
 #pragma once
 #include "MainWndSettingsDlg.h"
 #include "TaskBarSettingsDlg.h"
+#include "GeneralSettingsDlg.h"
 #include "afxcmn.h"
 
 // COptionsDlg ¶Ô»°¿ò
@@ -23,6 +24,7 @@ public:
 
 	CMainWndSettingsDlg m_tab1_dlg;
 	CTaskBarSettingsDlg m_tab2_dlg;
+	CGeneralSettingsDlg m_tab3_dlg;
 
 protected:
 	CTabCtrl m_tab;

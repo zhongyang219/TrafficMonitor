@@ -15,6 +15,41 @@
 // 有关此类的实现，请参阅 TrafficMonitor.cpp
 //
 
+//选项设置数据
+struct MainWndSettingData
+{
+	//主窗口
+	COLORREF text_color{};		//文字颜色
+	CString font_name;	//字体名称
+	int font_size;		//字体大小
+	wstring up_string;		//默认为“上传: ”
+	wstring down_string;		//默认为“下载: ”
+	wstring cpu_string;		//默认为“CPU: ”
+	wstring memory_string;		//默认为“内存: ”
+	bool swap_up_down{ false };		//交换上传和下载显示的位置
+	bool hide_main_wnd_when_fullscreen;		//有程序全屏运行时隐藏悬浮窗
+};
+
+struct TaskBarSettingData
+{
+	//任务栏窗口
+	COLORREF  back_color{ RGB(0,0,0) };	//背景颜色
+	COLORREF  text_color{ RGB(255,255,255) };	//文字颜色
+	CString  font_name;	//字体名称
+	int  font_size;		//字体大小
+	wstring  up_string;		//默认为“↑:”
+	wstring  down_string;		//默认为“↓:”
+	wstring  cpu_string;		//默认为“CPU:”
+	wstring  memory_string;		//默认为“内存:”
+	bool  swap_up_down{ false };		//交换上传和下载显示的位置
+};
+
+struct GeneralSettingData
+{
+	//常规设置
+	bool check_update_when_start{ true };
+};
+
 class CTrafficMonitorApp : public CWinApp
 {
 public:
@@ -36,33 +71,14 @@ public:
 
 	bool m_hide_main_window;	//隐藏主窗口
 	bool m_show_notify_icon{ true };	//显示通知区域图标
-
-	bool m_is_windows10_fall_creator;
+	bool m_tbar_show_cpu_memory;	//任务栏窗口显示CPU和内存利用率
 
 	//选项设置数据
-	//主窗口
-	COLORREF m_text_color{};		//文字颜色
-	CString m_font_name;	//字体名称
-	int m_font_size;		//字体大小
-	wstring m_up_string;		//默认为“上传: ”
-	wstring m_down_string;		//默认为“下载: ”
-	wstring m_cpu_string;		//默认为“CPU: ”
-	wstring m_memory_string;		//默认为“内存: ”
-	bool m_swap_up_down{ false };		//交换上传和下载显示的位置
-	bool m_hide_main_wnd_when_fullscreen;		//有程序全屏运行时隐藏悬浮窗
+	MainWndSettingData m_main_wnd_data;
+	TaskBarSettingData m_taskbar_data;
+	GeneralSettingData m_general_data;
 
-	//任务栏窗口
-	COLORREF m_tbar_back_color{ RGB(0,0,0) };	//背景颜色
-	COLORREF m_tbar_text_color{ RGB(255,255,255) };	//文字颜色
-	CString m_tbar_font_name;	//字体名称
-	int m_tbar_font_size;		//字体大小
-	wstring m_tbar_up_string;		//默认为“↑:”
-	wstring m_tbar_down_string;		//默认为“↓:”
-	wstring m_tbar_cpu_string;		//默认为“CPU:”
-	wstring m_tbar_memory_string;		//默认为“内存:”
-	bool m_tbar_swap_up_down{ false };		//交换上传和下载显示的位置
-
-	bool m_tbar_show_cpu_memory;	//任务栏窗口显示CPU和内存利用率
+	bool m_is_windows10_fall_creator;
 
 	CTrafficMonitorApp();
 
@@ -73,12 +89,15 @@ public:
 	int DPI(int pixel);
 	void GetDPI(CWnd* pWnd);
 
-	void CheckUpdate(bool failed_message);		//检查更新，如果failed_message为true，则在检查失败时弹出提示信息
+	static void CheckUpdate(bool message);		//检查更新，如果message为true，则在检查时弹出提示信息
+	//启动时检查更新线程函数
+	static UINT CheckUpdateThreadFunc(LPVOID lpParam);
 
 private:
 	//int m_no_multistart_warning_time{};		//用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示
 	bool m_no_multistart_warning{};			//如果为false，则永远都不会弹出“已经有一个程序正在运行”的警告提示
 	int m_dpi{ 96 };
+	CWinThread* m_pUpdateThread;			//检查更新的线程
 
 // 重写
 public:

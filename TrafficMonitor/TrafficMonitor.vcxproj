@@ -187,6 +187,7 @@
   <ItemGroup>
     <ClInclude Include="Common.h" />
     <ClInclude Include="DonateDlg.h" />
+    <ClInclude Include="GeneralSettingsDlg.h" />
     <ClInclude Include="HistoryTrafficDlg.h" />
     <ClInclude Include="ListCtrlEx.h" />
     <ClInclude Include="MainWndSettingsDlg.h" />
@@ -205,6 +206,7 @@
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="DonateDlg.cpp" />
+    <ClCompile Include="GeneralSettingsDlg.cpp" />
     <ClCompile Include="HistoryTrafficDlg.cpp" />
     <ClCompile Include="ListCtrlEx.cpp" />
     <ClCompile Include="MainWndSettingsDlg.cpp" />

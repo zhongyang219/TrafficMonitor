@@ -45,9 +45,11 @@ BOOL COptionsDlg::OnInitDialog()
 	//插入标签
 	m_tab.InsertItem(0, _T("主窗口设置"));
 	m_tab.InsertItem(1, _T("任务栏窗口设置"));
+	m_tab.InsertItem(2, _T("常规设置"));
 	//创建子对话框
 	m_tab1_dlg.Create(IDD_MAIN_WND_SETTINGS_DIALOG, &m_tab);
 	m_tab2_dlg.Create(IDD_TASKBAR_SETTINGS_DIALOG, &m_tab);
+	m_tab3_dlg.Create(IDD_GENERAL_SETTINGS_DIALOG, &m_tab);
 	//调整子对话框的大小和位置
 	CRect rect;
 	m_tab.GetClientRect(rect);
@@ -59,6 +61,7 @@ BOOL COptionsDlg::OnInitDialog()
 	rect.right -= 4;
 	m_tab1_dlg.MoveWindow(&rect);
 	m_tab2_dlg.MoveWindow(&rect);
+	m_tab3_dlg.MoveWindow(&rect);
 	//设置默认选中的标签
 	switch (m_tab_selected)
 	{
@@ -88,14 +91,22 @@ void COptionsDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 	case 0:
 		m_tab1_dlg.ShowWindow(SW_SHOW);
 		m_tab2_dlg.ShowWindow(SW_HIDE);
+		m_tab3_dlg.ShowWindow(SW_HIDE);
 		m_tab1_dlg.SetFocus();
 		SetTimer(TIMER_ID1, 50, NULL);		//点击了第1个选项卡后延迟30毫秒绘制颜色控件
 		break;
 	case 1:
 		m_tab2_dlg.ShowWindow(SW_SHOW);
 		m_tab1_dlg.ShowWindow(SW_HIDE);
+		m_tab3_dlg.ShowWindow(SW_HIDE);
 		m_tab2_dlg.SetFocus();
 		SetTimer(TIMER_ID2, 50, NULL);		//点击了第2个选项卡后延迟30毫秒绘制颜色控件
+		break;
+	case 2:
+		m_tab3_dlg.ShowWindow(SW_SHOW);
+		m_tab1_dlg.ShowWindow(SW_HIDE);
+		m_tab2_dlg.ShowWindow(SW_HIDE);
+		m_tab3_dlg.SetFocus();
 		break;
 	}
 	*pResult = 0;

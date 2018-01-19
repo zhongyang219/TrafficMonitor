@@ -23,7 +23,7 @@ CMainWndSettingsDlg::~CMainWndSettingsDlg()
 
 void CMainWndSettingsDlg::DrawStaticColor()
 {
-	CCommon::FillStaticColor(m_color_static, m_text_color);
+	CCommon::FillStaticColor(m_color_static, m_data.text_color);
 }
 
 void CMainWndSettingsDlg::DoDataExchange(CDataExchange* pDX)
@@ -59,18 +59,18 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 	SetBackgroundColor(RGB(255, 255, 255));
 
 	//初始化各控件状态
-	SetDlgItemText(IDC_FONT_NAME_EDIT, m_font_name);
+	SetDlgItemText(IDC_FONT_NAME_EDIT, m_data.font_name);
 	wchar_t buff[16];
-	swprintf_s(buff, L"%d", m_font_size);
+	swprintf_s(buff, L"%d", m_data.font_size);
 	SetDlgItemText(IDC_FONT_SIZE_EDIT, buff);
 
-	SetDlgItemText(IDC_UPLOAD_EDIT, m_up_string.c_str());
-	SetDlgItemText(IDC_DOWNLOAD_EDIT, m_down_string.c_str());
-	SetDlgItemText(IDC_CPU_EDIT, m_cpu_string.c_str());
-	SetDlgItemText(IDC_MEMORY_EDIT, m_memory_string.c_str());
+	SetDlgItemText(IDC_UPLOAD_EDIT, m_data.up_string.c_str());
+	SetDlgItemText(IDC_DOWNLOAD_EDIT, m_data.down_string.c_str());
+	SetDlgItemText(IDC_CPU_EDIT, m_data.cpu_string.c_str());
+	SetDlgItemText(IDC_MEMORY_EDIT, m_data.memory_string.c_str());
 
-	((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK))->SetCheck(m_swap_up_down);
-	((CButton*)GetDlgItem(IDC_FULLSCREEN_HIDE_CHECK))->SetCheck(m_hide_main_wnd_when_fullscreen);
+	((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK))->SetCheck(m_data.swap_up_down);
+	((CButton*)GetDlgItem(IDC_FULLSCREEN_HIDE_CHECK))->SetCheck(m_data.hide_main_wnd_when_fullscreen);
 
 	//SetTimer(11, 50, NULL);
 
@@ -89,7 +89,7 @@ void CMainWndSettingsDlg::OnEnChangeUploadEdit()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_UPLOAD_EDIT, tmp);
-	m_up_string = tmp;
+	m_data.up_string = tmp;
 }
 
 
@@ -103,7 +103,7 @@ void CMainWndSettingsDlg::OnEnChangeDownloadEdit()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_DOWNLOAD_EDIT, tmp);
-	m_down_string = tmp;
+	m_data.down_string = tmp;
 }
 
 
@@ -117,7 +117,7 @@ void CMainWndSettingsDlg::OnEnChangeCpuEdit()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_CPU_EDIT, tmp);
-	m_cpu_string = tmp;
+	m_data.cpu_string = tmp;
 }
 
 
@@ -131,7 +131,7 @@ void CMainWndSettingsDlg::OnEnChangeMemoryEdit()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_MEMORY_EDIT, tmp);
-	m_memory_string = tmp;
+	m_data.memory_string = tmp;
 }
 
 
@@ -140,7 +140,7 @@ void CMainWndSettingsDlg::OnEnChangeMemoryEdit()
 //	// TODO: 在此添加消息处理程序代码和/或调用默认值
 //	if (nIDEvent == 11)
 //	{
-//		CCommon::FillStaticColor(m_color_static, m_text_color);
+//		CCommon::FillStaticColor(m_data.color_static, m_data.text_color);
 //		KillTimer(11);
 //	}
 //	CDialogEx::OnTimer(nIDEvent);
@@ -156,10 +156,10 @@ void CMainWndSettingsDlg::OnEnChangeMemoryEdit()
 void CMainWndSettingsDlg::OnBnClickedSetColorButton1()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	CColorDialog colorDlg(m_text_color, 0, this);
+	CColorDialog colorDlg(m_data.text_color, 0, this);
 	if (colorDlg.DoModal() == IDOK)
 	{
-		m_text_color = colorDlg.GetColor();
+		m_data.text_color = colorDlg.GetColor();
 		DrawStaticColor();
 	}
 }
@@ -168,14 +168,14 @@ void CMainWndSettingsDlg::OnBnClickedSetColorButton1()
 void CMainWndSettingsDlg::OnBnClickedSetDefaultButton()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	m_up_string = L"上传: ";
-	m_down_string = L"下载: ";
-	m_cpu_string = L"CPU: ";
-	m_memory_string = L"内存: ";
-	SetDlgItemText(IDC_UPLOAD_EDIT, m_up_string.c_str());
-	SetDlgItemText(IDC_DOWNLOAD_EDIT, m_down_string.c_str());
-	SetDlgItemText(IDC_CPU_EDIT, m_cpu_string.c_str());
-	SetDlgItemText(IDC_MEMORY_EDIT, m_memory_string.c_str());
+	m_data.up_string = L"上传: ";
+	m_data.down_string = L"下载: ";
+	m_data.cpu_string = L"CPU: ";
+	m_data.memory_string = L"内存: ";
+	SetDlgItemText(IDC_UPLOAD_EDIT, m_data.up_string.c_str());
+	SetDlgItemText(IDC_DOWNLOAD_EDIT, m_data.down_string.c_str());
+	SetDlgItemText(IDC_CPU_EDIT, m_data.cpu_string.c_str());
+	SetDlgItemText(IDC_MEMORY_EDIT, m_data.memory_string.c_str());
 }
 
 
@@ -183,19 +183,19 @@ void CMainWndSettingsDlg::OnBnClickedSetFontButton()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	CFont font;
-	font.CreatePointFont(m_font_size * 10, m_font_name);
+	font.CreatePointFont(m_data.font_size * 10, m_data.font_name);
 	LOGFONT lf{};             //LOGFONT变量
 	font.GetLogFont(&lf);
 	CFontDialog fontDlg(&lf);	//构造字体对话框，初始选择字体为之前字体
 	if (IDOK == fontDlg.DoModal())     // 显示字体对话框
 	{
 		//获取字体信息
-		m_font_name = fontDlg.GetFaceName();
-		m_font_size = fontDlg.GetSize() / 10;
+		m_data.font_name = fontDlg.GetFaceName();
+		m_data.font_size = fontDlg.GetSize() / 10;
 		//将字体信息显示出来
-		SetDlgItemText(IDC_FONT_NAME_EDIT, m_font_name);
+		SetDlgItemText(IDC_FONT_NAME_EDIT, m_data.font_name);
 		wchar_t buff[16];
-		swprintf_s(buff, L"%d", m_font_size);
+		swprintf_s(buff, L"%d", m_data.font_size);
 		SetDlgItemText(IDC_FONT_SIZE_EDIT, buff);
 	}
 }
@@ -204,12 +204,12 @@ void CMainWndSettingsDlg::OnBnClickedSetFontButton()
 void CMainWndSettingsDlg::OnBnClickedSwitchUpDownCheck()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	m_swap_up_down = (((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK))->GetCheck() != 0);
+	m_data.swap_up_down = (((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK))->GetCheck() != 0);
 }
 
 
 void CMainWndSettingsDlg::OnBnClickedFullscreenHideCheck()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	m_hide_main_wnd_when_fullscreen = (((CButton*)GetDlgItem(IDC_FULLSCREEN_HIDE_CHECK))->GetCheck() != 0);
+	m_data.hide_main_wnd_when_fullscreen = (((CButton*)GetDlgItem(IDC_FULLSCREEN_HIDE_CHECK))->GetCheck() != 0);
 }

@@ -23,8 +23,8 @@ CTaskBarSettingsDlg::~CTaskBarSettingsDlg()
 
 void CTaskBarSettingsDlg::DrawStaticColor()
 {
-	CCommon::FillStaticColor(m_text_color_static, m_text_color);
-	CCommon::FillStaticColor(m_back_color_static, m_back_color);
+	CCommon::FillStaticColor(m_text_color_static, m_data.text_color);
+	CCommon::FillStaticColor(m_back_color_static, m_data.back_color);
 }
 
 void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
@@ -59,17 +59,17 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	SetBackgroundColor(RGB(255, 255, 255));
 
 	//初始化各控件状态
-	SetDlgItemText(IDC_FONT_NAME_EDIT1, m_font_name);
+	SetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font_name);
 	wchar_t buff[16];
-	swprintf_s(buff, L"%d", m_font_size);
+	swprintf_s(buff, L"%d", m_data.font_size);
 	SetDlgItemText(IDC_FONT_SIZE_EDIT1, buff);
 
-	SetDlgItemText(IDC_UPLOAD_EDIT1, m_up_string.c_str());
-	SetDlgItemText(IDC_DOWNLOAD_EDIT1, m_down_string.c_str());
-	SetDlgItemText(IDC_CPU_EDIT1, m_cpu_string.c_str());
-	SetDlgItemText(IDC_MEMORY_EDIT1, m_memory_string.c_str());
+	SetDlgItemText(IDC_UPLOAD_EDIT1, m_data.up_string.c_str());
+	SetDlgItemText(IDC_DOWNLOAD_EDIT1, m_data.down_string.c_str());
+	SetDlgItemText(IDC_CPU_EDIT1, m_data.cpu_string.c_str());
+	SetDlgItemText(IDC_MEMORY_EDIT1, m_data.memory_string.c_str());
 
-	((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK1))->SetCheck(m_swap_up_down);
+	((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK1))->SetCheck(m_data.swap_up_down);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -80,19 +80,19 @@ void CTaskBarSettingsDlg::OnBnClickedSetFontButton1()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	CFont font;
-	font.CreatePointFont(m_font_size * 10, m_font_name);
+	font.CreatePointFont(m_data.font_size * 10, m_data.font_name);
 	LOGFONT lf{};             //LOGFONT变量
 	font.GetLogFont(&lf);
 	CFontDialog fontDlg(&lf);	//构造字体对话框，初始选择字体为之前字体
 	if (IDOK == fontDlg.DoModal())     // 显示字体对话框
 	{
 		//获取字体信息
-		m_font_name = fontDlg.GetFaceName();
-		m_font_size = fontDlg.GetSize() / 10;
+		m_data.font_name = fontDlg.GetFaceName();
+		m_data.font_size = fontDlg.GetSize() / 10;
 		//将字体信息显示出来
-		SetDlgItemText(IDC_FONT_NAME_EDIT1, m_font_name);
+		SetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font_name);
 		wchar_t buff[16];
-		swprintf_s(buff, L"%d", m_font_size);
+		swprintf_s(buff, L"%d", m_data.font_size);
 		SetDlgItemText(IDC_FONT_SIZE_EDIT1, buff);
 	}
 }
@@ -101,11 +101,11 @@ void CTaskBarSettingsDlg::OnBnClickedSetFontButton1()
 void CTaskBarSettingsDlg::OnBnClickedSetColorButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	CColorDialog colorDlg(m_text_color, 0, this);
+	CColorDialog colorDlg(m_data.text_color, 0, this);
 	if (colorDlg.DoModal() == IDOK)
 	{
-		m_text_color = colorDlg.GetColor();
-		if (m_back_color == m_text_color)
+		m_data.text_color = colorDlg.GetColor();
+		if (m_data.back_color == m_data.text_color)
 			MessageBox(_T("警告：文字颜色和背景色相同！"), NULL, MB_ICONWARNING);
 		DrawStaticColor();
 	}
@@ -115,11 +115,11 @@ void CTaskBarSettingsDlg::OnBnClickedSetColorButton2()
 void CTaskBarSettingsDlg::OnBnClickedSetColorButton3()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	CColorDialog colorDlg(m_back_color, 0, this);
+	CColorDialog colorDlg(m_data.back_color, 0, this);
 	if (colorDlg.DoModal() == IDOK)
 	{
-		m_back_color = colorDlg.GetColor();
-		if (m_back_color == m_text_color)
+		m_data.back_color = colorDlg.GetColor();
+		if (m_data.back_color == m_data.text_color)
 			MessageBox(_T("警告：背景色和文字颜色相同！"), NULL, MB_ICONWARNING);
 		DrawStaticColor();
 	}
@@ -136,7 +136,7 @@ void CTaskBarSettingsDlg::OnEnChangeUploadEdit1()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_UPLOAD_EDIT1, tmp);
-	m_up_string = tmp;
+	m_data.up_string = tmp;
 }
 
 
@@ -150,7 +150,7 @@ void CTaskBarSettingsDlg::OnEnChangeDownloadEdit1()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_DOWNLOAD_EDIT1, tmp);
-	m_down_string = tmp;
+	m_data.down_string = tmp;
 }
 
 
@@ -164,7 +164,7 @@ void CTaskBarSettingsDlg::OnEnChangeCpuEdit1()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_CPU_EDIT1, tmp);
-	m_cpu_string = tmp;
+	m_data.cpu_string = tmp;
 }
 
 
@@ -178,26 +178,26 @@ void CTaskBarSettingsDlg::OnEnChangeMemoryEdit1()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_MEMORY_EDIT1, tmp);
-	m_memory_string = tmp;
+	m_data.memory_string = tmp;
 }
 
 
 void CTaskBarSettingsDlg::OnBnClickedSetDefaultButton1()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	m_up_string = L"↑:";
-	m_down_string = L"↓:";
-	m_cpu_string = L"CPU:";
-	m_memory_string = L"内存:";
-	SetDlgItemText(IDC_UPLOAD_EDIT1, m_up_string.c_str());
-	SetDlgItemText(IDC_DOWNLOAD_EDIT1, m_down_string.c_str());
-	SetDlgItemText(IDC_CPU_EDIT1, m_cpu_string.c_str());
-	SetDlgItemText(IDC_MEMORY_EDIT1, m_memory_string.c_str());
+	m_data.up_string = L"↑: ";
+	m_data.down_string = L"↓: ";
+	m_data.cpu_string = L"CPU: ";
+	m_data.memory_string = L"内存: ";
+	SetDlgItemText(IDC_UPLOAD_EDIT1, m_data.up_string.c_str());
+	SetDlgItemText(IDC_DOWNLOAD_EDIT1, m_data.down_string.c_str());
+	SetDlgItemText(IDC_CPU_EDIT1, m_data.cpu_string.c_str());
+	SetDlgItemText(IDC_MEMORY_EDIT1, m_data.memory_string.c_str());
 }
 
 
 void CTaskBarSettingsDlg::OnBnClickedSwitchUpDownCheck1()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	m_swap_up_down = (((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK1))->GetCheck() != 0);
+	m_data.swap_up_down = (((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK1))->GetCheck() != 0);
 }
