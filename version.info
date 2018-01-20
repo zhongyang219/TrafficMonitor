@@ -1,2 +1,7 @@
 <version>1.66</version>
 <link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.66/TrafficMonitor_V1.66.7z</link>
+<contents>新增鼠标悬浮提示会实时更新；
+优化关于启动时弹出“已经有一个程序正在运行”对话框的处理；
+增加无法嵌入任务栏时自动重试的处理；
+增加任务栏窗口的刷新频率，在一定程度上解决通知区域图标变化时任务栏窗口闪烁的问题；
+历史流量统计对话框中增加图形指示；</contents>
