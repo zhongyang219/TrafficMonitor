@@ -106,10 +106,18 @@ UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
 void CTrafficMonitorApp::SetAutoRun(bool auto_run)
 {
 	CRegKey key;
-	//在程序路径前后添加双引号
-	wstring module_path{ L'\"' };
-	module_path += m_module_path;
-	module_path += L'\"';
+	wstring module_path;
+	if (m_module_path.find(L' ') != wstring::npos)
+	{
+		//如果路径中有空格，则需要在程序路径前后添加双引号
+		module_path = L'\"';
+		module_path += m_module_path;
+		module_path += L'\"';
+	}
+	else
+	{
+		module_path = m_module_path;
+	}
 	if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
 	{
 		AfxMessageBox(_T("无法实现开机自启动，在注册表中找不到相应的键值！"), MB_OK | MB_ICONWARNING);
@@ -161,11 +169,18 @@ CTrafficMonitorApp theApp;
 BOOL CTrafficMonitorApp::InitInstance()
 {
 	//设置配置文件的路径
+#ifdef _DEBUG
+	m_config_path = L".\\config.ini";
+	m_history_traffic_path = L".\\history_traffic.dat";
+	m_log_path = L".\\error.log";
+	m_skin_path = L".\\skins";
+#else
 	wstring exe_path = CCommon::GetExePath();
 	m_config_path = exe_path + L"config.ini";
 	m_history_traffic_path = exe_path + L"history_traffic.dat";
 	m_log_path = exe_path + L"error.log";
 	m_skin_path = exe_path + L"skins";
+#endif
 
 	wchar_t path[MAX_PATH];
 	GetModuleFileNameW(NULL, path, MAX_PATH);

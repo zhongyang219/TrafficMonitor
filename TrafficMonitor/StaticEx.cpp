@@ -108,7 +108,9 @@ void CStaticEx::OnLButtonUp(UINT nFlags, CPoint point)
 		}
 		else
 		{
-			GetParent()->SendMessage(WM_LINK_CLICKED, (WPARAM)this);
+			CWnd* pParent{ GetParent() };
+			if(pParent!=nullptr)
+				pParent->SendMessage(WM_LINK_CLICKED, (WPARAM)this);
 		}
 	}
 	else
