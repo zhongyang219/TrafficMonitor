@@ -182,5 +182,8 @@
     <Image Include="res\notifyicon.ico">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="res\about_background_hd.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

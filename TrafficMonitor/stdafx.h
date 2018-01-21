@@ -75,6 +75,6 @@ using std::ofstream;
 #define DELAY_TIMER 1235		//延时定时器ID
 #define TASKBAR_TIMER 1236
 
-#define MAX_INSERT_TO_TASKBAR_CNT 30		//尝试嵌入任务栏的最大次数
+#define MAX_INSERT_TO_TASKBAR_CNT 5		//尝试嵌入任务栏的最大次数
 
-#define VERSION L"1.66"
+#define VERSION L"1.67"

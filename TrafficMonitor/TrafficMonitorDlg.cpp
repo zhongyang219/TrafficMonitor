@@ -67,6 +67,10 @@ BOOL CAboutDlg::OnInitDialog()
 	CRect rect;
 	GetClientRect(rect);
 	rect.bottom = rect.Height() * 2 / 5;	//图片高度占对话框高度的2/5
+	if (theApp.DPI(100) >= 125)
+		m_about_img.SetBitmap(LoadBitmap(theApp.m_hInstance, MAKEINTRESOURCE(IDB_ABOUT_BACKGROUND_HD)));
+	else
+		m_about_img.SetBitmap(LoadBitmap(theApp.m_hInstance, MAKEINTRESOURCE(IDB_ABOUT_BACKGROUND)));
 	m_about_img.MoveWindow(rect);
 	m_mail.SetURL(_T("mailto:zhongyang219@hotmail.com"));	//设置超链接
 	//m_check_update.SetURL(_T("http://pan.baidu.com/s/1c1LkPQ4"));
@@ -674,7 +678,11 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	m_ntIcon.cbSize = sizeof(NOTIFYICONDATA);	//该结构体变量的大小
 	m_ntIcon.hIcon = AfxGetApp()->LoadIcon(IDI_NOFITY_ICON); //图标，通过资源ID得到
 	m_ntIcon.hWnd = this->m_hWnd;				//接收托盘图标通知消息的窗口句柄
-	TCHAR atip[128] = _T("流量监控器");			//鼠标指向图标时显示的提示
+#ifdef _DEBUG
+	TCHAR atip[128] = _T("流量监控器 (Debug)");			//鼠标指向图标时显示的提示
+#else
+	TCHAR atip[128] = _T("流量监控器");
+#endif
 	wcscpy_s(m_ntIcon.szTip, 128, atip);
 	m_ntIcon.uCallbackMessage = MY_WM_NOTIFYICON;	//应用程序定义的消息ID号
 	m_ntIcon.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;	//图标的属性：设置成员uCallbackMessage、hIcon、szTip有效

@@ -45,6 +45,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_MEMORY_EDIT1, &CTaskBarSettingsDlg::OnEnChangeMemoryEdit1)
 	ON_BN_CLICKED(IDC_SET_DEFAULT_BUTTON1, &CTaskBarSettingsDlg::OnBnClickedSetDefaultButton1)
 	ON_BN_CLICKED(IDC_SWITCH_UP_DOWN_CHECK1, &CTaskBarSettingsDlg::OnBnClickedSwitchUpDownCheck1)
+	ON_BN_CLICKED(IDC_TASKBAR_WND_ON_LEFT_CHECK, &CTaskBarSettingsDlg::OnBnClickedTaskbarWndOnLeftCheck)
 END_MESSAGE_MAP()
 
 
@@ -70,6 +71,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	SetDlgItemText(IDC_MEMORY_EDIT1, m_data.memory_string.c_str());
 
 	((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK1))->SetCheck(m_data.swap_up_down);
+	((CButton*)GetDlgItem(IDC_TASKBAR_WND_ON_LEFT_CHECK))->SetCheck(m_data.tbar_wnd_on_left);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -200,4 +202,11 @@ void CTaskBarSettingsDlg::OnBnClickedSwitchUpDownCheck1()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.swap_up_down = (((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK1))->GetCheck() != 0);
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedTaskbarWndOnLeftCheck()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_data.tbar_wnd_on_left = (((CButton*)GetDlgItem(IDC_TASKBAR_WND_ON_LEFT_CHECK))->GetCheck() != 0);
 }

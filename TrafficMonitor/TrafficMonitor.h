@@ -42,6 +42,7 @@ struct TaskBarSettingData
 	wstring  cpu_string;		//默认为“CPU:”
 	wstring  memory_string;		//默认为“内存:”
 	bool  swap_up_down{ false };		//交换上传和下载显示的位置
+	bool tbar_wnd_on_left{ false };		//如果为true，则任务栏窗口显示在任务栏的左侧（或上方）
 };
 
 struct GeneralSettingData

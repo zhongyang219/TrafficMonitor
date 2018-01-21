@@ -46,8 +46,8 @@ protected:
 	int m_min_bar_width;	//最小化窗口缩小宽度后的宽度
 	int m_min_bar_height;	//最小化窗口缩小高度后的高度（用于任务栏在屏幕左侧或右侧时）
 
-	int m_left_space;			//最小化窗口和二级窗口窗口左侧的边距
-	int m_top_space;			//最小化窗口和二级窗口窗口顶部的边距（用于任务栏在屏幕左侧或右侧时）
+	int m_left_space{};			//最小化窗口和二级窗口窗口左侧的边距
+	int m_top_space{};			//最小化窗口和二级窗口窗口顶部的边距（用于任务栏在屏幕左侧或右侧时）
 
 	bool m_connot_insert_to_task_bar{ false };	//如果窗口无法嵌入任务栏，则为true
 	bool m_taskbar_on_top_or_bottom{ true };		//如果任务栏在屏幕顶部或底部，则为ture

@@ -233,6 +233,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\about_background.bmp" />
+    <Image Include="res\about_background_hd.bmp" />
     <Image Include="res\donate.bmp" />
     <Image Include="res\notifyicon.ico" />
     <Image Include="res\TrafficMonitor.ico" />
