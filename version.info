@@ -1,7 +1,3 @@
-<version>1.66</version>
-<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.66/TrafficMonitor_V1.66.7z</link>
-<contents>新增鼠标悬浮提示会实时更新；\n
-优化关于启动时弹出“已经有一个程序正在运行”对话框的处理；\n
-增加无法嵌入任务栏时自动重试的处理；\n
-增加任务栏窗口的刷新频率，在一定程度上解决通知区域图标变化时任务栏窗口闪烁的问题；\n
-历史流量统计对话框中增加图形指示；</contents>
+<version>1.67</version>
+<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.67/TrafficMonitor_V1.67.7z</link>
+<contents>修正当主窗口和任务栏窗口都不显示CPU和内存利用率时，鼠标提示中的CPU和内存利用率不刷新的问题；\n修正了当任务栏左侧有自定义工具栏或快速启动栏时，任务栏窗口位置不正确的问题；\n新增自动检查更新功能；\n开机自启动功能改为写入注册表实现，去掉右键菜单中的“开机自动运行”项，移至选项设置——常规设置；\n增加任务栏窗口可以放在任务栏的左侧；\n其他细节方面的改进。</contents>
