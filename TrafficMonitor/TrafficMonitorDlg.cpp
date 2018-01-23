@@ -246,6 +246,12 @@ void CTrafficMonitorDlg::SetTransparency()
 	SetLayeredWindowAttributes(0, m_transparency * 255 / 100, LWA_ALPHA);  //透明度取值范围为0~255
 }
 
+void CTrafficMonitorDlg::SetTransparency(int transparency)
+{
+	SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
+	SetLayeredWindowAttributes(0, transparency * 255 / 100, LWA_ALPHA);  //透明度取值范围为0~255
+}
+
 void CTrafficMonitorDlg::SetAlwaysOnTop()
 {
 	if (!m_is_foreground_fullscreen || (m_is_foreground_fullscreen && !theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen))
@@ -756,6 +762,10 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	m_tool_tips.SetMaxTipWidth(600);
 	m_tool_tips.AddTool(this, _T(""));
 
+	//如果程序启动时设置了隐藏主窗口，则先将其不透明度设为0
+	if (theApp.m_hide_main_window)
+		SetTransparency(0);
+
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -780,7 +790,10 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			SetAlwaysOnTop();		//设置窗口置顶
 			SetMousePenetrate();	//设置鼠标穿透
 			if (theApp.m_hide_main_window)	//设置隐藏主窗口
+			{
 				ShowWindow(SW_HIDE);
+				SetTransparency();				//重新设置窗口不透明度
+			}
 			
 			//if (!theApp.WhenStart())
 			//{

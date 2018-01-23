@@ -125,6 +125,7 @@ protected:
 
 	void ShowInfo();		//将上传下载速度信息显示到窗口中
 	void SetTransparency();			//根据m_transparency的值设置窗口透明度
+	void SetTransparency(int transparency);
 	void SetAlwaysOnTop();			//根据m_always_on_top的值设置窗口置顶
 	void SetMousePenetrate();		//根据m_mouse_penetrate的值设置是否鼠标穿透
 	void CheckWindowPos();			//测试窗口的位置，如窗口的位置在屏幕外，则移动窗口使其全部都在屏幕内，并返回新位置
