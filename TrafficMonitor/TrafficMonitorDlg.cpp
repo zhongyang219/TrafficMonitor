@@ -762,8 +762,8 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	m_tool_tips.SetMaxTipWidth(600);
 	m_tool_tips.AddTool(this, _T(""));
 
-	//如果程序启动时设置了隐藏主窗口，则先将其不透明度设为0
-	if (theApp.m_hide_main_window)
+	//如果程序启动时设置了隐藏主窗口，或窗口的位置在左上角，则先将其不透明度设为0
+	if (theApp.m_hide_main_window || (m_position_x == 0 && m_position_y == 0))
 		SetTransparency(0);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
@@ -790,16 +790,21 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			SetAlwaysOnTop();		//设置窗口置顶
 			SetMousePenetrate();	//设置鼠标穿透
 			if (theApp.m_hide_main_window)	//设置隐藏主窗口
-			{
 				ShowWindow(SW_HIDE);
-				SetTransparency();				//重新设置窗口不透明度
-			}
 			
-			//if (!theApp.WhenStart())
-			//{
+			//打开任务栏窗口
 			if (m_show_task_bar_wnd && m_tBarDlg == nullptr)
 				OpenTaskBarWnd();
-			//}
+
+			//如果窗口的位置为(0, 0)，则在初始化时MoveWindow函数无效，此时再移动一次窗口
+			if (m_position_x == 0 && m_position_y == 0)
+			{
+				CRect rect;
+				GetWindowRect(rect);
+				rect.MoveToXY(0, 0);
+				MoveWindow(rect);
+			}
+			SetTransparency();				//重新设置窗口不透明度
 
 			m_first_start = false;
 		}
@@ -854,6 +859,9 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 				SetAlwaysOnTop();		//每5分钟执行一次设置窗口置顶
 			}
 		}
+
+		if (m_timer_cnt % 15 == 14)		//每隔15秒钟保存一次设置
+			SaveConfig();
 
 		//获取网络连接速度
 		int rtn = GetIfTable(m_pIfTable, &m_dwSize, FALSE);
