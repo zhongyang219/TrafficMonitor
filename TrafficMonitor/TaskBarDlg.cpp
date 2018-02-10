@@ -45,6 +45,8 @@ void CTaskBarDlg::ShowInfo()
 	CString str;
 	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed);
 	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed);
+
+	if (m_rect.IsRectEmpty() || m_rect.IsRectNull()) return;
 	
 	//设置缓冲的DC
 	CDC MemDC;
@@ -159,7 +161,7 @@ bool CTaskBarDlg::AdjustWindowPos()
 		}
 	}
 
-	CRect rect;
+	CRect rect{};
 	GetWindowRect(rect);	//获取当前窗口的绝对位置
 	//如果窗口没有被成功嵌入到任务栏，窗口移动到了基于屏幕左上角的绝对位置，则修正窗口的位置
 	if (rect.left == wnd_x_pos && rect.top == wnd_y_pos)
