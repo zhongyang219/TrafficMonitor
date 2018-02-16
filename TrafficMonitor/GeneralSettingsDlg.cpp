@@ -84,4 +84,5 @@ void CGeneralSettingsDlg::OnBnClickedAutoRunCheck()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.auto_run = (((CButton*)GetDlgItem(IDC_AUTO_RUN_CHECK))->GetCheck() != 0);
+	m_auto_run_modified = true;
 }

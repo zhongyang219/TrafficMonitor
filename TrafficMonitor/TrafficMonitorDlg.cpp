@@ -626,7 +626,8 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 		}
 
 		theApp.m_general_data = optionsDlg.m_tab3_dlg.m_data;
-		theApp.SetAutoRun(theApp.m_general_data.auto_run);
+		if(optionsDlg.m_tab3_dlg.IsAutoRunModified())
+			theApp.SetAutoRun(theApp.m_general_data.auto_run);
 		theApp.SaveConfig();
 	}
 }

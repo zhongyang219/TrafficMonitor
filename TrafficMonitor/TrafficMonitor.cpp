@@ -128,12 +128,13 @@ void CTrafficMonitorApp::SetAutoRun(bool auto_run)
 	{
 		module_path = m_module_path;
 	}
+	//打开注册表项
 	if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
 	{
 		AfxMessageBox(_T("无法实现开机自启动，在注册表中找不到相应的键值！"), MB_OK | MB_ICONWARNING);
 		return;
 	}
-	if (auto_run)
+	if (auto_run)		//写入注册表项
 	{
 		if (key.SetStringValue(_T("TrafficMonitor"), module_path.c_str()) != ERROR_SUCCESS)
 		{
@@ -141,8 +142,13 @@ void CTrafficMonitorApp::SetAutoRun(bool auto_run)
 			return;
 		}
 	}
-	else
+	else		//删除注册表项
 	{
+		//删除前先检查注册表项是否存在，如果不存在，则直接返回
+		wchar_t buff[256];
+		ULONG size{ 256 };
+		if (key.QueryStringValue(_T("TrafficMonitor"), buff, &size) != ERROR_SUCCESS)
+			return;
 		if (key.DeleteValue(_T("TrafficMonitor")) != ERROR_SUCCESS)
 		{
 			AfxMessageBox(_T("注册表项删除失败，可能该键值没有权限访问！"), MB_OK | MB_ICONWARNING);

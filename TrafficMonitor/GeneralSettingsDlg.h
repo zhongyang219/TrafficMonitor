@@ -19,7 +19,12 @@ public:
 	enum { IDD = IDD_GENERAL_SETTINGS_DIALOG };
 #endif
 
+public:
+	bool IsAutoRunModified() const { return m_auto_run_modified; }
+
 protected:
+	bool m_auto_run_modified{ false };		//如果更改了开机自动运行的设置，则会置为true
+
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
