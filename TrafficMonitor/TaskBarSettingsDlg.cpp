@@ -23,8 +23,10 @@ CTaskBarSettingsDlg::~CTaskBarSettingsDlg()
 
 void CTaskBarSettingsDlg::DrawStaticColor()
 {
-	CCommon::FillStaticColor(m_text_color_static, m_data.text_color);
-	CCommon::FillStaticColor(m_back_color_static, m_data.back_color);
+	//CCommon::FillStaticColor(m_text_color_static, m_data.text_color);
+	//CCommon::FillStaticColor(m_back_color_static, m_data.back_color);
+	m_text_color_static.SetFillColor(m_data.text_color);
+	m_back_color_static.SetFillColor(m_data.back_color);
 }
 
 void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
@@ -74,6 +76,8 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK1))->SetCheck(m_data.swap_up_down);
 	((CButton*)GetDlgItem(IDC_TASKBAR_WND_ON_LEFT_CHECK))->SetCheck(m_data.tbar_wnd_on_left);
 	((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK))->SetCheck(m_data.speed_short_mode);
+
+	DrawStaticColor();
 
 	m_toolTip.Create(this);
 	m_toolTip.SetMaxTipWidth(theApp.DPI(300));

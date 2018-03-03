@@ -291,13 +291,13 @@ void CCommon::DrawWindowText(CDC * pDC, CRect rect, LPCTSTR lpszString, COLORREF
 
 }
 
-void CCommon::FillStaticColor(CStatic & static_ctr, COLORREF color)
-{
-	CDC* pDC = static_ctr.GetDC();
-	CRect rect;
-	static_ctr.GetClientRect(&rect);
-	pDC->FillSolidRect(rect, color);
-}
+//void CCommon::FillStaticColor(CStatic & static_ctr, COLORREF color)
+//{
+//	CDC* pDC = static_ctr.GetDC();
+//	CRect rect;
+//	static_ctr.GetClientRect(&rect);
+//	pDC->FillSolidRect(rect, color);
+//}
 
 void CCommon::SetDrawArea(CDC * pDC, CRect rect)
 {

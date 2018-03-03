@@ -19,6 +19,8 @@ public:
 
 	void SetLinkEnable(bool enable) { m_linkEnable = enable; }
 
+	void SetFillColor(COLORREF fill_color);		//设置要填充的背景色
+
 protected:
 	COLORREF m_TextColor;	//控件文字颜色
 	CString m_text;			//控件上的文本
@@ -27,6 +29,9 @@ protected:
 	bool m_linkEnable{ true };		//如果为true，点击后打开超链接，否则向父窗口发送一个点击消息
 	bool m_bHot{ false };			//当鼠标指向超链接时，则为true
 	CString m_strURL;				//超链接字符串
+
+	bool m_fill_color_enable{ false };		//是否为控件填充颜色
+	COLORREF m_fill_color{};
 
 	virtual LRESULT DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 public:

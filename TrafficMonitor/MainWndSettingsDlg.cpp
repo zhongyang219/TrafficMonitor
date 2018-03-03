@@ -23,7 +23,8 @@ CMainWndSettingsDlg::~CMainWndSettingsDlg()
 
 void CMainWndSettingsDlg::DrawStaticColor()
 {
-	CCommon::FillStaticColor(m_color_static, m_data.text_color);
+	//CCommon::FillStaticColor(m_color_static, m_data.text_color);
+	m_color_static.SetFillColor(m_data.text_color);
 }
 
 void CMainWndSettingsDlg::DoDataExchange(CDataExchange* pDX)
@@ -71,6 +72,7 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 	((CButton*)GetDlgItem(IDC_FULLSCREEN_HIDE_CHECK))->SetCheck(m_data.hide_main_wnd_when_fullscreen);
 
 	//SetTimer(11, 50, NULL);
+	DrawStaticColor();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE

@@ -81,8 +81,8 @@ public:
 	//在指定位置绘制文本
 	static void DrawWindowText(CDC* pDC, CRect rect, LPCTSTR lpszString, COLORREF color, COLORREF back_color);
 
-	//为一个Static控件填充指定的颜色
-	static void FillStaticColor(CStatic& static_ctr, COLORREF color);
+	////为一个Static控件填充指定的颜色
+	//static void FillStaticColor(CStatic& static_ctr, COLORREF color);
 
 	//设置绘图的剪辑区域
 	static void SetDrawArea(CDC* pDC, CRect rect);

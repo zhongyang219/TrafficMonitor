@@ -52,6 +52,13 @@ CString CStaticEx::GetURL() const
 	return m_strURL;
 }
 
+void CStaticEx::SetFillColor(COLORREF fill_color)
+{
+	m_fill_color = fill_color;
+	m_fill_color_enable = true;
+	Invalidate();
+}
+
 
 LRESULT CStaticEx::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -125,6 +132,7 @@ void CStaticEx::OnPaint()
 	CPaintDC dc(this); // device context for painting
 					   // TODO: 在此处添加消息处理程序代码
 					   // 不为绘图消息调用 CStatic::OnPaint()
+	//是超链接时的绘图处理
 	if (m_isHyperLink)
 	{
 		CFont* pFont = GetFont();
@@ -156,6 +164,14 @@ void CStaticEx::OnPaint()
 			dc.DrawText(m_text, rect, DT_VCENTER | DT_SINGLELINE);
 		}
 		m_Font.DeleteObject();
+	}
+
+	//需要填充背景色时的绘图处理
+	else if (m_fill_color_enable)
+	{
+		CRect rect;
+		GetClientRect(rect);
+		dc.FillSolidRect(rect, m_fill_color);
 	}
 }
 

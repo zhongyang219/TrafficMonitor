@@ -30,7 +30,6 @@ void COptionsDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(COptionsDlg, CDialog)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &COptionsDlg::OnTcnSelchangeTab1)
-	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -67,15 +66,12 @@ BOOL COptionsDlg::OnInitDialog()
 	{
 	case 0:
 		m_tab1_dlg.ShowWindow(SW_SHOW);
-		SetTimer(TIMER_ID1, 50, NULL);
 		break;
 	case 1:
 		m_tab2_dlg.ShowWindow(SW_SHOW);
-		SetTimer(TIMER_ID2, 50, NULL);
 		break;
 	}
 	m_tab.SetCurFocus(m_tab_selected);
-	//m_tab.SetCurSel(m_tab_selected);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -93,14 +89,12 @@ void COptionsDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 		m_tab2_dlg.ShowWindow(SW_HIDE);
 		m_tab3_dlg.ShowWindow(SW_HIDE);
 		m_tab1_dlg.SetFocus();
-		SetTimer(TIMER_ID1, 50, NULL);		//点击了第1个选项卡后延迟30毫秒绘制颜色控件
 		break;
 	case 1:
 		m_tab2_dlg.ShowWindow(SW_SHOW);
 		m_tab1_dlg.ShowWindow(SW_HIDE);
 		m_tab3_dlg.ShowWindow(SW_HIDE);
 		m_tab2_dlg.SetFocus();
-		SetTimer(TIMER_ID2, 50, NULL);		//点击了第2个选项卡后延迟30毫秒绘制颜色控件
 		break;
 	case 2:
 		m_tab3_dlg.ShowWindow(SW_SHOW);
@@ -110,23 +104,4 @@ void COptionsDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 		break;
 	}
 	*pResult = 0;
-}
-
-
-void COptionsDlg::OnTimer(UINT_PTR nIDEvent)
-{
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	if (nIDEvent == TIMER_ID1)
-	{
-		m_tab1_dlg.DrawStaticColor();
-		KillTimer(TIMER_ID1);
-	}
-
-	if (nIDEvent == TIMER_ID2)
-	{
-		m_tab2_dlg.DrawStaticColor();
-		KillTimer(TIMER_ID2);
-	}
-
-	CDialog::OnTimer(nIDEvent);
 }

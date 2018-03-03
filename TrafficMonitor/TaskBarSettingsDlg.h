@@ -1,5 +1,5 @@
 #pragma once
-
+#include "StaticEx.h"
 
 // CTaskBarSettingsDlg 对话框
 
@@ -14,17 +14,17 @@ public:
 	//选项设置数据
 	TaskBarSettingData m_data;
 
-	void DrawStaticColor();
-
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_TASKBAR_SETTINGS_DIALOG };
 #endif
 
 protected:
-	CStatic m_text_color_static;
-	CStatic m_back_color_static;
+	CStaticEx m_text_color_static;
+	CStaticEx m_back_color_static;
 	CToolTipCtrl m_toolTip;
+
+	void DrawStaticColor();
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 

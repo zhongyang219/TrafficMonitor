@@ -6,9 +6,6 @@
 
 // COptionsDlg ¶Ô»°¿ò
 
-#define TIMER_ID1 1120
-#define TIMER_ID2 1121
-
 class COptionsDlg : public CDialog
 {
 	DECLARE_DYNAMIC(COptionsDlg)
@@ -36,5 +33,4 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
