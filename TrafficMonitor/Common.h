@@ -42,7 +42,7 @@ public:
 	static bool WritePrivateProfileIntW(const wchar_t * AppName, const wchar_t * KeyName, int value, const wchar_t * Path);
 
 	//根据数据的大小转换成以KB、MB、GB为单位的字符串
-	static CString DataSizeToString(unsigned int size);
+	static CString DataSizeToString(unsigned int size, bool short_mode = false);
 
 	static CString KBytesToString(unsigned int kb_size);
 

@@ -46,6 +46,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_SET_DEFAULT_BUTTON1, &CTaskBarSettingsDlg::OnBnClickedSetDefaultButton1)
 	ON_BN_CLICKED(IDC_SWITCH_UP_DOWN_CHECK1, &CTaskBarSettingsDlg::OnBnClickedSwitchUpDownCheck1)
 	ON_BN_CLICKED(IDC_TASKBAR_WND_ON_LEFT_CHECK, &CTaskBarSettingsDlg::OnBnClickedTaskbarWndOnLeftCheck)
+	ON_BN_CLICKED(IDC_SPEED_SHORT_MODE_CHECK, &CTaskBarSettingsDlg::OnBnClickedSpeedShortModeCheck)
 END_MESSAGE_MAP()
 
 
@@ -72,6 +73,11 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 
 	((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK1))->SetCheck(m_data.swap_up_down);
 	((CButton*)GetDlgItem(IDC_TASKBAR_WND_ON_LEFT_CHECK))->SetCheck(m_data.tbar_wnd_on_left);
+	((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK))->SetCheck(m_data.speed_short_mode);
+
+	m_toolTip.Create(this);
+	m_toolTip.SetMaxTipWidth(theApp.DPI(300));
+	m_toolTip.AddTool(GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK), _T("勾选后，将减少网速显示的小数点位数，并且单位不显示“B”"));
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -209,4 +215,21 @@ void CTaskBarSettingsDlg::OnBnClickedTaskbarWndOnLeftCheck()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.tbar_wnd_on_left = (((CButton*)GetDlgItem(IDC_TASKBAR_WND_ON_LEFT_CHECK))->GetCheck() != 0);
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedSpeedShortModeCheck()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_data.speed_short_mode = (((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK))->GetCheck() != 0);
+}
+
+
+BOOL CTaskBarSettingsDlg::PreTranslateMessage(MSG* pMsg)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	if (pMsg->message == WM_MOUSEMOVE)
+		m_toolTip.RelayEvent(pMsg);
+
+	return CDialogEx::PreTranslateMessage(pMsg);
 }

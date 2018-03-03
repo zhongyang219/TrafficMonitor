@@ -24,6 +24,7 @@ public:
 protected:
 	CStatic m_text_color_static;
 	CStatic m_back_color_static;
+	CToolTipCtrl m_toolTip;
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
 
@@ -40,4 +41,6 @@ public:
 	afx_msg void OnBnClickedSetDefaultButton1();
 	afx_msg void OnBnClickedSwitchUpDownCheck1();
 	afx_msg void OnBnClickedTaskbarWndOnLeftCheck();
+	afx_msg void OnBnClickedSpeedShortModeCheck();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };
