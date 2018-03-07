@@ -34,6 +34,8 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TEXT_COLOR_STATIC1, m_text_color_static);
 	DDX_Control(pDX, IDC_TEXT_COLOR_STATIC2, m_back_color_static);
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_UNIT_COMBO, m_unit_combo);
+	DDX_Control(pDX, IDC_HIDE_UNIT_CHECK, m_hide_unit_chk);
 }
 
 
@@ -49,6 +51,8 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_SWITCH_UP_DOWN_CHECK1, &CTaskBarSettingsDlg::OnBnClickedSwitchUpDownCheck1)
 	ON_BN_CLICKED(IDC_TASKBAR_WND_ON_LEFT_CHECK, &CTaskBarSettingsDlg::OnBnClickedTaskbarWndOnLeftCheck)
 	ON_BN_CLICKED(IDC_SPEED_SHORT_MODE_CHECK, &CTaskBarSettingsDlg::OnBnClickedSpeedShortModeCheck)
+	ON_CBN_SELCHANGE(IDC_UNIT_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeUnitCombo)
+	ON_BN_CLICKED(IDC_HIDE_UNIT_CHECK, &CTaskBarSettingsDlg::OnBnClickedHideUnitCheck)
 END_MESSAGE_MAP()
 
 
@@ -82,6 +86,19 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	m_toolTip.Create(this);
 	m_toolTip.SetMaxTipWidth(theApp.DPI(300));
 	m_toolTip.AddTool(GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK), _T("勾选后，将减少网速显示的小数点位数，并且单位不显示“B”"));
+
+	m_unit_combo.AddString(_T("自动"));
+	m_unit_combo.AddString(_T("固定为 KB/s"));
+	m_unit_combo.AddString(_T("固定为 MB/s"));
+	m_unit_combo.SetCurSel(static_cast<int>(m_data.m_speed_unit));
+
+	m_hide_unit_chk.SetCheck(m_data.m_hide_unit);
+	if (m_data.m_speed_unit == SpeedUnit::AUTO)
+	{
+		m_hide_unit_chk.SetCheck(FALSE);
+		m_data.m_hide_unit = false;
+		m_hide_unit_chk.EnableWindow(FALSE);
+	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -236,4 +253,28 @@ BOOL CTaskBarSettingsDlg::PreTranslateMessage(MSG* pMsg)
 		m_toolTip.RelayEvent(pMsg);
 
 	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+
+void CTaskBarSettingsDlg::OnCbnSelchangeUnitCombo()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_data.m_speed_unit = static_cast<SpeedUnit>(m_unit_combo.GetCurSel());
+	if (m_data.m_speed_unit == SpeedUnit::AUTO)
+	{
+		m_hide_unit_chk.SetCheck(FALSE);
+		m_data.m_hide_unit = false;
+		m_hide_unit_chk.EnableWindow(FALSE);
+	}
+	else
+	{
+		m_hide_unit_chk.EnableWindow(TRUE);
+	}
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedHideUnitCheck()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_data.m_hide_unit = (m_hide_unit_chk.GetCheck() != 0);
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "StaticEx.h"
+#include "afxwin.h"
 
 // CTaskBarSettingsDlg ¶Ô»°¿ò
 
@@ -23,6 +24,8 @@ protected:
 	CStaticEx m_text_color_static;
 	CStaticEx m_back_color_static;
 	CToolTipCtrl m_toolTip;
+	CComboBox m_unit_combo;
+	CButton m_hide_unit_chk;
 
 	void DrawStaticColor();
 
@@ -43,4 +46,6 @@ public:
 	afx_msg void OnBnClickedTaskbarWndOnLeftCheck();
 	afx_msg void OnBnClickedSpeedShortModeCheck();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	afx_msg void OnCbnSelchangeUnitCombo();
+	afx_msg void OnBnClickedHideUnitCheck();
 };

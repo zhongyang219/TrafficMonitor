@@ -109,7 +109,7 @@ protected:
 
 	vector<wstring> m_skins;	//储存皮肤文件的路径
 	int m_skin_selected{};		//选择的皮肤序号
-	wstring m_skin_name{};		//选择的皮肤的名称
+	wstring m_skin_name;		//选择的皮肤的名称
 
 	SYSTEMTIME m_start_time;	//程序启动时的时间
 

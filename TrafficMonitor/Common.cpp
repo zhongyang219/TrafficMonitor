@@ -44,32 +44,89 @@ bool CCommon::WritePrivateProfileIntW(const wchar_t * AppName, const wchar_t * K
 	return (WritePrivateProfileStringW(AppName, KeyName, buff, Path) != FALSE);
 }
 
-CString CCommon::DataSizeToString(unsigned int size, bool short_mode)
+CString CCommon::DataSizeToString(unsigned int size, bool short_mode, SpeedUnit unit, bool hide_unit)
 {
 	CString str;
-	if (short_mode)
+	switch (unit)
 	{
-		//if (size <= 102)			//小于0.1KB时，显示0K
-		//	str = _T("0K");
-		/*else */if (size < 1024 * 10)					//10KB以下以KB为单位，保留1位小数
-			str.Format(_T("%.1fK"), size / 1024.0f);
-		else if (size < 1024 * 1024)			//1MB以下以KB为单位，保留整数
-			str.Format(_T("%.0fK"), size / 1024.0f);
-		else if (size < 1024 * 1024 * 1024)		//1GB以下以MB为单位，保留1位小数
-			str.Format(_T("%.1fM"), size / 1024.0f / 1024.0f);
+	case SpeedUnit::AUTO:
+		if (short_mode)
+		{
+			//if (size <= 102)			//小于0.1KB时，显示0K
+			//	str = _T("0K");
+			/*else */if (size < 1024 * 10)					//10KB以下以KB为单位，保留1位小数
+				str.Format(_T("%.1fK"), size / 1024.0f);
+			else if (size < 1024 * 1024)			//1MB以下以KB为单位，保留整数
+				str.Format(_T("%.0fK"), size / 1024.0f);
+			else if (size < 1024 * 1024 * 1024)		//1GB以下以MB为单位，保留1位小数
+				str.Format(_T("%.1fM"), size / 1024.0f / 1024.0f);
+			else
+				str.Format(_T("%.2fG"), size / 1024.0f / 1024.0f / 1024.0f);
+		}
 		else
-			str.Format(_T("%.2fG"), size / 1024.0f / 1024.0f / 1024.0f);
-	}
-	else
-	{
-		if (size < 1024 * 10)					//10KB以下以KB为单位，保留2位小数
-			str.Format(_T("%.2fKB"), size / 1024.0f);
-		else if (size < 1024 * 1024)			//1MB以下以KB为单位，保留1位小数
-			str.Format(_T("%.1fKB"), size / 1024.0f);
-		else if (size < 1024 * 1024 * 1024)		//1GB以下以MB为单位，保留2位小数
-			str.Format(_T("%.2fMB"), size / 1024.0f / 1024.0f);
+		{
+			if (size < 1024 * 10)					//10KB以下以KB为单位，保留2位小数
+				str.Format(_T("%.2fKB"), size / 1024.0f);
+			else if (size < 1024 * 1024)			//1MB以下以KB为单位，保留1位小数
+				str.Format(_T("%.1fKB"), size / 1024.0f);
+			else if (size < 1024 * 1024 * 1024)		//1GB以下以MB为单位，保留2位小数
+				str.Format(_T("%.2fMB"), size / 1024.0f / 1024.0f);
+			else
+				str.Format(_T("%.2fGB"), size / 1024.0f / 1024.0f / 1024.0f);
+		}
+		break;
+	case SpeedUnit::KBPS:
+		if (short_mode)
+		{
+			if (size < 1024 * 10)					//10KB以下以KB为单位，保留1位小数
+			{
+				if (hide_unit)
+					str.Format(_T("%.1f"), size / 1024.0f);
+				else
+					str.Format(_T("%.1fK"), size / 1024.0f);
+			}
+			else if (size < 1024 * 1024)			//1MB以下以KB为单位，保留整数
+			{
+				if (hide_unit)
+					str.Format(_T("%.0f"), size / 1024.0f);
+				else
+					str.Format(_T("%.0fK"), size / 1024.0f);
+			}
+		}
 		else
-			str.Format(_T("%.2fGB"), size / 1024.0f / 1024.0f / 1024.0f);
+		{
+			if (size < 1024 * 10)					//10KB以下以KB为单位，保留2位小数
+			{
+				if (hide_unit)
+					str.Format(_T("%.2f"), size / 1024.0f);
+				else
+					str.Format(_T("%.2fKB"), size / 1024.0f);
+			}
+			else if (size < 1024 * 1024)			//1MB以下以KB为单位，保留1位小数
+			{
+				if (hide_unit)
+					str.Format(_T("%.1f"), size / 1024.0f);
+				else
+					str.Format(_T("%.1fKB"), size / 1024.0f);
+			}
+		}
+		break;
+	case SpeedUnit::MBPS:
+		if (short_mode)
+		{
+			if (hide_unit)
+				str.Format(_T("%.1f"), size / 1024.0f / 1024.0f);
+			else
+				str.Format(_T("%.1fM"), size / 1024.0f / 1024.0f);
+		}
+		else
+		{
+			if (hide_unit)
+				str.Format(_T("%.2f"), size / 1024.0f / 1024.0f);
+			else
+				str.Format(_T("%.2fMB"), size / 1024.0f / 1024.0f);
+		}
+		break;
 	}
 	return str;
 }

@@ -43,8 +43,8 @@ void CTaskBarDlg::ShowInfo()
 {
 	if (this->m_hWnd == NULL || m_pDC == nullptr) return;
 	CString str;
-	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data.speed_short_mode);
-	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data.speed_short_mode);
+	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data.speed_short_mode, theApp.m_taskbar_data.m_speed_unit, theApp.m_taskbar_data.m_hide_unit);
+	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data.speed_short_mode, theApp.m_taskbar_data.m_speed_unit, theApp.m_taskbar_data.m_hide_unit);
 
 	if (m_rect.IsRectEmpty() || m_rect.IsRectNull()) return;
 	
@@ -63,17 +63,22 @@ void CTaskBarDlg::ShowInfo()
 	//绘制上传速度
 	tmp.bottom = m_window_height / 2;
 	tmp.right = tmp.left + m_window_width_s;
-	if (!theApp.m_taskbar_data.swap_up_down)
-		str.Format(_T("%s%s/s"), theApp.m_taskbar_data.up_string.c_str(), out_speed.GetString());
+	CString format_str;
+	if (theApp.m_taskbar_data.m_hide_unit && theApp.m_taskbar_data.m_speed_unit != SpeedUnit::AUTO)
+		format_str = _T("%s%s");
 	else
-		str.Format(_T("%s%s/s"), theApp.m_taskbar_data.down_string.c_str(), in_speed.GetString());
+		format_str = _T("%s%s/s");
+	if (!theApp.m_taskbar_data.swap_up_down)
+		str.Format(format_str, theApp.m_taskbar_data.up_string.c_str(), out_speed.GetString());
+	else
+		str.Format(format_str, theApp.m_taskbar_data.down_string.c_str(), in_speed.GetString());
 	CCommon::DrawWindowText(&MemDC, tmp, str, theApp.m_taskbar_data.text_color, theApp.m_taskbar_data.back_color);
 	//绘制下载速度
 	tmp.MoveToY(tmp.bottom);
 	if (!theApp.m_taskbar_data.swap_up_down)
-		str.Format(_T("%s%s/s"), theApp.m_taskbar_data.down_string.c_str(), in_speed.GetString());
+		str.Format(format_str, theApp.m_taskbar_data.down_string.c_str(), in_speed.GetString());
 	else
-		str.Format(_T("%s%s/s"), theApp.m_taskbar_data.up_string.c_str(), out_speed.GetString());
+		str.Format(format_str, theApp.m_taskbar_data.up_string.c_str(), out_speed.GetString());
 	CCommon::DrawWindowText(&MemDC, tmp, str, theApp.m_taskbar_data.text_color, theApp.m_taskbar_data.back_color);
 	if (theApp.m_tbar_show_cpu_memory)
 	{
@@ -217,6 +222,8 @@ void CTaskBarDlg::SaveConfig()
 
 	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_wnd_on_left", theApp.m_taskbar_data.tbar_wnd_on_left, theApp.m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_speed_short_mode", theApp.m_taskbar_data.speed_short_mode, theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_speed_unit", static_cast<int>(theApp.m_taskbar_data.m_speed_unit), theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_hide_unit", theApp.m_taskbar_data.m_hide_unit, theApp.m_config_path.c_str());
 }
 
 void CTaskBarDlg::LoadConfig()
@@ -248,6 +255,8 @@ void CTaskBarDlg::LoadConfig()
 
 	theApp.m_taskbar_data.tbar_wnd_on_left = (GetPrivateProfileInt(_T("task_bar"), _T("task_bar_wnd_on_left"), 0, theApp.m_config_path.c_str()) != 0);
 	theApp.m_taskbar_data.speed_short_mode = (GetPrivateProfileInt(_T("task_bar"), _T("task_bar_speed_short_mode"), 0, theApp.m_config_path.c_str()) != 0);
+	theApp.m_taskbar_data.m_speed_unit = static_cast<SpeedUnit>(GetPrivateProfileInt(_T("task_bar"), _T("task_bar_speed_unit"), 0, theApp.m_config_path.c_str()));
+	theApp.m_taskbar_data.m_hide_unit = (GetPrivateProfileInt(_T("task_bar"), _T("task_bar_hide_unit"), 0, theApp.m_config_path.c_str()) != 0);
 }
 
 void CTaskBarDlg::ApplySettings()
@@ -270,9 +279,19 @@ void CTaskBarDlg::CalculateWindowWidth()
 	int width1, width2;
 	CString sample_str;
 	if (theApp.m_taskbar_data.speed_short_mode)
-		sample_str = _T("%s8888K/s");
+	{
+		if (theApp.m_taskbar_data.m_hide_unit && theApp.m_taskbar_data.m_speed_unit != SpeedUnit::AUTO)
+			sample_str = _T("%s8888");
+		else
+			sample_str = _T("%s8888K/s");
+	}
 	else
-		sample_str = _T("%s8888.8KB/s");
+	{
+		if (theApp.m_taskbar_data.m_hide_unit && theApp.m_taskbar_data.m_speed_unit != SpeedUnit::AUTO)
+			sample_str = _T("%s8888.8");
+		else
+			sample_str = _T("%s8888.8KB/s");
+	}
 	str1.Format(sample_str, theApp.m_taskbar_data.up_string.c_str());
 	str2.Format(sample_str, theApp.m_taskbar_data.down_string.c_str());
 	width1= m_pDC->GetTextExtent(str1).cx;		//计算使用当前字体显示文本需要的宽度值
