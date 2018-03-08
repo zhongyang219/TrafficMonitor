@@ -289,3 +289,4 @@ __pycache__/
 
 *.ini
 *.dat
+*.bak

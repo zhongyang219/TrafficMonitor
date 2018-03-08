@@ -1,5 +1,6 @@
 #pragma once
 #include "StaticEx.h"
+#include "afxwin.h"
 
 // CMainWndSettingsDlg ¶Ô»°¿ò
 
@@ -21,6 +22,9 @@ public:
 
 protected:
 	CStaticEx m_color_static;
+	CToolTipCtrl m_toolTip;
+	CComboBox m_unit_combo;
+	CButton m_hide_unit_chk;
 
 	void DrawStaticColor();
 
@@ -38,4 +42,8 @@ public:
 	afx_msg void OnBnClickedSetFontButton();
 	afx_msg void OnBnClickedSwitchUpDownCheck();
 	afx_msg void OnBnClickedFullscreenHideCheck();
+	afx_msg void OnBnClickedSpeedShortModeCheck2();
+	afx_msg void OnCbnSelchangeUnitCombo();
+	afx_msg void OnBnClickedHideUnitCheck();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };

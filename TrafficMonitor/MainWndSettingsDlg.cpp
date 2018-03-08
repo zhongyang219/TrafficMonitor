@@ -31,6 +31,8 @@ void CMainWndSettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_TEXT_COLOR_STATIC, m_color_static);
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_HIDE_UNIT_CHECK, m_hide_unit_chk);
+	DDX_Control(pDX, IDC_UNIT_COMBO, m_unit_combo);
 }
 
 
@@ -44,6 +46,9 @@ BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_SET_FONT_BUTTON, &CMainWndSettingsDlg::OnBnClickedSetFontButton)
 	ON_BN_CLICKED(IDC_SWITCH_UP_DOWN_CHECK, &CMainWndSettingsDlg::OnBnClickedSwitchUpDownCheck)
 	ON_BN_CLICKED(IDC_FULLSCREEN_HIDE_CHECK, &CMainWndSettingsDlg::OnBnClickedFullscreenHideCheck)
+	ON_BN_CLICKED(IDC_SPEED_SHORT_MODE_CHECK2, &CMainWndSettingsDlg::OnBnClickedSpeedShortModeCheck2)
+	ON_CBN_SELCHANGE(IDC_UNIT_COMBO, &CMainWndSettingsDlg::OnCbnSelchangeUnitCombo)
+	ON_BN_CLICKED(IDC_HIDE_UNIT_CHECK, &CMainWndSettingsDlg::OnBnClickedHideUnitCheck)
 END_MESSAGE_MAP()
 
 
@@ -70,9 +75,27 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 
 	((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK))->SetCheck(m_data.swap_up_down);
 	((CButton*)GetDlgItem(IDC_FULLSCREEN_HIDE_CHECK))->SetCheck(m_data.hide_main_wnd_when_fullscreen);
+	((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK2))->SetCheck(m_data.speed_short_mode);
 
 	//SetTimer(11, 50, NULL);
 	DrawStaticColor();
+
+	m_toolTip.Create(this);
+	m_toolTip.SetMaxTipWidth(theApp.DPI(300));
+	m_toolTip.AddTool(GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK2), _T("勾选后，将减少网速显示的小数点位数，并且单位不显示“B”"));
+
+	m_unit_combo.AddString(_T("自动"));
+	m_unit_combo.AddString(_T("固定为 KB/s"));
+	m_unit_combo.AddString(_T("固定为 MB/s"));
+	m_unit_combo.SetCurSel(static_cast<int>(m_data.m_speed_unit));
+
+	m_hide_unit_chk.SetCheck(m_data.m_hide_unit);
+	if (m_data.m_speed_unit == SpeedUnit::AUTO)
+	{
+		m_hide_unit_chk.SetCheck(FALSE);
+		m_data.m_hide_unit = false;
+		m_hide_unit_chk.EnableWindow(FALSE);
+	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -194,4 +217,45 @@ void CMainWndSettingsDlg::OnBnClickedFullscreenHideCheck()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.hide_main_wnd_when_fullscreen = (((CButton*)GetDlgItem(IDC_FULLSCREEN_HIDE_CHECK))->GetCheck() != 0);
+}
+
+
+void CMainWndSettingsDlg::OnBnClickedSpeedShortModeCheck2()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_data.speed_short_mode = (((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK2))->GetCheck() != 0);
+}
+
+
+void CMainWndSettingsDlg::OnCbnSelchangeUnitCombo()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_data.m_speed_unit = static_cast<SpeedUnit>(m_unit_combo.GetCurSel());
+	if (m_data.m_speed_unit == SpeedUnit::AUTO)
+	{
+		m_hide_unit_chk.SetCheck(FALSE);
+		m_data.m_hide_unit = false;
+		m_hide_unit_chk.EnableWindow(FALSE);
+	}
+	else
+	{
+		m_hide_unit_chk.EnableWindow(TRUE);
+	}
+}
+
+
+void CMainWndSettingsDlg::OnBnClickedHideUnitCheck()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_data.m_hide_unit = (m_hide_unit_chk.GetCheck() != 0);
+}
+
+
+BOOL CMainWndSettingsDlg::PreTranslateMessage(MSG* pMsg)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	if (pMsg->message == WM_MOUSEMOVE)
+		m_toolTip.RelayEvent(pMsg);
+
+	return CDialogEx::PreTranslateMessage(pMsg);
 }

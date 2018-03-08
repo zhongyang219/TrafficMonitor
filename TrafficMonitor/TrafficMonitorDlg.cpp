@@ -209,21 +209,26 @@ END_MESSAGE_MAP()
 void CTrafficMonitorDlg::ShowInfo()
 {
 	CString str;
-	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed);
-	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed);
+	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit);
+	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit);
 
+	CString format_str;
+	if (theApp.m_main_wnd_data.m_hide_unit && theApp.m_main_wnd_data.m_speed_unit != SpeedUnit::AUTO)
+		format_str = _T("%s%s");
+	else
+		format_str = _T("%s%s/s");
 	if (!theApp.m_main_wnd_data.swap_up_down)
 	{
-		str.Format(_T("%s%s/s"), theApp.m_main_wnd_data.up_string.c_str(), out_speed.GetString());
+		str.Format(format_str, theApp.m_main_wnd_data.up_string.c_str(), out_speed.GetString());
 		m_disp_up.SetWindowTextEx(str);
-		str.Format(_T("%s%s/s"), theApp.m_main_wnd_data.down_string.c_str(), in_speed.GetString());
+		str.Format(format_str, theApp.m_main_wnd_data.down_string.c_str(), in_speed.GetString());
 		m_disp_down.SetWindowTextEx(str);
 	}
 	else		//交换上传和下载位置
 	{
-		str.Format(_T("%s%s/s"), theApp.m_main_wnd_data.down_string.c_str(), in_speed.GetString());
+		str.Format(format_str, theApp.m_main_wnd_data.down_string.c_str(), in_speed.GetString());
 		m_disp_up.SetWindowTextEx(str);
-		str.Format(_T("%s%s/s"), theApp.m_main_wnd_data.up_string.c_str(), out_speed.GetString());
+		str.Format(format_str, theApp.m_main_wnd_data.up_string.c_str(), out_speed.GetString());
 		m_disp_down.SetWindowTextEx(str);
 	}
 	if (m_show_cpu_memory)
@@ -359,6 +364,10 @@ void CTrafficMonitorDlg::LoadConfig()
 	theApp.m_main_wnd_data.memory_string = buff;
 	if (!theApp.m_main_wnd_data.memory_string.empty() && theApp.m_main_wnd_data.memory_string.back() == L'$')
 		theApp.m_main_wnd_data.memory_string.pop_back();
+
+	theApp.m_main_wnd_data.speed_short_mode = (GetPrivateProfileInt(_T("config"), _T("speed_short_mode"), 0, theApp.m_config_path.c_str()) != 0);
+	theApp.m_main_wnd_data.m_speed_unit = static_cast<SpeedUnit>(GetPrivateProfileInt(_T("config"), _T("speed_unit"), 0, theApp.m_config_path.c_str()));
+	theApp.m_main_wnd_data.m_hide_unit = (GetPrivateProfileInt(_T("config"), _T("hide_unit"), 0, theApp.m_config_path.c_str()) != 0);
 }
 
 void CTrafficMonitorDlg::SaveConfig()
@@ -399,6 +408,10 @@ void CTrafficMonitorDlg::SaveConfig()
 	WritePrivateProfileString(_T("config"), _T("down_string"), (theApp.m_main_wnd_data.down_string + L'$').c_str(), theApp.m_config_path.c_str());
 	WritePrivateProfileString(_T("config"), _T("cpu_string"), (theApp.m_main_wnd_data.cpu_string + L'$').c_str(), theApp.m_config_path.c_str());
 	WritePrivateProfileString(_T("config"), _T("memory_string"), (theApp.m_main_wnd_data.memory_string + L'$').c_str(), theApp.m_config_path.c_str());
+
+	CCommon::WritePrivateProfileIntW(L"config", L"speed_short_mode", theApp.m_main_wnd_data.speed_short_mode, theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"config", L"speed_unit", static_cast<int>(theApp.m_main_wnd_data.m_speed_unit), theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"config", L"hide_unit", theApp.m_main_wnd_data.m_hide_unit, theApp.m_config_path.c_str());
 }
 
 void CTrafficMonitorDlg::AutoSelect()

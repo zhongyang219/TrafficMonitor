@@ -26,8 +26,11 @@ struct MainWndSettingData
 	wstring down_string;		//默认为“下载: ”
 	wstring cpu_string;		//默认为“CPU: ”
 	wstring memory_string;		//默认为“内存: ”
+	bool speed_short_mode{ false };		//网速显示简洁模式（减少小数点的位数，单位不显示“B”）
 	bool swap_up_down{ false };		//交换上传和下载显示的位置
 	bool hide_main_wnd_when_fullscreen;		//有程序全屏运行时隐藏悬浮窗
+	SpeedUnit m_speed_unit;		//网速的单位
+	bool m_hide_unit;			//隐藏单位
 };
 
 struct TaskBarSettingData
