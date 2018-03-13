@@ -55,6 +55,9 @@
     <Filter Include="源文件和头文件\公共的类">
       <UniqueIdentifier>{5db79e4d-ccae-4347-8e35-bea54fc5a0a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\对话框类\IconSelectDlg">
+      <UniqueIdentifier>{eedf8a29-f4cb-4c66-a019-593c9dfd81ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -111,6 +114,9 @@
     <ClInclude Include="SkinDlg.h">
       <Filter>源文件和头文件\对话框类\SkinDlg</Filter>
     </ClInclude>
+    <ClInclude Include="IconSelectDlg.h">
+      <Filter>源文件和头文件\对话框类\IconSelectDlg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -158,6 +164,9 @@
     <ClCompile Include="SkinDlg.cpp">
       <Filter>源文件和头文件\对话框类\SkinDlg</Filter>
     </ClCompile>
+    <ClCompile Include="IconSelectDlg.cpp">
+      <Filter>源文件和头文件\对话框类\IconSelectDlg</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TrafficMonitor.rc">
@@ -183,6 +192,15 @@
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="res\about_background_hd.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\notifyicon2.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\notifyicon3.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\notify_preview.bmp">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

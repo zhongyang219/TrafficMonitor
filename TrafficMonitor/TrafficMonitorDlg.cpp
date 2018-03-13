@@ -203,6 +203,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialogEx)
 	ON_COMMAND(ID_OPTIONS, &CTrafficMonitorDlg::OnOptions)
 	ON_COMMAND(ID_OPTIONS2, &CTrafficMonitorDlg::OnOptions2)
 	ON_MESSAGE(WM_EXITMENULOOP, &CTrafficMonitorDlg::OnExitmenuloop)
+	ON_COMMAND(ID_CHANGE_NOTIFY_ICON, &CTrafficMonitorDlg::OnChangeNotifyIcon)
 END_MESSAGE_MAP()
 
 
@@ -342,6 +343,7 @@ void CTrafficMonitorDlg::LoadConfig()
 	m_skin_name = wbuff;
 	if (m_skin_name.substr(0, 8) == L".\\skins\\")		//如果读取到的皮肤名称前面有".\\skins\\"，则把它删除。（用于和前一个版本保持兼容性）
 		m_skin_name = m_skin_name.substr(7);
+	m_notify_icon_selected = GetPrivateProfileInt(_T("config"), _T("notify_icon_selected"), 0, theApp.m_config_path.c_str());
 	theApp.m_main_wnd_data.swap_up_down = (GetPrivateProfileInt(_T("config"), _T("swap_up_down"), 0, theApp.m_config_path.c_str()) != 0);
 	theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen = (GetPrivateProfileInt(_T("config"), _T("hide_main_wnd_when_fullscreen"), 1, theApp.m_config_path.c_str()) != 0);
 
@@ -398,6 +400,7 @@ void CTrafficMonitorDlg::SaveConfig()
 	m_connection_name = m_connections[m_connection_selected].description;
 	WritePrivateProfileStringW(L"connection", L"connection_name", CCommon::StrToUnicode(m_connection_name.c_str()).c_str(), theApp.m_config_path.c_str());
 	WritePrivateProfileString(_T("config"), _T("skin_selected"), m_skin_name.c_str(), theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"config", L"notify_icon_selected", m_notify_icon_selected, theApp.m_config_path.c_str());
 	WritePrivateProfileString(_T("config"), _T("font_name"), theApp.m_main_wnd_data.font_name, theApp.m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(L"config", L"font_size", theApp.m_main_wnd_data.font_size, theApp.m_config_path.c_str());
 
@@ -694,9 +697,17 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	if ((m_mouse_penetrate || theApp.m_hide_main_window) && !m_show_task_bar_wnd)
 		theApp.m_show_notify_icon = true;
 
+	//载入通知区图标
+	theApp.m_notify_icons[0] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_NOFITY_ICON), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
+	theApp.m_notify_icons[1] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_NOFITY_ICON2), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
+	theApp.m_notify_icons[2] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_NOFITY_ICON3), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
+	theApp.m_notify_icons[3] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR_MAINFRAME), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
+
 	//设置通知区域图标
 	m_ntIcon.cbSize = sizeof(NOTIFYICONDATA);	//该结构体变量的大小
-	m_ntIcon.hIcon = AfxGetApp()->LoadIcon(IDI_NOFITY_ICON); //图标，通过资源ID得到
+	if (m_notify_icon_selected < 0 || m_notify_icon_selected >= MAX_NOTIFY_ICON)
+		m_notify_icon_selected = 0;
+	m_ntIcon.hIcon = theApp.m_notify_icons[m_notify_icon_selected];		//设置图标
 	m_ntIcon.hWnd = this->m_hWnd;				//接收托盘图标通知消息的窗口句柄
 #ifdef _DEBUG
 	TCHAR atip[128] = _T("流量监控器 (Debug)");			//鼠标指向图标时显示的提示
@@ -1729,4 +1740,22 @@ afx_msg LRESULT CTrafficMonitorDlg::OnExitmenuloop(WPARAM wParam, LPARAM lParam)
 {
 	m_menu_popuped = false;
 	return 0;
+}
+
+
+void CTrafficMonitorDlg::OnChangeNotifyIcon()
+{
+	// TODO: 在此添加命令处理程序代码
+	CIconSelectDlg dlg(m_notify_icon_selected);
+	if (dlg.DoModal() == IDOK)
+	{
+		m_notify_icon_selected = dlg.GetIconSelected();
+		m_ntIcon.hIcon = theApp.m_notify_icons[m_notify_icon_selected];
+		if (theApp.m_show_notify_icon)
+		{
+			DeleteNotifyIcon();
+			AddNotifyIcon();
+		}
+		SaveConfig();
+	}
 }

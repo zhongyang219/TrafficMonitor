@@ -88,6 +88,8 @@ public:
 
 	bool m_is_windows10_fall_creator;
 
+	HICON m_notify_icons[MAX_NOTIFY_ICON];
+
 	CTrafficMonitorApp();
 
 	//bool WhenStart() const { return CCommon::WhenStart(m_no_multistart_warning_time); }

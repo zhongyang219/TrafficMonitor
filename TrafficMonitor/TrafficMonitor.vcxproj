@@ -189,6 +189,7 @@
     <ClInclude Include="DonateDlg.h" />
     <ClInclude Include="GeneralSettingsDlg.h" />
     <ClInclude Include="HistoryTrafficDlg.h" />
+    <ClInclude Include="IconSelectDlg.h" />
     <ClInclude Include="ListCtrlEx.h" />
     <ClInclude Include="MainWndSettingsDlg.h" />
     <ClInclude Include="NetworkInfoDlg.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="DonateDlg.cpp" />
     <ClCompile Include="GeneralSettingsDlg.cpp" />
     <ClCompile Include="HistoryTrafficDlg.cpp" />
+    <ClCompile Include="IconSelectDlg.cpp" />
     <ClCompile Include="ListCtrlEx.cpp" />
     <ClCompile Include="MainWndSettingsDlg.cpp" />
     <ClCompile Include="NetworkInfoDlg.cpp" />
@@ -236,6 +238,9 @@
     <Image Include="res\about_background_hd.bmp" />
     <Image Include="res\donate.bmp" />
     <Image Include="res\notifyicon.ico" />
+    <Image Include="res\notifyicon2.ico" />
+    <Image Include="res\notifyicon3.ico" />
+    <Image Include="res\notify_preview.bmp" />
     <Image Include="res\TrafficMonitor.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

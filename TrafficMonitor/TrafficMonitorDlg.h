@@ -13,6 +13,7 @@
 #include "HistoryTrafficDlg.h"
 #include "DonateDlg.h"
 #include "OptionsDlg.h"
+#include "IconSelectDlg.h"
 
 // CTrafficMonitorDlg 对话框
 class CTrafficMonitorDlg : public CDialogEx
@@ -111,6 +112,8 @@ protected:
 	int m_skin_selected{};		//选择的皮肤序号
 	wstring m_skin_name;		//选择的皮肤的名称
 
+	int m_notify_icon_selected{};	//要显示的通知区图标
+
 	SYSTEMTIME m_start_time;	//程序启动时的时间
 
 	deque<HistoryTraffic> m_history_traffics;	//储存历史流量
@@ -207,4 +210,6 @@ public:
 	afx_msg void OnOptions2();
 protected:
 	afx_msg LRESULT OnExitmenuloop(WPARAM wParam, LPARAM lParam);
+public:
+	afx_msg void OnChangeNotifyIcon();
 };
