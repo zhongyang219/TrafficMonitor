@@ -194,6 +194,7 @@
     <ClInclude Include="MainWndSettingsDlg.h" />
     <ClInclude Include="NetworkInfoDlg.h" />
     <ClInclude Include="OptionsDlg.h" />
+    <ClInclude Include="PictureStatic.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SkinDlg.h" />
     <ClInclude Include="StaticEx.h" />
@@ -214,6 +215,7 @@
     <ClCompile Include="MainWndSettingsDlg.cpp" />
     <ClCompile Include="NetworkInfoDlg.cpp" />
     <ClCompile Include="OptionsDlg.cpp" />
+    <ClCompile Include="PictureStatic.cpp" />
     <ClCompile Include="SkinDlg.cpp" />
     <ClCompile Include="StaticEx.cpp" />
     <ClCompile Include="stdafx.cpp">

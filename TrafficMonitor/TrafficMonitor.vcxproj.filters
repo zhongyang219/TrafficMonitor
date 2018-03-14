@@ -58,6 +58,9 @@
     <Filter Include="源文件和头文件\对话框类\IconSelectDlg">
       <UniqueIdentifier>{eedf8a29-f4cb-4c66-a019-593c9dfd81ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\派生的控件类\PictureStatic">
+      <UniqueIdentifier>{adb67f17-86da-401c-981c-c6f49a1f52ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -117,6 +120,9 @@
     <ClInclude Include="IconSelectDlg.h">
       <Filter>源文件和头文件\对话框类\IconSelectDlg</Filter>
     </ClInclude>
+    <ClInclude Include="PictureStatic.h">
+      <Filter>源文件和头文件\派生的控件类\PictureStatic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -166,6 +172,9 @@
     </ClCompile>
     <ClCompile Include="IconSelectDlg.cpp">
       <Filter>源文件和头文件\对话框类\IconSelectDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="PictureStatic.cpp">
+      <Filter>源文件和头文件\派生的控件类\PictureStatic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

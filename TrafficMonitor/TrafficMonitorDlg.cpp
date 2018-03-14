@@ -21,7 +21,7 @@ public:
 	// 对话框数据
 
 protected:
-	CStatic m_about_img;		//关于对话框中的图片
+	CPictureStatic m_about_img;		//关于对话框中的图片
 	CStaticEx m_mail{ true };	//“联系作者”超链接
 	CStaticEx m_check_update{ true };	//“检查更新”超链接
 	CStaticEx m_github{ true };		//“GitHub”超链接
@@ -67,11 +67,13 @@ BOOL CAboutDlg::OnInitDialog()
 	CRect rect;
 	GetClientRect(rect);
 	rect.bottom = rect.Height() * 2 / 5;	//图片高度占对话框高度的2/5
-	if (theApp.DPI(100) >= 125)
-		m_about_img.SetBitmap(LoadBitmap(theApp.m_hInstance, MAKEINTRESOURCE(IDB_ABOUT_BACKGROUND_HD)));
-	else
-		m_about_img.SetBitmap(LoadBitmap(theApp.m_hInstance, MAKEINTRESOURCE(IDB_ABOUT_BACKGROUND)));
 	m_about_img.MoveWindow(rect);
+	if (theApp.DPI(100) >= 125)
+		//m_about_img.SetBitmap(LoadBitmap(theApp.m_hInstance, MAKEINTRESOURCE(IDB_ABOUT_BACKGROUND_HD)));
+		m_about_img.SetPicture(IDB_ABOUT_BACKGROUND_HD);
+	else
+		//m_about_img.SetBitmap(LoadBitmap(theApp.m_hInstance, MAKEINTRESOURCE(IDB_ABOUT_BACKGROUND)));
+		m_about_img.SetPicture(IDB_ABOUT_BACKGROUND);
 	m_mail.SetURL(_T("mailto:zhongyang219@hotmail.com"));	//设置超链接
 	//m_check_update.SetURL(_T("http://pan.baidu.com/s/1c1LkPQ4"));
 	m_github.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor"));

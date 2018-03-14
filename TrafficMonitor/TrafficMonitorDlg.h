@@ -13,6 +13,7 @@
 #include "HistoryTrafficDlg.h"
 #include "DonateDlg.h"
 #include "OptionsDlg.h"
+#include "PictureStatic.h"
 #include "IconSelectDlg.h"
 
 // CTrafficMonitorDlg ¶Ô»°¿ò

@@ -61,6 +61,7 @@ BOOL CIconSelectDlg::OnInitDialog()
 
 	//设置预览图大小
 	m_preview_pic.SetWindowPos(nullptr, 0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT, SWP_NOZORDER | SWP_NOMOVE);
+	m_preview_pic.SetPicture(IDB_NOTIFY_ICON_PREVIEW);
 
 	//初始化下拉列表
 	m_icon_select_combo.AddString(_T("默认图标"));

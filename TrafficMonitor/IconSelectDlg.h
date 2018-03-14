@@ -1,6 +1,6 @@
 #pragma once
 #include "afxwin.h"
-
+#include "PictureStatic.h"
 
 // CIconSelectDlg 对话框
 
@@ -22,11 +22,12 @@ public:
 #define PREVIEW_WIDTH theApp.DPI(200)		//预览图的宽高
 #define PREVIEW_HEIGHT theApp.DPI(40)
 
-#define ICON_X theApp.DPI(47)		//预览图中图标的位置
+#define ICON_X theApp.DPI(46)		//预览图中图标的位置
 #define ICON_Y theApp.DPI(12)
 
 protected:
-	CStatic m_preview_pic;
+	CPictureStatic m_preview_pic;
+	CComboBox m_icon_select_combo;
 
 	int m_icon_selected{};
 
@@ -40,5 +41,4 @@ public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnCbnSelchangeCombo1();
-	CComboBox m_icon_select_combo;
 };
