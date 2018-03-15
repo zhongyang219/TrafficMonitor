@@ -293,34 +293,36 @@ void CTrafficMonitorDlg::CheckWindowPos()
 {
 	CRect rect;
 	GetWindowRect(rect);
-	if (m_screen_width <= rect.Width() || m_screen_height <= rect.Height())
+	if (m_screen_rect.Width() <= rect.Width() || m_screen_rect.Height() <= rect.Height())
 		return;
-	if (rect.left < 0)
+	if (rect.left < m_screen_rect.left)
 	{
-		rect.MoveToX(0);
+		rect.MoveToX(m_screen_rect.left);
 		MoveWindow(rect);
 	}
-	if (rect.top < 0)
+	if (rect.top < m_screen_rect.top)
 	{
-		rect.MoveToY(0);
+		rect.MoveToY(m_screen_rect.top);
 		MoveWindow(rect);
 	}
-	if (rect.right > m_screen_width)
+	if (rect.right > m_screen_rect.right)
 	{
-		rect.MoveToX(m_screen_width - rect.Width());
+		rect.MoveToX(m_screen_rect.right - rect.Width());
 		MoveWindow(rect);
 	}
-	if (rect.bottom > m_screen_height)
+	if (rect.bottom > m_screen_rect.bottom)
 	{
-		rect.MoveToY(m_screen_height - rect.Height());
+		rect.MoveToY(m_screen_rect.bottom - rect.Height());
 		MoveWindow(rect);
 	}
 }
 
-void CTrafficMonitorDlg::GetScreenSize(int compensition_value)
+void CTrafficMonitorDlg::GetScreenSize()
 {
-	m_screen_width = GetSystemMetrics(SM_CXFULLSCREEN);
-	m_screen_height = GetSystemMetrics(SM_CYFULLSCREEN) + compensition_value;
+	//m_screen_width = GetSystemMetrics(SM_CXFULLSCREEN);
+	//m_screen_height = GetSystemMetrics(SM_CYFULLSCREEN) + compensition_value;
+
+	::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0);   // 获得工作区大小
 }
 
 void CTrafficMonitorDlg::LoadConfig()
@@ -685,9 +687,9 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 
 	theApp.GetDPI(this);
 	//获取屏幕大小
-	if (theApp.m_is_windows10_fall_creator)
-		GetScreenSize(theApp.DPI(23));
-	else
+	//if (theApp.m_is_windows10_fall_creator)
+	//	GetScreenSize(theApp.DPI(23));
+	//else
 		GetScreenSize();
 
 	//设置窗口透明度
@@ -889,6 +891,12 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
 		if (m_timer_cnt % 15 == 14)		//每隔15秒钟保存一次设置
 			SaveConfig();
+
+		if (m_timer_cnt % 2 == 1)		//每隔2秒钟获取一次屏幕区域
+		{
+			GetScreenSize();
+			CheckWindowPos();
+		}
 
 		//获取网络连接速度
 		int rtn = GetIfTable(m_pIfTable, &m_dwSize, FALSE);

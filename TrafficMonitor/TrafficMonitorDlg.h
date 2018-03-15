@@ -83,8 +83,9 @@ protected:
 	int m_position_x;	//窗口位置的x坐标
 	int m_position_y;	//窗口位置的y坐标
 
-	int m_screen_width;		//屏幕宽度
-	int m_screen_height;	//屏幕高度
+	//int m_screen_width;		//屏幕宽度
+	//int m_screen_height;	//屏幕高度
+	CRect m_screen_rect;		//屏幕的范围（不包含任务栏）
 
 	int m_window_height;	//窗口高度
 	int m_window_height_s;	//不显示CPU和内存利用率时的窗口高度
@@ -133,7 +134,7 @@ protected:
 	void SetAlwaysOnTop();			//根据m_always_on_top的值设置窗口置顶
 	void SetMousePenetrate();		//根据m_mouse_penetrate的值设置是否鼠标穿透
 	void CheckWindowPos();			//测试窗口的位置，如窗口的位置在屏幕外，则移动窗口使其全部都在屏幕内，并返回新位置
-	void GetScreenSize(int compensition_value = 23);			//获取屏幕的宽度和高度
+	void GetScreenSize();			//获取屏幕的大小
 
 	void LoadConfig();	//载入设置
 	void SaveConfig();	//保存设置

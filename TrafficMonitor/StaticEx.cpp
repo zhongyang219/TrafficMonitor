@@ -18,17 +18,9 @@ CStaticEx::~CStaticEx()
 
 void CStaticEx::SetWindowTextEx(LPCTSTR lpszString)
 {
-	CDC* pDC = GetDC();
-	pDC->SetTextColor(m_TextColor);
-	pDC->SetBkMode(TRANSPARENT);
-	pDC->SelectObject(this->GetFont());
-	//int nTextLeft = 0, nTextTop = 0; //文字输出的位置
-	CRect rect;
-	this->GetClientRect(&rect);
-	DrawThemeParentBackground(m_hWnd, pDC->GetSafeHdc(), &rect);	//重绘控件区域以解决文字重叠的问题
-	pDC->DrawText(lpszString, rect, DT_VCENTER | DT_SINGLELINE);
-	ReleaseDC(pDC);
 	m_text = lpszString;
+	m_color_text = true;
+	Invalidate();
 }
 
 void CStaticEx::SetTextColor(COLORREF textColor)
@@ -172,6 +164,17 @@ void CStaticEx::OnPaint()
 		CRect rect;
 		GetClientRect(rect);
 		dc.FillSolidRect(rect, m_fill_color);
+	}
+
+	else if (m_color_text)
+	{
+		dc.SetTextColor(m_TextColor);
+		dc.SetBkMode(TRANSPARENT);
+		dc.SelectObject(this->GetFont());
+		CRect rect;
+		this->GetClientRect(&rect);
+		DrawThemeParentBackground(m_hWnd, dc.GetSafeHdc(), &rect);	//重绘控件区域以解决文字重叠的问题
+		dc.DrawText(m_text, rect, DT_VCENTER | DT_SINGLELINE);
 	}
 }
 
