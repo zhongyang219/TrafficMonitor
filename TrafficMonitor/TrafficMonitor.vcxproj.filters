@@ -123,6 +123,9 @@
     <ClInclude Include="PictureStatic.h">
       <Filter>源文件和头文件\派生的控件类\PictureStatic</Filter>
     </ClInclude>
+    <ClInclude Include="CommonData.h">
+      <Filter>源文件和头文件\头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">

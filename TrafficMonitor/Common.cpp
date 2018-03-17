@@ -41,8 +41,30 @@ bool CCommon::WritePrivateProfileIntW(const wchar_t * AppName, const wchar_t * K
 {
 	wchar_t buff[11];
 	_itow_s(value, buff, 10);
-	return (WritePrivateProfileStringW(AppName, KeyName, buff, Path) != FALSE);
+	return (::WritePrivateProfileStringW(AppName, KeyName, buff, Path) != FALSE);
 }
+
+bool CCommon::WriteIniStringW(const wchar_t* AppName, const wchar_t* KeyName, wstring str, const wchar_t* path)
+{
+	//由于读取ini文件字符串时会删除前后的空格，所以写入字符串之前先在前后添加一个指定字符，读取时再删除
+	str = NONE_CH + str + NONE_CH;
+	return ::WritePrivateProfileStringW(AppName, KeyName, str.c_str(), path);
+}
+
+wstring CCommon::GetIniStringW(const wchar_t* AppName, const wchar_t* KeyName, const wchar_t* default_str, const wchar_t* path)
+{
+	wstring rtn;
+	wchar_t buff[256];
+	::GetPrivateProfileStringW(AppName, KeyName, default_str, buff, 256, path);
+	rtn = buff;
+	//如果读取的字符串前后有指定的字符，则删除它
+	if (!rtn.empty() && rtn.front() == NONE_CH)
+		rtn = rtn.substr(1);
+	if (!rtn.empty() && rtn.back() == NONE_CH)
+		rtn.pop_back();
+	return rtn;
+}
+
 
 CString CCommon::DataSizeToString(unsigned int size, bool short_mode, SpeedUnit unit, bool hide_unit)
 {
@@ -508,6 +530,7 @@ bool CCommon::GetURL(const wstring & url, wstring & result)
 		}
 		session.Close();
 		sucessed = false;
+		e->Delete();		//没有这句会造成内存泄露
 	}
 	return sucessed;
 }

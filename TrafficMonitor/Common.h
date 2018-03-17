@@ -1,41 +1,5 @@
 #pragma once
-
-//储存某一天的历史流量
-struct HistoryTraffic
-{
-	int year;
-	int month;
-	int day;
-	unsigned int kBytes;	//当天使用的流量（以KB为单位）
-
-	//比较两个HistoryTraffic对象的日期，如果a的时间大于b，则返回true
-	static bool DateGreater(const HistoryTraffic& a, const HistoryTraffic& b)
-	{
-		if (a.year != b.year)
-			return a.year > b.year;
-		else if (a.month != b.month)
-			return a.month > b.month;
-		else if (a.day != b.day)
-			return a.day > b.day;
-		else
-			return false;
-	}
-
-	//判断两个HistoryTraffic对象的日期是否相等
-	static bool DateEqual(const HistoryTraffic& a, const HistoryTraffic& b)
-	{
-		return a.year == b.year && a.month == b.month && a.day == b.day;
-	}
-};
-
-//网速单位
-enum class SpeedUnit
-{
-	AUTO,		//自动
-	KBPS,		//KB/s
-	MBPS		//MB/s
-};
-
+#include "CommonData.h"
 
 class CCommon
 {
@@ -49,6 +13,10 @@ public:
 
 	//将一个int类型数据写入ini文件，如果成功则返回true
 	static bool WritePrivateProfileIntW(const wchar_t * AppName, const wchar_t * KeyName, int value, const wchar_t * Path);
+	//将一个wstring类型数据写入ini文件，如果成功则返回true
+	static bool WriteIniStringW(const wchar_t* AppName, const wchar_t* KeyName, wstring str, const wchar_t* path);
+	//从int文件读取一个wstring类型数据
+	static wstring GetIniStringW(const wchar_t* AppName, const wchar_t* KeyName, const wchar_t* default_str, const wchar_t* path);
 
 	/*根据数据的大小转换成以KB、MB、GB为单位的字符串
 	size：数据的大小，单位为字节

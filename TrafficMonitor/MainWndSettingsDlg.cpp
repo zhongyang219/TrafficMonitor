@@ -68,10 +68,10 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 	swprintf_s(buff, L"%d", m_data.font_size);
 	SetDlgItemText(IDC_FONT_SIZE_EDIT, buff);
 
-	SetDlgItemText(IDC_UPLOAD_EDIT, m_data.up_string.c_str());
-	SetDlgItemText(IDC_DOWNLOAD_EDIT, m_data.down_string.c_str());
-	SetDlgItemText(IDC_CPU_EDIT, m_data.cpu_string.c_str());
-	SetDlgItemText(IDC_MEMORY_EDIT, m_data.memory_string.c_str());
+	SetDlgItemText(IDC_UPLOAD_EDIT, m_data.disp_str.up.c_str());
+	SetDlgItemText(IDC_DOWNLOAD_EDIT, m_data.disp_str.down.c_str());
+	SetDlgItemText(IDC_CPU_EDIT, m_data.disp_str.cpu.c_str());
+	SetDlgItemText(IDC_MEMORY_EDIT, m_data.disp_str.memory.c_str());
 
 	((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK))->SetCheck(m_data.swap_up_down);
 	((CButton*)GetDlgItem(IDC_FULLSCREEN_HIDE_CHECK))->SetCheck(m_data.hide_main_wnd_when_fullscreen);
@@ -112,7 +112,7 @@ void CMainWndSettingsDlg::OnEnChangeUploadEdit()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_UPLOAD_EDIT, tmp);
-	m_data.up_string = tmp;
+	m_data.disp_str.up = tmp;
 }
 
 
@@ -126,7 +126,7 @@ void CMainWndSettingsDlg::OnEnChangeDownloadEdit()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_DOWNLOAD_EDIT, tmp);
-	m_data.down_string = tmp;
+	m_data.disp_str.down = tmp;
 }
 
 
@@ -140,7 +140,7 @@ void CMainWndSettingsDlg::OnEnChangeCpuEdit()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_CPU_EDIT, tmp);
-	m_data.cpu_string = tmp;
+	m_data.disp_str.cpu = tmp;
 }
 
 
@@ -154,7 +154,7 @@ void CMainWndSettingsDlg::OnEnChangeMemoryEdit()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_MEMORY_EDIT, tmp);
-	m_data.memory_string = tmp;
+	m_data.disp_str.memory = tmp;
 }
 
 
@@ -173,14 +173,14 @@ void CMainWndSettingsDlg::OnBnClickedSetColorButton1()
 void CMainWndSettingsDlg::OnBnClickedSetDefaultButton()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	m_data.up_string = L"上传: ";
-	m_data.down_string = L"下载: ";
-	m_data.cpu_string = L"CPU: ";
-	m_data.memory_string = L"内存: ";
-	SetDlgItemText(IDC_UPLOAD_EDIT, m_data.up_string.c_str());
-	SetDlgItemText(IDC_DOWNLOAD_EDIT, m_data.down_string.c_str());
-	SetDlgItemText(IDC_CPU_EDIT, m_data.cpu_string.c_str());
-	SetDlgItemText(IDC_MEMORY_EDIT, m_data.memory_string.c_str());
+	m_data.disp_str.up = L"上传: ";
+	m_data.disp_str.down = L"下载: ";
+	m_data.disp_str.cpu = L"CPU: ";
+	m_data.disp_str.memory = L"内存: ";
+	SetDlgItemText(IDC_UPLOAD_EDIT, m_data.disp_str.up.c_str());
+	SetDlgItemText(IDC_DOWNLOAD_EDIT, m_data.disp_str.down.c_str());
+	SetDlgItemText(IDC_CPU_EDIT, m_data.disp_str.cpu.c_str());
+	SetDlgItemText(IDC_MEMORY_EDIT, m_data.disp_str.memory.c_str());
 }
 
 

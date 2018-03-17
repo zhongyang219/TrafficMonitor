@@ -15,48 +15,6 @@
 // 有关此类的实现，请参阅 TrafficMonitor.cpp
 //
 
-//选项设置数据
-struct MainWndSettingData
-{
-	//主窗口
-	COLORREF text_color{};		//文字颜色
-	CString font_name;	//字体名称
-	int font_size;		//字体大小
-	wstring up_string;		//默认为“上传: ”
-	wstring down_string;		//默认为“下载: ”
-	wstring cpu_string;		//默认为“CPU: ”
-	wstring memory_string;		//默认为“内存: ”
-	bool speed_short_mode{ false };		//网速显示简洁模式（减少小数点的位数，单位不显示“B”）
-	bool swap_up_down{ false };		//交换上传和下载显示的位置
-	bool hide_main_wnd_when_fullscreen;		//有程序全屏运行时隐藏悬浮窗
-	SpeedUnit m_speed_unit;		//网速的单位
-	bool m_hide_unit;			//隐藏单位
-};
-
-struct TaskBarSettingData
-{
-	//任务栏窗口
-	COLORREF  back_color{ RGB(0,0,0) };	//背景颜色
-	COLORREF  text_color{ RGB(255,255,255) };	//文字颜色
-	CString  font_name;	//字体名称
-	int  font_size;		//字体大小
-	wstring  up_string;		//默认为“↑:”
-	wstring  down_string;		//默认为“↓:”
-	wstring  cpu_string;		//默认为“CPU:”
-	wstring  memory_string;		//默认为“内存:”
-	bool swap_up_down{ false };		//交换上传和下载显示的位置
-	bool speed_short_mode{ false };		//网速显示简洁模式（减少小数点的位数，单位不显示“B”）
-	bool tbar_wnd_on_left{ false };		//如果为true，则任务栏窗口显示在任务栏的左侧（或上方）
-	SpeedUnit m_speed_unit;		//网速的单位
-	bool m_hide_unit;			//隐藏单位
-};
-
-struct GeneralSettingData
-{
-	//常规设置
-	bool check_update_when_start{ true };
-	bool auto_run{ false };
-};
 
 class CTrafficMonitorApp : public CWinApp
 {

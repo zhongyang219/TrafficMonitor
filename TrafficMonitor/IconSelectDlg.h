@@ -34,11 +34,13 @@ protected:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
 
-	void DrawPreviewIcon();
+	void DrawPreviewIcon(CDC* pDC);
 
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnInitDialog();
-	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	//afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnCbnSelchangeCombo1();
+protected:
+	afx_msg LRESULT OnControlRepaint(WPARAM wParam, LPARAM lParam);
 };

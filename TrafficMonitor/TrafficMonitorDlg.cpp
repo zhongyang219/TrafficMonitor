@@ -222,23 +222,23 @@ void CTrafficMonitorDlg::ShowInfo()
 		format_str = _T("%s%s/s");
 	if (!theApp.m_main_wnd_data.swap_up_down)
 	{
-		str.Format(format_str, theApp.m_main_wnd_data.up_string.c_str(), out_speed.GetString());
+		str.Format(format_str, theApp.m_main_wnd_data.disp_str.up.c_str(), out_speed.GetString());
 		m_disp_up.SetWindowTextEx(str);
-		str.Format(format_str, theApp.m_main_wnd_data.down_string.c_str(), in_speed.GetString());
+		str.Format(format_str, theApp.m_main_wnd_data.disp_str.down.c_str(), in_speed.GetString());
 		m_disp_down.SetWindowTextEx(str);
 	}
 	else		//交换上传和下载位置
 	{
-		str.Format(format_str, theApp.m_main_wnd_data.down_string.c_str(), in_speed.GetString());
+		str.Format(format_str, theApp.m_main_wnd_data.disp_str.down.c_str(), in_speed.GetString());
 		m_disp_up.SetWindowTextEx(str);
-		str.Format(format_str, theApp.m_main_wnd_data.up_string.c_str(), out_speed.GetString());
+		str.Format(format_str, theApp.m_main_wnd_data.disp_str.up.c_str(), out_speed.GetString());
 		m_disp_down.SetWindowTextEx(str);
 	}
 	if (m_show_cpu_memory)
 	{
-		str.Format(_T("%s%d%%"), theApp.m_main_wnd_data.cpu_string.c_str(), theApp.m_cpu_usage);
+		str.Format(_T("%s%d%%"), theApp.m_main_wnd_data.disp_str.cpu.c_str(), theApp.m_cpu_usage);
 		m_disp_cpu.SetWindowTextEx(str);
-		str.Format(_T("%s%d%%"), theApp.m_main_wnd_data.memory_string.c_str(), theApp.m_memory_usage);
+		str.Format(_T("%s%d%%"), theApp.m_main_wnd_data.disp_str.memory.c_str(), theApp.m_memory_usage);
 		m_disp_memory.SetWindowTextEx(str);
 	}
 	else
@@ -354,22 +354,10 @@ void CTrafficMonitorDlg::LoadConfig()
 	GetPrivateProfileString(_T("config"), _T("font_name"), _T("微软雅黑"), theApp.m_main_wnd_data.font_name.GetBuffer(32), 32, theApp.m_config_path.c_str());
 	theApp.m_main_wnd_data.font_size = GetPrivateProfileInt(_T("config"), _T("font_size"), 10, theApp.m_config_path.c_str());
 
-	GetPrivateProfileStringW(L"config", L"up_string", L"上传: $", buff, 256, theApp.m_config_path.c_str());
-	theApp.m_main_wnd_data.up_string = buff;
-	if (!theApp.m_main_wnd_data.up_string.empty() && theApp.m_main_wnd_data.up_string.back() == L'$')		//如果读取的字符串末尾有'$'，则把它删除，用于解决读取ini文件保存的字符串时无法赢取末尾的空格的问题，此时只要在末尾加上'$'即可
-		theApp.m_main_wnd_data.up_string.pop_back();
-	GetPrivateProfileStringW(L"config", L"down_string", L"下载: $", buff, 256, theApp.m_config_path.c_str());
-	theApp.m_main_wnd_data.down_string = buff;
-	if (!theApp.m_main_wnd_data.down_string.empty() && theApp.m_main_wnd_data.down_string.back() == L'$')
-		theApp.m_main_wnd_data.down_string.pop_back();
-	GetPrivateProfileStringW(L"config", L"cpu_string", L"CPU: $", buff, 256, theApp.m_config_path.c_str());
-	theApp.m_main_wnd_data.cpu_string = buff;
-	if (!theApp.m_main_wnd_data.cpu_string.empty() && theApp.m_main_wnd_data.cpu_string.back() == L'$')
-		theApp.m_main_wnd_data.cpu_string.pop_back();
-	GetPrivateProfileStringW(L"config", L"memory_string", L"内存: $", buff, 256, theApp.m_config_path.c_str());
-	theApp.m_main_wnd_data.memory_string = buff;
-	if (!theApp.m_main_wnd_data.memory_string.empty() && theApp.m_main_wnd_data.memory_string.back() == L'$')
-		theApp.m_main_wnd_data.memory_string.pop_back();
+	theApp.m_main_wnd_data.disp_str.up = CCommon::GetIniStringW(L"config", L"up_string", L"上传: $", theApp.m_config_path.c_str());
+	theApp.m_main_wnd_data.disp_str.down = CCommon::GetIniStringW(L"config", L"down_string", L"下载: $", theApp.m_config_path.c_str());
+	theApp.m_main_wnd_data.disp_str.cpu = CCommon::GetIniStringW(L"config", L"cpu_string", L"CPU: $", theApp.m_config_path.c_str());
+	theApp.m_main_wnd_data.disp_str.memory = CCommon::GetIniStringW(L"config", L"memory_string", L"内存: $", theApp.m_config_path.c_str());
 
 	theApp.m_main_wnd_data.speed_short_mode = (GetPrivateProfileInt(_T("config"), _T("speed_short_mode"), 0, theApp.m_config_path.c_str()) != 0);
 	theApp.m_main_wnd_data.m_speed_unit = static_cast<SpeedUnit>(GetPrivateProfileInt(_T("config"), _T("speed_unit"), 0, theApp.m_config_path.c_str()));
@@ -411,10 +399,10 @@ void CTrafficMonitorDlg::SaveConfig()
 	CCommon::WritePrivateProfileIntW(L"config", L"swap_up_down", theApp.m_main_wnd_data.swap_up_down, theApp.m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(L"config", L"hide_main_wnd_when_fullscreen", theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen, theApp.m_config_path.c_str());
 
-	WritePrivateProfileString(_T("config"), _T("up_string"), (theApp.m_main_wnd_data.up_string + L'$').c_str(), theApp.m_config_path.c_str());
-	WritePrivateProfileString(_T("config"), _T("down_string"), (theApp.m_main_wnd_data.down_string + L'$').c_str(), theApp.m_config_path.c_str());
-	WritePrivateProfileString(_T("config"), _T("cpu_string"), (theApp.m_main_wnd_data.cpu_string + L'$').c_str(), theApp.m_config_path.c_str());
-	WritePrivateProfileString(_T("config"), _T("memory_string"), (theApp.m_main_wnd_data.memory_string + L'$').c_str(), theApp.m_config_path.c_str());
+	CCommon::WriteIniStringW(_T("config"), _T("up_string"), theApp.m_main_wnd_data.disp_str.up, theApp.m_config_path.c_str());
+	CCommon::WriteIniStringW(_T("config"), _T("down_string"), theApp.m_main_wnd_data.disp_str.down, theApp.m_config_path.c_str());
+	CCommon::WriteIniStringW(_T("config"), _T("cpu_string"), theApp.m_main_wnd_data.disp_str.cpu, theApp.m_config_path.c_str());
+	CCommon::WriteIniStringW(_T("config"), _T("memory_string"), theApp.m_main_wnd_data.disp_str.memory, theApp.m_config_path.c_str());
 
 	CCommon::WritePrivateProfileIntW(L"config", L"speed_short_mode", theApp.m_main_wnd_data.speed_short_mode, theApp.m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(L"config", L"speed_unit", static_cast<int>(theApp.m_main_wnd_data.m_speed_unit), theApp.m_config_path.c_str());
@@ -1701,6 +1689,7 @@ void CTrafficMonitorDlg::OnChangeSkin()
 		m_disp_up.SetTextColor(theApp.m_main_wnd_data.text_color);
 		m_disp_down.SetTextColor(theApp.m_main_wnd_data.text_color);
 
+		theApp.m_main_wnd_data.disp_str = skinDlg.GetDispStrings();
 		SaveConfig();
 	}
 }
