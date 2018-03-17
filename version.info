@@ -1,3 +1,3 @@
-<version>1.68</version>
-<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.68/TrafficMonitor_V1.68.7z</link>
-<contents>修正当程序启动时，如果设置了隐藏主窗口，主窗口还是会显示1秒钟再消失的问题；\n修正当窗口为左上角(0,0)时，下次启动时无法记住该位置的问题；\n修正有时在进入选项设置再点击“确定”时，会弹出“注册表项删除失败”提示框的问题；\n新增任务栏窗口网速显示简洁模式（选项——任务栏窗口设置——网速显示简洁模式）。</contents>
+<version>1.69</version>
+<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.69/TrafficMonitor_V1.69.7z</link>
+<contents>新增单位设置，允许隐藏单位；\n新增：单位设置、网速显示简洁模式可应用到主窗口；\n新增更换通知区图标的功能；\n一些细节方面的改进；\n增加两款皮肤。</contents>
