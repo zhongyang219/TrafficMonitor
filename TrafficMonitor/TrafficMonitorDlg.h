@@ -87,8 +87,9 @@ protected:
 	//int m_screen_height;	//屏幕高度
 	CRect m_screen_rect;		//屏幕的范围（不包含任务栏）
 
-	int m_window_height;	//窗口高度
-	int m_window_height_s;	//不显示CPU和内存利用率时的窗口高度
+	//int m_window_height;	//窗口高度
+	//int m_window_height_s;	//不显示CPU和内存利用率时的窗口高度
+	LayoutData m_layout_data;
 
 	HBITMAP m_back_img;		//背景图片
 
@@ -152,6 +153,9 @@ protected:
 	void LoadHistoryTraffic();
 
 	void _OnOptions(int tab);	//打开“选项”对话框的处理，参数为打开时切换的标签
+
+	void SetItemPosition();		//设置显示的4个项目的位置
+	void GetSkinLayout();		//从当前皮肤获取布局数据
 
 public:
 	void ApplySettings();

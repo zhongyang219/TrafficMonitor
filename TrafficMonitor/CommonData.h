@@ -96,3 +96,33 @@ struct GeneralSettingData
 	bool check_update_when_start{ true };
 	bool auto_run{ false };
 };
+
+//主窗口布局数据
+struct LayoutData
+{
+	int text_height;	//文本区域的高度
+	//大窗口模式
+	int width_l;	//窗口的宽度
+	int height_l;	//窗口的高度
+	int up_x_l;		//“上传”的x坐标
+	int up_y_l;		//“上传”的y坐标
+	int up_width_l;		//“上传”的宽度
+	int down_x_l;
+	int down_y_l;
+	int down_width_l;
+	int cpu_x_l;
+	int cpu_y_l;
+	int cpu_width_l;
+	int memory_x_l;
+	int memory_y_l;
+	int memory_width_l;
+	//小窗口模式
+	int width_s;	//窗口的宽度
+	int height_s;	//窗口的高度
+	int up_x_s;		//“上传”的x坐标
+	int up_y_s;		//“上传”的y坐标
+	int up_width_s;		//“上传”的宽度
+	int down_x_s;
+	int down_y_s;
+	int down_width_s;
+};

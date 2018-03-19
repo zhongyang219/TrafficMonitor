@@ -31,29 +31,61 @@ void CSkinDlg::DoDataExchange(CDataExchange* pDX)
 	//  DDX_Control(pDX, IDC_STATIC_TEXT2, m_preview_text_l);
 }
 
+void CSkinDlg::GetSkinLayout(const wstring& cfg_path, LayoutData& layout_data)
+{
+	//从ini文件读取皮肤布局，并根据DPI进行缩放
+	layout_data.text_height = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("text_height"), 20, cfg_path.c_str()));
+	layout_data.width_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("width_l"), 220, cfg_path.c_str()));
+	layout_data.height_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("height_l"), 43, cfg_path.c_str()));
+	layout_data.up_x_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("up_x_l"), 6, cfg_path.c_str()));
+	layout_data.up_y_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("up_y_l"), 2, cfg_path.c_str()));
+	layout_data.up_width_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("up_width_l"), 108, cfg_path.c_str()));
+	layout_data.down_x_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("down_x_l"), 114, cfg_path.c_str()));
+	layout_data.down_y_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("down_y_l"), 2, cfg_path.c_str()));
+	layout_data.down_width_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("down_width_l"), 110, cfg_path.c_str()));
+	layout_data.cpu_x_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("cpu_x_l"), 6, cfg_path.c_str()));
+	layout_data.cpu_y_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("cpu_y_l"), 22, cfg_path.c_str()));
+	layout_data.cpu_width_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("cpu_width_l"), 108, cfg_path.c_str()));
+	layout_data.memory_x_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("memory_x_l"), 114, cfg_path.c_str()));
+	layout_data.memory_y_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("memory_y_l"), 22, cfg_path.c_str()));
+	layout_data.memory_width_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("memory_width_l"), 110, cfg_path.c_str()));
+
+	layout_data.width_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("width_s"), 220, cfg_path.c_str()));
+	layout_data.height_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("height_s"), 28, cfg_path.c_str()));
+	layout_data.up_x_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("up_x_s"), 6, cfg_path.c_str()));
+	layout_data.up_y_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("up_y_s"), 4, cfg_path.c_str()));
+	layout_data.up_width_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("up_width_s"), 108, cfg_path.c_str()));
+	layout_data.down_x_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("down_x_s"), 114, cfg_path.c_str()));
+	layout_data.down_y_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("down_y_s"), 4, cfg_path.c_str()));
+	layout_data.down_width_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("down_width_s"), 110, cfg_path.c_str()));
+
+}
 
 void CSkinDlg::ShowPreview()
 {
+	//载入布局数据
+	wstring cfg_path{ theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini" };
+	GetSkinLayout(cfg_path, m_layout_data);
 	//显示小尺寸的预览图
-	m_skin_preview_s.SetWindowPos(&CWnd::wndTop, 0, 0, m_skin_width, m_skin_height_s, SWP_NOMOVE);	//更改控件的宽和高
-	m_image = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected]+ L"\\background.bmp").c_str(), IMAGE_BITMAP, m_skin_width, m_skin_height_s, LR_LOADFROMFILE);
+	m_skin_preview_s.SetWindowPos(&CWnd::wndTop, 0, 0, m_layout_data.width_s, m_layout_data.height_s, SWP_NOMOVE);	//更改控件的宽和高
+	m_image = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background.bmp").c_str(), IMAGE_BITMAP, m_layout_data.width_s, m_layout_data.height_s, LR_LOADFROMFILE);
 	m_skin_preview_s.SetPicture(m_image);		//为CStatic控件设置图片
 	//显示大尺寸的预览图
-	m_skin_preview_l.SetWindowPos(&CWnd::wndTop, 0, 0, m_skin_width, m_skin_height_l, SWP_NOMOVE);
-	m_image = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background_l.bmp").c_str(), IMAGE_BITMAP, m_skin_width, m_skin_height_l, LR_LOADFROMFILE);
+	m_skin_preview_l.SetWindowPos(&CWnd::wndTop, 0, 0, m_layout_data.width_l, m_layout_data.height_l, SWP_NOMOVE);
+	m_image = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background_l.bmp").c_str(), IMAGE_BITMAP, m_layout_data.width_l, m_layout_data.height_l, LR_LOADFROMFILE);
 	m_skin_preview_l.SetPicture(m_image);
 	//获取当前皮肤的文字颜色
-	m_text_color =  GetPrivateProfileInt(_T("skin"), _T("text_color"), 0, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini").c_str());
+	m_text_color = GetPrivateProfileInt(_T("skin"), _T("text_color"), 0, cfg_path.c_str());
 	//获取皮肤作者
 #define BUFF_SIZE 64
 	wchar_t buff[BUFF_SIZE];
-	GetPrivateProfileString(_T("skin"), _T("skin_author"), _T("unknow"), buff, BUFF_SIZE, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini").c_str());
+	GetPrivateProfileString(_T("skin"), _T("skin_author"), _T("unknow"), buff, BUFF_SIZE, cfg_path.c_str());
 	SetDlgItemText(IDC_SKIN_INFO, (wstring(L"皮肤作者：") + buff).c_str());
 	//获取显示文本
-	m_disp_str.up = CCommon::GetIniStringW(_T("skin"), _T("up_string"), NONE_STR, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini").c_str());
-	m_disp_str.down = CCommon::GetIniStringW(_T("skin"), _T("down_string"), NONE_STR, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini").c_str());
-	m_disp_str.cpu = CCommon::GetIniStringW(_T("skin"), _T("cpu_string"), NONE_STR, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini").c_str());
-	m_disp_str.memory = CCommon::GetIniStringW(_T("skin"), _T("memory_string"), NONE_STR, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini").c_str());
+	m_disp_str.up = CCommon::GetIniStringW(_T("skin"), _T("up_string"), NONE_STR, cfg_path.c_str());
+	m_disp_str.down = CCommon::GetIniStringW(_T("skin"), _T("down_string"), NONE_STR, cfg_path.c_str());
+	m_disp_str.cpu = CCommon::GetIniStringW(_T("skin"), _T("cpu_string"), NONE_STR, cfg_path.c_str());
+	m_disp_str.memory = CCommon::GetIniStringW(_T("skin"), _T("memory_string"), NONE_STR, cfg_path.c_str());
 }
 
 
@@ -63,11 +95,16 @@ void CSkinDlg::SetPreviewText(CDC* pDC, bool l_preview)
 	pDC->SetBkMode(TRANSPARENT);
 	pDC->SelectObject(this->GetFont());
 	CRect rect;
-	rect.right = m_skin_width;
 	if (l_preview)
-		rect.bottom = m_skin_height_l;
+	{
+		rect.right = m_layout_data.width_l;
+		rect.bottom = m_layout_data.height_l;
+	}
 	else
-		rect.bottom = m_skin_height_s;
+	{
+		rect.right = m_layout_data.width_s;
+		rect.bottom = m_layout_data.height_s;
+	}
 	rect.left += 10;
 	DrawThemeParentBackground(m_hWnd, pDC->GetSafeHdc(), &rect);	//重绘控件区域以解决文字重叠的问题
 	pDC->DrawText(_T("示例文本1234ABCD"), rect, DT_VCENTER | DT_SINGLELINE);

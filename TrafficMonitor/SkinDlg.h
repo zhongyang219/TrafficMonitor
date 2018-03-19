@@ -15,9 +15,9 @@ public:
 
 	vector<wstring> m_skins;		//皮肤文件的路径
 	int m_skin_selected;			//选择的皮肤
-	int m_skin_width;		//预览图宽度
-	int m_skin_height_s;	//预览图高度（小）
-	int m_skin_height_l;	//预览图高度（大）
+	//int m_skin_width;		//预览图宽度
+	//int m_skin_height_s;	//预览图高度（小）
+	//int m_skin_height_l;	//预览图高度（大）
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
@@ -26,6 +26,8 @@ public:
 
 	COLORREF GetTextColor() const { return m_text_color; }
 	DispStrings GetDispStrings() const { return m_disp_str; }
+
+	static void GetSkinLayout(const wstring& cfg_path, LayoutData& layout_data);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
@@ -38,6 +40,8 @@ protected:
 	COLORREF m_text_color;			//当前皮肤的文本颜色
 	//wstring m_skin_author;			//皮肤作者
 	DispStrings m_disp_str;		//显示的文本
+
+	LayoutData m_layout_data;
 
 	void ShowPreview();		//显示皮肤预览
 	void SetPreviewText(CDC* pDC, bool l_preview);	//设置预览文字。如果l_preview为true，则绘制大预览图控件
