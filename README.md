@@ -20,9 +20,64 @@ Traffic Monitor是一款用于Windows平台的网速监控悬浮窗软件，可�
 程序启动后在窗口点击鼠标右键可以弹出右键菜单，主要功能都集中在这个菜单中。如果需要让它嵌入到任务栏显示，请勾选“显示任务栏窗口”。
 # 自定义皮肤
 ![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/selecte_skin.png)<br>
-软件支持更换皮肤，目前共有9套皮肤可选。用户还可以根据自己的需要编辑自己的皮肤。<br>
-皮肤文件放在程序所在目录的skins目录下，每个皮肤被放到单独的文件夹下，文件夹的名字就是皮肤的名称。<br>
-在skins目录下新建一个文件夹，制作好background.bmp和background_l.bmp两个背景图片放在里面，然后编辑skin.ini文件，text_color是该皮肤对应的文字颜色，它是一个WIN32的COLORREF的值，skin_author是用于显示到更换皮肤界面中的皮肤作者。制作好后重启一下软件就可以在列表中看到新增加的皮肤了。<br>
+软件支持更换皮肤。用户还可以根据自己的需要编辑自己的皮肤。<br>
+皮肤文件放在程序所在目录的`skins`目录下，每个皮肤被放到单独的文件夹下，文件夹的名字就是皮肤的名称。<br>
+在`skins`目录下新建一个文件夹，制作好`background.bmp`和`background_l.bmp`两个背景图片放在里面，然后编辑skin.ini文件，`text_color`是该皮肤对应的文字颜色，它是一个WIN32的COLORREF的值，`skin_author`是用于显示到更换皮肤界面中的皮肤作者。<br>
+在V1.70及以后的版本中，还可以通过skin.ini来指定悬浮窗的大小，以及4个项目的大小和位置。<br>
+skin.ini文件中各项键值的含义如下所示：<br><br>
+>其中的“默认值”是当skin.ini文件中没有某个键时，程序获得的默认的值。<br>
+
+**[skin]节：**<br>
+
+| 键   | 含义              | 默认值 |
+| ---- | --------------- | ------ |
+| text_color | 文本颜色 | 0 |
+| skin_author | 皮肤作者 | unknow |
+| up_string | “上传”项目的显示文本 | 上传:  |
+| down_string | “下载”项目的显示文本 | 下载:  |
+| cpu_string | “CPU”项目的显示文本 | CPU:  |
+| memory_string | “内存”项目的显示文本 | 内存:  |
+
+**[layout]节:**<br>
+* 注意：V1.69及以前版本不支持[layout]节。
+
+| 键   | 含义              | 默认值 |
+| ---- | --------------- | ------ |
+| text_height | 每个项目的高度 | 20 |
+
+勾选“显示CPU和内存利用率”时的布局：
+
+| 键   | 含义              | 默认值 |
+| ---- | --------------- | ------ |
+| width_l | 窗口的宽度 | 220 |
+| height_l | 窗口的高度 | 43 |
+| up_x_l | “上传”的x坐标 | 5 |
+| up_y_l | “上传”的y坐标 | 2 |
+| up_width_l | “上传”的的宽度 | 108 |
+| down_x_l | “下载”的x坐标 | 114 |
+| down_y_l | “下载”的y坐标 | 2 |
+| down_width_l | “下载”的的宽度 | 110 |
+| cpu_x_l | “CPU”的x坐标 | 5 |
+| cpu_y_l | “CPU”的y坐标 | 22 |
+| cpu_width_l | “CPU”的的宽度 | 108 |
+| memory_x_l | “内存”的x坐标 | 114 |
+| memory_y_l | “内存”的y坐标 | 22 |
+| memory_width_l | “内存”的的宽度 | 110 |
+
+不勾选“显示CPU和内存利用率”时的布局：
+
+| 键   | 含义              | 默认值 |
+| ---- | --------------- | ------ |
+| width_s | 窗口的宽度 | 220 |
+| height_s | 窗口的高度 | 28 |
+| up_x_s | “上传”的x坐标 | 5 |
+| up_y_s | “上传”的y坐标 | 4 |
+| up_width_s | “上传”的的宽度 | 108 |
+| down_x_s | “下载”的x坐标 | 114 |
+| down_y_s | “下载”的y坐标 | 4 |
+| down_width_s | “下载”的的宽度 | 110 |
+
+制作好后重启一下软件就可以在列表中看到新增加的皮肤了。<br>
 # 选项设置
 ![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/option.png)<br>
 在右键菜单选择“选项...”可以进入选项设置。在选项设置对话框中，可以单独设置主窗口和任务栏窗口的文本颜色、字体、背景颜色，同时可以自定义显示的文本。还可以选择交换上传和下载的位置。<br>
