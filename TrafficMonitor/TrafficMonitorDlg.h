@@ -71,7 +71,7 @@ protected:
 	bool m_always_on_top{ false };		//窗口置顶
 	int m_transparency{ 100 };			//窗口透明度
 	bool m_lock_window_pos{ false };	//锁定窗口位置
-	bool m_show_cpu_memory{ false };	//显示CPU和内存利用率
+	bool m_show_more_info{ false };		//显示更多信息
 	bool m_mouse_penetrate{ false };	//鼠标穿透
 	bool m_show_task_bar_wnd{ false };	//显示任务栏窗口
 	//bool m_swap_up_down{ false };		//交换上传和下载显示的位置
@@ -130,6 +130,7 @@ protected:
 
 
 	void ShowInfo();		//将上传下载速度信息显示到窗口中
+	CString GetMouseTipsInfo();		//获取鼠标提示信息
 	void SetTransparency();			//根据m_transparency的值设置窗口透明度
 	void SetTransparency(int transparency);
 	void SetAlwaysOnTop();			//根据m_always_on_top的值设置窗口置顶

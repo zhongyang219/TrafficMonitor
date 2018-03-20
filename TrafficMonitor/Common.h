@@ -84,11 +84,11 @@ public:
 	//将一个字符串保存到剪贴板
 	static bool CopyStringToClipboard(const wstring& str);
 
-	//判断现在是否刚开机，在刚开机的time毫秒内返回true，否则返回false（在启用了快速启动时，此函数可能会无法得到正确的结果）
-	static bool WhenStart(int time, bool write_log = false);
+	////判断现在是否刚开机，在刚开机的time毫秒内返回true，否则返回false（在启用了快速启动时，此函数可能会无法得到正确的结果）
+	//static bool WhenStart(int time, bool write_log = false);
 
-	//显示鼠标提示
-	static CString GetMouseTipsInfo(__int64 today_traffic, int cpu_usage, int memory_usage, int used_memory, int total_memory, bool show_cpu_memory);
+	////显示鼠标提示
+	//static CString GetMouseTipsInfo(__int64 today_traffic, int cpu_usage, int memory_usage, int used_memory, int total_memory, bool show_cpu_memory);
 
 	//获取Windows版本
 	static void GetWindowsVersion(int& major_version, int& minor_version, int& build_number);

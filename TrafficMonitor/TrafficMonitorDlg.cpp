@@ -234,18 +234,90 @@ void CTrafficMonitorDlg::ShowInfo()
 		str.Format(format_str, theApp.m_main_wnd_data.disp_str.up.c_str(), out_speed.GetString());
 		m_disp_down.SetWindowTextEx(str);
 	}
-	if (m_show_cpu_memory)
+	str.Format(_T("%s%d%%"), theApp.m_main_wnd_data.disp_str.cpu.c_str(), theApp.m_cpu_usage);
+	m_disp_cpu.SetWindowTextEx(str);
+	str.Format(_T("%s%d%%"), theApp.m_main_wnd_data.disp_str.memory.c_str(), theApp.m_memory_usage);
+	m_disp_memory.SetWindowTextEx(str);
+	//设置要显示的项目
+	if (m_show_more_info)
 	{
-		str.Format(_T("%s%d%%"), theApp.m_main_wnd_data.disp_str.cpu.c_str(), theApp.m_cpu_usage);
-		m_disp_cpu.SetWindowTextEx(str);
-		str.Format(_T("%s%d%%"), theApp.m_main_wnd_data.disp_str.memory.c_str(), theApp.m_memory_usage);
-		m_disp_memory.SetWindowTextEx(str);
+		m_disp_up.ShowWindow(m_layout_data.show_up_l ? SW_SHOW : SW_HIDE);
+		m_disp_down.ShowWindow(m_layout_data.show_down_l ? SW_SHOW : SW_HIDE);
+		m_disp_cpu.ShowWindow(m_layout_data.show_cpu_l ? SW_SHOW : SW_HIDE);
+		m_disp_memory.ShowWindow(m_layout_data.show_memory_l ? SW_SHOW : SW_HIDE);
 	}
 	else
 	{
-		m_disp_cpu.SetWindowText(_T(""));
-		m_disp_memory.SetWindowText(_T(""));
+		m_disp_up.ShowWindow(m_layout_data.show_up_s ? SW_SHOW : SW_HIDE);
+		m_disp_down.ShowWindow(m_layout_data.show_down_s ? SW_SHOW : SW_HIDE);
+		m_disp_cpu.ShowWindow(m_layout_data.show_cpu_s ? SW_SHOW : SW_HIDE);
+		m_disp_memory.ShowWindow(m_layout_data.show_memory_s ? SW_SHOW : SW_HIDE);
 	}
+}
+
+CString CTrafficMonitorDlg::GetMouseTipsInfo()
+{
+	CString tip_info;
+	CString temp;
+	temp.Format(_T("今日已使用流量: %s\r\n"), CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_traffic / 1024)));
+	tip_info += temp;
+	if (m_show_more_info)
+	{
+		if (!m_layout_data.show_up_l)		//如果主窗口中没有显示上传速度，则在提示信息中显示上传速度
+		{
+			temp.Format(_T("上传: %s/s\r\n"), CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit));
+			tip_info += temp;
+		}
+		if (!m_layout_data.show_down_l)
+		{
+			temp.Format(_T("下载: %s/s\r\n"), CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit));
+			tip_info += temp;
+		}
+		if (!m_layout_data.show_cpu_l)
+		{
+			temp.Format(_T("CPU使用: %d%%\r\n"), theApp.m_cpu_usage);
+			tip_info += temp;
+		}
+		if (!m_layout_data.show_memory_l)
+		{
+			temp.Format(_T("内存使用：%s/%s (%d%%)\r\n"), CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory), theApp.m_memory_usage);
+			tip_info += temp;
+		}
+		else
+		{
+			temp.Format(_T("内存使用：%s/%s\r\n"), CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory));
+			tip_info += temp;
+		}
+	}
+	else
+	{
+		if (!m_layout_data.show_up_s)		//如果主窗口中没有显示上传速度，则在提示信息中显示上传速度
+		{
+			temp.Format(_T("上传: %s/s\r\n"), CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit));
+			tip_info += temp;
+		}
+		if (!m_layout_data.show_down_s)
+		{
+			temp.Format(_T("下载: %s/s\r\n"), CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit));
+			tip_info += temp;
+		}
+		if (!m_layout_data.show_cpu_s)
+		{
+			temp.Format(_T("CPU使用: %d%%\r\n"), theApp.m_cpu_usage);
+			tip_info += temp;
+		}
+		if (!m_layout_data.show_memory_s)
+		{
+			temp.Format(_T("内存使用：%s/%s (%d%%)\r\n"), CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory), theApp.m_memory_usage);
+			tip_info += temp;
+		}
+		else
+		{
+			temp.Format(_T("内存使用：%s/%s\r\n"), CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory));
+			tip_info += temp;
+		}
+	}
+	return tip_info;
 }
 
 void CTrafficMonitorDlg::SetTransparency()
@@ -331,7 +403,7 @@ void CTrafficMonitorDlg::LoadConfig()
 	m_always_on_top = (GetPrivateProfileInt(_T("config"), _T("always_on_top"), 1, theApp.m_config_path.c_str()) != 0);
 	m_lock_window_pos = (GetPrivateProfileInt(_T("config"), _T("lock_window_pos"), 0, theApp.m_config_path.c_str()) != 0);
 	theApp.m_show_notify_icon = (GetPrivateProfileInt(_T("config"), _T("show_notify_icon"), 1, theApp.m_config_path.c_str()) != 0);
-	m_show_cpu_memory = (GetPrivateProfileInt(_T("config"), _T("show_cpu_memory"), 1, theApp.m_config_path.c_str()) != 0);
+	m_show_more_info = (GetPrivateProfileInt(_T("config"), _T("show_cpu_memory"), 1, theApp.m_config_path.c_str()) != 0);
 	m_mouse_penetrate = (GetPrivateProfileInt(_T("config"), _T("mouse_penetrate"), 0, theApp.m_config_path.c_str()) != 0);
 	m_show_task_bar_wnd = (GetPrivateProfileInt(_T("config"), _T("show_task_bar_wnd"), 0, theApp.m_config_path.c_str()) != 0);
 	m_position_x = GetPrivateProfileInt(_T("config"), _T("position_x"), -1, theApp.m_config_path.c_str());
@@ -381,7 +453,7 @@ void CTrafficMonitorDlg::SaveConfig()
 	CCommon::WritePrivateProfileIntW(L"config", L"always_on_top", m_always_on_top, theApp.m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(L"config", L"lock_window_pos", m_lock_window_pos, theApp.m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(L"config", L"show_notify_icon", theApp.m_show_notify_icon, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"show_cpu_memory", m_show_cpu_memory, theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"config", L"show_cpu_memory", m_show_more_info, theApp.m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(L"config", L"mouse_penetrate", m_mouse_penetrate, theApp.m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(L"config", L"show_task_bar_wnd", m_show_task_bar_wnd, theApp.m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(L"config", L"position_x", m_position_x, theApp.m_config_path.c_str());
@@ -642,7 +714,7 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 
 void CTrafficMonitorDlg::SetItemPosition()
 {
-	if (m_show_cpu_memory)
+	if (m_show_more_info)
 	{
 		SetWindowPos(nullptr, 0, 0, m_layout_data.width_l, m_layout_data.height_l, SWP_NOMOVE | SWP_NOZORDER);
 		m_disp_up.MoveWindow(m_layout_data.up_x_l, m_layout_data.up_y_l, m_layout_data.up_width_l, m_layout_data.text_height);
@@ -655,6 +727,8 @@ void CTrafficMonitorDlg::SetItemPosition()
 		SetWindowPos(nullptr, 0, 0, m_layout_data.width_s, m_layout_data.height_s, SWP_NOMOVE | SWP_NOZORDER);
 		m_disp_up.MoveWindow(m_layout_data.up_x_s, m_layout_data.up_y_s, m_layout_data.up_width_s, m_layout_data.text_height);
 		m_disp_down.MoveWindow(m_layout_data.down_x_s, m_layout_data.down_y_s, m_layout_data.down_width_s, m_layout_data.text_height);
+		m_disp_cpu.MoveWindow(m_layout_data.cpu_x_s, m_layout_data.cpu_y_s, m_layout_data.cpu_width_s, m_layout_data.text_height);
+		m_disp_memory.MoveWindow(m_layout_data.memory_x_s, m_layout_data.memory_y_s, m_layout_data.memory_width_s, m_layout_data.text_height);
 	}
 }
 
@@ -763,7 +837,7 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	CheckWindowPos();
 
 	//载入背景图片
-	if (m_show_cpu_memory)
+	if (m_show_more_info)
 		m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background_l.bmp").c_str(), IMAGE_BITMAP, m_layout_data.width_l, m_layout_data.height_l, LR_LOADFROMFILE);
 	else
 		m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background.bmp").c_str(), IMAGE_BITMAP, m_layout_data.width_s, m_layout_data.height_s, LR_LOADFROMFILE);
@@ -997,8 +1071,6 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		//只有主窗口和任务栏窗口至少有一个显示时才执行下面的处理
 		if (!theApp.m_hide_main_window || m_show_task_bar_wnd)
 		{
-			//if (m_show_cpu_memory || (m_tBarDlg != nullptr && theApp.m_tbar_show_cpu_memory))
-			//{
 				//获取CPU利用率
 				FILETIME idleTime;
 				FILETIME kernelTime;
@@ -1029,13 +1101,12 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 				theApp.m_memory_usage = statex.dwMemoryLoad;
 				theApp.m_used_memory = static_cast<int>((statex.ullTotalPhys - statex.ullAvailPhys) / 1024);
 				theApp.m_total_memory  = static_cast<int>(statex.ullTotalPhys / 1024);
-			//}
 
 			ShowInfo();		//刷新窗口信息
 	
 			//更新鼠标提示
 			CString tip_info;
-			tip_info = CCommon::GetMouseTipsInfo(theApp.m_today_traffic, theApp.m_cpu_usage, theApp.m_memory_usage, theApp.m_used_memory, theApp.m_total_memory, m_show_cpu_memory);
+			tip_info = GetMouseTipsInfo();
 			m_tool_tips.UpdateTipText(tip_info, this);
 			//更新任务栏窗口鼠标提示
 			if (m_tBarDlg != nullptr)
@@ -1475,14 +1546,14 @@ void CTrafficMonitorDlg::OnShowCpuMemory()
 	// TODO: 在此添加命令处理程序代码
 	CRect rect;
 	GetWindowRect(rect);
-	if (m_show_cpu_memory)
+	if (m_show_more_info)
 	{
 		rect.right = rect.left + m_layout_data.width_s;
 		rect.bottom = rect.top + m_layout_data.height_s;
 		MoveWindow(rect);
 		CheckWindowPos();
 		m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background.bmp").c_str(), IMAGE_BITMAP, rect.Width(), rect.Height(), LR_LOADFROMFILE);
-		m_show_cpu_memory = false;
+		m_show_more_info = false;
 	}
 	else
 	{
@@ -1491,7 +1562,7 @@ void CTrafficMonitorDlg::OnShowCpuMemory()
 		MoveWindow(rect);
 		CheckWindowPos();
 		m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background_l.bmp").c_str(), IMAGE_BITMAP, rect.Width(), rect.Height(), LR_LOADFROMFILE);
-		m_show_cpu_memory = true;
+		m_show_more_info = true;
 	}
 	SetBackgroundImage(m_back_img);
 	SetItemPosition();
@@ -1517,7 +1588,7 @@ void CTrafficMonitorDlg::OnShowCpuMemory2()
 void CTrafficMonitorDlg::OnUpdateShowCpuMemory(CCmdUI *pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
-	pCmdUI->SetCheck(m_show_cpu_memory);
+	pCmdUI->SetCheck(m_show_more_info);
 }
 
 
@@ -1689,13 +1760,14 @@ void CTrafficMonitorDlg::OnChangeSkin()
 	//skinDlg.m_skin_width = rect.Width();
 	//skinDlg.m_skin_height_s = m_layout_data.height_s;
 	//skinDlg.m_skin_height_l = m_layout_data.height_l;
+	skinDlg.m_pFont = &m_font;
 	if (skinDlg.DoModal() == IDOK)
 	{
 		m_skin_selected = skinDlg.m_skin_selected;
 		m_skin_name = m_skins[m_skin_selected];
 		GetSkinLayout();
 		//载入背景图片
-		if (m_show_cpu_memory)
+		if (m_show_more_info)
 			m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background_l.bmp").c_str(), IMAGE_BITMAP, m_layout_data.width_l, m_layout_data.height_l, LR_LOADFROMFILE);
 		else
 			m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background.bmp").c_str(), IMAGE_BITMAP, m_layout_data.width_s, m_layout_data.height_s, LR_LOADFROMFILE);

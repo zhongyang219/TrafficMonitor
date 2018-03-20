@@ -18,6 +18,7 @@ public:
 	//int m_skin_width;		//预览图宽度
 	//int m_skin_height_s;	//预览图高度（小）
 	//int m_skin_height_l;	//预览图高度（大）
+	CFont* m_pFont;		//预览图的字体
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
@@ -42,6 +43,8 @@ protected:
 	DispStrings m_disp_str;		//显示的文本
 
 	LayoutData m_layout_data;
+#define PREVIEW_START_X theApp.DPI(38)	//预览图的起始坐标
+#define PREVIEW_START_Y theApp.DPI(83)
 
 	void ShowPreview();		//显示皮肤预览
 	void SetPreviewText(CDC* pDC, bool l_preview);	//设置预览文字。如果l_preview为true，则绘制大预览图控件

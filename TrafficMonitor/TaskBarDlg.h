@@ -59,6 +59,7 @@ protected:
 	CDC* m_pDC{};
 
 	bool IsTaskbarOnTopOrBottom();		//判断任务栏是否在屏幕的顶部或底部，如果是则返回false，如果任务栏在屏幕两侧，则返回false
+	CString GetMouseTipsInfo();		//获取鼠标提示
 
 public:
 	static void SaveConfig();		//保存设置到ini文件

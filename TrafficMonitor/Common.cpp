@@ -48,7 +48,7 @@ bool CCommon::WriteIniStringW(const wchar_t* AppName, const wchar_t* KeyName, ws
 {
 	//由于读取ini文件字符串时会删除前后的空格，所以写入字符串之前先在前后添加一个指定字符，读取时再删除
 	str = NONE_CH + str + NONE_CH;
-	return ::WritePrivateProfileStringW(AppName, KeyName, str.c_str(), path);
+	return (::WritePrivateProfileStringW(AppName, KeyName, str.c_str(), path) != FALSE);
 }
 
 wstring CCommon::GetIniStringW(const wchar_t* AppName, const wchar_t* KeyName, const wchar_t* default_str, const wchar_t* path)
@@ -429,37 +429,37 @@ bool CCommon::CopyStringToClipboard(const wstring & str)
 	else return false;
 }
 
-bool CCommon::WhenStart(int time, bool write_log)
-{
-	int tick_count = GetTickCount();
-	if (write_log)
-	{
-		char buff[128];
-		sprintf_s(buff, "start time is %dms, no_multistart_warning_time is %d", tick_count, time);
-		WriteLog(buff, _T(".\\start.log"));
-	}
-	return (tick_count < time);
-}
+//bool CCommon::WhenStart(int time, bool write_log)
+//{
+//	int tick_count = GetTickCount();
+//	if (write_log)
+//	{
+//		char buff[128];
+//		sprintf_s(buff, "start time is %dms, no_multistart_warning_time is %d", tick_count, time);
+//		WriteLog(buff, _T(".\\start.log"));
+//	}
+//	return (tick_count < time);
+//}
 
-CString CCommon::GetMouseTipsInfo(__int64 today_traffic, int cpu_usage, int memory_usage, int used_memory, int total_memory, bool show_cpu_memory)
-{
-	CString tip_info;
-	if (show_cpu_memory)
-	{
-		tip_info.Format(_T("今日已使用流量：%s\r\n内存使用：%s/%s"),
-			CCommon::KBytesToString(static_cast<unsigned int>(today_traffic / 1024)),
-			CCommon::KBytesToString(used_memory), CCommon::KBytesToString(total_memory));
-	}
-	else
-	{
-		tip_info.Format(_T("今日已使用流量：%s\r\nCPU使用：%d%%\r\n内存使用：%s/%s (%d%%)"),
-			CCommon::KBytesToString(static_cast<unsigned int>(today_traffic / 1024)),
-			cpu_usage,
-			CCommon::KBytesToString(used_memory), CCommon::KBytesToString(total_memory),
-			memory_usage);
-	}
-	return tip_info;
-}
+//CString CCommon::GetMouseTipsInfo(__int64 today_traffic, int cpu_usage, int memory_usage, int used_memory, int total_memory, bool show_cpu_memory)
+//{
+//	CString tip_info;
+//	if (show_cpu_memory)
+//	{
+//		tip_info.Format(_T("今日已使用流量：%s\r\n内存使用：%s/%s"),
+//			CCommon::KBytesToString(static_cast<unsigned int>(today_traffic / 1024)),
+//			CCommon::KBytesToString(used_memory), CCommon::KBytesToString(total_memory));
+//	}
+//	else
+//	{
+//		tip_info.Format(_T("今日已使用流量：%s\r\nCPU使用：%d%%\r\n内存使用：%s/%s (%d%%)"),
+//			CCommon::KBytesToString(static_cast<unsigned int>(today_traffic / 1024)),
+//			cpu_usage,
+//			CCommon::KBytesToString(used_memory), CCommon::KBytesToString(total_memory),
+//			memory_usage);
+//	}
+//	return tip_info;
+//}
 
 void CCommon::GetWindowsVersion(int & major_version, int & minor_version, int & build_number)
 {

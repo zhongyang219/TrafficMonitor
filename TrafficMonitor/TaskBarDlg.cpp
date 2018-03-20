@@ -206,6 +206,26 @@ bool CTaskBarDlg::IsTaskbarOnTopOrBottom()
 	}
 }
 
+CString CTaskBarDlg::GetMouseTipsInfo()
+{
+	CString tip_info;
+	if (theApp.m_tbar_show_cpu_memory)
+	{
+		tip_info.Format(_T("今日已使用流量：%s\r\n内存使用：%s/%s"),
+			CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_traffic / 1024)),
+			CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory));
+	}
+	else
+	{
+		tip_info.Format(_T("今日已使用流量：%s\r\nCPU使用：%d%%\r\n内存使用：%s/%s (%d%%)"),
+			CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_traffic / 1024)),
+			theApp.m_cpu_usage,
+			CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory),
+			theApp.m_memory_usage);
+	}
+	return tip_info;
+}
+
 void CTaskBarDlg::SaveConfig()
 {
 	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_back_color", theApp.m_taskbar_data.back_color, theApp.m_config_path.c_str());
@@ -303,7 +323,7 @@ void CTaskBarDlg::SetToolTipsTopMost()
 void CTaskBarDlg::UpdateToolTips()
 {
 	CString tip_info;
-	tip_info = CCommon::GetMouseTipsInfo(theApp.m_today_traffic, theApp.m_cpu_usage, theApp.m_memory_usage, theApp.m_used_memory, theApp.m_total_memory, theApp.m_tbar_show_cpu_memory);
+	tip_info = GetMouseTipsInfo();
 	m_tool_tips.UpdateTipText(tip_info, this);
 }
 
