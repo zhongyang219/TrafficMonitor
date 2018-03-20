@@ -37,6 +37,7 @@ protected:
 	CPictureStatic m_skin_preview_s;		//显示大预览图的控件
 	CPictureStatic m_skin_preview_l;		//显示小预览图的控件
 	HBITMAP m_image;				//图片句柄
+	CStaticEx m_skin_course{ true };	//“皮肤制作教程”超链接
 
 	COLORREF m_text_color;			//当前皮肤的文本颜色
 	//wstring m_skin_author;			//皮肤作者
