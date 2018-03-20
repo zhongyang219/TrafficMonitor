@@ -177,6 +177,8 @@ void CNetworkInfoDlg::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(CNetworkInfoDlg, CDialog)
+	ON_COMMAND(ID_COPY_TEXT, &CNetworkInfoDlg::OnCopyText)
+	ON_NOTIFY(NM_RCLICK, IDC_INFO_LIST1, &CNetworkInfoDlg::OnNMRClickInfoList1)
 END_MESSAGE_MAP()
 
 
@@ -189,11 +191,6 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 
 	// TODO:  在此添加额外的初始化
 
-	//获取dpi设置
-	CWindowDC dc(this);
-	HDC hDC = dc.GetSafeHdc();
-	int dpi = GetDeviceCaps(hDC, LOGPIXELSY);
-
 	//获取IP地址
 	GetIPAddress();
 
@@ -203,15 +200,47 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	m_info_list.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
 	int width0, width1;
 	width0 = rect.Width() / 4;
-	width1 = rect.Width() - width0 - 21 * dpi / 96;
+	width1 = rect.Width() - width0 - theApp.DPI(21);
 	m_info_list.InsertColumn(0, _T("项目"), LVCFMT_LEFT, width0);		//插入第0列
 	m_info_list.InsertColumn(1, _T("值"), LVCFMT_LEFT, width1);		//插入第1列
 
 	//显示列表中的信息
 	ShowInfo();
 
-	SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//取消置顶
+	//SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//取消置顶
+	m_info_list.GetToolTips()->SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+
+	m_menu.LoadMenu(IDR_INFO_MENU); //装载右键菜单
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
+}
+
+
+void CNetworkInfoDlg::OnCopyText()
+{
+	// TODO: 在此添加命令处理程序代码
+	if (!CCommon::CopyStringToClipboard(wstring(m_selected_string)))
+		MessageBox(_T("复制到剪贴板失败！"), NULL, MB_ICONWARNING);
+}
+
+
+void CNetworkInfoDlg::OnNMRClickInfoList1(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: 在此添加控件通知处理程序代码
+
+	//获取鼠标点击处的文本
+	int item, sub_item;
+	item = pNMItemActivate->iItem;
+	sub_item = pNMItemActivate->iSubItem;
+	m_selected_string = m_info_list.GetItemText(item, sub_item);
+
+	//弹出右键菜单
+	CMenu* pContextMenu = m_menu.GetSubMenu(0);	//获取第一个弹出菜单
+	CPoint point1;	//定义一个用于确定光标位置的位置  
+	GetCursorPos(&point1);	//获取当前光标的位置，以便使得菜单可以跟随光标
+	pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
+
+	*pResult = 0;
 }

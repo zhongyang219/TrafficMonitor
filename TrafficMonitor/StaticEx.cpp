@@ -18,17 +18,9 @@ CStaticEx::~CStaticEx()
 
 void CStaticEx::SetWindowTextEx(LPCTSTR lpszString)
 {
-	CDC* pDC = GetDC();
-	pDC->SetTextColor(m_TextColor);
-	pDC->SetBkMode(TRANSPARENT);
-	pDC->SelectObject(this->GetFont());
-	//int nTextLeft = 0, nTextTop = 0; //文字输出的位置
-	CRect rect;
-	this->GetClientRect(&rect);
-	DrawThemeParentBackground(m_hWnd, pDC->GetSafeHdc(), &rect);	//重绘控件区域以解决文字重叠的问题
-	pDC->DrawText(lpszString, rect, DT_VCENTER | DT_SINGLELINE);
-	ReleaseDC(pDC);
 	m_text = lpszString;
+	m_color_text = true;
+	Invalidate();
 }
 
 void CStaticEx::SetTextColor(COLORREF textColor)
@@ -50,6 +42,13 @@ void CStaticEx::SetURL(CString strURL)
 CString CStaticEx::GetURL() const
 {
 	return m_strURL;
+}
+
+void CStaticEx::SetFillColor(COLORREF fill_color)
+{
+	m_fill_color = fill_color;
+	m_fill_color_enable = true;
+	Invalidate();
 }
 
 
@@ -100,11 +99,18 @@ void CStaticEx::OnLButtonUp(UINT nFlags, CPoint point)
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	if (m_isHyperLink)
 	{
-		if (m_strURL.IsEmpty())
+		if (m_linkEnable)
 		{
-			m_strURL = m_text;
+			if (m_strURL.IsEmpty())
+				m_strURL = m_text;
+			ShellExecute(NULL, _T("open"), m_strURL, NULL, NULL, SW_SHOW);	//打开超链接
 		}
-		ShellExecute(NULL, _T("open"), m_strURL, NULL, NULL, SW_SHOW);	//打开超链接
+		else
+		{
+			CWnd* pParent{ GetParent() };
+			if(pParent!=nullptr)
+				pParent->SendMessage(WM_LINK_CLICKED, (WPARAM)this);
+		}
 	}
 	else
 	{
@@ -118,6 +124,7 @@ void CStaticEx::OnPaint()
 	CPaintDC dc(this); // device context for painting
 					   // TODO: 在此处添加消息处理程序代码
 					   // 不为绘图消息调用 CStatic::OnPaint()
+	//是超链接时的绘图处理
 	if (m_isHyperLink)
 	{
 		CFont* pFont = GetFont();
@@ -149,6 +156,25 @@ void CStaticEx::OnPaint()
 			dc.DrawText(m_text, rect, DT_VCENTER | DT_SINGLELINE);
 		}
 		m_Font.DeleteObject();
+	}
+
+	//需要填充背景色时的绘图处理
+	else if (m_fill_color_enable)
+	{
+		CRect rect;
+		GetClientRect(rect);
+		dc.FillSolidRect(rect, m_fill_color);
+	}
+
+	else if (m_color_text)
+	{
+		dc.SetTextColor(m_TextColor);
+		dc.SetBkMode(TRANSPARENT);
+		dc.SelectObject(this->GetFont());
+		CRect rect;
+		this->GetClientRect(&rect);
+		DrawThemeParentBackground(m_hWnd, dc.GetSafeHdc(), &rect);	//重绘控件区域以解决文字重叠的问题
+		dc.DrawText(m_text, rect, DT_VCENTER | DT_SINGLELINE);
 	}
 }
 

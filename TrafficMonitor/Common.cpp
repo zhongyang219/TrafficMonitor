@@ -11,14 +11,14 @@ CCommon::~CCommon()
 {
 }
 
-wstring CCommon::StrToUnicode(const char* str)
+wstring CCommon::StrToUnicode(const char* str, bool utf8)
 {
 	wstring result;
 	int size;
-	size = MultiByteToWideChar(CP_ACP, 0, str, -1, NULL, 0);
+	size = MultiByteToWideChar((utf8 ? CP_UTF8 : CP_ACP), 0, str, -1, NULL, 0);
 	if (size <= 0) return wstring();
 	wchar_t* str_unicode = new wchar_t[size + 1];
-	MultiByteToWideChar(CP_ACP, 0, str, -1, str_unicode, size);
+	MultiByteToWideChar((utf8 ? CP_UTF8 : CP_ACP), 0, str, -1, str_unicode, size);
 	result.assign(str_unicode);
 	delete[] str_unicode;
 	return result;
@@ -41,20 +41,115 @@ bool CCommon::WritePrivateProfileIntW(const wchar_t * AppName, const wchar_t * K
 {
 	wchar_t buff[11];
 	_itow_s(value, buff, 10);
-	return (WritePrivateProfileStringW(AppName, KeyName, buff, Path) != FALSE);
+	return (::WritePrivateProfileStringW(AppName, KeyName, buff, Path) != FALSE);
 }
 
-CString CCommon::DataSizeToString(unsigned int size)
+bool CCommon::WriteIniStringW(const wchar_t* AppName, const wchar_t* KeyName, wstring str, const wchar_t* path)
+{
+	//由于读取ini文件字符串时会删除前后的空格，所以写入字符串之前先在前后添加一个指定字符，读取时再删除
+	str = NONE_CH + str + NONE_CH;
+	return (::WritePrivateProfileStringW(AppName, KeyName, str.c_str(), path) != FALSE);
+}
+
+wstring CCommon::GetIniStringW(const wchar_t* AppName, const wchar_t* KeyName, const wchar_t* default_str, const wchar_t* path)
+{
+	wstring rtn;
+	wchar_t buff[256];
+	::GetPrivateProfileStringW(AppName, KeyName, default_str, buff, 256, path);
+	rtn = buff;
+	//如果读取的字符串前后有指定的字符，则删除它
+	if (!rtn.empty() && rtn.front() == NONE_CH)
+		rtn = rtn.substr(1);
+	if (!rtn.empty() && rtn.back() == NONE_CH)
+		rtn.pop_back();
+	return rtn;
+}
+
+
+CString CCommon::DataSizeToString(unsigned int size, bool short_mode, SpeedUnit unit, bool hide_unit)
 {
 	CString str;
-	if (size < 1024 * 10)					//10KB以下以KB为单位，保留2位小数
-		str.Format(_T("%.2fKB"), size / 1024.0f);
-	else if (size < 1024 * 1024)			//1MB以下以KB为单位，保留1位小数
-		str.Format(_T("%.1fKB"), size / 1024.0f);
-	else if (size < 1024 * 1024 * 1024)		//1GB以下以MB为单位，保留2位小数
-		str.Format(_T("%.2fMB"), size / 1024.0f / 1024.0f);
-	else
-		str.Format(_T("%.2fGB"), size / 1024.0f / 1024.0f / 1024.0f);
+	switch (unit)
+	{
+	case SpeedUnit::AUTO:
+		if (short_mode)
+		{
+			//if (size <= 102)			//小于0.1KB时，显示0K
+			//	str = _T("0K");
+			/*else */if (size < 1024 * 10)					//10KB以下以KB为单位，保留1位小数
+				str.Format(_T("%.1fK"), size / 1024.0f);
+			else if (size < 1024 * 1024)			//1MB以下以KB为单位，保留整数
+				str.Format(_T("%.0fK"), size / 1024.0f);
+			else if (size < 1024 * 1024 * 1024)		//1GB以下以MB为单位，保留1位小数
+				str.Format(_T("%.1fM"), size / 1024.0f / 1024.0f);
+			else
+				str.Format(_T("%.2fG"), size / 1024.0f / 1024.0f / 1024.0f);
+		}
+		else
+		{
+			if (size < 1024 * 10)					//10KB以下以KB为单位，保留2位小数
+				str.Format(_T("%.2fKB"), size / 1024.0f);
+			else if (size < 1024 * 1024)			//1MB以下以KB为单位，保留1位小数
+				str.Format(_T("%.1fKB"), size / 1024.0f);
+			else if (size < 1024 * 1024 * 1024)		//1GB以下以MB为单位，保留2位小数
+				str.Format(_T("%.2fMB"), size / 1024.0f / 1024.0f);
+			else
+				str.Format(_T("%.2fGB"), size / 1024.0f / 1024.0f / 1024.0f);
+		}
+		break;
+	case SpeedUnit::KBPS:
+		if (short_mode)
+		{
+			if (size < 1024 * 10)					//10KB以下保留1位小数
+			{
+				if (hide_unit)
+					str.Format(_T("%.1f"), size / 1024.0f);
+				else
+					str.Format(_T("%.1fK"), size / 1024.0f);
+			}
+			else					//10KB以上保留整数
+			{
+				if (hide_unit)
+					str.Format(_T("%.0f"), size / 1024.0f);
+				else
+					str.Format(_T("%.0fK"), size / 1024.0f);
+			}
+		}
+		else
+		{
+			if (size < 1024 * 10)					//10KB以下保留2位小数
+			{
+				if (hide_unit)
+					str.Format(_T("%.2f"), size / 1024.0f);
+				else
+					str.Format(_T("%.2fKB"), size / 1024.0f);
+			}
+			else			//10KB以上保留1位小数
+			{
+				if (hide_unit)
+					str.Format(_T("%.1f"), size / 1024.0f);
+				else
+					str.Format(_T("%.1fKB"), size / 1024.0f);
+			}
+		}
+		break;
+	case SpeedUnit::MBPS:
+		if (short_mode)
+		{
+			if (hide_unit)
+				str.Format(_T("%.1f"), size / 1024.0f / 1024.0f);
+			else
+				str.Format(_T("%.1fM"), size / 1024.0f / 1024.0f);
+		}
+		else
+		{
+			if (hide_unit)
+				str.Format(_T("%.2f"), size / 1024.0f / 1024.0f);
+			else
+				str.Format(_T("%.2fMB"), size / 1024.0f / 1024.0f);
+		}
+		break;
+	}
 	return str;
 }
 
@@ -81,9 +176,11 @@ void CCommon::WriteLog(const char* str_text, LPCTSTR file_path)
 {
 	SYSTEMTIME cur_time;
 	GetLocalTime(&cur_time);
+	char buff[32];
+	sprintf_s(buff, "%d/%.2d/%.2d %.2d:%.2d:%.2d.%.3d: ", cur_time.wYear, cur_time.wMonth, cur_time.wDay,
+		cur_time.wHour, cur_time.wMinute, cur_time.wSecond, cur_time.wMilliseconds);
 	ofstream file{ file_path, std::ios::app };	//以追加的方式打开日志文件
-	file << cur_time.wYear << "/" << cur_time.wMonth << "/" << cur_time.wDay << " ";
-	file << cur_time.wHour << ":" << cur_time.wMinute << ":" << cur_time.wSecond << "." << cur_time.wMilliseconds << ": ";
+	file << buff;
 	file << str_text << std::endl;
 }
 
@@ -192,7 +289,6 @@ wstring CCommon::GetStartUpPath()
 	if (SHGetSpecialFolderLocation(NULL, CSIDL_STARTUP, &ppidl) == S_OK)
 	{
 		SHGetPathFromIDList(ppidl, pszStartUpPath);
-		//wcscat_s(pszStartUpPath, MAX_PATH, L"\\Startup");
 		CoTaskMemFree(ppidl);
 	}
 	return wstring(pszStartUpPath);
@@ -211,7 +307,8 @@ void CCommon::GetFiles(const wchar_t* path, vector<wstring>& files)
 		{
 			file_name.assign(fileinfo.name);
 			if (file_name != L"." && file_name != L"..")
-				files.push_back(wstring(path) + L"\\" + file_name);  //将文件名保存(忽略"."和"..")
+				//files.push_back(wstring(path) + L"\\" + file_name);  //将文件名保存(忽略"."和"..")
+				files.push_back(L"\\" + file_name);  //将文件名保存(忽略"."和"..")
 		} while (_wfindnext(hFile, &fileinfo) == 0);
 	}
 	_findclose(hFile);
@@ -273,3 +370,167 @@ void CCommon::DrawWindowText(CDC * pDC, CRect rect, LPCTSTR lpszString, COLORREF
 
 }
 
+//void CCommon::FillStaticColor(CStatic & static_ctr, COLORREF color)
+//{
+//	CDC* pDC = static_ctr.GetDC();
+//	CRect rect;
+//	static_ctr.GetClientRect(&rect);
+//	pDC->FillSolidRect(rect, color);
+//}
+
+void CCommon::SetDrawArea(CDC * pDC, CRect rect)
+{
+	CRgn rgn;
+	rgn.CreateRectRgnIndirect(rect);
+	pDC->SelectClipRgn(&rgn);
+}
+
+
+bool CCommon::IsForegroundFullscreen()
+{
+	bool bFullscreen{ false };		//用于指示前台窗口是否是全屏
+	HWND hWnd;
+	RECT rcApp;
+	RECT rcDesk;
+	hWnd = GetForegroundWindow();	//获取当前正在与用户交互的前台窗口句柄
+	TCHAR buff[256];
+	GetClassName(hWnd, buff, 256);		//获取前台窗口的类名
+	CString class_name{ buff };
+	if (hWnd != GetDesktopWindow() && class_name!=_T("WorkerW") && hWnd != GetShellWindow())//如果前台窗口不是桌面窗口，也不是控制台窗口
+	{
+		GetWindowRect(hWnd, &rcApp);	//获取前台窗口的坐标
+		GetWindowRect(GetDesktopWindow(), &rcDesk);	//根据桌面窗口句柄，获取整个屏幕的坐标
+		if (rcApp.left <= rcDesk.left && //如果前台窗口的坐标完全覆盖住桌面窗口，就表示前台窗口是全屏的
+			rcApp.top <= rcDesk.top &&
+			rcApp.right >= rcDesk.right &&
+			rcApp.bottom >= rcDesk.bottom)
+		{
+			bFullscreen = true;
+		}
+	}//如果前台窗口是桌面窗口，或者是控制台窗口，就直接返回不是全屏
+	return bFullscreen;
+}
+
+bool CCommon::CopyStringToClipboard(const wstring & str)
+{
+	if (OpenClipboard(NULL))
+	{
+		HGLOBAL clipbuffer;
+		EmptyClipboard();
+		size_t size = (str.size() + 1) * 2;
+		clipbuffer = GlobalAlloc(GMEM_DDESHARE, size);
+		memcpy_s(GlobalLock(clipbuffer), size, str.c_str(), size);
+		GlobalUnlock(clipbuffer);
+		if (SetClipboardData(CF_UNICODETEXT, clipbuffer) == NULL)
+			return false;
+		CloseClipboard();
+		return true;
+	}
+	else return false;
+}
+
+//bool CCommon::WhenStart(int time, bool write_log)
+//{
+//	int tick_count = GetTickCount();
+//	if (write_log)
+//	{
+//		char buff[128];
+//		sprintf_s(buff, "start time is %dms, no_multistart_warning_time is %d", tick_count, time);
+//		WriteLog(buff, _T(".\\start.log"));
+//	}
+//	return (tick_count < time);
+//}
+
+//CString CCommon::GetMouseTipsInfo(__int64 today_traffic, int cpu_usage, int memory_usage, int used_memory, int total_memory, bool show_cpu_memory)
+//{
+//	CString tip_info;
+//	if (show_cpu_memory)
+//	{
+//		tip_info.Format(_T("今日已使用流量：%s\r\n内存使用：%s/%s"),
+//			CCommon::KBytesToString(static_cast<unsigned int>(today_traffic / 1024)),
+//			CCommon::KBytesToString(used_memory), CCommon::KBytesToString(total_memory));
+//	}
+//	else
+//	{
+//		tip_info.Format(_T("今日已使用流量：%s\r\nCPU使用：%d%%\r\n内存使用：%s/%s (%d%%)"),
+//			CCommon::KBytesToString(static_cast<unsigned int>(today_traffic / 1024)),
+//			cpu_usage,
+//			CCommon::KBytesToString(used_memory), CCommon::KBytesToString(total_memory),
+//			memory_usage);
+//	}
+//	return tip_info;
+//}
+
+void CCommon::GetWindowsVersion(int & major_version, int & minor_version, int & build_number)
+{
+	DWORD dwMajorVer{}, dwMinorVer{}, dwBuildNumber{};
+	HMODULE hModNtdll{};
+	if (hModNtdll = ::LoadLibraryW(L"ntdll.dll"))
+	{
+		typedef void (WINAPI *pfRTLGETNTVERSIONNUMBERS)(DWORD*, DWORD*, DWORD*);
+		pfRTLGETNTVERSIONNUMBERS pfRtlGetNtVersionNumbers;
+		pfRtlGetNtVersionNumbers = (pfRTLGETNTVERSIONNUMBERS)::GetProcAddress(hModNtdll, "RtlGetNtVersionNumbers");
+		if (pfRtlGetNtVersionNumbers)
+		{
+			pfRtlGetNtVersionNumbers(&dwMajorVer, &dwMinorVer, &dwBuildNumber);
+			dwBuildNumber &= 0x0ffff;
+		}
+		::FreeLibrary(hModNtdll);
+		hModNtdll = NULL;
+	}
+	major_version = dwMajorVer;
+	minor_version = dwMinorVer;
+	build_number = dwBuildNumber;
+}
+
+bool CCommon::IsWindows10FallCreatorOrLater()
+{
+	int major_version, minor_version, build_number;
+	GetWindowsVersion(major_version, minor_version, build_number);
+	if (major_version > 10)
+		return true;
+	else if (major_version == 10 && minor_version > 0)
+		return true;
+	else if (major_version == 10 && minor_version == 0 && build_number >= 16299)
+		return true;
+	else return false;
+}
+
+bool CCommon::GetURL(const wstring & url, wstring & result)
+{
+	bool sucessed{ false };
+	CInternetSession session{};
+	CHttpFile* pfile{};
+	try
+	{
+		pfile = (CHttpFile *)session.OpenURL(url.c_str());
+		DWORD dwStatusCode;
+		pfile->QueryInfoStatusCode(dwStatusCode);
+		if (dwStatusCode == HTTP_STATUS_OK)
+		{
+			CString content;
+			CString data;
+			while (pfile->ReadString(data))
+			{
+				content += data;
+			}
+			result = StrToUnicode((const char*)content.GetString());
+			sucessed = true;
+		}
+		pfile->Close();
+		delete pfile;
+		session.Close();
+	}
+	catch (CInternetException* e)
+	{
+		if (pfile != nullptr)
+		{
+			pfile->Close();
+			delete pfile;
+		}
+		session.Close();
+		sucessed = false;
+		e->Delete();		//没有这句会造成内存泄露
+	}
+	return sucessed;
+}

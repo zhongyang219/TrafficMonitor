@@ -17,11 +17,6 @@ public:
 	enum { IDD = IDD_NETWORK_INFO_DIALOG };
 #endif
 
-	//void SetInOutBytes(unsigned int in_bytes, unsigned int out_bytes)
-	//{
-	//	m_in_bytes = in_bytes;
-	//	m_out_bytes = out_bytes;
-	//}
 	unsigned int m_in_bytes;		//当前查看的网络自启动以来已接收字节数
 	unsigned int m_out_bytes;		//当前查看的网络自启动以来已发送字节数
 
@@ -35,6 +30,9 @@ protected:
 	wstring m_default_gateway{ L"-.-.-.-" };	//默认网关
 	
 	CListCtrl m_info_list;
+	CMenu m_menu;
+
+	CString m_selected_string;
 
 	void GetIPAddress();	//获取IP地址
 	void ShowInfo();
@@ -44,4 +42,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	virtual BOOL OnInitDialog();
+public:
+	afx_msg void OnCopyText();
+	afx_msg void OnNMRClickInfoList1(NMHDR *pNMHDR, LRESULT *pResult);
 };

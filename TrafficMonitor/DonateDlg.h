@@ -1,6 +1,6 @@
 #pragma once
 #include "afxwin.h"
-
+#include "PictureStatic.h"
 
 // CDonateDlg 对话框
 
@@ -18,7 +18,7 @@ public:
 #endif
 
 protected:
-	CStatic m_donate_pic;
+	CPictureStatic m_donate_pic;
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 

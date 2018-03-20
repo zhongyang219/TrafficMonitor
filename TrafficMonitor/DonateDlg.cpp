@@ -40,12 +40,10 @@ BOOL CDonateDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
-	CWindowDC dc(this);
-	HDC hDC = dc.GetSafeHdc();
-	int dpi = GetDeviceCaps(hDC, LOGPIXELSY);
-	int side = 304 * dpi / 96;
+	int side = theApp.DPI(304);
 
 	m_donate_pic.SetWindowPos(&CWnd::wndTop, 0, 0, side, side, SWP_NOMOVE);	//更改控件的宽和高
+	m_donate_pic.SetPicture(IDB_DONATE_BITMAP);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
