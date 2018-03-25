@@ -37,6 +37,8 @@ void CSkinDlg::GetSkinLayout(const wstring& cfg_path, LayoutData& layout_data)
 {
 	//从ini文件读取皮肤布局，并根据DPI进行缩放
 	layout_data.text_height = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("text_height"), 20, cfg_path.c_str()));
+	layout_data.no_text = (GetPrivateProfileInt(_T("layout"), _T("no_text"), 0, cfg_path.c_str()) != 0);
+
 	layout_data.width_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("width_l"), 220, cfg_path.c_str()));
 	layout_data.height_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("height_l"), 43, cfg_path.c_str()));
 	layout_data.up_x_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("up_x_l"), 6, cfg_path.c_str()));
@@ -115,6 +117,7 @@ void CSkinDlg::SetPreviewText(CDC* pDC, bool l_preview)
 	pDC->SelectObject(m_pFont);
 	CRect rect;
 	CString prev_text;
+	CString disp_text;
 	if (l_preview)
 	{
 		//绘制“上传”预览文本
@@ -123,7 +126,11 @@ void CSkinDlg::SetPreviewText(CDC* pDC, bool l_preview)
 			rect.MoveToXY(m_layout_data.up_x_l, m_layout_data.up_y_l);
 			rect.right = rect.left + m_layout_data.up_width_l;
 			rect.bottom = rect.top + m_layout_data.text_height;
-			prev_text.Format(_T("%s88.8KB/s"), ((m_disp_str.up == NONE_STR) ? theApp.m_main_wnd_data.disp_str.up.c_str() : m_disp_str.up.c_str()));
+			if (m_layout_data.no_text)
+				disp_text = _T("");
+			else
+				disp_text = ((m_disp_str.up == NONE_STR) ? theApp.m_main_wnd_data.disp_str.up.c_str() : m_disp_str.up.c_str());
+			prev_text.Format(_T("%s88.8KB/s"), disp_text);
 			pDC->DrawText(prev_text, rect, DT_VCENTER | DT_SINGLELINE);
 		}
 		//绘制“下载”预览文本
@@ -132,7 +139,11 @@ void CSkinDlg::SetPreviewText(CDC* pDC, bool l_preview)
 			rect.MoveToXY(m_layout_data.down_x_l, m_layout_data.down_y_l);
 			rect.right = rect.left + m_layout_data.down_width_l;
 			rect.bottom = rect.top + m_layout_data.text_height;
-			prev_text.Format(_T("%s88.9KB/s"), ((m_disp_str.down == NONE_STR) ? theApp.m_main_wnd_data.disp_str.down.c_str() : m_disp_str.down.c_str()));
+			if (m_layout_data.no_text)
+				disp_text = _T("");
+			else
+				disp_text = ((m_disp_str.down == NONE_STR) ? theApp.m_main_wnd_data.disp_str.down.c_str() : m_disp_str.down.c_str());
+			prev_text.Format(_T("%s88.9KB/s"), disp_text);
 			pDC->DrawText(prev_text, rect, DT_VCENTER | DT_SINGLELINE);
 		}
 		//绘制“CPU”预览文本
@@ -141,7 +152,11 @@ void CSkinDlg::SetPreviewText(CDC* pDC, bool l_preview)
 			rect.MoveToXY(m_layout_data.cpu_x_l, m_layout_data.cpu_y_l);
 			rect.right = rect.left + m_layout_data.cpu_width_l;
 			rect.bottom = rect.top + m_layout_data.text_height;
-			prev_text.Format(_T("%s50%%"), ((m_disp_str.cpu == NONE_STR) ? theApp.m_main_wnd_data.disp_str.cpu.c_str() : m_disp_str.cpu.c_str()));
+			if (m_layout_data.no_text)
+				disp_text = _T("");
+			else
+				disp_text = ((m_disp_str.cpu == NONE_STR) ? theApp.m_main_wnd_data.disp_str.cpu.c_str() : m_disp_str.cpu.c_str());
+			prev_text.Format(_T("%s50%%"), disp_text);
 			pDC->DrawText(prev_text, rect, DT_VCENTER | DT_SINGLELINE);
 		}
 		//绘制“内存”预览文本
@@ -150,7 +165,11 @@ void CSkinDlg::SetPreviewText(CDC* pDC, bool l_preview)
 			rect.MoveToXY(m_layout_data.memory_x_l, m_layout_data.memory_y_l);
 			rect.right = rect.left + m_layout_data.memory_width_l;
 			rect.bottom = rect.top + m_layout_data.text_height;
-			prev_text.Format(_T("%s51%%"), ((m_disp_str.memory == NONE_STR) ? theApp.m_main_wnd_data.disp_str.memory.c_str() : m_disp_str.memory.c_str()));
+			if (m_layout_data.no_text)
+				disp_text = _T("");
+			else
+				disp_text = ((m_disp_str.memory == NONE_STR) ? theApp.m_main_wnd_data.disp_str.memory.c_str() : m_disp_str.memory.c_str());
+			prev_text.Format(_T("%s51%%"), disp_text);
 			pDC->DrawText(prev_text, rect, DT_VCENTER | DT_SINGLELINE);
 		}
 	}
@@ -162,7 +181,11 @@ void CSkinDlg::SetPreviewText(CDC* pDC, bool l_preview)
 			rect.MoveToXY(m_layout_data.up_x_s, m_layout_data.up_y_s);
 			rect.right = rect.left + m_layout_data.up_width_s;
 			rect.bottom = rect.top + m_layout_data.text_height;
-			prev_text.Format(_T("%s88.8KB/s"), ((m_disp_str.up == NONE_STR) ? theApp.m_main_wnd_data.disp_str.up.c_str() : m_disp_str.up.c_str()));
+			if (m_layout_data.no_text)
+				disp_text = _T("");
+			else
+				disp_text = ((m_disp_str.up == NONE_STR) ? theApp.m_main_wnd_data.disp_str.up.c_str() : m_disp_str.up.c_str());
+			prev_text.Format(_T("%s88.8KB/s"), disp_text);
 			pDC->DrawText(prev_text, rect, DT_VCENTER | DT_SINGLELINE);
 		}
 		//绘制“下载”预览文本
@@ -171,7 +194,11 @@ void CSkinDlg::SetPreviewText(CDC* pDC, bool l_preview)
 			rect.MoveToXY(m_layout_data.down_x_s, m_layout_data.down_y_s);
 			rect.right = rect.left + m_layout_data.down_width_s;
 			rect.bottom = rect.top + m_layout_data.text_height;
-			prev_text.Format(_T("%s88.9KB/s"), ((m_disp_str.down == NONE_STR) ? theApp.m_main_wnd_data.disp_str.down.c_str() : m_disp_str.down.c_str()));
+			if (m_layout_data.no_text)
+				disp_text = _T("");
+			else
+				disp_text = ((m_disp_str.down == NONE_STR) ? theApp.m_main_wnd_data.disp_str.down.c_str() : m_disp_str.down.c_str());
+			prev_text.Format(_T("%s88.9KB/s"), disp_text);
 			pDC->DrawText(prev_text, rect, DT_VCENTER | DT_SINGLELINE);
 		}
 		//绘制“CPU”预览文本
@@ -180,7 +207,11 @@ void CSkinDlg::SetPreviewText(CDC* pDC, bool l_preview)
 			rect.MoveToXY(m_layout_data.cpu_x_s, m_layout_data.cpu_y_s);
 			rect.right = rect.left + m_layout_data.cpu_width_s;
 			rect.bottom = rect.top + m_layout_data.text_height;
-			prev_text.Format(_T("%s50%%"), ((m_disp_str.cpu == NONE_STR) ? theApp.m_main_wnd_data.disp_str.cpu.c_str() : m_disp_str.cpu.c_str()));
+			if (m_layout_data.no_text)
+				disp_text = _T("");
+			else
+				disp_text = ((m_disp_str.cpu == NONE_STR) ? theApp.m_main_wnd_data.disp_str.cpu.c_str() : m_disp_str.cpu.c_str());
+			prev_text.Format(_T("%s50%%"), disp_text);
 			pDC->DrawText(prev_text, rect, DT_VCENTER | DT_SINGLELINE);
 		}
 		//绘制“内存”预览文本
@@ -189,7 +220,11 @@ void CSkinDlg::SetPreviewText(CDC* pDC, bool l_preview)
 			rect.MoveToXY(m_layout_data.memory_x_s, m_layout_data.memory_y_s);
 			rect.right = rect.left + m_layout_data.memory_width_s;
 			rect.bottom = rect.top + m_layout_data.text_height;
-			prev_text.Format(_T("%s51%%"), ((m_disp_str.memory == NONE_STR) ? theApp.m_main_wnd_data.disp_str.memory.c_str() : m_disp_str.memory.c_str()));
+			if (m_layout_data.no_text)
+				disp_text = _T("");
+			else
+				disp_text = ((m_disp_str.memory == NONE_STR) ? theApp.m_main_wnd_data.disp_str.memory.c_str() : m_disp_str.memory.c_str());
+			prev_text.Format(_T("%s51%%"), disp_text);
 			pDC->DrawText(prev_text, rect, DT_VCENTER | DT_SINGLELINE);
 		}
 	}

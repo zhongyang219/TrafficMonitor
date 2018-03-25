@@ -101,6 +101,7 @@ struct GeneralSettingData
 struct LayoutData
 {
 	int text_height;	//文本区域的高度
+	bool no_text;		//不显示数值前的“上传”、“下载”等文本
 
 	//大窗口模式（勾选“显示更多信息”时的布局）
 	int width_l;	//窗口的宽度

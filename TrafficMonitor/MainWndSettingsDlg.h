@@ -15,6 +15,8 @@ public:
 	//选项设置数据
 	MainWndSettingData m_data;
 
+	bool m_text_disable{ false };	//如果为true，则不允许设置“显示文本”，并不允许交换上传和下载的位置
+
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_MAIN_WND_SETTINGS_DIALOG };

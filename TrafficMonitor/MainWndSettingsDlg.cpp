@@ -97,6 +97,18 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 		m_hide_unit_chk.EnableWindow(FALSE);
 	}
 
+	if (m_text_disable)
+	{
+		GetDlgItem(IDC_UPLOAD_EDIT)->EnableWindow(FALSE);
+		GetDlgItem(IDC_DOWNLOAD_EDIT)->EnableWindow(FALSE);
+		GetDlgItem(IDC_CPU_EDIT)->EnableWindow(FALSE);
+		GetDlgItem(IDC_MEMORY_EDIT)->EnableWindow(FALSE);
+		m_data.swap_up_down = false;
+		((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK))->SetCheck(FALSE);
+		GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK)->EnableWindow(FALSE);
+		GetDlgItem(IDC_SET_DEFAULT_BUTTON)->EnableWindow(FALSE);
+	}
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
 }

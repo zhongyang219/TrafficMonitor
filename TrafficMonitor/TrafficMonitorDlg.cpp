@@ -224,21 +224,21 @@ void CTrafficMonitorDlg::ShowInfo()
 		format_str = _T("%s%s/s");
 	if (!theApp.m_main_wnd_data.swap_up_down)
 	{
-		str.Format(format_str, theApp.m_main_wnd_data.disp_str.up.c_str(), out_speed.GetString());
+		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.up.c_str()), out_speed.GetString());
 		m_disp_up.SetWindowTextEx(str);
-		str.Format(format_str, theApp.m_main_wnd_data.disp_str.down.c_str(), in_speed.GetString());
+		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.down.c_str()), in_speed.GetString());
 		m_disp_down.SetWindowTextEx(str);
 	}
 	else		//交换上传和下载位置
 	{
-		str.Format(format_str, theApp.m_main_wnd_data.disp_str.down.c_str(), in_speed.GetString());
+		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.down.c_str()), in_speed.GetString());
 		m_disp_up.SetWindowTextEx(str);
-		str.Format(format_str, theApp.m_main_wnd_data.disp_str.up.c_str(), out_speed.GetString());
+		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.up.c_str()), out_speed.GetString());
 		m_disp_down.SetWindowTextEx(str);
 	}
-	str.Format(_T("%s%d%%"), theApp.m_main_wnd_data.disp_str.cpu.c_str(), theApp.m_cpu_usage);
+	str.Format(_T("%s%d%%"), (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.cpu.c_str()), theApp.m_cpu_usage);
 	m_disp_cpu.SetWindowTextEx(str);
-	str.Format(_T("%s%d%%"), theApp.m_main_wnd_data.disp_str.memory.c_str(), theApp.m_memory_usage);
+	str.Format(_T("%s%d%%"), (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.memory.c_str()), theApp.m_memory_usage);
 	m_disp_memory.SetWindowTextEx(str);
 	//设置要显示的项目
 	if (m_show_more_info)
@@ -697,7 +697,8 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 	optionsDlg.m_tab1_dlg.m_data = theApp.m_main_wnd_data;
 	optionsDlg.m_tab2_dlg.m_data = theApp.m_taskbar_data;
 	optionsDlg.m_tab3_dlg.m_data = theApp.m_general_data;
-	
+	optionsDlg.m_tab1_dlg.m_text_disable = m_layout_data.no_text;
+
 	if (optionsDlg.DoModal() == IDOK)
 	{
 		theApp.m_main_wnd_data = optionsDlg.m_tab1_dlg.m_data;
@@ -745,6 +746,8 @@ void CTrafficMonitorDlg::GetSkinLayout()
 {
 	wstring skin_cfg_path{ theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini" };
 	CSkinDlg::GetSkinLayout(skin_cfg_path, m_layout_data);
+	if (m_layout_data.no_text)		//如果皮肤布局不显示文本，则不允许交换上传和下载的位置，因为上传和下载的位置已经固定在皮肤中了
+		theApp.m_main_wnd_data.swap_up_down = false;
 }
 
 void CTrafficMonitorDlg::ApplySettings()
