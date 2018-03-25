@@ -30,6 +30,7 @@ void CSkinDlg::DoDataExchange(CDataExchange* pDX)
 	//  DDX_Control(pDX, IDC_STATIC_TEXT1, m_preview_text_s);
 	//  DDX_Control(pDX, IDC_STATIC_TEXT2, m_preview_text_l);
 	DDX_Control(pDX, IDC_SKIN_COURSE_STATIC, m_skin_course);
+	DDX_Control(pDX, IDC_SKIN_DOWNLOAD_STATIC, m_skin_download);
 }
 
 void CSkinDlg::GetSkinLayout(const wstring& cfg_path, LayoutData& layout_data)
@@ -223,6 +224,7 @@ BOOL CSkinDlg::OnInitDialog()
 	ShowPreview();
 
 	m_skin_course.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor/blob/master/皮肤制作教程.md"));
+	m_skin_download.SetURL(_T("https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md"));
 
 	//SetTimer(2345, 100, NULL);
 
