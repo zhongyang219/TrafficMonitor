@@ -206,6 +206,8 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialogEx)
 	ON_COMMAND(ID_OPTIONS2, &CTrafficMonitorDlg::OnOptions2)
 	ON_MESSAGE(WM_EXITMENULOOP, &CTrafficMonitorDlg::OnExitmenuloop)
 	ON_COMMAND(ID_CHANGE_NOTIFY_ICON, &CTrafficMonitorDlg::OnChangeNotifyIcon)
+	ON_COMMAND(ID_ALOW_OUT_OF_BORDER, &CTrafficMonitorDlg::OnAlowOutOfBorder)
+	ON_UPDATE_COMMAND_UI(ID_ALOW_OUT_OF_BORDER, &CTrafficMonitorDlg::OnUpdateAlowOutOfBorder)
 END_MESSAGE_MAP()
 
 
@@ -363,29 +365,32 @@ void CTrafficMonitorDlg::SetMousePenetrate()
 
 void CTrafficMonitorDlg::CheckWindowPos()
 {
-	CRect rect;
-	GetWindowRect(rect);
-	if (m_screen_rect.Width() <= rect.Width() || m_screen_rect.Height() <= rect.Height())
-		return;
-	if (rect.left < m_screen_rect.left)
+	if (!m_alow_out_of_border)
 	{
-		rect.MoveToX(m_screen_rect.left);
-		MoveWindow(rect);
-	}
-	if (rect.top < m_screen_rect.top)
-	{
-		rect.MoveToY(m_screen_rect.top);
-		MoveWindow(rect);
-	}
-	if (rect.right > m_screen_rect.right)
-	{
-		rect.MoveToX(m_screen_rect.right - rect.Width());
-		MoveWindow(rect);
-	}
-	if (rect.bottom > m_screen_rect.bottom)
-	{
-		rect.MoveToY(m_screen_rect.bottom - rect.Height());
-		MoveWindow(rect);
+		CRect rect;
+		GetWindowRect(rect);
+		if (m_screen_rect.Width() <= rect.Width() || m_screen_rect.Height() <= rect.Height())
+			return;
+		if (rect.left < m_screen_rect.left)
+		{
+			rect.MoveToX(m_screen_rect.left);
+			MoveWindow(rect);
+		}
+		if (rect.top < m_screen_rect.top)
+		{
+			rect.MoveToY(m_screen_rect.top);
+			MoveWindow(rect);
+		}
+		if (rect.right > m_screen_rect.right)
+		{
+			rect.MoveToX(m_screen_rect.right - rect.Width());
+			MoveWindow(rect);
+		}
+		if (rect.bottom > m_screen_rect.bottom)
+		{
+			rect.MoveToY(m_screen_rect.bottom - rect.Height());
+			MoveWindow(rect);
+		}
 	}
 }
 
@@ -434,6 +439,8 @@ void CTrafficMonitorDlg::LoadConfig()
 	theApp.m_main_wnd_data.speed_short_mode = (GetPrivateProfileInt(_T("config"), _T("speed_short_mode"), 0, theApp.m_config_path.c_str()) != 0);
 	theApp.m_main_wnd_data.m_speed_unit = static_cast<SpeedUnit>(GetPrivateProfileInt(_T("config"), _T("speed_unit"), 0, theApp.m_config_path.c_str()));
 	theApp.m_main_wnd_data.m_hide_unit = (GetPrivateProfileInt(_T("config"), _T("hide_unit"), 0, theApp.m_config_path.c_str()) != 0);
+
+	m_alow_out_of_border = (GetPrivateProfileInt(_T("config"), _T("alow_out_of_border"), 0, theApp.m_config_path.c_str()) != 0);
 }
 
 void CTrafficMonitorDlg::SaveConfig()
@@ -479,6 +486,8 @@ void CTrafficMonitorDlg::SaveConfig()
 	CCommon::WritePrivateProfileIntW(L"config", L"speed_short_mode", theApp.m_main_wnd_data.speed_short_mode, theApp.m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(L"config", L"speed_unit", static_cast<int>(theApp.m_main_wnd_data.m_speed_unit), theApp.m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(L"config", L"hide_unit", theApp.m_main_wnd_data.m_hide_unit, theApp.m_config_path.c_str());
+
+	CCommon::WritePrivateProfileIntW(L"config", L"alow_out_of_border", m_alow_out_of_border, theApp.m_config_path.c_str());
 }
 
 void CTrafficMonitorDlg::AutoSelect()
@@ -1848,4 +1857,19 @@ void CTrafficMonitorDlg::OnChangeNotifyIcon()
 		}
 		SaveConfig();
 	}
+}
+
+
+void CTrafficMonitorDlg::OnAlowOutOfBorder()
+{
+	// TODO: 在此添加命令处理程序代码
+	m_alow_out_of_border = !m_alow_out_of_border;
+	CheckWindowPos();
+}
+
+
+void CTrafficMonitorDlg::OnUpdateAlowOutOfBorder(CCmdUI *pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(m_alow_out_of_border);
 }

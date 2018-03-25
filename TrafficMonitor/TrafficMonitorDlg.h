@@ -116,9 +116,9 @@ protected:
 	wstring m_skin_name;		//选择的皮肤的名称
 
 	int m_notify_icon_selected{};	//要显示的通知区图标
+	bool m_alow_out_of_border{ false };		//是否允许悬浮窗超出屏幕边界
 
 	SYSTEMTIME m_start_time;	//程序启动时的时间
-
 	deque<HistoryTraffic> m_history_traffics;	//储存历史流量
 
 	CToolTipCtrl m_tool_tips;
@@ -219,4 +219,6 @@ protected:
 	afx_msg LRESULT OnExitmenuloop(WPARAM wParam, LPARAM lParam);
 public:
 	afx_msg void OnChangeNotifyIcon();
+	afx_msg void OnAlowOutOfBorder();
+	afx_msg void OnUpdateAlowOutOfBorder(CCmdUI *pCmdUI);
 };

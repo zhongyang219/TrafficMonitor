@@ -39,7 +39,7 @@ string CCommon::UnicodeToStr(const wchar_t * wstr)
 
 bool CCommon::WritePrivateProfileIntW(const wchar_t * AppName, const wchar_t * KeyName, int value, const wchar_t * Path)
 {
-	wchar_t buff[11];
+	wchar_t buff[11]{};
 	_itow_s(value, buff, 10);
 	return (::WritePrivateProfileStringW(AppName, KeyName, buff, Path) != FALSE);
 }
@@ -223,7 +223,7 @@ BOOL CCommon::CreateFileShortcut(LPCTSTR lpszLnkFileDir, LPCTSTR lpszFileName, L
 	else
 	{
 		//设置工作目录为快捷方式目标所在位置
-		TCHAR workDirBuf[MAX_PATH];
+		TCHAR workDirBuf[MAX_PATH]{};
 		if (lpszFileName == NULL)
 			wcscpy_s(workDirBuf, file_path);
 		else
@@ -285,7 +285,7 @@ BOOL CCommon::CreateFileShortcut(LPCTSTR lpszLnkFileDir, LPCTSTR lpszFileName, L
 wstring CCommon::GetStartUpPath()
 {
 	LPITEMIDLIST ppidl;
-	TCHAR pszStartUpPath[MAX_PATH];
+	TCHAR pszStartUpPath[MAX_PATH]{};
 	if (SHGetSpecialFolderLocation(NULL, CSIDL_STARTUP, &ppidl) == S_OK)
 	{
 		SHGetPathFromIDList(ppidl, pszStartUpPath);
