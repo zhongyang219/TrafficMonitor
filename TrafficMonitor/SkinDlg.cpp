@@ -25,12 +25,9 @@ void CSkinDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_COMBO1, m_select_box);
-	DDX_Control(pDX, IDC_STATIC_SKIN_S, m_skin_preview_s);
-	DDX_Control(pDX, IDC_STATIC_SKIN_L, m_skin_preview_l);
-	//  DDX_Control(pDX, IDC_STATIC_TEXT1, m_preview_text_s);
-	//  DDX_Control(pDX, IDC_STATIC_TEXT2, m_preview_text_l);
 	DDX_Control(pDX, IDC_SKIN_COURSE_STATIC, m_skin_course);
 	DDX_Control(pDX, IDC_SKIN_DOWNLOAD_STATIC, m_skin_download);
+	DDX_Control(pDX, IDC_PREVIEW_GROUP_STATIC, m_preview_static);
 }
 
 void CSkinDlg::GetSkinLayout(const wstring& cfg_path, LayoutData& layout_data)
@@ -86,155 +83,60 @@ void CSkinDlg::ShowPreview()
 {
 	//载入布局数据
 	wstring cfg_path{ theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini" };
-	GetSkinLayout(cfg_path, m_layout_data);
-	//显示小尺寸的预览图
-	m_skin_preview_s.SetWindowPos(nullptr, PREVIEW_START_X + m_layout_data.preview_x_s, PREVIEW_START_Y + m_layout_data.preview_y_s, m_layout_data.width_s, m_layout_data.height_s, SWP_NOZORDER);	//更改控件的大小和位置
-	m_image = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background.bmp").c_str(), IMAGE_BITMAP, m_layout_data.width_s, m_layout_data.height_s, LR_LOADFROMFILE);
-	m_skin_preview_s.SetPicture(m_image);		//为CStatic控件设置图片
-	//显示大尺寸的预览图
-	m_skin_preview_l.SetWindowPos(nullptr, PREVIEW_START_X + m_layout_data.preview_x_l, PREVIEW_START_Y + m_layout_data.preview_y_l, m_layout_data.width_l, m_layout_data.height_l, SWP_NOZORDER);
-	m_image = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background_l.bmp").c_str(), IMAGE_BITMAP, m_layout_data.width_l, m_layout_data.height_l, LR_LOADFROMFILE);
-	m_skin_preview_l.SetPicture(m_image);
+	GetSkinLayout(cfg_path, m_skin_data.layout);
+	//载入背景图
+	LoadBackImage((theApp.m_skin_path + m_skins[m_skin_selected]).c_str(), true);
+	LoadBackImage((theApp.m_skin_path + m_skins[m_skin_selected]).c_str(), false);
 	//获取当前皮肤的文字颜色
-	m_text_color = GetPrivateProfileInt(_T("skin"), _T("text_color"), 0, cfg_path.c_str());
+	m_skin_data.text_color = GetPrivateProfileInt(_T("skin"), _T("text_color"), 0, cfg_path.c_str());
 	//获取皮肤作者
 #define BUFF_SIZE 64
 	wchar_t buff[BUFF_SIZE];
 	GetPrivateProfileString(_T("skin"), _T("skin_author"), _T("unknow"), buff, BUFF_SIZE, cfg_path.c_str());
 	SetDlgItemText(IDC_SKIN_INFO, (wstring(L"皮肤作者：") + buff).c_str());
 	//获取显示文本
-	m_disp_str.up = CCommon::GetIniStringW(_T("skin"), _T("up_string"), NONE_STR, cfg_path.c_str());
-	m_disp_str.down = CCommon::GetIniStringW(_T("skin"), _T("down_string"), NONE_STR, cfg_path.c_str());
-	m_disp_str.cpu = CCommon::GetIniStringW(_T("skin"), _T("cpu_string"), NONE_STR, cfg_path.c_str());
-	m_disp_str.memory = CCommon::GetIniStringW(_T("skin"), _T("memory_string"), NONE_STR, cfg_path.c_str());
+	m_skin_data.disp_str.up = CCommon::GetIniStringW(_T("skin"), _T("up_string"), NONE_STR, cfg_path.c_str());
+	m_skin_data.disp_str.down = CCommon::GetIniStringW(_T("skin"), _T("down_string"), NONE_STR, cfg_path.c_str());
+	m_skin_data.disp_str.cpu = CCommon::GetIniStringW(_T("skin"), _T("cpu_string"), NONE_STR, cfg_path.c_str());
+	m_skin_data.disp_str.memory = CCommon::GetIniStringW(_T("skin"), _T("memory_string"), NONE_STR, cfg_path.c_str());
+	//获取预览区大小
+	m_skin_data.layout.preview_width = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("preview_width"), 238, cfg_path.c_str()));
+	m_skin_data.layout.preview_height = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("preview_height"), 116, cfg_path.c_str()));
+	m_view->SetSize(m_skin_data.layout.preview_width, m_skin_data.layout.preview_height);
+	m_view->Invalidate();
 }
 
 
-void CSkinDlg::SetPreviewText(CDC* pDC, bool l_preview)
+void CSkinDlg::LoadBackImage(const wstring & path, bool small_image)
 {
-	pDC->SetTextColor(m_text_color);
-	pDC->SetBkMode(TRANSPARENT);
-	pDC->SelectObject(m_pFont);
-	CRect rect;
-	CString prev_text;
-	CString disp_text;
-	if (l_preview)
+	if (small_image)
 	{
-		//绘制“上传”预览文本
-		if (m_layout_data.show_up_l)
-		{
-			rect.MoveToXY(m_layout_data.up_x_l, m_layout_data.up_y_l);
-			rect.right = rect.left + m_layout_data.up_width_l;
-			rect.bottom = rect.top + m_layout_data.text_height;
-			if (m_layout_data.no_text)
-				disp_text = _T("");
-			else
-				disp_text = ((m_disp_str.up == NONE_STR) ? theApp.m_main_wnd_data.disp_str.up.c_str() : m_disp_str.up.c_str());
-			prev_text.Format(_T("%s88.8KB/s"), disp_text);
-			pDC->DrawText(prev_text, rect, DT_VCENTER | DT_SINGLELINE);
-		}
-		//绘制“下载”预览文本
-		if (m_layout_data.show_down_l)
-		{
-			rect.MoveToXY(m_layout_data.down_x_l, m_layout_data.down_y_l);
-			rect.right = rect.left + m_layout_data.down_width_l;
-			rect.bottom = rect.top + m_layout_data.text_height;
-			if (m_layout_data.no_text)
-				disp_text = _T("");
-			else
-				disp_text = ((m_disp_str.down == NONE_STR) ? theApp.m_main_wnd_data.disp_str.down.c_str() : m_disp_str.down.c_str());
-			prev_text.Format(_T("%s88.9KB/s"), disp_text);
-			pDC->DrawText(prev_text, rect, DT_VCENTER | DT_SINGLELINE);
-		}
-		//绘制“CPU”预览文本
-		if (m_layout_data.show_cpu_l)
-		{
-			rect.MoveToXY(m_layout_data.cpu_x_l, m_layout_data.cpu_y_l);
-			rect.right = rect.left + m_layout_data.cpu_width_l;
-			rect.bottom = rect.top + m_layout_data.text_height;
-			if (m_layout_data.no_text)
-				disp_text = _T("");
-			else
-				disp_text = ((m_disp_str.cpu == NONE_STR) ? theApp.m_main_wnd_data.disp_str.cpu.c_str() : m_disp_str.cpu.c_str());
-			prev_text.Format(_T("%s50%%"), disp_text);
-			pDC->DrawText(prev_text, rect, DT_VCENTER | DT_SINGLELINE);
-		}
-		//绘制“内存”预览文本
-		if (m_layout_data.show_memory_l)
-		{
-			rect.MoveToXY(m_layout_data.memory_x_l, m_layout_data.memory_y_l);
-			rect.right = rect.left + m_layout_data.memory_width_l;
-			rect.bottom = rect.top + m_layout_data.text_height;
-			if (m_layout_data.no_text)
-				disp_text = _T("");
-			else
-				disp_text = ((m_disp_str.memory == NONE_STR) ? theApp.m_main_wnd_data.disp_str.memory.c_str() : m_disp_str.memory.c_str());
-			prev_text.Format(_T("%s51%%"), disp_text);
-			pDC->DrawText(prev_text, rect, DT_VCENTER | DT_SINGLELINE);
-		}
+		m_background_s.Destroy();
+		m_background_s.Load((path + BACKGROUND_IMAGE_S).c_str());
 	}
 	else
 	{
-		//绘制“上传”预览文本
-		if (m_layout_data.show_up_s)
-		{
-			rect.MoveToXY(m_layout_data.up_x_s, m_layout_data.up_y_s);
-			rect.right = rect.left + m_layout_data.up_width_s;
-			rect.bottom = rect.top + m_layout_data.text_height;
-			if (m_layout_data.no_text)
-				disp_text = _T("");
-			else
-				disp_text = ((m_disp_str.up == NONE_STR) ? theApp.m_main_wnd_data.disp_str.up.c_str() : m_disp_str.up.c_str());
-			prev_text.Format(_T("%s88.8KB/s"), disp_text);
-			pDC->DrawText(prev_text, rect, DT_VCENTER | DT_SINGLELINE);
-		}
-		//绘制“下载”预览文本
-		if (m_layout_data.show_down_s)
-		{
-			rect.MoveToXY(m_layout_data.down_x_s, m_layout_data.down_y_s);
-			rect.right = rect.left + m_layout_data.down_width_s;
-			rect.bottom = rect.top + m_layout_data.text_height;
-			if (m_layout_data.no_text)
-				disp_text = _T("");
-			else
-				disp_text = ((m_disp_str.down == NONE_STR) ? theApp.m_main_wnd_data.disp_str.down.c_str() : m_disp_str.down.c_str());
-			prev_text.Format(_T("%s88.9KB/s"), disp_text);
-			pDC->DrawText(prev_text, rect, DT_VCENTER | DT_SINGLELINE);
-		}
-		//绘制“CPU”预览文本
-		if (m_layout_data.show_cpu_s)
-		{
-			rect.MoveToXY(m_layout_data.cpu_x_s, m_layout_data.cpu_y_s);
-			rect.right = rect.left + m_layout_data.cpu_width_s;
-			rect.bottom = rect.top + m_layout_data.text_height;
-			if (m_layout_data.no_text)
-				disp_text = _T("");
-			else
-				disp_text = ((m_disp_str.cpu == NONE_STR) ? theApp.m_main_wnd_data.disp_str.cpu.c_str() : m_disp_str.cpu.c_str());
-			prev_text.Format(_T("%s50%%"), disp_text);
-			pDC->DrawText(prev_text, rect, DT_VCENTER | DT_SINGLELINE);
-		}
-		//绘制“内存”预览文本
-		if (m_layout_data.show_memory_s)
-		{
-			rect.MoveToXY(m_layout_data.memory_x_s, m_layout_data.memory_y_s);
-			rect.right = rect.left + m_layout_data.memory_width_s;
-			rect.bottom = rect.top + m_layout_data.text_height;
-			if (m_layout_data.no_text)
-				disp_text = _T("");
-			else
-				disp_text = ((m_disp_str.memory == NONE_STR) ? theApp.m_main_wnd_data.disp_str.memory.c_str() : m_disp_str.memory.c_str());
-			prev_text.Format(_T("%s51%%"), disp_text);
-			pDC->DrawText(prev_text, rect, DT_VCENTER | DT_SINGLELINE);
-		}
+		m_background_l.Destroy();
+		m_background_l.Load((path + BACKGROUND_IMAGE_L).c_str());
 	}
+}
+
+CRect CSkinDlg::CalculateViewRect()
+{
+	CRect rect;
+	m_preview_static.GetWindowRect(rect);		//获取“预览” group box 的位置
+	ScreenToClient(&rect);
+	CRect scroll_view_rect{ rect };
+	scroll_view_rect.DeflateRect(theApp.DPI(12), theApp.DPI(25));
+	scroll_view_rect.top = rect.top + theApp.DPI(28);
+	return scroll_view_rect;
 }
 
 
 BEGIN_MESSAGE_MAP(CSkinDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CSkinDlg::OnCbnSelchangeCombo1)
-	//ON_WM_TIMER()
-	ON_MESSAGE(WM_CONTROL_REPAINT, &CSkinDlg::OnControlRepaint)
+	ON_WM_SIZE()
+	ON_WM_GETMINMAXINFO()
 END_MESSAGE_MAP()
 
 
@@ -245,6 +147,7 @@ BOOL CSkinDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
+	SetIcon(AfxGetApp()->LoadIcon(IDI_NOFITY_ICON3), FALSE);		// 设置小图标
 	//初始化选择框
 	for (const auto& skin_path : m_skins)
 	{
@@ -255,13 +158,26 @@ BOOL CSkinDlg::OnInitDialog()
 	}
 	m_select_box.SetCurSel(m_skin_selected);
 	m_select_box.SetMinVisibleItems(9);
+	//初始化预览视图
+	m_view = (CSkinPreviewView*)RUNTIME_CLASS(CSkinPreviewView)->CreateObject();
+	m_view->Create(NULL, NULL, WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL, CalculateViewRect(), this, 3000);
+	m_view->InitialUpdate();
+	m_view->SetSkinData(&m_skin_data);
+	m_view->SetBackImage(&m_background_s, &m_background_l);
+	m_view->SetFont(m_pFont);
+	m_view->ShowWindow(SW_SHOW);
+
 	//显示预览图片
 	ShowPreview();
 
+	//获取窗口初始时的大小
+	CRect rect;
+	GetWindowRect(rect);
+	m_min_size = rect.Size();
+
+	//设置超链接
 	m_skin_course.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor/blob/master/皮肤制作教程.md"));
 	m_skin_download.SetURL(_T("https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md"));
-
-	//SetTimer(2345, 100, NULL);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -273,31 +189,25 @@ void CSkinDlg::OnCbnSelchangeCombo1()
 	// TODO: 在此添加控件通知处理程序代码
 	m_skin_selected = m_select_box.GetCurSel();
 	ShowPreview();
-	//显示示例文本
-	SetPreviewText(m_skin_preview_s.GetDC(), false);
-	SetPreviewText(m_skin_preview_l.GetDC(), true);
 }
 
 
-//void CSkinDlg::OnTimer(UINT_PTR nIDEvent)
-//{
-//	// TODO: 在此添加消息处理程序代码和/或调用默认值
-//	SetPreviewText(m_skin_preview_s);
-//	SetPreviewText(m_skin_preview_l);
-//	KillTimer(2345);		//定时器响应一次后就将其销毁
-//
-//	CDialogEx::OnTimer(nIDEvent);
-//}
-
-
-afx_msg LRESULT CSkinDlg::OnControlRepaint(WPARAM wParam, LPARAM lParam)
+void CSkinDlg::OnSize(UINT nType, int cx, int cy)
 {
-	//当接收到预览图控件的重绘消息时，重绘预览文本
-	CWnd* pControl = (CWnd*)wParam;
-	CDC* pDC = (CDC*)lParam;
-	if (pControl == &m_skin_preview_s)
-		SetPreviewText(pDC, false);
-	else if (pControl == &m_skin_preview_l)
-		SetPreviewText(pDC, true);
-	return 0;
+	CDialogEx::OnSize(nType, cx, cy);
+
+	// TODO: 在此处添加消息处理程序代码
+	if(m_preview_static.m_hWnd!=NULL && nType!= SIZE_MINIMIZED)
+		m_view->MoveWindow(CalculateViewRect());
+}
+
+
+void CSkinDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	//限制窗口最小大小
+	lpMMI->ptMinTrackSize.x = m_min_size.cx;		//设置最小宽度
+	lpMMI->ptMinTrackSize.y = m_min_size.cy;		//设置最小高度
+
+	CDialogEx::OnGetMinMaxInfo(lpMMI);
 }

@@ -61,6 +61,12 @@
     <Filter Include="源文件和头文件\派生的控件类\PictureStatic">
       <UniqueIdentifier>{adb67f17-86da-401c-981c-c6f49a1f52ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\Common">
+      <UniqueIdentifier>{7f523bbb-ec3f-4626-b1d8-ad45c2467dd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\DrawCommon">
+      <UniqueIdentifier>{c4eace17-d9e5-43bf-8e13-30680c7c80be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -77,9 +83,6 @@
     </ClInclude>
     <ClInclude Include="StaticEx.h">
       <Filter>源文件和头文件\派生的控件类\StaticEx</Filter>
-    </ClInclude>
-    <ClInclude Include="Common.h">
-      <Filter>源文件和头文件\公共的类</Filter>
     </ClInclude>
     <ClInclude Include="TaskBarDlg.h">
       <Filter>源文件和头文件\TaskBarDlg</Filter>
@@ -126,6 +129,15 @@
     <ClInclude Include="CommonData.h">
       <Filter>源文件和头文件\头文件</Filter>
     </ClInclude>
+    <ClInclude Include="CSkinPreviewView.h">
+      <Filter>源文件和头文件\对话框类\SkinDlg</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>源文件和头文件\公共的类\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawCommon.h">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -133,9 +145,6 @@
     </ClCompile>
     <ClCompile Include="StaticEx.cpp">
       <Filter>源文件和头文件\派生的控件类\StaticEx</Filter>
-    </ClCompile>
-    <ClCompile Include="Common.cpp">
-      <Filter>源文件和头文件\公共的类</Filter>
     </ClCompile>
     <ClCompile Include="TaskBarDlg.cpp">
       <Filter>源文件和头文件\TaskBarDlg</Filter>
@@ -178,6 +187,15 @@
     </ClCompile>
     <ClCompile Include="PictureStatic.cpp">
       <Filter>源文件和头文件\派生的控件类\PictureStatic</Filter>
+    </ClCompile>
+    <ClCompile Include="CSkinPreviewView.cpp">
+      <Filter>源文件和头文件\对话框类\SkinDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="Common.cpp">
+      <Filter>源文件和头文件\公共的类\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawCommon.cpp">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

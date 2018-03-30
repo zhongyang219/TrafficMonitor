@@ -48,6 +48,14 @@ int CTrafficMonitorApp::DPI(int pixel)
 	return m_dpi * pixel / 96;
 }
 
+void CTrafficMonitorApp::DPI(CRect & rect)
+{
+	rect.left = DPI(rect.left);
+	rect.right = DPI(rect.right);
+	rect.top = DPI(rect.top);
+	rect.bottom = DPI(rect.bottom);
+}
+
 void CTrafficMonitorApp::GetDPI(CWnd* pWnd)
 {
 	CWindowDC dc(pWnd);

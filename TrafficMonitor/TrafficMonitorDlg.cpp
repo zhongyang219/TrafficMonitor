@@ -850,9 +850,9 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 
 	//载入背景图片
 	if (m_show_more_info)
-		m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background_l.bmp").c_str(), IMAGE_BITMAP, m_layout_data.width_l, m_layout_data.height_l, LR_LOADFROMFILE);
+		m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_IMAGE_L).c_str(), IMAGE_BITMAP, m_layout_data.width_l, m_layout_data.height_l, LR_LOADFROMFILE);
 	else
-		m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background.bmp").c_str(), IMAGE_BITMAP, m_layout_data.width_s, m_layout_data.height_s, LR_LOADFROMFILE);
+		m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_IMAGE_S).c_str(), IMAGE_BITMAP, m_layout_data.width_s, m_layout_data.height_s, LR_LOADFROMFILE);
 	SetBackgroundImage(m_back_img);
 
 	//设置文字颜色
@@ -1564,7 +1564,7 @@ void CTrafficMonitorDlg::OnShowCpuMemory()
 		rect.bottom = rect.top + m_layout_data.height_s;
 		MoveWindow(rect);
 		CheckWindowPos();
-		m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background.bmp").c_str(), IMAGE_BITMAP, rect.Width(), rect.Height(), LR_LOADFROMFILE);
+		m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_IMAGE_S).c_str(), IMAGE_BITMAP, rect.Width(), rect.Height(), LR_LOADFROMFILE);
 		m_show_more_info = false;
 	}
 	else
@@ -1573,7 +1573,7 @@ void CTrafficMonitorDlg::OnShowCpuMemory()
 		rect.bottom = rect.top + m_layout_data.height_l;
 		MoveWindow(rect);
 		CheckWindowPos();
-		m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background_l.bmp").c_str(), IMAGE_BITMAP, rect.Width(), rect.Height(), LR_LOADFROMFILE);
+		m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_IMAGE_L).c_str(), IMAGE_BITMAP, rect.Width(), rect.Height(), LR_LOADFROMFILE);
 		m_show_more_info = true;
 	}
 	SetBackgroundImage(m_back_img);
@@ -1763,15 +1763,10 @@ void CTrafficMonitorDlg::OnUpdateHideMainWnd(CCmdUI *pCmdUI)
 void CTrafficMonitorDlg::OnChangeSkin()
 {
 	// TODO: 在此添加命令处理程序代码
-	//CRect rect;
-	//GetWindowRect(rect);
 	CSkinDlg skinDlg;
 	//初始化CSkinDlg对象的数据
 	skinDlg.m_skins = m_skins;
 	skinDlg.m_skin_selected = m_skin_selected;
-	//skinDlg.m_skin_width = rect.Width();
-	//skinDlg.m_skin_height_s = m_layout_data.height_s;
-	//skinDlg.m_skin_height_l = m_layout_data.height_l;
 	skinDlg.m_pFont = &m_font;
 	if (skinDlg.DoModal() == IDOK)
 	{
@@ -1780,9 +1775,9 @@ void CTrafficMonitorDlg::OnChangeSkin()
 		GetSkinLayout();
 		//载入背景图片
 		if (m_show_more_info)
-			m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background_l.bmp").c_str(), IMAGE_BITMAP, m_layout_data.width_l, m_layout_data.height_l, LR_LOADFROMFILE);
+			m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_IMAGE_L).c_str(), IMAGE_BITMAP, m_layout_data.width_l, m_layout_data.height_l, LR_LOADFROMFILE);
 		else
-			m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + L"\\background.bmp").c_str(), IMAGE_BITMAP, m_layout_data.width_s, m_layout_data.height_s, LR_LOADFROMFILE);
+			m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_IMAGE_S).c_str(), IMAGE_BITMAP, m_layout_data.width_s, m_layout_data.height_s, LR_LOADFROMFILE);
 		SetBackgroundImage(m_back_img);
 		//获取皮肤的文字颜色，并设置文字颜色
 		theApp.m_main_wnd_data.text_color = skinDlg.GetTextColor();

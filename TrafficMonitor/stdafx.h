@@ -49,6 +49,7 @@ using std::ofstream;
 #include<algorithm>
 #include <cmath>
 #include <afxinet.h>	//用于支持使用网络相关的类
+#include <afxwin.h>
 
 
 
@@ -80,3 +81,7 @@ using std::ofstream;
 #define VERSION L"1.69"
 
 #define MAX_NOTIFY_ICON 4		//可选的通知区图标数量
+
+//背景图片的文件名
+#define BACKGROUND_IMAGE_S L"\\background.bmp"
+#define BACKGROUND_IMAGE_L L"\\background_l.bmp"

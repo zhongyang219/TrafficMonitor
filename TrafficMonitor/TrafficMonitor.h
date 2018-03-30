@@ -55,6 +55,7 @@ public:
 	void SaveConfig();
 
 	int DPI(int pixel);
+	void DPI(CRect& rect);
 	void GetDPI(CWnd* pWnd);
 
 	static void CheckUpdate(bool message);		//检查更新，如果message为true，则在检查时弹出提示信息
