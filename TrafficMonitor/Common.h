@@ -98,5 +98,7 @@ public:
 
 	//获取URL的内容
 	static bool GetURL(const wstring& url, wstring& result);
+
+	static void SetRect(CRect& rect, int x, int y, int width, int height);
 };
 

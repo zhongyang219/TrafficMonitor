@@ -534,3 +534,11 @@ bool CCommon::GetURL(const wstring & url, wstring & result)
 	}
 	return sucessed;
 }
+
+void CCommon::SetRect(CRect & rect, int x, int y, int width, int height)
+{
+	rect.left = x;
+	rect.top = y;
+	rect.right = x + width;
+	rect.bottom = y + height;
+}

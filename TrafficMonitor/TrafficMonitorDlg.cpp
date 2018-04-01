@@ -136,7 +136,7 @@ afx_msg LRESULT CAboutDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
 unsigned int CTrafficMonitorDlg::m_WM_TASKBARCREATED{ ::RegisterWindowMessage(_T("TaskbarCreated")) };	//注册任务栏建立的消息
 
 CTrafficMonitorDlg::CTrafficMonitorDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_TRAFFICMONITOR_DIALOG, pParent)
+	: CDialog(IDD_TRAFFICMONITOR_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	LoadConfig();	//启动时从ini文件载入设置
@@ -156,14 +156,10 @@ CTrafficMonitorDlg::~CTrafficMonitorDlg()
 
 void CTrafficMonitorDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_STATIC_UP, m_disp_up);
-	DDX_Control(pDX, IDC_STATIC_DOWN, m_disp_down);
-	DDX_Control(pDX, IDC_STATIC_CPU, m_disp_cpu);
-	DDX_Control(pDX, IDC_STATIC_MEMORY, m_disp_memory);
+	CDialog::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
 	ON_WM_QUERYDRAGICON()
 	ON_WM_TIMER()
 	ON_WM_RBUTTONUP()
@@ -208,14 +204,32 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialogEx)
 	ON_COMMAND(ID_CHANGE_NOTIFY_ICON, &CTrafficMonitorDlg::OnChangeNotifyIcon)
 	ON_COMMAND(ID_ALOW_OUT_OF_BORDER, &CTrafficMonitorDlg::OnAlowOutOfBorder)
 	ON_UPDATE_COMMAND_UI(ID_ALOW_OUT_OF_BORDER, &CTrafficMonitorDlg::OnUpdateAlowOutOfBorder)
+	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 
-void CTrafficMonitorDlg::ShowInfo()
+void CTrafficMonitorDlg::DrawInfo(CDrawCommon* draw)
 {
 	CString str;
 	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit);
 	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit);
+
+	bool show_up, show_down, show_cpu, show_memory;
+	//设置要显示的项目
+	if (m_show_more_info)
+	{
+		show_up = m_layout_data.show_up_l;
+		show_down = m_layout_data.show_down_l;
+		show_cpu = m_layout_data.show_cpu_l;
+		show_memory = m_layout_data.show_memory_l;
+	}
+	else
+	{
+		show_up = m_layout_data.show_up_s;
+		show_down = m_layout_data.show_down_s;
+		show_cpu = m_layout_data.show_cpu_s;
+		show_memory = m_layout_data.show_memory_s;
+	}
 
 	CString format_str;
 	if (theApp.m_main_wnd_data.m_hide_unit && theApp.m_main_wnd_data.m_speed_unit != SpeedUnit::AUTO)
@@ -225,36 +239,27 @@ void CTrafficMonitorDlg::ShowInfo()
 	if (!theApp.m_main_wnd_data.swap_up_down)
 	{
 		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.up.c_str()), out_speed.GetString());
-		m_disp_up.SetWindowTextEx(str);
+		if (show_up)
+			draw->DrawWindowText(m_rect_up, str, theApp.m_main_wnd_data.text_color, false);
 		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.down.c_str()), in_speed.GetString());
-		m_disp_down.SetWindowTextEx(str);
+		if(show_down)
+			draw->DrawWindowText(m_rect_down, str, theApp.m_main_wnd_data.text_color, false);
 	}
 	else		//交换上传和下载位置
 	{
 		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.down.c_str()), in_speed.GetString());
-		m_disp_up.SetWindowTextEx(str);
+		if (show_up)
+			draw->DrawWindowText(m_rect_up, str, theApp.m_main_wnd_data.text_color, false);
 		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.up.c_str()), out_speed.GetString());
-		m_disp_down.SetWindowTextEx(str);
+		if (show_down)
+			draw->DrawWindowText(m_rect_down, str, theApp.m_main_wnd_data.text_color, false);
 	}
 	str.Format(_T("%s%d%%"), (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.cpu.c_str()), theApp.m_cpu_usage);
-	m_disp_cpu.SetWindowTextEx(str);
+	if (show_cpu)
+		draw->DrawWindowText(m_rect_cpu, str, theApp.m_main_wnd_data.text_color, false);
 	str.Format(_T("%s%d%%"), (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.memory.c_str()), theApp.m_memory_usage);
-	m_disp_memory.SetWindowTextEx(str);
-	//设置要显示的项目
-	if (m_show_more_info)
-	{
-		m_disp_up.ShowWindow(m_layout_data.show_up_l ? SW_SHOW : SW_HIDE);
-		m_disp_down.ShowWindow(m_layout_data.show_down_l ? SW_SHOW : SW_HIDE);
-		m_disp_cpu.ShowWindow(m_layout_data.show_cpu_l ? SW_SHOW : SW_HIDE);
-		m_disp_memory.ShowWindow(m_layout_data.show_memory_l ? SW_SHOW : SW_HIDE);
-	}
-	else
-	{
-		m_disp_up.ShowWindow(m_layout_data.show_up_s ? SW_SHOW : SW_HIDE);
-		m_disp_down.ShowWindow(m_layout_data.show_down_s ? SW_SHOW : SW_HIDE);
-		m_disp_cpu.ShowWindow(m_layout_data.show_cpu_s ? SW_SHOW : SW_HIDE);
-		m_disp_memory.ShowWindow(m_layout_data.show_memory_s ? SW_SHOW : SW_HIDE);
-	}
+	if (show_memory)
+		draw->DrawWindowText(m_rect_memory, str, theApp.m_main_wnd_data.text_color, false);
 }
 
 CString CTrafficMonitorDlg::GetMouseTipsInfo()
@@ -588,15 +593,10 @@ void CTrafficMonitorDlg::CloseTaskBarWnd()
 
 void CTrafficMonitorDlg::OpenTaskBarWnd()
 {
-	////如果没有设置主窗口置顶，则在打开任务栏窗口时先设置主窗口置顶，再取消置顶，以解决任务栏窗口的鼠标提示显示在任务栏后面的问题
-	//if (!m_always_on_top)
-	//	SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//设置置顶
 	m_tBarDlg = new CTaskBarDlg;
 	m_tBarDlg->Create(IDD_TASK_BAR_DIALOG, this);
 	m_tBarDlg->ShowWindow(SW_SHOW);
 	m_tBarDlg->ShowInfo();
-	//if (!m_always_on_top)
-	//	SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//取消置顶
 }
 
 void CTrafficMonitorDlg::AddNotifyIcon()
@@ -727,18 +727,18 @@ void CTrafficMonitorDlg::SetItemPosition()
 	if (m_show_more_info)
 	{
 		SetWindowPos(nullptr, 0, 0, m_layout_data.width_l, m_layout_data.height_l, SWP_NOMOVE | SWP_NOZORDER);
-		m_disp_up.MoveWindow(m_layout_data.up_x_l, m_layout_data.up_y_l, m_layout_data.up_width_l, m_layout_data.text_height);
-		m_disp_down.MoveWindow(m_layout_data.down_x_l, m_layout_data.down_y_l, m_layout_data.down_width_l, m_layout_data.text_height);
-		m_disp_cpu.MoveWindow(m_layout_data.cpu_x_l, m_layout_data.cpu_y_l, m_layout_data.cpu_width_l, m_layout_data.text_height);
-		m_disp_memory.MoveWindow(m_layout_data.memory_x_l, m_layout_data.memory_y_l, m_layout_data.memory_width_l, m_layout_data.text_height);
+		CCommon::SetRect(m_rect_up, m_layout_data.up_x_l, m_layout_data.up_y_l, m_layout_data.up_width_l, m_layout_data.text_height);
+		CCommon::SetRect(m_rect_down, m_layout_data.down_x_l, m_layout_data.down_y_l, m_layout_data.down_width_l, m_layout_data.text_height);
+		CCommon::SetRect(m_rect_cpu, m_layout_data.cpu_x_l, m_layout_data.cpu_y_l, m_layout_data.cpu_width_l, m_layout_data.text_height);
+		CCommon::SetRect(m_rect_memory, m_layout_data.memory_x_l, m_layout_data.memory_y_l, m_layout_data.memory_width_l, m_layout_data.text_height);
 	}
 	else
 	{
 		SetWindowPos(nullptr, 0, 0, m_layout_data.width_s, m_layout_data.height_s, SWP_NOMOVE | SWP_NOZORDER);
-		m_disp_up.MoveWindow(m_layout_data.up_x_s, m_layout_data.up_y_s, m_layout_data.up_width_s, m_layout_data.text_height);
-		m_disp_down.MoveWindow(m_layout_data.down_x_s, m_layout_data.down_y_s, m_layout_data.down_width_s, m_layout_data.text_height);
-		m_disp_cpu.MoveWindow(m_layout_data.cpu_x_s, m_layout_data.cpu_y_s, m_layout_data.cpu_width_s, m_layout_data.text_height);
-		m_disp_memory.MoveWindow(m_layout_data.memory_x_s, m_layout_data.memory_y_s, m_layout_data.memory_width_s, m_layout_data.text_height);
+		CCommon::SetRect(m_rect_up, m_layout_data.up_x_s, m_layout_data.up_y_s, m_layout_data.up_width_s, m_layout_data.text_height);
+		CCommon::SetRect(m_rect_down, m_layout_data.down_x_s, m_layout_data.down_y_s, m_layout_data.down_width_s, m_layout_data.text_height);
+		CCommon::SetRect(m_rect_cpu, m_layout_data.cpu_x_s, m_layout_data.cpu_y_s, m_layout_data.cpu_width_s, m_layout_data.text_height);
+		CCommon::SetRect(m_rect_memory, m_layout_data.memory_x_s, m_layout_data.memory_y_s, m_layout_data.memory_width_s, m_layout_data.text_height);
 	}
 }
 
@@ -750,28 +750,28 @@ void CTrafficMonitorDlg::GetSkinLayout()
 		theApp.m_main_wnd_data.swap_up_down = false;
 }
 
+void CTrafficMonitorDlg::LoadBackGroundImage()
+{
+	m_back_img.Destroy();
+	if (m_show_more_info)
+		m_back_img.Load((theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_IMAGE_L).c_str());
+	else
+		m_back_img.Load((theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_IMAGE_S).c_str());
+}
+
 void CTrafficMonitorDlg::ApplySettings()
 {
-	//应用文字颜色设置
-	m_disp_cpu.SetTextColor(theApp.m_main_wnd_data.text_color);
-	m_disp_memory.SetTextColor(theApp.m_main_wnd_data.text_color);
-	m_disp_up.SetTextColor(theApp.m_main_wnd_data.text_color);
-	m_disp_down.SetTextColor(theApp.m_main_wnd_data.text_color);
 	//应用字体设置
 	if (m_font.m_hObject)	//如果m_font已经关联了一个字体资源对象，则释放它
 		m_font.DeleteObject();
 	m_font.CreatePointFont(theApp.m_main_wnd_data.font_size * 10, theApp.m_main_wnd_data.font_name);
-	m_disp_cpu.SetFont(&m_font);
-	m_disp_memory.SetFont(&m_font);
-	m_disp_up.SetFont(&m_font);
-	m_disp_down.SetFont(&m_font);
 }
 
 // CTrafficMonitorDlg 消息处理程序
 
 BOOL CTrafficMonitorDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	CDialog::OnInitDialog();
 
 	// 设置此对话框的图标。  当应用程序主窗口不是对话框时，框架将自动
 	//  执行此操作
@@ -785,10 +785,7 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 
 	theApp.GetDPI(this);
 	//获取屏幕大小
-	//if (theApp.m_is_windows10_fall_creator)
-	//	GetScreenSize(theApp.DPI(23));
-	//else
-		GetScreenSize();
+	GetScreenSize();
 
 	//设置窗口透明度
 	SetTransparency();
@@ -849,30 +846,10 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	CheckWindowPos();
 
 	//载入背景图片
-	if (m_show_more_info)
-		m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_IMAGE_L).c_str(), IMAGE_BITMAP, m_layout_data.width_l, m_layout_data.height_l, LR_LOADFROMFILE);
-	else
-		m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_IMAGE_S).c_str(), IMAGE_BITMAP, m_layout_data.width_s, m_layout_data.height_s, LR_LOADFROMFILE);
-	SetBackgroundImage(m_back_img);
-
-	//设置文字颜色
-	m_disp_cpu.SetTextColor(theApp.m_main_wnd_data.text_color);
-	m_disp_memory.SetTextColor(theApp.m_main_wnd_data.text_color);
-	m_disp_up.SetTextColor(theApp.m_main_wnd_data.text_color);
-	m_disp_down.SetTextColor(theApp.m_main_wnd_data.text_color);
+	LoadBackGroundImage();
 
 	//设置字体
 	m_font.CreatePointFont(theApp.m_main_wnd_data.font_size * 10, theApp.m_main_wnd_data.font_name);
-	m_disp_cpu.SetFont(&m_font);
-	m_disp_memory.SetFont(&m_font);
-	m_disp_up.SetFont(&m_font);
-	m_disp_down.SetFont(&m_font);
-
-
-	////获取“启动”文件夹的路径
-	//m_start_up_path = CCommon::GetStartUpPath();
-	////判断程序的自启动快捷方式是否存在
-	//m_auto_run = CCommon::FileExist((m_start_up_path + L"\\TrafficMonitor.lnk").c_str());
 
 	//获取启动时的时间
 	GetLocalTime(&m_start_time);
@@ -1083,38 +1060,39 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		//只有主窗口和任务栏窗口至少有一个显示时才执行下面的处理
 		if (!theApp.m_hide_main_window || m_show_task_bar_wnd)
 		{
-				//获取CPU利用率
-				FILETIME idleTime;
-				FILETIME kernelTime;
-				FILETIME userTime;
-				GetSystemTimes(&idleTime, &kernelTime, &userTime);
+			//获取CPU利用率
+			FILETIME idleTime;
+			FILETIME kernelTime;
+			FILETIME userTime;
+			GetSystemTimes(&idleTime, &kernelTime, &userTime);
 
-				__int64 idle = CCommon::CompareFileTime2(m_preidleTime, idleTime);
-				__int64 kernel = CCommon::CompareFileTime2(m_prekernelTime, kernelTime);
-				__int64 user = CCommon::CompareFileTime2(m_preuserTime, userTime);
+			__int64 idle = CCommon::CompareFileTime2(m_preidleTime, idleTime);
+			__int64 kernel = CCommon::CompareFileTime2(m_prekernelTime, kernelTime);
+			__int64 user = CCommon::CompareFileTime2(m_preuserTime, userTime);
 
-				if (kernel + user == 0)
-				{
-					theApp.m_cpu_usage = 0;
-				}
-				else
-				{
-					//（总的时间-空闲时间）/总的时间=占用cpu的时间就是使用率
-					theApp.m_cpu_usage = static_cast<int>(abs((kernel + user - idle) * 100 / (kernel + user)));
-				}
-				m_preidleTime = idleTime;
-				m_prekernelTime = kernelTime;
-				m_preuserTime = userTime;
+			if (kernel + user == 0)
+			{
+				theApp.m_cpu_usage = 0;
+			}
+			else
+			{
+				//（总的时间-空闲时间）/总的时间=占用cpu的时间就是使用率
+				theApp.m_cpu_usage = static_cast<int>(abs((kernel + user - idle) * 100 / (kernel + user)));
+			}
+			m_preidleTime = idleTime;
+			m_prekernelTime = kernelTime;
+			m_preuserTime = userTime;
 		
-				//获取内存利用率
-				MEMORYSTATUSEX statex;
-				statex.dwLength = sizeof(statex);
-				GlobalMemoryStatusEx(&statex);
-				theApp.m_memory_usage = statex.dwMemoryLoad;
-				theApp.m_used_memory = static_cast<int>((statex.ullTotalPhys - statex.ullAvailPhys) / 1024);
-				theApp.m_total_memory  = static_cast<int>(statex.ullTotalPhys / 1024);
+			//获取内存利用率
+			MEMORYSTATUSEX statex;
+			statex.dwLength = sizeof(statex);
+			GlobalMemoryStatusEx(&statex);
+			theApp.m_memory_usage = statex.dwMemoryLoad;
+			theApp.m_used_memory = static_cast<int>((statex.ullTotalPhys - statex.ullAvailPhys) / 1024);
+			theApp.m_total_memory  = static_cast<int>(statex.ullTotalPhys / 1024);
 
-			ShowInfo();		//刷新窗口信息
+			//DrawInfo();		//刷新窗口信息
+			Invalidate();
 	
 			//更新鼠标提示
 			CString tip_info;
@@ -1157,7 +1135,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		KillTimer(DELAY_TIMER);
 	}
 
-	CDialogEx::OnTimer(nIDEvent);
+	CDialog::OnTimer(nIDEvent);
 }
 
 
@@ -1171,7 +1149,7 @@ void CTrafficMonitorDlg::OnRButtonUp(UINT nFlags, CPoint point)
 	pContextMenu->SetDefaultItem(ID_NETWORK_INFO);
 	pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
 
-	CDialogEx::OnRButtonUp(nFlags, point1);
+	CDialog::OnRButtonUp(nFlags, point1);
 }
 
 
@@ -1181,7 +1159,7 @@ void CTrafficMonitorDlg::OnLButtonDown(UINT nFlags, CPoint point)
 	//在未锁定窗口位置时允许通过点击窗口内部来拖动窗口
 	if (!m_lock_window_pos)
 		PostMessage(WM_NCLBUTTONDOWN, HTCAPTION, MAKELPARAM(point.x, point.y));
-	CDialogEx::OnLButtonDown(nFlags, point);
+	CDialog::OnLButtonDown(nFlags, point);
 }
 
 
@@ -1219,7 +1197,7 @@ void CTrafficMonitorDlg::OnUpdateAlwaysOnTop(CCmdUI *pCmdUI)
 
 void CTrafficMonitorDlg::OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu)
 {
-	CDialogEx::OnInitMenuPopup(pPopupMenu, nIndex, bSysMenu);
+	CDialog::OnInitMenuPopup(pPopupMenu, nIndex, bSysMenu);
 
 	// TODO: 在此处添加消息处理程序代码
 	ASSERT(pPopupMenu != NULL);
@@ -1348,7 +1326,7 @@ void CTrafficMonitorDlg::OnClose()
 	if (m_tBarDlg != nullptr)
 		m_tBarDlg->OnCancel();
 
-	CDialogEx::OnClose();
+	CDialog::OnClose();
 }
 
 
@@ -1373,13 +1351,13 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 		m_connection_change_flag = true;
 	}
 
-	return CDialogEx::OnCommand(wParam, lParam);
+	return CDialog::OnCommand(wParam, lParam);
 }
 
 
 void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
 {
-	CDialogEx::OnInitMenu(pMenu);
+	CDialog::OnInitMenu(pMenu);
 
 	// TODO: 在此处添加消息处理程序代码
 	m_menu_popuped = true;
@@ -1421,7 +1399,7 @@ BOOL CTrafficMonitorDlg::PreTranslateMessage(MSG* pMsg)
 		m_tool_tips.RelayEvent(pMsg);
 	}
 
-	return CDialogEx::PreTranslateMessage(pMsg);
+	return CDialog::PreTranslateMessage(pMsg);
 }
 
 
@@ -1442,7 +1420,7 @@ void CTrafficMonitorDlg::OnUpdateLockWindowPos(CCmdUI *pCmdUI)
 
 void CTrafficMonitorDlg::OnMove(int x, int y)
 {
-	CDialogEx::OnMove(x, y);
+	CDialog::OnMove(x, y);
 
 	// TODO: 在此处添加消息处理程序代码
 	//确保窗口不会超出屏幕范围
@@ -1545,7 +1523,7 @@ void CTrafficMonitorDlg::OnUpdateShowNotifyIcon(CCmdUI *pCmdUI)
 
 void CTrafficMonitorDlg::OnDestroy()
 {
-	CDialogEx::OnDestroy();
+	CDialog::OnDestroy();
 
 	//程序退出时删除通知栏图标
 	::Shell_NotifyIcon(NIM_DELETE, &m_ntIcon);
@@ -1564,7 +1542,6 @@ void CTrafficMonitorDlg::OnShowCpuMemory()
 		rect.bottom = rect.top + m_layout_data.height_s;
 		MoveWindow(rect);
 		CheckWindowPos();
-		m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_IMAGE_S).c_str(), IMAGE_BITMAP, rect.Width(), rect.Height(), LR_LOADFROMFILE);
 		m_show_more_info = false;
 	}
 	else
@@ -1573,12 +1550,11 @@ void CTrafficMonitorDlg::OnShowCpuMemory()
 		rect.bottom = rect.top + m_layout_data.height_l;
 		MoveWindow(rect);
 		CheckWindowPos();
-		m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_IMAGE_L).c_str(), IMAGE_BITMAP, rect.Width(), rect.Height(), LR_LOADFROMFILE);
 		m_show_more_info = true;
 	}
-	SetBackgroundImage(m_back_img);
+	LoadBackGroundImage();
 	SetItemPosition();
-	ShowInfo();
+	Invalidate();
 	SaveConfig();
 }
 
@@ -1774,17 +1750,9 @@ void CTrafficMonitorDlg::OnChangeSkin()
 		m_skin_name = m_skins[m_skin_selected];
 		GetSkinLayout();
 		//载入背景图片
-		if (m_show_more_info)
-			m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_IMAGE_L).c_str(), IMAGE_BITMAP, m_layout_data.width_l, m_layout_data.height_l, LR_LOADFROMFILE);
-		else
-			m_back_img = (HBITMAP)LoadImage(NULL, (theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_IMAGE_S).c_str(), IMAGE_BITMAP, m_layout_data.width_s, m_layout_data.height_s, LR_LOADFROMFILE);
-		SetBackgroundImage(m_back_img);
-		//获取皮肤的文字颜色，并设置文字颜色
+		LoadBackGroundImage();
+		//获取皮肤的文字颜色
 		theApp.m_main_wnd_data.text_color = skinDlg.GetTextColor();
-		m_disp_cpu.SetTextColor(theApp.m_main_wnd_data.text_color);
-		m_disp_memory.SetTextColor(theApp.m_main_wnd_data.text_color);
-		m_disp_up.SetTextColor(theApp.m_main_wnd_data.text_color);
-		m_disp_down.SetTextColor(theApp.m_main_wnd_data.text_color);
 
 		theApp.m_main_wnd_data.disp_str = skinDlg.GetDispStrings();
 		SetItemPosition();
@@ -1806,7 +1774,7 @@ void CTrafficMonitorDlg::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 
-	CDialogEx::OnMouseMove(nFlags, point);
+	CDialog::OnMouseMove(nFlags, point);
 }
 
 
@@ -1814,7 +1782,7 @@ void CTrafficMonitorDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	OnNetworkInfo();
-	CDialogEx::OnLButtonDblClk(nFlags, point);
+	CDialog::OnLButtonDblClk(nFlags, point);
 }
 
 
@@ -1870,4 +1838,35 @@ void CTrafficMonitorDlg::OnUpdateAlowOutOfBorder(CCmdUI *pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
 	pCmdUI->SetCheck(m_alow_out_of_border);
+}
+
+
+void CTrafficMonitorDlg::OnPaint()
+{
+	CPaintDC dc(this); // device context for painting
+					   // TODO: 在此处添加消息处理程序代码
+					   // 不为绘图消息调用 CDialog::OnPaint()
+	CDrawCommon draw;
+	draw.Create(&dc, nullptr);
+	draw.SetFont(&m_font);
+	CRect rect;
+	GetWindowRect(rect);
+
+	//设置缓冲的DC
+	CDC MemDC;
+	CBitmap MemBitmap;
+	MemDC.CreateCompatibleDC(NULL);
+	MemBitmap.CreateCompatibleBitmap(&dc, rect.Width(), rect.Height());
+	MemDC.SelectObject(&MemBitmap);
+
+	//绘图
+	draw.SetDC(&MemDC);
+	draw.DrawBitmap(m_back_img, CPoint(0, 0), rect.Size());
+	DrawInfo(&draw);
+
+	//将缓冲区DC中的图像拷贝到屏幕中显示
+	dc.BitBlt(0, 0, rect.Width(), rect.Height(), &MemDC, 0, 0, SRCCOPY);
+	MemBitmap.DeleteObject();
+	MemDC.DeleteDC();
+
 }
