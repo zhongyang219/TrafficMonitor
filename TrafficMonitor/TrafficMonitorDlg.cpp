@@ -1092,8 +1092,12 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			theApp.m_total_memory  = static_cast<int>(statex.ullTotalPhys / 1024);
 
 			//DrawInfo();		//刷新窗口信息
-			Invalidate();
-	
+			InvalidateRect(m_rect_up);
+			InvalidateRect(m_rect_down);
+			InvalidateRect(m_rect_cpu);
+			InvalidateRect(m_rect_memory);
+			//Invalidate();
+
 			//更新鼠标提示
 			CString tip_info;
 			tip_info = GetMouseTipsInfo();
@@ -1756,6 +1760,7 @@ void CTrafficMonitorDlg::OnChangeSkin()
 
 		theApp.m_main_wnd_data.disp_str = skinDlg.GetDispStrings();
 		SetItemPosition();
+		Invalidate();
 		SaveConfig();
 	}
 }
@@ -1850,7 +1855,7 @@ void CTrafficMonitorDlg::OnPaint()
 	draw.Create(&dc, nullptr);
 	draw.SetFont(&m_font);
 	CRect rect;
-	GetWindowRect(rect);
+	GetClientRect(rect);
 
 	//设置缓冲的DC
 	CDC MemDC;
@@ -1861,7 +1866,10 @@ void CTrafficMonitorDlg::OnPaint()
 
 	//绘图
 	draw.SetDC(&MemDC);
-	draw.DrawBitmap(m_back_img, CPoint(0, 0), rect.Size());
+	if (m_back_img.IsNull())
+		draw.FillRect(rect, RGB(230, 230, 230));
+	else
+		draw.DrawBitmap(m_back_img, CPoint(0, 0), rect.Size());
 	DrawInfo(&draw);
 
 	//将缓冲区DC中的图像拷贝到屏幕中显示
