@@ -31,6 +31,9 @@ public:
 	void DrawBitmap(UINT bitmap_id, CPoint start_point, CSize size, StretchMode stretch_mode = StretchMode::STRETCH);
 	void DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode = StretchMode::STRETCH);
 
+	//将图片拉伸到指定尺寸(https://blog.csdn.net/sichuanpb/article/details/22986877)
+	static void BitmapStretch(CImage *pImage, CImage *ResultImage, CSize size);
+
 	void FillRect(CRect rect, COLORREF color);		//用纯色填充矩形
 
 private:

@@ -18,7 +18,7 @@
 #include "DrawCommon.h"
 
 // CTrafficMonitorDlg 对话框
-class CTrafficMonitorDlg : public CDialog
+class CTrafficMonitorDlg : public CDialogEx
 {
 // 构造
 public:
@@ -94,14 +94,10 @@ protected:
 
 	CImage m_back_img;		//背景图片
 
-	//CStaticEx m_disp_up;	//显示上传的文本控件
-	//CStaticEx m_disp_down;	//显示下载的文本控件
-	//CStaticEx m_disp_cpu;	//显示CPU利用率的文本控件
-	//CStaticEx m_disp_memory;	//显示内存利用率的文本控件
-	CRect m_rect_up;
-	CRect m_rect_down;
-	CRect m_rect_cpu;
-	CRect m_rect_memory;
+	CStaticEx m_disp_up;	//显示上传的文本控件
+	CStaticEx m_disp_down;	//显示下载的文本控件
+	CStaticEx m_disp_cpu;	//显示CPU利用率的文本控件
+	CStaticEx m_disp_memory;	//显示内存利用率的文本控件
 
 	//COLORREF m_text_color{};		//文字颜色
 	CFont m_font;			//字体
@@ -134,7 +130,7 @@ protected:
 	bool m_menu_popuped{ false };				//指示当前是否有菜单处于弹出状态
 
 
-	void DrawInfo(CDrawCommon* draw);		//将上传下载速度信息显示到窗口中
+	void ShowInfo();		//将上传下载速度信息显示到窗口中
 	CString GetMouseTipsInfo();		//获取鼠标提示信息
 	void SetTransparency();			//根据m_transparency的值设置窗口透明度
 	void SetTransparency(int transparency);
@@ -164,6 +160,7 @@ protected:
 	void GetSkinLayout();		//从当前皮肤获取布局数据
 
 	void LoadBackGroundImage();
+	void SetTextColor();
 
 public:
 	void ApplySettings();
@@ -228,5 +225,4 @@ public:
 	afx_msg void OnChangeNotifyIcon();
 	afx_msg void OnAlowOutOfBorder();
 	afx_msg void OnUpdateAlowOutOfBorder(CCmdUI *pCmdUI);
-	afx_msg void OnPaint();
 };
