@@ -36,9 +36,15 @@ public:
 
 	void FillRect(CRect rect, COLORREF color);		//用纯色填充矩形
 
+	//从图像创建区域，如果像素点的亮度小于threshold（取值为0~255，0为黑色，255为白色），则该像素点在区域外
+	//https://blog.csdn.net/tajon1226/article/details/6589180
+	static void GetRegionFromImage(CRgn& rgn, CBitmap &cBitmap, int threshold);
+
 private:
 	CDC* m_pDC{};		//用于绘图的CDC类的指针
 	CWnd* m_pMainWnd{};	//绘图窗口的句柄
 	CFont* m_pfont{};
+
+	static int GetColorBritness(COLORREF color);
 };
 

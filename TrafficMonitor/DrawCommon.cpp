@@ -165,3 +165,47 @@ void CDrawCommon::FillRect(CRect rect, COLORREF color)
 {
 	m_pDC->FillSolidRect(rect, color);
 }
+
+void CDrawCommon::GetRegionFromImage(CRgn& rgn, CBitmap &cBitmap, int threshold)
+{
+	CDC memDC;
+
+	memDC.CreateCompatibleDC(NULL);
+	CBitmap *pOldMemBmp = NULL;
+	pOldMemBmp = memDC.SelectObject(&cBitmap);
+
+	//创建总的窗体区域，初始region为0
+	rgn.CreateRectRgn(0, 0, 0, 0);
+
+	BITMAP bit;
+	cBitmap.GetBitmap(&bit);//取得位图参数，这里要用到位图的长和宽
+	int y;
+	for (y = 0; y<bit.bmHeight; y++)
+	{
+		CRgn rgnTemp; //保存临时region
+		int iX = 0;
+		do
+		{
+			//跳过透明色找到下一个非透明色的点.
+			while (iX < bit.bmWidth && GetColorBritness(memDC.GetPixel(iX, y)) <= threshold)
+				iX++;
+			int iLeftX = iX; //记住这个起始点
+
+							 //寻找下个透明色的点
+			while (iX < bit.bmWidth && GetColorBritness(memDC.GetPixel(iX, y)) > threshold)
+				++iX;
+
+			//创建一个包含起点与重点间高为1像素的临时“region”
+			rgnTemp.CreateRectRgn(iLeftX, y, iX, y + 1);
+			rgn.CombineRgn(&rgn, &rgnTemp, RGN_OR);
+
+			//删除临时"region",否则下次创建时和出错
+			rgnTemp.DeleteObject();
+		} while (iX < bit.bmWidth);
+	}
+}
+
+int CDrawCommon::GetColorBritness(COLORREF color)
+{
+	return (GetRValue(color) + GetGValue(color) + GetBValue(color)) / 3;
+}

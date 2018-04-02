@@ -760,8 +760,31 @@ void CTrafficMonitorDlg::LoadBackGroundImage()
 		img_tmp.Load((theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_IMAGE_S).c_str());
 		image_size.SetSize(m_layout_data.width_s, m_layout_data.height_s);
 	}
-	CDrawCommon::BitmapStretch(&img_tmp, &m_back_img, image_size);
+	CDrawCommon::BitmapStretch(&img_tmp, &m_back_img, image_size);		//拉伸图片
 	SetBackgroundImage(m_back_img);
+	img_tmp.Destroy();
+
+	//创建窗口区域
+	CImage img_mask;
+	//载入掩码图片
+	if (m_show_more_info)
+		img_tmp.Load((theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_MASK_L).c_str());
+	else
+		img_tmp.Load((theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_MASK_S).c_str());
+	CRgn wnd_rgn;
+	if (!img_tmp.IsNull())
+	{
+		CDrawCommon::BitmapStretch(&img_tmp, &img_mask, image_size);		//拉伸掩码图片
+		CBitmap bitmap;
+		bitmap.Attach(img_mask);
+		CDrawCommon::GetRegionFromImage(wnd_rgn, bitmap, 128);		//从掩码图片获得窗口的区域
+		bitmap.Detach();
+	}
+	else
+	{
+		wnd_rgn.CreateRectRgnIndirect(CRect(CPoint(0, 0), image_size));		//载入掩码图片失败，则使用窗口大小作为窗口区域
+	}
+	SetWindowRgn(wnd_rgn, TRUE);		//设置窗口区域
 }
 
 void CTrafficMonitorDlg::SetTextColor()
