@@ -26,7 +26,7 @@ void CStaticEx::SetWindowTextEx(LPCTSTR lpszString)
 void CStaticEx::SetTextColor(COLORREF textColor)
 {
 	m_TextColor = textColor;
-	SetWindowTextEx(m_text);
+	Invalidate();
 }
 
 CString CStaticEx::GetString() const

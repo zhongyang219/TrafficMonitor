@@ -261,33 +261,33 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 {
 	CString tip_info;
 	CString temp;
-	temp.Format(_T("今日已使用流量: %s\r\n"), CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_traffic / 1024)));
+	temp.Format(_T("今日已使用流量: %s"), CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_traffic / 1024)));
 	tip_info += temp;
 	if (m_show_more_info)
 	{
 		if (!m_layout_data.show_up_l)		//如果主窗口中没有显示上传速度，则在提示信息中显示上传速度
 		{
-			temp.Format(_T("上传: %s/s\r\n"), CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit));
+			temp.Format(_T("\r\n上传: %s/s"), CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit));
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_down_l)
 		{
-			temp.Format(_T("下载: %s/s\r\n"), CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit));
+			temp.Format(_T("\r\n下载: %s/s"), CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit));
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_cpu_l)
 		{
-			temp.Format(_T("CPU使用: %d%%\r\n"), theApp.m_cpu_usage);
+			temp.Format(_T("\r\nCPU使用: %d%%"), theApp.m_cpu_usage);
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_memory_l)
 		{
-			temp.Format(_T("内存使用：%s/%s (%d%%)\r\n"), CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory), theApp.m_memory_usage);
+			temp.Format(_T("\r\n内存使用：%s/%s (%d%%)"), CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory), theApp.m_memory_usage);
 			tip_info += temp;
 		}
 		else
 		{
-			temp.Format(_T("内存使用：%s/%s\r\n"), CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory));
+			temp.Format(_T("\r\n内存使用：%s/%s"), CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory));
 			tip_info += temp;
 		}
 	}
@@ -295,27 +295,27 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 	{
 		if (!m_layout_data.show_up_s)		//如果主窗口中没有显示上传速度，则在提示信息中显示上传速度
 		{
-			temp.Format(_T("上传: %s/s\r\n"), CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit));
+			temp.Format(_T("\r\n上传: %s/s"), CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit));
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_down_s)
 		{
-			temp.Format(_T("下载: %s/s\r\n"), CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit));
+			temp.Format(_T("\r\n下载: %s/s"), CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit));
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_cpu_s)
 		{
-			temp.Format(_T("CPU使用: %d%%\r\n"), theApp.m_cpu_usage);
+			temp.Format(_T("\r\nCPU使用: %d%%"), theApp.m_cpu_usage);
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_memory_s)
 		{
-			temp.Format(_T("内存使用：%s/%s (%d%%)\r\n"), CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory), theApp.m_memory_usage);
+			temp.Format(_T("\r\n内存使用：%s/%s (%d%%)"), CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory), theApp.m_memory_usage);
 			tip_info += temp;
 		}
 		else
 		{
-			temp.Format(_T("内存使用：%s/%s\r\n"), CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory));
+			temp.Format(_T("\r\n内存使用：%s/%s"), CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory));
 			tip_info += temp;
 		}
 	}
@@ -900,11 +900,6 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	//设置文字颜色
 	SetTextColor();
 
-	////获取“启动”文件夹的路径
-	//m_start_up_path = CCommon::GetStartUpPath();
-	////判断程序的自启动快捷方式是否存在
-	//m_auto_run = CCommon::FileExist((m_start_up_path + L"\\TrafficMonitor.lnk").c_str());
-
 	//获取启动时的时间
 	GetLocalTime(&m_start_time);
 
@@ -956,13 +951,6 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
 			m_first_start = false;
 		}
-
-		////开机启动2秒后显示任务栏窗口，防止开机启动时由于任务栏还没有加载导致嵌入任务栏失败的问题
-		//if (theApp.WhenStart() && m_timer_cnt == 2)
-		//{
-		//	if (m_show_task_bar_wnd && m_tBarDlg == nullptr)
-		//		OpenTaskBarWnd();
-		//}
 
 		if (m_always_on_top && !theApp.m_hide_main_window)
 		{
@@ -1248,6 +1236,7 @@ void CTrafficMonitorDlg::OnUpdateAlwaysOnTop(CCmdUI *pCmdUI)
 }
 
 
+//此函数用于使得 OnUpdatexxxxx(CCmdUI *pCmdUI) 函数在基于对话框程序中有效
 void CTrafficMonitorDlg::OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu)
 {
 	CDialogEx::OnInitMenuPopup(pPopupMenu, nIndex, bSysMenu);
@@ -1485,8 +1474,8 @@ void CTrafficMonitorDlg::OnMove(int x, int y)
 afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
 {
 	bool dialog_exist{ false };
-	const int WIND_NUM{ 6 };
-	const CString diloge_title[WIND_NUM]{ _T("关于 TrafficMonitor"),_T("捐助"), _T("历史流量统计"), _T("连接详情"), _T("更换皮肤"), _T("选项设置") };
+	const int WIND_NUM{ 7 };
+	const CString diloge_title[WIND_NUM]{ _T("关于 TrafficMonitor"),_T("捐助"), _T("历史流量统计"), _T("连接详情"), _T("更换皮肤"), _T("选项设置"), _T("更换通知区图标") };
 	HWND handle{};
 	//依次查找程序中的每一个对话框，如果找到一个没有关闭的对话框时，则不允许弹出右键菜单，防止用户在此时退出程序
 	for (int i{}; i < WIND_NUM; i++)
@@ -1494,8 +1483,12 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
 		handle = ::FindWindow(NULL, diloge_title[i]);
 		if (handle != NULL)
 		{
-			dialog_exist = true;
-			break;
+			HWND hParent = ::GetParent(handle);		//查找找到的窗口的父窗口的句柄
+			if (hParent == m_hWnd)			//只有当找到的窗口的父窗口是程序主窗口时，才说明找到了
+			{
+				dialog_exist = true;
+				break;
+			}
 		}
 	}
 
@@ -1691,52 +1684,6 @@ void CTrafficMonitorDlg::OnAppAbout()
 }
 
 
-
-//void CTrafficMonitorDlg::OnAutoRunWhenStart()
-//{
-//	// TODO: 在此添加命令处理程序代码
-//	if (!m_auto_run)
-//	{
-//		if (MessageBox(_T("是否要在“开始”菜单的“启动”目录下创建程序的快捷方式？"), NULL, MB_ICONQUESTION | MB_YESNO) == IDYES)
-//		{
-//			if (CCommon::CreateFileShortcut(m_start_up_path.c_str(), NULL, _T("TrafficMonitor.lnk")))
-//			{
-//				CString info;
-//				info.Format(_T("已经在“%s”路径下创建了程序的快捷方式。"), m_start_up_path.c_str());
-//				MessageBox(info, NULL, MB_ICONINFORMATION);
-//				m_auto_run = true;
-//			}
-//			else
-//			{
-//				MessageBox(_T("快捷方式创建失败！"), NULL, MB_ICONWARNING);
-//			}
-//		}
-//	}
-//	else
-//	{
-//		if (MessageBox(_T("是否要在“开始”菜单的“启动”目录下删除程序的快捷方式？"), NULL, MB_ICONQUESTION | MB_YESNO) == IDYES)
-//		{
-//			if (DeleteFile((m_start_up_path + L"\\TrafficMonitor.lnk").c_str()))
-//			{
-//				MessageBox(_T("快捷方式删除成功！"), NULL, MB_ICONINFORMATION);
-//				m_auto_run = false;
-//			}
-//			else
-//			{
-//				MessageBox(_T("快捷方式删除失败！"), NULL, MB_ICONWARNING);
-//			}
-//		}
-//	}
-//}
-
-
-//void CTrafficMonitorDlg::OnUpdateAutoRunWhenStart(CCmdUI *pCmdUI)
-//{
-//	// TODO: 在此添加命令更新用户界面处理程序代码
-//	pCmdUI->SetCheck(m_auto_run);
-//}
-
-
 //当资源管理器重启时会触发此消息
 LRESULT CTrafficMonitorDlg::OnTaskBarCreated(WPARAM wParam, LPARAM lParam)
 {
@@ -1810,7 +1757,6 @@ void CTrafficMonitorDlg::OnChangeSkin()
 
 		theApp.m_main_wnd_data.disp_str = skinDlg.GetDispStrings();
 		SetItemPosition();
-		Invalidate();
 		SaveConfig();
 	}
 }
