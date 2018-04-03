@@ -225,21 +225,21 @@ void CTrafficMonitorDlg::ShowInfo()
 	if (!theApp.m_main_wnd_data.swap_up_down)
 	{
 		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.up.c_str()), out_speed.GetString());
-		m_disp_up.SetWindowTextEx(str);
+		m_disp_up.SetWindowTextEx(str, (m_show_more_info ? m_layout_data.up_align_l : m_layout_data.up_align_s));
 		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.down.c_str()), in_speed.GetString());
-		m_disp_down.SetWindowTextEx(str);
+		m_disp_down.SetWindowTextEx(str, (m_show_more_info ? m_layout_data.down_align_l : m_layout_data.down_align_s));
 	}
 	else		//交换上传和下载位置
 	{
 		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.down.c_str()), in_speed.GetString());
-		m_disp_up.SetWindowTextEx(str);
+		m_disp_up.SetWindowTextEx(str, (m_show_more_info ? m_layout_data.up_align_l : m_layout_data.up_align_s));
 		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.up.c_str()), out_speed.GetString());
-		m_disp_down.SetWindowTextEx(str);
+		m_disp_down.SetWindowTextEx(str, (m_show_more_info ? m_layout_data.down_align_l : m_layout_data.down_align_s));
 	}
 	str.Format(_T("%s%d%%"), (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.cpu.c_str()), theApp.m_cpu_usage);
-	m_disp_cpu.SetWindowTextEx(str);
+	m_disp_cpu.SetWindowTextEx(str, (m_show_more_info ? m_layout_data.cpu_align_l : m_layout_data.cpu_align_s));
 	str.Format(_T("%s%d%%"), (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.memory.c_str()), theApp.m_memory_usage);
-	m_disp_memory.SetWindowTextEx(str);
+	m_disp_memory.SetWindowTextEx(str, (m_show_more_info ? m_layout_data.memory_align_l : m_layout_data.memory_align_s));
 	//设置要显示的项目
 	if (m_show_more_info)
 	{

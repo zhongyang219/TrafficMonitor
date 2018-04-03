@@ -16,9 +16,10 @@ CStaticEx::~CStaticEx()
 {
 }
 
-void CStaticEx::SetWindowTextEx(LPCTSTR lpszString)
+void CStaticEx::SetWindowTextEx(LPCTSTR lpszString, Alignment align)
 {
 	m_text = lpszString;
+	m_align = align;
 	m_color_text = true;
 	Invalidate();
 }
@@ -174,7 +175,22 @@ void CStaticEx::OnPaint()
 		CRect rect;
 		this->GetClientRect(&rect);
 		DrawThemeParentBackground(m_hWnd, dc.GetSafeHdc(), &rect);	//重绘控件区域以解决文字重叠的问题
-		dc.DrawText(m_text, rect, DT_VCENTER | DT_SINGLELINE);
+		CSize text_size = dc.GetTextExtent(m_text);
+		UINT format{ DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX };		//CDC::DrawText()函数的文本格式
+		if (text_size.cx > rect.Width())		//如果文本宽度超过了矩形区域的宽度，设置了居中时左对齐
+		{
+			if (m_align == Alignment::RIGHT)
+				format |= DT_RIGHT;
+		}
+		else
+		{
+			switch (m_align)
+			{
+			case Alignment::RIGHT: format |= DT_RIGHT; break;
+			case Alignment::CENTER: format |= DT_CENTER; break;
+			}
+		}
+		dc.DrawText(m_text, rect, format);
 	}
 }
 

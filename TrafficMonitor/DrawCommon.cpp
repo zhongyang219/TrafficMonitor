@@ -28,16 +28,27 @@ void CDrawCommon::SetDC(CDC * pDC)
 	m_pDC = pDC;
 }
 
-void CDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, bool center)
+void CDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align)
 {
 	m_pDC->SetTextColor(color);
 	m_pDC->SetBkMode(TRANSPARENT);
 	m_pDC->SelectObject(m_pfont);
 	CSize text_size = m_pDC->GetTextExtent(lpszString);
-	if (text_size.cx > rect.Width())		//如果文本宽度超过了矩形区域的宽度，则总是左对齐
-		m_pDC->DrawText(lpszString, rect, DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
+	UINT format{ DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX };		//CDC::DrawText()函数的文本格式
+	if (text_size.cx > rect.Width())		//如果文本宽度超过了矩形区域的宽度，设置了居中时左对齐
+	{
+		if (align == Alignment::RIGHT)
+			format |= DT_RIGHT;
+	}
 	else
-		m_pDC->DrawText(lpszString, rect, (center ? DT_CENTER : 0) | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
+	{
+		switch (align)
+		{
+		case Alignment::RIGHT: format |= DT_RIGHT; break;
+		case Alignment::CENTER: format |= DT_CENTER; break;
+		}
+	}
+	m_pDC->DrawText(lpszString, rect, format);
 }
 
 
