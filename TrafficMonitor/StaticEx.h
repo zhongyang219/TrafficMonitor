@@ -33,13 +33,16 @@ public:
 public:
 	void SetWindowTextEx(LPCTSTR lpszString, Alignment align = Alignment::LEFT);	//为控件设置有颜色的文本（需要配合SetTextColor使用）
 	void SetTextColor(COLORREF textColor);		//设置控件文本颜色
+	void SetBackColor(COLORREF back_color);		//设置控件背景颜色
 	CString GetString() const;			//获取控件文本
 
 protected:
 	bool m_color_text{ false };
-	COLORREF m_TextColor;	//控件文字颜色
+	COLORREF m_text_color;	//控件文字颜色
+	COLORREF m_back_color;
 	CString m_text;			//控件上的文本
 	Alignment m_align{};		//文本的对齐方式
+	bool m_draw_background_color{ false };	//是否需要为控件填充背景颜色
 
 	//将Static控件用作超链接时
 public:

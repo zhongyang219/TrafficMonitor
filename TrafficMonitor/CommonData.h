@@ -58,6 +58,10 @@ struct DispStrings		//显示的文本
 		if (disp_str.memory != NONE_STR)
 			memory = disp_str.memory;
 	}
+	bool IsInvalid() const
+	{
+		return (up == NONE_STR && down == NONE_STR && cpu == NONE_STR && memory == NONE_STR);
+	}
 };
 
 //选项设置数据

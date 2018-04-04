@@ -38,6 +38,7 @@ protected:
 	CStaticEx m_skin_download{ true };	//“更多皮肤下载”超链接
 	CSkinPreviewView* m_view;	//预览区视图类
 	CStatic m_preview_static;
+	CStaticEx m_notify_static;	//显示提示信息的static控件
 
 	SkinData m_skin_data;		//皮肤数据
 	CImage m_background_s;		//小预览图背景图

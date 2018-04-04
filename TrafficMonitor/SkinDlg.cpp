@@ -28,6 +28,7 @@ void CSkinDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SKIN_COURSE_STATIC, m_skin_course);
 	DDX_Control(pDX, IDC_SKIN_DOWNLOAD_STATIC, m_skin_download);
 	DDX_Control(pDX, IDC_PREVIEW_GROUP_STATIC, m_preview_static);
+	DDX_Control(pDX, IDC_NOTIFY_STATIC, m_notify_static);
 }
 
 void CSkinDlg::LoadSkinLayout(const wstring& cfg_path, LayoutData& layout_data)
@@ -47,11 +48,11 @@ void CSkinDlg::LoadSkinLayout(const wstring& cfg_path, LayoutData& layout_data)
 	layout_data.down_width_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("down_width_l"), 110, cfg_path.c_str()));
 	layout_data.down_align_l = static_cast<Alignment>(GetPrivateProfileInt(_T("layout"), _T("down_align_l"), 0, cfg_path.c_str()));
 	layout_data.cpu_x_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("cpu_x_l"), 6, cfg_path.c_str()));
-	layout_data.cpu_y_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("cpu_y_l"), 22, cfg_path.c_str()));
+	layout_data.cpu_y_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("cpu_y_l"), 21, cfg_path.c_str()));
 	layout_data.cpu_width_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("cpu_width_l"), 108, cfg_path.c_str()));
 	layout_data.cpu_align_l = static_cast<Alignment>(GetPrivateProfileInt(_T("layout"), _T("cpu_align_l"), 0, cfg_path.c_str()));
 	layout_data.memory_x_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("memory_x_l"), 114, cfg_path.c_str()));
-	layout_data.memory_y_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("memory_y_l"), 22, cfg_path.c_str()));
+	layout_data.memory_y_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("memory_y_l"), 21, cfg_path.c_str()));
 	layout_data.memory_width_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("memory_width_l"), 110, cfg_path.c_str()));
 	layout_data.memory_align_l = static_cast<Alignment>(GetPrivateProfileInt(_T("layout"), _T("memory_align_l"), 0, cfg_path.c_str()));
 	layout_data.show_up_l = (GetPrivateProfileInt(_T("layout"), _T("show_up_l"), 1, cfg_path.c_str()) != 0);
@@ -113,9 +114,21 @@ void CSkinDlg::ShowPreview()
 	m_skin_data.disp_str.memory = CCommon::GetIniStringW(_T("skin"), _T("memory_string"), NONE_STR, cfg_path.c_str());
 	//获取预览区大小
 	m_skin_data.layout.preview_width = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("preview_width"), 238, cfg_path.c_str()));
-	m_skin_data.layout.preview_height = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("preview_height"), 116, cfg_path.c_str()));
+	m_skin_data.layout.preview_height = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("preview_height"), 105, cfg_path.c_str()));
 	m_view->SetSize(m_skin_data.layout.preview_width, m_skin_data.layout.preview_height);
+	//刷新预览图
 	m_view->Invalidate();
+	//设置提示信息
+	bool cover_font_setting{ !m_skin_data.font_name.empty() && m_skin_data.font_size > 0 };
+	bool cover_str_setting{ !m_skin_data.disp_str.IsInvalid() };
+	if (cover_font_setting && cover_str_setting)
+		m_notify_static.SetWindowTextEx(_T("注意：此皮肤会覆盖字体设置和显示文本设置。"));
+	else if(cover_font_setting)
+		m_notify_static.SetWindowTextEx(_T("注意：此皮肤会覆盖字体设置。"));
+	else if(cover_str_setting)
+		m_notify_static.SetWindowTextEx(_T("注意：此皮肤会覆盖显示文本设置。"));
+	else
+		m_notify_static.SetWindowTextEx(_T(""));
 }
 
 
@@ -139,7 +152,7 @@ CRect CSkinDlg::CalculateViewRect()
 	m_preview_static.GetWindowRect(rect);		//获取“预览” group box 的位置
 	ScreenToClient(&rect);
 	CRect scroll_view_rect{ rect };
-	scroll_view_rect.DeflateRect(theApp.DPI(12), theApp.DPI(25));
+	scroll_view_rect.DeflateRect(theApp.DPI(12), theApp.DPI(40));
 	scroll_view_rect.top = rect.top + theApp.DPI(28);
 	return scroll_view_rect;
 }
@@ -179,6 +192,11 @@ BOOL CSkinDlg::OnInitDialog()
 	m_view->SetFont(m_pFont);
 	m_view->IniFont();
 	m_view->ShowWindow(SW_SHOW);
+
+	//设置提示信息
+	m_notify_static.SetTextColor(RGB(252, 128, 45));
+	m_notify_static.SetBackColor(GetSysColor(COLOR_BTNFACE));
+	m_notify_static.SetWindowTextEx(_T(""));
 
 	//显示预览图片
 	ShowPreview();

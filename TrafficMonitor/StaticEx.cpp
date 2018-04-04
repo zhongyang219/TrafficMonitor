@@ -26,8 +26,14 @@ void CStaticEx::SetWindowTextEx(LPCTSTR lpszString, Alignment align)
 
 void CStaticEx::SetTextColor(COLORREF textColor)
 {
-	m_TextColor = textColor;
+	m_text_color = textColor;
 	Invalidate();
+}
+
+void CStaticEx::SetBackColor(COLORREF back_color)
+{
+	m_back_color = back_color;
+	m_draw_background_color = true;
 }
 
 CString CStaticEx::GetString() const
@@ -169,12 +175,15 @@ void CStaticEx::OnPaint()
 
 	else if (m_color_text)
 	{
-		dc.SetTextColor(m_TextColor);
+		dc.SetTextColor(m_text_color);
 		dc.SetBkMode(TRANSPARENT);
 		dc.SelectObject(this->GetFont());
 		CRect rect;
 		this->GetClientRect(&rect);
-		DrawThemeParentBackground(m_hWnd, dc.GetSafeHdc(), &rect);	//重绘控件区域以解决文字重叠的问题
+		if (m_draw_background_color)
+			dc.FillSolidRect(rect, m_back_color);
+		else
+			DrawThemeParentBackground(m_hWnd, dc.GetSafeHdc(), &rect);	//重绘控件区域以解决文字重叠的问题
 		CSize text_size = dc.GetTextExtent(m_text);
 		UINT format{ DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX };		//CDC::DrawText()函数的文本格式
 		if (text_size.cx > rect.Width())		//如果文本宽度超过了矩形区域的宽度，设置了居中时左对齐
