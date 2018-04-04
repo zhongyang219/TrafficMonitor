@@ -740,7 +740,7 @@ void CTrafficMonitorDlg::SetItemPosition()
 void CTrafficMonitorDlg::GetSkinLayout()
 {
 	wstring skin_cfg_path{ theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini" };
-	CSkinDlg::GetSkinLayout(skin_cfg_path, m_layout_data);
+	CSkinDlg::LoadSkinLayout(skin_cfg_path, m_layout_data);
 	if (m_layout_data.no_text)		//如果皮肤布局不显示文本，则不允许交换上传和下载的位置，因为上传和下载的位置已经固定在皮肤中了
 		theApp.m_main_wnd_data.swap_up_down = false;
 }
@@ -795,11 +795,8 @@ void CTrafficMonitorDlg::SetTextColor()
 	m_disp_down.SetTextColor(theApp.m_main_wnd_data.text_color);
 }
 
-void CTrafficMonitorDlg::ApplySettings()
+void CTrafficMonitorDlg::SetTextFont()
 {
-	//应用文字颜色设置
-	SetTextColor();
-	//应用字体设置
 	if (m_font.m_hObject)	//如果m_font已经关联了一个字体资源对象，则释放它
 		m_font.DeleteObject();
 	m_font.CreatePointFont(theApp.m_main_wnd_data.font_size * 10, theApp.m_main_wnd_data.font_name);
@@ -807,6 +804,14 @@ void CTrafficMonitorDlg::ApplySettings()
 	m_disp_memory.SetFont(&m_font);
 	m_disp_up.SetFont(&m_font);
 	m_disp_down.SetFont(&m_font);
+}
+
+void CTrafficMonitorDlg::ApplySettings()
+{
+	//应用文字颜色设置
+	SetTextColor();
+	//应用字体设置
+	SetTextFont();
 }
 
 // CTrafficMonitorDlg 消息处理程序
@@ -1748,14 +1753,22 @@ void CTrafficMonitorDlg::OnChangeSkin()
 	{
 		m_skin_selected = skinDlg.m_skin_selected;
 		m_skin_name = m_skins[m_skin_selected];
+		//获取皮肤布局
 		GetSkinLayout();
 		//载入背景图片
 		LoadBackGroundImage();
 		//获取皮肤的文字颜色
-		theApp.m_main_wnd_data.text_color = skinDlg.GetTextColor();
+		theApp.m_main_wnd_data.text_color = skinDlg.GetSkinData().text_color;
 		SetTextColor();
-
-		theApp.m_main_wnd_data.disp_str = skinDlg.GetDispStrings();
+		//获取皮肤的字体
+		if (!skinDlg.GetSkinData().font_name.empty() && skinDlg.GetSkinData().font_size > 0)
+		{
+			theApp.m_main_wnd_data.font_name = skinDlg.GetSkinData().font_name.c_str();
+			theApp.m_main_wnd_data.font_size = skinDlg.GetSkinData().font_size;
+			SetTextFont();
+		}
+		//获取项目的显示文本
+		theApp.m_main_wnd_data.disp_str = skinDlg.GetSkinData().disp_str;
 		SetItemPosition();
 		SaveConfig();
 	}

@@ -164,3 +164,15 @@ struct LayoutData
 	int preview_x_s;	//在“选择皮肤”界面中预览图的x坐标
 	int preview_y_s;	//在“选择皮肤”界面中预览图的y坐标
 };
+
+
+struct SkinData
+{
+	LayoutData layout;
+	COLORREF text_color;
+	//wstring skin_author;
+	DispStrings disp_str;
+	wstring font_name;
+	int font_size;
+};
+

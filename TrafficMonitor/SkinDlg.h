@@ -23,9 +23,10 @@ public:
 	enum { IDD = IDD_SKIN_DIALOG };
 #endif
 
-	COLORREF GetTextColor() const { return m_skin_data.text_color; }
-	DispStrings GetDispStrings() const { return m_skin_data.disp_str; }
-	static void GetSkinLayout(const wstring& cfg_path, LayoutData& layout_data);
+	//COLORREF GetTextColor() const { return m_skin_data.text_color; }
+	//DispStrings GetDispStrings() const { return m_skin_data.disp_str; }
+	const SkinData& GetSkinData() const { return m_skin_data; }
+	static void LoadSkinLayout(const wstring& cfg_path, LayoutData& layout_data);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö

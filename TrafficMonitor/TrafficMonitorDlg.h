@@ -161,6 +161,7 @@ protected:
 
 	void LoadBackGroundImage();
 	void SetTextColor();
+	void SetTextFont();
 
 public:
 	void ApplySettings();

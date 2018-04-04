@@ -30,7 +30,7 @@ void CSkinDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PREVIEW_GROUP_STATIC, m_preview_static);
 }
 
-void CSkinDlg::GetSkinLayout(const wstring& cfg_path, LayoutData& layout_data)
+void CSkinDlg::LoadSkinLayout(const wstring& cfg_path, LayoutData& layout_data)
 {
 	//从ini文件读取皮肤布局，并根据DPI进行缩放
 	layout_data.text_height = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("text_height"), 20, cfg_path.c_str()));
@@ -91,12 +91,16 @@ void CSkinDlg::ShowPreview()
 {
 	//载入布局数据
 	wstring cfg_path{ theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini" };
-	GetSkinLayout(cfg_path, m_skin_data.layout);
+	LoadSkinLayout(cfg_path, m_skin_data.layout);
 	//载入背景图
 	LoadBackImage((theApp.m_skin_path + m_skins[m_skin_selected]).c_str(), true);
 	LoadBackImage((theApp.m_skin_path + m_skins[m_skin_selected]).c_str(), false);
 	//获取当前皮肤的文字颜色
 	m_skin_data.text_color = GetPrivateProfileInt(_T("skin"), _T("text_color"), 0, cfg_path.c_str());
+	//获取当前皮肤的字体
+	m_skin_data.font_name = CCommon::GetIniStringW(L"skin", L"font_name", L"", cfg_path.c_str());
+	m_skin_data.font_size = GetPrivateProfileInt(_T("skin"), _T("font_size"), 0, cfg_path.c_str());
+	m_view->IniFont();
 	//获取皮肤作者
 #define BUFF_SIZE 64
 	wchar_t buff[BUFF_SIZE];
@@ -173,6 +177,7 @@ BOOL CSkinDlg::OnInitDialog()
 	m_view->SetSkinData(&m_skin_data);
 	m_view->SetBackImage(&m_background_s, &m_background_l);
 	m_view->SetFont(m_pFont);
+	m_view->IniFont();
 	m_view->ShowWindow(SW_SHOW);
 
 	//显示预览图片
