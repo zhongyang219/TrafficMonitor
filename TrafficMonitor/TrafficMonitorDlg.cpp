@@ -1770,6 +1770,7 @@ void CTrafficMonitorDlg::OnChangeSkin()
 		//获取项目的显示文本
 		theApp.m_main_wnd_data.disp_str = skinDlg.GetSkinData().disp_str;
 		SetItemPosition();
+		ShowInfo();		//更换皮肤后立即刷新窗口信息
 		SaveConfig();
 	}
 }
