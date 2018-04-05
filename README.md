@@ -7,6 +7,7 @@ Traffic Monitor是一款用于Windows平台的网速监控悬浮窗软件，可�
 * 支持嵌入到任务栏显示<br>
 * 支持更换皮肤<br>
 * 历史流量统计<br>
+* 自定义皮肤<br>
 # 截图
 主悬浮窗：<br>
 ![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/main1.png)<br>
@@ -22,12 +23,12 @@ Traffic Monitor是一款用于Windows平台的网速监控悬浮窗软件，可�
 ![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/selecte_skin.png)<br>
 软件支持更换皮肤。用户还可以根据自己的需要编辑自己的皮肤。<br>
 皮肤文件放在程序所在目录的`skins`目录下，每个皮肤被放到单独的文件夹下，文件夹的名字就是皮肤的名称。<br>
-在`skins`目录下新建一个文件夹，制作好`background.bmp`和`background_l.bmp`两个背景图片放在里面，然后编辑skin.ini文件，`text_color`是该皮肤对应的文字颜色，它是一个WIN32的COLORREF的值，`skin_author`是用于显示到更换皮肤界面中的皮肤作者。此外，还可以通过skin.ini指定界面中每个项目的大小和位置。<br>
+在`skins`目录下新建一个文件夹，制作好`background.bmp`和`background_l.bmp`两个背景图片放在里面，然后编辑skin.ini文件。可以通过skin.ini指定文本颜色、字体、皮肤作者、每个项目的大小和位置等信息。<br>
 详细的皮肤制作教程请[点击此处](https://github.com/zhongyang219/TrafficMonitor/blob/master/皮肤制作教程.md)。<br>
-制作好后重启一下软件就可以在列表中看到新增加的皮肤了。<br>
+需要重启软件才能在列表中看到新增的皮肤。<br>
 # 选项设置
 ![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/option.png)<br>
-在右键菜单选择“选项...”可以进入选项设置。在选项设置对话框中，可以单独设置主窗口和任务栏窗口的文本颜色、字体、背景颜色，同时可以自定义显示的文本。还可以选择交换上传和下载的位置。<br>
+在右键菜单选择“选项...”可以进入选项设置。在选项设置对话框中，可以单独设置主窗口和任务栏窗口的文本颜色、字体、背景颜色、网速单位，同时可以自定义显示的文本。还可以选择交换上传和下载的位置。<br>
 在“常规设置”选项卡中，可以设置是否在程序时自动检查更新，以及是否需要在开机是自动进行。
 # 更新日志
 V1.67以后版本的更新日志请参见releases页面：https://github.com/zhongyang219/TrafficMonitor/releases
