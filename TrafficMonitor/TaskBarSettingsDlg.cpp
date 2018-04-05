@@ -36,6 +36,7 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_UNIT_COMBO, m_unit_combo);
 	DDX_Control(pDX, IDC_HIDE_UNIT_CHECK, m_hide_unit_chk);
+	DDX_Control(pDX, IDC_FONT_SIZE_EDIT1, m_font_size_edit);
 }
 
 
@@ -68,9 +69,11 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 
 	//初始化各控件状态
 	SetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font_name);
-	wchar_t buff[16];
-	swprintf_s(buff, L"%d", m_data.font_size);
-	SetDlgItemText(IDC_FONT_SIZE_EDIT1, buff);
+	//wchar_t buff[16];
+	//swprintf_s(buff, L"%d", m_data.font_size);
+	//SetDlgItemText(IDC_FONT_SIZE_EDIT1, buff);
+	m_font_size_edit.SetRange(5, 72);
+	m_font_size_edit.SetValue(m_data.font_size);
 
 	SetDlgItemText(IDC_UPLOAD_EDIT1, m_data.disp_str.up.c_str());
 	SetDlgItemText(IDC_DOWNLOAD_EDIT1, m_data.disp_str.down.c_str());
@@ -277,4 +280,26 @@ void CTaskBarSettingsDlg::OnBnClickedHideUnitCheck()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.m_hide_unit = (m_hide_unit_chk.GetCheck() != 0);
+}
+
+
+void CTaskBarSettingsDlg::OnOK()
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	//获取字体设置
+	int font_size;
+	font_size = m_font_size_edit.GetValue();
+	if (font_size > MAX_FONT_SIZE || font_size < MIN_FONT_SIZE)
+	{
+		CString info;
+		info.Format(_T("字体大小必须在 %d~%d 之间！"), MIN_FONT_SIZE, MAX_FONT_SIZE);
+		MessageBox(info, NULL, MB_OK | MB_ICONWARNING);
+	}
+	else
+	{
+		m_data.font_size = font_size;
+	}
+	GetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font_name);
+
+	CDialogEx::OnOK();
 }

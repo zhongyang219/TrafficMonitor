@@ -1761,12 +1761,11 @@ void CTrafficMonitorDlg::OnChangeSkin()
 		theApp.m_main_wnd_data.text_color = skinDlg.GetSkinData().text_color;
 		SetTextColor();
 		//获取皮肤的字体
-		if (!skinDlg.GetSkinData().font_name.empty() && skinDlg.GetSkinData().font_size > 0)
-		{
+		if (!skinDlg.GetSkinData().font_name.empty())
 			theApp.m_main_wnd_data.font_name = skinDlg.GetSkinData().font_name.c_str();
+		if (skinDlg.GetSkinData().font_size >= MIN_FONT_SIZE && skinDlg.GetSkinData().font_size <= MAX_FONT_SIZE)
 			theApp.m_main_wnd_data.font_size = skinDlg.GetSkinData().font_size;
-			SetTextFont();
-		}
+		SetTextFont();
 		//获取项目的显示文本
 		theApp.m_main_wnd_data.disp_str = skinDlg.GetSkinData().disp_str;
 		SetItemPosition();

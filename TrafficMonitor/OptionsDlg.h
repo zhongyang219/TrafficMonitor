@@ -33,4 +33,5 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
+	virtual void OnOK();
 };

@@ -200,6 +200,7 @@
     <ClInclude Include="PictureStatic.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SkinDlg.h" />
+    <ClInclude Include="SpinEdit.h" />
     <ClInclude Include="StaticEx.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -222,6 +223,7 @@
     <ClCompile Include="OptionsDlg.cpp" />
     <ClCompile Include="PictureStatic.cpp" />
     <ClCompile Include="SkinDlg.cpp" />
+    <ClCompile Include="SpinEdit.cpp" />
     <ClCompile Include="StaticEx.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

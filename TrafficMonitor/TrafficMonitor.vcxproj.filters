@@ -67,6 +67,9 @@
     <Filter Include="源文件和头文件\公共的类\DrawCommon">
       <UniqueIdentifier>{c4eace17-d9e5-43bf-8e13-30680c7c80be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\派生的控件类\SpinEdit">
+      <UniqueIdentifier>{e63367cf-7c0d-4822-ac30-0f484e65f26d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -138,6 +141,9 @@
     <ClInclude Include="DrawCommon.h">
       <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
     </ClInclude>
+    <ClInclude Include="SpinEdit.h">
+      <Filter>源文件和头文件\派生的控件类\SpinEdit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -196,6 +202,9 @@
     </ClCompile>
     <ClCompile Include="DrawCommon.cpp">
       <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="SpinEdit.cpp">
+      <Filter>源文件和头文件\派生的控件类\SpinEdit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

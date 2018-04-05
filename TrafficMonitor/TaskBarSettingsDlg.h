@@ -1,6 +1,7 @@
 #pragma once
 #include "StaticEx.h"
 #include "afxwin.h"
+#include "SpinEdit.h"
 
 // CTaskBarSettingsDlg 对话框
 
@@ -21,11 +22,13 @@ public:
 #endif
 
 protected:
+	//控件变量
 	CStaticEx m_text_color_static;
 	CStaticEx m_back_color_static;
 	CToolTipCtrl m_toolTip;
 	CComboBox m_unit_combo;
 	CButton m_hide_unit_chk;
+	CSpinEdit m_font_size_edit;
 
 	void DrawStaticColor();
 
@@ -48,4 +51,5 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnCbnSelchangeUnitCombo();
 	afx_msg void OnBnClickedHideUnitCheck();
+	virtual void OnOK();
 };

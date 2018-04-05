@@ -105,3 +105,13 @@ void COptionsDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 	}
 	*pResult = 0;
 }
+
+
+void COptionsDlg::OnOK()
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	m_tab1_dlg.OnOK();
+	m_tab2_dlg.OnOK();
+
+	CDialog::OnOK();
+}
