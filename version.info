@@ -1,3 +1,3 @@
-<version>1.70</version>
-<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.70/TrafficMonitor_V1.70.7z</link>
-<contents>新增：自定义皮肤功能，可以通过皮肤文件更加自由地定义悬浮窗中的每个项目的大小和位置；\n“更换皮肤”对话框中预览图可以预览悬浮窗中显示的文本和字体，当预览图过大时会显示滚动条；\n“更换皮肤”对话框中增加“皮肤制作教程”和“更多皮肤下载”链接；\n新增允许悬浮窗超出屏幕边界的选项，解决多显示器时无法移动到其他显示器的问题。</contents>
+<version>1.71</version>
+<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.71/TrafficMonitor_V1.71.7z</link>
+<contents>优化背景图片的显示效果，解决了由于图片缩放导致的失真的问题；\n增加不规则形状皮肤的支持；\n增加可以通过皮肤文件设定项目的对齐方式和字体；\n改善了优化通知区图标在125%缩放比时的显示效果；\n一些细节方面的改进。</contents>
