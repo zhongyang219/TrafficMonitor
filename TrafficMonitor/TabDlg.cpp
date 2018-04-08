@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "TabDlg.h"
 
+IMPLEMENT_DYNAMIC(CTabDlg, CDialogEx)
 
 CTabDlg::CTabDlg(UINT nIDTemplate, CWnd * pParent) : CDialogEx(nIDTemplate, pParent)
 {
