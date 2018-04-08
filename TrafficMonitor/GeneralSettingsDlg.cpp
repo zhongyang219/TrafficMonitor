@@ -9,10 +9,10 @@
 
 // CGeneralSettingsDlg dialog
 
-IMPLEMENT_DYNAMIC(CGeneralSettingsDlg, CDialogEx)
+IMPLEMENT_DYNAMIC(CGeneralSettingsDlg, CTabDlg)
 
 CGeneralSettingsDlg::CGeneralSettingsDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_GENERAL_SETTINGS_DIALOG, pParent)
+	: CTabDlg(IDD_GENERAL_SETTINGS_DIALOG, pParent)
 {
 
 }
@@ -23,11 +23,11 @@ CGeneralSettingsDlg::~CGeneralSettingsDlg()
 
 void CGeneralSettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	CTabDlg::DoDataExchange(pDX);
 }
 
 
-BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_CHECK_NOW_BUTTON, &CGeneralSettingsDlg::OnBnClickedCheckNowButton)
 	ON_BN_CLICKED(IDC_CHECK_UPDATE_CHECK, &CGeneralSettingsDlg::OnBnClickedCheckUpdateCheck)
 	ON_BN_CLICKED(IDC_AUTO_RUN_CHECK, &CGeneralSettingsDlg::OnBnClickedAutoRunCheck)
@@ -39,10 +39,9 @@ END_MESSAGE_MAP()
 
 BOOL CGeneralSettingsDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	CTabDlg::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
-	SetBackgroundColor(RGB(255, 255, 255));
 
 	((CButton*)GetDlgItem(IDC_CHECK_UPDATE_CHECK))->SetCheck(m_data.check_update_when_start);
 

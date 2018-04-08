@@ -19,9 +19,9 @@ public:
 	enum { IDD = IDD_OPTIONS_DIALOG };
 #endif
 
-	CMainWndSettingsDlg m_tab1_dlg;
-	CTaskBarSettingsDlg m_tab2_dlg;
-	CGeneralSettingsDlg m_tab3_dlg;
+	CMainWndSettingsDlg m_tab1_dlg{ this };
+	CTaskBarSettingsDlg m_tab2_dlg{ this };
+	CGeneralSettingsDlg m_tab3_dlg{ this };
 
 protected:
 	CTabCtrl m_tab;

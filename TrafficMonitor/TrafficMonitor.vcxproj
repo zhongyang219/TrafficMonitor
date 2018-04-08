@@ -203,6 +203,7 @@
     <ClInclude Include="SpinEdit.h" />
     <ClInclude Include="StaticEx.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TabDlg.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TaskBarDlg.h" />
     <ClInclude Include="TaskBarSettingsDlg.h" />
@@ -231,6 +232,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TabDlg.cpp" />
     <ClCompile Include="TaskBarDlg.cpp" />
     <ClCompile Include="TaskBarSettingsDlg.cpp" />
     <ClCompile Include="TrafficMonitor.cpp" />

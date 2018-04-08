@@ -9,10 +9,10 @@
 
 // CTaskBarSettingsDlg 对话框
 
-IMPLEMENT_DYNAMIC(CTaskBarSettingsDlg, CDialogEx)
+IMPLEMENT_DYNAMIC(CTaskBarSettingsDlg, CTabDlg)
 
 CTaskBarSettingsDlg::CTaskBarSettingsDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_TASKBAR_SETTINGS_DIALOG, pParent)
+	: CTabDlg(IDD_TASKBAR_SETTINGS_DIALOG, pParent)
 {
 
 }
@@ -33,14 +33,14 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_TEXT_COLOR_STATIC1, m_text_color_static);
 	DDX_Control(pDX, IDC_TEXT_COLOR_STATIC2, m_back_color_static);
-	CDialogEx::DoDataExchange(pDX);
+	CTabDlg::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_UNIT_COMBO, m_unit_combo);
 	DDX_Control(pDX, IDC_HIDE_UNIT_CHECK, m_hide_unit_chk);
 	DDX_Control(pDX, IDC_FONT_SIZE_EDIT1, m_font_size_edit);
 }
 
 
-BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_SET_FONT_BUTTON1, &CTaskBarSettingsDlg::OnBnClickedSetFontButton1)
 	ON_BN_CLICKED(IDC_SET_COLOR_BUTTON2, &CTaskBarSettingsDlg::OnBnClickedSetColorButton2)
 	ON_BN_CLICKED(IDC_SET_COLOR_BUTTON3, &CTaskBarSettingsDlg::OnBnClickedSetColorButton3)
@@ -62,10 +62,9 @@ END_MESSAGE_MAP()
 
 BOOL CTaskBarSettingsDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	CTabDlg::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
-	SetBackgroundColor(RGB(255, 255, 255));
 
 	//初始化各控件状态
 	SetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font_name);
@@ -161,7 +160,7 @@ void CTaskBarSettingsDlg::OnBnClickedSetColorButton3()
 void CTaskBarSettingsDlg::OnEnChangeUploadEdit1()
 {
 	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
 	// 函数并调用 CRichEditCtrl().SetEventMask()，
 	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
 
@@ -175,7 +174,7 @@ void CTaskBarSettingsDlg::OnEnChangeUploadEdit1()
 void CTaskBarSettingsDlg::OnEnChangeDownloadEdit1()
 {
 	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
 	// 函数并调用 CRichEditCtrl().SetEventMask()，
 	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
 
@@ -189,7 +188,7 @@ void CTaskBarSettingsDlg::OnEnChangeDownloadEdit1()
 void CTaskBarSettingsDlg::OnEnChangeCpuEdit1()
 {
 	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
 	// 函数并调用 CRichEditCtrl().SetEventMask()，
 	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
 
@@ -203,7 +202,7 @@ void CTaskBarSettingsDlg::OnEnChangeCpuEdit1()
 void CTaskBarSettingsDlg::OnEnChangeMemoryEdit1()
 {
 	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
 	// 函数并调用 CRichEditCtrl().SetEventMask()，
 	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
 
@@ -255,7 +254,7 @@ BOOL CTaskBarSettingsDlg::PreTranslateMessage(MSG* pMsg)
 	if (pMsg->message == WM_MOUSEMOVE)
 		m_toolTip.RelayEvent(pMsg);
 
-	return CDialogEx::PreTranslateMessage(pMsg);
+	return CTabDlg::PreTranslateMessage(pMsg);
 }
 
 
@@ -301,5 +300,5 @@ void CTaskBarSettingsDlg::OnOK()
 	}
 	GetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font_name);
 
-	CDialogEx::OnOK();
+	CTabDlg::OnOK();
 }

@@ -2,10 +2,11 @@
 #include "StaticEx.h"
 #include "afxwin.h"
 #include "SpinEdit.h"
+#include "TabDlg.h"
 
 // CTaskBarSettingsDlg ¶Ô»°¿ò
 
-class CTaskBarSettingsDlg : public CDialogEx
+class CTaskBarSettingsDlg : public CTabDlg
 {
 	DECLARE_DYNAMIC(CTaskBarSettingsDlg)
 

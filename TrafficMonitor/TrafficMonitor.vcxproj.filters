@@ -70,6 +70,9 @@
     <Filter Include="源文件和头文件\派生的控件类\SpinEdit">
       <UniqueIdentifier>{e63367cf-7c0d-4822-ac30-0f484e65f26d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\派生的控件类\TabDlg">
+      <UniqueIdentifier>{5d1d612c-7ef4-498c-9d8f-ad11555faa80}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -144,6 +147,9 @@
     <ClInclude Include="SpinEdit.h">
       <Filter>源文件和头文件\派生的控件类\SpinEdit</Filter>
     </ClInclude>
+    <ClInclude Include="TabDlg.h">
+      <Filter>源文件和头文件\派生的控件类\TabDlg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -205,6 +211,9 @@
     </ClCompile>
     <ClCompile Include="SpinEdit.cpp">
       <Filter>源文件和头文件\派生的控件类\SpinEdit</Filter>
+    </ClCompile>
+    <ClCompile Include="TabDlg.cpp">
+      <Filter>源文件和头文件\派生的控件类\TabDlg</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

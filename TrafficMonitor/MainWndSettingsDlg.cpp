@@ -9,10 +9,10 @@
 
 // CMainWndSettingsDlg 对话框
 
-IMPLEMENT_DYNAMIC(CMainWndSettingsDlg, CDialogEx)
+IMPLEMENT_DYNAMIC(CMainWndSettingsDlg, CTabDlg)
 
 CMainWndSettingsDlg::CMainWndSettingsDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_MAIN_WND_SETTINGS_DIALOG, pParent)
+	: CTabDlg(IDD_MAIN_WND_SETTINGS_DIALOG, pParent)
 {
 
 }
@@ -30,14 +30,14 @@ void CMainWndSettingsDlg::DrawStaticColor()
 void CMainWndSettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_TEXT_COLOR_STATIC, m_color_static);
-	CDialogEx::DoDataExchange(pDX);
+	CTabDlg::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_HIDE_UNIT_CHECK, m_hide_unit_chk);
 	DDX_Control(pDX, IDC_UNIT_COMBO, m_unit_combo);
 	DDX_Control(pDX, IDC_FONT_SIZE_EDIT, m_font_size_edit);
 }
 
 
-BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CTabDlg)
 	ON_EN_CHANGE(IDC_UPLOAD_EDIT, &CMainWndSettingsDlg::OnEnChangeUploadEdit)
 	ON_EN_CHANGE(IDC_DOWNLOAD_EDIT, &CMainWndSettingsDlg::OnEnChangeDownloadEdit)
 	ON_EN_CHANGE(IDC_CPU_EDIT, &CMainWndSettingsDlg::OnEnChangeCpuEdit)
@@ -58,10 +58,9 @@ END_MESSAGE_MAP()
 
 BOOL CMainWndSettingsDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	CTabDlg::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
-	SetBackgroundColor(RGB(255, 255, 255));
 
 	//初始化各控件状态
 	SetDlgItemText(IDC_FONT_NAME_EDIT, m_data.font_name);
@@ -120,7 +119,7 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 void CMainWndSettingsDlg::OnEnChangeUploadEdit()
 {
 	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
 	// 函数并调用 CRichEditCtrl().SetEventMask()，
 	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
 
@@ -134,7 +133,7 @@ void CMainWndSettingsDlg::OnEnChangeUploadEdit()
 void CMainWndSettingsDlg::OnEnChangeDownloadEdit()
 {
 	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
 	// 函数并调用 CRichEditCtrl().SetEventMask()，
 	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
 
@@ -148,7 +147,7 @@ void CMainWndSettingsDlg::OnEnChangeDownloadEdit()
 void CMainWndSettingsDlg::OnEnChangeCpuEdit()
 {
 	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
 	// 函数并调用 CRichEditCtrl().SetEventMask()，
 	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
 
@@ -162,7 +161,7 @@ void CMainWndSettingsDlg::OnEnChangeCpuEdit()
 void CMainWndSettingsDlg::OnEnChangeMemoryEdit()
 {
 	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
 	// 函数并调用 CRichEditCtrl().SetEventMask()，
 	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
 
@@ -272,7 +271,7 @@ BOOL CMainWndSettingsDlg::PreTranslateMessage(MSG* pMsg)
 	if (pMsg->message == WM_MOUSEMOVE)
 		m_toolTip.RelayEvent(pMsg);
 
-	return CDialogEx::PreTranslateMessage(pMsg);
+	return CTabDlg::PreTranslateMessage(pMsg);
 }
 
 
@@ -294,5 +293,5 @@ void CMainWndSettingsDlg::OnOK()
 	}
 	GetDlgItemText(IDC_FONT_NAME_EDIT, m_data.font_name);
 
-	CDialogEx::OnOK();
+	CTabDlg::OnOK();
 }
