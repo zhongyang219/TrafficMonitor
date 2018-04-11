@@ -121,6 +121,8 @@ void CSkinDlg::ShowPreview()
 	//设置提示信息
 	bool cover_font_setting{ !m_skin_data.font_name.empty() || (m_skin_data.font_size >= MIN_FONT_SIZE && m_skin_data.font_size <= MAX_FONT_SIZE) };
 	bool cover_str_setting{ !m_skin_data.disp_str.IsInvalid() };
+	cover_font_setting = cover_font_setting && theApp.m_general_data.allow_skin_cover_font;
+	cover_str_setting = cover_str_setting && theApp.m_general_data.allow_skin_cover_text;
 	if (cover_font_setting && cover_str_setting)
 		m_notify_static.SetWindowTextEx(_T("注意：此皮肤会覆盖字体设置和显示文本设置。"));
 	else if(cover_font_setting)

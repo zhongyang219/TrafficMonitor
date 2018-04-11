@@ -99,6 +99,8 @@ struct GeneralSettingData
 	//≥£πÊ…Ë÷√
 	bool check_update_when_start{ true };
 	bool auto_run{ false };
+	bool allow_skin_cover_font{ true };
+	bool allow_skin_cover_text{ true };
 };
 
 enum class Alignment
