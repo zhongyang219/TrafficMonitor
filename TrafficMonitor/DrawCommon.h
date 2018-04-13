@@ -20,8 +20,9 @@ public:
 	void SetFont(CFont* pfont);		//设置绘制文本的字体
 	void SetDC(CDC* pDC);		//设置绘图的DC
 	CDC* GetDC() { return m_pDC; }
+	void SetBackColor(COLORREF back_color) { m_back_color = back_color; }
 
-	void DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align = Alignment::LEFT);	//在指定的矩形区域内绘制文本
+	void DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align = Alignment::LEFT, bool draw_back_ground = false);	//在指定的矩形区域内绘制文本
 
 	void SetDrawRect(CRect rect);		//设置绘图剪辑区域
 
@@ -45,6 +46,7 @@ private:
 	CDC* m_pDC{};		//用于绘图的CDC类的指针
 	CWnd* m_pMainWnd{};	//绘图窗口的句柄
 	CFont* m_pfont{};
+	COLORREF m_back_color{};
 
 	static int GetColorBritness(COLORREF color);
 };

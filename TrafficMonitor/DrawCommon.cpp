@@ -28,10 +28,11 @@ void CDrawCommon::SetDC(CDC * pDC)
 	m_pDC = pDC;
 }
 
-void CDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align)
+void CDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align, bool draw_back_ground)
 {
 	m_pDC->SetTextColor(color);
-	m_pDC->SetBkMode(TRANSPARENT);
+	if(!draw_back_ground)
+		m_pDC->SetBkMode(TRANSPARENT);
 	m_pDC->SelectObject(m_pfont);
 	CSize text_size = m_pDC->GetTextExtent(lpszString);
 	UINT format{ DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX };		//CDC::DrawText()函数的文本格式
@@ -48,6 +49,8 @@ void CDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color,
 		case Alignment::CENTER: format |= DT_CENTER; break;
 		}
 	}
+	if(draw_back_ground)
+		m_pDC->FillSolidRect(rect, m_back_color);
 	m_pDC->DrawText(lpszString, rect, format);
 }
 

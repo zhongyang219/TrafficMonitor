@@ -53,4 +53,5 @@ public:
 	afx_msg void OnCbnSelchangeUnitCombo();
 	afx_msg void OnBnClickedHideUnitCheck();
 	virtual void OnOK();
+	afx_msg void OnBnClickedValueRightAlignCheck();
 };

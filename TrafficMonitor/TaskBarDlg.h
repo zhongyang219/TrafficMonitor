@@ -2,6 +2,7 @@
 #include "Common.h"
 #include "afxwin.h"
 //#include "StaticEx.h"
+#include "DrawCommon.h"
 
 // CTaskBarDlg 对话框
 
@@ -14,13 +15,6 @@ public:
 	virtual ~CTaskBarDlg();
 
 	CToolTipCtrl m_tool_tips;
-
-
-	//窗口中显示的4个项目的前导字符串
-	//wstring m_up_string;		//默认为“↑:”
-	//wstring m_down_string;		//默认为“↓:”
-	//wstring m_cpu_string;		//默认为“CPU:”
-	//wstring m_memory_string;		//默认为“内存:”
 
 	void ShowInfo();		//将信息显示到控件上
 	bool AdjustWindowPos();	//设置窗口在任务栏中的位置
@@ -42,6 +36,8 @@ protected:
 	int m_window_width;		//窗口宽度
 	int m_window_width_s;	//不显示CPU和内存利用率时的窗口宽度
 	int m_window_height;
+	int m_ud_lable_width;	//上传、下载的标签宽度
+	int m_cm_lable_width;		//CPU、内存
 
 	int m_min_bar_width;	//最小化窗口缩小宽度后的宽度
 	int m_min_bar_height;	//最小化窗口缩小高度后的高度（用于任务栏在屏幕左侧或右侧时）
