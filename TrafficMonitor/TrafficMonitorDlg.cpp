@@ -214,11 +214,11 @@ END_MESSAGE_MAP()
 void CTrafficMonitorDlg::ShowInfo()
 {
 	CString str;
-	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit);
-	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit);
+	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit);
+	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit);
 
 	CString format_str;
-	if (theApp.m_main_wnd_data.m_hide_unit && theApp.m_main_wnd_data.m_speed_unit != SpeedUnit::AUTO)
+	if (theApp.m_main_wnd_data.hide_unit && theApp.m_main_wnd_data.speed_unit != SpeedUnit::AUTO)
 		format_str = _T("%s%s");
 	else
 		format_str = _T("%s%s/s");
@@ -236,9 +236,13 @@ void CTrafficMonitorDlg::ShowInfo()
 		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.up.c_str()), out_speed.GetString());
 		m_disp_down.SetWindowTextEx(str, (m_show_more_info ? m_layout_data.down_align_l : m_layout_data.down_align_s));
 	}
-	str.Format(_T("%s%d%%"), (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.cpu.c_str()), theApp.m_cpu_usage);
+	if (theApp.m_main_wnd_data.hide_percent)
+		format_str = _T("%s%d");
+	else
+		format_str = _T("%s%d%%");
+	str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.cpu.c_str()), theApp.m_cpu_usage);
 	m_disp_cpu.SetWindowTextEx(str, (m_show_more_info ? m_layout_data.cpu_align_l : m_layout_data.cpu_align_s));
-	str.Format(_T("%s%d%%"), (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.memory.c_str()), theApp.m_memory_usage);
+	str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.memory.c_str()), theApp.m_memory_usage);
 	m_disp_memory.SetWindowTextEx(str, (m_show_more_info ? m_layout_data.memory_align_l : m_layout_data.memory_align_s));
 	//设置要显示的项目
 	if (m_show_more_info)
@@ -267,12 +271,12 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 	{
 		if (!m_layout_data.show_up_l)		//如果主窗口中没有显示上传速度，则在提示信息中显示上传速度
 		{
-			temp.Format(_T("\r\n上传: %s/s"), CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit));
+			temp.Format(_T("\r\n上传: %s/s"), CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit));
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_down_l)
 		{
-			temp.Format(_T("\r\n下载: %s/s"), CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit));
+			temp.Format(_T("\r\n下载: %s/s"), CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit));
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_cpu_l)
@@ -295,12 +299,12 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 	{
 		if (!m_layout_data.show_up_s)		//如果主窗口中没有显示上传速度，则在提示信息中显示上传速度
 		{
-			temp.Format(_T("\r\n上传: %s/s"), CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit));
+			temp.Format(_T("\r\n上传: %s/s"), CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit));
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_down_s)
 		{
-			temp.Format(_T("\r\n下载: %s/s"), CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.m_speed_unit, theApp.m_main_wnd_data.m_hide_unit));
+			temp.Format(_T("\r\n下载: %s/s"), CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit));
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_cpu_s)
@@ -437,8 +441,9 @@ void CTrafficMonitorDlg::LoadConfig()
 	theApp.m_main_wnd_data.disp_str.memory = CCommon::GetIniStringW(L"config", L"memory_string", L"内存: $", theApp.m_config_path.c_str());
 
 	theApp.m_main_wnd_data.speed_short_mode = (GetPrivateProfileInt(_T("config"), _T("speed_short_mode"), 0, theApp.m_config_path.c_str()) != 0);
-	theApp.m_main_wnd_data.m_speed_unit = static_cast<SpeedUnit>(GetPrivateProfileInt(_T("config"), _T("speed_unit"), 0, theApp.m_config_path.c_str()));
-	theApp.m_main_wnd_data.m_hide_unit = (GetPrivateProfileInt(_T("config"), _T("hide_unit"), 0, theApp.m_config_path.c_str()) != 0);
+	theApp.m_main_wnd_data.speed_unit = static_cast<SpeedUnit>(GetPrivateProfileInt(_T("config"), _T("speed_unit"), 0, theApp.m_config_path.c_str()));
+	theApp.m_main_wnd_data.hide_unit = (GetPrivateProfileInt(_T("config"), _T("hide_unit"), 0, theApp.m_config_path.c_str()) != 0);
+	theApp.m_main_wnd_data.hide_percent = (GetPrivateProfileInt(_T("config"), _T("hide_percent"), 0, theApp.m_config_path.c_str()) != 0);
 
 	m_alow_out_of_border = (GetPrivateProfileInt(_T("config"), _T("alow_out_of_border"), 0, theApp.m_config_path.c_str()) != 0);
 }
@@ -484,8 +489,9 @@ void CTrafficMonitorDlg::SaveConfig()
 	CCommon::WriteIniStringW(_T("config"), _T("memory_string"), theApp.m_main_wnd_data.disp_str.memory, theApp.m_config_path.c_str());
 
 	CCommon::WritePrivateProfileIntW(L"config", L"speed_short_mode", theApp.m_main_wnd_data.speed_short_mode, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"speed_unit", static_cast<int>(theApp.m_main_wnd_data.m_speed_unit), theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"hide_unit", theApp.m_main_wnd_data.m_hide_unit, theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"config", L"speed_unit", static_cast<int>(theApp.m_main_wnd_data.speed_unit), theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"config", L"hide_unit", theApp.m_main_wnd_data.hide_unit, theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"config", L"hide_percent", theApp.m_main_wnd_data.hide_percent, theApp.m_config_path.c_str());
 
 	CCommon::WritePrivateProfileIntW(L"config", L"alow_out_of_border", m_alow_out_of_border, theApp.m_config_path.c_str());
 }

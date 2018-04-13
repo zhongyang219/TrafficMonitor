@@ -53,4 +53,5 @@ public:
 	afx_msg void OnBnClickedHideUnitCheck();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void OnOK();
+	afx_msg void OnBnClickedHidePercentageCheck();
 };

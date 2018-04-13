@@ -54,4 +54,5 @@ public:
 	afx_msg void OnBnClickedHideUnitCheck();
 	virtual void OnOK();
 	afx_msg void OnBnClickedValueRightAlignCheck();
+	afx_msg void OnBnClickedHidePercentageCheck();
 };

@@ -55,6 +55,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
 	ON_CBN_SELCHANGE(IDC_UNIT_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeUnitCombo)
 	ON_BN_CLICKED(IDC_HIDE_UNIT_CHECK, &CTaskBarSettingsDlg::OnBnClickedHideUnitCheck)
 	ON_BN_CLICKED(IDC_VALUE_RIGHT_ALIGN_CHECK, &CTaskBarSettingsDlg::OnBnClickedValueRightAlignCheck)
+	ON_BN_CLICKED(IDC_HIDE_PERCENTAGE_CHECK, &CTaskBarSettingsDlg::OnBnClickedHidePercentageCheck)
 END_MESSAGE_MAP()
 
 
@@ -94,15 +95,16 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	m_unit_combo.AddString(_T("自动"));
 	m_unit_combo.AddString(_T("固定为 KB/s"));
 	m_unit_combo.AddString(_T("固定为 MB/s"));
-	m_unit_combo.SetCurSel(static_cast<int>(m_data.m_speed_unit));
+	m_unit_combo.SetCurSel(static_cast<int>(m_data.speed_unit));
 
-	m_hide_unit_chk.SetCheck(m_data.m_hide_unit);
-	if (m_data.m_speed_unit == SpeedUnit::AUTO)
+	m_hide_unit_chk.SetCheck(m_data.hide_unit);
+	if (m_data.speed_unit == SpeedUnit::AUTO)
 	{
 		m_hide_unit_chk.SetCheck(FALSE);
-		m_data.m_hide_unit = false;
+		m_data.hide_unit = false;
 		m_hide_unit_chk.EnableWindow(FALSE);
 	}
+	((CButton*)GetDlgItem(IDC_HIDE_PERCENTAGE_CHECK))->SetCheck(m_data.hide_percent);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -263,11 +265,11 @@ BOOL CTaskBarSettingsDlg::PreTranslateMessage(MSG* pMsg)
 void CTaskBarSettingsDlg::OnCbnSelchangeUnitCombo()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	m_data.m_speed_unit = static_cast<SpeedUnit>(m_unit_combo.GetCurSel());
-	if (m_data.m_speed_unit == SpeedUnit::AUTO)
+	m_data.speed_unit = static_cast<SpeedUnit>(m_unit_combo.GetCurSel());
+	if (m_data.speed_unit == SpeedUnit::AUTO)
 	{
 		m_hide_unit_chk.SetCheck(FALSE);
-		m_data.m_hide_unit = false;
+		m_data.hide_unit = false;
 		m_hide_unit_chk.EnableWindow(FALSE);
 	}
 	else
@@ -280,7 +282,7 @@ void CTaskBarSettingsDlg::OnCbnSelchangeUnitCombo()
 void CTaskBarSettingsDlg::OnBnClickedHideUnitCheck()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	m_data.m_hide_unit = (m_hide_unit_chk.GetCheck() != 0);
+	m_data.hide_unit = (m_hide_unit_chk.GetCheck() != 0);
 }
 
 
@@ -310,4 +312,11 @@ void CTaskBarSettingsDlg::OnBnClickedValueRightAlignCheck()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.value_right_align = (((CButton*)GetDlgItem(IDC_VALUE_RIGHT_ALIGN_CHECK))->GetCheck() != 0);
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedHidePercentageCheck()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_data.hide_percent = (((CButton*)GetDlgItem(IDC_HIDE_PERCENTAGE_CHECK))->GetCheck() != 0);
 }

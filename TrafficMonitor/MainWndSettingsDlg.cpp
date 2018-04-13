@@ -50,6 +50,7 @@ BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_SPEED_SHORT_MODE_CHECK2, &CMainWndSettingsDlg::OnBnClickedSpeedShortModeCheck2)
 	ON_CBN_SELCHANGE(IDC_UNIT_COMBO, &CMainWndSettingsDlg::OnCbnSelchangeUnitCombo)
 	ON_BN_CLICKED(IDC_HIDE_UNIT_CHECK, &CMainWndSettingsDlg::OnBnClickedHideUnitCheck)
+	ON_BN_CLICKED(IDC_HIDE_PERCENTAGE_CHECK, &CMainWndSettingsDlg::OnBnClickedHidePercentageCheck)
 END_MESSAGE_MAP()
 
 
@@ -89,15 +90,16 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 	m_unit_combo.AddString(_T("自动"));
 	m_unit_combo.AddString(_T("固定为 KB/s"));
 	m_unit_combo.AddString(_T("固定为 MB/s"));
-	m_unit_combo.SetCurSel(static_cast<int>(m_data.m_speed_unit));
+	m_unit_combo.SetCurSel(static_cast<int>(m_data.speed_unit));
 
-	m_hide_unit_chk.SetCheck(m_data.m_hide_unit);
-	if (m_data.m_speed_unit == SpeedUnit::AUTO)
+	m_hide_unit_chk.SetCheck(m_data.hide_unit);
+	if (m_data.speed_unit == SpeedUnit::AUTO)
 	{
 		m_hide_unit_chk.SetCheck(FALSE);
-		m_data.m_hide_unit = false;
+		m_data.hide_unit = false;
 		m_hide_unit_chk.EnableWindow(FALSE);
 	}
+	((CButton*)GetDlgItem(IDC_HIDE_PERCENTAGE_CHECK))->SetCheck(m_data.hide_percent);
 
 	if (m_text_disable)
 	{
@@ -244,11 +246,11 @@ void CMainWndSettingsDlg::OnBnClickedSpeedShortModeCheck2()
 void CMainWndSettingsDlg::OnCbnSelchangeUnitCombo()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	m_data.m_speed_unit = static_cast<SpeedUnit>(m_unit_combo.GetCurSel());
-	if (m_data.m_speed_unit == SpeedUnit::AUTO)
+	m_data.speed_unit = static_cast<SpeedUnit>(m_unit_combo.GetCurSel());
+	if (m_data.speed_unit == SpeedUnit::AUTO)
 	{
 		m_hide_unit_chk.SetCheck(FALSE);
-		m_data.m_hide_unit = false;
+		m_data.hide_unit = false;
 		m_hide_unit_chk.EnableWindow(FALSE);
 	}
 	else
@@ -261,7 +263,7 @@ void CMainWndSettingsDlg::OnCbnSelchangeUnitCombo()
 void CMainWndSettingsDlg::OnBnClickedHideUnitCheck()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	m_data.m_hide_unit = (m_hide_unit_chk.GetCheck() != 0);
+	m_data.hide_unit = (m_hide_unit_chk.GetCheck() != 0);
 }
 
 
@@ -294,4 +296,11 @@ void CMainWndSettingsDlg::OnOK()
 	GetDlgItemText(IDC_FONT_NAME_EDIT, m_data.font_name);
 
 	CTabDlg::OnOK();
+}
+
+
+void CMainWndSettingsDlg::OnBnClickedHidePercentageCheck()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_data.hide_percent = (((CButton*)GetDlgItem(IDC_HIDE_PERCENTAGE_CHECK))->GetCheck() != 0);
 }

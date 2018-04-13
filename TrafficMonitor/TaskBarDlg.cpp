@@ -43,8 +43,8 @@ void CTaskBarDlg::ShowInfo()
 {
 	if (this->m_hWnd == NULL || m_pDC == nullptr) return;
 	CString str;
-	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data.speed_short_mode, theApp.m_taskbar_data.m_speed_unit, theApp.m_taskbar_data.m_hide_unit);
-	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data.speed_short_mode, theApp.m_taskbar_data.m_speed_unit, theApp.m_taskbar_data.m_hide_unit);
+	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data.speed_short_mode, theApp.m_taskbar_data.speed_unit, theApp.m_taskbar_data.hide_unit);
+	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data.speed_short_mode, theApp.m_taskbar_data.speed_unit, theApp.m_taskbar_data.hide_unit);
 
 	if (m_rect.IsRectEmpty() || m_rect.IsRectNull()) return;
 	
@@ -81,7 +81,7 @@ void CTaskBarDlg::ShowInfo()
 	lable_rect.right = lable_rect.left + m_ud_lable_width;
 	value_rect.left += m_ud_lable_width;
 	CString format_str;
-	if (theApp.m_taskbar_data.m_hide_unit && theApp.m_taskbar_data.m_speed_unit != SpeedUnit::AUTO)
+	if (theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO)
 		format_str = _T("%s");
 	else
 		format_str = _T("%s/s");
@@ -124,16 +124,21 @@ void CTaskBarDlg::ShowInfo()
 			window_width = max(m_window_width_s, (m_window_width - m_window_width_s));
 			value_rect.right = value_rect.left + window_width - theApp.DPI(5);
 		}
+		CString format_str;
+		if (theApp.m_taskbar_data.hide_percent)
+			format_str = _T("%d");
+		else
+			format_str = _T("%d%%");
 		lable_rect = value_rect;
 		lable_rect.right = lable_rect.left + m_cm_lable_width;
 		value_rect.left += m_cm_lable_width;
-		str.Format(_T("%d%%"), theApp.m_cpu_usage);
+		str.Format(format_str, theApp.m_cpu_usage);
 		draw.DrawWindowText(value_rect, str, theApp.m_taskbar_data.text_color, value_alignment, true);
 		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.cpu.c_str(), theApp.m_taskbar_data.text_color, Alignment::LEFT, true);
 		//绘制内存利用率
 		value_rect.MoveToY(value_rect.bottom);
 		lable_rect.MoveToY(lable_rect.bottom);
-		str.Format(_T("%d%%"), theApp.m_memory_usage);
+		str.Format(format_str, theApp.m_memory_usage);
 		draw.DrawWindowText(value_rect, str, theApp.m_taskbar_data.text_color, value_alignment, true);
 		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.memory.c_str(), theApp.m_taskbar_data.text_color, Alignment::LEFT, true);
 	}
@@ -183,7 +188,7 @@ bool CTaskBarDlg::AdjustWindowPos()
 		int window_width;
 		window_width = max(m_window_width_s, (m_window_width - m_window_width_s));
 		m_rect.right = m_rect.left + window_width;
-		m_rect.bottom = m_rect.top + (theApp.m_tbar_show_cpu_memory ? (2 * m_window_height) : m_window_height);
+		m_rect.bottom = m_rect.top + (theApp.m_tbar_show_cpu_memory ? (2 * m_window_height + theApp.DPI(2)) : m_window_height);
 		if (rcMin.Height() != m_min_bar_height)	//如果最小化窗口的高度改变了，重新设置任务栏窗口的位置
 		{
 			m_top_space = rcMin.top - rcBar.top;
@@ -281,8 +286,9 @@ void CTaskBarDlg::SaveConfig()
 
 	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_wnd_on_left", theApp.m_taskbar_data.tbar_wnd_on_left, theApp.m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_speed_short_mode", theApp.m_taskbar_data.speed_short_mode, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_speed_unit", static_cast<int>(theApp.m_taskbar_data.m_speed_unit), theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_hide_unit", theApp.m_taskbar_data.m_hide_unit, theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_speed_unit", static_cast<int>(theApp.m_taskbar_data.speed_unit), theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_hide_unit", theApp.m_taskbar_data.hide_unit, theApp.m_config_path.c_str());
+	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_hide_percent", theApp.m_taskbar_data.hide_percent, theApp.m_config_path.c_str());
 	CCommon::WritePrivateProfileIntW(L"task_bar", L"value_right_align", theApp.m_taskbar_data.value_right_align, theApp.m_config_path.c_str());
 }
 
@@ -302,8 +308,9 @@ void CTaskBarDlg::LoadConfig()
 
 	theApp.m_taskbar_data.tbar_wnd_on_left = (GetPrivateProfileInt(_T("task_bar"), _T("task_bar_wnd_on_left"), 0, theApp.m_config_path.c_str()) != 0);
 	theApp.m_taskbar_data.speed_short_mode = (GetPrivateProfileInt(_T("task_bar"), _T("task_bar_speed_short_mode"), 0, theApp.m_config_path.c_str()) != 0);
-	theApp.m_taskbar_data.m_speed_unit = static_cast<SpeedUnit>(GetPrivateProfileInt(_T("task_bar"), _T("task_bar_speed_unit"), 0, theApp.m_config_path.c_str()));
-	theApp.m_taskbar_data.m_hide_unit = (GetPrivateProfileInt(_T("task_bar"), _T("task_bar_hide_unit"), 0, theApp.m_config_path.c_str()) != 0);
+	theApp.m_taskbar_data.speed_unit = static_cast<SpeedUnit>(GetPrivateProfileInt(_T("task_bar"), _T("task_bar_speed_unit"), 0, theApp.m_config_path.c_str()));
+	theApp.m_taskbar_data.hide_unit = (GetPrivateProfileInt(_T("task_bar"), _T("task_bar_hide_unit"), 0, theApp.m_config_path.c_str()) != 0);
+	theApp.m_taskbar_data.hide_percent = (GetPrivateProfileInt(_T("task_bar"), _T("task_bar_hide_percent"), 0, theApp.m_config_path.c_str()) != 0);
 	theApp.m_taskbar_data.value_right_align = (GetPrivateProfileInt(_T("task_bar"), _T("value_right_align"), 0, theApp.m_config_path.c_str()) != 0);
 }
 
@@ -328,14 +335,14 @@ void CTaskBarDlg::CalculateWindowWidth()
 	CString sample_str;
 	if (theApp.m_taskbar_data.speed_short_mode)
 	{
-		if (theApp.m_taskbar_data.m_hide_unit && theApp.m_taskbar_data.m_speed_unit != SpeedUnit::AUTO)
+		if (theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO)
 			sample_str = _T("%s8888");
 		else
 			sample_str = _T("%s8888M/s");
 	}
 	else
 	{
-		if (theApp.m_taskbar_data.m_hide_unit && theApp.m_taskbar_data.m_speed_unit != SpeedUnit::AUTO)
+		if (theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO)
 			sample_str = _T("%s8888.8");
 		else
 			sample_str = _T("%s8888.8MB/s");
@@ -348,8 +355,16 @@ void CTaskBarDlg::CalculateWindowWidth()
 
 	//计算显示CPU、内存部分所需要的宽度
 	int width_cpu_memory;
-	str1.Format(_T("%s100%%"), theApp.m_taskbar_data.disp_str.cpu.c_str());
-	str2.Format(_T("%s100%%"), theApp.m_taskbar_data.disp_str.memory.c_str());
+	if (theApp.m_taskbar_data.hide_percent)
+	{
+		str1.Format(_T("%s100"), theApp.m_taskbar_data.disp_str.cpu.c_str());
+		str2.Format(_T("%s100"), theApp.m_taskbar_data.disp_str.memory.c_str());
+	}
+	else
+	{
+		str1.Format(_T("%s100%%"), theApp.m_taskbar_data.disp_str.cpu.c_str());
+		str2.Format(_T("%s100%%"), theApp.m_taskbar_data.disp_str.memory.c_str());
+	}
 	width1 = m_pDC->GetTextExtent(str1).cx;
 	width2 = m_pDC->GetTextExtent(str2).cx;
 	width_cpu_memory = max(width1, width2);
@@ -441,7 +456,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 		if (theApp.m_tbar_show_cpu_memory)	//将CPU和内存利用率放到网速的下面
 		{
 			m_rect.right = m_rect.left + window_width;
-			m_rect.bottom = m_rect.top + m_rect.Height() * 2;
+			m_rect.bottom = m_rect.top + m_rect.Height() * 2 + theApp.DPI(2);
 		}
 		m_min_bar_height = m_rcMin.Height() - m_rect.Height();	//保存最小化窗口高度
 
