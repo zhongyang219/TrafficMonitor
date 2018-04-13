@@ -42,7 +42,7 @@ BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CTabDlg)
 	ON_EN_CHANGE(IDC_DOWNLOAD_EDIT, &CMainWndSettingsDlg::OnEnChangeDownloadEdit)
 	ON_EN_CHANGE(IDC_CPU_EDIT, &CMainWndSettingsDlg::OnEnChangeCpuEdit)
 	ON_EN_CHANGE(IDC_MEMORY_EDIT, &CMainWndSettingsDlg::OnEnChangeMemoryEdit)
-	ON_BN_CLICKED(IDC_SET_COLOR_BUTTON1, &CMainWndSettingsDlg::OnBnClickedSetColorButton1)
+	//ON_BN_CLICKED(IDC_SET_COLOR_BUTTON1, &CMainWndSettingsDlg::OnBnClickedSetColorButton1)
 	ON_BN_CLICKED(IDC_SET_DEFAULT_BUTTON, &CMainWndSettingsDlg::OnBnClickedSetDefaultButton)
 	ON_BN_CLICKED(IDC_SET_FONT_BUTTON, &CMainWndSettingsDlg::OnBnClickedSetFontButton)
 	ON_BN_CLICKED(IDC_SWITCH_UP_DOWN_CHECK, &CMainWndSettingsDlg::OnBnClickedSwitchUpDownCheck)
@@ -51,6 +51,7 @@ BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CTabDlg)
 	ON_CBN_SELCHANGE(IDC_UNIT_COMBO, &CMainWndSettingsDlg::OnCbnSelchangeUnitCombo)
 	ON_BN_CLICKED(IDC_HIDE_UNIT_CHECK, &CMainWndSettingsDlg::OnBnClickedHideUnitCheck)
 	ON_BN_CLICKED(IDC_HIDE_PERCENTAGE_CHECK, &CMainWndSettingsDlg::OnBnClickedHidePercentageCheck)
+	ON_MESSAGE(WM_STATIC_CLICKED, &CMainWndSettingsDlg::OnStaticClicked)
 END_MESSAGE_MAP()
 
 
@@ -80,7 +81,7 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 	((CButton*)GetDlgItem(IDC_FULLSCREEN_HIDE_CHECK))->SetCheck(m_data.hide_main_wnd_when_fullscreen);
 	((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK2))->SetCheck(m_data.speed_short_mode);
 
-	//SetTimer(11, 50, NULL);
+	m_color_static.SetLinkCursor();
 	DrawStaticColor();
 
 	m_toolTip.Create(this);
@@ -171,18 +172,6 @@ void CMainWndSettingsDlg::OnEnChangeMemoryEdit()
 	CString tmp;
 	GetDlgItemText(IDC_MEMORY_EDIT, tmp);
 	m_data.disp_str.memory = tmp;
-}
-
-
-void CMainWndSettingsDlg::OnBnClickedSetColorButton1()
-{
-	// TODO: 在此添加控件通知处理程序代码
-	CColorDialog colorDlg(m_data.text_color, 0, this);
-	if (colorDlg.DoModal() == IDOK)
-	{
-		m_data.text_color = colorDlg.GetColor();
-		DrawStaticColor();
-	}
 }
 
 
@@ -303,4 +292,26 @@ void CMainWndSettingsDlg::OnBnClickedHidePercentageCheck()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.hide_percent = (((CButton*)GetDlgItem(IDC_HIDE_PERCENTAGE_CHECK))->GetCheck() != 0);
+}
+
+
+afx_msg LRESULT CMainWndSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lParam)
+{
+	switch (::GetDlgCtrlID(((CWnd*)wParam)->m_hWnd))
+	{
+	case IDC_TEXT_COLOR_STATIC:
+	{
+		//设置文本颜色
+		CColorDialog colorDlg(m_data.text_color, 0, this);
+		if (colorDlg.DoModal() == IDOK)
+		{
+			m_data.text_color = colorDlg.GetColor();
+			DrawStaticColor();
+		}
+		break;
+	}
+	default:
+		break;
+	}
+	return 0;
 }

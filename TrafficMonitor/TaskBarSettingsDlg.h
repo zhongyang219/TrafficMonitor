@@ -1,5 +1,5 @@
 #pragma once
-#include "StaticEx.h"
+#include "ColorStatic.h"
 #include "afxwin.h"
 #include "SpinEdit.h"
 #include "TabDlg.h"
@@ -24,8 +24,8 @@ public:
 
 protected:
 	//¿Ø¼þ±äÁ¿
-	CStaticEx m_text_color_static;
-	CStaticEx m_back_color_static;
+	CColorStatic m_text_color_static;
+	CColorStatic m_back_color_static;
 	CToolTipCtrl m_toolTip;
 	CComboBox m_unit_combo;
 	CButton m_hide_unit_chk;
@@ -39,8 +39,6 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnBnClickedSetFontButton1();
-	afx_msg void OnBnClickedSetColorButton2();
-	afx_msg void OnBnClickedSetColorButton3();
 	afx_msg void OnEnChangeUploadEdit1();
 	afx_msg void OnEnChangeDownloadEdit1();
 	afx_msg void OnEnChangeCpuEdit1();
@@ -55,4 +53,6 @@ public:
 	virtual void OnOK();
 	afx_msg void OnBnClickedValueRightAlignCheck();
 	afx_msg void OnBnClickedHidePercentageCheck();
+protected:
+	afx_msg LRESULT OnStaticClicked(WPARAM wParam, LPARAM lParam);
 };

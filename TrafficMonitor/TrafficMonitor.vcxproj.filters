@@ -73,6 +73,9 @@
     <Filter Include="源文件和头文件\派生的控件类\TabDlg">
       <UniqueIdentifier>{5d1d612c-7ef4-498c-9d8f-ad11555faa80}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\派生的控件类\ColorStatic">
+      <UniqueIdentifier>{1c3d2e37-c54d-429a-ac6f-efe82f02902c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -150,6 +153,9 @@
     <ClInclude Include="TabDlg.h">
       <Filter>源文件和头文件\派生的控件类\TabDlg</Filter>
     </ClInclude>
+    <ClInclude Include="ColorStatic.h">
+      <Filter>源文件和头文件\派生的控件类\ColorStatic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -214,6 +220,9 @@
     </ClCompile>
     <ClCompile Include="TabDlg.cpp">
       <Filter>源文件和头文件\派生的控件类\TabDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorStatic.cpp">
+      <Filter>源文件和头文件\派生的控件类\ColorStatic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

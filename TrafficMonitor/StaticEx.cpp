@@ -51,13 +51,6 @@ CString CStaticEx::GetURL() const
 	return m_strURL;
 }
 
-void CStaticEx::SetFillColor(COLORREF fill_color)
-{
-	m_fill_color = fill_color;
-	m_fill_color_enable = true;
-	Invalidate();
-}
-
 
 LRESULT CStaticEx::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -163,14 +156,6 @@ void CStaticEx::OnPaint()
 			dc.DrawText(m_text, rect, DT_VCENTER | DT_SINGLELINE);
 		}
 		m_Font.DeleteObject();
-	}
-
-	//需要填充背景色时的绘图处理
-	else if (m_fill_color_enable)
-	{
-		CRect rect;
-		GetClientRect(rect);
-		dc.FillSolidRect(rect, m_fill_color);
 	}
 
 	else if (m_color_text)

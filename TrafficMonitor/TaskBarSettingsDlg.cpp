@@ -42,8 +42,6 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_SET_FONT_BUTTON1, &CTaskBarSettingsDlg::OnBnClickedSetFontButton1)
-	ON_BN_CLICKED(IDC_SET_COLOR_BUTTON2, &CTaskBarSettingsDlg::OnBnClickedSetColorButton2)
-	ON_BN_CLICKED(IDC_SET_COLOR_BUTTON3, &CTaskBarSettingsDlg::OnBnClickedSetColorButton3)
 	ON_EN_CHANGE(IDC_UPLOAD_EDIT1, &CTaskBarSettingsDlg::OnEnChangeUploadEdit1)
 	ON_EN_CHANGE(IDC_DOWNLOAD_EDIT1, &CTaskBarSettingsDlg::OnEnChangeDownloadEdit1)
 	ON_EN_CHANGE(IDC_CPU_EDIT1, &CTaskBarSettingsDlg::OnEnChangeCpuEdit1)
@@ -56,6 +54,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_HIDE_UNIT_CHECK, &CTaskBarSettingsDlg::OnBnClickedHideUnitCheck)
 	ON_BN_CLICKED(IDC_VALUE_RIGHT_ALIGN_CHECK, &CTaskBarSettingsDlg::OnBnClickedValueRightAlignCheck)
 	ON_BN_CLICKED(IDC_HIDE_PERCENTAGE_CHECK, &CTaskBarSettingsDlg::OnBnClickedHidePercentageCheck)
+	ON_MESSAGE(WM_STATIC_CLICKED, &CTaskBarSettingsDlg::OnStaticClicked)
 END_MESSAGE_MAP()
 
 
@@ -86,6 +85,8 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK))->SetCheck(m_data.speed_short_mode);
 	((CButton*)GetDlgItem(IDC_VALUE_RIGHT_ALIGN_CHECK))->SetCheck(m_data.value_right_align);
 
+	m_text_color_static.SetLinkCursor();
+	m_back_color_static.SetLinkCursor();
 	DrawStaticColor();
 
 	m_toolTip.Create(this);
@@ -129,34 +130,6 @@ void CTaskBarSettingsDlg::OnBnClickedSetFontButton1()
 		wchar_t buff[16];
 		swprintf_s(buff, L"%d", m_data.font_size);
 		SetDlgItemText(IDC_FONT_SIZE_EDIT1, buff);
-	}
-}
-
-//设置文本颜色
-void CTaskBarSettingsDlg::OnBnClickedSetColorButton2()
-{
-	// TODO: 在此添加控件通知处理程序代码
-	CColorDialog colorDlg(m_data.text_color, 0, this);
-	if (colorDlg.DoModal() == IDOK)
-	{
-		m_data.text_color = colorDlg.GetColor();
-		if (m_data.back_color == m_data.text_color)
-			MessageBox(_T("警告：文字颜色和背景色相同！"), NULL, MB_ICONWARNING);
-		DrawStaticColor();
-	}
-}
-
-//设置背景颜色
-void CTaskBarSettingsDlg::OnBnClickedSetColorButton3()
-{
-	// TODO: 在此添加控件通知处理程序代码
-	CColorDialog colorDlg(m_data.back_color, 0, this);
-	if (colorDlg.DoModal() == IDOK)
-	{
-		m_data.back_color = colorDlg.GetColor();
-		if (m_data.back_color == m_data.text_color)
-			MessageBox(_T("警告：背景色和文字颜色相同！"), NULL, MB_ICONWARNING);
-		DrawStaticColor();
 	}
 }
 
@@ -319,4 +292,40 @@ void CTaskBarSettingsDlg::OnBnClickedHidePercentageCheck()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.hide_percent = (((CButton*)GetDlgItem(IDC_HIDE_PERCENTAGE_CHECK))->GetCheck() != 0);
+}
+
+
+afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lParam)
+{
+	switch (::GetDlgCtrlID(((CWnd*)wParam)->m_hWnd))
+	{
+	case IDC_TEXT_COLOR_STATIC1:		//点击“文本颜色”时
+	{
+		//设置文本颜色
+		CColorDialog colorDlg(m_data.text_color, 0, this);
+		if (colorDlg.DoModal() == IDOK)
+		{
+			m_data.text_color = colorDlg.GetColor();
+			if (m_data.back_color == m_data.text_color)
+				MessageBox(_T("警告：文字颜色和背景色相同！"), NULL, MB_ICONWARNING);
+			DrawStaticColor();
+		}
+		break;
+	}
+	case IDC_TEXT_COLOR_STATIC2:		//点击“背景颜色”时
+	{
+		//设置背景颜色
+		CColorDialog colorDlg(m_data.back_color, 0, this);
+		if (colorDlg.DoModal() == IDOK)
+		{
+			m_data.back_color = colorDlg.GetColor();
+			if (m_data.back_color == m_data.text_color)
+				MessageBox(_T("警告：背景色和文字颜色相同！"), NULL, MB_ICONWARNING);
+			DrawStaticColor();
+		}
+	}
+	default:
+		break;
+	}
+	return 0;
 }

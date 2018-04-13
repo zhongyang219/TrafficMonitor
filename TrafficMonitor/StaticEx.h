@@ -1,6 +1,5 @@
 /*
-#define FUNCTION_TYPE 3
-CStatic类的派生类，可实现以下FUNCTION_TYPE种功能
+CStatic类的派生类，可实现以下几种功能
 1、用作带颜色的文本控件：
 调用SetTextColor设置文本颜色；
 在需要的时候调用SetWindowTextEx设置控件文本
@@ -12,10 +11,7 @@ CStatic类的派生类，可实现以下FUNCTION_TYPE种功能
 如果调用SetLinkEnable(false)，则点击控件后会向父窗口发送一个WM_LINK_CLICKED消息，
 并通过WPARAM传递控件的指针
 
-3、用作颜色填充：
-使用SetFillColor()函数设置要填充的颜色
-
-以上FUNCTION_TYPE种功能不能同时使用
+以上功能不能同时使用
 */
 #pragma once
 #include "afxwin.h"
@@ -54,13 +50,6 @@ protected:
 	bool m_linkEnable{ true };		//如果为true，点击后打开超链接，否则向父窗口发送一个点击消息
 	bool m_bHot{ false };			//当鼠标指向超链接时，则为true
 	CString m_strURL;				//超链接字符串
-
-	//将Static控件用作颜色填充时
-public:
-	void SetFillColor(COLORREF fill_color);		//设置要填充的背景色
-protected:
-	bool m_fill_color_enable{ false };		//是否为控件填充颜色
-	COLORREF m_fill_color{};
 
 protected:
 	virtual LRESULT DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam);

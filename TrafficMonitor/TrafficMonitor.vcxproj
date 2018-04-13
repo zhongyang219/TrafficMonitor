@@ -185,6 +185,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ColorStatic.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="CommonData.h" />
     <ClInclude Include="CSkinPreviewView.h" />
@@ -211,6 +212,7 @@
     <ClInclude Include="TrafficMonitorDlg.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ColorStatic.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="CSkinPreviewView.cpp" />
     <ClCompile Include="DonateDlg.cpp" />
