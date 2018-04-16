@@ -3,6 +3,7 @@
 #include "afxwin.h"
 //#include "StaticEx.h"
 #include "DrawCommon.h"
+#include "IniHelper.h"
 
 // CTaskBarDlg ¶Ô»°¿ò
 

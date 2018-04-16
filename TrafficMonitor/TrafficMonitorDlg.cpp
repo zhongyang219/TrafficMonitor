@@ -408,92 +408,92 @@ void CTrafficMonitorDlg::GetScreenSize()
 
 void CTrafficMonitorDlg::LoadConfig()
 {
-	m_transparency = GetPrivateProfileInt(_T("config"), _T("transparency"), 80, theApp.m_config_path.c_str());
-	m_always_on_top = (GetPrivateProfileInt(_T("config"), _T("always_on_top"), 1, theApp.m_config_path.c_str()) != 0);
-	m_lock_window_pos = (GetPrivateProfileInt(_T("config"), _T("lock_window_pos"), 0, theApp.m_config_path.c_str()) != 0);
-	theApp.m_show_notify_icon = (GetPrivateProfileInt(_T("config"), _T("show_notify_icon"), 1, theApp.m_config_path.c_str()) != 0);
-	m_show_more_info = (GetPrivateProfileInt(_T("config"), _T("show_cpu_memory"), 1, theApp.m_config_path.c_str()) != 0);
-	m_mouse_penetrate = (GetPrivateProfileInt(_T("config"), _T("mouse_penetrate"), 0, theApp.m_config_path.c_str()) != 0);
-	m_show_task_bar_wnd = (GetPrivateProfileInt(_T("config"), _T("show_task_bar_wnd"), 0, theApp.m_config_path.c_str()) != 0);
-	m_position_x = GetPrivateProfileInt(_T("config"), _T("position_x"), -1, theApp.m_config_path.c_str());
-	m_position_y = GetPrivateProfileInt(_T("config"), _T("position_y"), -1, theApp.m_config_path.c_str());
-	m_auto_select = (GetPrivateProfileInt(_T("connection"), _T("auto_select"), 1, theApp.m_config_path.c_str()) != 0);
-	theApp.m_main_wnd_data.text_color = GetPrivateProfileInt(_T("config"), _T("text_color"), 16384, theApp.m_config_path.c_str());
-	theApp.m_hide_main_window = (GetPrivateProfileInt(_T("config"), _T("hide_main_window"), 0, theApp.m_config_path.c_str()) != 0);
-	wchar_t buff[256];
-	GetPrivateProfileStringW(L"connection", L"connection_name", L"", buff, 256, theApp.m_config_path.c_str());
-	m_connection_name = CCommon::UnicodeToStr(buff);
-	wchar_t wbuff[32];
-	GetPrivateProfileString(_T("config"), _T("skin_selected"), _T(""), wbuff, 32, theApp.m_config_path.c_str());
-	m_skin_name = wbuff;
+	CIniHelper ini;
+	ini.SetPath(theApp.m_config_path);
+	m_transparency = ini.GetInt(_T("config"), _T("transparency"), 80);
+	m_always_on_top = ini.GetBool(_T("config"), _T("always_on_top"), true);
+	m_lock_window_pos = ini.GetBool(_T("config"), _T("lock_window_pos"), false);
+	theApp.m_show_notify_icon = ini.GetBool(_T("config"), _T("show_notify_icon"), true);
+	m_show_more_info = ini.GetBool(_T("config"), _T("show_cpu_memory"), true);
+	m_mouse_penetrate = ini.GetBool(_T("config"), _T("mouse_penetrate"), false);
+	m_show_task_bar_wnd = ini.GetBool(_T("config"), _T("show_task_bar_wnd"), false);
+	m_position_x = ini.GetInt(_T("config"), _T("position_x"), -1);
+	m_position_y = ini.GetInt(_T("config"), _T("position_y"), -1);
+	m_auto_select = ini.GetBool(_T("connection"), _T("auto_select"), true);
+	theApp.m_main_wnd_data.text_color = ini.GetInt(_T("config"), _T("text_color"), 16384);
+	theApp.m_hide_main_window = ini.GetBool(_T("config"), _T("hide_main_window"), false);
+	m_connection_name = CCommon::UnicodeToStr(ini.GetString(L"connection", L"connection_name", L"").c_str());
+	m_skin_name = ini.GetString(_T("config"), _T("skin_selected"), _T(""));
 	if (m_skin_name.substr(0, 8) == L".\\skins\\")		//如果读取到的皮肤名称前面有".\\skins\\"，则把它删除。（用于和前一个版本保持兼容性）
 		m_skin_name = m_skin_name.substr(7);
-	m_notify_icon_selected = GetPrivateProfileInt(_T("config"), _T("notify_icon_selected"), 0, theApp.m_config_path.c_str());
-	theApp.m_main_wnd_data.swap_up_down = (GetPrivateProfileInt(_T("config"), _T("swap_up_down"), 0, theApp.m_config_path.c_str()) != 0);
-	theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen = (GetPrivateProfileInt(_T("config"), _T("hide_main_wnd_when_fullscreen"), 1, theApp.m_config_path.c_str()) != 0);
+	m_notify_icon_selected = ini.GetInt(_T("config"), _T("notify_icon_selected"), 0);
+	theApp.m_main_wnd_data.swap_up_down = ini.GetBool(_T("config"), _T("swap_up_down"), false);
+	theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen = ini.GetBool(_T("config"), _T("hide_main_wnd_when_fullscreen"), true);
 
-	GetPrivateProfileString(_T("config"), _T("font_name"), _T("微软雅黑"), theApp.m_main_wnd_data.font_name.GetBuffer(32), 32, theApp.m_config_path.c_str());
-	theApp.m_main_wnd_data.font_size = GetPrivateProfileInt(_T("config"), _T("font_size"), 10, theApp.m_config_path.c_str());
+	theApp.m_main_wnd_data.font_name = ini.GetString(_T("config"), _T("font_name"), _T("微软雅黑")).c_str();
+	theApp.m_main_wnd_data.font_size = ini.GetInt(_T("config"), _T("font_size"), 10);
 
-	theApp.m_main_wnd_data.disp_str.up = CCommon::GetIniStringW(L"config", L"up_string", L"上传: $", theApp.m_config_path.c_str());
-	theApp.m_main_wnd_data.disp_str.down = CCommon::GetIniStringW(L"config", L"down_string", L"下载: $", theApp.m_config_path.c_str());
-	theApp.m_main_wnd_data.disp_str.cpu = CCommon::GetIniStringW(L"config", L"cpu_string", L"CPU: $", theApp.m_config_path.c_str());
-	theApp.m_main_wnd_data.disp_str.memory = CCommon::GetIniStringW(L"config", L"memory_string", L"内存: $", theApp.m_config_path.c_str());
+	theApp.m_main_wnd_data.disp_str.up = ini.GetString(L"config", L"up_string", L"上传: $");
+	theApp.m_main_wnd_data.disp_str.down = ini.GetString(L"config", L"down_string", L"下载: $");
+	theApp.m_main_wnd_data.disp_str.cpu = ini.GetString(L"config", L"cpu_string", L"CPU: $");
+	theApp.m_main_wnd_data.disp_str.memory = ini.GetString(L"config", L"memory_string", L"内存: $");
 
-	theApp.m_main_wnd_data.speed_short_mode = (GetPrivateProfileInt(_T("config"), _T("speed_short_mode"), 0, theApp.m_config_path.c_str()) != 0);
-	theApp.m_main_wnd_data.speed_unit = static_cast<SpeedUnit>(GetPrivateProfileInt(_T("config"), _T("speed_unit"), 0, theApp.m_config_path.c_str()));
-	theApp.m_main_wnd_data.hide_unit = (GetPrivateProfileInt(_T("config"), _T("hide_unit"), 0, theApp.m_config_path.c_str()) != 0);
-	theApp.m_main_wnd_data.hide_percent = (GetPrivateProfileInt(_T("config"), _T("hide_percent"), 0, theApp.m_config_path.c_str()) != 0);
+	theApp.m_main_wnd_data.speed_short_mode = ini.GetBool(_T("config"), _T("speed_short_mode"), false);
+	theApp.m_main_wnd_data.speed_unit = static_cast<SpeedUnit>(ini.GetInt(_T("config"), _T("speed_unit"), 0));
+	theApp.m_main_wnd_data.hide_unit = ini.GetBool(_T("config"), _T("hide_unit"), false);
+	theApp.m_main_wnd_data.hide_percent = ini.GetBool(_T("config"), _T("hide_percent"), false);
 
-	m_alow_out_of_border = (GetPrivateProfileInt(_T("config"), _T("alow_out_of_border"), 0, theApp.m_config_path.c_str()) != 0);
+	m_alow_out_of_border = ini.GetBool(_T("config"), _T("alow_out_of_border"), false);
 }
 
 void CTrafficMonitorDlg::SaveConfig()
 {
+	CIniHelper ini;
+	ini.SetPath(theApp.m_config_path);
 	//保存前先获取窗口的位置
 	CRect rect;
 	GetWindowRect(rect);
 	m_position_x = rect.left;
 	m_position_y = rect.top;
-	if (!CCommon::WritePrivateProfileIntW(L"config", L"transparency", m_transparency, theApp.m_config_path.c_str()))
+	if (!ini.WriteInt(L"config", L"transparency", m_transparency))
 	{
 		if (m_cannot_save_config_warning)
 			MessageBox(_T("警告：无法保存设置，请检查是否有向程序所在目录下写入数据的权限！以管理员身份运行程序可能会解决问题。"), NULL, MB_ICONWARNING);
 		m_cannot_save_config_warning = false;
 		return;
 	}
-	CCommon::WritePrivateProfileIntW(L"config", L"always_on_top", m_always_on_top, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"lock_window_pos", m_lock_window_pos, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"show_notify_icon", theApp.m_show_notify_icon, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"show_cpu_memory", m_show_more_info, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"mouse_penetrate", m_mouse_penetrate, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"show_task_bar_wnd", m_show_task_bar_wnd, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"position_x", m_position_x, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"position_y", m_position_y, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"connection", L"auto_select", m_auto_select, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"text_color", theApp.m_main_wnd_data.text_color, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"hide_main_window", theApp.m_hide_main_window, theApp.m_config_path.c_str());
+	ini.WriteInt(L"config", L"always_on_top", m_always_on_top);
+	ini.WriteInt(L"config", L"lock_window_pos", m_lock_window_pos);
+	ini.WriteInt(L"config", L"show_notify_icon", theApp.m_show_notify_icon);
+	ini.WriteInt(L"config", L"show_cpu_memory", m_show_more_info);
+	ini.WriteInt(L"config", L"mouse_penetrate", m_mouse_penetrate);
+	ini.WriteInt(L"config", L"show_task_bar_wnd", m_show_task_bar_wnd);
+	ini.WriteInt(L"config", L"position_x", m_position_x);
+	ini.WriteInt(L"config", L"position_y", m_position_y);
+	ini.WriteInt(L"connection", L"auto_select", m_auto_select);
+	ini.WriteInt(L"config", L"text_color", theApp.m_main_wnd_data.text_color);
+	ini.WriteInt(L"config", L"hide_main_window", theApp.m_hide_main_window);
 	m_connection_name = m_connections[m_connection_selected].description;
-	WritePrivateProfileStringW(L"connection", L"connection_name", CCommon::StrToUnicode(m_connection_name.c_str()).c_str(), theApp.m_config_path.c_str());
-	WritePrivateProfileString(_T("config"), _T("skin_selected"), m_skin_name.c_str(), theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"notify_icon_selected", m_notify_icon_selected, theApp.m_config_path.c_str());
-	WritePrivateProfileString(_T("config"), _T("font_name"), theApp.m_main_wnd_data.font_name, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"font_size", theApp.m_main_wnd_data.font_size, theApp.m_config_path.c_str());
+	ini.WriteString(L"connection", L"connection_name", CCommon::StrToUnicode(m_connection_name.c_str()).c_str());
+	ini.WriteString(_T("config"), _T("skin_selected"), m_skin_name.c_str());
+	ini.WriteInt(L"config", L"notify_icon_selected", m_notify_icon_selected);
+	ini.WriteString(_T("config"), _T("font_name"), wstring(theApp.m_main_wnd_data.font_name));
+	ini.WriteInt(L"config", L"font_size", theApp.m_main_wnd_data.font_size);
 
-	CCommon::WritePrivateProfileIntW(L"config", L"swap_up_down", theApp.m_main_wnd_data.swap_up_down, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"hide_main_wnd_when_fullscreen", theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen, theApp.m_config_path.c_str());
+	ini.WriteInt(L"config", L"swap_up_down", theApp.m_main_wnd_data.swap_up_down);
+	ini.WriteInt(L"config", L"hide_main_wnd_when_fullscreen", theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen);
 
-	CCommon::WriteIniStringW(_T("config"), _T("up_string"), theApp.m_main_wnd_data.disp_str.up, theApp.m_config_path.c_str());
-	CCommon::WriteIniStringW(_T("config"), _T("down_string"), theApp.m_main_wnd_data.disp_str.down, theApp.m_config_path.c_str());
-	CCommon::WriteIniStringW(_T("config"), _T("cpu_string"), theApp.m_main_wnd_data.disp_str.cpu, theApp.m_config_path.c_str());
-	CCommon::WriteIniStringW(_T("config"), _T("memory_string"), theApp.m_main_wnd_data.disp_str.memory, theApp.m_config_path.c_str());
+	ini.WriteString(_T("config"), _T("up_string"), theApp.m_main_wnd_data.disp_str.up);
+	ini.WriteString(_T("config"), _T("down_string"), theApp.m_main_wnd_data.disp_str.down);
+	ini.WriteString(_T("config"), _T("cpu_string"), theApp.m_main_wnd_data.disp_str.cpu);
+	ini.WriteString(_T("config"), _T("memory_string"), theApp.m_main_wnd_data.disp_str.memory);
 
-	CCommon::WritePrivateProfileIntW(L"config", L"speed_short_mode", theApp.m_main_wnd_data.speed_short_mode, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"speed_unit", static_cast<int>(theApp.m_main_wnd_data.speed_unit), theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"hide_unit", theApp.m_main_wnd_data.hide_unit, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"config", L"hide_percent", theApp.m_main_wnd_data.hide_percent, theApp.m_config_path.c_str());
+	ini.WriteInt(L"config", L"speed_short_mode", theApp.m_main_wnd_data.speed_short_mode);
+	ini.WriteInt(L"config", L"speed_unit", static_cast<int>(theApp.m_main_wnd_data.speed_unit));
+	ini.WriteInt(L"config", L"hide_unit", theApp.m_main_wnd_data.hide_unit);
+	ini.WriteInt(L"config", L"hide_percent", theApp.m_main_wnd_data.hide_percent);
 
-	CCommon::WritePrivateProfileIntW(L"config", L"alow_out_of_border", m_alow_out_of_border, theApp.m_config_path.c_str());
+	ini.WriteInt(L"config", L"alow_out_of_border", m_alow_out_of_border);
 }
 
 void CTrafficMonitorDlg::AutoSelect()

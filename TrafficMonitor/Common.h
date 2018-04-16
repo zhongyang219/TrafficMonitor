@@ -11,12 +11,12 @@ public:
 
 	static string UnicodeToStr(const wchar_t* wstr);
 
-	//将一个int类型数据写入ini文件，如果成功则返回true
-	static bool WritePrivateProfileIntW(const wchar_t * AppName, const wchar_t * KeyName, int value, const wchar_t * Path);
-	//将一个wstring类型数据写入ini文件，如果成功则返回true
-	static bool WriteIniStringW(const wchar_t* AppName, const wchar_t* KeyName, wstring str, const wchar_t* path);
-	//从int文件读取一个wstring类型数据
-	static wstring GetIniStringW(const wchar_t* AppName, const wchar_t* KeyName, const wchar_t* default_str, const wchar_t* path);
+	////将一个int类型数据写入ini文件，如果成功则返回true
+	//static bool WritePrivateProfileIntW(const wchar_t * AppName, const wchar_t * KeyName, int value, const wchar_t * Path);
+	////将一个wstring类型数据写入ini文件，如果成功则返回true
+	//static bool WriteIniStringW(const wchar_t* AppName, const wchar_t* KeyName, wstring str, const wchar_t* path);
+	////从int文件读取一个wstring类型数据
+	//static wstring GetIniStringW(const wchar_t* AppName, const wchar_t* KeyName, const wchar_t* default_str, const wchar_t* path);
 
 	/*根据数据的大小转换成以KB、MB、GB为单位的字符串
 	size：数据的大小，单位为字节

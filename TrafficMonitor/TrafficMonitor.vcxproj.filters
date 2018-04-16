@@ -76,6 +76,9 @@
     <Filter Include="源文件和头文件\派生的控件类\ColorStatic">
       <UniqueIdentifier>{1c3d2e37-c54d-429a-ac6f-efe82f02902c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\IniHelper">
+      <UniqueIdentifier>{974cdadc-b70f-420b-b28b-c09a0686077c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -156,6 +159,9 @@
     <ClInclude Include="ColorStatic.h">
       <Filter>源文件和头文件\派生的控件类\ColorStatic</Filter>
     </ClInclude>
+    <ClInclude Include="IniHelper.h">
+      <Filter>源文件和头文件\公共的类\IniHelper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -223,6 +229,9 @@
     </ClCompile>
     <ClCompile Include="ColorStatic.cpp">
       <Filter>源文件和头文件\派生的控件类\ColorStatic</Filter>
+    </ClCompile>
+    <ClCompile Include="IniHelper.cpp">
+      <Filter>源文件和头文件\公共的类\IniHelper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

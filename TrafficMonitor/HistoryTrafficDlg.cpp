@@ -23,12 +23,16 @@ CHistoryTrafficDlg::~CHistoryTrafficDlg()
 
 void CHistoryTrafficDlg::SaveConfig() const
 {
-	CCommon::WritePrivateProfileIntW(L"histroy_traffic", L"use_log_scale", m_use_log_scale, theApp.m_config_path.c_str());
+	CIniHelper ini;
+	ini.SetPath(theApp.m_config_path);
+	ini.WriteBool(L"histroy_traffic", L"use_log_scale", m_use_log_scale);
 }
 
 void CHistoryTrafficDlg::LoadConfig()
 {
-	m_use_log_scale = (GetPrivateProfileInt(_T("histroy_traffic"), _T("use_log_scale"), 0, theApp.m_config_path.c_str()) != 0);
+	CIniHelper ini;
+	ini.SetPath(theApp.m_config_path);
+	m_use_log_scale = ini.GetBool(_T("histroy_traffic"), _T("use_log_scale"), false);
 }
 
 void CHistoryTrafficDlg::DoDataExchange(CDataExchange* pDX)

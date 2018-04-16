@@ -11,11 +11,15 @@ public:
 	CColorStatic();
 	virtual ~CColorStatic();
 
-	void SetFillColor(COLORREF fill_color);		//设置要填充的背景色
+	void SetFillColor(COLORREF fill_color);		//设置要填充单一的背景色
+	void SetColorNum(int color_num);			//设置颜色的数量
+	void SetFillColor(int index, COLORREF fill_color);
 	void SetLinkCursor(bool link_cursor = true);		//设置指向控件时光标变成超链接形状
 
 protected:
-	COLORREF m_fill_color{ RGB(255, 255,255) };
+	//COLORREF m_fill_color{ RGB(255, 255,255) };
+	vector<COLORREF> m_colors;
+	int m_color_num;
 	bool m_hover{ false };		//当鼠标指向控件时为true
 	bool m_link_cursor{ false };	//是否启用超链接形状的光标
 

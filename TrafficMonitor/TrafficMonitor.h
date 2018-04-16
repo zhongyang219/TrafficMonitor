@@ -10,6 +10,7 @@
 
 #include "resource.h"		// 主符号
 #include "Common.h"
+#include "IniHelper.h"
 
 // CTrafficMonitorApp: 
 // 有关此类的实现，请参阅 TrafficMonitor.cpp

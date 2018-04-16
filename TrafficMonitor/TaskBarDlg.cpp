@@ -272,46 +272,50 @@ CString CTaskBarDlg::GetMouseTipsInfo()
 
 void CTaskBarDlg::SaveConfig()
 {
-	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_back_color", theApp.m_taskbar_data.back_color, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_text_color", theApp.m_taskbar_data.text_color, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"task_bar", L"tack_bar_show_cpu_memory", theApp.m_tbar_show_cpu_memory, theApp.m_config_path.c_str());
-	WritePrivateProfileString(_T("task_bar"), _T("tack_bar_font_name"), theApp.m_taskbar_data.font_name, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"task_bar", L"tack_bar_font_size", theApp.m_taskbar_data.font_size, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_swap_up_down", theApp.m_taskbar_data.swap_up_down, theApp.m_config_path.c_str());
+	CIniHelper ini;
+	ini.SetPath(theApp.m_config_path);
+	ini.WriteInt(L"task_bar", L"task_bar_back_color", theApp.m_taskbar_data.back_color);
+	ini.WriteInt(L"task_bar", L"task_bar_text_color", theApp.m_taskbar_data.text_color);
+	ini.WriteInt(L"task_bar", L"tack_bar_show_cpu_memory", theApp.m_tbar_show_cpu_memory);
+	ini.WriteString(_T("task_bar"), _T("tack_bar_font_name"), wstring(theApp.m_taskbar_data.font_name));
+	ini.WriteInt(L"task_bar", L"tack_bar_font_size", theApp.m_taskbar_data.font_size);
+	ini.WriteInt(L"task_bar", L"task_bar_swap_up_down", theApp.m_taskbar_data.swap_up_down);
 
-	CCommon::WriteIniStringW(_T("task_bar"), _T("up_string"), theApp.m_taskbar_data.disp_str.up, theApp.m_config_path.c_str());
-	CCommon::WriteIniStringW(_T("task_bar"), _T("down_string"), theApp.m_taskbar_data.disp_str.down, theApp.m_config_path.c_str());
-	CCommon::WriteIniStringW(_T("task_bar"), _T("cpu_string"), theApp.m_taskbar_data.disp_str.cpu, theApp.m_config_path.c_str());
-	CCommon::WriteIniStringW(_T("task_bar"), _T("memory_string"), theApp.m_taskbar_data.disp_str.memory, theApp.m_config_path.c_str());
+	ini.WriteString(_T("task_bar"), _T("up_string"), theApp.m_taskbar_data.disp_str.up);
+	ini.WriteString(_T("task_bar"), _T("down_string"), theApp.m_taskbar_data.disp_str.down);
+	ini.WriteString(_T("task_bar"), _T("cpu_string"), theApp.m_taskbar_data.disp_str.cpu);
+	ini.WriteString(_T("task_bar"), _T("memory_string"), theApp.m_taskbar_data.disp_str.memory);
 
-	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_wnd_on_left", theApp.m_taskbar_data.tbar_wnd_on_left, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_speed_short_mode", theApp.m_taskbar_data.speed_short_mode, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_speed_unit", static_cast<int>(theApp.m_taskbar_data.speed_unit), theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_hide_unit", theApp.m_taskbar_data.hide_unit, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"task_bar", L"task_bar_hide_percent", theApp.m_taskbar_data.hide_percent, theApp.m_config_path.c_str());
-	CCommon::WritePrivateProfileIntW(L"task_bar", L"value_right_align", theApp.m_taskbar_data.value_right_align, theApp.m_config_path.c_str());
+	ini.WriteInt(L"task_bar", L"task_bar_wnd_on_left", theApp.m_taskbar_data.tbar_wnd_on_left);
+	ini.WriteInt(L"task_bar", L"task_bar_speed_short_mode", theApp.m_taskbar_data.speed_short_mode);
+	ini.WriteInt(L"task_bar", L"task_bar_speed_unit", static_cast<int>(theApp.m_taskbar_data.speed_unit));
+	ini.WriteInt(L"task_bar", L"task_bar_hide_unit", theApp.m_taskbar_data.hide_unit);
+	ini.WriteInt(L"task_bar", L"task_bar_hide_percent", theApp.m_taskbar_data.hide_percent);
+	ini.WriteInt(L"task_bar", L"value_right_align", theApp.m_taskbar_data.value_right_align);
 }
 
 void CTaskBarDlg::LoadConfig()
 {
+	CIniHelper ini;
+	ini.SetPath(theApp.m_config_path);
 	theApp.m_taskbar_data.back_color = GetPrivateProfileInt(_T("task_bar"), _T("task_bar_back_color"), 0, theApp.m_config_path.c_str());
 	theApp.m_taskbar_data.text_color = GetPrivateProfileInt(_T("task_bar"), _T("task_bar_text_color"), 0x00ffffffU, theApp.m_config_path.c_str());
-	theApp.m_tbar_show_cpu_memory = (GetPrivateProfileInt(_T("task_bar"), _T("tack_bar_show_cpu_memory"), 1, theApp.m_config_path.c_str()) != 0);
-	theApp.m_taskbar_data.swap_up_down = (GetPrivateProfileInt(_T("task_bar"), _T("task_bar_swap_up_down"), 0, theApp.m_config_path.c_str()) != 0);
+	theApp.m_tbar_show_cpu_memory = ini.GetBool(_T("task_bar"), _T("tack_bar_show_cpu_memory"), true);
+	theApp.m_taskbar_data.swap_up_down = ini.GetBool(_T("task_bar"), _T("task_bar_swap_up_down"), false);
 	GetPrivateProfileString(_T("task_bar"), _T("tack_bar_font_name"), _T("Î¢ÈíÑÅºÚ"), theApp.m_taskbar_data.font_name.GetBuffer(32), 32, theApp.m_config_path.c_str());
 	theApp.m_taskbar_data.font_size = GetPrivateProfileInt(_T("task_bar"), _T("tack_bar_font_size"), 9, theApp.m_config_path.c_str());
 	
-	theApp.m_taskbar_data.disp_str.up = CCommon::GetIniStringW(L"task_bar", L"up_string", L"¡ü: $", theApp.m_config_path.c_str());
-	theApp.m_taskbar_data.disp_str.down = CCommon::GetIniStringW(L"task_bar", L"down_string", L"¡ý: $", theApp.m_config_path.c_str());
-	theApp.m_taskbar_data.disp_str.cpu = CCommon::GetIniStringW(L"task_bar", L"cpu_string", L"CPU: $", theApp.m_config_path.c_str());
-	theApp.m_taskbar_data.disp_str.memory = CCommon::GetIniStringW(L"task_bar", L"memory_string", L"ÄÚ´æ: $", theApp.m_config_path.c_str());
+	theApp.m_taskbar_data.disp_str.up = ini.GetString(L"task_bar", L"up_string", L"¡ü: $");
+	theApp.m_taskbar_data.disp_str.down = ini.GetString(L"task_bar", L"down_string", L"¡ý: $");
+	theApp.m_taskbar_data.disp_str.cpu = ini.GetString(L"task_bar", L"cpu_string", L"CPU: $");
+	theApp.m_taskbar_data.disp_str.memory = ini.GetString(L"task_bar", L"memory_string", L"ÄÚ´æ: $");
 
-	theApp.m_taskbar_data.tbar_wnd_on_left = (GetPrivateProfileInt(_T("task_bar"), _T("task_bar_wnd_on_left"), 0, theApp.m_config_path.c_str()) != 0);
-	theApp.m_taskbar_data.speed_short_mode = (GetPrivateProfileInt(_T("task_bar"), _T("task_bar_speed_short_mode"), 0, theApp.m_config_path.c_str()) != 0);
-	theApp.m_taskbar_data.speed_unit = static_cast<SpeedUnit>(GetPrivateProfileInt(_T("task_bar"), _T("task_bar_speed_unit"), 0, theApp.m_config_path.c_str()));
-	theApp.m_taskbar_data.hide_unit = (GetPrivateProfileInt(_T("task_bar"), _T("task_bar_hide_unit"), 0, theApp.m_config_path.c_str()) != 0);
-	theApp.m_taskbar_data.hide_percent = (GetPrivateProfileInt(_T("task_bar"), _T("task_bar_hide_percent"), 0, theApp.m_config_path.c_str()) != 0);
-	theApp.m_taskbar_data.value_right_align = (GetPrivateProfileInt(_T("task_bar"), _T("value_right_align"), 0, theApp.m_config_path.c_str()) != 0);
+	theApp.m_taskbar_data.tbar_wnd_on_left = ini.GetBool(_T("task_bar"), _T("task_bar_wnd_on_left"), false);
+	theApp.m_taskbar_data.speed_short_mode = ini.GetBool(_T("task_bar"), _T("task_bar_speed_short_mode"), false);
+	theApp.m_taskbar_data.speed_unit = static_cast<SpeedUnit>(ini.GetInt(_T("task_bar"), _T("task_bar_speed_unit"), 0));
+	theApp.m_taskbar_data.hide_unit = ini.GetBool(_T("task_bar"), _T("task_bar_hide_unit"), false);
+	theApp.m_taskbar_data.hide_percent = ini.GetBool(_T("task_bar"), _T("task_bar_hide_percent"), false);
+	theApp.m_taskbar_data.value_right_align = ini.GetBool(_T("task_bar"), _T("value_right_align"), false);
 }
 
 void CTaskBarDlg::ApplySettings()

@@ -194,6 +194,7 @@
     <ClInclude Include="GeneralSettingsDlg.h" />
     <ClInclude Include="HistoryTrafficDlg.h" />
     <ClInclude Include="IconSelectDlg.h" />
+    <ClInclude Include="IniHelper.h" />
     <ClInclude Include="ListCtrlEx.h" />
     <ClInclude Include="MainWndSettingsDlg.h" />
     <ClInclude Include="NetworkInfoDlg.h" />
@@ -220,6 +221,7 @@
     <ClCompile Include="GeneralSettingsDlg.cpp" />
     <ClCompile Include="HistoryTrafficDlg.cpp" />
     <ClCompile Include="IconSelectDlg.cpp" />
+    <ClCompile Include="IniHelper.cpp" />
     <ClCompile Include="ListCtrlEx.cpp" />
     <ClCompile Include="MainWndSettingsDlg.cpp" />
     <ClCompile Include="NetworkInfoDlg.cpp" />

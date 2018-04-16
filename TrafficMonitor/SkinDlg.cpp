@@ -33,59 +33,61 @@ void CSkinDlg::DoDataExchange(CDataExchange* pDX)
 
 void CSkinDlg::LoadSkinLayout(const wstring& cfg_path, LayoutData& layout_data)
 {
+	CIniHelper ini;
+	ini.SetPath(cfg_path);
 	//从ini文件读取皮肤布局，并根据DPI进行缩放
-	layout_data.text_height = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("text_height"), 20, cfg_path.c_str()));
-	layout_data.no_text = (GetPrivateProfileInt(_T("layout"), _T("no_text"), 0, cfg_path.c_str()) != 0);
+	layout_data.text_height = theApp.DPI(ini.GetInt(_T("layout"), _T("text_height"), 20));
+	layout_data.no_text = ini.GetBool(_T("layout"), _T("no_text"), false);
 
-	layout_data.width_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("width_l"), 220, cfg_path.c_str()));
-	layout_data.height_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("height_l"), 43, cfg_path.c_str()));
-	layout_data.up_x_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("up_x_l"), 6, cfg_path.c_str()));
-	layout_data.up_y_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("up_y_l"), 2, cfg_path.c_str()));
-	layout_data.up_width_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("up_width_l"), 108, cfg_path.c_str()));
-	layout_data.up_align_l = static_cast<Alignment>(GetPrivateProfileInt(_T("layout"), _T("up_align_l"), 0, cfg_path.c_str()));
-	layout_data.down_x_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("down_x_l"), 114, cfg_path.c_str()));
-	layout_data.down_y_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("down_y_l"), 2, cfg_path.c_str()));
-	layout_data.down_width_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("down_width_l"), 110, cfg_path.c_str()));
-	layout_data.down_align_l = static_cast<Alignment>(GetPrivateProfileInt(_T("layout"), _T("down_align_l"), 0, cfg_path.c_str()));
-	layout_data.cpu_x_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("cpu_x_l"), 6, cfg_path.c_str()));
-	layout_data.cpu_y_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("cpu_y_l"), 21, cfg_path.c_str()));
-	layout_data.cpu_width_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("cpu_width_l"), 108, cfg_path.c_str()));
-	layout_data.cpu_align_l = static_cast<Alignment>(GetPrivateProfileInt(_T("layout"), _T("cpu_align_l"), 0, cfg_path.c_str()));
-	layout_data.memory_x_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("memory_x_l"), 114, cfg_path.c_str()));
-	layout_data.memory_y_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("memory_y_l"), 21, cfg_path.c_str()));
-	layout_data.memory_width_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("memory_width_l"), 110, cfg_path.c_str()));
-	layout_data.memory_align_l = static_cast<Alignment>(GetPrivateProfileInt(_T("layout"), _T("memory_align_l"), 0, cfg_path.c_str()));
-	layout_data.show_up_l = (GetPrivateProfileInt(_T("layout"), _T("show_up_l"), 1, cfg_path.c_str()) != 0);
-	layout_data.show_down_l = (GetPrivateProfileInt(_T("layout"), _T("show_down_l"), 1, cfg_path.c_str()) != 0);
-	layout_data.show_cpu_l = (GetPrivateProfileInt(_T("layout"), _T("show_cpu_l"), 1, cfg_path.c_str()) != 0);
-	layout_data.show_memory_l = (GetPrivateProfileInt(_T("layout"), _T("show_memory_l"), 1, cfg_path.c_str()) != 0);
-	layout_data.preview_x_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("preview_x_l"), 0, cfg_path.c_str()));
-	layout_data.preview_y_l = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("preview_y_l"), 47, cfg_path.c_str()));
+	layout_data.width_l = theApp.DPI(ini.GetInt(_T("layout"), _T("width_l"), 220));
+	layout_data.height_l = theApp.DPI(ini.GetInt(_T("layout"), _T("height_l"), 43));
+	layout_data.up_x_l = theApp.DPI(ini.GetInt(_T("layout"), _T("up_x_l"), 6));
+	layout_data.up_y_l = theApp.DPI(ini.GetInt(_T("layout"), _T("up_y_l"), 2));
+	layout_data.up_width_l = theApp.DPI(ini.GetInt(_T("layout"), _T("up_width_l"), 108));
+	layout_data.up_align_l = static_cast<Alignment>(ini.GetInt(_T("layout"), _T("up_align_l"), 0));
+	layout_data.down_x_l = theApp.DPI(ini.GetInt(_T("layout"), _T("down_x_l"), 114));
+	layout_data.down_y_l = theApp.DPI(ini.GetInt(_T("layout"), _T("down_y_l"), 2));
+	layout_data.down_width_l = theApp.DPI(ini.GetInt(_T("layout"), _T("down_width_l"), 110));
+	layout_data.down_align_l = static_cast<Alignment>(ini.GetInt(_T("layout"), _T("down_align_l"), 0));
+	layout_data.cpu_x_l = theApp.DPI(ini.GetInt(_T("layout"), _T("cpu_x_l"), 6));
+	layout_data.cpu_y_l = theApp.DPI(ini.GetInt(_T("layout"), _T("cpu_y_l"), 21));
+	layout_data.cpu_width_l = theApp.DPI(ini.GetInt(_T("layout"), _T("cpu_width_l"), 108));
+	layout_data.cpu_align_l = static_cast<Alignment>(ini.GetInt(_T("layout"), _T("cpu_align_l"), 0));
+	layout_data.memory_x_l = theApp.DPI(ini.GetInt(_T("layout"), _T("memory_x_l"), 114));
+	layout_data.memory_y_l = theApp.DPI(ini.GetInt(_T("layout"), _T("memory_y_l"), 21));
+	layout_data.memory_width_l = theApp.DPI(ini.GetInt(_T("layout"), _T("memory_width_l"), 110));
+	layout_data.memory_align_l = static_cast<Alignment>(ini.GetInt(_T("layout"), _T("memory_align_l"), 0));
+	layout_data.show_up_l = ini.GetBool(_T("layout"), _T("show_up_l"), true);
+	layout_data.show_down_l = ini.GetBool(_T("layout"), _T("show_down_l"), true);
+	layout_data.show_cpu_l = ini.GetBool(_T("layout"), _T("show_cpu_l"), true);
+	layout_data.show_memory_l = ini.GetBool(_T("layout"), _T("show_memory_l"), true);
+	layout_data.preview_x_l = theApp.DPI(ini.GetInt(_T("layout"), _T("preview_x_l"), 0));
+	layout_data.preview_y_l = theApp.DPI(ini.GetInt(_T("layout"), _T("preview_y_l"), 47));
 
-	layout_data.width_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("width_s"), 220, cfg_path.c_str()));
-	layout_data.height_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("height_s"), 28, cfg_path.c_str()));
-	layout_data.up_x_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("up_x_s"), 6, cfg_path.c_str()));
-	layout_data.up_y_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("up_y_s"), 4, cfg_path.c_str()));
-	layout_data.up_width_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("up_width_s"), 108, cfg_path.c_str()));
-	layout_data.up_align_s = static_cast<Alignment>(GetPrivateProfileInt(_T("layout"), _T("up_align_s"), 0, cfg_path.c_str()));
-	layout_data.down_x_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("down_x_s"), 114, cfg_path.c_str()));
-	layout_data.down_y_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("down_y_s"), 4, cfg_path.c_str()));
-	layout_data.down_width_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("down_width_s"), 110, cfg_path.c_str()));
-	layout_data.down_align_s = static_cast<Alignment>(GetPrivateProfileInt(_T("layout"), _T("down_align_s"), 0, cfg_path.c_str()));
-	layout_data.cpu_x_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("cpu_x_s"), 0, cfg_path.c_str()));
-	layout_data.cpu_y_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("cpu_y_s"), 0, cfg_path.c_str()));
-	layout_data.cpu_width_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("cpu_width_s"), 0, cfg_path.c_str()));
-	layout_data.cpu_align_s = static_cast<Alignment>(GetPrivateProfileInt(_T("layout"), _T("cpu_align_s"), 0, cfg_path.c_str()));
-	layout_data.memory_x_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("memory_x_s"), 0, cfg_path.c_str()));
-	layout_data.memory_y_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("memory_y_s"), 0, cfg_path.c_str()));
-	layout_data.memory_width_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("memory_width_s"), 0, cfg_path.c_str()));
-	layout_data.memory_align_s = static_cast<Alignment>(GetPrivateProfileInt(_T("layout"), _T("memory_align_s"), 0, cfg_path.c_str()));
-	layout_data.show_up_s = (GetPrivateProfileInt(_T("layout"), _T("show_up_s"), 1, cfg_path.c_str()) != 0);
-	layout_data.show_down_s = (GetPrivateProfileInt(_T("layout"), _T("show_down_s"), 1, cfg_path.c_str()) != 0);
-	layout_data.show_cpu_s = (GetPrivateProfileInt(_T("layout"), _T("show_cpu_s"), 0, cfg_path.c_str()) != 0);
-	layout_data.show_memory_s = (GetPrivateProfileInt(_T("layout"), _T("show_memory_s"), 0, cfg_path.c_str()) != 0);
-	layout_data.preview_x_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("preview_x_s"), 0, cfg_path.c_str()));
-	layout_data.preview_y_s = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("preview_y_s"), 0, cfg_path.c_str()));
+	layout_data.width_s = theApp.DPI(ini.GetInt(_T("layout"), _T("width_s"), 220));
+	layout_data.height_s = theApp.DPI(ini.GetInt(_T("layout"), _T("height_s"), 28));
+	layout_data.up_x_s = theApp.DPI(ini.GetInt(_T("layout"), _T("up_x_s"), 6));
+	layout_data.up_y_s = theApp.DPI(ini.GetInt(_T("layout"), _T("up_y_s"), 4));
+	layout_data.up_width_s = theApp.DPI(ini.GetInt(_T("layout"), _T("up_width_s"), 108));
+	layout_data.up_align_s = static_cast<Alignment>(ini.GetInt(_T("layout"), _T("up_align_s"), 0));
+	layout_data.down_x_s = theApp.DPI(ini.GetInt(_T("layout"), _T("down_x_s"), 114));
+	layout_data.down_y_s = theApp.DPI(ini.GetInt(_T("layout"), _T("down_y_s"), 4));
+	layout_data.down_width_s = theApp.DPI(ini.GetInt(_T("layout"), _T("down_width_s"), 110));
+	layout_data.down_align_s = static_cast<Alignment>(ini.GetInt(_T("layout"), _T("down_align_s"), 0));
+	layout_data.cpu_x_s = theApp.DPI(ini.GetInt(_T("layout"), _T("cpu_x_s"), 0));
+	layout_data.cpu_y_s = theApp.DPI(ini.GetInt(_T("layout"), _T("cpu_y_s"), 0));
+	layout_data.cpu_width_s = theApp.DPI(ini.GetInt(_T("layout"), _T("cpu_width_s"), 0));
+	layout_data.cpu_align_s = static_cast<Alignment>(ini.GetInt(_T("layout"), _T("cpu_align_s"), 0));
+	layout_data.memory_x_s = theApp.DPI(ini.GetInt(_T("layout"), _T("memory_x_s"), 0));
+	layout_data.memory_y_s = theApp.DPI(ini.GetInt(_T("layout"), _T("memory_y_s"), 0));
+	layout_data.memory_width_s = theApp.DPI(ini.GetInt(_T("layout"), _T("memory_width_s"), 0));
+	layout_data.memory_align_s = static_cast<Alignment>(ini.GetInt(_T("layout"), _T("memory_align_s"), 0));
+	layout_data.show_up_s = ini.GetBool(_T("layout"), _T("show_up_s"), true);
+	layout_data.show_down_s = ini.GetBool(_T("layout"), _T("show_down_s"), true);
+	layout_data.show_cpu_s = ini.GetBool(_T("layout"), _T("show_cpu_s"), false);
+	layout_data.show_memory_s = ini.GetBool(_T("layout"), _T("show_memory_s"), false);
+	layout_data.preview_x_s = theApp.DPI(ini.GetInt(_T("layout"), _T("preview_x_s"), 0));
+	layout_data.preview_y_s = theApp.DPI(ini.GetInt(_T("layout"), _T("preview_y_s"), 0));
 }
 
 void CSkinDlg::ShowPreview()
@@ -93,28 +95,29 @@ void CSkinDlg::ShowPreview()
 	//载入布局数据
 	wstring cfg_path{ theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini" };
 	LoadSkinLayout(cfg_path, m_skin_data.layout);
+	CIniHelper ini;
+	ini.SetPath(cfg_path);
 	//载入背景图
 	LoadBackImage((theApp.m_skin_path + m_skins[m_skin_selected]).c_str(), true);
 	LoadBackImage((theApp.m_skin_path + m_skins[m_skin_selected]).c_str(), false);
 	//获取当前皮肤的文字颜色
-	m_skin_data.text_color = GetPrivateProfileInt(_T("skin"), _T("text_color"), 0, cfg_path.c_str());
+	m_skin_data.text_color = ini.GetInt(_T("skin"), _T("text_color"), 0);
 	//获取当前皮肤的字体
-	m_skin_data.font_name = CCommon::GetIniStringW(L"skin", L"font_name", L"", cfg_path.c_str());
-	m_skin_data.font_size = GetPrivateProfileInt(_T("skin"), _T("font_size"), 0, cfg_path.c_str());
+	m_skin_data.font_name = ini.GetString(L"skin", L"font_name", L"");
+	m_skin_data.font_size = ini.GetInt(_T("skin"), _T("font_size"), 0);
 	m_view->IniFont();
 	//获取皮肤作者
-#define BUFF_SIZE 64
-	wchar_t buff[BUFF_SIZE];
-	GetPrivateProfileString(_T("skin"), _T("skin_author"), _T("unknow"), buff, BUFF_SIZE, cfg_path.c_str());
-	SetDlgItemText(IDC_SKIN_INFO, (wstring(L"皮肤作者：") + buff).c_str());
+	wstring skin_author;
+	skin_author = ini.GetString(_T("skin"), _T("skin_author"), _T("unknow"));
+	SetDlgItemText(IDC_SKIN_INFO, (L"皮肤作者：" + skin_author).c_str());
 	//获取显示文本
-	m_skin_data.disp_str.up = CCommon::GetIniStringW(_T("skin"), _T("up_string"), NONE_STR, cfg_path.c_str());
-	m_skin_data.disp_str.down = CCommon::GetIniStringW(_T("skin"), _T("down_string"), NONE_STR, cfg_path.c_str());
-	m_skin_data.disp_str.cpu = CCommon::GetIniStringW(_T("skin"), _T("cpu_string"), NONE_STR, cfg_path.c_str());
-	m_skin_data.disp_str.memory = CCommon::GetIniStringW(_T("skin"), _T("memory_string"), NONE_STR, cfg_path.c_str());
+	m_skin_data.disp_str.up = ini.GetString(_T("skin"), _T("up_string"), NONE_STR);
+	m_skin_data.disp_str.down = ini.GetString(_T("skin"), _T("down_string"), NONE_STR);
+	m_skin_data.disp_str.cpu = ini.GetString(_T("skin"), _T("cpu_string"), NONE_STR);
+	m_skin_data.disp_str.memory = ini.GetString(_T("skin"), _T("memory_string"), NONE_STR);
 	//获取预览区大小
-	m_skin_data.layout.preview_width = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("preview_width"), 238, cfg_path.c_str()));
-	m_skin_data.layout.preview_height = theApp.DPI(GetPrivateProfileInt(_T("layout"), _T("preview_height"), 105, cfg_path.c_str()));
+	m_skin_data.layout.preview_width = theApp.DPI(ini.GetInt(_T("layout"), _T("preview_width"), 238));
+	m_skin_data.layout.preview_height = theApp.DPI(ini.GetInt(_T("layout"), _T("preview_height"), 105));
 	m_view->SetSize(m_skin_data.layout.preview_width, m_skin_data.layout.preview_height);
 	//刷新预览图
 	m_view->Invalidate();

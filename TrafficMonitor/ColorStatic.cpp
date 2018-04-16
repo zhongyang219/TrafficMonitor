@@ -21,8 +21,25 @@ CColorStatic::~CColorStatic()
 
 void CColorStatic::SetFillColor(COLORREF fill_color)
 {
-	m_fill_color = fill_color;
+	m_colors.resize(1);
+	m_colors[0] = fill_color;
+	m_color_num = 1;
+	//m_fill_color = fill_color;
 	Invalidate();
+}
+
+void CColorStatic::SetColorNum(int color_num)
+{
+	if (color_num <= 0 || color_num > 10)
+		color_num = 1;
+	m_colors.resize(color_num);
+	m_color_num = color_num;
+}
+
+void CColorStatic::SetFillColor(int index, COLORREF fill_color)
+{
+	if (index >= 0 && index < m_color_num)
+		m_colors[index] = fill_color;
 }
 
 void CColorStatic::SetLinkCursor(bool link_cursor)
@@ -54,7 +71,29 @@ void CColorStatic::OnPaint()
 					   // 不为绘图消息调用 CStatic::OnPaint()
 	CRect rect;
 	GetClientRect(rect);
-	dc.FillSolidRect(rect, m_fill_color);
+	rect.MoveToXY(0, 0);
+	CRect rc_tmp{ rect };
+	switch (m_color_num)
+	{
+	case 1:
+		dc.FillSolidRect(rect, m_colors[0]);
+		break;
+	case 4:
+		rc_tmp.right /= 2;
+		rc_tmp.bottom /= 2;
+		dc.FillSolidRect(rc_tmp, m_colors[0]);
+		rc_tmp.left = rc_tmp.right;
+		rc_tmp.right = rect.right;
+		dc.FillSolidRect(rc_tmp, m_colors[1]);
+		rc_tmp.left = 0;
+		rc_tmp.top = rect.Height() / 2;
+		rc_tmp.bottom = rect.bottom;
+		rc_tmp.right = rect.Width() / 2;
+		dc.FillSolidRect(rc_tmp, m_colors[2]);
+		rc_tmp.left = rc_tmp.right;
+		rc_tmp.right = rect.right;
+		dc.FillSolidRect(rc_tmp, m_colors[3]);
+	}
 }
 
 
