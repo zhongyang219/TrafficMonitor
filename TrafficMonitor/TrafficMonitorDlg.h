@@ -17,6 +17,7 @@
 #include "IconSelectDlg.h"
 #include "DrawCommon.h"
 #include "IniHelper.h"
+#include "LinkStatic.h"
 
 // CTrafficMonitorDlg ¶Ô»°¿ò
 class CTrafficMonitorDlg : public CDialogEx

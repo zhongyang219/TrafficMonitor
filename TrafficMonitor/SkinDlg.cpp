@@ -9,10 +9,10 @@
 
 // CSkinDlg 对话框
 
-IMPLEMENT_DYNAMIC(CSkinDlg, CDialogEx)
+IMPLEMENT_DYNAMIC(CSkinDlg, CDialog)
 
 CSkinDlg::CSkinDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_SKIN_DIALOG, pParent)
+	: CDialog(IDD_SKIN_DIALOG, pParent)
 {
 
 }
@@ -23,7 +23,7 @@ CSkinDlg::~CSkinDlg()
 
 void CSkinDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_COMBO1, m_select_box);
 	DDX_Control(pDX, IDC_SKIN_COURSE_STATIC, m_skin_course);
 	DDX_Control(pDX, IDC_SKIN_DOWNLOAD_STATIC, m_skin_download);
@@ -163,7 +163,7 @@ CRect CSkinDlg::CalculateViewRect()
 }
 
 
-BEGIN_MESSAGE_MAP(CSkinDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CSkinDlg, CDialog)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CSkinDlg::OnCbnSelchangeCombo1)
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
@@ -174,7 +174,7 @@ END_MESSAGE_MAP()
 
 BOOL CSkinDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	CDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
 	SetIcon(AfxGetApp()->LoadIcon(IDI_NOFITY_ICON3), FALSE);		// 设置小图标
@@ -230,7 +230,7 @@ void CSkinDlg::OnCbnSelchangeCombo1()
 
 void CSkinDlg::OnSize(UINT nType, int cx, int cy)
 {
-	CDialogEx::OnSize(nType, cx, cy);
+	CDialog::OnSize(nType, cx, cy);
 
 	// TODO: 在此处添加消息处理程序代码
 	if(m_preview_static.m_hWnd!=NULL && nType!= SIZE_MINIMIZED)
@@ -245,5 +245,5 @@ void CSkinDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	lpMMI->ptMinTrackSize.x = m_min_size.cx;		//设置最小宽度
 	lpMMI->ptMinTrackSize.y = m_min_size.cy;		//设置最小高度
 
-	CDialogEx::OnGetMinMaxInfo(lpMMI);
+	CDialog::OnGetMinMaxInfo(lpMMI);
 }

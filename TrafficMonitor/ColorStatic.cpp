@@ -82,17 +82,20 @@ void CColorStatic::OnPaint()
 		rc_tmp.right /= 2;
 		rc_tmp.bottom /= 2;
 		dc.FillSolidRect(rc_tmp, m_colors[0]);
-		rc_tmp.left = rc_tmp.right;
-		rc_tmp.right = rect.right;
+		rc_tmp.MoveToX(rc_tmp.right);
 		dc.FillSolidRect(rc_tmp, m_colors[1]);
-		rc_tmp.left = 0;
-		rc_tmp.top = rect.Height() / 2;
-		rc_tmp.bottom = rect.bottom;
-		rc_tmp.right = rect.Width() / 2;
+		rc_tmp.MoveToXY(0, rc_tmp.bottom);
 		dc.FillSolidRect(rc_tmp, m_colors[2]);
-		rc_tmp.left = rc_tmp.right;
-		rc_tmp.right = rect.right;
+		rc_tmp.MoveToX(rc_tmp.right);
 		dc.FillSolidRect(rc_tmp, m_colors[3]);
+		break;
+	default:
+		rc_tmp.right = rect.Width() / m_color_num;
+		for (int i{}; i < m_color_num; i++)
+		{
+			rc_tmp.MoveToX(i*(rect.Width() / m_color_num));
+			dc.FillSolidRect(rc_tmp, m_colors[i]);
+		}
 	}
 }
 

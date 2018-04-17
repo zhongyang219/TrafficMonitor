@@ -24,7 +24,17 @@ CMainWndSettingsDlg::~CMainWndSettingsDlg()
 void CMainWndSettingsDlg::DrawStaticColor()
 {
 	//CCommon::FillStaticColor(m_color_static, m_data.text_color);
-	m_color_static.SetFillColor(m_data.text_color);
+	if (m_data.specify_each_item_color)
+	{
+		m_color_static.SetColorNum(MAIN_WND_COLOR_NUM);
+		for(int i{}; i<MAIN_WND_COLOR_NUM; i++)
+			m_color_static.SetFillColor(i, m_data.text_colors[i]);
+		Invalidate();
+	}
+	else
+	{
+		m_color_static.SetFillColor(m_data.text_colors[0]);
+	}
 }
 
 void CMainWndSettingsDlg::DoDataExchange(CDataExchange* pDX)
@@ -52,6 +62,7 @@ BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_HIDE_UNIT_CHECK, &CMainWndSettingsDlg::OnBnClickedHideUnitCheck)
 	ON_BN_CLICKED(IDC_HIDE_PERCENTAGE_CHECK, &CMainWndSettingsDlg::OnBnClickedHidePercentageCheck)
 	ON_MESSAGE(WM_STATIC_CLICKED, &CMainWndSettingsDlg::OnStaticClicked)
+	ON_BN_CLICKED(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK, &CMainWndSettingsDlg::OnBnClickedSpecifyEachItemColorCheck)
 END_MESSAGE_MAP()
 
 
@@ -113,6 +124,8 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 		GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK)->EnableWindow(FALSE);
 		GetDlgItem(IDC_SET_DEFAULT_BUTTON)->EnableWindow(FALSE);
 	}
+
+	((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->SetCheck(m_data.specify_each_item_color);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -302,11 +315,24 @@ afx_msg LRESULT CMainWndSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 	case IDC_TEXT_COLOR_STATIC:
 	{
 		//设置文本颜色
-		CColorDialog colorDlg(m_data.text_color, 0, this);
-		if (colorDlg.DoModal() == IDOK)
+		if (m_data.specify_each_item_color)
 		{
-			m_data.text_color = colorDlg.GetColor();
-			DrawStaticColor();
+			CMainWndColorDlg colorDlg(m_data.text_colors);
+			if (colorDlg.DoModal() == IDOK)
+			{
+				for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
+					m_data.text_colors[i] = colorDlg.GetColors()[i];
+				DrawStaticColor();
+			}
+		}
+		else
+		{
+			CColorDialog colorDlg(m_data.text_colors[0], 0, this);
+			if (colorDlg.DoModal() == IDOK)
+			{
+				m_data.text_colors[0] = colorDlg.GetColor();
+				DrawStaticColor();
+			}
 		}
 		break;
 	}
@@ -314,4 +340,12 @@ afx_msg LRESULT CMainWndSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 		break;
 	}
 	return 0;
+}
+
+
+void CMainWndSettingsDlg::OnBnClickedSpecifyEachItemColorCheck()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_data.specify_each_item_color = (((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->GetCheck() != 0);
+	DrawStaticColor();
 }

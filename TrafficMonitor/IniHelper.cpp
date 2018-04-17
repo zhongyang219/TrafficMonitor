@@ -60,3 +60,42 @@ bool CIniHelper::GetBool(const wchar_t * AppName, const wchar_t * KeyName, bool 
 {
 	return (GetPrivateProfileIntW(AppName, KeyName, default_value, m_path.c_str()) != 0);
 }
+
+bool CIniHelper::WriteIntArray(const wchar_t * AppName, const wchar_t * KeyName, const int * values, int size)
+{
+	CString str, tmp;
+	for (int i{}; i < size; i++)
+	{
+		tmp.Format(_T("%d,"), values[i]);
+		str += tmp;
+	}
+	return (::WritePrivateProfileStringW(AppName, KeyName, str, m_path.c_str()) != FALSE);
+}
+
+bool CIniHelper::GetIntArray(const wchar_t * AppName, const wchar_t * KeyName, int * values, int size, int default_value)
+{
+	wchar_t buff[256];
+	bool result;
+	CString default_str;
+	default_str.Format(_T("%d"), default_value);
+	result = ::GetPrivateProfileStringW(AppName, KeyName, default_str, buff, 256, m_path.c_str());
+	wstring str{ buff };
+	size_t index{}, index0{};
+	for (int i{}; i < size; i++)
+	{
+		index0 = index;
+		if (index0 < 256 && str[index0] == L',')
+			index0++;
+		index = str.find(L',', index + 1);
+		if (index0 == index)
+		{
+			values[i] = 0;
+		}
+		else
+		{
+			wstring tmp = str.substr(index0, index - index0);
+			values[i] = _wtoi(tmp.c_str());
+		}
+	}
+	return result;
+}

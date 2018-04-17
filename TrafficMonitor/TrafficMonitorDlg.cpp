@@ -13,7 +13,7 @@
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
-class CAboutDlg : public CDialogEx
+class CAboutDlg : public CDialog
 {
 public:
 	CAboutDlg();
@@ -22,11 +22,11 @@ public:
 
 protected:
 	CPictureStatic m_about_img;		//关于对话框中的图片
-	CStaticEx m_mail{ true };	//“联系作者”超链接
-	CStaticEx m_check_update{ true };	//“检查更新”超链接
-	CStaticEx m_github{ true };		//“GitHub”超链接
-	CStaticEx m_donate{ true };	//“捐助”超链接
-	CToolTipCtrl m_Mytip;		//鼠标指向时的工具提示
+	CLinkStatic m_mail;				//“联系作者”超链接
+	CLinkStatic m_check_update;		//“检查更新”超链接
+	CLinkStatic m_github;			//“GitHub”超链接
+	CLinkStatic m_donate;			//“捐助”超链接
+	CToolTipCtrl m_Mytip;			//鼠标指向时的工具提示
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 	// 实现
@@ -40,18 +40,18 @@ protected:
 	afx_msg LRESULT OnLinkClicked(WPARAM wParam, LPARAM lParam);
 };
 
-BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 	//ON_STN_CLICKED(IDC_STATIC_DONATE, &CAboutDlg::OnStnClickedStaticDonate)
 	ON_MESSAGE(WM_LINK_CLICKED, &CAboutDlg::OnLinkClicked)
 END_MESSAGE_MAP()
 
-CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
+CAboutDlg::CAboutDlg() : CDialog(IDD_ABOUTBOX)
 {
 }
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_STATIC_ABOUT, m_about_img);
 	DDX_Control(pDX, IDC_STATIC_MAIL, m_mail);
 	DDX_Control(pDX, IDC_STATIC_CHECK_UPDATE, m_check_update);
@@ -61,7 +61,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL CAboutDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	CDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
 	CRect rect;
@@ -103,7 +103,7 @@ BOOL CAboutDlg::PreTranslateMessage(MSG* pMsg)
 	// TODO: 在此添加专用代码和/或调用基类
 	if (pMsg->message == WM_MOUSEMOVE)
 		m_Mytip.RelayEvent(pMsg);
-	return CDialogEx::PreTranslateMessage(pMsg);
+	return CDialog::PreTranslateMessage(pMsg);
 }
 
 //void CAboutDlg::OnStnClickedStaticDonate()
@@ -420,7 +420,9 @@ void CTrafficMonitorDlg::LoadConfig()
 	m_position_x = ini.GetInt(_T("config"), _T("position_x"), -1);
 	m_position_y = ini.GetInt(_T("config"), _T("position_y"), -1);
 	m_auto_select = ini.GetBool(_T("connection"), _T("auto_select"), true);
-	theApp.m_main_wnd_data.text_color = ini.GetInt(_T("config"), _T("text_color"), 16384);
+	//theApp.m_main_wnd_data.text_color = ini.GetInt(_T("config"), _T("text_color"), 16384);
+	ini.GetIntArray(_T("config"), _T("text_color"), (int*)theApp.m_main_wnd_data.text_colors, MAIN_WND_COLOR_NUM, 16384);
+	theApp.m_main_wnd_data.specify_each_item_color = ini.GetBool(_T("config"), _T("specify_each_item_color"), false);
 	theApp.m_hide_main_window = ini.GetBool(_T("config"), _T("hide_main_window"), false);
 	m_connection_name = CCommon::UnicodeToStr(ini.GetString(L"connection", L"connection_name", L"").c_str());
 	m_skin_name = ini.GetString(_T("config"), _T("skin_selected"), _T(""));
@@ -444,6 +446,9 @@ void CTrafficMonitorDlg::LoadConfig()
 	theApp.m_main_wnd_data.hide_percent = ini.GetBool(_T("config"), _T("hide_percent"), false);
 
 	m_alow_out_of_border = ini.GetBool(_T("config"), _T("alow_out_of_border"), false);
+
+	int test[4];
+	ini.GetIntArray(L"test", L"test", test, 4);
 }
 
 void CTrafficMonitorDlg::SaveConfig()
@@ -471,7 +476,9 @@ void CTrafficMonitorDlg::SaveConfig()
 	ini.WriteInt(L"config", L"position_x", m_position_x);
 	ini.WriteInt(L"config", L"position_y", m_position_y);
 	ini.WriteInt(L"connection", L"auto_select", m_auto_select);
-	ini.WriteInt(L"config", L"text_color", theApp.m_main_wnd_data.text_color);
+	//ini.WriteInt(L"config", L"text_color", theApp.m_main_wnd_data.text_color);
+	ini.WriteIntArray(L"config", L"text_color", (int*)theApp.m_main_wnd_data.text_colors, MAIN_WND_COLOR_NUM);
+	ini.WriteBool(_T("config"), _T("specify_each_item_color"), theApp.m_main_wnd_data.specify_each_item_color);
 	ini.WriteInt(L"config", L"hide_main_window", theApp.m_hide_main_window);
 	m_connection_name = m_connections[m_connection_selected].description;
 	ini.WriteString(L"connection", L"connection_name", CCommon::StrToUnicode(m_connection_name.c_str()).c_str());
@@ -494,6 +501,9 @@ void CTrafficMonitorDlg::SaveConfig()
 	ini.WriteInt(L"config", L"hide_percent", theApp.m_main_wnd_data.hide_percent);
 
 	ini.WriteInt(L"config", L"alow_out_of_border", m_alow_out_of_border);
+
+	//int test[4]{ 125,13,54,9 };
+	//ini.WriteIntArray(L"test", L"test", test, 4);
 }
 
 void CTrafficMonitorDlg::AutoSelect()
@@ -795,10 +805,22 @@ void CTrafficMonitorDlg::LoadBackGroundImage()
 
 void CTrafficMonitorDlg::SetTextColor()
 {
-	m_disp_cpu.SetTextColor(theApp.m_main_wnd_data.text_color);
-	m_disp_memory.SetTextColor(theApp.m_main_wnd_data.text_color);
-	m_disp_up.SetTextColor(theApp.m_main_wnd_data.text_color);
-	m_disp_down.SetTextColor(theApp.m_main_wnd_data.text_color);
+	int text_colors[MAIN_WND_COLOR_NUM];
+	if (theApp.m_main_wnd_data.specify_each_item_color)
+	{
+		for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
+			text_colors[i] = theApp.m_main_wnd_data.text_colors[i];
+	}
+	else
+	{
+		for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
+			text_colors[i] = theApp.m_main_wnd_data.text_colors[0];
+	}
+
+	m_disp_up.SetTextColor(text_colors[0]);
+	m_disp_down.SetTextColor(text_colors[1]);
+	m_disp_cpu.SetTextColor(text_colors[2]);
+	m_disp_memory.SetTextColor(text_colors[3]);
 }
 
 void CTrafficMonitorDlg::SetTextFont()
@@ -1764,7 +1786,7 @@ void CTrafficMonitorDlg::OnChangeSkin()
 		//载入背景图片
 		LoadBackGroundImage();
 		//获取皮肤的文字颜色
-		theApp.m_main_wnd_data.text_color = skinDlg.GetSkinData().text_color;
+		theApp.m_main_wnd_data.text_colors[0] = skinDlg.GetSkinData().text_color;
 		SetTextColor();
 		//获取皮肤的字体
 		if (theApp.m_general_data.allow_skin_cover_font)

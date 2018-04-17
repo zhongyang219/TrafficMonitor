@@ -185,6 +185,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LinkStatic.h" />
     <ClInclude Include="ColorStatic.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="CommonData.h" />
@@ -196,6 +197,7 @@
     <ClInclude Include="IconSelectDlg.h" />
     <ClInclude Include="IniHelper.h" />
     <ClInclude Include="ListCtrlEx.h" />
+    <ClInclude Include="MainWndColorDlg.h" />
     <ClInclude Include="MainWndSettingsDlg.h" />
     <ClInclude Include="NetworkInfoDlg.h" />
     <ClInclude Include="OptionsDlg.h" />
@@ -213,6 +215,7 @@
     <ClInclude Include="TrafficMonitorDlg.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LinkStatic.cpp" />
     <ClCompile Include="ColorStatic.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="CSkinPreviewView.cpp" />
@@ -223,6 +226,7 @@
     <ClCompile Include="IconSelectDlg.cpp" />
     <ClCompile Include="IniHelper.cpp" />
     <ClCompile Include="ListCtrlEx.cpp" />
+    <ClCompile Include="MainWndColorDlg.cpp" />
     <ClCompile Include="MainWndSettingsDlg.cpp" />
     <ClCompile Include="NetworkInfoDlg.cpp" />
     <ClCompile Include="OptionsDlg.cpp" />

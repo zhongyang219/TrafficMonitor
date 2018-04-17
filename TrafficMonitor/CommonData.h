@@ -65,10 +65,12 @@ struct DispStrings		//显示的文本
 };
 
 //选项设置数据
+#define MAIN_WND_COLOR_NUM 4		//主窗口颜色数量
 struct MainWndSettingData
 {
 	//主窗口
-	COLORREF text_color{};		//文字颜色
+	COLORREF text_colors[MAIN_WND_COLOR_NUM]{};		//文字颜色（分别为“上传”、“下载”、“CPU”、“内存”的颜色）
+	bool specify_each_item_color{ false };		//是否指定每个项目的颜色
 	CString font_name;	//字体名称
 	int font_size;		//字体大小
 	DispStrings disp_str;	//显示的文本

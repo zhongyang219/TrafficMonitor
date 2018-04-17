@@ -3,6 +3,7 @@
 #include "afxwin.h"
 #include "SpinEdit.h"
 #include "TabDlg.h"
+#include "MainWndColorDlg.h"
 
 // CMainWndSettingsDlg ¶Ô»°¿ò
 
@@ -55,4 +56,6 @@ public:
 	afx_msg void OnBnClickedHidePercentageCheck();
 protected:
 	afx_msg LRESULT OnStaticClicked(WPARAM wParam, LPARAM lParam);
+public:
+	afx_msg void OnBnClickedSpecifyEachItemColorCheck();
 };

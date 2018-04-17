@@ -3,10 +3,11 @@
 #include"StaticEx.h"
 #include "PictureStatic.h"
 #include "CSkinPreviewView.h"
+#include "LinkStatic.h"
 
 // CSkinDlg 对话框
 
-class CSkinDlg : public CDialogEx
+class CSkinDlg : public CDialog
 {
 	DECLARE_DYNAMIC(CSkinDlg)
 
@@ -34,8 +35,8 @@ protected:
 protected:
 	//控件变量
 	CComboBox m_select_box;			//选择框
-	CStaticEx m_skin_course{ true };	//“皮肤制作教程”超链接
-	CStaticEx m_skin_download{ true };	//“更多皮肤下载”超链接
+	CLinkStatic m_skin_course;	//“皮肤制作教程”超链接
+	CLinkStatic m_skin_download;	//“更多皮肤下载”超链接
 	CSkinPreviewView* m_view;	//预览区视图类
 	CStatic m_preview_static;
 	CStaticEx m_notify_static;	//显示提示信息的static控件

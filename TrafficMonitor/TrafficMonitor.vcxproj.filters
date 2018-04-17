@@ -79,6 +79,12 @@
     <Filter Include="源文件和头文件\公共的类\IniHelper">
       <UniqueIdentifier>{974cdadc-b70f-420b-b28b-c09a0686077c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\对话框类\颜色设置对话框">
+      <UniqueIdentifier>{66fdf1ef-3bc4-445a-b08e-4cd121d3455a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\派生的控件类\LinkStatic">
+      <UniqueIdentifier>{6fce899f-3e92-40c2-a69b-ffcfb4a4c19f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -162,6 +168,12 @@
     <ClInclude Include="IniHelper.h">
       <Filter>源文件和头文件\公共的类\IniHelper</Filter>
     </ClInclude>
+    <ClInclude Include="MainWndColorDlg.h">
+      <Filter>源文件和头文件\对话框类\颜色设置对话框</Filter>
+    </ClInclude>
+    <ClInclude Include="LinkStatic.h">
+      <Filter>源文件和头文件\派生的控件类\LinkStatic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -232,6 +244,12 @@
     </ClCompile>
     <ClCompile Include="IniHelper.cpp">
       <Filter>源文件和头文件\公共的类\IniHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWndColorDlg.cpp">
+      <Filter>源文件和头文件\对话框类\颜色设置对话框</Filter>
+    </ClCompile>
+    <ClCompile Include="LinkStatic.cpp">
+      <Filter>源文件和头文件\派生的控件类\LinkStatic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
