@@ -29,7 +29,7 @@ void CMainWndSettingsDlg::DrawStaticColor()
 		m_color_static.SetColorNum(MAIN_WND_COLOR_NUM);
 		for(int i{}; i<MAIN_WND_COLOR_NUM; i++)
 			m_color_static.SetFillColor(i, m_data.text_colors[i]);
-		Invalidate();
+		m_color_static.Invalidate();
 	}
 	else
 	{

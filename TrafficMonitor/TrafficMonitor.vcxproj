@@ -209,6 +209,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TabDlg.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TaskbarColorDlg.h" />
     <ClInclude Include="TaskBarDlg.h" />
     <ClInclude Include="TaskBarSettingsDlg.h" />
     <ClInclude Include="TrafficMonitor.h" />
@@ -241,6 +242,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TabDlg.cpp" />
+    <ClCompile Include="TaskbarColorDlg.cpp" />
     <ClCompile Include="TaskBarDlg.cpp" />
     <ClCompile Include="TaskBarSettingsDlg.cpp" />
     <ClCompile Include="TrafficMonitor.cpp" />
