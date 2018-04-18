@@ -1780,7 +1780,9 @@ void CTrafficMonitorDlg::OnChangeSkin()
 		//载入背景图片
 		LoadBackGroundImage();
 		//获取皮肤的文字颜色
-		theApp.m_main_wnd_data.text_colors[0] = skinDlg.GetSkinData().text_color;
+		theApp.m_main_wnd_data.specify_each_item_color = skinDlg.GetSkinData().specify_each_item_color;
+		for(int i{}; i<MAIN_WND_COLOR_NUM; i++)
+			theApp.m_main_wnd_data.text_colors[i] = skinDlg.GetSkinData().text_colors[i];
 		SetTextColor();
 		//获取皮肤的字体
 		if (theApp.m_general_data.allow_skin_cover_font)

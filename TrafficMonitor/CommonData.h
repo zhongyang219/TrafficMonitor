@@ -87,7 +87,7 @@ struct TaskBarSettingData
 {
 	//任务栏窗口
 	COLORREF  back_color{ RGB(0, 0, 0) };	//背景颜色
-	COLORREF text_colors[TASKBAR_COLOR_NUM]{};		//文字颜色（依次为“上传”、“下载”、“CPU”、“内存”的标签的数据颜色）
+	COLORREF text_colors[TASKBAR_COLOR_NUM]{};		//文字颜色（依次为“上传”、“下载”、“CPU”、“内存”的标签和数据颜色）
 	bool specify_each_item_color{ false };		//是否指定每个项目的颜色
 	CString  font_name;	//字体名称
 	int  font_size;		//字体大小
@@ -182,7 +182,8 @@ struct LayoutData
 struct SkinData
 {
 	LayoutData layout;
-	COLORREF text_color;
+	COLORREF text_colors[MAIN_WND_COLOR_NUM]{};		//文字颜色（分别为“上传”、“下载”、“CPU”、“内存”的颜色）
+	bool specify_each_item_color;		//是否指定每个项目的颜色
 	//wstring skin_author;
 	DispStrings disp_str;
 	wstring font_name;

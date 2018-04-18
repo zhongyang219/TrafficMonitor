@@ -99,28 +99,38 @@ void CTaskBarDlg::ShowInfo()
 	else
 		format_str = _T("%s/s");
 	if (!theApp.m_taskbar_data.swap_up_down)
+	{
 		str.Format(format_str, out_speed.GetString());
+		draw.DrawWindowText(value_rect, str, text_colors[1], value_alignment, true);
+	}
 	else
+	{
 		str.Format(format_str, in_speed.GetString());
-	draw.DrawWindowText(value_rect, str, text_colors[1], value_alignment, true);
+		draw.DrawWindowText(value_rect, str, text_colors[3], value_alignment, true);
+	}
 	//绘制上传标签
 	if (!theApp.m_taskbar_data.swap_up_down)
 		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.up.c_str(), text_colors[0], Alignment::LEFT, true);
 	else
-		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.down.c_str(), text_colors[0], Alignment::LEFT, true);
+		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.down.c_str(), text_colors[2], Alignment::LEFT, true);
 	//绘制下载速度
 	value_rect.MoveToY(value_rect.bottom);
 	lable_rect.MoveToY(lable_rect.bottom);
 	if (!theApp.m_taskbar_data.swap_up_down)
+	{
 		str.Format(format_str, in_speed.GetString());
+		draw.DrawWindowText(value_rect, str, text_colors[3], value_alignment, true);
+	}
 	else
+	{
 		str.Format(format_str, out_speed.GetString());
-	draw.DrawWindowText(value_rect, str, text_colors[3], value_alignment, true);
+		draw.DrawWindowText(value_rect, str, text_colors[1], value_alignment, true);
+	}
 	//绘制下载标签
 	if (!theApp.m_taskbar_data.swap_up_down)
 		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.down.c_str(), text_colors[2], Alignment::LEFT, true);
 	else
-		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.up.c_str(), text_colors[2], Alignment::LEFT, true);
+		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.up.c_str(), text_colors[0], Alignment::LEFT, true);
 
 	if (theApp.m_tbar_show_cpu_memory)
 	{
@@ -146,13 +156,13 @@ void CTaskBarDlg::ShowInfo()
 		lable_rect.right = lable_rect.left + m_cm_lable_width;
 		value_rect.left += m_cm_lable_width;
 		str.Format(format_str, theApp.m_cpu_usage);
-		draw.DrawWindowText(value_rect, str, text_colors[5], value_alignment, true);
+		draw.DrawWindowText(value_rect, str, text_colors[5], (theApp.m_cpu_usage == 100 ? Alignment::LEFT : value_alignment), true);
 		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.cpu.c_str(), text_colors[4], Alignment::LEFT, true);
 		//绘制内存利用率
 		value_rect.MoveToY(value_rect.bottom);
 		lable_rect.MoveToY(lable_rect.bottom);
 		str.Format(format_str, theApp.m_memory_usage);
-		draw.DrawWindowText(value_rect, str, text_colors[7], value_alignment, true);
+		draw.DrawWindowText(value_rect, str, text_colors[7], (theApp.m_memory_usage == 100 ? Alignment::LEFT : value_alignment), true);
 		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.memory.c_str(), text_colors[6], Alignment::LEFT, true);
 	}
 	//将缓冲区DC中的图像拷贝到屏幕中显示

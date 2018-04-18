@@ -101,7 +101,9 @@ void CSkinDlg::ShowPreview()
 	LoadBackImage((theApp.m_skin_path + m_skins[m_skin_selected]).c_str(), true);
 	LoadBackImage((theApp.m_skin_path + m_skins[m_skin_selected]).c_str(), false);
 	//获取当前皮肤的文字颜色
-	m_skin_data.text_color = ini.GetInt(_T("skin"), _T("text_color"), 0);
+	//m_skin_data.text_color = ini.GetInt(_T("skin"), _T("text_color"), 0);
+	ini.GetIntArray(_T("skin"), _T("text_color"), (int*)m_skin_data.text_colors, MAIN_WND_COLOR_NUM, 0);
+	m_skin_data.specify_each_item_color = ini.GetBool(_T("skin"), _T("specify_each_item_color"), false);
 	//获取当前皮肤的字体
 	m_skin_data.font_name = ini.GetString(L"skin", L"font_name", L"");
 	m_skin_data.font_size = ini.GetInt(_T("skin"), _T("font_size"), 0);

@@ -98,13 +98,13 @@ void CColorStatic::OnPaint()
 		rc_tmp.MoveToX(rc_tmp.right);
 		dc.FillSolidRect(rc_tmp, m_colors[1]);
 		rc_tmp.MoveToX(rc_tmp.right);
-		dc.FillSolidRect(rc_tmp, m_colors[2]);
-		rc_tmp.MoveToX(rc_tmp.right);
-		dc.FillSolidRect(rc_tmp, m_colors[3]);
-		rc_tmp.MoveToXY(0, rc_tmp.bottom);
 		dc.FillSolidRect(rc_tmp, m_colors[4]);
 		rc_tmp.MoveToX(rc_tmp.right);
 		dc.FillSolidRect(rc_tmp, m_colors[5]);
+		rc_tmp.MoveToXY(0, rc_tmp.bottom);
+		dc.FillSolidRect(rc_tmp, m_colors[2]);
+		rc_tmp.MoveToX(rc_tmp.right);
+		dc.FillSolidRect(rc_tmp, m_colors[3]);
 		rc_tmp.MoveToX(rc_tmp.right);
 		dc.FillSolidRect(rc_tmp, m_colors[6]);
 		rc_tmp.MoveToX(rc_tmp.right);
