@@ -20,11 +20,13 @@
 class CTrafficMonitorApp : public CWinApp
 {
 public:
+	//各种路径
 	wstring m_module_path;
 	wstring m_config_path;
 	wstring m_history_traffic_path;
 	wstring m_log_path;
 	wstring m_skin_path;
+	wstring m_system_path;
 
 	//以下数据定义为App类中的公共成员，以便于在主对话框和任务栏窗口中都能访问
 	unsigned int m_in_speed{};		//下载速度

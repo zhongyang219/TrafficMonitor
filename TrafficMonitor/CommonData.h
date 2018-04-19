@@ -64,6 +64,18 @@ struct DispStrings		//显示的文本
 	}
 };
 
+//鼠标双击窗口的动作
+enum class DoubleClickAction
+{
+	CONNECTION_INFO,	//连接详情
+	HISTORY_TRAFFIC,	//历史流量统计
+	SHOW_MORE_INFO,		//显示更多信息
+	OPTIONS,			//选项设置
+	TASK_MANAGER,		//任务管理器
+	CHANGE_SKIN,		//更换皮肤
+	NONE				//不执行任何动作
+};
+
 //选项设置数据
 #define MAIN_WND_COLOR_NUM 4		//主窗口颜色数量
 struct MainWndSettingData
@@ -80,6 +92,7 @@ struct MainWndSettingData
 	SpeedUnit speed_unit;		//网速的单位
 	bool hide_unit;			//隐藏单位
 	bool hide_percent;		//隐藏百分号
+	DoubleClickAction double_click_action;		//鼠标双击动作
 };
 
 #define TASKBAR_COLOR_NUM 8		//任务栏窗口颜色数量
@@ -99,6 +112,7 @@ struct TaskBarSettingData
 	SpeedUnit speed_unit;		//网速的单位
 	bool hide_unit;			//隐藏单位
 	bool hide_percent;		//隐藏百分号
+	DoubleClickAction double_click_action;		//鼠标双击动作
 };
 
 struct GeneralSettingData

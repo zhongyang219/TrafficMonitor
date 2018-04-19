@@ -301,22 +301,23 @@ void CTaskBarDlg::SaveConfig()
 	//ini.WriteInt(L"task_bar", L"task_bar_text_color", theApp.m_taskbar_data.text_color);
 	ini.WriteIntArray(L"task_bar", L"task_bar_text_color", (int*)theApp.m_taskbar_data.text_colors, TASKBAR_COLOR_NUM);
 	ini.WriteBool(L"task_bar", L"specify_each_item_color", theApp.m_taskbar_data.specify_each_item_color);
-	ini.WriteInt(L"task_bar", L"tack_bar_show_cpu_memory", theApp.m_tbar_show_cpu_memory);
+	ini.WriteBool(L"task_bar", L"tack_bar_show_cpu_memory", theApp.m_tbar_show_cpu_memory);
 	ini.WriteString(_T("task_bar"), _T("tack_bar_font_name"), wstring(theApp.m_taskbar_data.font_name));
 	ini.WriteInt(L"task_bar", L"tack_bar_font_size", theApp.m_taskbar_data.font_size);
-	ini.WriteInt(L"task_bar", L"task_bar_swap_up_down", theApp.m_taskbar_data.swap_up_down);
+	ini.WriteBool(L"task_bar", L"task_bar_swap_up_down", theApp.m_taskbar_data.swap_up_down);
 
 	ini.WriteString(_T("task_bar"), _T("up_string"), theApp.m_taskbar_data.disp_str.up);
 	ini.WriteString(_T("task_bar"), _T("down_string"), theApp.m_taskbar_data.disp_str.down);
 	ini.WriteString(_T("task_bar"), _T("cpu_string"), theApp.m_taskbar_data.disp_str.cpu);
 	ini.WriteString(_T("task_bar"), _T("memory_string"), theApp.m_taskbar_data.disp_str.memory);
 
-	ini.WriteInt(L"task_bar", L"task_bar_wnd_on_left", theApp.m_taskbar_data.tbar_wnd_on_left);
-	ini.WriteInt(L"task_bar", L"task_bar_speed_short_mode", theApp.m_taskbar_data.speed_short_mode);
+	ini.WriteBool(L"task_bar", L"task_bar_wnd_on_left", theApp.m_taskbar_data.tbar_wnd_on_left);
+	ini.WriteBool(L"task_bar", L"task_bar_speed_short_mode", theApp.m_taskbar_data.speed_short_mode);
 	ini.WriteInt(L"task_bar", L"task_bar_speed_unit", static_cast<int>(theApp.m_taskbar_data.speed_unit));
-	ini.WriteInt(L"task_bar", L"task_bar_hide_unit", theApp.m_taskbar_data.hide_unit);
-	ini.WriteInt(L"task_bar", L"task_bar_hide_percent", theApp.m_taskbar_data.hide_percent);
-	ini.WriteInt(L"task_bar", L"value_right_align", theApp.m_taskbar_data.value_right_align);
+	ini.WriteBool(L"task_bar", L"task_bar_hide_unit", theApp.m_taskbar_data.hide_unit);
+	ini.WriteBool(L"task_bar", L"task_bar_hide_percent", theApp.m_taskbar_data.hide_percent);
+	ini.WriteBool(L"task_bar", L"value_right_align", theApp.m_taskbar_data.value_right_align);
+	ini.WriteInt(L"task_bar", L"double_click_action", static_cast<int>(theApp.m_taskbar_data.double_click_action));
 }
 
 void CTaskBarDlg::LoadConfig()
@@ -343,6 +344,7 @@ void CTaskBarDlg::LoadConfig()
 	theApp.m_taskbar_data.hide_unit = ini.GetBool(_T("task_bar"), _T("task_bar_hide_unit"), false);
 	theApp.m_taskbar_data.hide_percent = ini.GetBool(_T("task_bar"), _T("task_bar_hide_percent"), false);
 	theApp.m_taskbar_data.value_right_align = ini.GetBool(_T("task_bar"), _T("value_right_align"), false);
+	theApp.m_taskbar_data.double_click_action = static_cast<DoubleClickAction>(ini.GetInt(_T("task_bar"), _T("double_click_action"), 0));
 }
 
 void CTaskBarDlg::ApplySettings()
@@ -608,8 +610,27 @@ void CTaskBarDlg::OnMouseMove(UINT nFlags, CPoint point)
 void CTaskBarDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	SendMessage(WM_COMMAND,ID_NETWORK_INFO);		//双击后弹出“连接详情”对话框
-	CDialogEx::OnLButtonDblClk(nFlags, point);
+	switch (theApp.m_taskbar_data.double_click_action)
+	{
+	case DoubleClickAction::CONNECTION_INFO:
+		SendMessage(WM_COMMAND,ID_NETWORK_INFO);		//双击后弹出“连接详情”对话框
+		break;
+	case DoubleClickAction::HISTORY_TRAFFIC:
+		SendMessage(WM_COMMAND, ID_TRAFFIC_HISTORY);		//双击后弹出“历史流量统计”对话框
+		break;
+	case DoubleClickAction::SHOW_MORE_INFO:
+		PostMessage(WM_COMMAND, ID_SHOW_CPU_MEMORY2);		//切换显示CPU和内存利用率
+		break;
+	case DoubleClickAction::OPTIONS:
+		SendMessage(WM_COMMAND, ID_OPTIONS2);		//双击后弹出“选项设置”对话框
+		break;
+	case DoubleClickAction::TASK_MANAGER:
+		ShellExecuteW(NULL, _T("open"), (theApp.m_system_path+L"\\Taskmgr.exe").c_str(), NULL, NULL, SW_NORMAL);		//打开任务管理器
+		break;
+	default:
+		break;
+	}
+	//CDialogEx::OnLButtonDblClk(nFlags, point);
 }
 
 

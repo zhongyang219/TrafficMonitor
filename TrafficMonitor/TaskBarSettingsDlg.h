@@ -31,6 +31,7 @@ protected:
 	CComboBox m_unit_combo;
 	CButton m_hide_unit_chk;
 	CSpinEdit m_font_size_edit;
+	CComboBox m_double_click_combo;
 
 	void DrawStaticColor();
 
@@ -58,4 +59,5 @@ protected:
 	afx_msg LRESULT OnStaticClicked(WPARAM wParam, LPARAM lParam);
 public:
 	afx_msg void OnBnClickedSpecifyEachItemColorCheck();
+	afx_msg void OnCbnSelchangeDoubleClickCombo();
 };

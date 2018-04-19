@@ -444,6 +444,7 @@ void CTrafficMonitorDlg::LoadConfig()
 	theApp.m_main_wnd_data.speed_unit = static_cast<SpeedUnit>(ini.GetInt(_T("config"), _T("speed_unit"), 0));
 	theApp.m_main_wnd_data.hide_unit = ini.GetBool(_T("config"), _T("hide_unit"), false);
 	theApp.m_main_wnd_data.hide_percent = ini.GetBool(_T("config"), _T("hide_percent"), false);
+	theApp.m_main_wnd_data.double_click_action = static_cast<DoubleClickAction>(ini.GetInt(_T("config"), _T("double_click_action"), 0));
 
 	m_alow_out_of_border = ini.GetBool(_T("config"), _T("alow_out_of_border"), false);
 }
@@ -464,15 +465,15 @@ void CTrafficMonitorDlg::SaveConfig()
 		m_cannot_save_config_warning = false;
 		return;
 	}
-	ini.WriteInt(L"config", L"always_on_top", m_always_on_top);
-	ini.WriteInt(L"config", L"lock_window_pos", m_lock_window_pos);
-	ini.WriteInt(L"config", L"show_notify_icon", theApp.m_show_notify_icon);
-	ini.WriteInt(L"config", L"show_cpu_memory", m_show_more_info);
-	ini.WriteInt(L"config", L"mouse_penetrate", m_mouse_penetrate);
-	ini.WriteInt(L"config", L"show_task_bar_wnd", m_show_task_bar_wnd);
+	ini.WriteBool(L"config", L"always_on_top", m_always_on_top);
+	ini.WriteBool(L"config", L"lock_window_pos", m_lock_window_pos);
+	ini.WriteBool(L"config", L"show_notify_icon", theApp.m_show_notify_icon);
+	ini.WriteBool(L"config", L"show_cpu_memory", m_show_more_info);
+	ini.WriteBool(L"config", L"mouse_penetrate", m_mouse_penetrate);
+	ini.WriteBool(L"config", L"show_task_bar_wnd", m_show_task_bar_wnd);
 	ini.WriteInt(L"config", L"position_x", m_position_x);
 	ini.WriteInt(L"config", L"position_y", m_position_y);
-	ini.WriteInt(L"connection", L"auto_select", m_auto_select);
+	ini.WriteBool(L"connection", L"auto_select", m_auto_select);
 	//ini.WriteInt(L"config", L"text_color", theApp.m_main_wnd_data.text_color);
 	ini.WriteIntArray(L"config", L"text_color", (int*)theApp.m_main_wnd_data.text_colors, MAIN_WND_COLOR_NUM);
 	ini.WriteBool(_T("config"), _T("specify_each_item_color"), theApp.m_main_wnd_data.specify_each_item_color);
@@ -484,18 +485,19 @@ void CTrafficMonitorDlg::SaveConfig()
 	ini.WriteString(_T("config"), _T("font_name"), wstring(theApp.m_main_wnd_data.font_name));
 	ini.WriteInt(L"config", L"font_size", theApp.m_main_wnd_data.font_size);
 
-	ini.WriteInt(L"config", L"swap_up_down", theApp.m_main_wnd_data.swap_up_down);
-	ini.WriteInt(L"config", L"hide_main_wnd_when_fullscreen", theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen);
+	ini.WriteBool(L"config", L"swap_up_down", theApp.m_main_wnd_data.swap_up_down);
+	ini.WriteBool(L"config", L"hide_main_wnd_when_fullscreen", theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen);
 
 	ini.WriteString(_T("config"), _T("up_string"), theApp.m_main_wnd_data.disp_str.up);
 	ini.WriteString(_T("config"), _T("down_string"), theApp.m_main_wnd_data.disp_str.down);
 	ini.WriteString(_T("config"), _T("cpu_string"), theApp.m_main_wnd_data.disp_str.cpu);
 	ini.WriteString(_T("config"), _T("memory_string"), theApp.m_main_wnd_data.disp_str.memory);
 
-	ini.WriteInt(L"config", L"speed_short_mode", theApp.m_main_wnd_data.speed_short_mode);
+	ini.WriteBool(L"config", L"speed_short_mode", theApp.m_main_wnd_data.speed_short_mode);
 	ini.WriteInt(L"config", L"speed_unit", static_cast<int>(theApp.m_main_wnd_data.speed_unit));
-	ini.WriteInt(L"config", L"hide_unit", theApp.m_main_wnd_data.hide_unit);
-	ini.WriteInt(L"config", L"hide_percent", theApp.m_main_wnd_data.hide_percent);
+	ini.WriteBool(L"config", L"hide_unit", theApp.m_main_wnd_data.hide_unit);
+	ini.WriteBool(L"config", L"hide_percent", theApp.m_main_wnd_data.hide_percent);
+	ini.WriteInt(L"config", L"double_click_action", static_cast<int>(theApp.m_main_wnd_data.double_click_action));
 
 	ini.WriteInt(L"config", L"alow_out_of_border", m_alow_out_of_border);
 }
@@ -1821,7 +1823,29 @@ void CTrafficMonitorDlg::OnMouseMove(UINT nFlags, CPoint point)
 void CTrafficMonitorDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	OnNetworkInfo();
+	switch (theApp.m_main_wnd_data.double_click_action)
+	{
+	case DoubleClickAction::CONNECTION_INFO:
+		OnNetworkInfo();			//双击后弹出“连接详情”对话框
+		break;
+	case DoubleClickAction::HISTORY_TRAFFIC:
+		OnTrafficHistory();			//双击后弹出“历史流量统计”对话框
+		break;
+	case DoubleClickAction::SHOW_MORE_INFO:
+		OnShowCpuMemory();			//切换显示CPU和内存利用率
+		break;
+	case DoubleClickAction::OPTIONS:
+		OnOptions();				//双击后弹出“选项设置”对话框
+		break;
+	case DoubleClickAction::TASK_MANAGER:
+		ShellExecuteW(NULL, _T("open"), (theApp.m_system_path + L"\\Taskmgr.exe").c_str(), NULL, NULL, SW_NORMAL);		//打开任务管理器
+		break;
+	case DoubleClickAction::CHANGE_SKIN:
+		OnChangeSkin();				//双击后弹出“更换皮肤”对话框
+		break;
+	default:
+		break;
+	}
 	CDialogEx::OnLButtonDblClk(nFlags, point);
 }
 

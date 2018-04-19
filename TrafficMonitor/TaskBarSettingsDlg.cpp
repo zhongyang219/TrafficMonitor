@@ -47,6 +47,7 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_UNIT_COMBO, m_unit_combo);
 	DDX_Control(pDX, IDC_HIDE_UNIT_CHECK, m_hide_unit_chk);
 	DDX_Control(pDX, IDC_FONT_SIZE_EDIT1, m_font_size_edit);
+	DDX_Control(pDX, IDC_DOUBLE_CLICK_COMBO, m_double_click_combo);
 }
 
 
@@ -66,6 +67,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_HIDE_PERCENTAGE_CHECK, &CTaskBarSettingsDlg::OnBnClickedHidePercentageCheck)
 	ON_MESSAGE(WM_STATIC_CLICKED, &CTaskBarSettingsDlg::OnStaticClicked)
 	ON_BN_CLICKED(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK, &CTaskBarSettingsDlg::OnBnClickedSpecifyEachItemColorCheck)
+	ON_CBN_SELCHANGE(IDC_DOUBLE_CLICK_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeDoubleClickCombo)
 END_MESSAGE_MAP()
 
 
@@ -118,6 +120,14 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	}
 	((CButton*)GetDlgItem(IDC_HIDE_PERCENTAGE_CHECK))->SetCheck(m_data.hide_percent);
 	((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->SetCheck(m_data.specify_each_item_color);
+
+	m_double_click_combo.AddString(_T("打开连接详情"));
+	m_double_click_combo.AddString(_T("打开历史流量统计"));
+	m_double_click_combo.AddString(_T("显示/隐藏CPU和内存利用率"));
+	m_double_click_combo.AddString(_T("打开选项设置"));
+	m_double_click_combo.AddString(_T("打开任务管理器"));
+	m_double_click_combo.AddString(_T("无"));
+	m_double_click_combo.SetCurSel(static_cast<int>(m_data.double_click_action));
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -361,4 +371,11 @@ void CTaskBarSettingsDlg::OnBnClickedSpecifyEachItemColorCheck()
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.specify_each_item_color = (((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->GetCheck() != 0);
 	DrawStaticColor();
+}
+
+
+void CTaskBarSettingsDlg::OnCbnSelchangeDoubleClickCombo()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_data.double_click_action = static_cast<DoubleClickAction>(m_double_click_combo.GetCurSel());
 }

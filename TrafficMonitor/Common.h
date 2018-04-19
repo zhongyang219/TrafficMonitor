@@ -59,7 +59,11 @@ public:
 	//计算两个SYSTEMTIME结构时间的差（a-b，只保留时、分、秒）
 	static SYSTEMTIME CompareSystemTime(SYSTEMTIME a, SYSTEMTIME b);
 
+	//获取当前程序的路径
 	static wstring GetExePath();
+
+	//获取system32文件夹的路径
+	static wstring GetSystemPath();
 
 	//在指定位置绘制文本
 	static void DrawWindowText(CDC* pDC, CRect rect, LPCTSTR lpszString, COLORREF color, COLORREF back_color);

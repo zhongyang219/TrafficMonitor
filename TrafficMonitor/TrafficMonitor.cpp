@@ -218,6 +218,8 @@ BOOL CTrafficMonitorApp::InitInstance()
 	GetModuleFileNameW(NULL, path, MAX_PATH);
 	m_module_path = path;
 
+	m_system_path = CCommon::GetSystemPath();
+
 	m_is_windows10_fall_creator = CCommon::IsWindows10FallCreatorOrLater();
 
 	//从ini文件载入设置

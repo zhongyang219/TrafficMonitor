@@ -331,6 +331,13 @@ wstring CCommon::GetExePath()
 	return current_path;
 }
 
+wstring CCommon::GetSystemPath()
+{
+	wchar_t buff[MAX_PATH];
+	GetSystemDirectory(buff, MAX_PATH);
+	return wstring(buff);
+}
+
 void CCommon::DrawWindowText(CDC * pDC, CRect rect, LPCTSTR lpszString, COLORREF color, COLORREF back_color)
 {
 	pDC->SetTextColor(color);

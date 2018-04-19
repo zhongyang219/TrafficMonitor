@@ -4,6 +4,7 @@
 //#include "StaticEx.h"
 #include "DrawCommon.h"
 #include "IniHelper.h"
+#include "CommonData.h"
 
 // CTaskBarDlg ¶Ô»°¿ò
 
