@@ -918,11 +918,7 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	LoadBackGroundImage();
 
 	//设置字体
-	m_font.CreatePointFont(theApp.m_main_wnd_data.font_size * 10, theApp.m_main_wnd_data.font_name);
-	m_disp_cpu.SetFont(&m_font);
-	m_disp_memory.SetFont(&m_font);
-	m_disp_up.SetFont(&m_font);
-	m_disp_down.SetFont(&m_font);
+	SetTextFont();
 
 	//设置文字颜色
 	SetTextColor();

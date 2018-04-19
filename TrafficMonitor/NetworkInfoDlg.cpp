@@ -167,6 +167,20 @@ void CNetworkInfoDlg::ShowInfo()
 	time = CCommon::CompareSystemTime(current_time, m_start_time);
 	temp.Format(_T("%d小时%d分%d秒"), time.wHour, time.wMinute, time.wSecond);
 	m_info_list.SetItemText(13, 1, temp);
+
+	m_info_list.InsertItem(14, _T("外网IP地址"));
+	m_info_list.SetItemText(14, 1, m_internet_ip_address.c_str());
+}
+
+UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
+{
+	CNetworkInfoDlg* p_instance = (CNetworkInfoDlg*)lpParam;
+	p_instance->m_internet_ip_address = CCommon::GetInternetIp();
+	if (!p_instance->m_internet_ip_address.empty())
+		p_instance->m_info_list.SetItemText(14, 1, p_instance->m_internet_ip_address.c_str());
+	else
+		p_instance->m_info_list.SetItemText(14, 1, _T("获取失败"));
+	return 0;
 }
 
 void CNetworkInfoDlg::DoDataExchange(CDataExchange* pDX)
@@ -179,6 +193,7 @@ void CNetworkInfoDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CNetworkInfoDlg, CDialog)
 	ON_COMMAND(ID_COPY_TEXT, &CNetworkInfoDlg::OnCopyText)
 	ON_NOTIFY(NM_RCLICK, IDC_INFO_LIST1, &CNetworkInfoDlg::OnNMRClickInfoList1)
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 
@@ -206,6 +221,9 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 
 	//显示列表中的信息
 	ShowInfo();
+
+	//CCommon::GetInternetIp();
+	m_pGetIPThread = AfxBeginThread(GetInternetIPThreadFunc, this);		//启动获取外网IP的线程
 
 	//SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//取消置顶
 	m_info_list.GetToolTips()->SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
@@ -243,4 +261,14 @@ void CNetworkInfoDlg::OnNMRClickInfoList1(NMHDR *pNMHDR, LRESULT *pResult)
 	pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
 
 	*pResult = 0;
+}
+
+
+void CNetworkInfoDlg::OnClose()
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	//对话框关闭时强制结束获取IP地址的线程
+	TerminateThread(m_pGetIPThread->m_hThread, 0);
+
+	CDialog::OnClose();
 }

@@ -99,6 +99,9 @@ public:
 	//获取URL的内容
 	static bool GetURL(const wstring& url, wstring& result);
 
+	//获取外网IP
+	static wstring GetInternetIp();
+
 	static void SetRect(CRect& rect, int x, int y, int width, int height);
 };
 

@@ -37,35 +37,6 @@ string CCommon::UnicodeToStr(const wchar_t * wstr)
 	return result;
 }
 
-//bool CCommon::WritePrivateProfileIntW(const wchar_t * AppName, const wchar_t * KeyName, int value, const wchar_t * Path)
-//{
-//	wchar_t buff[11]{};
-//	_itow_s(value, buff, 10);
-//	return (::WritePrivateProfileStringW(AppName, KeyName, buff, Path) != FALSE);
-//}
-//
-//bool CCommon::WriteIniStringW(const wchar_t* AppName, const wchar_t* KeyName, wstring str, const wchar_t* path)
-//{
-//	//由于读取ini文件字符串时会删除前后的空格，所以写入字符串之前先在前后添加一个指定字符，读取时再删除
-//	str = DEF_CH + str + DEF_CH;
-//	return (::WritePrivateProfileStringW(AppName, KeyName, str.c_str(), path) != FALSE);
-//}
-//
-//wstring CCommon::GetIniStringW(const wchar_t* AppName, const wchar_t* KeyName, const wchar_t* default_str, const wchar_t* path)
-//{
-//	wstring rtn;
-//	wchar_t buff[256];
-//	::GetPrivateProfileStringW(AppName, KeyName, default_str, buff, 256, path);
-//	rtn = buff;
-//	//如果读取的字符串前后有指定的字符，则删除它
-//	if (!rtn.empty() && (rtn.front() == L'$' || rtn.front() == DEF_CH))
-//		rtn = rtn.substr(1);
-//	if (!rtn.empty() && (rtn.back() == L'$' || rtn.back() == DEF_CH))
-//		rtn.pop_back();
-//	return rtn;
-//}
-
-
 CString CCommon::DataSizeToString(unsigned int size, bool short_mode, SpeedUnit unit, bool hide_unit)
 {
 	CString str;
@@ -370,14 +341,6 @@ void CCommon::DrawWindowText(CDC * pDC, CRect rect, LPCTSTR lpszString, COLORREF
 
 }
 
-//void CCommon::FillStaticColor(CStatic & static_ctr, COLORREF color)
-//{
-//	CDC* pDC = static_ctr.GetDC();
-//	CRect rect;
-//	static_ctr.GetClientRect(&rect);
-//	pDC->FillSolidRect(rect, color);
-//}
-
 void CCommon::SetDrawArea(CDC * pDC, CRect rect)
 {
 	CRgn rgn;
@@ -533,6 +496,32 @@ bool CCommon::GetURL(const wstring & url, wstring & result)
 		e->Delete();		//没有这句会造成内存泄露
 	}
 	return sucessed;
+}
+
+wstring CCommon::GetInternetIp()
+{
+	wstring web_page;
+	wstring ip_address;
+	if (GetURL(L"http://www.whatismyip.com.tw/", web_page))
+	{
+#ifdef _DEBUG
+		ofstream file{ L".\\IP_web_page.log" };
+		file << UnicodeToStr(web_page.c_str()) << std::endl;
+#endif // _DEBUG
+		size_t index, index1, index2;
+		index = web_page.find(L"\"ip\"");		//查找字符串“"ip"”
+		index1 = web_page.find(L'\"', index + 5);	//查找IP地址前面的引号
+		index2 = web_page.find(L'\"', index + 12);	//查找IP地址后面的引号
+		if (index == wstring::npos || index1 == wstring::npos || index2 == wstring::npos)
+			ip_address.clear();
+		else
+			ip_address = web_page.substr(index1 + 1, index2 - index1 - 1);	//获取IP地址
+		if (ip_address.size() > 15 || ip_address.size() < 7)		//IP地址最长15个字符，最短7个字符
+			ip_address.clear();
+
+		return ip_address;
+	}
+	return wstring();
 }
 
 void CCommon::SetRect(CRect & rect, int x, int y, int width, int height)
