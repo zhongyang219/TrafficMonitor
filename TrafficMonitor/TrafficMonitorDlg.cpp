@@ -1212,7 +1212,28 @@ void CTrafficMonitorDlg::OnRButtonUp(UINT nFlags, CPoint point)
 	CMenu* pContextMenu = m_menu.GetSubMenu(0); //获取第一个弹出菜单，所以第一个菜单必须有子菜单 
 	CPoint point1;	//定义一个用于确定光标位置的位置  
 	GetCursorPos(&point1);	//获取当前光标的位置，以便使得菜单可以跟随光标
-	pContextMenu->SetDefaultItem(ID_NETWORK_INFO);
+	//设置默认菜单项
+	switch (theApp.m_main_wnd_data.double_click_action)
+	{
+	case DoubleClickAction::CONNECTION_INFO:
+		pContextMenu->SetDefaultItem(ID_NETWORK_INFO);
+		break;
+	//case DoubleClickAction::HISTORY_TRAFFIC:
+	//	pContextMenu->SetDefaultItem(ID_TRAFFIC_HISTORY);
+	//	break;
+	case DoubleClickAction::SHOW_MORE_INFO:
+		pContextMenu->SetDefaultItem(ID_SHOW_CPU_MEMORY);
+		break;
+	case DoubleClickAction::OPTIONS:
+		pContextMenu->SetDefaultItem(ID_OPTIONS);
+		break;
+	//case DoubleClickAction::CHANGE_SKIN:
+	//	pContextMenu->SetDefaultItem(ID_CHANGE_SKIN);
+	//	break;
+	default:
+		pContextMenu->SetDefaultItem(-1);
+		break;
+	}
 	pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
 
 	CDialogEx::OnRButtonUp(nFlags, point1);

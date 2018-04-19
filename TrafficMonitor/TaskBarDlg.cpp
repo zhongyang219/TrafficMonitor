@@ -578,6 +578,25 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
 	pMenu->CheckMenuItem(ID_SHOW_NOTIFY_ICON, MF_BYCOMMAND | (theApp.m_show_notify_icon ? MF_CHECKED : MF_UNCHECKED));
 
 	pMenu->SetDefaultItem(ID_NETWORK_INFO);
+	//设置默认菜单项
+	switch (theApp.m_taskbar_data.double_click_action)
+	{
+	case DoubleClickAction::CONNECTION_INFO:
+		pMenu->SetDefaultItem(ID_NETWORK_INFO);
+		break;
+	case DoubleClickAction::HISTORY_TRAFFIC:
+		pMenu->SetDefaultItem(ID_TRAFFIC_HISTORY);
+		break;
+	case DoubleClickAction::SHOW_MORE_INFO:
+		pMenu->SetDefaultItem(ID_SHOW_CPU_MEMORY2);
+		break;
+	case DoubleClickAction::OPTIONS:
+		pMenu->SetDefaultItem(ID_OPTIONS2);
+		break;
+	default:
+		pMenu->SetDefaultItem(-1);
+		break;
+	}
 }
 
 
