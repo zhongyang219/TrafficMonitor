@@ -122,6 +122,12 @@ struct GeneralSettingData
 	bool auto_run{ false };
 	bool allow_skin_cover_font{ true };
 	bool allow_skin_cover_text{ true };
+	//通知消息
+	bool traffic_tip_enable{ false };		//是否启用流量超出时提示
+	int traffic_tip_value;					//要提示的流量临界值
+	int traffic_tip_unit{};					//要提示的流量值的单位（0: MB, 1: GB）
+	bool memory_usage_tip_enable{ false };	//是否启用内存使用率超出提示
+	int memory_tip_value;			//要提示的内存使用率的临界值
 };
 
 enum class Alignment

@@ -1,6 +1,6 @@
 #pragma once
 #include "TabDlg.h"
-
+#include "SpinEdit.h"
 
 // CGeneralSettingsDlg dialog
 
@@ -26,7 +26,16 @@ public:
 protected:
 	bool m_auto_run_modified{ false };		//如果更改了开机自动运行的设置，则会置为true
 
+	//控件变量
+	CSpinEdit m_traffic_tip_edit;
+	CComboBox m_traffic_tip_combo;
+	CSpinEdit m_memory_tip_edit;
+
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+	//设置控件的启用和禁用
+	void SetTrafficTipControlEnable(bool enable);
+	void SetMemoryTipControlEnable(bool enable);
 
 	DECLARE_MESSAGE_MAP()
 public:
@@ -36,4 +45,7 @@ public:
 	afx_msg void OnBnClickedAutoRunCheck();
 	afx_msg void OnBnClickedAllowSkinFontCheck();
 	afx_msg void OnBnClickedAllowSkinDispStrCheck();
+	virtual void OnOK();
+	afx_msg void OnBnClickedTodayTrafficTipCheck();
+	afx_msg void OnBnClickedMemoryUsageTipCheck();
 };

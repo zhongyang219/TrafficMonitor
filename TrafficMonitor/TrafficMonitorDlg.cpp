@@ -447,6 +447,12 @@ void CTrafficMonitorDlg::LoadConfig()
 	theApp.m_main_wnd_data.double_click_action = static_cast<DoubleClickAction>(ini.GetInt(_T("config"), _T("double_click_action"), 0));
 
 	m_alow_out_of_border = ini.GetBool(_T("config"), _T("alow_out_of_border"), false);
+
+	theApp.m_general_data.traffic_tip_enable = ini.GetBool(L"notify_tip", L"traffic_tip_enable", false);
+	theApp.m_general_data.traffic_tip_value = ini.GetInt(L"notify_tip", L"traffic_tip_value", 200);
+	theApp.m_general_data.traffic_tip_unit = ini.GetInt(L"notify_tip", L"traffic_tip_unit", 0);
+	theApp.m_general_data.memory_usage_tip_enable = ini.GetBool(L"notify_tip", L"memory_usage_tip_enable", false);
+	theApp.m_general_data.memory_tip_value = ini.GetInt(L"notify_tip", L"memory_tip_value", 80);
 }
 
 void CTrafficMonitorDlg::SaveConfig()
@@ -500,6 +506,12 @@ void CTrafficMonitorDlg::SaveConfig()
 	ini.WriteInt(L"config", L"double_click_action", static_cast<int>(theApp.m_main_wnd_data.double_click_action));
 
 	ini.WriteInt(L"config", L"alow_out_of_border", m_alow_out_of_border);
+
+	ini.WriteBool(L"notify_tip", L"traffic_tip_enable", theApp.m_general_data.traffic_tip_enable);
+	ini.WriteInt(L"notify_tip", L"traffic_tip_value", theApp.m_general_data.traffic_tip_value);
+	ini.WriteInt(L"notify_tip", L"traffic_tip_unit", theApp.m_general_data.traffic_tip_unit);
+	ini.WriteBool(L"notify_tip", L"memory_usage_tip_enable", theApp.m_general_data.memory_usage_tip_enable);
+	ini.WriteInt(L"notify_tip", L"memory_tip_value", theApp.m_general_data.memory_tip_value);
 }
 
 void CTrafficMonitorDlg::AutoSelect()
@@ -624,6 +636,23 @@ void CTrafficMonitorDlg::DeleteNotifyIcon()
 	::Shell_NotifyIcon(NIM_DELETE, &m_ntIcon);
 	if (m_show_task_bar_wnd)
 		OpenTaskBarWnd();
+}
+
+void CTrafficMonitorDlg::ShowNotifyTip(const wchar_t * title, const wchar_t * message)
+{
+	//要显示通知区提示，必须先将通知区图标显示出来
+	if (!theApp.m_show_notify_icon)
+	{
+		//添加通知栏图标
+		AddNotifyIcon();
+		theApp.m_show_notify_icon = true;
+	}
+	//显示通知提示
+	m_ntIcon.uFlags |= NIF_INFO;
+	wcscpy_s(m_ntIcon.szInfo, message ? message : _T(""));
+	wcscpy_s(m_ntIcon.szInfoTitle, title ? title : _T(""));
+	::Shell_NotifyIcon(NIM_MODIFY, &m_ntIcon);
+	m_ntIcon.uFlags &= ~NIF_INFO;
 }
 
 void CTrafficMonitorDlg::SaveHistoryTraffic()
@@ -1178,7 +1207,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 					m_insert_to_taskbar_cnt++;
 					if (m_insert_to_taskbar_cnt == MAX_INSERT_TO_TASKBAR_CNT)
 					{
-						if (m_cannot_intsert_to_task_bar_warning)		//确保提示信息只弹出一次
+						if (m_tBarDlg->GetCannotInsertToTaskBar() && m_cannot_intsert_to_task_bar_warning)		//确保提示信息只弹出一次
 						{
 							MessageBox(_T("警告：窗口没有成功嵌入任务栏，可能已被安全软件阻止！"), NULL, MB_ICONWARNING);
 							m_cannot_intsert_to_task_bar_warning = false;
@@ -1190,6 +1219,37 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 					m_insert_to_taskbar_cnt = 0;
 				}
 			}
+		}
+
+		//检查是否要弹出内存使用率超出提示
+		if (theApp.m_general_data.memory_usage_tip_enable)
+		{
+			static int last_memory_usage;
+			if (last_memory_usage < theApp.m_general_data.memory_tip_value && theApp.m_memory_usage >= theApp.m_general_data.memory_tip_value)
+			{
+				CString info;
+				info.Format(_T("内存使用率已超过 %d%%！"), theApp.m_general_data.memory_tip_value);
+				ShowNotifyTip(L"TrafficMonitor 通知", info.GetString());
+			}
+			last_memory_usage = theApp.m_memory_usage;
+		}
+
+		//检查是否要弹出流量使用超出提示
+		if (theApp.m_general_data.traffic_tip_enable)
+		{
+			static __int64 last_today_traffic;
+			__int64 traffic_tip_value;
+			if (theApp.m_general_data.traffic_tip_unit == 0)
+				traffic_tip_value = static_cast<__int64>(theApp.m_general_data.traffic_tip_value) * 1024 * 1024;
+			else
+				traffic_tip_value = static_cast<__int64>(theApp.m_general_data.traffic_tip_value) * 1024 * 1024 * 1024;
+			if (last_today_traffic < traffic_tip_value && theApp.m_today_traffic >= traffic_tip_value)
+			{
+				CString info;
+				info.Format(_T("今日已经使用流量已超过 %d %s！"), theApp.m_general_data.traffic_tip_value, (theApp.m_general_data.traffic_tip_unit==0?_T("MB"):_T("GB")));
+				ShowNotifyTip(L"TrafficMonitor 通知", info.GetString());
+			}
+			last_today_traffic = theApp.m_today_traffic;
 		}
 
 		m_timer_cnt++;
@@ -1725,6 +1785,7 @@ void CTrafficMonitorDlg::OnAppAbout()
 {
 	// TODO: 在此添加命令处理程序代码
 	//弹出“关于”对话框
+	//ShowNotifyTip(L"test", L"测试消息");
 	CAboutDlg aDlg;
 	aDlg.DoModal();
 }
