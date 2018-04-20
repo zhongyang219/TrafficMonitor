@@ -131,7 +131,6 @@ void CDrawCommon::DrawBitmap(CBitmap & bitmap, CPoint start_point, CSize size, S
 
 void CDrawCommon::DrawBitmap(UINT bitmap_id, CPoint start_point, CSize size, StretchMode stretch_mode)
 {
-	CDC memDC;
 	CBitmap bitmap;
 	bitmap.LoadBitmap(bitmap_id);
 	DrawBitmap(bitmap, start_point, size, stretch_mode);
@@ -139,7 +138,6 @@ void CDrawCommon::DrawBitmap(UINT bitmap_id, CPoint start_point, CSize size, Str
 
 void CDrawCommon::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode)
 {
-	//CDC memDC;
 	CBitmap bitmap;
 	if (!bitmap.Attach(hbitmap))
 		return;

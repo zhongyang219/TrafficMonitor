@@ -738,10 +738,12 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 	if (optionsDlg.DoModal() == IDOK)
 	{
 		theApp.m_main_wnd_data = optionsDlg.m_tab1_dlg.m_data;
+		theApp.m_taskbar_data = optionsDlg.m_tab2_dlg.m_data;
+		theApp.m_general_data = optionsDlg.m_tab3_dlg.m_data;
+
 		ApplySettings();
 		SaveConfig();
 
-		theApp.m_taskbar_data = optionsDlg.m_tab2_dlg.m_data;
 		CTaskBarDlg::SaveConfig();
 		if (m_tBarDlg != nullptr)
 		{
@@ -751,7 +753,6 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 			OpenTaskBarWnd();
 		}
 
-		theApp.m_general_data = optionsDlg.m_tab3_dlg.m_data;
 		if(optionsDlg.m_tab3_dlg.IsAutoRunModified())
 			theApp.SetAutoRun(theApp.m_general_data.auto_run);
 		theApp.SaveConfig();
