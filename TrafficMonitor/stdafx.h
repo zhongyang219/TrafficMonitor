@@ -91,3 +91,5 @@ using std::ofstream;
 
 #define MIN_FONT_SIZE 5
 #define MAX_FONT_SIZE 72
+
+//#define COMPILE_FOR_WINXP
