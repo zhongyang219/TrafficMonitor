@@ -1,3 +1,3 @@
-<version>1.71</version>
-<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.71/TrafficMonitor_V1.71.7z</link>
-<contents>优化背景图片的显示效果，解决了由于图片缩放导致的失真的问题；\n增加不规则形状皮肤的支持；\n增加可以通过皮肤文件设定项目的对齐方式和字体；\n改善了优化通知区图标在125%缩放比时的显示效果；\n一些细节方面的改进。</contents>
+<version>1.72</version>
+<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.72/TrafficMonitor_V1.72.7z</link>
+<contents>新增：任务栏窗口数值右对齐的选项；\n新增：每个项目文本颜色单独设置的功能；\n新增：设置鼠标双击动作的功能；\n新增：设置当流量或内存使用率超过一定值时弹出通知的功能；\n新增：获取外网IP地址的功能；\n其他细节方面的改进。</contents>
