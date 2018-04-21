@@ -89,7 +89,10 @@ bool CIniHelper::GetIntArray(const wchar_t * AppName, const wchar_t * KeyName, i
 		index = str.find(L',', index + 1);
 		if (index0 == index)
 		{
-			values[i] = default_value;
+			if(i!=0)
+				values[i] = values[i - 1];		//如果后面已经没有数据，则填充为前一个数据
+			else
+				values[i] = default_value;
 		}
 		else
 		{

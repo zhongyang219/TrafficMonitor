@@ -430,7 +430,7 @@ void CTrafficMonitorDlg::LoadConfig()
 	m_position_y = ini.GetInt(_T("config"), _T("position_y"), -1);
 	m_auto_select = ini.GetBool(_T("connection"), _T("auto_select"), true);
 	//theApp.m_main_wnd_data.text_color = ini.GetInt(_T("config"), _T("text_color"), 16384);
-	ini.GetIntArray(_T("config"), _T("text_color"), (int*)theApp.m_main_wnd_data.text_colors, MAIN_WND_COLOR_NUM, 0);
+	ini.GetIntArray(_T("config"), _T("text_color"), (int*)theApp.m_main_wnd_data.text_colors, MAIN_WND_COLOR_NUM, 16384);
 	theApp.m_main_wnd_data.specify_each_item_color = ini.GetBool(_T("config"), _T("specify_each_item_color"), false);
 	theApp.m_hide_main_window = ini.GetBool(_T("config"), _T("hide_main_window"), false);
 	m_connection_name = CCommon::UnicodeToStr(ini.GetString(L"connection", L"connection_name", L"").c_str());
