@@ -49,7 +49,7 @@ void CTaskBarDlg::ShowInfo()
 	if (m_rect.IsRectEmpty() || m_rect.IsRectNull()) return;
 
 	//设置要绘制的文本颜色
-	int text_colors[TASKBAR_COLOR_NUM];
+	COLORREF text_colors[TASKBAR_COLOR_NUM];
 	if (theApp.m_taskbar_data.specify_each_item_color)
 	{
 		for (int i{}; i < TASKBAR_COLOR_NUM; i++)
@@ -69,8 +69,8 @@ void CTaskBarDlg::ShowInfo()
 	MemBitmap.CreateCompatibleBitmap(m_pDC, draw_width, m_rect.Height());
 	MemDC.SelectObject(&MemBitmap);
 	//绘图
-	CRect value_rect{ m_rect };
-	CRect lable_rect;
+	CRect value_rect{ m_rect };		//显示数值的矩形区域
+	CRect lable_rect;				//显示文本标签的矩形区域
 	value_rect.MoveToXY(0, 0);
 	MemDC.FillSolidRect(value_rect, theApp.m_taskbar_data.back_color);		//填充背景色
 	CDrawCommon draw;
@@ -156,13 +156,19 @@ void CTaskBarDlg::ShowInfo()
 		lable_rect.right = lable_rect.left + m_cm_lable_width;
 		value_rect.left += m_cm_lable_width;
 		str.Format(format_str, theApp.m_cpu_usage);
-		draw.DrawWindowText(value_rect, str, text_colors[5], (theApp.m_cpu_usage == 100 ? Alignment::LEFT : value_alignment), true);
-		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.cpu.c_str(), text_colors[4], Alignment::LEFT, true);
+		CRect rect_tmp{ value_rect };
+		if (theApp.m_cpu_usage == 100)		//如果CPU利用为100%，则将矩形框右侧扩大一些，防止显示不全
+			rect_tmp.right += theApp.DPI(5);
+		draw.DrawWindowText(rect_tmp, str, text_colors[5], value_alignment, true);		//绘制数值
+		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.cpu.c_str(), text_colors[4], Alignment::LEFT, true);				//绘制标签
 		//绘制内存利用率
 		value_rect.MoveToY(value_rect.bottom);
 		lable_rect.MoveToY(lable_rect.bottom);
 		str.Format(format_str, theApp.m_memory_usage);
-		draw.DrawWindowText(value_rect, str, text_colors[7], (theApp.m_memory_usage == 100 ? Alignment::LEFT : value_alignment), true);
+		rect_tmp = value_rect;
+		if (theApp.m_memory_usage == 100)		//如果内存利用为100%，则将矩形框右侧扩大一些，防止显示不全
+			rect_tmp.right += theApp.DPI(5);
+		draw.DrawWindowText(rect_tmp, str, text_colors[7], value_alignment, true);
 		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.memory.c_str(), text_colors[6], Alignment::LEFT, true);
 	}
 	//将缓冲区DC中的图像拷贝到屏幕中显示

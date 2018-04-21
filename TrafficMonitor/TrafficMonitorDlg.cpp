@@ -85,7 +85,13 @@ BOOL CAboutDlg::OnInitDialog()
 	GetDlgItemText(IDC_STATIC_VERSION, version_info);
 	version_info.Replace(_T("<version>"), VERSION);
 	SetDlgItemText(IDC_STATIC_VERSION, version_info);
-	
+
+	//设置最后编译日期
+	CString temp_str;
+	GetDlgItemText(IDC_STATIC_COPYRIGHT, temp_str);
+	temp_str.Replace(_T("<compile_date>"), COMPILE_DATE);
+	SetDlgItemText(IDC_STATIC_COPYRIGHT, temp_str);
+
 	m_Mytip.Create(this, TTS_ALWAYSTIP | TTS_NOPREFIX);
 	m_Mytip.AddTool(&m_mail, _T("向作者发送电子邮件\r\nmailto:zhongyang219@hotmail.com"));
 	//m_Mytip.AddTool(&m_check_update, _T("到百度网盘链接查看是否有更新\r\nhttp://pan.baidu.com/s/1c1LkPQ4"));

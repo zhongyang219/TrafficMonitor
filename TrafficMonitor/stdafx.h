@@ -50,7 +50,6 @@ using std::ofstream;
 #include <cmath>
 #include <afxinet.h>	//用于支持使用网络相关的类
 #include <afxwin.h>
-#include <afxwin.h>
 
 
 
@@ -79,7 +78,8 @@ using std::ofstream;
 
 #define MAX_INSERT_TO_TASKBAR_CNT 5		//尝试嵌入任务栏的最大次数
 
-#define VERSION L"1.71"
+#define VERSION L"1.72"
+#define COMPILE_DATE L"2018/04/21"
 
 #define MAX_NOTIFY_ICON 4		//可选的通知区图标数量
 
