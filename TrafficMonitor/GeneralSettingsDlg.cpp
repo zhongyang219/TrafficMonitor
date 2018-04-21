@@ -81,13 +81,14 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
 	((CButton*)GetDlgItem(IDC_AUTO_RUN_CHECK))->SetCheck(m_data.auto_run);
 
 	((CButton*)GetDlgItem(IDC_TODAY_TRAFFIC_TIP_CHECK))->SetCheck(m_data.traffic_tip_enable);
+	m_traffic_tip_edit.SetRange(1, 32767);
 	m_traffic_tip_edit.SetValue(m_data.traffic_tip_value);
 	m_traffic_tip_combo.AddString(_T("MB"));
 	m_traffic_tip_combo.AddString(_T("GB"));
 	m_traffic_tip_combo.SetCurSel(m_data.traffic_tip_unit);
 	((CButton*)GetDlgItem(IDC_MEMORY_USAGE_TIP_CHECK))->SetCheck(m_data.memory_usage_tip_enable);
-	m_memory_tip_edit.SetValue(m_data.memory_tip_value);
 	m_memory_tip_edit.SetRange(1, 100);
+	m_memory_tip_edit.SetValue(m_data.memory_tip_value);
 	SetTrafficTipControlEnable(m_data.traffic_tip_enable);
 	SetMemoryTipControlEnable(m_data.memory_usage_tip_enable);
 
