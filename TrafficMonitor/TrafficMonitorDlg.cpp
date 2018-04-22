@@ -456,7 +456,7 @@ void CTrafficMonitorDlg::LoadConfig()
 	theApp.m_main_wnd_data.swap_up_down = ini.GetBool(_T("config"), _T("swap_up_down"), false);
 	theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen = ini.GetBool(_T("config"), _T("hide_main_wnd_when_fullscreen"), true);
 
-	theApp.m_main_wnd_data.font_name = ini.GetString(_T("config"), _T("font_name"), _T("微软雅黑")).c_str();
+	theApp.m_main_wnd_data.font_name = ini.GetString(_T("config"), _T("font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();
 	theApp.m_main_wnd_data.font_size = ini.GetInt(_T("config"), _T("font_size"), 10);
 
 	theApp.m_main_wnd_data.disp_str.up = ini.GetString(L"config", L"up_string", CCommon::LoadText(IDS_UPLOAD_DISP, _T(": $")));
@@ -1613,24 +1613,28 @@ void CTrafficMonitorDlg::OnMove(int x, int y)
 afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
 {
 	bool dialog_exist{ false };
-	const int WIND_NUM{ 7 };
-	//const CString diloge_title[WIND_NUM]{ _T("关于 TrafficMonitor"),_T("捐助"), _T("历史流量统计"), _T("连接详情"), _T("更换皮肤"), _T("选项设置"), _T("更换通知区图标") };
-	const CString diloge_title[WIND_NUM]{ CCommon::LoadText(IDS_TITLE_ABOUT), CCommon::LoadText(IDS_TITLE_DONATE), CCommon::LoadText(IDS_TITLE_HISTORY_TRAFFIC),
-		CCommon::LoadText(IDS_TITLE_CONNECTION_DETIAL), CCommon::LoadText(IDS_TITLE_CHANGE_SKIN), CCommon::LoadText(IDS_TITLE_OPTION), CCommon::LoadText(IDS_TITLE_CHANGE_ICON) };
 	HWND handle{};
-	//依次查找程序中的每一个对话框，如果找到一个没有关闭的对话框时，则不允许弹出右键菜单，防止用户在此时退出程序
-	for (int i{}; i < WIND_NUM; i++)
+	if (lParam == WM_LBUTTONDOWN || lParam == WM_RBUTTONUP || lParam == WM_LBUTTONDBLCLK)
 	{
-		handle = ::FindWindow(NULL, diloge_title[i]);
-		if (handle != NULL)
+		const int WIND_NUM{ 7 };
+		//const CString diloge_title[WIND_NUM]{ _T("关于 TrafficMonitor"),_T("捐助"), _T("历史流量统计"), _T("连接详情"), _T("更换皮肤"), _T("选项设置"), _T("更换通知区图标") };
+		const CString diloge_title[WIND_NUM]{ CCommon::LoadText(IDS_TITLE_ABOUT), CCommon::LoadText(IDS_TITLE_DONATE), CCommon::LoadText(IDS_TITLE_HISTORY_TRAFFIC),
+			CCommon::LoadText(IDS_TITLE_CONNECTION_DETIAL), CCommon::LoadText(IDS_TITLE_CHANGE_SKIN), CCommon::LoadText(IDS_TITLE_OPTION), CCommon::LoadText(IDS_TITLE_CHANGE_ICON) };
+		//依次查找程序中的每一个对话框，如果找到一个没有关闭的对话框时，则不允许弹出右键菜单，防止用户在此时退出程序
+		for (int i{}; i < WIND_NUM; i++)
 		{
-			HWND hParent = ::GetParent(handle);		//查找找到的窗口的父窗口的句柄
-			if (hParent == m_hWnd)			//只有当找到的窗口的父窗口是程序主窗口时，才说明找到了
+			handle = ::FindWindow(NULL, diloge_title[i]);
+			if (handle != NULL)
 			{
-				dialog_exist = true;
-				break;
+				HWND hParent = ::GetParent(handle);		//查找找到的窗口的父窗口的句柄
+				if (hParent == m_hWnd || (m_tBarDlg!=nullptr && hParent==m_tBarDlg->m_hWnd))			//只有当找到的窗口的父窗口是程序主窗口或任务栏窗口时，才说明找到了
+				{
+					dialog_exist = true;
+					break;
+				}
 			}
 		}
+
 	}
 
 	if (lParam == WM_LBUTTONDOWN)
