@@ -5,9 +5,8 @@ Traffic Monitor是一款用于Windows平台的网速监控悬浮窗软件，可�
 * 如果电脑有多个网卡，支持自动和手动选择网络连接<br>
 * 查看网络详细信息<br>
 * 支持嵌入到任务栏显示<br>
-* 支持更换皮肤<br>
+* 支持更换皮肤和自定义皮肤<br>
 * 历史流量统计<br>
-* 自定义皮肤<br>
 # 截图
 主悬浮窗：<br>
 ![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/main1.png)<br>
@@ -29,7 +28,8 @@ Traffic Monitor是一款用于Windows平台的网速监控悬浮窗软件，可�
 # 选项设置
 ![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/option.png)<br>
 在右键菜单选择“选项...”可以进入选项设置。在选项设置对话框中，可以单独设置主窗口和任务栏窗口的文本颜色、字体、背景颜色、网速单位，同时可以自定义显示的文本。还可以选择交换上传和下载的位置。<br>
-在“常规设置”选项卡中，可以设置是否在程序时自动检查更新，以及是否需要在开机是自动进行。
+在“常规设置”选项卡中，可以设置是否在程序时自动检查更新，以及是否需要在开机是自动运行。可以设置在什么时候需要发出消息通知。<br>
+从1.72版本开始，支持每个项目文本颜色单独设置。勾选“指定每个项目的颜色”后，点击“文本颜色”右边的颜色框，会弹出详细颜色设置的对话框，可以在这里单独指定每个项目的颜色。<br>
 # 更新日志
 V1.67以后版本的更新日志请参见releases页面：https://github.com/zhongyang219/TrafficMonitor/releases
 ## V1.67 (2018/01/21)
