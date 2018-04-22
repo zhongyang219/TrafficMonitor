@@ -144,8 +144,12 @@ void CGeneralSettingsDlg::OnOK()
 	// TODO: 在此添加专用代码和/或调用基类
 	//获取消息提示的设置
 	m_data.traffic_tip_value = m_traffic_tip_edit.GetValue();
+	if (m_data.traffic_tip_value < 1) m_data.traffic_tip_value = 1;
+	if (m_data.traffic_tip_value > 32767) m_data.traffic_tip_value = 32767;
 	m_data.traffic_tip_unit = m_traffic_tip_combo.GetCurSel();
 	m_data.memory_tip_value = m_memory_tip_edit.GetValue();
+	if (m_data.memory_tip_value < 1) m_data.memory_tip_value = 1;
+	if (m_data.memory_tip_value > 100) m_data.memory_tip_value = 100;
 	//获取语言的设置
 	m_data.language = static_cast<Language>(m_language_combo.GetCurSel());
 	if (m_data.language != theApp.m_general_data.language)
