@@ -27,6 +27,7 @@ void CGeneralSettingsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TODAY_TRAFFIC_TIP_EDIT, m_traffic_tip_edit);
 	DDX_Control(pDX, IDC_TODAY_TRAFFIC_TIP_COMBO, m_traffic_tip_combo);
 	DDX_Control(pDX, IDC_MEMORY_USAGE_TIP_EDIT, m_memory_tip_edit);
+	DDX_Control(pDX, IDC_LANGUAGE_COMBO, m_language_combo);
 }
 
 void CGeneralSettingsDlg::SetTrafficTipControlEnable(bool enable)
@@ -92,6 +93,11 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
 	SetTrafficTipControlEnable(m_data.traffic_tip_enable);
 	SetMemoryTipControlEnable(m_data.memory_usage_tip_enable);
 
+	m_language_combo.AddString(CCommon::LoadText(IDS_FOLLOWING_SYSTEM));
+	m_language_combo.AddString(_T("English"));
+	m_language_combo.AddString(_T("简体中文"));
+	m_language_combo.SetCurSel(static_cast<int>(m_data.language));
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
 }
@@ -140,6 +146,13 @@ void CGeneralSettingsDlg::OnOK()
 	m_data.traffic_tip_value = m_traffic_tip_edit.GetValue();
 	m_data.traffic_tip_unit = m_traffic_tip_combo.GetCurSel();
 	m_data.memory_tip_value = m_memory_tip_edit.GetValue();
+	//获取语言的设置
+	m_data.language = static_cast<Language>(m_language_combo.GetCurSel());
+	if (m_data.language != theApp.m_general_data.language)
+	{
+		MessageBox(CCommon::LoadText(IDS_LANGUAGE_CHANGE_INFO), NULL, MB_ICONINFORMATION | MB_OK);;
+	}
+
 	CTabDlg::OnOK();
 }
 

@@ -99,11 +99,11 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 
 	m_toolTip.Create(this);
 	m_toolTip.SetMaxTipWidth(theApp.DPI(300));
-	m_toolTip.AddTool(GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK2), _T("勾选后，将减少网速显示的小数点位数，并且单位不显示“B”"));
+	m_toolTip.AddTool(GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK2), CCommon::LoadText(IDS_SPEED_SHORT_MODE_TIP));
 
-	m_unit_combo.AddString(_T("自动"));
-	m_unit_combo.AddString(_T("固定为 KB/s"));
-	m_unit_combo.AddString(_T("固定为 MB/s"));
+	m_unit_combo.AddString(CCommon::LoadText(IDS_AUTO));
+	m_unit_combo.AddString(CCommon::LoadText(IDS_FIXED_AS, _T(" KB/s")));
+	m_unit_combo.AddString(CCommon::LoadText(IDS_FIXED_AS, _T(" MB/s")));
 	m_unit_combo.SetCurSel(static_cast<int>(m_data.speed_unit));
 
 	m_hide_unit_chk.SetCheck(m_data.hide_unit);
@@ -129,13 +129,13 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 
 	((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->SetCheck(m_data.specify_each_item_color);
 
-	m_double_click_combo.AddString(_T("打开连接详情"));
-	m_double_click_combo.AddString(_T("打开历史流量统计"));
-	m_double_click_combo.AddString(_T("显示/隐藏更多信息"));
-	m_double_click_combo.AddString(_T("打开选项设置"));
-	m_double_click_combo.AddString(_T("打开任务管理器"));
-	m_double_click_combo.AddString(_T("更换皮肤"));
-	m_double_click_combo.AddString(_T("无"));
+	m_double_click_combo.AddString(CCommon::LoadText(IDS_OPEN_CONNECTION_DETIAL));
+	m_double_click_combo.AddString(CCommon::LoadText(IDS_OPEN_HISTORICAL_TRAFFIC));
+	m_double_click_combo.AddString(CCommon::LoadText(IDS_SHOW_HIDE_MORE_INFO));
+	m_double_click_combo.AddString(CCommon::LoadText(IDS_OPEN_OPTION_SETTINGS));
+	m_double_click_combo.AddString(CCommon::LoadText(IDS_OPEN_TASK_MANAGER));
+	m_double_click_combo.AddString(CCommon::LoadText(IDS_CHANGE_SKIN));
+	m_double_click_combo.AddString(CCommon::LoadText(IDS_NONE));
 	m_double_click_combo.SetCurSel(static_cast<int>(m_data.double_click_action));
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -202,10 +202,10 @@ void CMainWndSettingsDlg::OnEnChangeMemoryEdit()
 void CMainWndSettingsDlg::OnBnClickedSetDefaultButton()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	m_data.disp_str.up = L"上传: ";
-	m_data.disp_str.down = L"下载: ";
+	m_data.disp_str.up = CCommon::LoadText(IDS_UPLOAD_DISP, _T(": "));
+	m_data.disp_str.down = CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": "));
 	m_data.disp_str.cpu = L"CPU: ";
-	m_data.disp_str.memory = L"内存: ";
+	m_data.disp_str.memory = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
 	SetDlgItemText(IDC_UPLOAD_EDIT, m_data.disp_str.up.c_str());
 	SetDlgItemText(IDC_DOWNLOAD_EDIT, m_data.disp_str.down.c_str());
 	SetDlgItemText(IDC_CPU_EDIT, m_data.disp_str.cpu.c_str());
@@ -299,7 +299,7 @@ void CMainWndSettingsDlg::OnOK()
 	if (font_size > MAX_FONT_SIZE || font_size < MIN_FONT_SIZE)
 	{
 		CString info;
-		info.Format(_T("字体大小必须在 %d~%d 之间！"), MIN_FONT_SIZE, MAX_FONT_SIZE);
+		info.Format(CCommon::LoadText(IDS_FONT_SIZE_WARNING), MIN_FONT_SIZE, MAX_FONT_SIZE);
 		MessageBox(info, NULL, MB_OK | MB_ICONWARNING);
 	}
 	else

@@ -66,29 +66,29 @@ void CNetworkInfoDlg::GetIPAddress()
 void CNetworkInfoDlg::ShowInfo()
 {
 	CString temp;
-	m_info_list.InsertItem(0, _T("接口名"));
+	m_info_list.InsertItem(0, CCommon::LoadText(IDS_INTERFACE_NAME));
 	m_info_list.SetItemText(0, 1, m_network_info.wszName);
 
-	m_info_list.InsertItem(1, _T("接口描述"));
+	m_info_list.InsertItem(1, CCommon::LoadText(IDS_INTERFACE_DESCRIPTION));
 	m_info_list.SetItemText(1, 1, CCommon::StrToUnicode((const char*)m_network_info.bDescr).c_str());
 
-	m_info_list.InsertItem(2, _T("连接类型"));
+	m_info_list.InsertItem(2, CCommon::LoadText(IDS_CONNECTION_TYPE));
 	switch (m_network_info.dwType)
 	{
-	case IF_TYPE_OTHER: temp = _T("其他类型网络"); break;
-	case IF_TYPE_ETHERNET_CSMACD: temp = _T("以太网网络"); break;
-	case IF_TYPE_ISO88025_TOKENRING: temp = _T("令牌环网络"); break;
-	case IF_TYPE_FDDI: temp = _T("光纤分布式数据接口 (FDDI) 网络"); break;
-	case IF_TYPE_PPP: temp = _T("PPP 网络"); break;
-	case IF_TYPE_SOFTWARE_LOOPBACK: temp = _T("软件环回网络"); break;
-	case IF_TYPE_ATM: temp = _T("ATM 网络"); break;
-	case IF_TYPE_IEEE80211: temp = _T("IEEE 802.11 无线网络"); break;
-	case IF_TYPE_TUNNEL: temp = _T("隧道类型封装网络"); break;
-	case IF_TYPE_IEEE1394: temp = _T("IEEE 1394 (Firewire) 高性能串行总线网络"); break;
-	case IF_TYPE_IEEE80216_WMAN: temp = _T("对于 WiMax 设备的移动宽带"); break;
-	case IF_TYPE_WWANPP: temp = _T("基于 GSM 网络设备的移动宽带"); break;
-	case IF_TYPE_WWANPP2: temp = _T("基于 CDMA 的设备移动宽带"); break;
-	default: temp = _T("未知网络"); break;
+	case IF_TYPE_OTHER: temp = CCommon::LoadText(IDS_IF_TYPE_OTHER); break;
+	case IF_TYPE_ETHERNET_CSMACD: temp = CCommon::LoadText(IDS_IF_TYPE_ETHERNET_CSMACD); break;
+	case IF_TYPE_ISO88025_TOKENRING: temp = CCommon::LoadText(IDS_IF_TYPE_ISO88025_TOKENRING); break;
+	case IF_TYPE_FDDI: temp = CCommon::LoadText(IDS_IF_TYPE_FDDI); break;
+	case IF_TYPE_PPP: temp = CCommon::LoadText(IDS_IF_TYPE_PPP); break;
+	case IF_TYPE_SOFTWARE_LOOPBACK: temp = CCommon::LoadText(IDS_IF_TYPE_SOFTWARE_LOOPBACK); break;
+	case IF_TYPE_ATM: temp = CCommon::LoadText(IDS_IF_TYPE_ATM); break;
+	case IF_TYPE_IEEE80211: temp = CCommon::LoadText(IDS_IF_TYPE_IEEE80211); break;
+	case IF_TYPE_TUNNEL: temp = CCommon::LoadText(IDS_IF_TYPE_TUNNEL); break;
+	case IF_TYPE_IEEE1394: temp = CCommon::LoadText(IDS_IF_TYPE_IEEE1394); break;
+	case IF_TYPE_IEEE80216_WMAN: temp = CCommon::LoadText(IDS_IF_TYPE_IEEE80216_WMAN); break;
+	case IF_TYPE_WWANPP: temp = CCommon::LoadText(IDS_IF_TYPE_WWANPP); break;
+	case IF_TYPE_WWANPP2: temp = CCommon::LoadText(IDS_IF_TYPE_WWANPP2); break;
+	default: temp = CCommon::LoadText(IDS_UNKNOW_CONNECTION); break;
 	}
 	m_info_list.SetItemText(2, 1, temp);
 
@@ -96,11 +96,11 @@ void CNetworkInfoDlg::ShowInfo()
 	//temp.Format(_T("%u"), m_network_info.dwMtu);
 	//m_info_list.SetItemText(3, 1, temp);
 
-	m_info_list.InsertItem(3, _T("速度"));
+	m_info_list.InsertItem(3, CCommon::LoadText(IDS_SPEED));
 	temp.Format(_T("%dMbps"), m_network_info.dwSpeed / 1000000);
 	m_info_list.SetItemText(3, 1, temp);
 
-	m_info_list.InsertItem(4, _T("适配器物理地址"));
+	m_info_list.InsertItem(4, CCommon::LoadText(IDS_ADAPTER_PHYSICAL_ADDRESS));
 	temp = _T("");
 	char buff[3];
 	for (int i{}; i < m_network_info.dwPhysAddrLen; i++)
@@ -113,13 +113,13 @@ void CNetworkInfoDlg::ShowInfo()
 	}
 	m_info_list.SetItemText(4, 1, temp);
 
-	m_info_list.InsertItem(5, _T("IP地址"));
+	m_info_list.InsertItem(5, CCommon::LoadText(IDS_IP_ADDRESS));
 	m_info_list.SetItemText(5, 1, m_ip_address.c_str());
 
-	m_info_list.InsertItem(6, _T("子网掩码"));
+	m_info_list.InsertItem(6, CCommon::LoadText(IDS_SUBNET_MASK));
 	m_info_list.SetItemText(6, 1, m_subnet_mask.c_str());
 
-	m_info_list.InsertItem(7, _T("默认网关"));
+	m_info_list.InsertItem(7, CCommon::LoadText(IDS_DEFAULT_GATEWAY));
 	m_info_list.SetItemText(7, 1, m_default_gateway.c_str());
 
 	////temp.Format(_T("物理地址长度：%d\r\n"), m_network_info.dwPhysAddrLen);
@@ -132,43 +132,43 @@ void CNetworkInfoDlg::ShowInfo()
 	//m_info_list.InsertItem(5, _T("管理员状态"));
 	//m_info_list.SetItemText(5, 1, m_network_info.dwAdminStatus ? _T("启用") : _T("禁用"));
 
-	m_info_list.InsertItem(8, _T("连接状态"));
+	m_info_list.InsertItem(8, CCommon::LoadText(IDS_OPERATIONAL_STATUS));
 	switch (m_network_info.dwOperStatus)
 	{
-	case IF_OPER_STATUS_NON_OPERATIONAL: temp = _T("LAN 适配器已被禁用"); break;
-	case IF_OPER_STATUS_UNREACHABLE: temp = _T("WAN 适配器未连接"); break;
-	case IF_OPER_STATUS_DISCONNECTED: temp = _T("网络电缆断开连接或无载体"); break;
-	case IF_OPER_STATUS_CONNECTING: temp = _T("WAN 适配器正在连接"); break;
-	case IF_OPER_STATUS_CONNECTED: temp = _T("WAN 适配器连接到远程对等方"); break;
-	case IF_OPER_STATUS_OPERATIONAL: temp = _T("LAN 适配器已连接"); break;
-	default: temp = _T("未知状态"); break;
+	case IF_OPER_STATUS_NON_OPERATIONAL: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_NON_OPERATIONAL); break;
+	case IF_OPER_STATUS_UNREACHABLE: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_UNREACHABLE); break;
+	case IF_OPER_STATUS_DISCONNECTED: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_DISCONNECTED); break;
+	case IF_OPER_STATUS_CONNECTING: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_CONNECTING); break;
+	case IF_OPER_STATUS_CONNECTED: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_CONNECTED); break;
+	case IF_OPER_STATUS_OPERATIONAL: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_OPERATIONAL); break;
+	default: temp = CCommon::LoadText(IDS_UNKNOW_STATUS); break;
 	}
 	m_info_list.SetItemText(8, 1, temp);
 
-	m_info_list.InsertItem(9, _T("已接收字节数"));
+	m_info_list.InsertItem(9, CCommon::LoadText(IDS_BYTES_RECEIVED));
 	temp.Format(_T("%u (%s)"), m_network_info.dwInOctets, CCommon::DataSizeToString(m_network_info.dwInOctets));
 	m_info_list.SetItemText(9, 1, temp);
 
-	m_info_list.InsertItem(10, _T("已发送字节数"));
+	m_info_list.InsertItem(10, CCommon::LoadText(IDS_BYTES_SENT));
 	temp.Format(_T("%u (%s)"), m_network_info.dwOutOctets, CCommon::DataSizeToString(m_network_info.dwOutOctets));
 	m_info_list.SetItemText(10, 1, temp);
 
-	m_info_list.InsertItem(11, _T("自程序启动以来已接收字节数"));
+	m_info_list.InsertItem(11, CCommon::LoadText(IDS_BYTES_RECEIVED_SINCE_START));
 	temp.Format(_T("%u (%s)"), m_in_bytes, CCommon::DataSizeToString(m_in_bytes));
 	m_info_list.SetItemText(11, 1, temp);
 
-	m_info_list.InsertItem(12, _T("自程序启动以来已发送字节数"));
+	m_info_list.InsertItem(12, CCommon::LoadText(IDS_BYTES_SENT_SINCE_START));
 	temp.Format(_T("%u (%s)"), m_out_bytes, CCommon::DataSizeToString(m_out_bytes));
 	m_info_list.SetItemText(12, 1, temp);
 
-	m_info_list.InsertItem(13, _T("程序已运行时间"));
+	m_info_list.InsertItem(13, CCommon::LoadText(IDS_PROGRAM_ELAPSED_TIME));
 	SYSTEMTIME current_time, time;
 	GetLocalTime(&current_time);
 	time = CCommon::CompareSystemTime(current_time, m_start_time);
-	temp.Format(_T("%d小时%d分%d秒"), time.wHour, time.wMinute, time.wSecond);
+	temp.Format(CCommon::LoadText(IDS_HOUR_MINUTE_SECOND), time.wHour, time.wMinute, time.wSecond);
 	m_info_list.SetItemText(13, 1, temp);
 
-	m_info_list.InsertItem(14, _T("外网IP地址"));
+	m_info_list.InsertItem(14, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS));
 	m_info_list.SetItemText(14, 1, m_internet_ip_address.c_str());
 }
 
@@ -179,7 +179,7 @@ UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
 	if (!p_instance->m_internet_ip_address.empty())
 		p_instance->m_info_list.SetItemText(14, 1, p_instance->m_internet_ip_address.c_str());
 	else
-		p_instance->m_info_list.SetItemText(14, 1, _T("获取失败"));
+		p_instance->m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_GET_FAILED));
 	return 0;
 }
 
@@ -216,8 +216,8 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	int width0, width1;
 	width0 = rect.Width() / 4;
 	width1 = rect.Width() - width0 - theApp.DPI(21);
-	m_info_list.InsertColumn(0, _T("项目"), LVCFMT_LEFT, width0);		//插入第0列
-	m_info_list.InsertColumn(1, _T("值"), LVCFMT_LEFT, width1);		//插入第1列
+	m_info_list.InsertColumn(0, CCommon::LoadText(IDS_ITEM), LVCFMT_LEFT, width0);		//插入第0列
+	m_info_list.InsertColumn(1, CCommon::LoadText(IDS_VALUE), LVCFMT_LEFT, width1);		//插入第1列
 
 	//显示列表中的信息
 	ShowInfo();
@@ -239,7 +239,7 @@ void CNetworkInfoDlg::OnCopyText()
 {
 	// TODO: 在此添加命令处理程序代码
 	if (!CCommon::CopyStringToClipboard(wstring(m_selected_string)))
-		MessageBox(_T("复制到剪贴板失败！"), NULL, MB_ICONWARNING);
+		MessageBox(CCommon::LoadText(IDS_COPY_TO_CLIPBOARD_FAILED), NULL, MB_ICONWARNING);
 }
 
 

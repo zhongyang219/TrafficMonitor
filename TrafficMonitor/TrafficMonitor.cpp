@@ -38,6 +38,7 @@ void CTrafficMonitorApp::LoadConfig()
 	m_general_data.check_update_when_start = ini.GetBool(_T("general"), _T("check_update_when_start"), true);
 	m_general_data.allow_skin_cover_font = ini.GetBool(_T("general"), _T("allow_skin_cover_font"), true);
 	m_general_data.allow_skin_cover_text = ini.GetBool(_T("general"), _T("allow_skin_cover_text"), true);
+	m_general_data.language = static_cast<Language>(ini.GetInt(_T("general"), _T("language"), 0));
 }
 
 void CTrafficMonitorApp::SaveConfig()
@@ -49,6 +50,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteBool(_T("general"), _T("check_update_when_start"), m_general_data.check_update_when_start);
 	ini.WriteBool(_T("general"), _T("allow_skin_cover_font"), m_general_data.allow_skin_cover_font);
 	ini.WriteBool(_T("general"), _T("allow_skin_cover_text"), m_general_data.allow_skin_cover_text);
+	ini.WriteInt(_T("general"), _T("language"), static_cast<int>(m_general_data.language));
 }
 
 int CTrafficMonitorApp::DPI(int pixel)
@@ -78,7 +80,7 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
 	if (!CCommon::GetURL(L"https://raw.githubusercontent.com/zhongyang219/TrafficMonitor/master/version.info", version_info))		//获取版本信息
 	{
 		if(message)
-			AfxMessageBox(_T("检查更新失败，请检查你的网络连接！"), MB_OK | MB_ICONWARNING);
+			AfxMessageBox(CCommon::LoadText(IDS_CHECK_UPDATE_FAILD), MB_OK | MB_ICONWARNING);
 		return;
 	}
 
@@ -100,16 +102,16 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
 	if (index == wstring::npos || index1 == wstring::npos || index2 == wstring::npos || index3 == wstring::npos || version.empty() || link.empty())
 	{
 		if (message)
-			AfxMessageBox(_T("检查更新失败，从远程更新文件获取到了错误的信息，请联系作者！"), MB_OK | MB_ICONWARNING);
+			AfxMessageBox(CCommon::LoadText(IDS_CHECK_UPDATE_ERROR), MB_OK | MB_ICONWARNING);
 		return;
 	}
 	if (version > VERSION)		//如果服务器上的版本大于本地版本
 	{
 		CString info;
 		if (contents.empty())
-			info.Format(_T("检测到新版本 V%s，是否前往更新？"), version.c_str());
+			info.Format(CCommon::LoadText(IDS_UPDATE_AVLIABLE), version.c_str());
 		else
-			info.Format(_T("检测到新版本 V%s，更新内容：\r\n%s\r\n是否前往更新？"), version.c_str(), contents_str);
+			info.Format(CCommon::LoadText(IDS_UPDATE_AVLIABLE2), version.c_str(), contents_str);
 			
 		if (AfxMessageBox(info, MB_YESNO | MB_ICONQUESTION) == IDYES)
 		{
@@ -119,7 +121,7 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
 	else
 	{
 		if(message)
-			AfxMessageBox(_T("当前已经是最新版本。"), MB_OK | MB_ICONINFORMATION);
+			AfxMessageBox(CCommon::LoadText(IDS_ALREADY_UPDATED), MB_OK | MB_ICONINFORMATION);
 	}
 }
 
@@ -147,14 +149,14 @@ void CTrafficMonitorApp::SetAutoRun(bool auto_run)
 	//打开注册表项
 	if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
 	{
-		AfxMessageBox(_T("无法实现开机自启动，在注册表中找不到相应的键值！"), MB_OK | MB_ICONWARNING);
+		AfxMessageBox(CCommon::LoadText(IDS_AUTORUN_FAILED_NO_KEY), MB_OK | MB_ICONWARNING);
 		return;
 	}
 	if (auto_run)		//写入注册表项
 	{
 		if (key.SetStringValue(_T("TrafficMonitor"), module_path.c_str()) != ERROR_SUCCESS)
 		{
-			AfxMessageBox(_T("注册表项写入失败，可能该键值没有权限访问！"), MB_OK | MB_ICONWARNING);
+			AfxMessageBox(CCommon::LoadText(IDS_AUTORUN_FAILED_NO_ACCESS), MB_OK | MB_ICONWARNING);
 			return;
 		}
 	}
@@ -167,7 +169,7 @@ void CTrafficMonitorApp::SetAutoRun(bool auto_run)
 			return;
 		if (key.DeleteValue(_T("TrafficMonitor")) != ERROR_SUCCESS)
 		{
-			AfxMessageBox(_T("注册表项删除失败，可能该键值没有权限访问！"), MB_OK | MB_ICONWARNING);
+			AfxMessageBox(CCommon::LoadText(IDS_AUTORUN_DELETE_FAILED), MB_OK | MB_ICONWARNING);
 			return;
 		}
 	}
@@ -247,12 +249,20 @@ BOOL CTrafficMonitorApp::InitInstance()
 			//CCommon::WriteLog(buff, _T(".\\start.log"));
 			if (!m_no_multistart_warning)
 			{
-				AfxMessageBox(_T("已经有一个程序正在运行。"));
+				AfxMessageBox(CCommon::LoadText(IDS_AN_INSTANCE_RUNNING));
 			}
 			return FALSE;
 		}
 	}
 #endif
+
+	//初始化界面语言
+	switch (m_general_data.language)
+	{
+	case Language::ENGLISH: SetThreadUILanguage(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); break;
+	case Language::SIMPLIFIED_CHINESE: SetThreadUILanguage(MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)); break;
+	default: break;
+	}
 
 	SaveConfig();
 

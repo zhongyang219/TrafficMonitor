@@ -96,10 +96,10 @@ BOOL CAboutDlg::OnInitDialog()
 	SetDlgItemText(IDC_STATIC_COPYRIGHT, temp_str);
 
 	m_Mytip.Create(this, TTS_ALWAYSTIP | TTS_NOPREFIX);
-	m_Mytip.AddTool(&m_mail, _T("向作者发送电子邮件\r\nmailto:zhongyang219@hotmail.com"));
+	m_Mytip.AddTool(&m_mail, CCommon::LoadText(IDS_SEND_EMAIL_TO_ATHOUR, _T("\r\nmailto:zhongyang219@hotmail.com")));
 	//m_Mytip.AddTool(&m_check_update, _T("到百度网盘链接查看是否有更新\r\nhttp://pan.baidu.com/s/1c1LkPQ4"));
-	m_Mytip.AddTool(&m_github, _T("转到此项目在GitHub上的页面\r\nhttps://github.com/zhongyang219/TrafficMonitor"));
-	m_Mytip.AddTool(&m_donate, _T("捐助作者"));
+	m_Mytip.AddTool(&m_github, CCommon::LoadText(IDS_GOTO_GITHUB, _T("\r\nhttps://github.com/zhongyang219/TrafficMonitor")));
+	m_Mytip.AddTool(&m_donate, CCommon::LoadText(IDS_DONATE_ATHOUR));
 	m_Mytip.SetDelayTime(300);	//设置延迟
 	m_Mytip.SetMaxTipWidth(800);
 
@@ -274,33 +274,42 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 {
 	CString tip_info;
 	CString temp;
-	temp.Format(_T("今日已使用流量: %s"), CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_traffic / 1024)));
+	temp.Format(_T("%s: %s"), CCommon::LoadText(IDS_TRAFFIC_USED_TODAY),
+		CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_traffic / 1024)));
 	tip_info += temp;
 	if (m_show_more_info)
 	{
 		if (!m_layout_data.show_up_l)		//如果主窗口中没有显示上传速度，则在提示信息中显示上传速度
 		{
-			temp.Format(_T("\r\n上传: %s/s"), CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit));
+			temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_UPLOAD),
+				CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, 
+				theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit));
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_down_l)
 		{
-			temp.Format(_T("\r\n下载: %s/s"), CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit));
+			temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_DOWNLOAD),
+				CCommon::DataSizeToString(theApp.m_in_speed,
+				theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit));
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_cpu_l)
 		{
-			temp.Format(_T("\r\nCPU使用: %d%%"), theApp.m_cpu_usage);
+			temp.Format(_T("\r\n%s: %d%%"), CCommon::LoadText(IDS_CPU_USAGE), theApp.m_cpu_usage);
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_memory_l)
 		{
-			temp.Format(_T("\r\n内存使用：%s/%s (%d%%)"), CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory), theApp.m_memory_usage);
+			temp.Format(_T("\r\n%s: %s/%s (%d%%)"), CCommon::LoadText(IDS_MEMORY_USAGE),
+				CCommon::KBytesToString(theApp.m_used_memory),
+				CCommon::KBytesToString(theApp.m_total_memory), theApp.m_memory_usage);
 			tip_info += temp;
 		}
 		else
 		{
-			temp.Format(_T("\r\n内存使用：%s/%s"), CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory));
+			temp.Format(_T("\r\n%s: %s/%s"), CCommon::LoadText(IDS_MEMORY_USAGE),
+				CCommon::KBytesToString(theApp.m_used_memory),
+				CCommon::KBytesToString(theApp.m_total_memory));
 			tip_info += temp;
 		}
 	}
@@ -308,27 +317,33 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 	{
 		if (!m_layout_data.show_up_s)		//如果主窗口中没有显示上传速度，则在提示信息中显示上传速度
 		{
-			temp.Format(_T("\r\n上传: %s/s"), CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit));
+			temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_UPLOAD),
+				CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit));
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_down_s)
 		{
-			temp.Format(_T("\r\n下载: %s/s"), CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit));
+			temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_DOWNLOAD),
+				CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit));
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_cpu_s)
 		{
-			temp.Format(_T("\r\nCPU使用: %d%%"), theApp.m_cpu_usage);
+			temp.Format(_T("\r\n%s: %d%%"), CCommon::LoadText(IDS_CPU_USAGE), theApp.m_cpu_usage);
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_memory_s)
 		{
-			temp.Format(_T("\r\n内存使用：%s/%s (%d%%)"), CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory), theApp.m_memory_usage);
+			temp.Format(_T("\r\n%s: %s/%s (%d%%)"), CCommon::LoadText(IDS_MEMORY_USAGE),
+				CCommon::KBytesToString(theApp.m_used_memory),
+				CCommon::KBytesToString(theApp.m_total_memory), theApp.m_memory_usage);
 			tip_info += temp;
 		}
 		else
 		{
-			temp.Format(_T("\r\n内存使用：%s/%s"), CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory));
+			temp.Format(_T("\r\n%s: %s/%s"), CCommon::LoadText(IDS_MEMORY_USAGE),
+				CCommon::KBytesToString(theApp.m_used_memory),
+				CCommon::KBytesToString(theApp.m_total_memory));
 			tip_info += temp;
 		}
 	}
@@ -444,10 +459,10 @@ void CTrafficMonitorDlg::LoadConfig()
 	theApp.m_main_wnd_data.font_name = ini.GetString(_T("config"), _T("font_name"), _T("微软雅黑")).c_str();
 	theApp.m_main_wnd_data.font_size = ini.GetInt(_T("config"), _T("font_size"), 10);
 
-	theApp.m_main_wnd_data.disp_str.up = ini.GetString(L"config", L"up_string", L"上传: $");
-	theApp.m_main_wnd_data.disp_str.down = ini.GetString(L"config", L"down_string", L"下载: $");
+	theApp.m_main_wnd_data.disp_str.up = ini.GetString(L"config", L"up_string", CCommon::LoadText(IDS_UPLOAD_DISP, _T(": $")));
+	theApp.m_main_wnd_data.disp_str.down = ini.GetString(L"config", L"down_string", CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": $")));
 	theApp.m_main_wnd_data.disp_str.cpu = ini.GetString(L"config", L"cpu_string", L"CPU: $");
-	theApp.m_main_wnd_data.disp_str.memory = ini.GetString(L"config", L"memory_string", L"内存: $");
+	theApp.m_main_wnd_data.disp_str.memory = ini.GetString(L"config", L"memory_string", CCommon::LoadText(IDS_MEMORY_DISP, _T(": $")));
 
 	theApp.m_main_wnd_data.speed_short_mode = ini.GetBool(_T("config"), _T("speed_short_mode"), false);
 	theApp.m_main_wnd_data.speed_unit = static_cast<SpeedUnit>(ini.GetInt(_T("config"), _T("speed_unit"), 0));
@@ -476,7 +491,7 @@ void CTrafficMonitorDlg::SaveConfig()
 	if (!ini.WriteInt(L"config", L"transparency", m_transparency))
 	{
 		if (m_cannot_save_config_warning)
-			MessageBox(_T("警告：无法保存设置，请检查是否有向程序所在目录下写入数据的权限！以管理员身份运行程序可能会解决问题。"), NULL, MB_ICONWARNING);
+			MessageBox(CCommon::LoadText(IDS_CONNOT_SAVE_CONFIG_WARNING), NULL, MB_ICONWARNING);
 		m_cannot_save_config_warning = false;
 		return;
 	}
@@ -918,10 +933,11 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 		m_notify_icon_selected = 0;
 	m_ntIcon.hIcon = theApp.m_notify_icons[m_notify_icon_selected];		//设置图标
 	m_ntIcon.hWnd = this->m_hWnd;				//接收托盘图标通知消息的窗口句柄
+	TCHAR atip[128];			//鼠标指向图标时显示的提示
 #ifdef _DEBUG
-	TCHAR atip[128] = _T("流量监控器 (Debug)");			//鼠标指向图标时显示的提示
+	wcscpy_s(atip, CCommon::LoadText(IDS_TRAFFICMONITOR, _T(" (Debug)")).GetString());
 #else
-	TCHAR atip[128] = _T("流量监控器");
+	wcscpy_s(atip, CCommon::LoadText(IDS_TRAFFICMONITOR).GetString());
 #endif
 	wcscpy_s(m_ntIcon.szTip, 128, atip);
 	m_ntIcon.uCallbackMessage = MY_WM_NOTIFYICON;	//应用程序定义的消息ID号
@@ -1131,12 +1147,13 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		if (m_timer_cnt % 30 == 10)
 			SaveHistoryTraffic();
 
-		char buff[256];
 		if (rtn == ERROR_INSUFFICIENT_BUFFER)
 		{
 			IniConnection();
-			sprintf_s(buff, "用于储存连接信息的缓冲区大小不够，已重新初始化连接。(已重新初始化%d次)", m_restart_cnt);
-			CCommon::WriteLog(buff, theApp.m_log_path.c_str());
+			CString info;
+			info.LoadString(IDS_INSUFFICIENT_BUFFER);
+			info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt));
+			CCommon::WriteLog(info, theApp.m_log_path.c_str());
 		}
 
 		//统计当前已发送或已接收字节数不为0的连接个数
@@ -1151,16 +1168,22 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		if (connection_count == 0) connection_count = 1;
 		if (connection_count != m_connections.size())	//如果连接数发生变化，则重新初始化连接
 		{
-			sprintf_s(buff, "检测到连接数发生变化，已重新获取连接。先前连接数：%d，现在连接数：%d。(已重新初始化%d次)", m_connections.size(), connection_count, m_restart_cnt + 1);
+			CString info;
+			info.LoadString(IDS_CONNECTION_NUM_CHANGED);
+			info.Replace(_T("<%before%>"), CCommon::IntToString(m_connections.size()));
+			info.Replace(_T("<%after%>"), CCommon::IntToString(connection_count));
+			info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt + 1));
 			IniConnection();
-			CCommon::WriteLog(buff, theApp.m_log_path.c_str());
+			CCommon::WriteLog(info, theApp.m_log_path.c_str());
 		}
 		descr = (const char*)m_pIfTable->table[m_connections[m_connection_selected].index].bDescr;
 		if (descr != m_connection_name)
 		{
 			IniConnection();
-			sprintf_s(buff, "可能出现了异常，当前选择的连接和期望的连接不一致，已重新获取连接。(已重新初始化%d次)", m_restart_cnt);
-			CCommon::WriteLog(buff, theApp.m_log_path.c_str());
+			CString info;
+			info.LoadString(IDS_CONNECTION_NOT_MATCH);
+			info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt));
+			CCommon::WriteLog(info, theApp.m_log_path.c_str());
 		}
 
 		//只有主窗口和任务栏窗口至少有一个显示时才执行下面的处理
@@ -1219,7 +1242,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 					{
 						if (m_tBarDlg->GetCannotInsertToTaskBar() && m_cannot_intsert_to_task_bar_warning)		//确保提示信息只弹出一次
 						{
-							MessageBox(_T("警告：窗口没有成功嵌入任务栏，可能已被安全软件阻止！"), NULL, MB_ICONWARNING);
+							MessageBox(CCommon::LoadText(IDS_CONNOT_INSERT_TO_TASKBAR), NULL, MB_ICONWARNING);
 							m_cannot_intsert_to_task_bar_warning = false;
 						}
 					}
@@ -1238,8 +1261,8 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			if (last_memory_usage < theApp.m_general_data.memory_tip_value && theApp.m_memory_usage >= theApp.m_general_data.memory_tip_value)
 			{
 				CString info;
-				info.Format(_T("内存使用率已超过 %d%%！"), theApp.m_general_data.memory_tip_value);
-				ShowNotifyTip(L"TrafficMonitor 通知", info.GetString());
+				info.Format(CCommon::LoadText(IDS_MEMORY_UDAGE_EXCEED, _T(" %d%%!")), theApp.m_general_data.memory_tip_value);
+				ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY), info.GetString());
 			}
 			last_memory_usage = theApp.m_memory_usage;
 		}
@@ -1256,8 +1279,8 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			if (last_today_traffic < traffic_tip_value && theApp.m_today_traffic >= traffic_tip_value)
 			{
 				CString info;
-				info.Format(_T("今日已经使用流量已超过 %d %s！"), theApp.m_general_data.traffic_tip_value, (theApp.m_general_data.traffic_tip_unit==0?_T("MB"):_T("GB")));
-				ShowNotifyTip(L"TrafficMonitor 通知", info.GetString());
+				info.Format(CCommon::LoadText(IDS_TODAY_TRAFFIC_EXCEED, _T(" %d %s!")), theApp.m_general_data.traffic_tip_value, (theApp.m_general_data.traffic_tip_unit==0?_T("MB"):_T("GB")));
+				ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY), info.GetString());
 			}
 			last_today_traffic = theApp.m_today_traffic;
 		}
@@ -1591,7 +1614,9 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
 {
 	bool dialog_exist{ false };
 	const int WIND_NUM{ 7 };
-	const CString diloge_title[WIND_NUM]{ _T("关于 TrafficMonitor"),_T("捐助"), _T("历史流量统计"), _T("连接详情"), _T("更换皮肤"), _T("选项设置"), _T("更换通知区图标") };
+	//const CString diloge_title[WIND_NUM]{ _T("关于 TrafficMonitor"),_T("捐助"), _T("历史流量统计"), _T("连接详情"), _T("更换皮肤"), _T("选项设置"), _T("更换通知区图标") };
+	const CString diloge_title[WIND_NUM]{ CCommon::LoadText(IDS_TITLE_ABOUT), CCommon::LoadText(IDS_TITLE_DONATE), CCommon::LoadText(IDS_TITLE_HISTORY_TRAFFIC),
+		CCommon::LoadText(IDS_TITLE_CONNECTION_DETIAL), CCommon::LoadText(IDS_TITLE_CHANGE_SKIN), CCommon::LoadText(IDS_TITLE_OPTION), CCommon::LoadText(IDS_TITLE_CHANGE_ICON) };
 	HWND handle{};
 	//依次查找程序中的每一个对话框，如果找到一个没有关闭的对话框时，则不允许弹出右键菜单，防止用户在此时退出程序
 	for (int i{}; i < WIND_NUM; i++)

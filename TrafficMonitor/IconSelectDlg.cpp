@@ -64,10 +64,10 @@ BOOL CIconSelectDlg::OnInitDialog()
 	m_preview_pic.SetPicture(IDB_NOTIFY_ICON_PREVIEW);
 
 	//初始化下拉列表
-	m_icon_select_combo.AddString(_T("默认图标"));
-	m_icon_select_combo.AddString(_T("图标1"));
-	m_icon_select_combo.AddString(_T("图标2"));
-	m_icon_select_combo.AddString(_T("图标3"));
+	m_icon_select_combo.AddString(CCommon::LoadText(IDS_DEFAULT_ICON));
+	m_icon_select_combo.AddString(CCommon::LoadText(IDS_ICON, _T(" 1")));
+	m_icon_select_combo.AddString(CCommon::LoadText(IDS_ICON, _T(" 2")));
+	m_icon_select_combo.AddString(CCommon::LoadText(IDS_ICON, _T(" 3")));
 	m_icon_select_combo.SetCurSel(m_icon_selected);
 
 	return TRUE;  // return TRUE unless you set the focus to a control

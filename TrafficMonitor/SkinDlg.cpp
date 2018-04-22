@@ -111,7 +111,7 @@ void CSkinDlg::ShowPreview()
 	//获取皮肤作者
 	wstring skin_author;
 	skin_author = ini.GetString(_T("skin"), _T("skin_author"), _T("unknow"));
-	SetDlgItemText(IDC_SKIN_INFO, (L"皮肤作者：" + skin_author).c_str());
+	SetDlgItemText(IDC_SKIN_INFO, CCommon::LoadText(IDS_SKIN_AUTHOUR, skin_author.c_str()));
 	//获取显示文本
 	m_skin_data.disp_str.up = ini.GetString(_T("skin"), _T("up_string"), NONE_STR);
 	m_skin_data.disp_str.down = ini.GetString(_T("skin"), _T("down_string"), NONE_STR);
@@ -129,11 +129,11 @@ void CSkinDlg::ShowPreview()
 	cover_font_setting = cover_font_setting && theApp.m_general_data.allow_skin_cover_font;
 	cover_str_setting = cover_str_setting && theApp.m_general_data.allow_skin_cover_text;
 	if (cover_font_setting && cover_str_setting)
-		m_notify_static.SetWindowTextEx(_T("注意：此皮肤会覆盖字体设置和显示文本设置。"));
+		m_notify_static.SetWindowTextEx(CCommon::LoadText(IDS_OVERWRITE_FONT_TEXT_WARNING));
 	else if(cover_font_setting)
-		m_notify_static.SetWindowTextEx(_T("注意：此皮肤会覆盖字体设置。"));
+		m_notify_static.SetWindowTextEx(CCommon::LoadText(IDS_OVERWRITE_FONT_WARNING));
 	else if(cover_str_setting)
-		m_notify_static.SetWindowTextEx(_T("注意：此皮肤会覆盖显示文本设置。"));
+		m_notify_static.SetWindowTextEx(CCommon::LoadText(IDS_OVERWRITE_TEXT_WARNING));
 	else
 		m_notify_static.SetWindowTextEx(_T(""));
 }

@@ -155,6 +155,18 @@ void CCommon::WriteLog(const char* str_text, LPCTSTR file_path)
 	file << str_text << std::endl;
 }
 
+void CCommon::WriteLog(const wchar_t * str_text, LPCTSTR file_path)
+{
+	SYSTEMTIME cur_time;
+	GetLocalTime(&cur_time);
+	char buff[32];
+	sprintf_s(buff, "%d/%.2d/%.2d %.2d:%.2d:%.2d.%.3d: ", cur_time.wYear, cur_time.wMonth, cur_time.wDay,
+		cur_time.wHour, cur_time.wMinute, cur_time.wSecond, cur_time.wMilliseconds);
+	ofstream file{ file_path, std::ios::app };	//以追加的方式打开日志文件
+	file << buff;
+	file << UnicodeToStr(str_text).c_str() << std::endl;
+}
+
 BOOL CCommon::CreateFileShortcut(LPCTSTR lpszLnkFileDir, LPCTSTR lpszFileName, LPCTSTR lpszLnkFileName, LPCTSTR lpszWorkDir, WORD wHotkey, LPCTSTR lpszDescription, int iShowCmd)
 {
 	if (lpszLnkFileDir == NULL)
@@ -537,4 +549,31 @@ void CCommon::SetRect(CRect & rect, int x, int y, int width, int height)
 	rect.top = y;
 	rect.right = x + width;
 	rect.bottom = y + height;
+}
+
+CString CCommon::LoadText(UINT id, LPCTSTR back_str)
+{
+	CString str;
+	str.LoadString(id);
+	if (back_str != nullptr)
+		str += back_str;
+	return str;
+}
+
+CString CCommon::LoadText(LPCTSTR front_str, UINT id, LPCTSTR back_str)
+{
+	CString str;
+	str.LoadString(id);
+	if (back_str != nullptr)
+		str += back_str;
+	if (front_str != nullptr)
+		str = front_str + str;
+	return str;
+}
+
+CString CCommon::IntToString(int n)
+{
+	CString str;
+	str.Format(_T("%d"), n);
+	return str;
 }

@@ -30,6 +30,7 @@ protected:
 	CSpinEdit m_traffic_tip_edit;
 	CComboBox m_traffic_tip_combo;
 	CSpinEdit m_memory_tip_edit;
+	CComboBox m_language_combo;
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 

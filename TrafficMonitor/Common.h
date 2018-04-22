@@ -34,6 +34,7 @@ public:
 
 	//将一个日志信息str_text写入到file_path文件中
 	static void WriteLog(const char* str_text, LPCTSTR file_path);
+	static void WriteLog(const wchar_t* str_text, LPCTSTR file_path);
 
 	/*
 	函数功能：对指定文件在指定的目录下创建其快捷方式
@@ -107,5 +108,11 @@ public:
 	static wstring GetInternetIp();
 
 	static void SetRect(CRect& rect, int x, int y, int width, int height);
+
+	//从资源文件载入字符串。其中，front_str、back_str为载入字符串时需要在前面或后面添加的字符串
+	static CString LoadText(UINT id, LPCTSTR back_str = nullptr);
+	static CString LoadText(LPCTSTR front_str, UINT id, LPCTSTR back_str = nullptr);
+
+	static CString IntToString(int n);
 };
 

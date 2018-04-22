@@ -42,9 +42,9 @@ BOOL COptionsDlg::OnInitDialog()
 
 	// TODO:  在此添加额外的初始化
 	//插入标签
-	m_tab.InsertItem(0, _T("主窗口设置"));
-	m_tab.InsertItem(1, _T("任务栏窗口设置"));
-	m_tab.InsertItem(2, _T("常规设置"));
+	m_tab.InsertItem(0, CCommon::LoadText(IDS_MAIN_WINDOW_SETTINGS));
+	m_tab.InsertItem(1, CCommon::LoadText(IDS_TASKBAR_WINDOW_SETTINGS));
+	m_tab.InsertItem(2, CCommon::LoadText(IDS_GENERAL_SETTINGS));
 	//创建子对话框
 	m_tab1_dlg.Create(IDD_MAIN_WND_SETTINGS_DIALOG, &m_tab);
 	m_tab2_dlg.Create(IDD_TASKBAR_SETTINGS_DIALOG, &m_tab);

@@ -76,6 +76,15 @@ enum class DoubleClickAction
 	NONE				//不执行任何动作
 };
 
+//语言
+enum class Language
+{
+	FOLLOWING_SYSTEM,		//跟随系统
+	ENGLISH,				//英语
+	SIMPLIFIED_CHINESE		//简体中文
+};
+
+
 //选项设置数据
 #define MAIN_WND_COLOR_NUM 4		//主窗口颜色数量
 struct MainWndSettingData
@@ -128,6 +137,8 @@ struct GeneralSettingData
 	int traffic_tip_unit{};					//要提示的流量值的单位（0: MB, 1: GB）
 	bool memory_usage_tip_enable{ false };	//是否启用内存使用率超出提示
 	int memory_tip_value;			//要提示的内存使用率的临界值
+	//语言
+	Language language;
 };
 
 enum class Alignment
@@ -209,4 +220,3 @@ struct SkinData
 	wstring font_name;
 	int font_size;
 };
-

@@ -69,9 +69,9 @@ BOOL CHistoryTrafficDlg::OnInitDialog()
 	int width0, width1;
 	width0 = rect.Width() / 3;
 	width1 = rect.Width() - 2 * width0 - theApp.DPI(21);
-	m_history_list.InsertColumn(0, _T("日期"), LVCFMT_LEFT, width0);		//插入第0列
-	m_history_list.InsertColumn(1, _T("使用的流量（上传+下载）"), LVCFMT_LEFT, width0);		//插入第1列
-	m_history_list.InsertColumn(2, _T("图表"), LVCFMT_LEFT, width1);
+	m_history_list.InsertColumn(0, CCommon::LoadText(IDS_DATE), LVCFMT_LEFT, width0);		//插入第0列
+	m_history_list.InsertColumn(1, CCommon::LoadText(IDS_TRAFFIC_USED), LVCFMT_LEFT, width0);		//插入第1列
+	m_history_list.InsertColumn(2, CCommon::LoadText(IDS_FIGURE), LVCFMT_LEFT, width1);
 
 	//获取历史流量列表中流量的最大值
 	unsigned int max_traffic{};
