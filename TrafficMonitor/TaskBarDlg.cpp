@@ -341,7 +341,7 @@ void CTaskBarDlg::LoadConfig()
 	theApp.m_taskbar_data.specify_each_item_color = ini.GetBool(L"task_bar", L"specify_each_item_color", false);
 	theApp.m_tbar_show_cpu_memory = ini.GetBool(_T("task_bar"), _T("tack_bar_show_cpu_memory"), true);
 	theApp.m_taskbar_data.swap_up_down = ini.GetBool(_T("task_bar"), _T("task_bar_swap_up_down"), false);
-	theApp.m_taskbar_data.font_name = ini.GetString(_T("task_bar"), _T("tack_bar_font_name"), _T("Î¢ÈíÑÅºÚ")).c_str();
+	theApp.m_taskbar_data.font_name = ini.GetString(_T("task_bar"), _T("tack_bar_font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();
 	theApp.m_taskbar_data.font_size = ini.GetInt(_T("task_bar"), _T("tack_bar_font_size"), 9);
 	
 	theApp.m_taskbar_data.disp_str.up = ini.GetString(L"task_bar", L"up_string", L"¡ü: $");
