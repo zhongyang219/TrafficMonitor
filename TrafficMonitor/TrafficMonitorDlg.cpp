@@ -27,6 +27,13 @@ protected:
 	CLinkStatic m_github;			//“GitHub”超链接
 	CLinkStatic m_donate;			//“捐助”超链接
 	CToolTipCtrl m_Mytip;			//鼠标指向时的工具提示
+#define WIDTH 305
+#define HEIGHT 164
+#define PIC_HEIGHT 65
+#define WIDTH2 319
+#define HEIGHT2 154
+#define PIC_HEIGHT2 61
+
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 	// 实现
@@ -64,16 +71,25 @@ BOOL CAboutDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
-	CRect rect;
-	GetClientRect(rect);
-	rect.bottom = rect.Height() * 2 / 5;	//图片高度占对话框高度的2/5
-	m_about_img.MoveWindow(rect);
-	if (theApp.DPI(100) >= 125)
-		//m_about_img.SetBitmap(LoadBitmap(theApp.m_hInstance, MAKEINTRESOURCE(IDB_ABOUT_BACKGROUND_HD)));
-		m_about_img.SetPicture(IDB_ABOUT_BACKGROUND_HD);
-	else
-		//m_about_img.SetBitmap(LoadBitmap(theApp.m_hInstance, MAKEINTRESOURCE(IDB_ABOUT_BACKGROUND)));
+	CRect window_rect{};
+	if (theApp.DPI(100) < 125)
+	{
+		window_rect.right = theApp.DPI(WIDTH);
+		window_rect.bottom = theApp.DPI(HEIGHT);
+		AdjustWindowRectEx(window_rect, GetStyle(), FALSE, GetExStyle());		//将客户区大小转换成窗口大小
+		SetWindowPos(nullptr, 0, 0, window_rect.Width(), window_rect.Height(), SWP_NOZORDER | SWP_NOMOVE);
+		m_about_img.SetWindowPos(nullptr, 0, 0, theApp.DPI(WIDTH), theApp.DPI(PIC_HEIGHT), SWP_NOZORDER | SWP_NOMOVE);
 		m_about_img.SetPicture(IDB_ABOUT_BACKGROUND);
+	}
+	else
+	{
+		window_rect.right = theApp.DPI(WIDTH2);
+		window_rect.bottom = theApp.DPI(HEIGHT2);
+		AdjustWindowRectEx(window_rect, GetStyle(), FALSE, GetExStyle());		//将客户区大小转换成窗口大小
+		SetWindowPos(nullptr, 0, 0, window_rect.Width(), window_rect.Height(), SWP_NOZORDER | SWP_NOMOVE);
+		m_about_img.SetWindowPos(nullptr, 0, 0, theApp.DPI(WIDTH2), theApp.DPI(PIC_HEIGHT2), SWP_NOZORDER | SWP_NOMOVE);
+		m_about_img.SetPicture(IDB_ABOUT_BACKGROUND_HD);
+	}
 	m_mail.SetURL(_T("mailto:zhongyang219@hotmail.com"));	//设置超链接
 	//m_check_update.SetURL(_T("http://pan.baidu.com/s/1c1LkPQ4"));
 	m_github.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor"));
