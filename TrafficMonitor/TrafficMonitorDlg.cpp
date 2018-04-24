@@ -472,10 +472,14 @@ void CTrafficMonitorDlg::LoadConfig()
 	theApp.m_main_wnd_data.swap_up_down = ini.GetBool(_T("config"), _T("swap_up_down"), false);
 	theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen = ini.GetBool(_T("config"), _T("hide_main_wnd_when_fullscreen"), true);
 
-	theApp.m_main_wnd_data.font_name = ini.GetString(_T("config"), _T("font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();
-	theApp.m_main_wnd_data.font_size = ini.GetInt(_T("config"), _T("font_size"), 10);
+	FontInfo default_font{};
+	default_font.name = CCommon::LoadText(IDS_MICROSOFT_YAHEI);
+	default_font.size = 10;
+	ini.LoadFontData(_T("config"), theApp.m_main_wnd_data.font, default_font);
+	//theApp.m_main_wnd_data.font.name = ini.GetString(_T("config"), _T("font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();
+	//theApp.m_main_wnd_data.font.size = ini.GetInt(_T("config"), _T("font_size"), 10);
 
-	theApp.m_main_wnd_data.disp_str.up = ini.GetString(L"config", L"up_string", CCommon::LoadText(IDS_UPLOAD_DISP, _T(": $")));
+	theApp.m_main_wnd_data.disp_str.up = ini.GetString(_T("config"), L"up_string", CCommon::LoadText(IDS_UPLOAD_DISP, _T(": $")));
 	theApp.m_main_wnd_data.disp_str.down = ini.GetString(L"config", L"down_string", CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": $")));
 	theApp.m_main_wnd_data.disp_str.cpu = ini.GetString(L"config", L"cpu_string", L"CPU: $");
 	theApp.m_main_wnd_data.disp_str.memory = ini.GetString(L"config", L"memory_string", CCommon::LoadText(IDS_MEMORY_DISP, _T(": $")));
@@ -528,8 +532,10 @@ void CTrafficMonitorDlg::SaveConfig()
 	ini.WriteString(L"connection", L"connection_name", CCommon::StrToUnicode(m_connection_name.c_str()).c_str());
 	ini.WriteString(_T("config"), _T("skin_selected"), m_skin_name.c_str());
 	ini.WriteInt(L"config", L"notify_icon_selected", m_notify_icon_selected);
-	ini.WriteString(_T("config"), _T("font_name"), wstring(theApp.m_main_wnd_data.font_name));
-	ini.WriteInt(L"config", L"font_size", theApp.m_main_wnd_data.font_size);
+
+	//ini.WriteString(_T("config"), _T("font_name"), wstring(theApp.m_main_wnd_data.font.name));
+	//ini.WriteInt(L"config", L"font_size", theApp.m_main_wnd_data.font.size);
+	ini.SaveFontData(L"config", theApp.m_main_wnd_data.font);
 
 	ini.WriteBool(L"config", L"swap_up_down", theApp.m_main_wnd_data.swap_up_down);
 	ini.WriteBool(L"config", L"hide_main_wnd_when_fullscreen", theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen);
@@ -893,7 +899,21 @@ void CTrafficMonitorDlg::SetTextFont()
 {
 	if (m_font.m_hObject)	//如果m_font已经关联了一个字体资源对象，则释放它
 		m_font.DeleteObject();
-	m_font.CreatePointFont(theApp.m_main_wnd_data.font_size * 10, theApp.m_main_wnd_data.font_name);
+	m_font.CreateFont(
+		FONTSIZE_TO_LFHEIGHT(theApp.m_main_wnd_data.font.size), // nHeight
+		0, // nWidth
+		0, // nEscapement
+		0, // nOrientation
+		(theApp.m_main_wnd_data.font.bold ? FW_BOLD : FW_NORMAL), // nWeight
+		theApp.m_main_wnd_data.font.italic, // bItalic
+		theApp.m_main_wnd_data.font.underline, // bUnderline
+		theApp.m_main_wnd_data.font.strike_out, // cStrikeOut
+		ANSI_CHARSET, // nCharSet
+		OUT_DEFAULT_PRECIS, // nOutPrecision
+		CLIP_DEFAULT_PRECIS, // nClipPrecision
+		DEFAULT_QUALITY, // nQuality
+		DEFAULT_PITCH | FF_SWISS, // nPitchAndFamily
+		theApp.m_main_wnd_data.font.name);
 	m_disp_cpu.SetFont(&m_font);
 	m_disp_memory.SetFont(&m_font);
 	m_disp_up.SetFont(&m_font);
@@ -1923,9 +1943,9 @@ void CTrafficMonitorDlg::OnChangeSkin()
 		if (theApp.m_general_data.allow_skin_cover_font)
 		{
 			if (!skinDlg.GetSkinData().font_name.empty())
-				theApp.m_main_wnd_data.font_name = skinDlg.GetSkinData().font_name.c_str();
+				theApp.m_main_wnd_data.font.name = skinDlg.GetSkinData().font_name.c_str();
 			if (skinDlg.GetSkinData().font_size >= MIN_FONT_SIZE && skinDlg.GetSkinData().font_size <= MAX_FONT_SIZE)
-				theApp.m_main_wnd_data.font_size = skinDlg.GetSkinData().font_size;
+				theApp.m_main_wnd_data.font.size = skinDlg.GetSkinData().font_size;
 			SetTextFont();
 		}
 		//获取项目的显示文本

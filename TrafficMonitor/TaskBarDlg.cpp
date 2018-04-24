@@ -313,8 +313,9 @@ void CTaskBarDlg::SaveConfig()
 	ini.WriteIntArray(L"task_bar", L"task_bar_text_color", (int*)theApp.m_taskbar_data.text_colors, TASKBAR_COLOR_NUM);
 	ini.WriteBool(L"task_bar", L"specify_each_item_color", theApp.m_taskbar_data.specify_each_item_color);
 	ini.WriteBool(L"task_bar", L"tack_bar_show_cpu_memory", theApp.m_tbar_show_cpu_memory);
-	ini.WriteString(_T("task_bar"), _T("tack_bar_font_name"), wstring(theApp.m_taskbar_data.font_name));
-	ini.WriteInt(L"task_bar", L"tack_bar_font_size", theApp.m_taskbar_data.font_size);
+	//ini.WriteString(_T("task_bar"), _T("tack_bar_font_name"), wstring(theApp.m_taskbar_data.font.name));
+	//ini.WriteInt(L"task_bar", L"tack_bar_font_size", theApp.m_taskbar_data.font.size);
+	ini.SaveFontData(L"task_bar", theApp.m_taskbar_data.font);
 	ini.WriteBool(L"task_bar", L"task_bar_swap_up_down", theApp.m_taskbar_data.swap_up_down);
 
 	ini.WriteString(_T("task_bar"), _T("up_string"), theApp.m_taskbar_data.disp_str.up);
@@ -341,9 +342,15 @@ void CTaskBarDlg::LoadConfig()
 	theApp.m_taskbar_data.specify_each_item_color = ini.GetBool(L"task_bar", L"specify_each_item_color", false);
 	theApp.m_tbar_show_cpu_memory = ini.GetBool(_T("task_bar"), _T("tack_bar_show_cpu_memory"), true);
 	theApp.m_taskbar_data.swap_up_down = ini.GetBool(_T("task_bar"), _T("task_bar_swap_up_down"), false);
-	theApp.m_taskbar_data.font_name = ini.GetString(_T("task_bar"), _T("tack_bar_font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();
-	theApp.m_taskbar_data.font_size = ini.GetInt(_T("task_bar"), _T("tack_bar_font_size"), 9);
-	
+
+	//theApp.m_taskbar_data.font.name = ini.GetString(_T("task_bar"), _T("tack_bar_font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();
+	//theApp.m_taskbar_data.font.size = ini.GetInt(_T("task_bar"), _T("tack_bar_font_size"), 9);
+	FontInfo default_font{};
+	default_font.name = CCommon::LoadText(IDS_MICROSOFT_YAHEI);
+	default_font.size = 9;
+	ini.LoadFontData(_T("task_bar"), theApp.m_taskbar_data.font, default_font);
+
+
 	theApp.m_taskbar_data.disp_str.up = ini.GetString(L"task_bar", L"up_string", L"↑: $");
 	theApp.m_taskbar_data.disp_str.down = ini.GetString(L"task_bar", L"down_string", L"↓: $");
 	theApp.m_taskbar_data.disp_str.cpu = ini.GetString(L"task_bar", L"cpu_string", L"CPU: $");
@@ -358,7 +365,7 @@ void CTaskBarDlg::LoadConfig()
 	theApp.m_taskbar_data.double_click_action = static_cast<DoubleClickAction>(ini.GetInt(_T("task_bar"), _T("double_click_action"), 0));
 }
 
-void CTaskBarDlg::ApplySettings()
+void CTaskBarDlg::SetTextFont()
 {
 	//如果m_font已经关联了一个字体资源对象，则释放它
 	if (m_font.m_hObject)
@@ -366,8 +373,26 @@ void CTaskBarDlg::ApplySettings()
 		m_font.DeleteObject();
 	}
 	//创建新的字体
-	m_font.CreatePointFont(theApp.m_taskbar_data.font_size * 10, theApp.m_taskbar_data.font_name);
+	m_font.CreateFont(
+		FONTSIZE_TO_LFHEIGHT(theApp.m_taskbar_data.font.size), // nHeight
+		0, // nWidth
+		0, // nEscapement
+		0, // nOrientation
+		(theApp.m_taskbar_data.font.bold ? FW_BOLD : FW_NORMAL), // nWeight
+		theApp.m_taskbar_data.font.italic, // bItalic
+		theApp.m_taskbar_data.font.underline, // bUnderline
+		theApp.m_taskbar_data.font.strike_out, // cStrikeOut
+		ANSI_CHARSET, // nCharSet
+		OUT_DEFAULT_PRECIS, // nOutPrecision
+		CLIP_DEFAULT_PRECIS, // nClipPrecision
+		DEFAULT_QUALITY, // nQuality
+		DEFAULT_PITCH | FF_SWISS, // nPitchAndFamily
+		theApp.m_taskbar_data.font.name);
+}
 
+void CTaskBarDlg::ApplySettings()
+{
+	SetTextFont();
 	CalculateWindowWidth();
 }
 
@@ -448,7 +473,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 	m_pDC = GetDC();
 
 	//设置字体
-	m_font.CreatePointFont(theApp.m_taskbar_data.font_size * 10, theApp.m_taskbar_data.font_name);
+	SetTextFont();
 	m_pDC->SelectObject(&m_font);
 
 	this->GetWindowRect(m_rect);

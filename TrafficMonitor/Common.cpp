@@ -577,3 +577,49 @@ CString CCommon::IntToString(int n)
 	str.Format(_T("%d"), n);
 	return str;
 }
+
+void CCommon::NormalizeFont(LOGFONT & font)
+{
+	wstring name;
+	wstring style;
+	name = font.lfFaceName;
+	if (name.back() == L' ')
+		name.pop_back();
+	size_t index = name.rfind(L' ');
+	if (index == wstring::npos)
+		return;
+	style = name.substr(index + 1);
+	//font.name = font.name.Left(index);
+	bool style_acquired = false;
+	if (style == L"Light")
+	{
+		font.lfWeight = FW_LIGHT;
+		style_acquired = true;
+	}
+	else if (style == L"Semilight")
+	{
+		font.lfWeight = 350;
+		style_acquired = true;
+	}
+	else if (style == L"Semibold")
+	{
+		font.lfWeight = FW_SEMIBOLD;
+		style_acquired = true;
+	}
+	else if (style == L"Bold")
+	{
+		font.lfWeight = FW_BOLD;
+		style_acquired = true;
+	}
+	else if (style == L"Black")
+	{
+		font.lfWeight = FW_BLACK;
+		style_acquired = true;
+	}
+
+	if (style_acquired)
+	{
+		name = name.substr(0, index);
+	}
+	wcsncpy_s(font.lfFaceName, name.c_str(), 32);
+}

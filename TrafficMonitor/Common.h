@@ -11,13 +11,6 @@ public:
 
 	static string UnicodeToStr(const wchar_t* wstr);
 
-	////将一个int类型数据写入ini文件，如果成功则返回true
-	//static bool WritePrivateProfileIntW(const wchar_t * AppName, const wchar_t * KeyName, int value, const wchar_t * Path);
-	////将一个wstring类型数据写入ini文件，如果成功则返回true
-	//static bool WriteIniStringW(const wchar_t* AppName, const wchar_t* KeyName, wstring str, const wchar_t* path);
-	////从int文件读取一个wstring类型数据
-	//static wstring GetIniStringW(const wchar_t* AppName, const wchar_t* KeyName, const wchar_t* default_str, const wchar_t* path);
-
 	/*根据数据的大小转换成以KB、MB、GB为单位的字符串
 	size：数据的大小，单位为字节
 	short_mode：是否使用精简模式（减小小数点位数，单位不显示“B”）
@@ -69,9 +62,6 @@ public:
 	//在指定位置绘制文本
 	static void DrawWindowText(CDC* pDC, CRect rect, LPCTSTR lpszString, COLORREF color, COLORREF back_color);
 
-	////为一个Static控件填充指定的颜色
-	//static void FillStaticColor(CStatic& static_ctr, COLORREF color);
-
 	//设置绘图的剪辑区域
 	static void SetDrawArea(CDC* pDC, CRect rect);
 
@@ -88,12 +78,6 @@ public:
 
 	//将一个字符串保存到剪贴板
 	static bool CopyStringToClipboard(const wstring& str);
-
-	////判断现在是否刚开机，在刚开机的time毫秒内返回true，否则返回false（在启用了快速启动时，此函数可能会无法得到正确的结果）
-	//static bool WhenStart(int time, bool write_log = false);
-
-	////显示鼠标提示
-	//static CString GetMouseTipsInfo(__int64 today_traffic, int cpu_usage, int memory_usage, int used_memory, int total_memory, bool show_cpu_memory);
 
 	//获取Windows版本
 	static void GetWindowsVersion(int& major_version, int& minor_version, int& build_number);
@@ -114,5 +98,8 @@ public:
 	static CString LoadText(LPCTSTR front_str, UINT id, LPCTSTR back_str = nullptr);
 
 	static CString IntToString(int n);
+
+	//删除字体名称后面的Bold、Light等字符串，并根据这些字符串设置字体粗细
+	static void NormalizeFont(LOGFONT& font);
 };
 

@@ -102,3 +102,47 @@ bool CIniHelper::GetIntArray(const wchar_t * AppName, const wchar_t * KeyName, i
 	}
 	return result;
 }
+
+bool CIniHelper::WriteBoolArray(const wchar_t * AppName, const wchar_t * KeyName, const bool * values, int size)
+{
+	int value{};
+	for (int i{}; i < size; i++)
+	{
+		if (values[i])
+			value |= (1 << i);
+	}
+	return WriteInt(AppName, KeyName, value);
+}
+
+void CIniHelper::GetBoolArray(const wchar_t * AppName, const wchar_t * KeyName, bool * values, int size, bool default_value)
+{
+	int value = GetInt(AppName, KeyName, 0);
+	for (int i{}; i < size; i++)
+	{
+		values[i] = ((value >> i) % 2 != 0);
+	}
+}
+
+void CIniHelper::SaveFontData(const wchar_t * AppName, const FontInfo & font)
+{
+	WriteString(AppName, L"font_name", wstring(font.name));
+	WriteInt(AppName, L"font_size", font.size);
+	bool style[4];
+	style[0] = font.bold;
+	style[1] = font.italic;
+	style[2] = font.underline;
+	style[3] = font.strike_out;
+	WriteBoolArray(AppName, L"font_style", style, 4);
+}
+
+void CIniHelper::LoadFontData(const wchar_t * AppName, FontInfo & font, const FontInfo& default_font)
+{
+	font.name = GetString(AppName, L"font_name", default_font.name).c_str();
+	font.size = GetInt(AppName, L"font_size", default_font.size);
+	bool style[4];
+	GetBoolArray(AppName, L"font_style", style, 4);
+	font.bold = style[0];
+	font.italic = style[1];
+	font.underline = style[2];
+	font.strike_out = style[3];
+}

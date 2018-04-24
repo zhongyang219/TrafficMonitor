@@ -81,12 +81,12 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	// TODO:  在此添加额外的初始化
 
 	//初始化各控件状态
-	SetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font_name);
+	SetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font.name);
 	//wchar_t buff[16];
 	//swprintf_s(buff, L"%d", m_data.font_size);
 	//SetDlgItemText(IDC_FONT_SIZE_EDIT1, buff);
 	m_font_size_edit.SetRange(5, 72);
-	m_font_size_edit.SetValue(m_data.font_size);
+	m_font_size_edit.SetValue(m_data.font.size);
 
 	SetDlgItemText(IDC_UPLOAD_EDIT1, m_data.disp_str.up.c_str());
 	SetDlgItemText(IDC_DOWNLOAD_EDIT1, m_data.disp_str.down.c_str());
@@ -137,20 +137,29 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 void CTaskBarSettingsDlg::OnBnClickedSetFontButton1()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	CFont font;
-	font.CreatePointFont(m_data.font_size * 10, m_data.font_name);
-	LOGFONT lf{};             //LOGFONT变量
-	font.GetLogFont(&lf);
+	LOGFONT lf{};
+	lf.lfHeight = FONTSIZE_TO_LFHEIGHT(m_data.font.size);
+	lf.lfWeight = (m_data.font.bold ? FW_BOLD : FW_NORMAL);
+	lf.lfItalic = m_data.font.italic;
+	lf.lfUnderline = m_data.font.underline;
+	lf.lfStrikeOut = m_data.font.strike_out;
+	lf.lfPitchAndFamily = DEFAULT_PITCH | FF_SWISS;
+	wcsncpy_s(lf.lfFaceName, m_data.font.name.GetString(), 32);
+	CCommon::NormalizeFont(lf);
 	CFontDialog fontDlg(&lf);	//构造字体对话框，初始选择字体为之前字体
 	if (IDOK == fontDlg.DoModal())     // 显示字体对话框
 	{
 		//获取字体信息
-		m_data.font_name = fontDlg.GetFaceName();
-		m_data.font_size = fontDlg.GetSize() / 10;
+		m_data.font.name = fontDlg.GetFaceName();
+		m_data.font.size = fontDlg.GetSize() / 10;
+		m_data.font.bold = (fontDlg.IsBold() != FALSE);
+		m_data.font.italic = (fontDlg.IsItalic() != FALSE);
+		m_data.font.underline = (fontDlg.IsUnderline() != FALSE);
+		m_data.font.strike_out = (fontDlg.IsStrikeOut() != FALSE);
 		//将字体信息显示出来
-		SetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font_name);
+		SetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font.name);
 		wchar_t buff[16];
-		swprintf_s(buff, L"%d", m_data.font_size);
+		swprintf_s(buff, L"%d", m_data.font.size);
 		SetDlgItemText(IDC_FONT_SIZE_EDIT1, buff);
 	}
 }
@@ -295,9 +304,9 @@ void CTaskBarSettingsDlg::OnOK()
 	}
 	else
 	{
-		m_data.font_size = font_size;
+		m_data.font.size = font_size;
 	}
-	GetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font_name);
+	GetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font.name);
 
 	CTabDlg::OnOK();
 }

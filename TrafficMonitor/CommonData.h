@@ -84,6 +84,19 @@ enum class Language
 	SIMPLIFIED_CHINESE		//简体中文
 };
 
+//字体
+struct FontInfo
+{
+	CString name;	//字体名称
+	int size;		//字体大小
+	bool bold;			//粗体
+	bool italic;		//斜体
+	bool underline;		//下划线
+	bool strike_out;	//删除线
+};
+
+//将字号转成成LOGFONT结构中的lfHeight
+#define FONTSIZE_TO_LFHEIGHT(font_size) (-MulDiv(font_size, GetDeviceCaps(::GetDC(HWND_DESKTOP), LOGPIXELSY), 72))
 
 //选项设置数据
 #define MAIN_WND_COLOR_NUM 4		//主窗口颜色数量
@@ -92,8 +105,7 @@ struct MainWndSettingData
 	//主窗口
 	COLORREF text_colors[MAIN_WND_COLOR_NUM]{};		//文字颜色（分别为“上传”、“下载”、“CPU”、“内存”的颜色）
 	bool specify_each_item_color{ false };		//是否指定每个项目的颜色
-	CString font_name;	//字体名称
-	int font_size;		//字体大小
+	FontInfo font;			//字体
 	DispStrings disp_str;	//显示的文本
 	bool speed_short_mode{ false };		//网速显示简洁模式（减少小数点的位数，单位不显示“B”）
 	bool swap_up_down{ false };		//交换上传和下载显示的位置
@@ -111,8 +123,7 @@ struct TaskBarSettingData
 	COLORREF  back_color{ RGB(0, 0, 0) };	//背景颜色
 	COLORREF text_colors[TASKBAR_COLOR_NUM]{};		//文字颜色（依次为“上传”、“下载”、“CPU”、“内存”的标签和数据颜色）
 	bool specify_each_item_color{ false };		//是否指定每个项目的颜色
-	CString  font_name;	//字体名称
-	int  font_size;		//字体大小
+	FontInfo font;			//字体
 	DispStrings disp_str;	//显示的文本
 	bool swap_up_down{ false };		//交换上传和下载显示的位置
 	bool speed_short_mode{ false };		//网速显示简洁模式（减少小数点的位数，单位不显示“B”）

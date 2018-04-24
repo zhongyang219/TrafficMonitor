@@ -63,6 +63,7 @@ public:
 	static void SaveConfig();		//保存设置到ini文件
 	static void LoadConfig();		//从ini文件载入设置
 
+	void SetTextFont();
 	void ApplySettings();
 	void CalculateWindowWidth();		//计算窗口需要的宽度
 
