@@ -382,7 +382,7 @@ void CTaskBarDlg::SetTextFont()
 		theApp.m_taskbar_data.font.italic, // bItalic
 		theApp.m_taskbar_data.font.underline, // bUnderline
 		theApp.m_taskbar_data.font.strike_out, // cStrikeOut
-		ANSI_CHARSET, // nCharSet
+		DEFAULT_CHARSET, // nCharSet
 		OUT_DEFAULT_PRECIS, // nOutPrecision
 		CLIP_DEFAULT_PRECIS, // nClipPrecision
 		DEFAULT_QUALITY, // nQuality
