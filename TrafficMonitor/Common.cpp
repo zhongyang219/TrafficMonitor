@@ -623,3 +623,14 @@ void CCommon::NormalizeFont(LOGFONT & font)
 	}
 	wcsncpy_s(font.lfFaceName, name.c_str(), 32);
 }
+
+void CCommon::WStringCopy(wchar_t * str_dest, int dest_size, const wchar_t * str_source, int source_size)
+{
+	for (int i{}; i < dest_size && i < source_size; i++)
+		str_dest[i] = str_source[i];
+	//确保目标字符串末尾有一个\0
+	if (source_size < dest_size)
+		str_dest[source_size] = L'\0';
+	else
+		str_dest[dest_size - 1] = L'\0';
+}
