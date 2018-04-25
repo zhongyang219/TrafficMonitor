@@ -454,7 +454,7 @@ void CTrafficMonitorDlg::LoadConfig()
 	m_always_on_top = ini.GetBool(_T("config"), _T("always_on_top"), true);
 	m_lock_window_pos = ini.GetBool(_T("config"), _T("lock_window_pos"), false);
 	theApp.m_show_notify_icon = ini.GetBool(_T("config"), _T("show_notify_icon"), true);
-	m_show_more_info = ini.GetBool(_T("config"), _T("show_cpu_memory"), true);
+	m_show_more_info = ini.GetBool(_T("config"), _T("show_cpu_memory"), false);
 	m_mouse_penetrate = ini.GetBool(_T("config"), _T("mouse_penetrate"), false);
 	m_show_task_bar_wnd = ini.GetBool(_T("config"), _T("show_task_bar_wnd"), false);
 	m_position_x = ini.GetInt(_T("config"), _T("position_x"), -1);
@@ -473,7 +473,7 @@ void CTrafficMonitorDlg::LoadConfig()
 	theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen = ini.GetBool(_T("config"), _T("hide_main_wnd_when_fullscreen"), true);
 
 	FontInfo default_font{};
-	default_font.name = CCommon::LoadText(IDS_MICROSOFT_YAHEI);
+	default_font.name = CCommon::LoadText(IDS_DEFAULT_FONT);
 	default_font.size = 10;
 	ini.LoadFontData(_T("config"), theApp.m_main_wnd_data.font, default_font);
 	//theApp.m_main_wnd_data.font.name = ini.GetString(_T("config"), _T("font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();

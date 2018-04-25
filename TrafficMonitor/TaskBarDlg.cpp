@@ -340,13 +340,13 @@ void CTaskBarDlg::LoadConfig()
 	//theApp.m_taskbar_data.text_color = GetPrivateProfileInt(_T("task_bar"), _T("task_bar_text_color"), 0x00ffffffU, theApp.m_config_path.c_str());
 	ini.GetIntArray(_T("task_bar"), _T("task_bar_text_color"), (int*)theApp.m_taskbar_data.text_colors, TASKBAR_COLOR_NUM, 0x00ffffffU);
 	theApp.m_taskbar_data.specify_each_item_color = ini.GetBool(L"task_bar", L"specify_each_item_color", false);
-	theApp.m_tbar_show_cpu_memory = ini.GetBool(_T("task_bar"), _T("tack_bar_show_cpu_memory"), true);
+	theApp.m_tbar_show_cpu_memory = ini.GetBool(_T("task_bar"), _T("task_bar_show_cpu_memory"), false);
 	theApp.m_taskbar_data.swap_up_down = ini.GetBool(_T("task_bar"), _T("task_bar_swap_up_down"), false);
 
 	//theApp.m_taskbar_data.font.name = ini.GetString(_T("task_bar"), _T("tack_bar_font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();
 	//theApp.m_taskbar_data.font.size = ini.GetInt(_T("task_bar"), _T("tack_bar_font_size"), 9);
 	FontInfo default_font{};
-	default_font.name = CCommon::LoadText(IDS_MICROSOFT_YAHEI);
+	default_font.name = CCommon::LoadText(IDS_DEFAULT_FONT);
 	default_font.size = 9;
 	ini.LoadFontData(_T("task_bar"), theApp.m_taskbar_data.font, default_font);
 
