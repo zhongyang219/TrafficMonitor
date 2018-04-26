@@ -227,6 +227,14 @@ BOOL CTrafficMonitorApp::InitInstance()
 	//从ini文件载入设置
 	LoadConfig();
 
+	//初始化界面语言
+	switch (m_general_data.language)
+	{
+	case Language::ENGLISH: SetThreadUILanguage(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); break;
+	case Language::SIMPLIFIED_CHINESE: SetThreadUILanguage(MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)); break;
+	default: break;
+	}
+
 #ifndef _DEBUG
 	wstring cmd_line{ m_lpCmdLine };
 	bool is_restart{ cmd_line.find(L"RestartByRestartManager") != wstring::npos };		//如果命令行参数中含有字符串“RestartByRestartManager”则说明程序是被Windows重新启动的
@@ -255,14 +263,6 @@ BOOL CTrafficMonitorApp::InitInstance()
 		}
 	}
 #endif
-
-	//初始化界面语言
-	switch (m_general_data.language)
-	{
-	case Language::ENGLISH: SetThreadUILanguage(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); break;
-	case Language::SIMPLIFIED_CHINESE: SetThreadUILanguage(MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)); break;
-	default: break;
-	}
 
 	SaveConfig();
 
