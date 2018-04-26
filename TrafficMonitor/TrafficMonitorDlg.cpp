@@ -695,8 +695,10 @@ void CTrafficMonitorDlg::ShowNotifyTip(const wchar_t * title, const wchar_t * me
 	}
 	//显示通知提示
 	m_ntIcon.uFlags |= NIF_INFO;
-	wcscpy_s(m_ntIcon.szInfo, message ? message : _T(""));
-	wcscpy_s(m_ntIcon.szInfoTitle, title ? title : _T(""));
+	//wcscpy_s(m_ntIcon.szInfo, message ? message : _T(""));
+	//wcscpy_s(m_ntIcon.szInfoTitle, title ? title : _T(""));
+	CCommon::WStringCopy(m_ntIcon.szInfo, 256, message);
+	CCommon::WStringCopy(m_ntIcon.szInfoTitle, 64, title);
 	::Shell_NotifyIcon(NIM_MODIFY, &m_ntIcon);
 	m_ntIcon.uFlags &= ~NIF_INFO;
 }
@@ -969,13 +971,14 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 		m_notify_icon_selected = 0;
 	m_ntIcon.hIcon = theApp.m_notify_icons[m_notify_icon_selected];		//设置图标
 	m_ntIcon.hWnd = this->m_hWnd;				//接收托盘图标通知消息的窗口句柄
-	TCHAR atip[128];			//鼠标指向图标时显示的提示
+	CString atip;			//鼠标指向图标时显示的提示
 #ifdef _DEBUG
-	wcscpy_s(atip, CCommon::LoadText(IDS_TRAFFICMONITOR, _T(" (Debug)")).GetString());
+	atip = CCommon::LoadText(IDS_TRAFFICMONITOR, _T(" (Debug)"));
 #else
-	wcscpy_s(atip, CCommon::LoadText(IDS_TRAFFICMONITOR).GetString());
+	atip = CCommon::LoadText(IDS_TRAFFICMONITOR);
 #endif
-	wcscpy_s(m_ntIcon.szTip, 128, atip);
+	//wcscpy_s(m_ntIcon.szTip, 128, atip);
+	CCommon::WStringCopy(m_ntIcon.szTip, 128, atip.GetString());
 	m_ntIcon.uCallbackMessage = MY_WM_NOTIFYICON;	//应用程序定义的消息ID号
 	m_ntIcon.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;	//图标的属性：设置成员uCallbackMessage、hIcon、szTip有效
 	if (theApp.m_show_notify_icon)

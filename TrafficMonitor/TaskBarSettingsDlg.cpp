@@ -145,7 +145,7 @@ void CTaskBarSettingsDlg::OnBnClickedSetFontButton1()
 	lf.lfStrikeOut = m_data.font.strike_out;
 	lf.lfPitchAndFamily = DEFAULT_PITCH | FF_SWISS;
 	//wcsncpy_s(lf.lfFaceName, m_data.font.name.GetString(), 32);
-	CCommon::WStringCopy(lf.lfFaceName, 32, m_data.font.name.GetString(), m_data.font.name.GetLength());
+	CCommon::WStringCopy(lf.lfFaceName, 32, m_data.font.name.GetString());
 	CCommon::NormalizeFont(lf);
 	CFontDialog fontDlg(&lf);	//构造字体对话框，初始选择字体为之前字体
 	if (IDOK == fontDlg.DoModal())     // 显示字体对话框

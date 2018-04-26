@@ -208,9 +208,11 @@ BOOL CCommon::CreateFileShortcut(LPCTSTR lpszLnkFileDir, LPCTSTR lpszFileName, L
 		//设置工作目录为快捷方式目标所在位置
 		TCHAR workDirBuf[MAX_PATH]{};
 		if (lpszFileName == NULL)
-			wcscpy_s(workDirBuf, file_path);
+			//wcscpy_s(workDirBuf, file_path);
+			WStringCopy(workDirBuf, 260, file_path, 260);
 		else
-			wcscpy_s(workDirBuf, lpszFileName);
+			//wcscpy_s(workDirBuf, lpszFileName);
+			WStringCopy(workDirBuf, 260, lpszFileName);
 		LPTSTR pstr = wcsrchr(workDirBuf, _T('\\'));
 		*pstr = _T('\0');
 		pLink->SetWorkingDirectory(workDirBuf);
@@ -589,7 +591,6 @@ void CCommon::NormalizeFont(LOGFONT & font)
 	if (index == wstring::npos)
 		return;
 	style = name.substr(index + 1);
-	//font.name = font.name.Left(index);
 	bool style_acquired = false;
 	if (style == L"Light")
 	{
@@ -621,16 +622,26 @@ void CCommon::NormalizeFont(LOGFONT & font)
 	{
 		name = name.substr(0, index);
 	}
-	wcsncpy_s(font.lfFaceName, name.c_str(), 32);
+	//wcsncpy_s(font.lfFaceName, name.c_str(), 32);
+	WStringCopy(font.lfFaceName, 32, name.c_str(), name.size());
 }
 
 void CCommon::WStringCopy(wchar_t * str_dest, int dest_size, const wchar_t * str_source, int source_size)
 {
-	for (int i{}; i < dest_size && i < source_size; i++)
+	if (dest_size <= 0)
+		return;
+	if (source_size <= 0 || str_source == nullptr)
+	{
+		str_dest[0] = L'\0';
+		return;
+	}
+	int i;
+	for (i = 0; i < dest_size && i < source_size && str_source[i] != L'\0'; i++)
 		str_dest[i] = str_source[i];
 	//确保目标字符串末尾有一个\0
-	if (source_size < dest_size)
-		str_dest[source_size] = L'\0';
+	int copy_cnt = i;
+	if (copy_cnt < dest_size)
+		str_dest[copy_cnt] = L'\0';
 	else
 		str_dest[dest_size - 1] = L'\0';
 }
