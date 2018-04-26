@@ -1945,10 +1945,16 @@ void CTrafficMonitorDlg::OnChangeSkin()
 		//获取皮肤的字体
 		if (theApp.m_general_data.allow_skin_cover_font)
 		{
-			if (!skinDlg.GetSkinData().font_name.empty())
-				theApp.m_main_wnd_data.font.name = skinDlg.GetSkinData().font_name.c_str();
-			if (skinDlg.GetSkinData().font_size >= MIN_FONT_SIZE && skinDlg.GetSkinData().font_size <= MAX_FONT_SIZE)
-				theApp.m_main_wnd_data.font.size = skinDlg.GetSkinData().font_size;
+			if (!skinDlg.GetSkinData().font.name.IsEmpty())
+			{
+				theApp.m_main_wnd_data.font.name = skinDlg.GetSkinData().font.name;
+				theApp.m_main_wnd_data.font.bold = skinDlg.GetSkinData().font.bold;
+				theApp.m_main_wnd_data.font.italic = skinDlg.GetSkinData().font.italic;
+				theApp.m_main_wnd_data.font.underline = skinDlg.GetSkinData().font.underline;
+				theApp.m_main_wnd_data.font.strike_out = skinDlg.GetSkinData().font.strike_out;
+			}
+			if (skinDlg.GetSkinData().font.size >= MIN_FONT_SIZE && skinDlg.GetSkinData().font.size <= MAX_FONT_SIZE)
+				theApp.m_main_wnd_data.font.size = skinDlg.GetSkinData().font.size;
 			SetTextFont();
 		}
 		//获取项目的显示文本

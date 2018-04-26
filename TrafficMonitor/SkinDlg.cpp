@@ -105,8 +105,10 @@ void CSkinDlg::ShowPreview()
 	ini.GetIntArray(_T("skin"), _T("text_color"), (int*)m_skin_data.text_colors, MAIN_WND_COLOR_NUM, 0);
 	m_skin_data.specify_each_item_color = ini.GetBool(_T("skin"), _T("specify_each_item_color"), false);
 	//获取当前皮肤的字体
-	m_skin_data.font_name = ini.GetString(L"skin", L"font_name", L"");
-	m_skin_data.font_size = ini.GetInt(_T("skin"), _T("font_size"), 0);
+	//m_skin_data.font_name = ini.GetString(L"skin", L"font_name", L"");
+	//m_skin_data.font_size = ini.GetInt(_T("skin"), _T("font_size"), 0);
+	FontInfo default_font{};
+	ini.LoadFontData(L"skin", m_skin_data.font, default_font);
 	m_view->IniFont();
 	//获取皮肤作者
 	wstring skin_author;
@@ -124,7 +126,7 @@ void CSkinDlg::ShowPreview()
 	//刷新预览图
 	m_view->Invalidate();
 	//设置提示信息
-	bool cover_font_setting{ !m_skin_data.font_name.empty() || (m_skin_data.font_size >= MIN_FONT_SIZE && m_skin_data.font_size <= MAX_FONT_SIZE) };
+	bool cover_font_setting{ !m_skin_data.font.name.IsEmpty() || (m_skin_data.font.size >= MIN_FONT_SIZE && m_skin_data.font.size <= MAX_FONT_SIZE) };
 	bool cover_str_setting{ !m_skin_data.disp_str.IsInvalid() };
 	cover_font_setting = cover_font_setting && theApp.m_general_data.allow_skin_cover_font;
 	cover_str_setting = cover_str_setting && theApp.m_general_data.allow_skin_cover_text;

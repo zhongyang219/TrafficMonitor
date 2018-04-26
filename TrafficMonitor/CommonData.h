@@ -228,6 +228,7 @@ struct SkinData
 	bool specify_each_item_color;		//是否指定每个项目的颜色
 	//wstring skin_author;
 	DispStrings disp_str;
-	wstring font_name;
-	int font_size;
+	//wstring font_name;
+	//int font_size
+	FontInfo font;			//字体
 };
