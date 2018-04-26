@@ -127,7 +127,8 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
 
 UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
 {
-	CheckUpdate(false);
+	CCommon::SetThreadLanguage(theApp.m_general_data.language);		//设置线程语言
+	CheckUpdate(false);		//检查更新
 	return 0;
 }
 
@@ -228,12 +229,7 @@ BOOL CTrafficMonitorApp::InitInstance()
 	LoadConfig();
 
 	//初始化界面语言
-	switch (m_general_data.language)
-	{
-	case Language::ENGLISH: SetThreadUILanguage(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); break;
-	case Language::SIMPLIFIED_CHINESE: SetThreadUILanguage(MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)); break;
-	default: break;
-	}
+	CCommon::SetThreadLanguage(m_general_data.language);
 
 #ifndef _DEBUG
 	wstring cmd_line{ m_lpCmdLine };

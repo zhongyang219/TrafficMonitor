@@ -174,6 +174,7 @@ void CNetworkInfoDlg::ShowInfo()
 
 UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
 {
+	CCommon::SetThreadLanguage(theApp.m_general_data.language);		//ÉèÖÃÏß³ÌÓïÑÔ
 	CNetworkInfoDlg* p_instance = (CNetworkInfoDlg*)lpParam;
 	p_instance->m_internet_ip_address = CCommon::GetInternetIp();
 	if (!p_instance->m_internet_ip_address.empty())
