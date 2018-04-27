@@ -312,7 +312,7 @@ void CTaskBarDlg::SaveConfig()
 	//ini.WriteInt(L"task_bar", L"task_bar_text_color", theApp.m_taskbar_data.text_color);
 	ini.WriteIntArray(L"task_bar", L"task_bar_text_color", (int*)theApp.m_taskbar_data.text_colors, TASKBAR_COLOR_NUM);
 	ini.WriteBool(L"task_bar", L"specify_each_item_color", theApp.m_taskbar_data.specify_each_item_color);
-	ini.WriteBool(L"task_bar", L"tack_bar_show_cpu_memory", theApp.m_tbar_show_cpu_memory);
+	ini.WriteBool(L"task_bar", L"task_bar_show_cpu_memory", theApp.m_tbar_show_cpu_memory);
 	//ini.WriteString(_T("task_bar"), _T("tack_bar_font_name"), wstring(theApp.m_taskbar_data.font.name));
 	//ini.WriteInt(L"task_bar", L"tack_bar_font_size", theApp.m_taskbar_data.font.size);
 	ini.SaveFontData(L"task_bar", theApp.m_taskbar_data.font);
