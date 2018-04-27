@@ -27,12 +27,14 @@ protected:
 	CLinkStatic m_github;			//“GitHub”超链接
 	CLinkStatic m_donate;			//“捐助”超链接
 	CToolTipCtrl m_Mytip;			//鼠标指向时的工具提示
-#define WIDTH 305
-#define HEIGHT 164
-#define PIC_HEIGHT 65
-#define WIDTH2 319
-#define HEIGHT2 154
-#define PIC_HEIGHT2 61
+
+	//布局数据
+	const int m_width{ theApp.DPI(305) };
+	const int m_height{ theApp.DPI(164) };
+	const int m_pic_height{ theApp.DPI(65) };
+	const int m_width2{ theApp.DPI(319) };
+	const int m_height2{ theApp.DPI(154) };
+	const int m_pic_height2{ theApp.DPI(61) };
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
@@ -75,20 +77,20 @@ BOOL CAboutDlg::OnInitDialog()
 	CRect window_rect{};
 	if (theApp.DPI(100) < 125)
 	{
-		window_rect.right = theApp.DPI(WIDTH);
-		window_rect.bottom = theApp.DPI(HEIGHT);
+		window_rect.right = m_width;
+		window_rect.bottom = m_height;
 		AdjustWindowRectEx(window_rect, GetStyle(), FALSE, GetExStyle());		//将客户区大小转换成窗口大小
 		SetWindowPos(nullptr, 0, 0, window_rect.Width(), window_rect.Height(), SWP_NOZORDER | SWP_NOMOVE);
-		m_about_img.SetWindowPos(nullptr, 0, 0, theApp.DPI(WIDTH), theApp.DPI(PIC_HEIGHT), SWP_NOZORDER | SWP_NOMOVE);
+		m_about_img.SetWindowPos(nullptr, 0, 0, m_width, m_pic_height, SWP_NOZORDER | SWP_NOMOVE);
 		m_about_img.SetPicture(IDB_ABOUT_BACKGROUND);
 	}
 	else
 	{
-		window_rect.right = theApp.DPI(WIDTH2);
-		window_rect.bottom = theApp.DPI(HEIGHT2);
+		window_rect.right = m_width2;
+		window_rect.bottom = m_height2;
 		AdjustWindowRectEx(window_rect, GetStyle(), FALSE, GetExStyle());		//将客户区大小转换成窗口大小
 		SetWindowPos(nullptr, 0, 0, window_rect.Width(), window_rect.Height(), SWP_NOZORDER | SWP_NOMOVE);
-		m_about_img.SetWindowPos(nullptr, 0, 0, theApp.DPI(WIDTH2), theApp.DPI(PIC_HEIGHT2), SWP_NOZORDER | SWP_NOMOVE);
+		m_about_img.SetWindowPos(nullptr, 0, 0, m_width2, m_pic_height2, SWP_NOZORDER | SWP_NOMOVE);
 		m_about_img.SetPicture(IDB_ABOUT_BACKGROUND_HD);
 	}
 	m_mail.SetURL(_T("mailto:zhongyang219@hotmail.com"));	//设置超链接
@@ -1298,11 +1300,13 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		if (theApp.m_general_data.memory_usage_tip_enable)
 		{
 			static int last_memory_usage;
-			if (last_memory_usage < theApp.m_general_data.memory_tip_value && theApp.m_memory_usage >= theApp.m_general_data.memory_tip_value)
+			static int notify_time{ -theApp.m_notify_interval };		//记录上次弹出提示时的时间
+			if (last_memory_usage < theApp.m_general_data.memory_tip_value && theApp.m_memory_usage >= theApp.m_general_data.memory_tip_value && (m_timer_cnt - notify_time > theApp.m_notify_interval))
 			{
 				CString info;
 				info.Format(CCommon::LoadText(IDS_MEMORY_UDAGE_EXCEED, _T(" %d%%!")), theApp.m_general_data.memory_tip_value);
 				ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY), info.GetString());
+				notify_time = m_timer_cnt;
 			}
 			last_memory_usage = theApp.m_memory_usage;
 		}

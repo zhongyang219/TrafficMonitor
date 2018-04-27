@@ -585,6 +585,8 @@ void CCommon::NormalizeFont(LOGFONT & font)
 	wstring name;
 	wstring style;
 	name = font.lfFaceName;
+	if (name.empty())
+		return;
 	if (name.back() == L' ')
 		name.pop_back();
 	size_t index = name.rfind(L' ');

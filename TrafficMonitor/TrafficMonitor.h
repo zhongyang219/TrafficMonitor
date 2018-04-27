@@ -46,6 +46,8 @@ public:
 	MainWndSettingData m_main_wnd_data;
 	TaskBarSettingData m_taskbar_data;
 	GeneralSettingData m_general_data;
+	//其他设置数据
+	int m_notify_interval;		//弹出通知消息的时间间隔
 
 	bool m_is_windows10_fall_creator;
 

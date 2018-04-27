@@ -35,6 +35,7 @@ void CTrafficMonitorApp::LoadConfig()
 	ini.SetPath(theApp.m_config_path);
 	//m_no_multistart_warning_time = GetPrivateProfileInt(_T("other"), _T("no_multistart_warning_time"), 300000, m_config_path.c_str());
 	m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), false);
+	m_notify_interval = ini.GetInt(_T("other"), _T("notify_interval"), 60);
 	m_general_data.check_update_when_start = ini.GetBool(_T("general"), _T("check_update_when_start"), true);
 	m_general_data.allow_skin_cover_font = ini.GetBool(_T("general"), _T("allow_skin_cover_font"), true);
 	m_general_data.allow_skin_cover_text = ini.GetBool(_T("general"), _T("allow_skin_cover_text"), true);
@@ -47,6 +48,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.SetPath(theApp.m_config_path);
 	//CCommon::WritePrivateProfileIntW(_T("other"), _T("no_multistart_warning_time"), m_no_multistart_warning_time);
 	ini.WriteBool(_T("other"), _T("no_multistart_warning"), m_no_multistart_warning);
+	ini.WriteInt(_T("other"), _T("notify_interval"), m_notify_interval);
 	ini.WriteBool(_T("general"), _T("check_update_when_start"), m_general_data.check_update_when_start);
 	ini.WriteBool(_T("general"), _T("allow_skin_cover_font"), m_general_data.allow_skin_cover_font);
 	ini.WriteBool(_T("general"), _T("allow_skin_cover_text"), m_general_data.allow_skin_cover_text);
