@@ -58,6 +58,7 @@ BOOL CIconSelectDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
+	SetWindowText(CCommon::LoadText(IDS_TITLE_CHANGE_ICON));
 
 	//设置预览图大小
 	m_preview_pic.SetWindowPos(nullptr, 0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT, SWP_NOZORDER | SWP_NOMOVE);

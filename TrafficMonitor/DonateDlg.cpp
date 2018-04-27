@@ -40,6 +40,7 @@ BOOL CDonateDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
+	SetWindowText(CCommon::LoadText(IDS_TITLE_DONATE));
 	int side = theApp.DPI(304);
 
 	m_donate_pic.SetWindowPos(&CWnd::wndTop, 0, 0, side, side, SWP_NOMOVE);	//更改控件的宽和高

@@ -71,6 +71,7 @@ BOOL CAboutDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
+	SetWindowText(CCommon::LoadText(IDS_TITLE_ABOUT));
 	CRect window_rect{};
 	if (theApp.DPI(100) < 125)
 	{

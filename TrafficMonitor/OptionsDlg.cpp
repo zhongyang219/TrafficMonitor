@@ -41,6 +41,7 @@ BOOL COptionsDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
+	SetWindowText(CCommon::LoadText(IDS_TITLE_OPTION));
 	//插入标签
 	m_tab.InsertItem(0, CCommon::LoadText(IDS_MAIN_WINDOW_SETTINGS));
 	m_tab.InsertItem(1, CCommon::LoadText(IDS_TASKBAR_WINDOW_SETTINGS));

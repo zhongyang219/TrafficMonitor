@@ -206,6 +206,7 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
+	SetWindowText(CCommon::LoadText(IDS_TITLE_CONNECTION_DETIAL));
 
 	//获取IP地址
 	GetIPAddress();

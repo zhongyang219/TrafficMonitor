@@ -181,6 +181,7 @@ BOOL CSkinDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
+	SetWindowText(CCommon::LoadText(IDS_TITLE_CHANGE_SKIN));
 	SetIcon(AfxGetApp()->LoadIcon(IDI_NOFITY_ICON3), FALSE);		// 设置小图标
 	//初始化选择框
 	for (const auto& skin_path : m_skins)
