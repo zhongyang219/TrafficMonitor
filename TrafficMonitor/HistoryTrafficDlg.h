@@ -1,7 +1,8 @@
 #pragma once
 #include "afxcmn.h"
 #include "Common.h"
-#include "ListCtrlEx.h"
+#include "HistoryTrafficListDlg.h"
+#include "HistoryTrafficCalendarDlg.h"
 
 // CHistoryTrafficDlg 对话框
 
@@ -18,25 +19,26 @@ public:
 	enum { IDD = IDD_HISTORY_TRAFFIC_DIALOG };
 #endif
 
+public:
+	CHistoryTrafficListDlg m_tab1_dlg;
+	CHistoryTrafficCalendarDlg m_tab2_dlg;
+
 protected:
-	CListCtrlEx m_history_list;
 	deque<HistoryTraffic>& m_history_traffics;
 	CSize m_min_size;
 
-	CMenu m_menu;
-	bool m_use_log_scale{ false };		//绘制表示历史流量数值的矩形时是否使用对数比例
+	CTabCtrl m_tab;
+	int m_tab_selected;
 
-	void SaveConfig() const;
-	void LoadConfig();
-
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+	void SetTabWndSize();
 
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
-	afx_msg void OnInitMenu(CMenu* pMenu);
-	afx_msg void OnUseLinearScale();
-	afx_msg void OnUseLogScale();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 };

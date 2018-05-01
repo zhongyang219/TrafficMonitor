@@ -33,7 +33,7 @@
 
 #include <afxcontrolbars.h>     // 功能区和控件条的 MFC 支持
 
-
+#include "resource.h"
 #include <string>
 using std::string;
 using std::wstring;
@@ -50,6 +50,8 @@ using std::ofstream;
 #include <cmath>
 #include <afxinet.h>	//用于支持使用网络相关的类
 #include <afxwin.h>
+#include <afxcontrolbars.h>
+#include <afxcontrolbars.h>
 
 
 

@@ -47,11 +47,14 @@ public:
 //	afx_msg void OnStnClickedStaticDonate();
 protected:
 	afx_msg LRESULT OnLinkClicked(WPARAM wParam, LPARAM lParam);
+public:
+	afx_msg void OnPaint();
 };
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 	//ON_STN_CLICKED(IDC_STATIC_DONATE, &CAboutDlg::OnStnClickedStaticDonate)
 	ON_MESSAGE(WM_LINK_CLICKED, &CAboutDlg::OnLinkClicked)
+	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 CAboutDlg::CAboutDlg() : CDialog(IDD_ABOUTBOX)
@@ -2073,4 +2076,12 @@ void CTrafficMonitorDlg::OnUpdateAlowOutOfBorder(CCmdUI *pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
 	pCmdUI->SetCheck(m_alow_out_of_border);
+}
+
+
+void CAboutDlg::OnPaint()
+{
+	CPaintDC dc(this); // device context for painting
+					   // TODO: 在此处添加消息处理程序代码
+					   // 不为绘图消息调用 CDialog::OnPaint()
 }

@@ -185,6 +185,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CalendarHelper.h" />
+    <ClInclude Include="HistoryTrafficCalendarDlg.h" />
+    <ClInclude Include="HistoryTrafficListDlg.h" />
     <ClInclude Include="LinkStatic.h" />
     <ClInclude Include="ColorStatic.h" />
     <ClInclude Include="Common.h" />
@@ -216,6 +219,9 @@
     <ClInclude Include="TrafficMonitorDlg.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CalendarHelper.cpp" />
+    <ClCompile Include="HistoryTrafficCalendarDlg.cpp" />
+    <ClCompile Include="HistoryTrafficListDlg.cpp" />
     <ClCompile Include="LinkStatic.cpp" />
     <ClCompile Include="ColorStatic.cpp" />
     <ClCompile Include="Common.cpp" />

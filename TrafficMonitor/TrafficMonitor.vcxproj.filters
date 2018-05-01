@@ -85,6 +85,9 @@
     <Filter Include="源文件和头文件\派生的控件类\LinkStatic">
       <UniqueIdentifier>{6fce899f-3e92-40c2-a69b-ffcfb4a4c19f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\CalendarHelper">
+      <UniqueIdentifier>{9fa66474-d19b-4357-9813-e511bb20c722}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -177,6 +180,15 @@
     <ClInclude Include="TaskbarColorDlg.h">
       <Filter>源文件和头文件\对话框类\颜色设置对话框</Filter>
     </ClInclude>
+    <ClInclude Include="HistoryTrafficListDlg.h">
+      <Filter>源文件和头文件\对话框类\HistoryTrafficDlg</Filter>
+    </ClInclude>
+    <ClInclude Include="HistoryTrafficCalendarDlg.h">
+      <Filter>源文件和头文件\对话框类\HistoryTrafficDlg</Filter>
+    </ClInclude>
+    <ClInclude Include="CalendarHelper.h">
+      <Filter>源文件和头文件\公共的类\CalendarHelper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -256,6 +268,15 @@
     </ClCompile>
     <ClCompile Include="TaskbarColorDlg.cpp">
       <Filter>源文件和头文件\对话框类\颜色设置对话框</Filter>
+    </ClCompile>
+    <ClCompile Include="HistoryTrafficListDlg.cpp">
+      <Filter>源文件和头文件\对话框类\HistoryTrafficDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="HistoryTrafficCalendarDlg.cpp">
+      <Filter>源文件和头文件\对话框类\HistoryTrafficDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="CalendarHelper.cpp">
+      <Filter>源文件和头文件\公共的类\CalendarHelper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
