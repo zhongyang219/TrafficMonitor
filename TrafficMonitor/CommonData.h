@@ -30,6 +30,12 @@ struct HistoryTraffic
 	}
 };
 
+//历史流量统计中用于指示不同范围内的流量的颜色
+#define TRAFFIC_COLOR_BLUE RGB(0, 183, 238)
+#define TRAFFIC_COLOR_GREEN RGB(128, 194, 105)
+#define TRAFFIC_COLOR_YELLOE RGB(255, 216, 58)
+#define TRAFFIC_COLOR_RED RGB(255, 95, 74)
+
 //网速单位
 enum class SpeedUnit
 {
