@@ -37,6 +37,7 @@ public:
 	static void BitmapStretch(CImage *pImage, CImage *ResultImage, CSize size);
 
 	void FillRect(CRect rect, COLORREF color);		//用纯色填充矩形
+	void FillRectWithBackColor(CRect rect);			//使用背景色填充矩形
 
 	//从图像创建区域，如果像素点的亮度小于threshold（取值为0~255，0为黑色，255为白色），则该像素点在区域外
 	//https://blog.csdn.net/tajon1226/article/details/6589180

@@ -178,6 +178,11 @@ void CDrawCommon::FillRect(CRect rect, COLORREF color)
 	m_pDC->FillSolidRect(rect, color);
 }
 
+void CDrawCommon::FillRectWithBackColor(CRect rect)
+{
+	m_pDC->FillSolidRect(rect, m_back_color);
+}
+
 void CDrawCommon::GetRegionFromImage(CRgn& rgn, CBitmap &cBitmap, int threshold)
 {
 	CDC memDC;

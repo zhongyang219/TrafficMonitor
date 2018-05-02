@@ -136,6 +136,18 @@ CString CCommon::KBytesToString(unsigned int kb_size)
 	return k_bytes_str;
 }
 
+CString CCommon::KBytesToStringL(__int64 kb_size)
+{
+	CString k_bytes_str;
+	if (kb_size < 1024)
+		k_bytes_str.Format(_T("%dKB"), kb_size);
+	else if (kb_size < 1024 * 1024)
+		k_bytes_str.Format(_T("%.2fMB"), kb_size / 1024.0);
+	else
+		k_bytes_str.Format(_T("%.2fGB"), kb_size / (1024.0 * 1024.0));
+	return k_bytes_str;
+}
+
 __int64 CCommon::CompareFileTime2(FILETIME time1, FILETIME time2)
 {
 	__int64 a = static_cast<__int64>(time1.dwHighDateTime) << 32 | time1.dwLowDateTime;

@@ -21,6 +21,7 @@ public:
 	static CString DataSizeToString(unsigned int size, bool short_mode = false, SpeedUnit unit = SpeedUnit::AUTO, bool hide_unit = false);
 
 	static CString KBytesToString(unsigned int kb_size);
+	static CString KBytesToStringL(__int64 kb_size);
 
 	//返回两个FILETIME结构的时间差
 	static __int64 CompareFileTime2(FILETIME time1, FILETIME time2);
