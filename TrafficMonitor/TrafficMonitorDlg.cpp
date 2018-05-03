@@ -1011,9 +1011,9 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	GetSkinLayout();
 
 	//初始化窗口位置
+	SetItemPosition();
 	if (m_position_x != -1 && m_position_y != -1)
 		SetWindowPos(nullptr, m_position_x, m_position_y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
-	SetItemPosition();
 	CheckWindowPos();
 
 	//载入背景图片
