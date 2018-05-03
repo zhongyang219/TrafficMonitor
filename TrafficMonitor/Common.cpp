@@ -294,7 +294,7 @@ wstring CCommon::GetStartUpPath()
 void CCommon::GetFiles(const wchar_t* path, vector<wstring>& files)
 {
 	//文件句柄 
-	int hFile = 0;
+	intptr_t hFile = 0;
 	//文件信息（用Unicode保存使用_wfinddata_t，多字节字符集使用_finddata_t）
 	_wfinddata_t fileinfo;
 	wstring file_name;
