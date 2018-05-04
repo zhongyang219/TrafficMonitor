@@ -506,6 +506,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 			::MoveWindow(m_hMin, m_left_space + m_rect.Width(), 0, m_rcMin.Width() - m_rect.Width(), m_rcMin.Height(), TRUE);
 
 		::SetParent(this->m_hWnd, m_hBar);	//把程序窗口设置成任务栏的子窗口
+		m_error_code = GetLastError();
 
 		//调整程序窗口的大小和位置
 		//注：当把当前窗口设置为任务栏的子窗口后，MoveWindow函数移动的位置是基于任务栏的相对位置，
@@ -536,6 +537,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 			::MoveWindow(m_hMin, 0, m_top_space + m_rect.Height(), m_rcMin.Width(), m_rcMin.Height() - m_rect.Height(), TRUE);
 
 		::SetParent(this->m_hWnd, m_hBar);	//把程序窗口设置成任务栏的子窗口
+		m_error_code = GetLastError();
 
 		//调整程序窗口的大小和位置
 		//注：当把当前窗口设置为任务栏的子窗口后，MoveWindow函数移动的位置是基于任务栏的相对位置，

@@ -49,6 +49,7 @@ protected:
 
 	bool m_connot_insert_to_task_bar{ false };	//如果窗口无法嵌入任务栏，则为true
 	bool m_taskbar_on_top_or_bottom{ true };		//如果任务栏在屏幕顶部或底部，则为ture
+	int m_error_code{};
 
 	CMenu m_menu;	//右键菜单
 
@@ -71,6 +72,7 @@ public:
 	void UpdateToolTips();
 
 	bool GetCannotInsertToTaskBar() const { return m_connot_insert_to_task_bar; }
+	int GetErrorCode() const { return m_error_code; }
 
 	DECLARE_MESSAGE_MAP()
 

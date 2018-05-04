@@ -317,6 +317,15 @@ bool CCommon::FileExist(LPCTSTR file_name)
 	return (_wfindfirst(file_name, &fileinfo) != -1);
 }
 
+bool CCommon::MoveAFile(LPCTSTR exist_file, LPCTSTR new_file)
+{
+	if(!FileExist(exist_file))
+		return false;
+	//if (FileExist(new_file))		//如果目标文件已经存在，则先删除它
+	//	DeleteFile(new_file);
+	return (MoveFile(exist_file, new_file) != 0);
+}
+
 SYSTEMTIME CCommon::CompareSystemTime(SYSTEMTIME a, SYSTEMTIME b)
 {
 	SYSTEMTIME result{};
@@ -362,6 +371,34 @@ wstring CCommon::GetSystemPath()
 	wchar_t buff[MAX_PATH];
 	GetSystemDirectory(buff, MAX_PATH);
 	return wstring(buff);
+}
+
+wstring CCommon::GetTemplatePath()
+{
+	wstring result;
+	wchar_t buff[MAX_PATH];
+	GetTempPath(MAX_PATH, buff);		//获取临时文件夹的路径
+	result = buff;
+	if (result.back() != L'\\' && result.back() != L'/')		//确保路径后面有斜杠
+		result.push_back(L'\\');
+	return result;
+}
+
+wstring CCommon::GetAppDataConfigPath()
+{
+	LPITEMIDLIST ppidl;
+	TCHAR pszAppDataPath[MAX_PATH];
+	if (SHGetSpecialFolderLocation(NULL, CSIDL_APPDATA, &ppidl) == S_OK)
+	{
+		SHGetPathFromIDList(ppidl, pszAppDataPath);
+		CoTaskMemFree(ppidl);
+	}
+	wstring app_data_path{ pszAppDataPath };		//获取到C:/User/用户名/AppData/Roaming路径
+	CreateDirectory(app_data_path.c_str(), NULL);		//如果Roaming不存在，则创建它
+	app_data_path += L"\\TrafficMonitor\\";
+	CreateDirectory(app_data_path.c_str(), NULL);		//如果C:/User/用户名/AppData/Roaming/TrafficMonitor不存在，则创建它
+
+	return app_data_path;
 }
 
 void CCommon::DrawWindowText(CDC * pDC, CRect rect, LPCTSTR lpszString, COLORREF color, COLORREF back_color)

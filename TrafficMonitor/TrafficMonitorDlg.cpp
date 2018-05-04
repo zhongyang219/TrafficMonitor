@@ -517,7 +517,12 @@ void CTrafficMonitorDlg::SaveConfig()
 	if (!ini.WriteInt(L"config", L"transparency", m_transparency))
 	{
 		if (m_cannot_save_config_warning)
-			MessageBox(CCommon::LoadText(IDS_CONNOT_SAVE_CONFIG_WARNING), NULL, MB_ICONWARNING);
+		{
+			CString info;
+			info.LoadString(IDS_CONNOT_SAVE_CONFIG_WARNING);
+			info.Replace(_T("<%file_path%>"), theApp.m_config_path.c_str());
+			MessageBox(info, NULL, MB_ICONWARNING);
+		}
 		m_cannot_save_config_warning = false;
 		return;
 	}
@@ -1121,7 +1126,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			}
 		}
 
-		if (m_timer_cnt % 15 == 14)		//每隔15秒钟保存一次设置
+		if (m_timer_cnt % 30 == 26)		//每隔30秒钟保存一次设置
 			SaveConfig();
 
 		if (m_timer_cnt % 2 == 1)		//每隔2秒钟获取一次屏幕区域
@@ -1287,6 +1292,13 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 					{
 						if (m_tBarDlg->GetCannotInsertToTaskBar() && m_cannot_intsert_to_task_bar_warning)		//确保提示信息只弹出一次
 						{
+							//写入错误日志
+							CString info;
+							info.LoadString(IDS_CONNOT_INSERT_TO_TASKBAR_ERROR_LOG);
+							info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_insert_to_taskbar_cnt));
+							info.Replace(_T("<%error_code%>"), CCommon::IntToString(m_tBarDlg->GetErrorCode()));
+							CCommon::WriteLog(info, theApp.m_log_path.c_str());
+							//弹出错误信息
 							MessageBox(CCommon::LoadText(IDS_CONNOT_INSERT_TO_TASKBAR), NULL, MB_ICONWARNING);
 							m_cannot_intsert_to_task_bar_warning = false;
 						}
@@ -1871,7 +1883,6 @@ void CTrafficMonitorDlg::OnAppAbout()
 {
 	// TODO: 在此添加命令处理程序代码
 	//弹出“关于”对话框
-	//ShowNotifyTip(L"test", L"测试消息");
 	CAboutDlg aDlg;
 	aDlg.DoModal();
 }

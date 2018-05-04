@@ -27,6 +27,8 @@ public:
 	wstring m_log_path;
 	wstring m_skin_path;
 	wstring m_system_path;
+	wstring m_temp_path;
+	wstring m_app_data_cfg_path;
 
 	//以下数据定义为App类中的公共成员，以便于在主对话框和任务栏窗口中都能访问
 	unsigned int m_in_speed{};		//下载速度

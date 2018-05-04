@@ -51,6 +51,8 @@ public:
 	//判断一个文件是否存在
 	static bool FileExist(LPCTSTR file_name);
 
+	static bool MoveAFile(LPCTSTR exist_file, LPCTSTR new_file);
+
 	//计算两个SYSTEMTIME结构时间的差（a-b，只保留时、分、秒）
 	static SYSTEMTIME CompareSystemTime(SYSTEMTIME a, SYSTEMTIME b);
 
@@ -59,6 +61,12 @@ public:
 
 	//获取system32文件夹的路径
 	static wstring GetSystemPath();
+
+	//获取临时文件夹的路径
+	static wstring GetTemplatePath();
+
+	//获取Appdata/Local/TrafficMonitor的目录，如果不存在，则会自动创建
+	static wstring GetAppDataConfigPath();
 
 	//在指定位置绘制文本
 	static void DrawWindowText(CDC* pDC, CRect rect, LPCTSTR lpszString, COLORREF color, COLORREF back_color);
