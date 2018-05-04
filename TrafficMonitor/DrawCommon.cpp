@@ -183,6 +183,21 @@ void CDrawCommon::FillRectWithBackColor(CRect rect)
 	m_pDC->FillSolidRect(rect, m_back_color);
 }
 
+void CDrawCommon::DrawRectOutLine(CRect rect, COLORREF color, int width, bool dot_line)
+{
+	CPen aPen, *pOldPen;
+	aPen.CreatePen((dot_line ? PS_DOT : PS_SOLID), width, color);
+	pOldPen = m_pDC->SelectObject(&aPen);
+
+	m_pDC->MoveTo(rect.TopLeft());
+	m_pDC->LineTo(rect.right - (width / 2 + 1), rect.top);
+	m_pDC->LineTo(rect.right - (width / 2 + 1), rect.bottom - (width / 2 + 1));
+	m_pDC->LineTo(rect.left, rect.bottom - (width / 2 + 1));
+	m_pDC->LineTo(rect.TopLeft());
+
+	m_pDC->SelectObject(pOldPen);
+}
+
 void CDrawCommon::GetRegionFromImage(CRgn& rgn, CBitmap &cBitmap, int threshold)
 {
 	CDC memDC;

@@ -244,7 +244,7 @@ BOOL CTrafficMonitorApp::InitInstance()
 	}
 
 	//检查是否已有实例正在运行
-	HANDLE hMutex = ::CreateMutex(NULL, TRUE, _T("FirstName"));
+	HANDLE hMutex = ::CreateMutex(NULL, TRUE, _T("TrafficMonitor-1419J3XLKL1w8OZc"));
 	if (hMutex != NULL)
 	{
 		if (GetLastError() == ERROR_ALREADY_EXISTS)
