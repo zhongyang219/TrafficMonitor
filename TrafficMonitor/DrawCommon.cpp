@@ -188,14 +188,12 @@ void CDrawCommon::DrawRectOutLine(CRect rect, COLORREF color, int width, bool do
 	CPen aPen, *pOldPen;
 	aPen.CreatePen((dot_line ? PS_DOT : PS_SOLID), width, color);
 	pOldPen = m_pDC->SelectObject(&aPen);
+	CBrush* pOldBrush{ dynamic_cast<CBrush*>(m_pDC->SelectStockObject(NULL_BRUSH)) };
 
-	m_pDC->MoveTo(rect.TopLeft());
-	m_pDC->LineTo(rect.right - (width / 2 + 1), rect.top);
-	m_pDC->LineTo(rect.right - (width / 2 + 1), rect.bottom - (width / 2 + 1));
-	m_pDC->LineTo(rect.left, rect.bottom - (width / 2 + 1));
-	m_pDC->LineTo(rect.TopLeft());
-
+	rect.DeflateRect(width / 2, width / 2);
+	m_pDC->Rectangle(rect);
 	m_pDC->SelectObject(pOldPen);
+	m_pDC->SelectObject(pOldBrush);       // Restore the old brush
 }
 
 void CDrawCommon::GetRegionFromImage(CRgn& rgn, CBitmap &cBitmap, int threshold)
