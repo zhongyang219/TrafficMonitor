@@ -1299,7 +1299,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 							info.Replace(_T("<%error_code%>"), CCommon::IntToString(m_tBarDlg->GetErrorCode()));
 							CCommon::WriteLog(info, theApp.m_log_path.c_str());
 							//µ¯³ö´íÎóÐÅÏ¢
-							MessageBox(CCommon::LoadText(IDS_CONNOT_INSERT_TO_TASKBAR), NULL, MB_ICONWARNING);
+							MessageBox(CCommon::LoadText(IDS_CONNOT_INSERT_TO_TASKBAR, CCommon::IntToString(m_tBarDlg->GetErrorCode())), NULL, MB_ICONWARNING);
 							m_cannot_intsert_to_task_bar_warning = false;
 						}
 					}
