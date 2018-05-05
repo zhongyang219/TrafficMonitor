@@ -49,4 +49,5 @@ public:
 	virtual void OnOK();
 	afx_msg void OnBnClickedTodayTrafficTipCheck();
 	afx_msg void OnBnClickedMemoryUsageTipCheck();
+	afx_msg void OnBnClickedOpenConfigPathButton();
 };

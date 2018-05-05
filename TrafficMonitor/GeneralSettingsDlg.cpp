@@ -50,6 +50,7 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_ALLOW_SKIN_DISP_STR_CHECK, &CGeneralSettingsDlg::OnBnClickedAllowSkinDispStrCheck)
 	ON_BN_CLICKED(IDC_TODAY_TRAFFIC_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedTodayTrafficTipCheck)
 	ON_BN_CLICKED(IDC_MEMORY_USAGE_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedMemoryUsageTipCheck)
+	ON_BN_CLICKED(IDC_OPEN_CONFIG_PATH_BUTTON, &CGeneralSettingsDlg::OnBnClickedOpenConfigPathButton)
 END_MESSAGE_MAP()
 
 
@@ -174,4 +175,15 @@ void CGeneralSettingsDlg::OnBnClickedMemoryUsageTipCheck()
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.memory_usage_tip_enable = (((CButton*)GetDlgItem(IDC_MEMORY_USAGE_TIP_CHECK))->GetCheck() != 0);
 	SetMemoryTipControlEnable(m_data.memory_usage_tip_enable);
+}
+
+
+void CGeneralSettingsDlg::OnBnClickedOpenConfigPathButton()
+{
+	// TODO: 在此添加控件通知处理程序代码
+#ifdef _DEBUG
+	ShellExecute(NULL, _T("explore"), _T(".\\"), NULL, NULL, SW_SHOWNORMAL);
+#else
+	ShellExecute(NULL, _T("explore"), theApp.m_app_data_cfg_path.c_str(), NULL, NULL, SW_SHOWNORMAL);
+#endif
 }
