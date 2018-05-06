@@ -329,6 +329,7 @@ void CTaskBarDlg::SaveConfig()
 	ini.WriteBool(L"task_bar", L"task_bar_hide_unit", theApp.m_taskbar_data.hide_unit);
 	ini.WriteBool(L"task_bar", L"task_bar_hide_percent", theApp.m_taskbar_data.hide_percent);
 	ini.WriteBool(L"task_bar", L"value_right_align", theApp.m_taskbar_data.value_right_align);
+	ini.WriteInt(L"task_bar", L"digits_number", theApp.m_taskbar_data.digits_number);
 	ini.WriteInt(L"task_bar", L"double_click_action", static_cast<int>(theApp.m_taskbar_data.double_click_action));
 }
 
@@ -362,6 +363,7 @@ void CTaskBarDlg::LoadConfig()
 	theApp.m_taskbar_data.hide_unit = ini.GetBool(_T("task_bar"), _T("task_bar_hide_unit"), false);
 	theApp.m_taskbar_data.hide_percent = ini.GetBool(_T("task_bar"), _T("task_bar_hide_percent"), false);
 	theApp.m_taskbar_data.value_right_align = ini.GetBool(_T("task_bar"), _T("value_right_align"), false);
+	theApp.m_taskbar_data.digits_number = ini.GetInt(_T("task_bar"), _T("digits_number"), 4);
 	theApp.m_taskbar_data.double_click_action = static_cast<DoubleClickAction>(ini.GetInt(_T("task_bar"), _T("double_click_action"), 0));
 }
 
@@ -402,22 +404,23 @@ void CTaskBarDlg::CalculateWindowWidth()
 	CString str1, str2;
 	int width1, width2;
 	CString sample_str;
+	wstring digits(theApp.m_taskbar_data.digits_number, L'8');		//根据数据位数生成指定个数的“8”
 	if (theApp.m_taskbar_data.speed_short_mode)
 	{
 		if (theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO)
-			sample_str = _T("%s8888");
+			sample_str.Format(_T("%s."), digits.c_str());
 		else
-			sample_str = _T("%s8888M/s");
+			sample_str.Format(_T("%s.M/s"), digits.c_str());
 	}
 	else
 	{
 		if (theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO)
-			sample_str = _T("%s8888.8");
+			sample_str.Format(_T("%s.8"), digits.c_str());
 		else
-			sample_str = _T("%s8888.8MB/s");
+			sample_str.Format(_T("%s.8MB/s"), digits.c_str());
 	}
-	str1.Format(sample_str, theApp.m_taskbar_data.disp_str.up.c_str());
-	str2.Format(sample_str, theApp.m_taskbar_data.disp_str.down.c_str());
+	str1 = theApp.m_taskbar_data.disp_str.up.c_str() + sample_str;
+	str2 = theApp.m_taskbar_data.disp_str.down.c_str() + sample_str;
 	width1= m_pDC->GetTextExtent(str1).cx;		//计算使用当前字体显示文本需要的宽度值
 	width2= m_pDC->GetTextExtent(str2).cx;
 	m_window_width_s = max(width1, width2);

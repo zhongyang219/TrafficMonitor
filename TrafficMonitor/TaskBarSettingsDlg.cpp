@@ -48,6 +48,7 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_HIDE_UNIT_CHECK, m_hide_unit_chk);
 	DDX_Control(pDX, IDC_FONT_SIZE_EDIT1, m_font_size_edit);
 	DDX_Control(pDX, IDC_DOUBLE_CLICK_COMBO, m_double_click_combo);
+	DDX_Control(pDX, IDC_DIGIT_NUMBER_COMBO, m_digit_number_combo);
 }
 
 
@@ -128,6 +129,12 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	m_double_click_combo.AddString(CCommon::LoadText(IDS_OPEN_TASK_MANAGER));
 	m_double_click_combo.AddString(CCommon::LoadText(IDS_NONE));
 	m_double_click_combo.SetCurSel(static_cast<int>(m_data.double_click_action));
+
+	m_digit_number_combo.AddString(_T("4"));
+	m_digit_number_combo.AddString(_T("5"));
+	m_digit_number_combo.AddString(_T("6"));
+	m_digit_number_combo.AddString(_T("7"));
+	m_digit_number_combo.SetCurSel(m_data.digits_number - 4);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -308,6 +315,9 @@ void CTaskBarSettingsDlg::OnOK()
 		m_data.font.size = font_size;
 	}
 	GetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font.name);
+
+	//获取数据位数的设置
+	m_data.digits_number = m_digit_number_combo.GetCurSel() + 4;
 
 	CTabDlg::OnOK();
 }

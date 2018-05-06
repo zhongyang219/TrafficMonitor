@@ -32,6 +32,7 @@ protected:
 	CButton m_hide_unit_chk;
 	CSpinEdit m_font_size_edit;
 	CComboBox m_double_click_combo;
+	CComboBox m_digit_number_combo;
 
 	void DrawStaticColor();
 

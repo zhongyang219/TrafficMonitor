@@ -134,6 +134,7 @@ struct TaskBarSettingData
 	bool swap_up_down{ false };		//交换上传和下载显示的位置
 	bool speed_short_mode{ false };		//网速显示简洁模式（减少小数点的位数，单位不显示“B”）
 	bool value_right_align{ false };	//数值是否右对齐
+	int digits_number{ 4 };				//数据位数
 	bool tbar_wnd_on_left{ false };		//如果为true，则任务栏窗口显示在任务栏的左侧（或上方）
 	SpeedUnit speed_unit;		//网速的单位
 	bool hide_unit;			//隐藏单位
