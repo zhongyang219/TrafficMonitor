@@ -103,7 +103,7 @@ void CNetworkInfoDlg::ShowInfo()
 	m_info_list.InsertItem(4, CCommon::LoadText(IDS_ADAPTER_PHYSICAL_ADDRESS));
 	temp = _T("");
 	char buff[3];
-	for (int i{}; i < m_network_info.dwPhysAddrLen; i++)
+	for (size_t i{}; i < m_network_info.dwPhysAddrLen; i++)
 	{
 		//_itoa_s(m_network_info.bPhysAddr[i], buff, 16);
 		sprintf_s(buff, "%.2x", m_network_info.bPhysAddr[i]);

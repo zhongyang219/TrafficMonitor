@@ -578,7 +578,7 @@ void CTrafficMonitorDlg::AutoSelect()
 	//m_connection_selected = m_connections[0].index;
 	m_connection_selected = 0;
 	//自动选择连接时，查找已发送和已接收字节数之和最多的那个连接，并将其设置为当前查看的连接
-	for (int i{}; i<m_connections.size(); i++)
+	for (size_t i{}; i<m_connections.size(); i++)
 	{
 		if (m_pIfTable->table[m_connections[i].index].dwOperStatus == IF_OPER_STATUS_OPERATIONAL)		//只选择网络状态为正常的连接
 		{
@@ -650,7 +650,7 @@ void CTrafficMonitorDlg::IniConnection()
 	m_menu.LoadMenu(IDR_MENU1); //装载右键菜单
 	m_select_connection_menu = m_menu.GetSubMenu(0)->GetSubMenu(0);		//设置“选择网卡”子菜单项
 	CString connection_descr;
-	for (int i{}; i < m_connections.size(); i++)
+	for (size_t i{}; i < m_connections.size(); i++)
 	{
 		connection_descr = CCommon::StrToUnicode(m_connections[i].description.c_str()).c_str();
 		m_select_connection_menu->AppendMenu(MF_STRING | MF_ENABLED, ID_SELETE_CONNECTION + i + 1, connection_descr);
@@ -767,7 +767,7 @@ void CTrafficMonitorDlg::LoadHistoryTraffic()
 		std::sort(m_history_traffics.begin(), m_history_traffics.end(), HistoryTraffic::DateGreater);
 
 		//如果列表中有相同日期的项目，则将它合并
-		for (int i{}; i < m_history_traffics.size() - 1; i++)
+		for (int i{}; i < static_cast<int>(m_history_traffics.size() - 1); i++)
 		{
 			if (HistoryTraffic::DateEqual(m_history_traffics[i], m_history_traffics[i + 1]))
 			{
@@ -1195,7 +1195,14 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		m_history_traffics[0].kBytes = static_cast<unsigned int>(theApp.m_today_traffic / 1024);
 		//每隔30秒保存一次流量历史记录
 		if (m_timer_cnt % 30 == 10)
-			SaveHistoryTraffic();
+		{
+			static unsigned int last_today_kbytes;
+			if (m_history_traffics[0].kBytes - last_today_kbytes >= 100)	//只有当流量变化超过100KB时才保存历史流量记录，防止磁盘写入过于频繁
+			{
+				SaveHistoryTraffic();
+				last_today_kbytes = m_history_traffics[0].kBytes;
+			}
+		}
 
 		if (rtn == ERROR_INSUFFICIENT_BUFFER)
 		{
@@ -1316,7 +1323,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		{
 			static int last_memory_usage;
 			static int notify_time{ -theApp.m_notify_interval };		//记录上次弹出提示时的时间
-			if (last_memory_usage < theApp.m_general_data.memory_tip_value && theApp.m_memory_usage >= theApp.m_general_data.memory_tip_value && (m_timer_cnt - notify_time > theApp.m_notify_interval))
+			if (last_memory_usage < theApp.m_general_data.memory_tip_value && theApp.m_memory_usage >= theApp.m_general_data.memory_tip_value && (m_timer_cnt - notify_time > static_cast<unsigned int>(theApp.m_notify_interval)))
 			{
 				CString info;
 				info.Format(CCommon::LoadText(IDS_MEMORY_UDAGE_EXCEED, _T(" %d%%!")), theApp.m_general_data.memory_tip_value);
