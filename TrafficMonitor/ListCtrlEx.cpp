@@ -14,7 +14,7 @@ CListCtrlEx::~CListCtrlEx()
 void CListCtrlEx::SetDrawItemRangeData(int item, double range, COLORREF color)
 {
 	if (item < 0) return;
-	if (item >= m_item_rage_data.size())
+	if (item >= static_cast<int>(m_item_rage_data.size()))
 		m_item_rage_data.resize(item + 1);
 	m_item_rage_data[item].data_value = range;
 	m_item_rage_data[item].color = color;
