@@ -386,13 +386,23 @@ void CTrafficMonitorDlg::SetTransparency(int transparency)
 
 void CTrafficMonitorDlg::SetAlwaysOnTop()
 {
-	if (!m_is_foreground_fullscreen || (m_is_foreground_fullscreen && !theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen))
-	{
-		if (m_always_on_top)
-			SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);			//设置置顶
-		else
-			SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//取消置顶
-	}
+	//if (!m_is_foreground_fullscreen || (m_is_foreground_fullscreen && !theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen))
+	//{
+	//	if (m_always_on_top)
+	//		SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);			//设置置顶
+	//	else
+	//		SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//取消置顶
+	//}
+	if (theApp.m_hide_main_window)
+		return;
+	else if (theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen && m_is_foreground_fullscreen)		//当设置有程序全屏时隐藏悬浮窗且有程序在全屏运行时，不执行置顶操作
+		return;
+
+	if (m_always_on_top)
+		SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);			//设置置顶
+	else
+		SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//取消置顶
+
 }
 
 void CTrafficMonitorDlg::SetMousePenetrate()
