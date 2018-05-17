@@ -14,7 +14,8 @@
 // CTrafficMonitorApp
 
 BEGIN_MESSAGE_MAP(CTrafficMonitorApp, CWinApp)
-	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
+	//ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
+	ON_COMMAND(ID_HELP, &CTrafficMonitorApp::OnHelp)
 END_MESSAGE_MAP()
 
 
@@ -345,3 +346,10 @@ BOOL CTrafficMonitorApp::InitInstance()
 	return FALSE;
 }
 
+
+
+void CTrafficMonitorApp::OnHelp()
+{
+	// TODO: 在此添加命令处理程序代码
+	ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/Help.md"), NULL, NULL, SW_SHOW);	//打开超链接;
+}
