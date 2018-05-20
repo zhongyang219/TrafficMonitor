@@ -1,3 +1,4 @@
+**简体中文 | [English](https://github.com/zhongyang219/TrafficMonitor/blob/master/Help_en-us.md)**<br>
 # TrafficMonitor 帮助
 ### 1. 如何显示CPU和内存利用率？
 在主窗口点击右弹出键菜单，勾选“显示更多信息”。如果需要在任务栏窗口中也显示CPU和内存利用率，则在任务栏窗口中点击右键弹出菜单，勾选“显示CPU和内存利用率”即可。

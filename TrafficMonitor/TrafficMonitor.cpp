@@ -353,5 +353,10 @@ BOOL CTrafficMonitorApp::InitInstance()
 void CTrafficMonitorApp::OnHelp()
 {
 	// TODO: 在此添加命令处理程序代码
-	ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/Help.md"), NULL, NULL, SW_SHOW);	//打开超链接;
+	CString language_code;
+	language_code.LoadString(IDS_LANGUAGE_CODE);
+	if (language_code == _T("2"))
+		ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/Help.md"), NULL, NULL, SW_SHOW);	//打开超链接;
+	else
+		ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/Help_en-us.md"), NULL, NULL, SW_SHOW);
 }
