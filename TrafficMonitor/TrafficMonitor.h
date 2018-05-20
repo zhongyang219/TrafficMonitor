@@ -21,7 +21,8 @@ class CTrafficMonitorApp : public CWinApp
 {
 public:
 	//各种路径
-	wstring m_module_path;
+	wstring m_module_path;		//程序exe文件的路径
+	wstring m_module_path_reg;	//用于作为写入注册表开机自项的exe文件的路径（如果路径中有空格，加上引号）
 	wstring m_config_path;
 	wstring m_history_traffic_path;
 	wstring m_log_path;

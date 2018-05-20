@@ -138,18 +138,6 @@ UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
 void CTrafficMonitorApp::SetAutoRun(bool auto_run)
 {
 	CRegKey key;
-	wstring module_path;
-	if (m_module_path.find(L' ') != wstring::npos)
-	{
-		//如果路径中有空格，则需要在程序路径前后添加双引号
-		module_path = L'\"';
-		module_path += m_module_path;
-		module_path += L'\"';
-	}
-	else
-	{
-		module_path = m_module_path;
-	}
 	//打开注册表项
 	if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
 	{
@@ -158,7 +146,7 @@ void CTrafficMonitorApp::SetAutoRun(bool auto_run)
 	}
 	if (auto_run)		//写入注册表项
 	{
-		if (key.SetStringValue(_T("TrafficMonitor"), module_path.c_str()) != ERROR_SUCCESS)
+		if (key.SetStringValue(_T("TrafficMonitor"), m_module_path_reg.c_str()) != ERROR_SUCCESS)
 		{
 			AfxMessageBox(CCommon::LoadText(IDS_AUTORUN_FAILED_NO_ACCESS), MB_OK | MB_ICONWARNING);
 			return;
@@ -184,16 +172,19 @@ bool CTrafficMonitorApp::GetAutoRun()
 	CRegKey key;
 	if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
 	{
+		//打开注册表“Software\\Microsoft\\Windows\\CurrentVersion\\Run”失败，则返回false
 		return false;
 	}
 	wchar_t buff[256];
 	ULONG size{ 256 };
-	if (key.QueryStringValue(_T("TrafficMonitor"), buff, &size) != ERROR_SUCCESS)
+	if (key.QueryStringValue(_T("TrafficMonitor"), buff, &size) == ERROR_SUCCESS)		//如果找到了“TrafficMonitor”键
 	{
-		return false;
+		return (m_module_path_reg == buff);	//如果“TrafficMonitor”的值是当前程序的路径，就返回true，否则返回false
 	}
-	//只要找到了"TrafficMonitor"这个键，则返回true
-	return true;
+	else
+	{
+		return false;		//没有找到“TrafficMonitor”键，返回false
+	}
 }
 
 
@@ -210,6 +201,17 @@ BOOL CTrafficMonitorApp::InitInstance()
 	wchar_t path[MAX_PATH];
 	GetModuleFileNameW(NULL, path, MAX_PATH);
 	m_module_path = path;
+	if (m_module_path.find(L' ') != wstring::npos)
+	{
+		//如果路径中有空格，则在程序路径前后添加双引号
+		m_module_path_reg = L'\"';
+		m_module_path_reg += m_module_path;
+		m_module_path_reg += L'\"';
+	}
+	else
+	{
+		m_module_path_reg = m_module_path;
+	}
 	m_system_path = CCommon::GetSystemPath();
 	m_temp_path = CCommon::GetTemplatePath();
 	m_app_data_cfg_path = CCommon::GetAppDataConfigPath();
