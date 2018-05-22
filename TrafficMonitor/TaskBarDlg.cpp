@@ -234,7 +234,7 @@ bool CTaskBarDlg::AdjustWindowPos()
 				wnd_y_pos = m_top_space;
 			}
 			wnd_x_pos = (m_rcMin.Width() - window_width) / 2;
-			if (wnd_x_pos < 0) wnd_x_pos = 0;
+			if (wnd_x_pos < theApp.DPI(2)) wnd_x_pos = theApp.DPI(2);
 			::MoveWindow(this->m_hWnd, wnd_x_pos, wnd_y_pos, m_rect.Width(), m_rect.Height(), TRUE);		//设置任务栏窗口的位置
 		}
 	}
@@ -546,7 +546,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 		//注：当把当前窗口设置为任务栏的子窗口后，MoveWindow函数移动的位置是基于任务栏的相对位置，
 		//在某些情况下，如被安全软件阻止时，窗口无法嵌入任务栏，窗口会移动到基于屏幕左上角的绝对位置。
 		wnd_x_pos = (m_rcMin.Width() - window_width) / 2;
-		if (wnd_x_pos < 0) wnd_x_pos = 0;
+		if (wnd_x_pos < theApp.DPI(2)) wnd_x_pos = theApp.DPI(2);
 		if (!theApp.m_taskbar_data.tbar_wnd_on_left)
 			wnd_y_pos = m_top_space + m_rcMin.Height() - m_rect.Height() + 2;
 		else
