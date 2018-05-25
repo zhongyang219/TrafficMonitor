@@ -7,6 +7,7 @@
 #include "CommonData.h"
 
 // CTaskBarDlg 对话框
+#define TASKBAR_WND_HEIGHT theApp.DPI(31);
 
 class CTaskBarDlg : public CDialogEx
 {
@@ -67,7 +68,7 @@ public:
 	void SetTextFont();
 	void ApplySettings();
 	void CalculateWindowWidth();		//计算窗口需要的宽度
-	void CalculateHorizontalArrangeWidth();		//如果设置了水平排列，则将窗口宽度扩大
+	void CalculateHorizontalArrangeSize();		//如果设置了水平排列，则将窗口宽度扩大，高度减小（调用此函数前必须先调用CalculateWindowWidth()）
 
 	void SetToolTipsTopMost();			//设置鼠标提示置顶
 	void UpdateToolTips();
