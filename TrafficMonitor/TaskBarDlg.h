@@ -67,6 +67,7 @@ public:
 	void SetTextFont();
 	void ApplySettings();
 	void CalculateWindowWidth();		//计算窗口需要的宽度
+	void CalculateHorizontalArrangeWidth();		//如果设置了水平排列，则将窗口宽度扩大
 
 	void SetToolTipsTopMost();			//设置鼠标提示置顶
 	void UpdateToolTips();

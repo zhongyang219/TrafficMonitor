@@ -79,16 +79,23 @@ void CTaskBarDlg::ShowInfo()
 	draw.SetBackColor(theApp.m_taskbar_data.back_color);
 	Alignment value_alignment{ theApp.m_taskbar_data.value_right_align ? Alignment::RIGHT : Alignment::LEFT };		//数值的对齐方式
 	//绘制上传速度
-	value_rect.bottom = m_window_height / 2;
-	if (m_taskbar_on_top_or_bottom)
+	if (theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom)
 	{
-		value_rect.right = value_rect.left + m_window_width_s - theApp.DPI(5);
+		value_rect.right = m_window_width_s / 2 - theApp.DPI(2);
 	}
 	else
 	{
-		int window_width;
-		window_width = max(m_window_width_s, (m_window_width - m_window_width_s));
-		value_rect.right = value_rect.left + window_width - theApp.DPI(5);
+		value_rect.bottom = m_window_height / 2;
+		if (m_taskbar_on_top_or_bottom)
+		{
+			value_rect.right = value_rect.left + m_window_width_s - theApp.DPI(5);
+		}
+		else
+		{
+			int window_width;
+			window_width = max(m_window_width_s, (m_window_width - m_window_width_s));
+			value_rect.right = value_rect.left + window_width - theApp.DPI(5);
+		}
 	}
 	lable_rect = value_rect;
 	lable_rect.right = lable_rect.left + m_ud_lable_width;
@@ -114,8 +121,16 @@ void CTaskBarDlg::ShowInfo()
 	else
 		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.down.c_str(), text_colors[2], Alignment::LEFT, true);
 	//绘制下载速度
-	value_rect.MoveToY(value_rect.bottom);
-	lable_rect.MoveToY(lable_rect.bottom);
+	if (theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom)
+	{
+		lable_rect.MoveToX(value_rect.right + theApp.DPI(4));
+		value_rect.MoveToX(lable_rect.right);
+	}
+	else
+	{
+		value_rect.MoveToY(value_rect.bottom);
+		lable_rect.MoveToY(lable_rect.bottom);
+	}
 	if (!theApp.m_taskbar_data.swap_up_down)
 	{
 		str.Format(format_str, in_speed.GetString());
@@ -135,7 +150,12 @@ void CTaskBarDlg::ShowInfo()
 	if (theApp.m_tbar_show_cpu_memory)
 	{
 		//绘制CPU利用率
-		if (m_taskbar_on_top_or_bottom)
+		if (theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom)
+		{
+			value_rect.MoveToXY(m_window_width_s + theApp.DPI(4), 0);
+			value_rect.right = value_rect.left + (m_window_width - m_window_width_s)/2 - theApp.DPI(5);
+		}
+		else if (m_taskbar_on_top_or_bottom)
 		{
 			value_rect.MoveToXY(m_window_width_s, 0);
 			value_rect.right = value_rect.left + (m_window_width - m_window_width_s) - theApp.DPI(5);
@@ -162,8 +182,16 @@ void CTaskBarDlg::ShowInfo()
 		draw.DrawWindowText(rect_tmp, str, text_colors[5], value_alignment, true);		//绘制数值
 		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.cpu.c_str(), text_colors[4], Alignment::LEFT, true);				//绘制标签
 		//绘制内存利用率
-		value_rect.MoveToY(value_rect.bottom);
-		lable_rect.MoveToY(lable_rect.bottom);
+		if (theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom)
+		{
+			lable_rect.MoveToX(value_rect.right + theApp.DPI(4));
+			value_rect.MoveToX(lable_rect.right);
+		}
+		else
+		{
+			value_rect.MoveToY(value_rect.bottom);
+			lable_rect.MoveToY(lable_rect.bottom);
+		}
 		str.Format(format_str, theApp.m_memory_usage);
 		rect_tmp = value_rect;
 		if (theApp.m_memory_usage == 100)		//如果内存利用为100%，则将矩形框右侧扩大一些，防止显示不全
@@ -185,7 +213,14 @@ bool CTaskBarDlg::AdjustWindowPos()
 	CRect rcMin, rcBar;
 	::GetWindowRect(m_hMin, rcMin);	//获得最小化窗口的区域
 	::GetWindowRect(m_hBar, rcBar);	//获得二级容器的区域
+	static bool last_taskbar_on_top_or_bottom;
 	m_taskbar_on_top_or_bottom = IsTaskbarOnTopOrBottom();
+	if (m_taskbar_on_top_or_bottom != last_taskbar_on_top_or_bottom)
+	{
+		CalculateWindowWidth();
+		CalculateHorizontalArrangeWidth();
+		last_taskbar_on_top_or_bottom = m_taskbar_on_top_or_bottom;
+	}
 	int wnd_x_pos{}, wnd_y_pos{};
 	if (m_taskbar_on_top_or_bottom)		//当任务栏在桌面顶部或底部时
 	{
@@ -329,6 +364,7 @@ void CTaskBarDlg::SaveConfig()
 	ini.WriteBool(L"task_bar", L"task_bar_hide_unit", theApp.m_taskbar_data.hide_unit);
 	ini.WriteBool(L"task_bar", L"task_bar_hide_percent", theApp.m_taskbar_data.hide_percent);
 	ini.WriteBool(L"task_bar", L"value_right_align", theApp.m_taskbar_data.value_right_align);
+	ini.WriteBool(L"task_bar", L"horizontal_arrange", theApp.m_taskbar_data.horizontal_arrange);
 	ini.WriteInt(L"task_bar", L"digits_number", theApp.m_taskbar_data.digits_number);
 	ini.WriteInt(L"task_bar", L"double_click_action", static_cast<int>(theApp.m_taskbar_data.double_click_action));
 }
@@ -363,6 +399,7 @@ void CTaskBarDlg::LoadConfig()
 	theApp.m_taskbar_data.hide_unit = ini.GetBool(_T("task_bar"), _T("task_bar_hide_unit"), false);
 	theApp.m_taskbar_data.hide_percent = ini.GetBool(_T("task_bar"), _T("task_bar_hide_percent"), false);
 	theApp.m_taskbar_data.value_right_align = ini.GetBool(_T("task_bar"), _T("value_right_align"), false);
+	theApp.m_taskbar_data.horizontal_arrange = ini.GetBool(_T("task_bar"), _T("horizontal_arrange"), false);
 	theApp.m_taskbar_data.digits_number = ini.GetInt(_T("task_bar"), _T("digits_number"), 4);
 	theApp.m_taskbar_data.double_click_action = static_cast<DoubleClickAction>(ini.GetInt(_T("task_bar"), _T("double_click_action"), 0));
 }
@@ -396,6 +433,7 @@ void CTaskBarDlg::ApplySettings()
 {
 	SetTextFont();
 	CalculateWindowWidth();
+	CalculateHorizontalArrangeWidth();
 }
 
 void CTaskBarDlg::CalculateWindowWidth()
@@ -451,6 +489,16 @@ void CTaskBarDlg::CalculateWindowWidth()
 	m_cm_lable_width = max(width1, width2);
 }
 
+void CTaskBarDlg::CalculateHorizontalArrangeWidth()
+{
+	//如果设置了水平排列，则宽度增加一倍
+	if (theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom)
+	{
+		m_window_width = m_window_width * 2 + theApp.DPI(8);
+		m_window_width_s = m_window_width_s * 2 + theApp.DPI(4);
+	}
+}
+
 void CTaskBarDlg::SetToolTipsTopMost()
 {
 	m_tool_tips.SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
@@ -482,10 +530,6 @@ BOOL CTaskBarDlg::OnInitDialog()
 	this->GetWindowRect(m_rect);
 	CalculateWindowWidth();
 	m_window_height = m_rect.Height();
-	if (!theApp.m_tbar_show_cpu_memory)
-		m_rect.right = m_rect.left + m_window_width_s;
-	else
-		m_rect.right = m_rect.left + m_window_width;
 
 	m_hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL);		//寻找类名是Shell_TrayWnd的窗口句柄
 	m_hBar = ::FindWindowEx(m_hTaskbar, 0, L"ReBarWindow32", NULL);	//寻找二级容器的句柄
@@ -497,6 +541,12 @@ BOOL CTaskBarDlg::OnInitDialog()
 	m_top_space = m_rcMin.top - m_rcBar.top;
 
 	m_taskbar_on_top_or_bottom = IsTaskbarOnTopOrBottom();
+	CalculateHorizontalArrangeWidth();
+	if (!theApp.m_tbar_show_cpu_memory)
+		m_rect.right = m_rect.left + m_window_width_s;
+	else
+		m_rect.right = m_rect.left + m_window_width;
+
 	int wnd_x_pos, wnd_y_pos;
 	if (m_taskbar_on_top_or_bottom)		//如果任务栏在桌面顶部或底部
 	{
