@@ -48,24 +48,24 @@ CString CCommon::DataSizeToString(unsigned int size, bool short_mode, SpeedUnit 
 			//if (size <= 102)			//小于0.1KB时，显示0K
 			//	str = _T("0K");
 			/*else */if (size < 1024 * 10)					//10KB以下以KB为单位，保留1位小数
-				str.Format(_T("%.1fK"), size / 1024.0f);
+				str.Format(_T("%.1f K"), size / 1024.0f);
 			else if (size < 1024 * 1024)			//1MB以下以KB为单位，保留整数
-				str.Format(_T("%.0fK"), size / 1024.0f);
+				str.Format(_T("%.0f K"), size / 1024.0f);
 			else if (size < 1024 * 1024 * 1024)		//1GB以下以MB为单位，保留1位小数
-				str.Format(_T("%.1fM"), size / 1024.0f / 1024.0f);
+				str.Format(_T("%.1f M"), size / 1024.0f / 1024.0f);
 			else
-				str.Format(_T("%.2fG"), size / 1024.0f / 1024.0f / 1024.0f);
+				str.Format(_T("%.2f G"), size / 1024.0f / 1024.0f / 1024.0f);
 		}
 		else
 		{
 			if (size < 1024 * 10)					//10KB以下以KB为单位，保留2位小数
-				str.Format(_T("%.2fKB"), size / 1024.0f);
+				str.Format(_T("%.2f KB"), size / 1024.0f);
 			else if (size < 1024 * 1024)			//1MB以下以KB为单位，保留1位小数
-				str.Format(_T("%.1fKB"), size / 1024.0f);
+				str.Format(_T("%.1f KB"), size / 1024.0f);
 			else if (size < 1024 * 1024 * 1024)		//1GB以下以MB为单位，保留2位小数
-				str.Format(_T("%.2fMB"), size / 1024.0f / 1024.0f);
+				str.Format(_T("%.2f MB"), size / 1024.0f / 1024.0f);
 			else
-				str.Format(_T("%.2fGB"), size / 1024.0f / 1024.0f / 1024.0f);
+				str.Format(_T("%.2f GB"), size / 1024.0f / 1024.0f / 1024.0f);
 		}
 		break;
 	case SpeedUnit::KBPS:
@@ -76,7 +76,7 @@ CString CCommon::DataSizeToString(unsigned int size, bool short_mode, SpeedUnit 
 				if (hide_unit)
 					str.Format(_T("%.1f"), size / 1024.0f);
 				else
-					str.Format(_T("%.1fK"), size / 1024.0f);
+					str.Format(_T("%.1f K"), size / 1024.0f);
 			}
 			else					//10KB以上保留整数
 			{
@@ -93,14 +93,14 @@ CString CCommon::DataSizeToString(unsigned int size, bool short_mode, SpeedUnit 
 				if (hide_unit)
 					str.Format(_T("%.2f"), size / 1024.0f);
 				else
-					str.Format(_T("%.2fKB"), size / 1024.0f);
+					str.Format(_T("%.2f KB"), size / 1024.0f);
 			}
 			else			//10KB以上保留1位小数
 			{
 				if (hide_unit)
 					str.Format(_T("%.1f"), size / 1024.0f);
 				else
-					str.Format(_T("%.1fKB"), size / 1024.0f);
+					str.Format(_T("%.1f KB"), size / 1024.0f);
 			}
 		}
 		break;
@@ -110,14 +110,14 @@ CString CCommon::DataSizeToString(unsigned int size, bool short_mode, SpeedUnit 
 			if (hide_unit)
 				str.Format(_T("%.1f"), size / 1024.0f / 1024.0f);
 			else
-				str.Format(_T("%.1fM"), size / 1024.0f / 1024.0f);
+				str.Format(_T("%.1f M"), size / 1024.0f / 1024.0f);
 		}
 		else
 		{
 			if (hide_unit)
 				str.Format(_T("%.2f"), size / 1024.0f / 1024.0f);
 			else
-				str.Format(_T("%.2fMB"), size / 1024.0f / 1024.0f);
+				str.Format(_T("%.2f MB"), size / 1024.0f / 1024.0f);
 		}
 		break;
 	}
@@ -128,11 +128,11 @@ CString CCommon::KBytesToString(unsigned int kb_size)
 {
 	CString k_bytes_str;
 	if (kb_size < 1024)
-		k_bytes_str.Format(_T("%dKB"), kb_size);
+		k_bytes_str.Format(_T("%d KB"), kb_size);
 	else if (kb_size < 1024 * 1024)
-		k_bytes_str.Format(_T("%.2fMB"), kb_size / 1024.0);
+		k_bytes_str.Format(_T("%.2f MB"), kb_size / 1024.0);
 	else
-		k_bytes_str.Format(_T("%.2fGB"), kb_size / 1024.0 / 1024.0);
+		k_bytes_str.Format(_T("%.2f GB"), kb_size / 1024.0 / 1024.0);
 	return k_bytes_str;
 }
 
@@ -140,11 +140,11 @@ CString CCommon::KBytesToStringL(__int64 kb_size)
 {
 	CString k_bytes_str;
 	if (kb_size < 1024)
-		k_bytes_str.Format(_T("%dKB"), kb_size);
+		k_bytes_str.Format(_T("%d KB"), kb_size);
 	else if (kb_size < 1024 * 1024)
-		k_bytes_str.Format(_T("%.2fMB"), kb_size / 1024.0);
+		k_bytes_str.Format(_T("%.2f MB"), kb_size / 1024.0);
 	else
-		k_bytes_str.Format(_T("%.2fGB"), kb_size / (1024.0 * 1024.0));
+		k_bytes_str.Format(_T("%.2f GB"), kb_size / (1024.0 * 1024.0));
 	return k_bytes_str;
 }
 

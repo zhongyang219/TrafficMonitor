@@ -448,14 +448,14 @@ void CTaskBarDlg::CalculateWindowWidth()
 		if (theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO)
 			sample_str.Format(_T("%s."), digits.c_str());
 		else
-			sample_str.Format(_T("%s.M/s"), digits.c_str());
+			sample_str.Format(_T("%s. M/s"), digits.c_str());
 	}
 	else
 	{
 		if (theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO)
 			sample_str.Format(_T("%s.8"), digits.c_str());
 		else
-			sample_str.Format(_T("%s.8MB/s"), digits.c_str());
+			sample_str.Format(_T("%s.8 MB/s"), digits.c_str());
 	}
 	str1 = theApp.m_taskbar_data.disp_str.up.c_str() + sample_str;
 	str2 = theApp.m_taskbar_data.disp_str.down.c_str() + sample_str;

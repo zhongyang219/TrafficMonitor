@@ -176,7 +176,10 @@ UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
 {
 	CCommon::SetThreadLanguage(theApp.m_general_data.language);		//设置线程语言
 	CNetworkInfoDlg* p_instance = (CNetworkInfoDlg*)lpParam;
-	p_instance->m_internet_ip_address = CCommon::GetInternetIp();
+	wstring ip_address = CCommon::GetInternetIp();			//获取外网IP地址
+	if (!IsWindow(p_instance->GetSafeHwnd()))		//如果当前对话框已经销毁，则退出线程
+		return 0;
+	p_instance->m_internet_ip_address = ip_address;
 	if (!p_instance->m_internet_ip_address.empty())
 		p_instance->m_info_list.SetItemText(14, 1, p_instance->m_internet_ip_address.c_str());
 	else
