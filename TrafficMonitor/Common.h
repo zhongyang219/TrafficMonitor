@@ -95,10 +95,10 @@ public:
 	static bool IsWindows10FallCreatorOrLater();
 
 	//获取URL的内容
-	static bool GetURL(const wstring& url, wstring& result);
+	static bool GetURL(const wstring& url, wstring& result, bool utf8 = false);
 
-	//获取外网IP
-	static wstring GetInternetIp();
+	//获取外网IP地址和IP归属地
+	static void GetInternetIp(wstring& ip_address, wstring& ip_location, bool global);
 
 	static void SetRect(CRect& rect, int x, int y, int width, int height);
 

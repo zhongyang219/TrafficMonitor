@@ -28,7 +28,6 @@ protected:
 	wstring m_ip_address{ L"-.-.-.-" };		//IP地址
 	wstring m_subnet_mask{ L"-.-.-.-" };	//子网掩码
 	wstring m_default_gateway{ L"-.-.-.-" };	//默认网关
-	wstring m_internet_ip_address{ CCommon::LoadText(IDS_ACQUIRING, _T("...")) };
 	
 	CListCtrl m_info_list;
 	CMenu m_menu;

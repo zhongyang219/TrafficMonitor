@@ -169,21 +169,27 @@ void CNetworkInfoDlg::ShowInfo()
 	m_info_list.SetItemText(13, 1, temp);
 
 	m_info_list.InsertItem(14, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS));
-	m_info_list.SetItemText(14, 1, m_internet_ip_address.c_str());
+	m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
 }
 
 UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
 {
 	CCommon::SetThreadLanguage(theApp.m_general_data.language);		//设置线程语言
 	CNetworkInfoDlg* p_instance = (CNetworkInfoDlg*)lpParam;
-	wstring ip_address = CCommon::GetInternetIp();			//获取外网IP地址
+	wstring ip_address, ip_location;
+	CCommon::GetInternetIp(ip_address, ip_location, CCommon::LoadText(IDS_LANGUAGE_CODE) != _T("2"));			//获取外网IP地址，
 	if (!IsWindow(p_instance->GetSafeHwnd()))		//如果当前对话框已经销毁，则退出线程
 		return 0;
-	p_instance->m_internet_ip_address = ip_address;
-	if (!p_instance->m_internet_ip_address.empty())
-		p_instance->m_info_list.SetItemText(14, 1, p_instance->m_internet_ip_address.c_str());
+	if (!ip_address.empty())
+	{
+		CString info;
+		info.Format(_T("%s %s"), ip_address.c_str(), ip_location.c_str());
+		p_instance->m_info_list.SetItemText(14, 1, info);
+	}
 	else
+	{
 		p_instance->m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_GET_FAILED));
+	}
 	return 0;
 }
 

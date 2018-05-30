@@ -529,7 +529,7 @@ bool CCommon::IsWindows10FallCreatorOrLater()
 	else return false;
 }
 
-bool CCommon::GetURL(const wstring & url, wstring & result)
+bool CCommon::GetURL(const wstring & url, wstring & result, bool utf8)
 {
 	bool sucessed{ false };
 	CInternetSession session{};
@@ -547,7 +547,7 @@ bool CCommon::GetURL(const wstring & url, wstring & result)
 			{
 				content += data;
 			}
-			result = StrToUnicode((const char*)content.GetString());
+			result = StrToUnicode((const char*)content.GetString(), utf8);
 			sucessed = true;
 		}
 		pfile->Close();
@@ -568,30 +568,49 @@ bool CCommon::GetURL(const wstring & url, wstring & result)
 	return sucessed;
 }
 
-wstring CCommon::GetInternetIp()
+void CCommon::GetInternetIp(wstring& ip_address, wstring& ip_location, bool global)
 {
 	wstring web_page;
-	wstring ip_address;
-	if (GetURL(L"http://www.whatismyip.com.tw/", web_page))
+	if (GetURL(L"https://ip.cn/", web_page, true))
 	{
 #ifdef _DEBUG
 		ofstream file{ L".\\IP_web_page.log" };
 		file << UnicodeToStr(web_page.c_str()) << std::endl;
 #endif // _DEBUG
-		size_t index, index1, index2;
-		index = web_page.find(L"\"ip\"");		//查找字符串“"ip"”
-		index1 = web_page.find(L'\"', index + 5);	//查找IP地址前面的引号
-		index2 = web_page.find(L'\"', index + 12);	//查找IP地址后面的引号
-		if (index == wstring::npos || index1 == wstring::npos || index2 == wstring::npos)
+		size_t index, index1;
+		index = web_page.find(L"<code>");
+		index1 = web_page.find(L"</code>", index + 6);
+		if (index == wstring::npos || index1 == wstring::npos)
 			ip_address.clear();
 		else
-			ip_address = web_page.substr(index1 + 1, index2 - index1 - 1);	//获取IP地址
+			ip_address = web_page.substr(index + 6, index1 - index - 6);	//获取IP地址
 		if (ip_address.size() > 15 || ip_address.size() < 7)		//IP地址最长15个字符，最短7个字符
 			ip_address.clear();
 
-		return ip_address;
+		//获取IP地址归属地
+		if (!global)
+		{
+			index = web_page.find(L"<code>", index1 + 7);
+			index1 = web_page.find(L"</code>", index + 6);
+			if (index == wstring::npos || index1 == wstring::npos)
+				ip_location.clear();
+			else
+				ip_location = web_page.substr(index + 6, index1 - index - 6);
+		}
+		else
+		{
+			index = web_page.find(L"GeoIP", index1 + 7);
+			index1 = web_page.find(L"</p>", index + 6);
+			if (index == wstring::npos || index1 == wstring::npos)
+				ip_location.clear();
+			else
+				ip_location = web_page.substr(index + 7, index1 - index - 7);
+		}
 	}
-	return wstring();
+	else
+	{
+		ip_address.clear();
+	}
 }
 
 void CCommon::SetRect(CRect & rect, int x, int y, int width, int height)
