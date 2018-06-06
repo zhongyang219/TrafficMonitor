@@ -646,6 +646,8 @@ void CTrafficMonitorDlg::IniConnection()
 				m_connection_selected = i;
 		}
 	}
+	if (m_connection_selected < 0 || m_connection_selected >= m_connections.size())
+		m_connection_selected = 0;
 	m_connection_name = m_connections[m_connection_selected].description;
 
 	//根据已获取到的连接在菜单中添加相应项目
@@ -1232,30 +1234,24 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			CCommon::WriteLog(info, theApp.m_log_path.c_str());
 		}
 
-		////统计当前已发送或已接收字节数不为0的连接个数
-		//int connection_count{};
-		//string descr;
-		//for (unsigned int i{}; i < m_pIfTable->dwNumEntries; i++)
-		//{
-		//	descr = (const char*)m_pIfTable->table[i].bDescr;
-		//	if (m_pIfTable->table[i].dwInOctets > 0 || m_pIfTable->table[i].dwOutOctets > 0 || descr == m_connection_name)
-		//		connection_count++;
-		//}
-		//if (connection_count == 0) connection_count = 1;
 		
 		//重新获取当前连接数量
-		vector<NetWorkConection> connections;
-		CAdapterCommon::GetAdapterInfo(connections);
-		if (connections.size() != m_connections.size())	//如果连接数发生变化，则重新初始化连接
+		//vector<NetWorkConection> connections;
+		//CAdapterCommon::GetAdapterInfo(connections);
+		static DWORD last_interface_num = -1;
+		DWORD interface_num;
+		GetNumberOfInterfaces(&interface_num);
+		if (last_interface_num != -1 && interface_num != last_interface_num)	//如果连接数发生变化，则重新初始化连接
 		{
 			CString info;
 			info.LoadString(IDS_CONNECTION_NUM_CHANGED);
-			info.Replace(_T("<%before%>"), CCommon::IntToString(m_connections.size()));
-			info.Replace(_T("<%after%>"), CCommon::IntToString(connections.size()));
+			info.Replace(_T("<%before%>"), CCommon::IntToString(last_interface_num));
+			info.Replace(_T("<%after%>"), CCommon::IntToString(interface_num));
 			info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt + 1));
 			IniConnection();
 			CCommon::WriteLog(info, theApp.m_log_path.c_str());
 		}
+		last_interface_num = interface_num;
 		string descr;
 		descr = (const char*)m_pIfTable->table[m_connections[m_connection_selected].index].bDescr;
 		if (descr != m_connection_name)

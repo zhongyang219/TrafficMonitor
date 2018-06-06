@@ -26,10 +26,11 @@ void CNetworkInfoDlg::ShowInfo()
 {
 	CString temp;
 	MIB_IFROW& network_info = m_pIfRow[m_connections[m_connection_selected].index];
+	//接口名
 	m_info_list.SetItemText(0, 1, network_info.wszName);
-
+	//接口描述
 	m_info_list.SetItemText(1, 1, CCommon::StrToUnicode((const char*)network_info.bDescr).c_str());
-
+	//连接类型
 	switch (network_info.dwType)
 	{
 	case IF_TYPE_OTHER: temp = CCommon::LoadText(IDS_IF_TYPE_OTHER); break;
@@ -48,10 +49,10 @@ void CNetworkInfoDlg::ShowInfo()
 	default: temp = CCommon::LoadText(IDS_UNKNOW_CONNECTION); break;
 	}
 	m_info_list.SetItemText(2, 1, temp);
-
+	//速度
 	temp.Format(_T("%dMbps"), network_info.dwSpeed / 1000000);
 	m_info_list.SetItemText(3, 1, temp);
-
+	//适配器物理地址
 	temp = _T("");
 	char buff[3];
 	for (size_t i{}; i < network_info.dwPhysAddrLen; i++)
@@ -62,13 +63,13 @@ void CNetworkInfoDlg::ShowInfo()
 			temp += _T('-');
 	}
 	m_info_list.SetItemText(4, 1, temp);
-
+	//IP地址
 	m_info_list.SetItemText(5, 1, m_connections[m_connection_selected].ip_address.c_str());
-
+	//子网掩码
 	m_info_list.SetItemText(6, 1, m_connections[m_connection_selected].subnet_mask.c_str());
-
+	//默认网关
 	m_info_list.SetItemText(7, 1, m_connections[m_connection_selected].default_gateway.c_str());
-
+	//连接状态
 	switch (network_info.dwOperStatus)
 	{
 	case IF_OPER_STATUS_NON_OPERATIONAL: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_NON_OPERATIONAL); break;
@@ -80,19 +81,23 @@ void CNetworkInfoDlg::ShowInfo()
 	default: temp = CCommon::LoadText(IDS_UNKNOW_STATUS); break;
 	}
 	m_info_list.SetItemText(8, 1, temp);
-
+	//已接收字节数
 	temp.Format(_T("%u (%s)"), network_info.dwInOctets, CCommon::DataSizeToString(network_info.dwInOctets));
 	m_info_list.SetItemText(9, 1, temp);
-
+	//已发送字节数
 	temp.Format(_T("%u (%s)"), network_info.dwOutOctets, CCommon::DataSizeToString(network_info.dwOutOctets));
 	m_info_list.SetItemText(10, 1, temp);
-
-	temp.Format(_T("%u (%s)"), m_connections[m_connection_selected].in_bytes, CCommon::DataSizeToString(m_connections[m_connection_selected].in_bytes));
+	//自程序启动以来已接收字节数
+	unsigned int in_bytes_since_start;
+	in_bytes_since_start = network_info.dwInOctets - m_connections[m_connection_selected].in_bytes;
+	temp.Format(_T("%u (%s)"), in_bytes_since_start, CCommon::DataSizeToString(in_bytes_since_start));
 	m_info_list.SetItemText(11, 1, temp);
-
-	temp.Format(_T("%u (%s)"), m_connections[m_connection_selected].out_bytes, CCommon::DataSizeToString(m_connections[m_connection_selected].out_bytes));
+	//自程序启动以来已发送字节数
+	unsigned int out_bytes_since_start;
+	out_bytes_since_start = network_info.dwOutOctets = m_connections[m_connection_selected].out_bytes;
+	temp.Format(_T("%u (%s)"), out_bytes_since_start, CCommon::DataSizeToString(out_bytes_since_start));
 	m_info_list.SetItemText(12, 1, temp);
-
+	//程序已运行时间
 	SYSTEMTIME current_time, time;
 	GetLocalTime(&current_time);
 	time = CCommon::CompareSystemTime(current_time, m_start_time);
