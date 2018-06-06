@@ -121,7 +121,10 @@ UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
 	if (!ip_address.empty())
 	{
 		CString info;
-		info.Format(_T("%s %s"), ip_address.c_str(), ip_location.c_str());
+		if (ip_location.empty())
+			info = ip_address.c_str();
+		else
+			info.Format(_T("%s (%s)"), ip_address.c_str(), ip_location.c_str());
 		p_instance->m_info_list.SetItemText(14, 1, info);
 	}
 	else
@@ -144,6 +147,7 @@ BEGIN_MESSAGE_MAP(CNetworkInfoDlg, CDialog)
 	ON_WM_CLOSE()
 	ON_BN_CLICKED(IDC_PREVIOUS_BUTTON, &CNetworkInfoDlg::OnBnClickedPreviousButton)
 	ON_BN_CLICKED(IDC_NEXT_BUTTON, &CNetworkInfoDlg::OnBnClickedNextButton)
+	ON_WM_GETMINMAXINFO()
 END_MESSAGE_MAP()
 
 
@@ -156,9 +160,14 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 
 	// TODO:  在此添加额外的初始化
 	SetWindowText(CCommon::LoadText(IDS_TITLE_CONNECTION_DETIAL));
+	SetIcon(AfxGetApp()->LoadIcon(IDI_NOFITY_ICON), FALSE);		// 设置小图标
+
+	//获取窗口初始大小
+	CRect rect;
+	GetWindowRect(rect);
+	m_min_size = rect.Size();
 
 	//初始化列表控件
-	CRect rect;
 	m_info_list.GetClientRect(rect);
 	m_info_list.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
 	int width0, width1;
@@ -280,4 +289,15 @@ BOOL CNetworkInfoDlg::PreTranslateMessage(MSG* pMsg)
 	}
 
 	return CDialog::PreTranslateMessage(pMsg);
+}
+
+
+void CNetworkInfoDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	//限制窗口最小大小
+	lpMMI->ptMinTrackSize.x = m_min_size.cx;		//设置最小宽度
+	lpMMI->ptMinTrackSize.y = m_min_size.cy;		//设置最小高度
+
+	CDialog::OnGetMinMaxInfo(lpMMI);
 }

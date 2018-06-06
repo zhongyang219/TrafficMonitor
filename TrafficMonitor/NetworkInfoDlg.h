@@ -37,6 +37,7 @@ protected:
 	CListCtrl m_info_list;
 	CMenu m_menu;
 	CString m_selected_string;
+	CSize m_min_size;
 
 	CWinThread* m_pGetIPThread;			//获取外网IP的线程
 
@@ -58,4 +59,5 @@ public:
 	afx_msg void OnBnClickedPreviousButton();
 	afx_msg void OnBnClickedNextButton();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 };
