@@ -476,6 +476,7 @@ void CTrafficMonitorDlg::LoadConfig()
 	m_position_x = ini.GetInt(_T("config"), _T("position_x"), -1);
 	m_position_y = ini.GetInt(_T("config"), _T("position_y"), -1);
 	m_auto_select = ini.GetBool(_T("connection"), _T("auto_select"), true);
+	m_select_all = ini.GetBool(_T("connection"), _T("select_all"), false);
 	//theApp.m_main_wnd_data.text_color = ini.GetInt(_T("config"), _T("text_color"), 16384);
 	ini.GetIntArray(_T("config"), _T("text_color"), (int*)theApp.m_main_wnd_data.text_colors, MAIN_WND_COLOR_NUM, 16384);
 	theApp.m_main_wnd_data.specify_each_item_color = ini.GetBool(_T("config"), _T("specify_each_item_color"), false);
@@ -545,6 +546,7 @@ void CTrafficMonitorDlg::SaveConfig()
 	ini.WriteInt(L"config", L"position_x", m_position_x);
 	ini.WriteInt(L"config", L"position_y", m_position_y);
 	ini.WriteBool(L"connection", L"auto_select", m_auto_select);
+	ini.WriteBool(L"connection", L"select_all", m_select_all);
 	//ini.WriteInt(L"config", L"text_color", theApp.m_main_wnd_data.text_color);
 	ini.WriteIntArray(L"config", L"text_color", (int*)theApp.m_main_wnd_data.text_colors, MAIN_WND_COLOR_NUM);
 	ini.WriteBool(_T("config"), _T("specify_each_item_color"), theApp.m_main_wnd_data.specify_each_item_color);
@@ -616,18 +618,9 @@ void CTrafficMonitorDlg::IniConnection()
 		m_pIfTable = (MIB_IFTABLE *)malloc(m_dwSize);	//用新的大小重新开辟一块内存
 	}
 	//获取当前所有的连接，并保存到m_connections容器中
-	m_connections.clear();
+	CAdapterCommon::GetAdapterInfo(m_connections);
 	GetIfTable(m_pIfTable, &m_dwSize, FALSE);
-	for (unsigned int i{}; i < m_pIfTable->dwNumEntries; i++)
-	{
-		string descr = (const char*)m_pIfTable->table[i].bDescr;
-		if (m_pIfTable->table[i].dwInOctets > 0 || m_pIfTable->table[i].dwOutOctets > 0 || descr == m_connection_name)		//查找接收或发送数据量大于0的连接和上次选择的连接
-		{
-			m_connections.emplace_back(i, descr, m_pIfTable->table[i].dwInOctets, m_pIfTable->table[i].dwOutOctets);
-		}
-	}
-	if (m_connections.empty())
-		m_connections.emplace_back(0, string((const char*)m_pIfTable->table[0].bDescr), 0, 0);
+	CAdapterCommon::GetIfTableInfo(m_connections, m_pIfTable);
 
 	//if (m_connection_selected < 0 || m_connection_selected >= m_connections.size() || m_auto_select)
 	//	AutoSelect();
@@ -663,7 +656,7 @@ void CTrafficMonitorDlg::IniConnection()
 	for (size_t i{}; i < m_connections.size(); i++)
 	{
 		connection_descr = CCommon::StrToUnicode(m_connections[i].description.c_str()).c_str();
-		m_select_connection_menu->AppendMenu(MF_STRING | MF_ENABLED, ID_SELETE_CONNECTION + i + 1, connection_descr);
+		m_select_connection_menu->AppendMenu(MF_STRING | MF_ENABLED, ID_SELECT_ALL_CONNECTION + i + 1, connection_descr);
 	}
 
 	m_restart_cnt++;	//记录初始化次数
@@ -1147,8 +1140,24 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
 		//获取网络连接速度
 		int rtn = GetIfTable(m_pIfTable, &m_dwSize, FALSE);
-		m_in_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwInOctets;
-		m_out_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwOutOctets;
+		if (!m_select_all)		//获取当前选中连接的网速
+		{
+			m_in_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwInOctets;
+			m_out_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwOutOctets;
+		}
+		else		//获取全部连接的网速
+		{
+			m_in_bytes = 0;
+			m_out_bytes = 0;
+			for (size_t i{}; i<m_connections.size(); i++)
+			{
+				//if (i > 0 && m_pIfTable->table[m_connections[i].index].dwInOctets == m_pIfTable->table[m_connections[i - 1].index].dwInOctets
+				//	&& m_pIfTable->table[m_connections[i].index].dwOutOctets == m_pIfTable->table[m_connections[i - 1].index].dwOutOctets)
+				//	continue;		//连接列表中可能会有相同的连接，统计所有连接的网速时，忽略掉已发送和已接收字节数完全相同的连接
+				m_in_bytes += m_pIfTable->table[m_connections[i].index].dwInOctets;
+				m_out_bytes += m_pIfTable->table[m_connections[i].index].dwOutOctets;
+			}
+		}
 
 		//如果发送和接收的字节数为0或上次发送和接收的字节数为0或当前连接已改变时，网速无效
 		if ((m_in_bytes == 0 && m_out_bytes == 0) || (m_last_in_bytes == 0 && m_last_out_bytes) || m_connection_change_flag)
@@ -1158,8 +1167,8 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		}
 		else
 		{
-			theApp.m_in_speed = m_in_bytes - m_last_in_bytes;
-			theApp.m_out_speed = m_out_bytes - m_last_out_bytes;
+			theApp.m_in_speed = static_cast<unsigned int>(m_in_bytes - m_last_in_bytes);
+			theApp.m_out_speed = static_cast<unsigned int>(m_out_bytes - m_last_out_bytes);
 		}
 		//如果大于1GB/s，说明可能产生了异常，网速无效
 		if (theApp.m_in_speed > 1073741824)
@@ -1223,26 +1232,31 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			CCommon::WriteLog(info, theApp.m_log_path.c_str());
 		}
 
-		//统计当前已发送或已接收字节数不为0的连接个数
-		int connection_count{};
-		string descr;
-		for (unsigned int i{}; i < m_pIfTable->dwNumEntries; i++)
-		{
-			descr = (const char*)m_pIfTable->table[i].bDescr;
-			if (m_pIfTable->table[i].dwInOctets > 0 || m_pIfTable->table[i].dwOutOctets > 0 || descr == m_connection_name)
-				connection_count++;
-		}
-		if (connection_count == 0) connection_count = 1;
-		if (connection_count != m_connections.size())	//如果连接数发生变化，则重新初始化连接
+		////统计当前已发送或已接收字节数不为0的连接个数
+		//int connection_count{};
+		//string descr;
+		//for (unsigned int i{}; i < m_pIfTable->dwNumEntries; i++)
+		//{
+		//	descr = (const char*)m_pIfTable->table[i].bDescr;
+		//	if (m_pIfTable->table[i].dwInOctets > 0 || m_pIfTable->table[i].dwOutOctets > 0 || descr == m_connection_name)
+		//		connection_count++;
+		//}
+		//if (connection_count == 0) connection_count = 1;
+		
+		//重新获取当前连接数量
+		vector<NetWorkConection> connections;
+		CAdapterCommon::GetAdapterInfo(connections);
+		if (connections.size() != m_connections.size())	//如果连接数发生变化，则重新初始化连接
 		{
 			CString info;
 			info.LoadString(IDS_CONNECTION_NUM_CHANGED);
 			info.Replace(_T("<%before%>"), CCommon::IntToString(m_connections.size()));
-			info.Replace(_T("<%after%>"), CCommon::IntToString(connection_count));
+			info.Replace(_T("<%after%>"), CCommon::IntToString(connections.size()));
 			info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt + 1));
 			IniConnection();
 			CCommon::WriteLog(info, theApp.m_log_path.c_str());
 		}
+		string descr;
 		descr = (const char*)m_pIfTable->table[m_connections[m_connection_selected].index].bDescr;
 		if (descr != m_connection_name)
 		{
@@ -1423,10 +1437,10 @@ void CTrafficMonitorDlg::OnNetworkInfo()
 {
 	// TODO: 在此添加命令处理程序代码
 	//弹出“连接详情”对话框
-	CNetworkInfoDlg aDlg(m_pIfTable->table[m_connections[m_connection_selected].index]);
-	//向CNetworkInfoDlg类传递自启动以来已发送和接收的字节数
-	aDlg.m_in_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwInOctets - m_connections[m_connection_selected].in_bytes;
-	aDlg.m_out_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwOutOctets - m_connections[m_connection_selected].out_bytes;
+	CNetworkInfoDlg aDlg(m_connections, m_pIfTable->table, m_connection_selected);
+	////向CNetworkInfoDlg类传递自启动以来已发送和接收的字节数
+	//aDlg.m_in_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwInOctets - m_connections[m_connection_selected].in_bytes;
+	//aDlg.m_out_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwOutOctets - m_connections[m_connection_selected].out_bytes;
 	aDlg.m_start_time = m_start_time;
 	aDlg.DoModal();
 	//SetAlwaysOnTop();	//由于在“连接详情”对话框内设置了取消窗口置顶，所有在对话框关闭后，重新设置窗口置顶
@@ -1591,19 +1605,27 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	// TODO: 在此添加专用代码和/或调用基类
 	UINT uMsg = LOWORD(wParam);
+	if (uMsg == ID_SELECT_ALL_CONNECTION)
+	{
+		m_select_all = true;
+		m_auto_select = false;
+		m_connection_change_flag = true;
+	}
 	//选择了“选择网络连接”子菜单中项目时的处理
 	if (uMsg == ID_SELETE_CONNECTION)	//选择了“自动选择”菜单项
 	{
 		AutoSelect();
 		m_auto_select = true;
+		m_select_all = false;
 		SaveConfig();
 		m_connection_change_flag = true;
 	}
-	if (uMsg > ID_SELETE_CONNECTION && uMsg <= ID_SELETE_CONNECTION + m_connections.size())	//选择了一个网络连接
+	if (uMsg > ID_SELECT_ALL_CONNECTION && uMsg <= ID_SELECT_ALL_CONNECTION + m_connections.size())	//选择了一个网络连接
 	{
-		m_connection_selected = uMsg - ID_SELETE_CONNECTION - 1;
+		m_connection_selected = uMsg - ID_SELECT_ALL_CONNECTION - 1;
 		m_connection_name = m_connections[m_connection_selected].description;
 		m_auto_select = false;
+		m_select_all = false;
 		SaveConfig();
 		m_connection_change_flag = true;
 	}
@@ -1620,10 +1642,12 @@ void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
 	m_menu_popuped = true;
 
 	//设置“选择连接”子菜单项中各单选项的选择状态
-	if (m_auto_select)		//m_auto_select为true时为自动选择，选中菜单的第1项
-		m_select_connection_menu->CheckMenuRadioItem(0, m_connections.size(), 0, MF_BYPOSITION | MF_CHECKED);
+	if(m_select_all)
+		m_select_connection_menu->CheckMenuRadioItem(0, m_connections.size() + 1, 1, MF_BYPOSITION | MF_CHECKED);
+	else if (m_auto_select)		//m_auto_select为true时为自动选择，选中菜单的第1项
+		m_select_connection_menu->CheckMenuRadioItem(0, m_connections.size() + 1, 0, MF_BYPOSITION | MF_CHECKED);
 	else		//m_auto_select为false时非自动选择，根据m_connection_selected的值选择对应的项
-		m_select_connection_menu->CheckMenuRadioItem(0, m_connections.size(), m_connection_selected + 1, MF_BYPOSITION | MF_CHECKED);
+		m_select_connection_menu->CheckMenuRadioItem(0, m_connections.size() + 1, m_connection_selected + 2, MF_BYPOSITION | MF_CHECKED);
 
 	//设置“窗口不透明度”子菜单下各单选项的选择状态
 	switch (m_transparency)

@@ -18,6 +18,7 @@
 #include "DrawCommon.h"
 #include "IniHelper.h"
 #include "LinkStatic.h"
+#include "AdapterCommon.h"
 
 // CTrafficMonitorDlg 对话框
 class CTrafficMonitorDlg : public CDialogEx
@@ -44,27 +45,16 @@ protected:
 	NOTIFYICONDATA m_ntIcon;	//通知区域图标
 	CTaskBarDlg* m_tBarDlg;		//任务栏窗口的指针
 
-	//嵌套结构体，保存一个网络连接的索引和描述等信息
-	struct NetWorkConection
-	{
-		int index;				//网络索引
-		string description;		//网络描述
-		unsigned int in_bytes;	//初始时已接收字节数
-		unsigned int out_bytes;	//初始时已发送字节数
-		NetWorkConection(int idx, string desc, unsigned int in_bytes, unsigned out_bytes)
-			: index{ idx }, description{ desc }, in_bytes{ in_bytes }, out_bytes{out_bytes}		//构造函数
-		{}
-	};
-
 	vector<NetWorkConection> m_connections;	//保存获取到的要显示到“选择网卡”菜单项中的所有网络连接
 	MIB_IFTABLE* m_pIfTable;
 	DWORD m_dwSize{};	//m_pIfTable的大小
 	int m_connection_selected{ 0 };	//要显示流量的连接的序号
 	bool m_auto_select{ false };	//自动选择连接
-	unsigned int m_in_bytes;		//当前已接收的字节数
-	unsigned int m_out_bytes;	//当前已发送的字节数
-	unsigned int m_last_in_bytes{};	//上次已接收的字节数
-	unsigned int m_last_out_bytes{};	//上次已发送的字节数
+	bool m_select_all{ false };		//统计所有连接的网速
+	unsigned __int64 m_in_bytes;		//当前已接收的字节数
+	unsigned __int64 m_out_bytes;	//当前已发送的字节数
+	unsigned __int64 m_last_in_bytes{};	//上次已接收的字节数
+	unsigned __int64 m_last_out_bytes{};	//上次已发送的字节数
 	string m_connection_name;	//当前选择网络的名称
 
 	FILETIME m_preidleTime;

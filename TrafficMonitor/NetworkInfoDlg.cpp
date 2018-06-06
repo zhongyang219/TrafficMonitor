@@ -11,8 +11,8 @@
 
 IMPLEMENT_DYNAMIC(CNetworkInfoDlg, CDialog)
 
-CNetworkInfoDlg::CNetworkInfoDlg(MIB_IFROW network_info, CWnd* pParent /*=NULL*/)
-	: CDialog(IDD_NETWORK_INFO_DIALOG, pParent), m_network_info(network_info)
+CNetworkInfoDlg::CNetworkInfoDlg(vector<NetWorkConection>& adapters, MIB_IFROW* pIfRow, int connection_selected, CWnd* pParent /*=NULL*/)
+	: CDialog(IDD_NETWORK_INFO_DIALOG, pParent), m_connections(adapters), m_pIfRow(pIfRow), m_connection_selected(connection_selected)
 {
 
 }
@@ -22,58 +22,15 @@ CNetworkInfoDlg::~CNetworkInfoDlg()
 }
 
 
-void CNetworkInfoDlg::GetIPAddress()
-{
-	PIP_ADAPTER_INFO pIpAdapterInfo = new IP_ADAPTER_INFO();		//PIP_ADAPTER_INFO结构体指针存储本机网卡信息
-	unsigned long stSize = sizeof(IP_ADAPTER_INFO);		//得到结构体大小,用于GetAdaptersInfo参数
-	int nRel = GetAdaptersInfo(pIpAdapterInfo, &stSize);	//调用GetAdaptersInfo函数,填充pIpAdapterInfo指针变量;其中stSize参数既是一个输入量也是一个输出量
-
-	if (ERROR_BUFFER_OVERFLOW == nRel)
-	{
-		//如果函数返回的是ERROR_BUFFER_OVERFLOW
-		//则说明GetAdaptersInfo参数传递的内存空间不够,同时其传出stSize,表示需要的空间大小
-		//这也是说明为什么stSize既是一个输入量也是一个输出量
-		delete pIpAdapterInfo;	//释放原来的内存空间
-		pIpAdapterInfo = (PIP_ADAPTER_INFO)new BYTE[stSize];	//重新申请内存空间用来存储所有网卡信息
-		nRel = GetAdaptersInfo(pIpAdapterInfo, &stSize);		//再次调用GetAdaptersInfo函数,填充pIpAdapterInfo指针变量
-	}
-
-	PIP_ADAPTER_INFO pIpAdapterInfoHead = pIpAdapterInfo;	//保存pIpAdapterInfo链表中第一个元素的地址
-	if (ERROR_SUCCESS == nRel)
-	{
-		string current_network_descr{ (const char*)m_network_info.bDescr };		//MIB_IFROW结构中的当前选中的网络连接的描述
-		//获取网卡信息
-		//可能有多网卡,因此通过循环来查找当前要显示的网卡
-		while (pIpAdapterInfo)
-		{
-			if(current_network_descr.find(pIpAdapterInfo->Description) != string::npos)
-			{
-				m_ip_address = CCommon::StrToUnicode(pIpAdapterInfo->IpAddressList.IpAddress.String);
-				m_subnet_mask = CCommon::StrToUnicode(pIpAdapterInfo->IpAddressList.IpMask.String);
-				m_default_gateway = CCommon::StrToUnicode(pIpAdapterInfo->GatewayList.IpAddress.String);
-				break;
-			}
-			pIpAdapterInfo = pIpAdapterInfo->Next;
-		}
-	}
-	//释放内存空间
-	if (pIpAdapterInfoHead)
-	{
-		delete pIpAdapterInfoHead;
-	}
-}
-
 void CNetworkInfoDlg::ShowInfo()
 {
 	CString temp;
-	m_info_list.InsertItem(0, CCommon::LoadText(IDS_INTERFACE_NAME));
-	m_info_list.SetItemText(0, 1, m_network_info.wszName);
+	MIB_IFROW& network_info = m_pIfRow[m_connections[m_connection_selected].index];
+	m_info_list.SetItemText(0, 1, network_info.wszName);
 
-	m_info_list.InsertItem(1, CCommon::LoadText(IDS_INTERFACE_DESCRIPTION));
-	m_info_list.SetItemText(1, 1, CCommon::StrToUnicode((const char*)m_network_info.bDescr).c_str());
+	m_info_list.SetItemText(1, 1, CCommon::StrToUnicode((const char*)network_info.bDescr).c_str());
 
-	m_info_list.InsertItem(2, CCommon::LoadText(IDS_CONNECTION_TYPE));
-	switch (m_network_info.dwType)
+	switch (network_info.dwType)
 	{
 	case IF_TYPE_OTHER: temp = CCommon::LoadText(IDS_IF_TYPE_OTHER); break;
 	case IF_TYPE_ETHERNET_CSMACD: temp = CCommon::LoadText(IDS_IF_TYPE_ETHERNET_CSMACD); break;
@@ -92,48 +49,27 @@ void CNetworkInfoDlg::ShowInfo()
 	}
 	m_info_list.SetItemText(2, 1, temp);
 
-	//m_info_list.InsertItem(3, _T("最大传输单位大小"));
-	//temp.Format(_T("%u"), m_network_info.dwMtu);
-	//m_info_list.SetItemText(3, 1, temp);
-
-	m_info_list.InsertItem(3, CCommon::LoadText(IDS_SPEED));
-	temp.Format(_T("%dMbps"), m_network_info.dwSpeed / 1000000);
+	temp.Format(_T("%dMbps"), network_info.dwSpeed / 1000000);
 	m_info_list.SetItemText(3, 1, temp);
 
-	m_info_list.InsertItem(4, CCommon::LoadText(IDS_ADAPTER_PHYSICAL_ADDRESS));
 	temp = _T("");
 	char buff[3];
-	for (size_t i{}; i < m_network_info.dwPhysAddrLen; i++)
+	for (size_t i{}; i < network_info.dwPhysAddrLen; i++)
 	{
-		//_itoa_s(m_network_info.bPhysAddr[i], buff, 16);
-		sprintf_s(buff, "%.2x", m_network_info.bPhysAddr[i]);
+		sprintf_s(buff, "%.2x", network_info.bPhysAddr[i]);
 		temp += buff;
-		if (i != m_network_info.dwPhysAddrLen - 1)
+		if (i != network_info.dwPhysAddrLen - 1)
 			temp += _T('-');
 	}
 	m_info_list.SetItemText(4, 1, temp);
 
-	m_info_list.InsertItem(5, CCommon::LoadText(IDS_IP_ADDRESS));
-	m_info_list.SetItemText(5, 1, m_ip_address.c_str());
+	m_info_list.SetItemText(5, 1, m_connections[m_connection_selected].ip_address.c_str());
 
-	m_info_list.InsertItem(6, CCommon::LoadText(IDS_SUBNET_MASK));
-	m_info_list.SetItemText(6, 1, m_subnet_mask.c_str());
+	m_info_list.SetItemText(6, 1, m_connections[m_connection_selected].subnet_mask.c_str());
 
-	m_info_list.InsertItem(7, CCommon::LoadText(IDS_DEFAULT_GATEWAY));
-	m_info_list.SetItemText(7, 1, m_default_gateway.c_str());
+	m_info_list.SetItemText(7, 1, m_connections[m_connection_selected].default_gateway.c_str());
 
-	////temp.Format(_T("物理地址长度：%d\r\n"), m_network_info.dwPhysAddrLen);
-	////out_info += temp;
-	////temp = _T("适配器物理地址：");
-	////temp += StrToUnicode((const char*)m_network_info.bPhysAddr).c_str();
-	////out_info += temp;
-	////out_info += _T("\r\n");
-
-	//m_info_list.InsertItem(5, _T("管理员状态"));
-	//m_info_list.SetItemText(5, 1, m_network_info.dwAdminStatus ? _T("启用") : _T("禁用"));
-
-	m_info_list.InsertItem(8, CCommon::LoadText(IDS_OPERATIONAL_STATUS));
-	switch (m_network_info.dwOperStatus)
+	switch (network_info.dwOperStatus)
 	{
 	case IF_OPER_STATUS_NON_OPERATIONAL: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_NON_OPERATIONAL); break;
 	case IF_OPER_STATUS_UNREACHABLE: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_UNREACHABLE); break;
@@ -145,31 +81,28 @@ void CNetworkInfoDlg::ShowInfo()
 	}
 	m_info_list.SetItemText(8, 1, temp);
 
-	m_info_list.InsertItem(9, CCommon::LoadText(IDS_BYTES_RECEIVED));
-	temp.Format(_T("%u (%s)"), m_network_info.dwInOctets, CCommon::DataSizeToString(m_network_info.dwInOctets));
+	temp.Format(_T("%u (%s)"), network_info.dwInOctets, CCommon::DataSizeToString(network_info.dwInOctets));
 	m_info_list.SetItemText(9, 1, temp);
 
-	m_info_list.InsertItem(10, CCommon::LoadText(IDS_BYTES_SENT));
-	temp.Format(_T("%u (%s)"), m_network_info.dwOutOctets, CCommon::DataSizeToString(m_network_info.dwOutOctets));
+	temp.Format(_T("%u (%s)"), network_info.dwOutOctets, CCommon::DataSizeToString(network_info.dwOutOctets));
 	m_info_list.SetItemText(10, 1, temp);
 
-	m_info_list.InsertItem(11, CCommon::LoadText(IDS_BYTES_RECEIVED_SINCE_START));
-	temp.Format(_T("%u (%s)"), m_in_bytes, CCommon::DataSizeToString(m_in_bytes));
+	temp.Format(_T("%u (%s)"), m_connections[m_connection_selected].in_bytes, CCommon::DataSizeToString(m_connections[m_connection_selected].in_bytes));
 	m_info_list.SetItemText(11, 1, temp);
 
-	m_info_list.InsertItem(12, CCommon::LoadText(IDS_BYTES_SENT_SINCE_START));
-	temp.Format(_T("%u (%s)"), m_out_bytes, CCommon::DataSizeToString(m_out_bytes));
+	temp.Format(_T("%u (%s)"), m_connections[m_connection_selected].out_bytes, CCommon::DataSizeToString(m_connections[m_connection_selected].out_bytes));
 	m_info_list.SetItemText(12, 1, temp);
 
-	m_info_list.InsertItem(13, CCommon::LoadText(IDS_PROGRAM_ELAPSED_TIME));
 	SYSTEMTIME current_time, time;
 	GetLocalTime(&current_time);
 	time = CCommon::CompareSystemTime(current_time, m_start_time);
 	temp.Format(CCommon::LoadText(IDS_HOUR_MINUTE_SECOND), time.wHour, time.wMinute, time.wSecond);
 	m_info_list.SetItemText(13, 1, temp);
 
-	m_info_list.InsertItem(14, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS));
-	m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
+	//显示当前选择指示
+	CString str;
+	str.Format(_T("%d/%d"), m_connection_selected + 1, m_connections.size());
+	SetDlgItemText(IDC_INDEX_STATIC, str);
 }
 
 UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
@@ -204,6 +137,8 @@ BEGIN_MESSAGE_MAP(CNetworkInfoDlg, CDialog)
 	ON_COMMAND(ID_COPY_TEXT, &CNetworkInfoDlg::OnCopyText)
 	ON_NOTIFY(NM_RCLICK, IDC_INFO_LIST1, &CNetworkInfoDlg::OnNMRClickInfoList1)
 	ON_WM_CLOSE()
+	ON_BN_CLICKED(IDC_PREVIOUS_BUTTON, &CNetworkInfoDlg::OnBnClickedPreviousButton)
+	ON_BN_CLICKED(IDC_NEXT_BUTTON, &CNetworkInfoDlg::OnBnClickedNextButton)
 END_MESSAGE_MAP()
 
 
@@ -217,9 +152,6 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	// TODO:  在此添加额外的初始化
 	SetWindowText(CCommon::LoadText(IDS_TITLE_CONNECTION_DETIAL));
 
-	//获取IP地址
-	GetIPAddress();
-
 	//初始化列表控件
 	CRect rect;
 	m_info_list.GetClientRect(rect);
@@ -229,6 +161,24 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	width1 = rect.Width() - width0 - theApp.DPI(21);
 	m_info_list.InsertColumn(0, CCommon::LoadText(IDS_ITEM), LVCFMT_LEFT, width0);		//插入第0列
 	m_info_list.InsertColumn(1, CCommon::LoadText(IDS_VALUE), LVCFMT_LEFT, width1);		//插入第1列
+
+	//向列表中插入行
+	m_info_list.InsertItem(0, CCommon::LoadText(IDS_INTERFACE_NAME));
+	m_info_list.InsertItem(1, CCommon::LoadText(IDS_INTERFACE_DESCRIPTION));
+	m_info_list.InsertItem(2, CCommon::LoadText(IDS_CONNECTION_TYPE));
+	m_info_list.InsertItem(3, CCommon::LoadText(IDS_SPEED));
+	m_info_list.InsertItem(4, CCommon::LoadText(IDS_ADAPTER_PHYSICAL_ADDRESS));
+	m_info_list.InsertItem(5, CCommon::LoadText(IDS_IP_ADDRESS));
+	m_info_list.InsertItem(6, CCommon::LoadText(IDS_SUBNET_MASK));
+	m_info_list.InsertItem(7, CCommon::LoadText(IDS_DEFAULT_GATEWAY));
+	m_info_list.InsertItem(8, CCommon::LoadText(IDS_OPERATIONAL_STATUS));
+	m_info_list.InsertItem(9, CCommon::LoadText(IDS_BYTES_RECEIVED));
+	m_info_list.InsertItem(10, CCommon::LoadText(IDS_BYTES_SENT));
+	m_info_list.InsertItem(11, CCommon::LoadText(IDS_BYTES_RECEIVED_SINCE_START));
+	m_info_list.InsertItem(12, CCommon::LoadText(IDS_BYTES_SENT_SINCE_START));
+	m_info_list.InsertItem(13, CCommon::LoadText(IDS_PROGRAM_ELAPSED_TIME));
+	m_info_list.InsertItem(14, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS));
+	m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
 
 	//显示列表中的信息
 	ShowInfo();
@@ -282,4 +232,47 @@ void CNetworkInfoDlg::OnClose()
 	TerminateThread(m_pGetIPThread->m_hThread, 0);
 
 	CDialog::OnClose();
+}
+
+
+void CNetworkInfoDlg::OnBnClickedPreviousButton()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	if (m_connection_selected > 0)
+	{
+		m_connection_selected--;
+		ShowInfo();
+	}
+}
+
+
+void CNetworkInfoDlg::OnBnClickedNextButton()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	if (m_connection_selected < m_connections.size() - 1)
+	{
+		m_connection_selected++;
+		ShowInfo();
+	}
+}
+
+
+BOOL CNetworkInfoDlg::PreTranslateMessage(MSG* pMsg)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	if (pMsg->message == WM_KEYDOWN)
+	{
+		if (pMsg->wParam == VK_LEFT)
+		{
+			OnBnClickedPreviousButton();
+			return TRUE;
+		}
+		if (pMsg->wParam == VK_RIGHT)
+		{
+			OnBnClickedNextButton();
+			return TRUE;
+		}
+	}
+
+	return CDialog::PreTranslateMessage(pMsg);
 }

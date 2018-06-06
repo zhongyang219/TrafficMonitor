@@ -88,6 +88,9 @@
     <Filter Include="源文件和头文件\公共的类\CalendarHelper">
       <UniqueIdentifier>{9fa66474-d19b-4357-9813-e511bb20c722}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\AdapterCommon">
+      <UniqueIdentifier>{75cd7f4d-06b2-467e-9960-994560da6e7b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -189,6 +192,9 @@
     <ClInclude Include="CalendarHelper.h">
       <Filter>源文件和头文件\公共的类\CalendarHelper</Filter>
     </ClInclude>
+    <ClInclude Include="AdapterCommon.h">
+      <Filter>源文件和头文件\公共的类\AdapterCommon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -277,6 +283,9 @@
     </ClCompile>
     <ClCompile Include="CalendarHelper.cpp">
       <Filter>源文件和头文件\公共的类\CalendarHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="AdapterCommon.cpp">
+      <Filter>源文件和头文件\公共的类\AdapterCommon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

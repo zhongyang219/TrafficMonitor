@@ -37,6 +37,7 @@ void CTrafficMonitorApp::LoadConfig()
 	//m_no_multistart_warning_time = GetPrivateProfileInt(_T("other"), _T("no_multistart_warning_time"), 300000, m_config_path.c_str());
 	m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), false);
 	m_notify_interval = ini.GetInt(_T("other"), _T("notify_interval"), 60);
+	m_exit_when_start_by_restart_manager = ini.GetBool(_T("other"), _T("exit_when_start_by_restart_manager"), true);
 	m_general_data.check_update_when_start = ini.GetBool(_T("general"), _T("check_update_when_start"), true);
 	m_general_data.allow_skin_cover_font = ini.GetBool(_T("general"), _T("allow_skin_cover_font"), true);
 	m_general_data.allow_skin_cover_text = ini.GetBool(_T("general"), _T("allow_skin_cover_text"), true);
@@ -49,6 +50,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.SetPath(theApp.m_config_path);
 	//CCommon::WritePrivateProfileIntW(_T("other"), _T("no_multistart_warning_time"), m_no_multistart_warning_time);
 	ini.WriteBool(_T("other"), _T("no_multistart_warning"), m_no_multistart_warning);
+	ini.WriteBool(_T("other"), _T("exit_when_start_by_restart_manager"), m_exit_when_start_by_restart_manager);
 	ini.WriteInt(_T("other"), _T("notify_interval"), m_notify_interval);
 	ini.WriteBool(_T("general"), _T("check_update_when_start"), m_general_data.check_update_when_start);
 	ini.WriteBool(_T("general"), _T("allow_skin_cover_font"), m_general_data.allow_skin_cover_font);
@@ -250,7 +252,7 @@ BOOL CTrafficMonitorApp::InitInstance()
 	wstring cmd_line{ m_lpCmdLine };
 	bool is_restart{ cmd_line.find(L"RestartByRestartManager") != wstring::npos };		//如果命令行参数中含有字符串“RestartByRestartManager”则说明程序是被Windows重新启动的
 	//bool when_start{ CCommon::WhenStart(m_no_multistart_warning_time) };
-	if (is_restart && m_is_windows10_fall_creator)		//当前Windows版本是秋季创意者更新时，如果程序被重新启动，则直接退出程序
+	if (m_exit_when_start_by_restart_manager && is_restart && m_is_windows10_fall_creator)		//当前Windows版本是秋季创意者更新时，如果程序被重新启动，则直接退出程序
 	{
 		//AfxMessageBox(_T("调试信息：程序已被Windows的重启管理器重新启动。"));
 		return FALSE;
