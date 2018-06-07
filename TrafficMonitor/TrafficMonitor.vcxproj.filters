@@ -91,6 +91,9 @@
     <Filter Include="源文件和头文件\公共的类\AdapterCommon">
       <UniqueIdentifier>{75cd7f4d-06b2-467e-9960-994560da6e7b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\WinVersionHelper">
+      <UniqueIdentifier>{dd5aaacf-0f59-47ca-a738-250b15c6bbbb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -195,6 +198,9 @@
     <ClInclude Include="AdapterCommon.h">
       <Filter>源文件和头文件\公共的类\AdapterCommon</Filter>
     </ClInclude>
+    <ClInclude Include="WinVersionHelper.h">
+      <Filter>源文件和头文件\公共的类\WinVersionHelper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -286,6 +292,9 @@
     </ClCompile>
     <ClCompile Include="AdapterCommon.cpp">
       <Filter>源文件和头文件\公共的类\AdapterCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="WinVersionHelper.cpp">
+      <Filter>源文件和头文件\公共的类\WinVersionHelper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

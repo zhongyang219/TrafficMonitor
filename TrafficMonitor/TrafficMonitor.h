@@ -11,6 +11,7 @@
 #include "resource.h"		// 主符号
 #include "Common.h"
 #include "IniHelper.h"
+#include "WinVersionHelper.h"
 
 // CTrafficMonitorApp: 
 // 有关此类的实现，请参阅 TrafficMonitor.cpp
@@ -52,7 +53,8 @@ public:
 	//其他设置数据
 	int m_notify_interval;		//弹出通知消息的时间间隔
 
-	bool m_is_windows10_fall_creator;
+	//bool m_is_windows10_fall_creator;
+	CWinVersionHelper m_win_version;		//当前Windows的版本
 
 	HICON m_notify_icons[MAX_NOTIFY_ICON];
 

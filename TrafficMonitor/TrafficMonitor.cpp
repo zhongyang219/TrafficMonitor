@@ -240,7 +240,7 @@ BOOL CTrafficMonitorApp::InitInstance()
 	m_skin_path = exe_path + L"skins";
 #endif
 
-	m_is_windows10_fall_creator = CCommon::IsWindows10FallCreatorOrLater();
+	bool is_windows10_fall_creator = m_win_version.IsWindows10FallCreatorOrLater();
 
 	//从ini文件载入设置
 	LoadConfig();
@@ -252,7 +252,7 @@ BOOL CTrafficMonitorApp::InitInstance()
 	wstring cmd_line{ m_lpCmdLine };
 	bool is_restart{ cmd_line.find(L"RestartByRestartManager") != wstring::npos };		//如果命令行参数中含有字符串“RestartByRestartManager”则说明程序是被Windows重新启动的
 	//bool when_start{ CCommon::WhenStart(m_no_multistart_warning_time) };
-	if (m_exit_when_start_by_restart_manager && is_restart && m_is_windows10_fall_creator)		//当前Windows版本是秋季创意者更新时，如果程序被重新启动，则直接退出程序
+	if (m_exit_when_start_by_restart_manager && is_restart && is_windows10_fall_creator)		//当前Windows版本是秋季创意者更新时，如果程序被重新启动，则直接退出程序
 	{
 		//AfxMessageBox(_T("调试信息：程序已被Windows的重启管理器重新启动。"));
 		return FALSE;

@@ -242,7 +242,9 @@ bool CTaskBarDlg::AdjustWindowPos()
 				::MoveWindow(m_hMin, m_left_space + m_rect.Width(), 0, m_rcMin.Width() - m_rect.Width(), m_rcMin.Height(), TRUE);
 				wnd_x_pos = m_left_space;
 			}
-			wnd_y_pos = (m_rcMin.Height() - m_rect.Height()) / 2;
+			wnd_y_pos = (m_rcBar.Height() - m_rect.Height()) / 2;
+			if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())
+				wnd_y_pos += theApp.DPI(1);
 			::MoveWindow(this->m_hWnd, wnd_x_pos, wnd_y_pos, m_rect.Width(), m_rect.Height(), TRUE);		//设置任务栏窗口的位置
 		}
 	}
@@ -575,6 +577,8 @@ BOOL CTaskBarDlg::OnInitDialog()
 		else
 			wnd_x_pos = m_left_space;
 		wnd_y_pos = (m_rcBar.Height() - m_rect.Height()) / 2;
+		if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())		//系统是Win7并且水平排列时，任务栏窗口位置向下调整一个像素
+			wnd_y_pos += theApp.DPI(1);
 		::MoveWindow(this->m_hWnd, wnd_x_pos, wnd_y_pos, m_rect.Width(), m_rect.Height(), TRUE);
 	}
 	else	//当任务栏在桌面左侧或右侧时

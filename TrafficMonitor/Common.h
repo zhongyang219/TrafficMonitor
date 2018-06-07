@@ -88,12 +88,6 @@ public:
 	//将一个字符串保存到剪贴板
 	static bool CopyStringToClipboard(const wstring& str);
 
-	//获取Windows版本
-	static void GetWindowsVersion(int& major_version, int& minor_version, int& build_number);
-
-	//判断当前Windows版本是否为Win10秋季创意者更新或更新的版本
-	static bool IsWindows10FallCreatorOrLater();
-
 	//获取URL的内容
 	static bool GetURL(const wstring& url, wstring& result, bool utf8 = false);
 
