@@ -1235,32 +1235,34 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		}
 
 		
-		//重新获取当前连接数量
-		//vector<NetWorkConection> connections;
-		//CAdapterCommon::GetAdapterInfo(connections);
-		static DWORD last_interface_num = -1;
-		DWORD interface_num;
-		GetNumberOfInterfaces(&interface_num);
-		if (last_interface_num != -1 && interface_num != last_interface_num)	//如果连接数发生变化，则重新初始化连接
+		if (m_timer_cnt % 3 == 2)
 		{
-			CString info;
-			info.LoadString(IDS_CONNECTION_NUM_CHANGED);
-			info.Replace(_T("<%before%>"), CCommon::IntToString(last_interface_num));
-			info.Replace(_T("<%after%>"), CCommon::IntToString(interface_num));
-			info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt + 1));
-			IniConnection();
-			CCommon::WriteLog(info, theApp.m_log_path.c_str());
-		}
-		last_interface_num = interface_num;
-		string descr;
-		descr = (const char*)m_pIfTable->table[m_connections[m_connection_selected].index].bDescr;
-		if (descr != m_connection_name)
-		{
-			IniConnection();
-			CString info;
-			info.LoadString(IDS_CONNECTION_NOT_MATCH);
-			info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt));
-			CCommon::WriteLog(info, theApp.m_log_path.c_str());
+			//重新获取当前连接数量
+			static DWORD last_interface_num = -1;
+			DWORD interface_num;
+			GetNumberOfInterfaces(&interface_num);
+			if (last_interface_num != -1 && interface_num != last_interface_num)	//如果连接数发生变化，则重新初始化连接
+			{
+				CString info;
+				info.LoadString(IDS_CONNECTION_NUM_CHANGED);
+				info.Replace(_T("<%before%>"), CCommon::IntToString(last_interface_num));
+				info.Replace(_T("<%after%>"), CCommon::IntToString(interface_num));
+				info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt + 1));
+				IniConnection();
+				CCommon::WriteLog(info, theApp.m_log_path.c_str());
+			}
+			last_interface_num = interface_num;
+
+			string descr;
+			descr = (const char*)m_pIfTable->table[m_connections[m_connection_selected].index].bDescr;
+			if (descr != m_connection_name)
+			{
+				IniConnection();
+				CString info;
+				info.LoadString(IDS_CONNECTION_NOT_MATCH);
+				info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt));
+				CCommon::WriteLog(info, theApp.m_log_path.c_str());
+			}
 		}
 
 		//只有主窗口和任务栏窗口至少有一个显示时才执行下面的处理
