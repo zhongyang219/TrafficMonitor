@@ -18,18 +18,10 @@ public:
 	enum { IDD = IDD_NETWORK_INFO_DIALOG };
 #endif
 
-	//unsigned int m_in_bytes;		//当前查看的网络自启动以来已接收字节数
-	//unsigned int m_out_bytes;		//当前查看的网络自启动以来已发送字节数
-
 	SYSTEMTIME m_start_time;		//程序启动的时间
 
 protected:
 
-	//MIB_IFROW m_network_info;		//当前查看的网络连接信息
-	//wstring m_ip_address{ L"-.-.-.-" };		//IP地址
-	//wstring m_subnet_mask{ L"-.-.-.-" };	//子网掩码
-	//wstring m_default_gateway{ L"-.-.-.-" };	//默认网关
-	
 	vector<NetWorkConection>& m_connections;
 	MIB_IFROW* m_pIfRow;
 	int m_connection_selected;
@@ -41,11 +33,17 @@ protected:
 
 	CWinThread* m_pGetIPThread;			//获取外网IP的线程
 
+	bool m_no_internet_ip{ false };		//如果为true，则不显示外网IP地址
+
 	//void GetIPAddress();	//获取IP地址
 	void ShowInfo();
+	void GetProgramElapsedTime();
 
 	//获取外网IP的线程函数
 	static UINT GetInternetIPThreadFunc(LPVOID lpParam);
+
+	void LoadConfig();
+	void SaveConfig();
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
@@ -60,4 +58,5 @@ public:
 	afx_msg void OnBnClickedNextButton();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };

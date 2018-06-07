@@ -97,17 +97,22 @@ void CNetworkInfoDlg::ShowInfo()
 	out_bytes_since_start = network_info.dwOutOctets = m_connections[m_connection_selected].out_bytes;
 	temp.Format(_T("%u (%s)"), out_bytes_since_start, CCommon::DataSizeToString(out_bytes_since_start));
 	m_info_list.SetItemText(12, 1, temp);
-	//程序已运行时间
-	SYSTEMTIME current_time, time;
-	GetLocalTime(&current_time);
-	time = CCommon::CompareSystemTime(current_time, m_start_time);
-	temp.Format(CCommon::LoadText(IDS_HOUR_MINUTE_SECOND), time.wHour, time.wMinute, time.wSecond);
-	m_info_list.SetItemText(13, 1, temp);
 
 	//显示当前选择指示
 	CString str;
 	str.Format(_T("%d/%d"), m_connection_selected + 1, m_connections.size());
 	SetDlgItemText(IDC_INDEX_STATIC, str);
+}
+
+void CNetworkInfoDlg::GetProgramElapsedTime()
+{
+	//程序已运行时间
+	SYSTEMTIME current_time, time;
+	GetLocalTime(&current_time);
+	time = CCommon::CompareSystemTime(current_time, m_start_time);
+	CString temp;
+	temp.Format(CCommon::LoadText(IDS_HOUR_MINUTE_SECOND), time.wHour, time.wMinute, time.wSecond);
+	m_info_list.SetItemText(13, 1, temp);
 }
 
 UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
@@ -134,6 +139,20 @@ UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
 	return 0;
 }
 
+void CNetworkInfoDlg::LoadConfig()
+{
+	CIniHelper ini;
+	ini.SetPath(theApp.m_config_path);
+	m_no_internet_ip = ini.GetBool(L"connection_details", L"no_internet_ip", false);
+}
+
+void CNetworkInfoDlg::SaveConfig()
+{
+	CIniHelper ini;
+	ini.SetPath(theApp.m_config_path);
+	ini.WriteBool(L"connection_details", L"no_internet_ip", m_no_internet_ip);
+}
+
 void CNetworkInfoDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -148,6 +167,7 @@ BEGIN_MESSAGE_MAP(CNetworkInfoDlg, CDialog)
 	ON_BN_CLICKED(IDC_PREVIOUS_BUTTON, &CNetworkInfoDlg::OnBnClickedPreviousButton)
 	ON_BN_CLICKED(IDC_NEXT_BUTTON, &CNetworkInfoDlg::OnBnClickedNextButton)
 	ON_WM_GETMINMAXINFO()
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -161,6 +181,7 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	// TODO:  在此添加额外的初始化
 	SetWindowText(CCommon::LoadText(IDS_TITLE_CONNECTION_DETIAL));
 	SetIcon(AfxGetApp()->LoadIcon(IDI_NOFITY_ICON), FALSE);		// 设置小图标
+	LoadConfig();
 
 	//获取窗口初始大小
 	CRect rect;
@@ -191,19 +212,26 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	m_info_list.InsertItem(11, CCommon::LoadText(IDS_BYTES_RECEIVED_SINCE_START));
 	m_info_list.InsertItem(12, CCommon::LoadText(IDS_BYTES_SENT_SINCE_START));
 	m_info_list.InsertItem(13, CCommon::LoadText(IDS_PROGRAM_ELAPSED_TIME));
-	m_info_list.InsertItem(14, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS));
-	m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
+	if (!m_no_internet_ip)
+	{
+		m_info_list.InsertItem(14, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS));
+		m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
+	}
 
 	//显示列表中的信息
 	ShowInfo();
+	GetProgramElapsedTime();
 
 	//CCommon::GetInternetIp();
-	m_pGetIPThread = AfxBeginThread(GetInternetIPThreadFunc, this);		//启动获取外网IP的线程
+	if (!m_no_internet_ip)
+		m_pGetIPThread = AfxBeginThread(GetInternetIPThreadFunc, this);		//启动获取外网IP的线程
 
 	//SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//取消置顶
 	m_info_list.GetToolTips()->SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 
 	m_menu.LoadMenu(IDR_INFO_MENU); //装载右键菜单
+
+	SetTimer(CONNECTION_DETAIL_TIMER, 1000, NULL);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -243,8 +271,9 @@ void CNetworkInfoDlg::OnClose()
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	//对话框关闭时强制结束获取IP地址的线程
-	TerminateThread(m_pGetIPThread->m_hThread, 0);
-
+	if(!m_no_internet_ip)
+		TerminateThread(m_pGetIPThread->m_hThread, 0);
+	SaveConfig();
 	CDialog::OnClose();
 }
 
@@ -300,4 +329,16 @@ void CNetworkInfoDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	lpMMI->ptMinTrackSize.y = m_min_size.cy;		//设置最小高度
 
 	CDialog::OnGetMinMaxInfo(lpMMI);
+}
+
+
+void CNetworkInfoDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	if (nIDEvent == CONNECTION_DETAIL_TIMER)
+	{
+		GetProgramElapsedTime();
+	}
+
+	CDialog::OnTimer(nIDEvent);
 }
