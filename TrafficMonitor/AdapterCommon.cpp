@@ -49,7 +49,11 @@ void CAdapterCommon::GetAdapterInfo(vector<NetWorkConection>& adapters)
 		delete pIpAdapterInfoHead;
 	}
 	if (adapters.empty())
-		adapters.push_back(NetWorkConection());
+	{
+		NetWorkConection connection{};
+		connection.description = CCommon::UnicodeToStr(CCommon::LoadText(L"<", IDS_NO_CONNECTION, L">"));
+		adapters.push_back(connection);
+	}
 }
 
 void CAdapterCommon::GetIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTABLE* pIfTable)
