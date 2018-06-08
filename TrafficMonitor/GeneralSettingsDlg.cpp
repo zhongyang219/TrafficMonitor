@@ -97,6 +97,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
 	m_language_combo.AddString(CCommon::LoadText(IDS_FOLLOWING_SYSTEM));
 	m_language_combo.AddString(_T("English"));
 	m_language_combo.AddString(_T("简体中文"));
+	m_language_combo.AddString(_T("繁體中文"));
 	m_language_combo.SetCurSel(static_cast<int>(m_data.language));
 
 	return TRUE;  // return TRUE unless you set the focus to a control

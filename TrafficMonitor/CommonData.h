@@ -87,7 +87,8 @@ enum class Language
 {
 	FOLLOWING_SYSTEM,		//跟随系统
 	ENGLISH,				//英语
-	SIMPLIFIED_CHINESE		//简体中文
+	SIMPLIFIED_CHINESE,		//简体中文
+	TRADITIONAL_CHINESE		//繁体中文
 };
 
 //字体
