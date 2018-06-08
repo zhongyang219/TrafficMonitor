@@ -186,6 +186,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AcknowledgementDlg.h" />
     <ClInclude Include="AdapterCommon.h" />
     <ClInclude Include="CalendarHelper.h" />
     <ClInclude Include="HistoryTrafficCalendarDlg.h" />
@@ -222,6 +223,7 @@
     <ClInclude Include="WinVersionHelper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AcknowledgementDlg.cpp" />
     <ClCompile Include="AdapterCommon.cpp" />
     <ClCompile Include="CalendarHelper.cpp" />
     <ClCompile Include="HistoryTrafficCalendarDlg.cpp" />

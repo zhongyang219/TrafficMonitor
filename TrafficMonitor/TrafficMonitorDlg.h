@@ -19,6 +19,7 @@
 #include "IniHelper.h"
 #include "LinkStatic.h"
 #include "AdapterCommon.h"
+#include "AcknowledgementDlg.h"
 
 // CTrafficMonitorDlg ¶Ô»°¿ò
 class CTrafficMonitorDlg : public CDialogEx
@@ -219,4 +220,5 @@ public:
 	afx_msg void OnChangeNotifyIcon();
 	afx_msg void OnAlowOutOfBorder();
 	afx_msg void OnUpdateAlowOutOfBorder(CCmdUI *pCmdUI);
+	afx_msg void OnCheckUpdate();
 };

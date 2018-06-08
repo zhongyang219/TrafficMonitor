@@ -23,7 +23,7 @@ public:
 protected:
 	CPictureStatic m_about_img;		//关于对话框中的图片
 	CLinkStatic m_mail;				//“联系作者”超链接
-	CLinkStatic m_check_update;		//“检查更新”超链接
+	CLinkStatic m_acknowledgement;	//“鸣谢”超链接
 	CLinkStatic m_github;			//“GitHub”超链接
 	CLinkStatic m_donate;			//“捐助”超链接
 	CToolTipCtrl m_Mytip;			//鼠标指向时的工具提示
@@ -66,7 +66,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_STATIC_ABOUT, m_about_img);
 	DDX_Control(pDX, IDC_STATIC_MAIL, m_mail);
-	DDX_Control(pDX, IDC_STATIC_CHECK_UPDATE, m_check_update);
+	DDX_Control(pDX, IDC_STATIC_ACKNOWLEDGEMENT, m_acknowledgement);
 	DDX_Control(pDX, IDC_STATIC_GITHUB, m_github);
 	DDX_Control(pDX, IDC_STATIC_DONATE, m_donate);
 }
@@ -100,7 +100,7 @@ BOOL CAboutDlg::OnInitDialog()
 	//m_check_update.SetURL(_T("http://pan.baidu.com/s/1c1LkPQ4"));
 	m_github.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor"));
 	m_donate.SetLinkEnable(false);
-	m_check_update.SetLinkEnable(false);
+	m_acknowledgement.SetLinkEnable(false);
 
 	//设置版本信息
 	CString version_info;
@@ -153,8 +153,10 @@ afx_msg LRESULT CAboutDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
 			donateDlg.DoModal();
 		}
 		break;
-	case IDC_STATIC_CHECK_UPDATE:
-		theApp.CheckUpdate(true);
+	case IDC_STATIC_ACKNOWLEDGEMENT:
+		//theApp.CheckUpdate(true);
+		CAcknowledgementDlg acknowledgementDlg;
+		acknowledgementDlg.DoModal();
 		break;
 	}
 	return 0;
@@ -239,6 +241,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialogEx)
 	ON_COMMAND(ID_CHANGE_NOTIFY_ICON, &CTrafficMonitorDlg::OnChangeNotifyIcon)
 	ON_COMMAND(ID_ALOW_OUT_OF_BORDER, &CTrafficMonitorDlg::OnAlowOutOfBorder)
 	ON_UPDATE_COMMAND_UI(ID_ALOW_OUT_OF_BORDER, &CTrafficMonitorDlg::OnUpdateAlowOutOfBorder)
+	ON_COMMAND(ID_CHECK_UPDATE, &CTrafficMonitorDlg::OnCheckUpdate)
 END_MESSAGE_MAP()
 
 
@@ -2134,4 +2137,11 @@ void CAboutDlg::OnPaint()
 	CPaintDC dc(this); // device context for painting
 					   // TODO: 在此处添加消息处理程序代码
 					   // 不为绘图消息调用 CDialog::OnPaint()
+}
+
+
+void CTrafficMonitorDlg::OnCheckUpdate()
+{
+	// TODO: 在此添加命令处理程序代码
+	theApp.CheckUpdate(true);
 }
