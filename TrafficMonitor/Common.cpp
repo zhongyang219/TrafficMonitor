@@ -83,7 +83,7 @@ CString CCommon::DataSizeToString(unsigned int size, bool short_mode, SpeedUnit 
 				if (hide_unit)
 					str.Format(_T("%.0f"), size / 1024.0f);
 				else
-					str.Format(_T("%.0fK"), size / 1024.0f);
+					str.Format(_T("%.0f K"), size / 1024.0f);
 			}
 		}
 		else
@@ -575,10 +575,24 @@ CString CCommon::LoadText(LPCTSTR front_str, UINT id, LPCTSTR back_str)
 	return str;
 }
 
-CString CCommon::IntToString(int n)
+CString CCommon::IntToString(int n, bool thousand_separation, bool is_unsigned)
 {
 	CString str;
-	str.Format(_T("%d"), n);
+	if(is_unsigned)
+		str.Format(_T("%u"), static_cast<unsigned int>(n));
+	else
+		str.Format(_T("%d"), n);
+	int length{ str.GetLength() };
+	int count{};
+	if (thousand_separation)
+	{
+		for (int i{ length - 1 }; i > 0; i--)
+		{
+			count++;
+			if (count % 3 == 0)
+				str.Insert(i, _T(","));
+		}
+	}
 	return str;
 }
 

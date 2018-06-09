@@ -82,20 +82,20 @@ void CNetworkInfoDlg::ShowInfo()
 	}
 	m_info_list.SetItemText(8, 1, temp);
 	//已接收字节数
-	temp.Format(_T("%u (%s)"), network_info.dwInOctets, CCommon::DataSizeToString(network_info.dwInOctets));
+	temp.Format(_T("%s (%s)"), CCommon::IntToString(network_info.dwInOctets, true, true), CCommon::DataSizeToString(network_info.dwInOctets));
 	m_info_list.SetItemText(9, 1, temp);
 	//已发送字节数
-	temp.Format(_T("%u (%s)"), network_info.dwOutOctets, CCommon::DataSizeToString(network_info.dwOutOctets));
+	temp.Format(_T("%s (%s)"), CCommon::IntToString(network_info.dwOutOctets, true, true), CCommon::DataSizeToString(network_info.dwOutOctets));
 	m_info_list.SetItemText(10, 1, temp);
 	//自程序启动以来已接收字节数
 	unsigned int in_bytes_since_start;
 	in_bytes_since_start = network_info.dwInOctets - m_connections[m_connection_selected].in_bytes;
-	temp.Format(_T("%u (%s)"), in_bytes_since_start, CCommon::DataSizeToString(in_bytes_since_start));
+	temp.Format(_T("%s (%s)"), CCommon::IntToString(in_bytes_since_start, true, true), CCommon::DataSizeToString(in_bytes_since_start));
 	m_info_list.SetItemText(11, 1, temp);
 	//自程序启动以来已发送字节数
 	unsigned int out_bytes_since_start;
-	out_bytes_since_start = network_info.dwOutOctets = m_connections[m_connection_selected].out_bytes;
-	temp.Format(_T("%u (%s)"), out_bytes_since_start, CCommon::DataSizeToString(out_bytes_since_start));
+	out_bytes_since_start = network_info.dwOutOctets - m_connections[m_connection_selected].out_bytes;
+	temp.Format(_T("%s (%s)"), CCommon::IntToString(out_bytes_since_start, true, true), CCommon::DataSizeToString(out_bytes_since_start));
 	m_info_list.SetItemText(12, 1, temp);
 
 	//显示当前选择指示

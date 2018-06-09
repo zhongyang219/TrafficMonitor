@@ -100,7 +100,11 @@ public:
 	static CString LoadText(UINT id, LPCTSTR back_str = nullptr);
 	static CString LoadText(LPCTSTR front_str, UINT id, LPCTSTR back_str = nullptr);
 
-	static CString IntToString(int n);
+	//将int类型转换成字符串
+	//n：要转换的数值
+	//thousand_separation：是否要每隔3位数使用逗号分隔
+	//is_unsigned：数值是否是无符号的
+	static CString IntToString(int n, bool thousand_separation = false, bool is_unsigned = false);
 
 	//删除字体名称后面的Bold、Light等字符串，并根据这些字符串设置字体粗细
 	static void NormalizeFont(LOGFONT& font);
