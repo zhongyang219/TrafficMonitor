@@ -1601,6 +1601,7 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
 				ShowWindow(SW_RESTORE);
 				theApp.m_hide_main_window = false;
 				SetForegroundWindow();
+				SetAlwaysOnTop();
 				CheckWindowPos();
 				SaveConfig();
 			}
@@ -1631,6 +1632,7 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
 			ShowWindow(SW_RESTORE);
 			theApp.m_hide_main_window = false;
 			SetForegroundWindow();
+			SetAlwaysOnTop();
 			CheckWindowPos();
 			SaveConfig();
 		}
