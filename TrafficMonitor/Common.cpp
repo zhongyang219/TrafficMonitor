@@ -411,12 +411,12 @@ void CCommon::DrawWindowText(CDC * pDC, CRect rect, LPCTSTR lpszString, COLORREF
 
 }
 
-void CCommon::SetDrawArea(CDC * pDC, CRect rect)
-{
-	CRgn rgn;
-	rgn.CreateRectRgnIndirect(rect);
-	pDC->SelectClipRgn(&rgn);
-}
+//void CCommon::SetDrawArea(CDC * pDC, CRect rect)
+//{
+//	CRgn rgn;
+//	rgn.CreateRectRgnIndirect(rect);
+//	pDC->SelectClipRgn(&rgn);
+//}
 
 
 bool CCommon::IsForegroundFullscreen()

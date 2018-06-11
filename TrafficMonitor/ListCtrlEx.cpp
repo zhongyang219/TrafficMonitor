@@ -50,7 +50,7 @@ void CListCtrlEx::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 				CDC* pDC = CDC::FromHandle(nmcd.hdc);		//获取绘图DC
 				CRect item_rect, draw_rect;
 				GetSubItemRect(nmcd.dwItemSpec,m_draw_item_range_row, LVIR_BOUNDS, item_rect);	//获取绘图单元格的矩形区域
-				CCommon::SetDrawArea(pDC, item_rect);		//设置绘图区域为当前列
+				CDrawCommon::SetDrawRect(pDC, item_rect);		//设置绘图区域为当前列
 				draw_rect = item_rect;
 				if (draw_rect.Height() > 2 * m_margin)
 				{
@@ -74,7 +74,7 @@ void CListCtrlEx::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 				CRect rect1{ item_rect };
 				rect1.left = 0;
 				rect1.right = item_rect.left;
-				CCommon::SetDrawArea(pDC, rect1);
+				CDrawCommon::SetDrawRect(pDC, rect1);
 			}
 			*pResult = CDRF_DODEFAULT;
 			break;

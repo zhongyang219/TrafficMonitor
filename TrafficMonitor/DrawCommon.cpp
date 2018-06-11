@@ -62,6 +62,13 @@ void CDrawCommon::SetDrawRect(CRect rect)
 	m_pDC->SelectClipRgn(&rgn);
 }
 
+void CDrawCommon::SetDrawRect(CDC * pDC, CRect rect)
+{
+	CRgn rgn;
+	rgn.CreateRectRgnIndirect(rect);
+	pDC->SelectClipRgn(&rgn);
+}
+
 void CDrawCommon::DrawBitmap(CBitmap & bitmap, CPoint start_point, CSize size, StretchMode stretch_mode)
 {
 	CDC memDC;

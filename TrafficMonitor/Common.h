@@ -71,8 +71,8 @@ public:
 	//在指定位置绘制文本
 	static void DrawWindowText(CDC* pDC, CRect rect, LPCTSTR lpszString, COLORREF color, COLORREF back_color);
 
-	//设置绘图的剪辑区域
-	static void SetDrawArea(CDC* pDC, CRect rect);
+	////设置绘图的剪辑区域
+	//static void SetDrawArea(CDC* pDC, CRect rect);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	* 函数名称：IsForegroundFullscreen

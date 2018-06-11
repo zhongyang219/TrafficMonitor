@@ -25,6 +25,7 @@ public:
 	void DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align = Alignment::LEFT, bool draw_back_ground = false);	//在指定的矩形区域内绘制文本
 
 	void SetDrawRect(CRect rect);		//设置绘图剪辑区域
+	static void SetDrawRect(CDC* pDC, CRect rect);
 
 	//绘制一个位图
 	//（注意：当stretch_mode设置为StretchMode::FILL（填充）时，会设置绘图剪辑区域，如果之后需要绘制其他图形，

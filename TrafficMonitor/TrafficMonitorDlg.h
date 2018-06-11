@@ -11,7 +11,6 @@
 #include "TaskBarDlg.h"
 #include "SkinDlg.h"
 #include "HistoryTrafficDlg.h"
-#include "DonateDlg.h"
 #include "OptionsDlg.h"
 #include "PictureStatic.h"
 #include "IconSelectDlg.h"
@@ -19,7 +18,7 @@
 #include "IniHelper.h"
 #include "LinkStatic.h"
 #include "AdapterCommon.h"
-#include "AcknowledgementDlg.h"
+#include "AboutDlg.h"
 
 // CTrafficMonitorDlg ¶Ô»°¿ò
 class CTrafficMonitorDlg : public CDialogEx

@@ -184,8 +184,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="res\Acknowledgement.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AboutDlg.h" />
     <ClInclude Include="AcknowledgementDlg.h" />
     <ClInclude Include="AdapterCommon.h" />
     <ClInclude Include="CalendarHelper.h" />
@@ -223,6 +225,7 @@
     <ClInclude Include="WinVersionHelper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AboutDlg.cpp" />
     <ClCompile Include="AcknowledgementDlg.cpp" />
     <ClCompile Include="AdapterCommon.cpp" />
     <ClCompile Include="CalendarHelper.cpp" />

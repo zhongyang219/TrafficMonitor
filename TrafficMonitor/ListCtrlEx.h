@@ -1,6 +1,6 @@
 #pragma once
 #include "afxcmn.h"
-#include "Common.h"
+#include "DrawCommon.h"
 class CListCtrlEx :
 	public CListCtrl
 {
