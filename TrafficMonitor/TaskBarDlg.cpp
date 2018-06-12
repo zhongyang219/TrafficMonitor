@@ -481,7 +481,7 @@ void CTaskBarDlg::CalculateWindowWidth()
 	if (!horizontal_arrange)
 		m_window_width_s = max(width1, width2);
 	else
-		m_window_width_s = width1 + width2 + theApp.DPI(4);
+		m_window_width_s = width1 + width2 + theApp.DPI(8);
 	m_ud_value_width = width1 - m_up_lable_width;
 
 	//计算显示CPU、内存部分所需要的宽度
