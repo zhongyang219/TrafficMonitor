@@ -7,7 +7,7 @@
 #include "CommonData.h"
 
 // CTaskBarDlg 对话框
-#define TASKBAR_WND_HEIGHT theApp.DPI(31);
+#define TASKBAR_WND_HEIGHT theApp.DPI(31)
 
 class CTaskBarDlg : public CDialogEx
 {
@@ -39,8 +39,12 @@ protected:
 	int m_window_width;		//窗口宽度
 	int m_window_width_s;	//不显示CPU和内存利用率时的窗口宽度
 	int m_window_height;
-	int m_ud_lable_width;	//上传、下载的标签宽度
-	int m_cm_lable_width;		//CPU、内存
+	int m_up_lable_width;	//上传标签的宽度
+	int m_down_lable_width;	//下载标签的宽度
+	int m_cpu_lable_width;		//CPU标签的宽度
+	int m_memory_lable_width;	//内存标签的宽度
+	int m_ud_value_width;		//上传、下载数值的宽度
+	int m_cm_value_width;		//CPU、内存数值的宽度
 
 	int m_min_bar_width;	//最小化窗口缩小宽度后的宽度
 	int m_min_bar_height;	//最小化窗口缩小高度后的高度（用于任务栏在屏幕左侧或右侧时）
@@ -68,7 +72,6 @@ public:
 	void SetTextFont();
 	void ApplySettings();
 	void CalculateWindowWidth();		//计算窗口需要的宽度
-	void CalculateHorizontalArrangeSize();		//如果设置了水平排列，则将窗口宽度扩大，高度减小（调用此函数前必须先调用CalculateWindowWidth()）
 
 	void SetToolTipsTopMost();			//设置鼠标提示置顶
 	void UpdateToolTips();

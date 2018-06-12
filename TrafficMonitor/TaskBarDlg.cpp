@@ -81,7 +81,10 @@ void CTaskBarDlg::ShowInfo()
 	//绘制上传速度
 	if (theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom)
 	{
-		value_rect.right = m_window_width_s / 2 - theApp.DPI(4);
+		value_rect.right = m_up_lable_width + m_ud_value_width;
+		lable_rect = value_rect;
+		lable_rect.right = lable_rect.left + m_up_lable_width;
+		value_rect.left += m_up_lable_width;
 	}
 	else
 	{
@@ -96,10 +99,10 @@ void CTaskBarDlg::ShowInfo()
 			window_width = max(m_window_width_s, (m_window_width - m_window_width_s));
 			value_rect.right = value_rect.left + window_width - theApp.DPI(5);
 		}
+		lable_rect = value_rect;
+		lable_rect.right = lable_rect.left + max(m_up_lable_width, m_down_lable_width);
+		value_rect.left += max(m_up_lable_width, m_down_lable_width);
 	}
-	lable_rect = value_rect;
-	lable_rect.right = lable_rect.left + m_ud_lable_width;
-	value_rect.left += m_ud_lable_width;
 	CString format_str;
 	if (theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO)
 		format_str = _T("%s");
@@ -124,6 +127,7 @@ void CTaskBarDlg::ShowInfo()
 	if (theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom)
 	{
 		lable_rect.MoveToX(value_rect.right + theApp.DPI(4));
+		lable_rect.right = lable_rect.left + m_down_lable_width;
 		value_rect.MoveToX(lable_rect.right);
 	}
 	else
@@ -153,12 +157,18 @@ void CTaskBarDlg::ShowInfo()
 		if (theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom)
 		{
 			value_rect.MoveToXY(m_window_width_s + theApp.DPI(4), 0);
-			value_rect.right = value_rect.left + (m_window_width - m_window_width_s)/2 - theApp.DPI(5);
+			value_rect.right = value_rect.left + m_cpu_lable_width + m_cm_value_width - theApp.DPI(5);
+			lable_rect = value_rect;
+			lable_rect.right = lable_rect.left + m_cpu_lable_width;
+			value_rect.left += m_cpu_lable_width;
 		}
 		else if (m_taskbar_on_top_or_bottom)
 		{
 			value_rect.MoveToXY(m_window_width_s, 0);
 			value_rect.right = value_rect.left + (m_window_width - m_window_width_s) - theApp.DPI(5);
+			lable_rect = value_rect;
+			lable_rect.right = lable_rect.left + max(m_cpu_lable_width, m_memory_lable_width);
+			value_rect.left += max(m_cpu_lable_width, m_memory_lable_width);
 		}
 		else
 		{
@@ -166,15 +176,15 @@ void CTaskBarDlg::ShowInfo()
 			int window_width;
 			window_width = max(m_window_width_s, (m_window_width - m_window_width_s));
 			value_rect.right = value_rect.left + window_width - theApp.DPI(5);
+			lable_rect = value_rect;
+			lable_rect.right = lable_rect.left + max(m_cpu_lable_width, m_memory_lable_width);
+			value_rect.left += max(m_cpu_lable_width, m_memory_lable_width);
 		}
 		CString format_str;
 		if (theApp.m_taskbar_data.hide_percent)
 			format_str = _T("%d");
 		else
 			format_str = _T("%d%%");
-		lable_rect = value_rect;
-		lable_rect.right = lable_rect.left + m_cm_lable_width;
-		value_rect.left += m_cm_lable_width;
 		str.Format(format_str, theApp.m_cpu_usage);
 		CRect rect_tmp{ value_rect };
 		if (theApp.m_cpu_usage == 100)		//如果CPU利用为100%，则将矩形框右侧扩大一些，防止显示不全
@@ -185,6 +195,7 @@ void CTaskBarDlg::ShowInfo()
 		if (theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom)
 		{
 			lable_rect.MoveToX(value_rect.right + theApp.DPI(4));
+			lable_rect.right = lable_rect.left + m_memory_lable_width;
 			value_rect.MoveToX(lable_rect.right);
 		}
 		else
@@ -218,7 +229,6 @@ bool CTaskBarDlg::AdjustWindowPos()
 	if (m_taskbar_on_top_or_bottom != last_taskbar_on_top_or_bottom)
 	{
 		CalculateWindowWidth();
-		CalculateHorizontalArrangeSize();
 		last_taskbar_on_top_or_bottom = m_taskbar_on_top_or_bottom;
 	}
 	int wnd_x_pos{}, wnd_y_pos{};
@@ -435,11 +445,16 @@ void CTaskBarDlg::ApplySettings()
 {
 	SetTextFont();
 	CalculateWindowWidth();
-	CalculateHorizontalArrangeSize();
 }
 
 void CTaskBarDlg::CalculateWindowWidth()
 {
+	bool horizontal_arrange = theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom;
+	//计算标签宽度
+	m_up_lable_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.up.c_str()).cx;
+	m_down_lable_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.down.c_str()).cx;
+	m_cpu_lable_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.cpu.c_str()).cx;
+	m_memory_lable_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.memory.c_str()).cx;
 	//计算显示上传下载部分所需要的宽度
 	CString str1, str2;
 	int width1, width2;
@@ -463,7 +478,11 @@ void CTaskBarDlg::CalculateWindowWidth()
 	str2 = theApp.m_taskbar_data.disp_str.down.c_str() + sample_str;
 	width1= m_pDC->GetTextExtent(str1).cx;		//计算使用当前字体显示文本需要的宽度值
 	width2= m_pDC->GetTextExtent(str2).cx;
-	m_window_width_s = max(width1, width2);
+	if (!horizontal_arrange)
+		m_window_width_s = max(width1, width2);
+	else
+		m_window_width_s = width1 + width2 + theApp.DPI(4);
+	m_ud_value_width = width1 - m_up_lable_width;
 
 	//计算显示CPU、内存部分所需要的宽度
 	int width_cpu_memory;
@@ -479,31 +498,18 @@ void CTaskBarDlg::CalculateWindowWidth()
 	}
 	width1 = m_pDC->GetTextExtent(str1).cx;
 	width2 = m_pDC->GetTextExtent(str2).cx;
-	width_cpu_memory = max(width1, width2);
+	if (!horizontal_arrange)
+		width_cpu_memory = max(width1, width2);
+	else
+		width_cpu_memory = width1 + width2 + theApp.DPI(4);
 	m_window_width = m_window_width_s + width_cpu_memory;
+	m_cm_value_width = width1 - m_cpu_lable_width;
 
-	//计算标签宽度
-	width1 = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.up.c_str()).cx;
-	width2 = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.down.c_str()).cx;
-	m_ud_lable_width = max(width1, width2);
-	width1 = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.cpu.c_str()).cx;
-	width2 = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.memory.c_str()).cx;
-	m_cm_lable_width = max(width1, width2);
-
-	m_window_height = TASKBAR_WND_HEIGHT;
+	if (!horizontal_arrange)
+		m_window_height = TASKBAR_WND_HEIGHT;
+	else
+		m_window_height = TASKBAR_WND_HEIGHT * 3 / 4;
 	m_rect.bottom = m_rect.top + m_window_height;
-}
-
-void CTaskBarDlg::CalculateHorizontalArrangeSize()
-{
-	//如果设置了水平排列，则宽度增加一倍，高度变为3/4
-	if (theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom)
-	{
-		m_window_width = m_window_width * 2 + theApp.DPI(8);
-		m_window_width_s = m_window_width_s * 2 + theApp.DPI(4);
-		m_window_height = m_window_height * 3 / 4;
-		m_rect.bottom = m_rect.top + m_window_height;
-	}
 }
 
 void CTaskBarDlg::SetToolTipsTopMost()
@@ -534,7 +540,6 @@ BOOL CTaskBarDlg::OnInitDialog()
 	SetTextFont();
 	m_pDC->SelectObject(&m_font);
 
-	CalculateWindowWidth();
 	m_window_height = TASKBAR_WND_HEIGHT;
 	m_rect.SetRectEmpty();
 	m_rect.bottom = m_window_height;
@@ -549,7 +554,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 	m_top_space = m_rcMin.top - m_rcBar.top;
 
 	m_taskbar_on_top_or_bottom = IsTaskbarOnTopOrBottom();
-	CalculateHorizontalArrangeSize();
+	CalculateWindowWidth();
 	if (!theApp.m_tbar_show_cpu_memory)
 		m_rect.right = m_rect.left + m_window_width_s;
 	else
