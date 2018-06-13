@@ -202,8 +202,8 @@ public:
 	afx_msg void OnAppAbout();
 	afx_msg void OnShowCpuMemory2();
 //	afx_msg void OnAutoRunWhenStart();
-	afx_msg void OnHideMainWnd();
-	afx_msg void OnUpdateHideMainWnd(CCmdUI *pCmdUI);
+	afx_msg void OnShowMainWnd();
+	afx_msg void OnUpdateShowMainWnd(CCmdUI *pCmdUI);
 	afx_msg void OnChangeSkin();
 //	afx_msg void OnUpdateAutoRunWhenStart(CCmdUI *pCmdUI);
 	afx_msg LRESULT OnTaskBarCreated(WPARAM wParam, LPARAM lParam);
