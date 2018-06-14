@@ -520,9 +520,12 @@ void CTrafficMonitorDlg::IniConnection()
 
 void CTrafficMonitorDlg::CloseTaskBarWnd()
 {
-	m_tBarDlg->OnCancel();
-	delete m_tBarDlg;
-	m_tBarDlg = nullptr;
+	if (m_tBarDlg != nullptr)
+	{
+		m_tBarDlg->OnCancel();
+		delete m_tBarDlg;
+		m_tBarDlg = nullptr;
+	}
 }
 
 void CTrafficMonitorDlg::OpenTaskBarWnd()
