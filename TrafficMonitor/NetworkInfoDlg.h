@@ -33,7 +33,7 @@ protected:
 
 	CWinThread* m_pGetIPThread;			//获取外网IP的线程
 
-	bool m_no_internet_ip{ false };		//如果为true，则不显示外网IP地址
+	bool m_show_internet_ip{ false };		//如果为true，则不显示外网IP地址
 
 	//void GetIPAddress();	//获取IP地址
 	void ShowInfo();
