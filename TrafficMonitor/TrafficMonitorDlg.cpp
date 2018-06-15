@@ -263,12 +263,6 @@ void CTrafficMonitorDlg::SetMousePenetrate()
 	if (m_mouse_penetrate)
 	{
 		SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_TRANSPARENT);		//设置鼠标穿透
-		if (!theApp.m_show_notify_icon)	//鼠标穿透时，如果通知图标没有显示，则将它显示出来，否则无法呼出右键菜单
-		{
-			//添加通知栏图标
-			AddNotifyIcon();
-			theApp.m_show_notify_icon = true;
-		}
 	}
 	else
 	{
@@ -1732,6 +1726,12 @@ void CTrafficMonitorDlg::OnMousePenetrate()
 	// TODO: 在此添加命令处理程序代码
 	m_mouse_penetrate = !m_mouse_penetrate;
 	SetMousePenetrate();
+	if (m_mouse_penetrate && !theApp.m_show_notify_icon)	//鼠标穿透时，如果通知图标没有显示，则将它显示出来，否则无法呼出右键菜单
+	{
+		//添加通知栏图标
+		AddNotifyIcon();
+		theApp.m_show_notify_icon = true;
+	}
 	SaveConfig();
 }
 
