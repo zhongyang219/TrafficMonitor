@@ -92,6 +92,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialogEx)
 	ON_COMMAND(ID_ALOW_OUT_OF_BORDER, &CTrafficMonitorDlg::OnAlowOutOfBorder)
 	ON_UPDATE_COMMAND_UI(ID_ALOW_OUT_OF_BORDER, &CTrafficMonitorDlg::OnUpdateAlowOutOfBorder)
 	ON_COMMAND(ID_CHECK_UPDATE, &CTrafficMonitorDlg::OnCheckUpdate)
+	ON_MESSAGE(WM_TASKBAR_MENU_POPED_UP, &CTrafficMonitorDlg::OnTaskbarMenuPopedUp)
 END_MESSAGE_MAP()
 
 
@@ -500,16 +501,45 @@ void CTrafficMonitorDlg::IniConnection()
 	//根据已获取到的连接在菜单中添加相应项目
 	m_menu.DestroyMenu();
 	m_menu.LoadMenu(IDR_MENU1); //装载右键菜单
-	m_select_connection_menu = m_menu.GetSubMenu(0)->GetSubMenu(0);		//设置“选择网卡”子菜单项
+	CMenu* select_connection_menu = m_menu.GetSubMenu(0)->GetSubMenu(0);		//设置“选择网络连接”子菜单项
+	IniConnectionMenu(select_connection_menu);		//向“选择网卡”子菜单项添加项目
+
+	IniTaskBarConnectionMenu();		//初始化任务栏窗口中的“选择网络连接”子菜单项
+
+	m_restart_cnt++;	//记录初始化次数
+	m_connection_change_flag = true;
+}
+
+void CTrafficMonitorDlg::IniConnectionMenu(CMenu * pMenu)
+{
 	CString connection_descr;
 	for (size_t i{}; i < m_connections.size(); i++)
 	{
 		connection_descr = CCommon::StrToUnicode(m_connections[i].description.c_str()).c_str();
-		m_select_connection_menu->AppendMenu(MF_STRING | MF_ENABLED, ID_SELECT_ALL_CONNECTION + i + 1, connection_descr);
+		pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SELECT_ALL_CONNECTION + i + 1, connection_descr);
 	}
+}
 
-	m_restart_cnt++;	//记录初始化次数
-	m_connection_change_flag = true;
+void CTrafficMonitorDlg::IniTaskBarConnectionMenu()
+{
+	//初始化任务栏窗口中的“选择网络连接”子菜单项
+	if (m_tBarDlg != nullptr)
+	{
+		m_tBarDlg->m_menu.DestroyMenu();
+		m_tBarDlg->m_menu.LoadMenu(IDR_TASK_BAR_MENU);
+		CMenu* select_connection_menu = m_tBarDlg->m_menu.GetSubMenu(0)->GetSubMenu(0);		//设置“选择网络连接”子菜单项
+		IniConnectionMenu(select_connection_menu);		//向“选择网卡”子菜单项添加项目
+	}
+}
+
+void CTrafficMonitorDlg::SetConnectionMenuState(CMenu * pMenu)
+{
+	if (m_select_all)
+		pMenu->CheckMenuRadioItem(0, m_connections.size() + 1, 1, MF_BYPOSITION | MF_CHECKED);
+	else if (m_auto_select)		//m_auto_select为true时为自动选择，选中菜单的第1项
+		pMenu->CheckMenuRadioItem(0, m_connections.size() + 1, 0, MF_BYPOSITION | MF_CHECKED);
+	else		//m_auto_select为false时非自动选择，根据m_connection_selected的值选择对应的项
+		pMenu->CheckMenuRadioItem(0, m_connections.size() + 1, m_connection_selected + 2, MF_BYPOSITION | MF_CHECKED);
 }
 
 void CTrafficMonitorDlg::CloseTaskBarWnd()
@@ -528,6 +558,7 @@ void CTrafficMonitorDlg::OpenTaskBarWnd()
 	m_tBarDlg->Create(IDD_TASK_BAR_DIALOG, this);
 	m_tBarDlg->ShowWindow(SW_SHOW);
 	m_tBarDlg->ShowInfo();
+	IniTaskBarConnectionMenu();
 }
 
 void CTrafficMonitorDlg::AddNotifyIcon()
@@ -1490,12 +1521,8 @@ void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
 	m_menu_popuped = true;
 
 	//设置“选择连接”子菜单项中各单选项的选择状态
-	if(m_select_all)
-		m_select_connection_menu->CheckMenuRadioItem(0, m_connections.size() + 1, 1, MF_BYPOSITION | MF_CHECKED);
-	else if (m_auto_select)		//m_auto_select为true时为自动选择，选中菜单的第1项
-		m_select_connection_menu->CheckMenuRadioItem(0, m_connections.size() + 1, 0, MF_BYPOSITION | MF_CHECKED);
-	else		//m_auto_select为false时非自动选择，根据m_connection_selected的值选择对应的项
-		m_select_connection_menu->CheckMenuRadioItem(0, m_connections.size() + 1, m_connection_selected + 2, MF_BYPOSITION | MF_CHECKED);
+	CMenu* select_connection_menu = m_menu.GetSubMenu(0)->GetSubMenu(0);
+	SetConnectionMenuState(select_connection_menu);
 
 	//设置“窗口不透明度”子菜单下各单选项的选择状态
 	switch (m_transparency)
@@ -1999,4 +2026,13 @@ void CTrafficMonitorDlg::OnCheckUpdate()
 {
 	// TODO: 在此添加命令处理程序代码
 	theApp.CheckUpdate(true);
+}
+
+
+afx_msg LRESULT CTrafficMonitorDlg::OnTaskbarMenuPopedUp(WPARAM wParam, LPARAM lParam)
+{
+	//设置“选择连接”子菜单项中各单选项的选择状态
+	CMenu* select_connection_menu = m_tBarDlg->m_menu.GetSubMenu(0)->GetSubMenu(0);
+	SetConnectionMenuState(select_connection_menu);
+	return 0;
 }

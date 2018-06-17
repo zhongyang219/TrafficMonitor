@@ -703,6 +703,7 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
 		pMenu->SetDefaultItem(-1);
 		break;
 	}
+	::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_TASKBAR_MENU_POPED_UP, 0, 0);		//通知主窗口菜单已弹出
 }
 
 
@@ -769,4 +770,19 @@ void CTaskBarDlg::OnTimer(UINT_PTR nIDEvent)
 	}
 
 	CDialogEx::OnTimer(nIDEvent);
+}
+
+
+BOOL CTaskBarDlg::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	UINT uMsg = LOWORD(wParam);
+	if (uMsg == ID_SELECT_ALL_CONNECTION || uMsg == ID_SELETE_CONNECTION
+		|| (uMsg > ID_SELECT_ALL_CONNECTION && uMsg <= ID_SELECT_ALL_CONNECTION + 98))
+	{
+		::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_COMMAND, wParam, lParam);	//如果点击了“选择网络连接”子菜单项，将消息转发到主窗口
+		return TRUE;
+	}
+
+	return CDialogEx::OnCommand(wParam, lParam);
 }

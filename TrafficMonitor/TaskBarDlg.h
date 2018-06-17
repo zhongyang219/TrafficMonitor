@@ -8,6 +8,7 @@
 
 // CTaskBarDlg 对话框
 #define TASKBAR_WND_HEIGHT theApp.DPI(31)
+#define WM_TASKBAR_MENU_POPED_UP (WM_USER + 1004)		//定义任务栏窗口右键菜单弹出时发出的消息
 
 class CTaskBarDlg : public CDialogEx
 {
@@ -18,6 +19,7 @@ public:
 	virtual ~CTaskBarDlg();
 
 	CToolTipCtrl m_tool_tips;
+	CMenu m_menu;	//右键菜单
 
 	void ShowInfo();		//将信息显示到控件上
 	bool AdjustWindowPos();	//设置窗口在任务栏中的位置
@@ -56,8 +58,6 @@ protected:
 	bool m_taskbar_on_top_or_bottom{ true };		//如果任务栏在屏幕顶部或底部，则为ture
 	int m_error_code{};
 
-	CMenu m_menu;	//右键菜单
-
 	CFont m_font;			//字体
 
 	CDC* m_pDC{};
@@ -93,4 +93,5 @@ public:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 };

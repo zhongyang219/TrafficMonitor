@@ -41,7 +41,7 @@ public:
 protected:
 	HICON m_hIcon;
 	CMenu m_menu;		//右键菜单对象
-	CMenu* m_select_connection_menu;	//“选择网卡”菜单项
+	//CMenu* m_select_connection_menu;	//“选择网卡”菜单项
 	NOTIFYICONDATA m_ntIcon;	//通知区域图标
 	CTaskBarDlg* m_tBarDlg;		//任务栏窗口的指针
 
@@ -137,6 +137,10 @@ protected:
 	void AutoSelect();		//自动选择连接
 	void IniConnection();	//初始化连接
 
+	void IniConnectionMenu(CMenu* pMenu);	//初始化“选择网络连接”菜单
+	void IniTaskBarConnectionMenu();		//初始化任务栏窗口的“选择网络连接”菜单
+	void SetConnectionMenuState(CMenu* pMenu);		//设置“选择网络连接”菜单中选中的项目
+
 	void CloseTaskBarWnd();	//关闭任务栏窗口
 	void OpenTaskBarWnd();	//打开任务栏窗口
 
@@ -220,4 +224,6 @@ public:
 	afx_msg void OnAlowOutOfBorder();
 	afx_msg void OnUpdateAlowOutOfBorder(CCmdUI *pCmdUI);
 	afx_msg void OnCheckUpdate();
+protected:
+	afx_msg LRESULT OnTaskbarMenuPopedUp(WPARAM wParam, LPARAM lParam);
 };
