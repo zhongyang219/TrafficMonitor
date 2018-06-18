@@ -82,7 +82,7 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
 {
 	CWaitCursor wait_cursor;
 	wstring version_info;
-	if (!CCommon::GetURL(L"https://raw.githubusercontent.com/zhongyang219/TrafficMonitor/master/version.info", version_info, true))		//获取版本信息
+	if (!CCommon::GetURL(L"https://raw.githubusercontent.com/zhongyang219/TrafficMonitor/master/version.info", version_info))		//获取版本信息
 	{
 		if(message)
 			AfxMessageBox(CCommon::LoadText(IDS_CHECK_UPDATE_FAILD), MB_OK | MB_ICONWARNING);
