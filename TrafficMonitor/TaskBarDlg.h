@@ -7,7 +7,7 @@
 #include "CommonData.h"
 
 // CTaskBarDlg 对话框
-#define TASKBAR_WND_HEIGHT theApp.DPI(31)
+#define TASKBAR_WND_HEIGHT theApp.DPI(32)				//任务栏窗口的高度
 #define WM_TASKBAR_MENU_POPED_UP (WM_USER + 1004)		//定义任务栏窗口右键菜单弹出时发出的消息
 
 class CTaskBarDlg : public CDialogEx
