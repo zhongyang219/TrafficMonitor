@@ -138,6 +138,7 @@ struct TaskBarSettingData
 	int digits_number{ 4 };				//数据位数
 	bool horizontal_arrange{ true };	//水平排列
 	bool tbar_wnd_on_left{ false };		//如果为true，则任务栏窗口显示在任务栏的左侧（或上方）
+	bool separate_value_unit_with_space{ true };	//网速数值和单位用空格分隔
 	SpeedUnit speed_unit;		//网速的单位
 	bool hide_unit;			//隐藏单位
 	bool hide_percent;		//隐藏百分号

@@ -43,8 +43,8 @@ void CTaskBarDlg::ShowInfo()
 {
 	if (this->m_hWnd == NULL || m_pDC == nullptr) return;
 	CString str;
-	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data.speed_short_mode, theApp.m_taskbar_data.speed_unit, theApp.m_taskbar_data.hide_unit);
-	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data.speed_short_mode, theApp.m_taskbar_data.speed_unit, theApp.m_taskbar_data.hide_unit);
+	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data.speed_short_mode, theApp.m_taskbar_data.speed_unit, theApp.m_taskbar_data.hide_unit, theApp.m_taskbar_data.separate_value_unit_with_space);
+	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data.speed_short_mode, theApp.m_taskbar_data.speed_unit, theApp.m_taskbar_data.hide_unit, theApp.m_taskbar_data.separate_value_unit_with_space);
 
 	if (m_rect.IsRectEmpty() || m_rect.IsRectNull()) return;
 
@@ -377,6 +377,7 @@ void CTaskBarDlg::SaveConfig()
 	ini.WriteBool(L"task_bar", L"task_bar_hide_percent", theApp.m_taskbar_data.hide_percent);
 	ini.WriteBool(L"task_bar", L"value_right_align", theApp.m_taskbar_data.value_right_align);
 	ini.WriteBool(L"task_bar", L"horizontal_arrange", theApp.m_taskbar_data.horizontal_arrange);
+	ini.WriteBool(L"task_bar", L"separate_value_unit_with_space", theApp.m_taskbar_data.separate_value_unit_with_space);
 	ini.WriteInt(L"task_bar", L"digits_number", theApp.m_taskbar_data.digits_number);
 	ini.WriteInt(L"task_bar", L"double_click_action", static_cast<int>(theApp.m_taskbar_data.double_click_action));
 }
@@ -412,6 +413,7 @@ void CTaskBarDlg::LoadConfig()
 	theApp.m_taskbar_data.hide_percent = ini.GetBool(_T("task_bar"), _T("task_bar_hide_percent"), false);
 	theApp.m_taskbar_data.value_right_align = ini.GetBool(_T("task_bar"), _T("value_right_align"), false);
 	theApp.m_taskbar_data.horizontal_arrange = ini.GetBool(_T("task_bar"), _T("horizontal_arrange"), false);
+	theApp.m_taskbar_data.separate_value_unit_with_space = ini.GetBool(_T("task_bar"), _T("separate_value_unit_with_space"), true);
 	theApp.m_taskbar_data.digits_number = ini.GetInt(_T("task_bar"), _T("digits_number"), 4);
 	theApp.m_taskbar_data.double_click_action = static_cast<DoubleClickAction>(ini.GetInt(_T("task_bar"), _T("double_click_action"), 0));
 }
@@ -460,20 +462,23 @@ void CTaskBarDlg::CalculateWindowWidth()
 	int width1, width2;
 	CString sample_str;
 	wstring digits(theApp.m_taskbar_data.digits_number, L'8');		//根据数据位数生成指定个数的“8”
+	bool hide_unit{ theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO };
 	if (theApp.m_taskbar_data.speed_short_mode)
 	{
-		if (theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO)
+		if (hide_unit)
 			sample_str.Format(_T("%s."), digits.c_str());
 		else
-			sample_str.Format(_T("%s. M/s"), digits.c_str());
+			sample_str.Format(_T("%s.M/s"), digits.c_str());
 	}
 	else
 	{
-		if (theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO)
+		if (hide_unit)
 			sample_str.Format(_T("%s.8"), digits.c_str());
 		else
-			sample_str.Format(_T("%s.8 MB/s"), digits.c_str());
+			sample_str.Format(_T("%s.8MB/s"), digits.c_str());
 	}
+	if (!hide_unit && theApp.m_taskbar_data.separate_value_unit_with_space)
+		sample_str += _T(' ');
 	str1 = theApp.m_taskbar_data.disp_str.up.c_str() + sample_str;
 	str2 = theApp.m_taskbar_data.disp_str.down.c_str() + sample_str;
 	width1= m_pDC->GetTextExtent(str1).cx;		//计算使用当前字体显示文本需要的宽度值

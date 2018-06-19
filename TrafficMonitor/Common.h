@@ -16,9 +16,10 @@ public:
 	short_mode：是否使用精简模式（减小小数点位数，单位不显示“B”）
 	speed_unit：数据的单位，可以是自动、KB或MB
 	hide_unit：是否隐藏单位
+	space_separate：数值和单位是否用空格分开
 	返回值：转换后的字符串
 	*/
-	static CString DataSizeToString(unsigned int size, bool short_mode = false, SpeedUnit unit = SpeedUnit::AUTO, bool hide_unit = false);
+	static CString DataSizeToString(unsigned int size, bool short_mode = false, SpeedUnit unit = SpeedUnit::AUTO, bool hide_unit = false, bool space_separate = true);
 
 	static CString KBytesToString(unsigned int kb_size);
 	static CString KBytesToStringL(__int64 kb_size);

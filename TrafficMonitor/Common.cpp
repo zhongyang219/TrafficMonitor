@@ -37,90 +37,100 @@ string CCommon::UnicodeToStr(const wchar_t * wstr)
 	return result;
 }
 
-CString CCommon::DataSizeToString(unsigned int size, bool short_mode, SpeedUnit unit, bool hide_unit)
+CString CCommon::DataSizeToString(unsigned int size, bool short_mode, SpeedUnit unit, bool hide_unit, bool space_separate)
 {
-	CString str;
+	//CString str;
+	CString value_str, unit_str;
 	switch (unit)
 	{
 	case SpeedUnit::AUTO:
 		if (short_mode)
 		{
-			//if (size <= 102)			//小于0.1KB时，显示0K
-			//	str = _T("0K");
-			/*else */if (size < 1024 * 10)					//10KB以下以KB为单位，保留1位小数
-				str.Format(_T("%.1f K"), size / 1024.0f);
-			else if (size < 1024 * 1024)			//1MB以下以KB为单位，保留整数
-				str.Format(_T("%.0f K"), size / 1024.0f);
-			else if (size < 1024 * 1024 * 1024)		//1GB以下以MB为单位，保留1位小数
-				str.Format(_T("%.1f M"), size / 1024.0f / 1024.0f);
+			if (size < 1024 * 10)					//10KB以下以KB为单位，保留1位小数
+			{
+				value_str.Format(_T("%.1f"), size / 1024.0f);
+				unit_str = _T("K");
+			}
+			else if (size < 1024 * 1000)			//1000KB以下以KB为单位，保留整数
+			{
+				value_str.Format(_T("%.0f"), size / 1024.0f);
+				unit_str = _T("K");
+			}
+			else if (size < 1024 * 1024 * 1000)		//1000MB以下以MB为单位，保留1位小数
+			{
+				value_str.Format(_T("%.1f"), size / 1024.0f / 1024.0f);
+				unit_str = _T("M");
+			}
 			else
-				str.Format(_T("%.2f G"), size / 1024.0f / 1024.0f / 1024.0f);
+			{
+				value_str.Format(_T("%.2f"), size / 1024.0f / 1024.0f / 1024.0f);
+				unit_str = _T("G");
+			}
 		}
 		else
 		{
 			if (size < 1024 * 10)					//10KB以下以KB为单位，保留2位小数
-				str.Format(_T("%.2f KB"), size / 1024.0f);
-			else if (size < 1024 * 1024)			//1MB以下以KB为单位，保留1位小数
-				str.Format(_T("%.1f KB"), size / 1024.0f);
-			else if (size < 1024 * 1024 * 1024)		//1GB以下以MB为单位，保留2位小数
-				str.Format(_T("%.2f MB"), size / 1024.0f / 1024.0f);
+			{
+				value_str.Format(_T("%.2f"), size / 1024.0f);
+				unit_str = _T("KB");
+			}
+			else if (size < 1024 * 1000)			//1000KB以下以KB为单位，保留1位小数
+			{
+				value_str.Format(_T("%.1f"), size / 1024.0f);
+				unit_str = _T("KB");
+			}
+			else if (size < 1024 * 1024 * 1000)		//1000MB以下以MB为单位，保留2位小数
+			{
+				value_str.Format(_T("%.2f"), size / 1024.0f / 1024.0f);
+				unit_str = _T("MB");
+			}
 			else
-				str.Format(_T("%.2f GB"), size / 1024.0f / 1024.0f / 1024.0f);
+			{
+				value_str.Format(_T("%.2f"), size / 1024.0f / 1024.0f / 1024.0f);
+				unit_str = _T("GB");
+			}
 		}
 		break;
 	case SpeedUnit::KBPS:
 		if (short_mode)
 		{
 			if (size < 1024 * 10)					//10KB以下保留1位小数
-			{
-				if (hide_unit)
-					str.Format(_T("%.1f"), size / 1024.0f);
-				else
-					str.Format(_T("%.1f K"), size / 1024.0f);
-			}
+				value_str.Format(_T("%.1f"), size / 1024.0f);
 			else					//10KB以上保留整数
-			{
-				if (hide_unit)
-					str.Format(_T("%.0f"), size / 1024.0f);
-				else
-					str.Format(_T("%.0f K"), size / 1024.0f);
-			}
+				value_str.Format(_T("%.0f"), size / 1024.0f);
+			if (!hide_unit)
+				unit_str = _T("K");
 		}
 		else
 		{
 			if (size < 1024 * 10)					//10KB以下保留2位小数
-			{
-				if (hide_unit)
-					str.Format(_T("%.2f"), size / 1024.0f);
-				else
-					str.Format(_T("%.2f KB"), size / 1024.0f);
-			}
+				value_str.Format(_T("%.2f"), size / 1024.0f);
 			else			//10KB以上保留1位小数
-			{
-				if (hide_unit)
-					str.Format(_T("%.1f"), size / 1024.0f);
-				else
-					str.Format(_T("%.1f KB"), size / 1024.0f);
-			}
+				value_str.Format(_T("%.1f"), size / 1024.0f);
+			if (!hide_unit)
+				unit_str = _T("KB");
 		}
 		break;
 	case SpeedUnit::MBPS:
 		if (short_mode)
 		{
-			if (hide_unit)
-				str.Format(_T("%.1f"), size / 1024.0f / 1024.0f);
-			else
-				str.Format(_T("%.1f M"), size / 1024.0f / 1024.0f);
+			value_str.Format(_T("%.1f"), size / 1024.0f / 1024.0f);
+			if (!hide_unit)
+				unit_str = _T("M");
 		}
 		else
 		{
-			if (hide_unit)
-				str.Format(_T("%.2f"), size / 1024.0f / 1024.0f);
-			else
-				str.Format(_T("%.2f MB"), size / 1024.0f / 1024.0f);
+			value_str.Format(_T("%.2f"), size / 1024.0f / 1024.0f);
+			if (!hide_unit)
+				unit_str = _T("MB");
 		}
 		break;
 	}
+	CString str;
+	if (space_separate)
+		str = value_str + _T(' ') + unit_str;
+	else
+		str = value_str + unit_str;
 	return str;
 }
 
