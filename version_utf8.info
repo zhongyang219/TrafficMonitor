@@ -1,0 +1,3 @@
+﻿<version>1.74</version>
+<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.74/TrafficMonitor_V1.74.7z</link>
+<contents>修正两处导致程序崩溃的问题；\n新增：监控所有连接的网速的功能；\n右键菜单“选择网络连接”中显示所有的网络接口，不显示loopback接口；\n新增：任务栏窗口项目可以水平排列；\n新增：繁体中文语言支持；\n其他细节方面的改进。</contents>
