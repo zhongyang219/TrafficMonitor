@@ -139,20 +139,6 @@ UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
 	return 0;
 }
 
-void CNetworkInfoDlg::LoadConfig()
-{
-	CIniHelper ini;
-	ini.SetPath(theApp.m_config_path);
-	m_show_internet_ip = ini.GetBool(L"connection_details", L"show_internet_ip", false);
-}
-
-void CNetworkInfoDlg::SaveConfig()
-{
-	CIniHelper ini;
-	ini.SetPath(theApp.m_config_path);
-	ini.WriteBool(L"connection_details", L"show_internet_ip", m_show_internet_ip);
-}
-
 void CNetworkInfoDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -181,7 +167,6 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	// TODO:  在此添加额外的初始化
 	SetWindowText(CCommon::LoadText(IDS_TITLE_CONNECTION_DETIAL));
 	SetIcon(AfxGetApp()->LoadIcon(IDI_NOFITY_ICON), FALSE);		// 设置小图标
-	LoadConfig();
 
 	//获取窗口初始大小
 	CRect rect;
@@ -212,7 +197,7 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	m_info_list.InsertItem(11, CCommon::LoadText(IDS_BYTES_RECEIVED_SINCE_START));
 	m_info_list.InsertItem(12, CCommon::LoadText(IDS_BYTES_SENT_SINCE_START));
 	m_info_list.InsertItem(13, CCommon::LoadText(IDS_PROGRAM_ELAPSED_TIME));
-	if (m_show_internet_ip)
+	if (theApp.m_cfg_data.m_show_internet_ip)
 	{
 		m_info_list.InsertItem(14, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS));
 		m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
@@ -223,7 +208,7 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	GetProgramElapsedTime();
 
 	//CCommon::GetInternetIp();
-	if (m_show_internet_ip)
+	if (theApp.m_cfg_data.m_show_internet_ip)
 		m_pGetIPThread = AfxBeginThread(GetInternetIPThreadFunc, this);		//启动获取外网IP的线程
 
 	//SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//取消置顶
@@ -271,9 +256,8 @@ void CNetworkInfoDlg::OnClose()
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	//对话框关闭时强制结束获取IP地址的线程
-	if(m_show_internet_ip)
+	if(theApp.m_cfg_data.m_show_internet_ip)
 		TerminateThread(m_pGetIPThread->m_hThread, 0);
-	SaveConfig();
 	CDialog::OnClose();
 }
 

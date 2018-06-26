@@ -106,10 +106,37 @@ struct FontInfo
 #define FONTSIZE_TO_LFHEIGHT(font_size) (-MulDiv(font_size, GetDeviceCaps(::GetDC(HWND_DESKTOP), LOGPIXELSY), 72))
 
 //选项设置数据
+struct MainConfigData
+{
+	bool m_always_on_top{ false };		//窗口置顶
+	int m_transparency{ 100 };			//窗口透明度
+	bool m_lock_window_pos{ false };	//锁定窗口位置
+	bool m_show_more_info{ false };		//显示更多信息
+	bool m_mouse_penetrate{ false };	//鼠标穿透
+	bool m_show_task_bar_wnd{ false };	//显示任务栏窗口
+	bool m_hide_main_window;			//隐藏主窗口
+	bool m_show_notify_icon{ true };	//显示通知区域图标
+	bool m_tbar_show_cpu_memory;		//任务栏窗口显示CPU和内存利用率
+
+	int m_position_x;	//窗口位置的x坐标
+	int m_position_y;	//窗口位置的y坐标
+
+	bool m_auto_select{ false };	//自动选择连接
+	bool m_select_all{ false };		//统计所有连接的网速
+	string m_connection_name;		//当前选择网络的名称
+
+	wstring m_skin_name;			//选择的皮肤的名称
+	int m_notify_icon_selected{};	//要显示的通知区图标
+	bool m_alow_out_of_border{ false };		//是否允许悬浮窗超出屏幕边界
+
+	bool m_show_internet_ip{ false };		//是否在“连接详情”对话框中显示外网IP地址
+	bool m_use_log_scale{ false };			//“历史流量统计”对话框中绘制表示历史流量数值的矩形时是否使用对数比例
+};
+
 #define MAIN_WND_COLOR_NUM 4		//主窗口颜色数量
+//选项设置中“主窗口设置”的数据
 struct MainWndSettingData
 {
-	//主窗口
 	COLORREF text_colors[MAIN_WND_COLOR_NUM]{};		//文字颜色（分别为“上传”、“下载”、“CPU”、“内存”的颜色）
 	bool specify_each_item_color{ false };		//是否指定每个项目的颜色
 	FontInfo font;			//字体
@@ -124,9 +151,9 @@ struct MainWndSettingData
 };
 
 #define TASKBAR_COLOR_NUM 8		//任务栏窗口颜色数量
+//选项设置中“任务栏窗口设置”的数据
 struct TaskBarSettingData
 {
-	//任务栏窗口
 	COLORREF  back_color{ RGB(0, 0, 0) };	//背景颜色
 	COLORREF text_colors[TASKBAR_COLOR_NUM]{};		//文字颜色（依次为“上传”、“下载”、“CPU”、“内存”的标签和数据颜色）
 	bool specify_each_item_color{ false };		//是否指定每个项目的颜色
@@ -145,9 +172,9 @@ struct TaskBarSettingData
 	DoubleClickAction double_click_action;		//鼠标双击动作
 };
 
+//选项设置中“常规设置”的数据
 struct GeneralSettingData
 {
-	//常规设置
 	bool check_update_when_start{ true };
 	bool auto_run{ false };
 	bool allow_skin_cover_font{ true };

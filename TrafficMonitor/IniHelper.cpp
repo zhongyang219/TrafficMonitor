@@ -16,10 +16,10 @@ void CIniHelper::SetPath(const wstring & path)
 	m_path = path;
 }
 
-bool CIniHelper::WriteString(const wchar_t * AppName, const wchar_t * KeyName, wstring str)
+void CIniHelper::WriteString(const wchar_t * AppName, const wchar_t * KeyName, wstring str)
 {
 	str = DEF_CH + str + DEF_CH;
-	return (::WritePrivateProfileStringW(AppName, KeyName, str.c_str(), m_path.c_str()) != FALSE);
+	m_save_failed = m_save_failed || (::WritePrivateProfileStringW(AppName, KeyName, str.c_str(), m_path.c_str()) == FALSE);
 }
 
 wstring CIniHelper::GetString(const wchar_t * AppName, const wchar_t * KeyName, const wchar_t * default_str)
@@ -36,11 +36,11 @@ wstring CIniHelper::GetString(const wchar_t * AppName, const wchar_t * KeyName, 
 	return rtn;
 }
 
-bool CIniHelper::WriteInt(const wchar_t * AppName, const wchar_t * KeyName, int value)
+void CIniHelper::WriteInt(const wchar_t * AppName, const wchar_t * KeyName, int value)
 {
 	wchar_t buff[11]{};
 	_itow_s(value, buff, 10);
-	return (::WritePrivateProfileStringW(AppName, KeyName, buff, m_path.c_str()) != FALSE);
+	m_save_failed = m_save_failed || (::WritePrivateProfileStringW(AppName, KeyName, buff, m_path.c_str()) == FALSE);
 }
 
 int CIniHelper::GetInt(const wchar_t * AppName, const wchar_t * KeyName, int default_value)
@@ -48,12 +48,12 @@ int CIniHelper::GetInt(const wchar_t * AppName, const wchar_t * KeyName, int def
 	return GetPrivateProfileIntW(AppName, KeyName, default_value, m_path.c_str());
 }
 
-bool CIniHelper::WriteBool(const wchar_t * AppName, const wchar_t * KeyName, bool value)
+void CIniHelper::WriteBool(const wchar_t * AppName, const wchar_t * KeyName, bool value)
 {
 	if(value)
-		return (::WritePrivateProfileStringW(AppName, KeyName, L"1", m_path.c_str()) != FALSE);
+		m_save_failed = m_save_failed || (::WritePrivateProfileStringW(AppName, KeyName, L"1", m_path.c_str()) == FALSE);
 	else
-		return (::WritePrivateProfileStringW(AppName, KeyName, L"0", m_path.c_str()) != FALSE);
+		m_save_failed = m_save_failed || (::WritePrivateProfileStringW(AppName, KeyName, L"0", m_path.c_str()) == FALSE);
 }
 
 bool CIniHelper::GetBool(const wchar_t * AppName, const wchar_t * KeyName, bool default_value)
@@ -61,7 +61,7 @@ bool CIniHelper::GetBool(const wchar_t * AppName, const wchar_t * KeyName, bool 
 	return (GetPrivateProfileIntW(AppName, KeyName, default_value, m_path.c_str()) != 0);
 }
 
-bool CIniHelper::WriteIntArray(const wchar_t * AppName, const wchar_t * KeyName, const int * values, int size)
+void CIniHelper::WriteIntArray(const wchar_t * AppName, const wchar_t * KeyName, const int * values, int size)
 {
 	CString str, tmp;
 	for (int i{}; i < size; i++)
@@ -69,7 +69,7 @@ bool CIniHelper::WriteIntArray(const wchar_t * AppName, const wchar_t * KeyName,
 		tmp.Format(_T("%d,"), values[i]);
 		str += tmp;
 	}
-	return (::WritePrivateProfileStringW(AppName, KeyName, str, m_path.c_str()) != FALSE);
+	m_save_failed = m_save_failed || (::WritePrivateProfileStringW(AppName, KeyName, str, m_path.c_str()) == FALSE);
 }
 
 bool CIniHelper::GetIntArray(const wchar_t * AppName, const wchar_t * KeyName, int * values, int size, int default_value)
@@ -103,7 +103,7 @@ bool CIniHelper::GetIntArray(const wchar_t * AppName, const wchar_t * KeyName, i
 	return result;
 }
 
-bool CIniHelper::WriteBoolArray(const wchar_t * AppName, const wchar_t * KeyName, const bool * values, int size)
+void CIniHelper::WriteBoolArray(const wchar_t * AppName, const wchar_t * KeyName, const bool * values, int size)
 {
 	int value{};
 	for (int i{}; i < size; i++)

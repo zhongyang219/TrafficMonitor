@@ -42,15 +42,14 @@ public:
 
 	__int64 m_today_traffic{};	//今天已使用的流量
 
-	bool m_hide_main_window;	//隐藏主窗口
-	bool m_show_notify_icon{ true };	//显示通知区域图标
-	bool m_tbar_show_cpu_memory;	//任务栏窗口显示CPU和内存利用率
+	bool m_cannot_save_config_warning{ true };	//指示是否会在无法保存设置时弹出提示框
 
 	//选项设置数据
 	MainWndSettingData m_main_wnd_data;
 	TaskBarSettingData m_taskbar_data;
 	GeneralSettingData m_general_data;
 	//其他设置数据
+	MainConfigData m_cfg_data;
 	int m_notify_interval;		//弹出通知消息的时间间隔
 
 	//bool m_is_windows10_fall_creator;
@@ -61,7 +60,6 @@ public:
 public:
 	CTrafficMonitorApp();
 
-	//bool WhenStart() const { return CCommon::WhenStart(m_no_multistart_warning_time); }
 	void LoadConfig();
 	void SaveConfig();
 

@@ -33,17 +33,12 @@ protected:
 
 	CWinThread* m_pGetIPThread;			//获取外网IP的线程
 
-	bool m_show_internet_ip{ false };		//如果为true，则不显示外网IP地址
-
 	//void GetIPAddress();	//获取IP地址
 	void ShowInfo();
 	void GetProgramElapsedTime();
 
 	//获取外网IP的线程函数
 	static UINT GetInternetIPThreadFunc(LPVOID lpParam);
-
-	void LoadConfig();
-	void SaveConfig();
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 

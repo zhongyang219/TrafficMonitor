@@ -41,7 +41,6 @@ public:
 protected:
 	HICON m_hIcon;
 	CMenu m_menu;		//右键菜单对象
-	//CMenu* m_select_connection_menu;	//“选择网卡”菜单项
 	NOTIFYICONDATA m_ntIcon;	//通知区域图标
 	CTaskBarDlg* m_tBarDlg;		//任务栏窗口的指针
 
@@ -49,41 +48,18 @@ protected:
 	MIB_IFTABLE* m_pIfTable;
 	DWORD m_dwSize{};	//m_pIfTable的大小
 	int m_connection_selected{ 0 };	//要显示流量的连接的序号
-	bool m_auto_select{ false };	//自动选择连接
-	bool m_select_all{ false };		//统计所有连接的网速
 	unsigned __int64 m_in_bytes;		//当前已接收的字节数
 	unsigned __int64 m_out_bytes;	//当前已发送的字节数
 	unsigned __int64 m_last_in_bytes{};	//上次已接收的字节数
 	unsigned __int64 m_last_out_bytes{};	//上次已发送的字节数
-	string m_connection_name;	//当前选择网络的名称
 
 	FILETIME m_preidleTime;
 	FILETIME m_prekernelTime;
 	FILETIME m_preuserTime;
 
-	bool m_always_on_top{ false };		//窗口置顶
-	int m_transparency{ 100 };			//窗口透明度
-	bool m_lock_window_pos{ false };	//锁定窗口位置
-	bool m_show_more_info{ false };		//显示更多信息
-	bool m_mouse_penetrate{ false };	//鼠标穿透
-	bool m_show_task_bar_wnd{ false };	//显示任务栏窗口
-	//bool m_swap_up_down{ false };		//交换上传和下载显示的位置
-	//bool m_auto_run;				//是否开机自动运行
-	//wstring m_start_up_path;		//开始菜单中的“启动”文件夹的路径
-
 	bool m_first_start{ true };		//初始时为true，在定时器第一次启动后置为flase
-
-	int m_position_x;	//窗口位置的x坐标
-	int m_position_y;	//窗口位置的y坐标
-
-	//int m_screen_width;		//屏幕宽度
-	//int m_screen_height;	//屏幕高度
 	CRect m_screen_rect;		//屏幕的范围（不包含任务栏）
-
-	//int m_window_height;	//窗口高度
-	//int m_window_height_s;	//不显示CPU和内存利用率时的窗口高度
 	LayoutData m_layout_data;
-
 	CImage m_back_img;		//背景图片
 
 	CStaticEx m_disp_up;	//显示上传的文本控件
@@ -91,10 +67,7 @@ protected:
 	CStaticEx m_disp_cpu;	//显示CPU利用率的文本控件
 	CStaticEx m_disp_memory;	//显示内存利用率的文本控件
 
-	//COLORREF m_text_color{};		//文字颜色
 	CFont m_font;			//字体
-	//CString m_font_name;	//字体名称
-	//int m_font_size;		//字体大小
 
 	int m_restart_cnt{ -1 };	//重新初始化次数
 	unsigned int m_timer_cnt{};		//定时器触发次数（自程序启动以来的秒数）
@@ -106,10 +79,6 @@ protected:
 
 	vector<wstring> m_skins;	//储存皮肤文件的路径
 	int m_skin_selected{};		//选择的皮肤序号
-	wstring m_skin_name;		//选择的皮肤的名称
-
-	int m_notify_icon_selected{};	//要显示的通知区图标
-	bool m_alow_out_of_border{ false };		//是否允许悬浮窗超出屏幕边界
 
 	SYSTEMTIME m_start_time;	//程序启动时的时间
 	deque<HistoryTraffic> m_history_traffics;	//储存历史流量
@@ -117,7 +86,6 @@ protected:
 	CToolTipCtrl m_tool_tips;
 
 	bool m_connection_change_flag{ false };		//如果执行过IniConnection()函数，该flag会置为true
-	bool m_cannot_save_config_warning{ true };	//指示是否会在无法保存设置时弹出提示框
 	bool m_is_foreground_fullscreen{ false };	//指示前台窗口是否正在全局显示
 	bool m_menu_popuped{ false };				//指示当前是否有菜单处于弹出状态
 
@@ -130,9 +98,6 @@ protected:
 	void SetMousePenetrate();		//根据m_mouse_penetrate的值设置是否鼠标穿透
 	void CheckWindowPos();			//测试窗口的位置，如窗口的位置在屏幕外，则移动窗口使其全部都在屏幕内，并返回新位置
 	void GetScreenSize();			//获取屏幕的大小
-
-	void LoadConfig();	//载入设置
-	void SaveConfig();	//保存设置
 
 	void AutoSelect();		//自动选择连接
 	void IniConnection();	//初始化连接

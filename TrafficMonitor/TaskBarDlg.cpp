@@ -65,7 +65,7 @@ void CTaskBarDlg::ShowInfo()
 	CDC MemDC;
 	CBitmap MemBitmap;
 	MemDC.CreateCompatibleDC(NULL);
-	int draw_width = (theApp.m_tbar_show_cpu_memory ? m_window_width : m_window_width_s);
+	int draw_width = (theApp.m_cfg_data.m_tbar_show_cpu_memory ? m_window_width : m_window_width_s);
 	MemBitmap.CreateCompatibleBitmap(m_pDC, draw_width, m_rect.Height());
 	MemDC.SelectObject(&MemBitmap);
 	//绘图
@@ -151,7 +151,7 @@ void CTaskBarDlg::ShowInfo()
 	else
 		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.up.c_str(), text_colors[0], Alignment::LEFT, true);
 
-	if (theApp.m_tbar_show_cpu_memory)
+	if (theApp.m_cfg_data.m_tbar_show_cpu_memory)
 	{
 		//绘制CPU利用率
 		if (theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom)
@@ -235,7 +235,7 @@ bool CTaskBarDlg::AdjustWindowPos()
 	if (m_taskbar_on_top_or_bottom)		//当任务栏在桌面顶部或底部时
 	{
 		//设置窗口大小
-		m_rect.right = m_rect.left + (theApp.m_tbar_show_cpu_memory ? m_window_width : m_window_width_s);
+		m_rect.right = m_rect.left + (theApp.m_cfg_data.m_tbar_show_cpu_memory ? m_window_width : m_window_width_s);
 		m_rect.bottom = m_rect.top + m_window_height;
 		if (rcMin.Width() != m_min_bar_width)	//如果最小化窗口的宽度改变了，重新设置任务栏窗口的位置
 		{
@@ -264,7 +264,7 @@ bool CTaskBarDlg::AdjustWindowPos()
 		int window_width;
 		window_width = max(m_window_width_s, (m_window_width - m_window_width_s));
 		m_rect.right = m_rect.left + window_width;
-		m_rect.bottom = m_rect.top + (theApp.m_tbar_show_cpu_memory ? (2 * m_window_height + theApp.DPI(2)) : m_window_height);
+		m_rect.bottom = m_rect.top + (theApp.m_cfg_data.m_tbar_show_cpu_memory ? (2 * m_window_height + theApp.DPI(2)) : m_window_height);
 		if (rcMin.Height() != m_min_bar_height)	//如果最小化窗口的高度改变了，重新设置任务栏窗口的位置
 		{
 			m_top_space = rcMin.top - rcBar.top;
@@ -329,7 +329,7 @@ bool CTaskBarDlg::IsTaskbarOnTopOrBottom()
 CString CTaskBarDlg::GetMouseTipsInfo()
 {
 	CString tip_info;
-	if (theApp.m_tbar_show_cpu_memory)
+	if (theApp.m_cfg_data.m_tbar_show_cpu_memory)
 	{
 		tip_info.Format(_T("%s: %s\r\n%s: %s/%s"),
 			CCommon::LoadText(IDS_TRAFFIC_USED_TODAY),
@@ -349,73 +349,6 @@ CString CTaskBarDlg::GetMouseTipsInfo()
 			theApp.m_memory_usage);
 	}
 	return tip_info;
-}
-
-void CTaskBarDlg::SaveConfig()
-{
-	CIniHelper ini;
-	ini.SetPath(theApp.m_config_path);
-	ini.WriteInt(L"task_bar", L"task_bar_back_color", theApp.m_taskbar_data.back_color);
-	//ini.WriteInt(L"task_bar", L"task_bar_text_color", theApp.m_taskbar_data.text_color);
-	ini.WriteIntArray(L"task_bar", L"task_bar_text_color", (int*)theApp.m_taskbar_data.text_colors, TASKBAR_COLOR_NUM);
-	ini.WriteBool(L"task_bar", L"specify_each_item_color", theApp.m_taskbar_data.specify_each_item_color);
-	ini.WriteBool(L"task_bar", L"task_bar_show_cpu_memory", theApp.m_tbar_show_cpu_memory);
-	//ini.WriteString(_T("task_bar"), _T("tack_bar_font_name"), wstring(theApp.m_taskbar_data.font.name));
-	//ini.WriteInt(L"task_bar", L"tack_bar_font_size", theApp.m_taskbar_data.font.size);
-	ini.SaveFontData(L"task_bar", theApp.m_taskbar_data.font);
-	ini.WriteBool(L"task_bar", L"task_bar_swap_up_down", theApp.m_taskbar_data.swap_up_down);
-
-	ini.WriteString(_T("task_bar"), _T("up_string"), theApp.m_taskbar_data.disp_str.up);
-	ini.WriteString(_T("task_bar"), _T("down_string"), theApp.m_taskbar_data.disp_str.down);
-	ini.WriteString(_T("task_bar"), _T("cpu_string"), theApp.m_taskbar_data.disp_str.cpu);
-	ini.WriteString(_T("task_bar"), _T("memory_string"), theApp.m_taskbar_data.disp_str.memory);
-
-	ini.WriteBool(L"task_bar", L"task_bar_wnd_on_left", theApp.m_taskbar_data.tbar_wnd_on_left);
-	ini.WriteBool(L"task_bar", L"task_bar_speed_short_mode", theApp.m_taskbar_data.speed_short_mode);
-	ini.WriteInt(L"task_bar", L"task_bar_speed_unit", static_cast<int>(theApp.m_taskbar_data.speed_unit));
-	ini.WriteBool(L"task_bar", L"task_bar_hide_unit", theApp.m_taskbar_data.hide_unit);
-	ini.WriteBool(L"task_bar", L"task_bar_hide_percent", theApp.m_taskbar_data.hide_percent);
-	ini.WriteBool(L"task_bar", L"value_right_align", theApp.m_taskbar_data.value_right_align);
-	ini.WriteBool(L"task_bar", L"horizontal_arrange", theApp.m_taskbar_data.horizontal_arrange);
-	ini.WriteBool(L"task_bar", L"separate_value_unit_with_space", theApp.m_taskbar_data.separate_value_unit_with_space);
-	ini.WriteInt(L"task_bar", L"digits_number", theApp.m_taskbar_data.digits_number);
-	ini.WriteInt(L"task_bar", L"double_click_action", static_cast<int>(theApp.m_taskbar_data.double_click_action));
-}
-
-void CTaskBarDlg::LoadConfig()
-{
-	CIniHelper ini;
-	ini.SetPath(theApp.m_config_path);
-	theApp.m_taskbar_data.back_color = ini.GetInt(_T("task_bar"), _T("task_bar_back_color"), 0);
-	//theApp.m_taskbar_data.text_color = GetPrivateProfileInt(_T("task_bar"), _T("task_bar_text_color"), 0x00ffffffU, theApp.m_config_path.c_str());
-	ini.GetIntArray(_T("task_bar"), _T("task_bar_text_color"), (int*)theApp.m_taskbar_data.text_colors, TASKBAR_COLOR_NUM, 0x00ffffffU);
-	theApp.m_taskbar_data.specify_each_item_color = ini.GetBool(L"task_bar", L"specify_each_item_color", false);
-	theApp.m_tbar_show_cpu_memory = ini.GetBool(_T("task_bar"), _T("task_bar_show_cpu_memory"), false);
-	theApp.m_taskbar_data.swap_up_down = ini.GetBool(_T("task_bar"), _T("task_bar_swap_up_down"), false);
-
-	//theApp.m_taskbar_data.font.name = ini.GetString(_T("task_bar"), _T("tack_bar_font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();
-	//theApp.m_taskbar_data.font.size = ini.GetInt(_T("task_bar"), _T("tack_bar_font_size"), 9);
-	FontInfo default_font{};
-	default_font.name = CCommon::LoadText(IDS_DEFAULT_FONT);
-	default_font.size = 9;
-	ini.LoadFontData(_T("task_bar"), theApp.m_taskbar_data.font, default_font);
-
-
-	theApp.m_taskbar_data.disp_str.up = ini.GetString(L"task_bar", L"up_string", L"↑: $");
-	theApp.m_taskbar_data.disp_str.down = ini.GetString(L"task_bar", L"down_string", L"↓: $");
-	theApp.m_taskbar_data.disp_str.cpu = ini.GetString(L"task_bar", L"cpu_string", L"CPU: $");
-	theApp.m_taskbar_data.disp_str.memory = ini.GetString(L"task_bar", L"memory_string", CCommon::LoadText(IDS_MEMORY_DISP, _T(": $")));
-
-	theApp.m_taskbar_data.tbar_wnd_on_left = ini.GetBool(_T("task_bar"), _T("task_bar_wnd_on_left"), false);
-	theApp.m_taskbar_data.speed_short_mode = ini.GetBool(_T("task_bar"), _T("task_bar_speed_short_mode"), false);
-	theApp.m_taskbar_data.speed_unit = static_cast<SpeedUnit>(ini.GetInt(_T("task_bar"), _T("task_bar_speed_unit"), 0));
-	theApp.m_taskbar_data.hide_unit = ini.GetBool(_T("task_bar"), _T("task_bar_hide_unit"), false);
-	theApp.m_taskbar_data.hide_percent = ini.GetBool(_T("task_bar"), _T("task_bar_hide_percent"), false);
-	theApp.m_taskbar_data.value_right_align = ini.GetBool(_T("task_bar"), _T("value_right_align"), false);
-	theApp.m_taskbar_data.horizontal_arrange = ini.GetBool(_T("task_bar"), _T("horizontal_arrange"), false);
-	theApp.m_taskbar_data.separate_value_unit_with_space = ini.GetBool(_T("task_bar"), _T("separate_value_unit_with_space"), true);
-	theApp.m_taskbar_data.digits_number = ini.GetInt(_T("task_bar"), _T("digits_number"), 4);
-	theApp.m_taskbar_data.double_click_action = static_cast<DoubleClickAction>(ini.GetInt(_T("task_bar"), _T("double_click_action"), 0));
 }
 
 void CTaskBarDlg::SetTextFont()
@@ -537,8 +470,6 @@ BOOL CTaskBarDlg::OnInitDialog()
 	//设置隐藏任务栏图标
 	ModifyStyleEx(0, WS_EX_TOOLWINDOW);
 
-	LoadConfig();
-
 	m_pDC = GetDC();
 
 	//设置字体
@@ -560,7 +491,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 
 	m_taskbar_on_top_or_bottom = IsTaskbarOnTopOrBottom();
 	CalculateWindowWidth();
-	if (!theApp.m_tbar_show_cpu_memory)
+	if (!theApp.m_cfg_data.m_tbar_show_cpu_memory)
 		m_rect.right = m_rect.left + m_window_width_s;
 	else
 		m_rect.right = m_rect.left + m_window_width;
@@ -596,7 +527,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 		//设置窗口大小
 		int window_width;
 		window_width = max(m_window_width_s, (m_window_width - m_window_width_s));
-		if (theApp.m_tbar_show_cpu_memory)	//将CPU和内存利用率放到网速的下面
+		if (theApp.m_cfg_data.m_tbar_show_cpu_memory)	//将CPU和内存利用率放到网速的下面
 		{
 			m_rect.right = m_rect.left + window_width;
 			m_rect.bottom = m_rect.top + m_rect.Height() * 2 + theApp.DPI(2);
@@ -655,7 +586,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 void CTaskBarDlg::OnCancel()
 {
 	// TODO: 在此添加专用代码和/或调用基类
-	SaveConfig();
+	//SaveConfig();
 	DestroyWindow();
 	//程序关闭的时候，把最小化窗口的width恢复回去
 	if (IsTaskbarOnTopOrBottom())
@@ -684,9 +615,9 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
 	CDialogEx::OnInitMenu(pMenu);
 
 	// TODO: 在此处添加消息处理程序代码
-	pMenu->CheckMenuItem(ID_SHOW_CPU_MEMORY2, MF_BYCOMMAND | (theApp.m_tbar_show_cpu_memory ? MF_CHECKED : MF_UNCHECKED));
-	pMenu->CheckMenuItem(ID_SHOW_MAIN_WND, MF_BYCOMMAND | (!theApp.m_hide_main_window ? MF_CHECKED : MF_UNCHECKED));
-	pMenu->CheckMenuItem(ID_SHOW_NOTIFY_ICON, MF_BYCOMMAND | (theApp.m_show_notify_icon ? MF_CHECKED : MF_UNCHECKED));
+	pMenu->CheckMenuItem(ID_SHOW_CPU_MEMORY2, MF_BYCOMMAND | (theApp.m_cfg_data.m_tbar_show_cpu_memory ? MF_CHECKED : MF_UNCHECKED));
+	pMenu->CheckMenuItem(ID_SHOW_MAIN_WND, MF_BYCOMMAND | (!theApp.m_cfg_data.m_hide_main_window ? MF_CHECKED : MF_UNCHECKED));
+	pMenu->CheckMenuItem(ID_SHOW_NOTIFY_ICON, MF_BYCOMMAND | (theApp.m_cfg_data.m_show_notify_icon ? MF_CHECKED : MF_UNCHECKED));
 
 	//pMenu->SetDefaultItem(ID_NETWORK_INFO);
 	//设置默认菜单项
