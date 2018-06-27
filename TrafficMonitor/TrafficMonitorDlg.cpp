@@ -97,8 +97,8 @@ END_MESSAGE_MAP()
 void CTrafficMonitorDlg::ShowInfo()
 {
 	CString str;
-	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit);
-	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit);
+	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit, theApp.m_main_wnd_data.separate_value_unit_with_space);
+	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit, theApp.m_main_wnd_data.separate_value_unit_with_space);
 
 	CString format_str;
 	if (theApp.m_main_wnd_data.hide_unit && theApp.m_main_wnd_data.speed_unit != SpeedUnit::AUTO)

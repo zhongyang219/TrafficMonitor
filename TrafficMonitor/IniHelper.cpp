@@ -263,7 +263,7 @@ wstring CIniHelper::_GetString(const wchar_t * AppName, const wchar_t * KeyName,
 		str_end_pos = m_ini_str.find(L"\n", str_pos);
 		//获取文本
 		wstring return_str{ m_ini_str.substr(str_pos, str_end_pos - str_pos) };
-		//如何前后有空格，则将其删除
+		//如果前后有空格，则将其删除
 		CCommon::StringNormalize(return_str);
 		return return_str;
 	}

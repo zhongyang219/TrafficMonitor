@@ -65,6 +65,7 @@ BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CTabDlg)
 	ON_MESSAGE(WM_STATIC_CLICKED, &CMainWndSettingsDlg::OnStaticClicked)
 	ON_BN_CLICKED(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK, &CMainWndSettingsDlg::OnBnClickedSpecifyEachItemColorCheck)
 	ON_CBN_SELCHANGE(IDC_DOUBLE_CLICK_COMBO, &CMainWndSettingsDlg::OnCbnSelchangeDoubleClickCombo)
+	ON_BN_CLICKED(IDC_SEPARATE_VALUE_UNIT_CHECK, &CMainWndSettingsDlg::OnBnClickedSeparateValueUnitCheck)
 END_MESSAGE_MAP()
 
 
@@ -93,6 +94,7 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 	((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK))->SetCheck(m_data.swap_up_down);
 	((CButton*)GetDlgItem(IDC_FULLSCREEN_HIDE_CHECK))->SetCheck(m_data.hide_main_wnd_when_fullscreen);
 	((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK2))->SetCheck(m_data.speed_short_mode);
+	((CButton*)GetDlgItem(IDC_SEPARATE_VALUE_UNIT_CHECK))->SetCheck(m_data.separate_value_unit_with_space);
 
 	m_color_static.SetLinkCursor();
 	DrawStaticColor();
@@ -376,4 +378,11 @@ void CMainWndSettingsDlg::OnCbnSelchangeDoubleClickCombo()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.double_click_action = static_cast<DoubleClickAction>(m_double_click_combo.GetCurSel());
+}
+
+
+void CMainWndSettingsDlg::OnBnClickedSeparateValueUnitCheck()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_data.separate_value_unit_with_space = (((CButton*)GetDlgItem(IDC_SEPARATE_VALUE_UNIT_CHECK))->GetCheck() != 0);
 }

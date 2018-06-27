@@ -81,6 +81,7 @@ void CTrafficMonitorApp::LoadConfig()
 	m_main_wnd_data.disp_str.memory = ini.GetString(L"config", L"memory_string", CCommon::LoadText(IDS_MEMORY_DISP, _T(": $")));
 
 	m_main_wnd_data.speed_short_mode = ini.GetBool(_T("config"), _T("speed_short_mode"), false);
+	m_main_wnd_data.separate_value_unit_with_space = ini.GetBool(_T("config"), _T("separate_value_unit_with_space"), true);
 	m_main_wnd_data.speed_unit = static_cast<SpeedUnit>(ini.GetInt(_T("config"), _T("speed_unit"), 0));
 	m_main_wnd_data.hide_unit = ini.GetBool(_T("config"), _T("hide_unit"), false);
 	m_main_wnd_data.hide_percent = ini.GetBool(_T("config"), _T("hide_percent"), false);
@@ -185,6 +186,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteString(_T("config"), _T("memory_string"), theApp.m_main_wnd_data.disp_str.memory);
 
 	ini.WriteBool(L"config", L"speed_short_mode", theApp.m_main_wnd_data.speed_short_mode);
+	ini.WriteBool(L"config", L"separate_value_unit_with_space", theApp.m_main_wnd_data.separate_value_unit_with_space);
 	ini.WriteInt(L"config", L"speed_unit", static_cast<int>(theApp.m_main_wnd_data.speed_unit));
 	ini.WriteBool(L"config", L"hide_unit", theApp.m_main_wnd_data.hide_unit);
 	ini.WriteBool(L"config", L"hide_percent", theApp.m_main_wnd_data.hide_percent);

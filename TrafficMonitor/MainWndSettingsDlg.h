@@ -60,4 +60,5 @@ protected:
 public:
 	afx_msg void OnBnClickedSpecifyEachItemColorCheck();
 	afx_msg void OnCbnSelchangeDoubleClickCombo();
+	afx_msg void OnBnClickedSeparateValueUnitCheck();
 };
