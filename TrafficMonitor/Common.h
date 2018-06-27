@@ -9,7 +9,9 @@ public:
 	//将const char*字符串转换成宽字符字符串
 	static wstring StrToUnicode(const char* str, bool utf8 = false);
 
-	static string UnicodeToStr(const wchar_t* wstr);
+	static string UnicodeToStr(const wchar_t* wstr, bool utf8 = false);
+
+	static void StringNormalize(wstring& str);
 
 	/*根据数据的大小转换成以KB、MB、GB为单位的字符串
 	size：数据的大小，单位为字节

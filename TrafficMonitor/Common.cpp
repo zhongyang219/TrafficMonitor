@@ -24,17 +24,43 @@ wstring CCommon::StrToUnicode(const char* str, bool utf8)
 	return result;
 }
 
-string CCommon::UnicodeToStr(const wchar_t * wstr)
+string CCommon::UnicodeToStr(const wchar_t * wstr, bool utf8)
 {
 	string result;
 	int size{ 0 };
-	size = WideCharToMultiByte(CP_ACP, 0, wstr, -1, NULL, 0, NULL, NULL);
+	size = WideCharToMultiByte((utf8 ? CP_UTF8 : CP_ACP), 0, wstr, -1, NULL, 0, NULL, NULL);
 	if (size <= 0) return string();
 	char* str = new char[size + 1];
-	WideCharToMultiByte(CP_ACP, 0, wstr, -1, str, size, NULL, NULL);
-	result.assign(str);
+	WideCharToMultiByte((utf8 ? CP_UTF8 : CP_ACP), 0, wstr, -1, str, size, NULL, NULL);
+	if (utf8)
+	{
+		result.push_back(-17);
+		result.push_back(-69);
+		result.push_back(-65);
+	}
+	result.append(str);
 	delete[] str;
 	return result;
+}
+
+void CCommon::StringNormalize(wstring & str)
+{
+	if (str.empty()) return;
+
+	int size = str.size();	//字符串的长度
+	if (size < 0) return;
+	int index1 = 0;		//字符串中第1个不是空格或控制字符的位置
+	int index2 = size - 1;	//字符串中最后一个不是空格或控制字符的位置
+	while (index1 < size && str[index1] >= 0 && str[index1] <= 32)
+		index1++;
+	while (index2 >= 0 && str[index2] >= 0 && str[index2] <= 32)
+		index2--;
+	if (index1 > index2)	//如果index1 > index2，说明字符串全是空格或控制字符
+		str.clear();
+	else if (index1 == 0 && index2 == size - 1)	//如果index1和index2的值分别为0和size - 1，说明字符串前后没有空格或控制字符，直接返回
+		return;
+	else
+		str = str.substr(index1, index2 - index1 + 1);
 }
 
 CString CCommon::DataSizeToString(unsigned int size, bool short_mode, SpeedUnit unit, bool hide_unit, bool space_separate)

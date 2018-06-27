@@ -33,8 +33,7 @@ void CSkinDlg::DoDataExchange(CDataExchange* pDX)
 
 void CSkinDlg::LoadSkinLayout(const wstring& cfg_path, LayoutData& layout_data)
 {
-	CIniHelper ini;
-	ini.SetPath(cfg_path);
+	CIniHelper ini(cfg_path);
 	//从ini文件读取皮肤布局，并根据DPI进行缩放
 	layout_data.text_height = theApp.DPI(ini.GetInt(_T("layout"), _T("text_height"), 20));
 	layout_data.no_text = ini.GetBool(_T("layout"), _T("no_text"), false);
@@ -95,8 +94,7 @@ void CSkinDlg::ShowPreview()
 	//载入布局数据
 	wstring cfg_path{ theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini" };
 	LoadSkinLayout(cfg_path, m_skin_data.layout);
-	CIniHelper ini;
-	ini.SetPath(cfg_path);
+	CIniHelper ini(cfg_path);
 	//载入背景图
 	LoadBackImage((theApp.m_skin_path + m_skins[m_skin_selected]).c_str(), true);
 	LoadBackImage((theApp.m_skin_path + m_skins[m_skin_selected]).c_str(), false);

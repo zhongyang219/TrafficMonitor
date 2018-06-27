@@ -32,8 +32,7 @@ CTrafficMonitorApp::CTrafficMonitorApp()
 
 void CTrafficMonitorApp::LoadConfig()
 {
-	CIniHelper ini;
-	ini.SetPath(m_config_path);
+	CIniHelper ini{ m_config_path };
 	//m_no_multistart_warning_time = GetPrivateProfileInt(_T("other"), _T("no_multistart_warning_time"), 300000, m_config_path.c_str());
 	m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), false);
 	m_notify_interval = ini.GetInt(_T("other"), _T("notify_interval"), 60);
@@ -134,8 +133,8 @@ void CTrafficMonitorApp::LoadConfig()
 
 void CTrafficMonitorApp::SaveConfig()
 {
-	CIniHelper ini;
-	ini.SetPath(m_config_path);
+	CIniHelper ini{ m_config_path };
+	//ini.SetSaveAsUTF8(false);
 	//CCommon::WritePrivateProfileIntW(_T("other"), _T("no_multistart_warning_time"), m_no_multistart_warning_time);
 	ini.WriteBool(_T("other"), _T("no_multistart_warning"), m_no_multistart_warning);
 	ini.WriteBool(_T("other"), _T("exit_when_start_by_restart_manager"), m_exit_when_start_by_restart_manager);
@@ -230,6 +229,8 @@ void CTrafficMonitorApp::SaveConfig()
 	//其他设置
 	ini.WriteBool(L"connection_details", L"show_internet_ip", m_cfg_data.m_show_internet_ip);
 	ini.WriteBool(L"histroy_traffic", L"use_log_scale", m_cfg_data.m_use_log_scale);
+
+	ini.Save();
 
 	//检查是否保存成功
 	if (ini.CheckSaveFailed())
