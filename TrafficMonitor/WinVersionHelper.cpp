@@ -44,3 +44,8 @@ bool CWinVersionHelper::IsWindows7() const
 {
 	return (m_major_version == 6 && m_minor_version == 1);
 }
+
+bool CWinVersionHelper::IsWindows8Or8point1() const
+{
+	return (m_major_version == 6 && m_minor_version > 1);
+}

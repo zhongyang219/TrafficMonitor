@@ -32,13 +32,7 @@ string CCommon::UnicodeToStr(const wchar_t * wstr, bool utf8)
 	if (size <= 0) return string();
 	char* str = new char[size + 1];
 	WideCharToMultiByte((utf8 ? CP_UTF8 : CP_ACP), 0, wstr, -1, str, size, NULL, NULL);
-	if (utf8)
-	{
-		result.push_back(-17);
-		result.push_back(-69);
-		result.push_back(-65);
-	}
-	result.append(str);
+	result.assign(str);
 	delete[] str;
 	return result;
 }

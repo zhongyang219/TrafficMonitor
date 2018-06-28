@@ -1,7 +1,6 @@
 //ini读写类
 //使用时将ini文件路径通过构造函数参数传递
 //在向ini文件写入数据时，需要在最后调用Save()函数以将更改保存到文件
-//调用CheckSaveFailed()用来检查写入是否成功
 //默认以UTF8_BOM编码保存，如果要以ANSI保存，请调用SetSaveAsUTF8(false);
 #pragma once
 #include "CommonData.h"
@@ -29,14 +28,11 @@ public:
 	void SaveFontData(const wchar_t * AppName, const FontInfo& font);
 	void LoadFontData(const wchar_t * AppName, FontInfo& font, const FontInfo& default_font) const;
 
-	bool CheckSaveFailed() const { return m_save_failed; }
-
-	void Save();
+	bool Save();		//将ini文件保存到文件，成功返回true
 
 protected:
 	wstring m_file_path;
 	wstring m_ini_str;
-	bool m_save_failed{ false };		//是否保存失败
 	bool m_save_as_utf8{ true };		//是否以及UTF8编码保存
 
 	void _WriteString(const wchar_t* AppName, const wchar_t* KeyName, const wstring& str);

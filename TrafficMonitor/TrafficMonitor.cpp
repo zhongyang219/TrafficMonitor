@@ -33,10 +33,6 @@ CTrafficMonitorApp::CTrafficMonitorApp()
 void CTrafficMonitorApp::LoadConfig()
 {
 	CIniHelper ini{ m_config_path };
-	//m_no_multistart_warning_time = GetPrivateProfileInt(_T("other"), _T("no_multistart_warning_time"), 300000, m_config_path.c_str());
-	m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), false);
-	m_notify_interval = ini.GetInt(_T("other"), _T("notify_interval"), 60);
-	m_exit_when_start_by_restart_manager = ini.GetBool(_T("other"), _T("exit_when_start_by_restart_manager"), true);
 
 	//常规设置
 	m_general_data.check_update_when_start = ini.GetBool(_T("general"), _T("check_update_when_start"), true);
@@ -64,7 +60,7 @@ void CTrafficMonitorApp::LoadConfig()
 	m_cfg_data.m_skin_name = ini.GetString(_T("config"), _T("skin_selected"), _T(""));
 	if (m_cfg_data.m_skin_name.substr(0, 8) == L".\\skins\\")		//如果读取到的皮肤名称前面有".\\skins\\"，则把它删除。（用于和前一个版本保持兼容性）
 		m_cfg_data.m_skin_name = m_cfg_data.m_skin_name.substr(7);
-	m_cfg_data.m_notify_icon_selected = ini.GetInt(_T("config"), _T("notify_icon_selected"), 0);
+	m_cfg_data.m_notify_icon_selected = ini.GetInt(_T("config"), _T("notify_icon_selected"), (m_win_version.IsWindows7() || m_win_version.IsWindows8Or8point1() ? 2 : 0));		//Win7/8/8.1默认使用蓝色通知区图标，因为隐藏通知区图标后白色图标会看不清，其他系统默认使用白色图标
 	m_main_wnd_data.swap_up_down = ini.GetBool(_T("config"), _T("swap_up_down"), false);
 	m_main_wnd_data.hide_main_wnd_when_fullscreen = ini.GetBool(_T("config"), _T("hide_main_wnd_when_fullscreen"), true);
 
@@ -130,16 +126,15 @@ void CTrafficMonitorApp::LoadConfig()
 	//其他设置
 	m_cfg_data.m_show_internet_ip = ini.GetBool(L"connection_details", L"show_internet_ip", false);
 	m_cfg_data.m_use_log_scale = ini.GetBool(_T("histroy_traffic"), _T("use_log_scale"), false);
+
+	m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), false);
+	m_notify_interval = ini.GetInt(_T("other"), _T("notify_interval"), 60);
+	m_exit_when_start_by_restart_manager = ini.GetBool(_T("other"), _T("exit_when_start_by_restart_manager"), true);
 }
 
 void CTrafficMonitorApp::SaveConfig()
 {
 	CIniHelper ini{ m_config_path };
-	//ini.SetSaveAsUTF8(false);
-	//CCommon::WritePrivateProfileIntW(_T("other"), _T("no_multistart_warning_time"), m_no_multistart_warning_time);
-	ini.WriteBool(_T("other"), _T("no_multistart_warning"), m_no_multistart_warning);
-	ini.WriteBool(_T("other"), _T("exit_when_start_by_restart_manager"), m_exit_when_start_by_restart_manager);
-	ini.WriteInt(_T("other"), _T("notify_interval"), m_notify_interval);
 
 	//常规设置
 	ini.WriteBool(_T("general"), _T("check_update_when_start"), m_general_data.check_update_when_start);
@@ -232,10 +227,12 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteBool(L"connection_details", L"show_internet_ip", m_cfg_data.m_show_internet_ip);
 	ini.WriteBool(L"histroy_traffic", L"use_log_scale", m_cfg_data.m_use_log_scale);
 
-	ini.Save();
+	ini.WriteBool(_T("other"), _T("no_multistart_warning"), m_no_multistart_warning);
+	ini.WriteBool(_T("other"), _T("exit_when_start_by_restart_manager"), m_exit_when_start_by_restart_manager);
+	ini.WriteInt(_T("other"), _T("notify_interval"), m_notify_interval);
 
 	//检查是否保存成功
-	if (ini.CheckSaveFailed())
+	if (!ini.Save())
 	{
 		if (m_cannot_save_config_warning)
 		{

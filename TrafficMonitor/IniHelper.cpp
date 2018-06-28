@@ -17,9 +17,20 @@ CIniHelper::CIniHelper(const wstring& file_path)
 		ini_str.push_back(file_stream.get());
 	}
 	ini_str.pop_back();
+	if (!ini_str.empty() && ini_str.back() != L'\n')		//确保文件末尾有回车符
+		ini_str.push_back(L'\n');
 	//判断文件是否是utf8编码
 	bool is_utf8;
-	is_utf8 = (ini_str.size() >= 3 && ini_str[0] == -17 && ini_str[1] == -69 && ini_str[2] == -65);
+	if (ini_str.size() >= 3 && ini_str[0] == -17 && ini_str[1] == -69 && ini_str[2] == -65)
+	{
+		//如果有UTF8的BOM，则删除BOM
+		is_utf8 = true;
+		ini_str = ini_str.substr(3);
+	}
+	else
+	{
+		is_utf8 = false;
+	}
 	//转换成Unicode
 	m_ini_str = CCommon::StrToUnicode(ini_str.c_str(), is_utf8);
 }
@@ -161,12 +172,23 @@ void CIniHelper::SaveFontData(const wchar_t * AppName, const FontInfo & font)
 	WriteBoolArray(AppName, L"font_style", style, 4);
 }
 
-void CIniHelper::Save()
+bool CIniHelper::Save()
 {
 	ofstream file_stream{ m_file_path };
-	m_save_failed = file_stream.fail();
+	if(file_stream.fail())
+		return false;
 	string ini_str{ CCommon::UnicodeToStr(m_ini_str.c_str(), m_save_as_utf8) };
+	if (m_save_as_utf8)		//如果以UTF8编码保存，先插入BOM
+	{
+		string utf8_bom;
+		utf8_bom.push_back(-17);
+		utf8_bom.push_back(-69);
+		utf8_bom.push_back(-65);
+		file_stream << utf8_bom;
+	}
+
 	file_stream << ini_str;
+	return true;
 }
 
 void CIniHelper::LoadFontData(const wchar_t * AppName, FontInfo & font, const FontInfo& default_font) const
