@@ -43,8 +43,8 @@ void CTaskBarDlg::ShowInfo()
 {
 	if (this->m_hWnd == NULL || m_pDC == nullptr) return;
 	CString str;
-	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data.speed_short_mode, theApp.m_taskbar_data.speed_unit, theApp.m_taskbar_data.hide_unit, theApp.m_taskbar_data.separate_value_unit_with_space);
-	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data.speed_short_mode, theApp.m_taskbar_data.speed_unit, theApp.m_taskbar_data.hide_unit, theApp.m_taskbar_data.separate_value_unit_with_space);
+	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data);
+	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data);
 
 	if (m_rect.IsRectEmpty() || m_rect.IsRectNull()) return;
 
@@ -412,6 +412,8 @@ void CTaskBarDlg::CalculateWindowWidth()
 	}
 	if (!hide_unit && theApp.m_taskbar_data.separate_value_unit_with_space)
 		sample_str += _T(' ');
+	if(theApp.m_taskbar_data.speed_short_mode && !theApp.m_taskbar_data.unit_byte && !theApp.m_taskbar_data.hide_unit)
+		sample_str += _T('b');
 	str1 = theApp.m_taskbar_data.disp_str.up.c_str() + sample_str;
 	str2 = theApp.m_taskbar_data.disp_str.down.c_str() + sample_str;
 	width1= m_pDC->GetTextExtent(str1).cx;		//计算使用当前字体显示文本需要的宽度值

@@ -35,6 +35,7 @@ protected:
 	CComboBox m_double_click_combo;
 
 	void DrawStaticColor();
+	void IniUnitCombo();
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
 
@@ -61,4 +62,6 @@ public:
 	afx_msg void OnBnClickedSpecifyEachItemColorCheck();
 	afx_msg void OnCbnSelchangeDoubleClickCombo();
 	afx_msg void OnBnClickedSeparateValueUnitCheck();
+	afx_msg void OnBnClickedUnitByteRadio();
+	afx_msg void OnBnClickedUnitBitRadio();
 };

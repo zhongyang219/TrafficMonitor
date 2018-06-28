@@ -97,8 +97,8 @@ END_MESSAGE_MAP()
 void CTrafficMonitorDlg::ShowInfo()
 {
 	CString str;
-	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit, theApp.m_main_wnd_data.separate_value_unit_with_space);
-	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit, theApp.m_main_wnd_data.separate_value_unit_with_space);
+	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data);
+	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data);
 
 	CString format_str;
 	if (theApp.m_main_wnd_data.hide_unit && theApp.m_main_wnd_data.speed_unit != SpeedUnit::AUTO)
@@ -156,15 +156,13 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 		if (!m_layout_data.show_up_l)		//如果主窗口中没有显示上传速度，则在提示信息中显示上传速度
 		{
 			temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_UPLOAD),
-				CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, 
-				theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit));
+				CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data));
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_down_l)
 		{
 			temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_DOWNLOAD),
-				CCommon::DataSizeToString(theApp.m_in_speed,
-				theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit));
+				CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data));
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_cpu_l)
@@ -192,13 +190,13 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 		if (!m_layout_data.show_up_s)		//如果主窗口中没有显示上传速度，则在提示信息中显示上传速度
 		{
 			temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_UPLOAD),
-				CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit));
+				CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data));
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_down_s)
 		{
 			temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_DOWNLOAD),
-				CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data.speed_short_mode, theApp.m_main_wnd_data.speed_unit, theApp.m_main_wnd_data.hide_unit));
+				CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data));
 			tip_info += temp;
 		}
 		if (!m_layout_data.show_cpu_s)

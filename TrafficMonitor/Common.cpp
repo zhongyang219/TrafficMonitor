@@ -57,14 +57,18 @@ void CCommon::StringNormalize(wstring & str)
 		str = str.substr(index1, index2 - index1 + 1);
 }
 
-CString CCommon::DataSizeToString(unsigned int size, bool short_mode, SpeedUnit unit, bool hide_unit, bool space_separate)
+CString CCommon::DataSizeToString(unsigned int size, const PublicSettingData& cfg)
 {
 	//CString str;
 	CString value_str, unit_str;
-	switch (unit)
+	if (!cfg.unit_byte)		//如果使用比特(bit)为单位，则数值乘以8
+	{
+		size *= 8;
+	}
+	switch (cfg.speed_unit)
 	{
 	case SpeedUnit::AUTO:
-		if (short_mode)
+		if (cfg.speed_short_mode)
 		{
 			if (size < 1024 * 10)					//10KB以下以KB为单位，保留1位小数
 			{
@@ -112,13 +116,13 @@ CString CCommon::DataSizeToString(unsigned int size, bool short_mode, SpeedUnit 
 		}
 		break;
 	case SpeedUnit::KBPS:
-		if (short_mode)
+		if (cfg.speed_short_mode)
 		{
 			if (size < 1024 * 10)					//10KB以下保留1位小数
 				value_str.Format(_T("%.1f"), size / 1024.0f);
 			else					//10KB以上保留整数
 				value_str.Format(_T("%.0f"), size / 1024.0f);
-			if (!hide_unit)
+			if (!cfg.hide_unit)
 				unit_str = _T("K");
 		}
 		else
@@ -127,30 +131,51 @@ CString CCommon::DataSizeToString(unsigned int size, bool short_mode, SpeedUnit 
 				value_str.Format(_T("%.2f"), size / 1024.0f);
 			else			//10KB以上保留1位小数
 				value_str.Format(_T("%.1f"), size / 1024.0f);
-			if (!hide_unit)
+			if (!cfg.hide_unit)
 				unit_str = _T("KB");
 		}
 		break;
 	case SpeedUnit::MBPS:
-		if (short_mode)
+		if (cfg.speed_short_mode)
 		{
 			value_str.Format(_T("%.1f"), size / 1024.0f / 1024.0f);
-			if (!hide_unit)
+			if (!cfg.hide_unit)
 				unit_str = _T("M");
 		}
 		else
 		{
 			value_str.Format(_T("%.2f"), size / 1024.0f / 1024.0f);
-			if (!hide_unit)
+			if (!cfg.hide_unit)
 				unit_str = _T("MB");
 		}
 		break;
 	}
 	CString str;
-	if (space_separate)
+	if (cfg.separate_value_unit_with_space && !cfg.hide_unit)
 		str = value_str + _T(' ') + unit_str;
 	else
 		str = value_str + unit_str;
+	if (!cfg.unit_byte)	
+	{
+		if (cfg.speed_short_mode && !cfg.hide_unit)
+			str += _T('b');		//如果使用比特(bit)为单位，即使设置了网速简洁模式，也将“b”显示出来
+		else
+			str.Replace(_T('B'), _T('b'));	//如果使用比特(bit)为单位，将B替换成b
+	}
+	return str;
+}
+
+CString CCommon::DataSizeToString(unsigned int size)
+{
+	CString str;
+	if (size < 1024 * 10)					//10KB以下以KB为单位，保留2位小数
+		str.Format(_T("%.2f KB"), size / 1024.0f);
+	else if (size < 1024 * 1024)			//1MB以下以KB为单位，保留1位小数
+		str.Format(_T("%.1f KB"), size / 1024.0f);
+	else if (size < 1024 * 1024 * 1024)		//1GB以下以MB为单位，保留2位小数
+		str.Format(_T("%.2f MB"), size / 1024.0f / 1024.0f);
+	else
+		str.Format(_T("%.2f GB"), size / 1024.0f / 1024.0f / 1024.0f);
 	return str;
 }
 

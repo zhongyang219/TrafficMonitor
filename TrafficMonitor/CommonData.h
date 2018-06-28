@@ -102,7 +102,7 @@ struct FontInfo
 	bool strike_out;	//删除线
 };
 
-//将字号转成成LOGFONT结构中的lfHeight
+//将字号转成LOGFONT结构中的lfHeight
 #define FONTSIZE_TO_LFHEIGHT(font_size) (-MulDiv(font_size, GetDeviceCaps(::GetDC(HWND_DESKTOP), LOGPIXELSY), 72))
 
 //选项设置数据
@@ -133,44 +133,40 @@ struct MainConfigData
 	bool m_use_log_scale{ false };			//“历史流量统计”对话框中绘制表示历史流量数值的矩形时是否使用对数比例
 };
 
-#define MAIN_WND_COLOR_NUM 4		//主窗口颜色数量
-//选项设置中“主窗口设置”的数据
-struct MainWndSettingData
+//选项设置中“主窗口设置”和“任务栏窗口设置”中公共的数据（不使用此结构体创建对象）
+struct PublicSettingData
 {
-	COLORREF text_colors[MAIN_WND_COLOR_NUM]{};		//文字颜色（分别为“上传”、“下载”、“CPU”、“内存”的颜色）
 	bool specify_each_item_color{ false };		//是否指定每个项目的颜色
 	FontInfo font;			//字体
 	DispStrings disp_str;	//显示的文本
-	bool speed_short_mode{ false };		//网速显示简洁模式（减少小数点的位数，单位不显示“B”）
 	bool swap_up_down{ false };		//交换上传和下载显示的位置
+	bool speed_short_mode{ false };		//网速显示简洁模式（减少小数点的位数，单位不显示“B”）
 	bool separate_value_unit_with_space{ true };	//网速数值和单位用空格分隔
-	bool hide_main_wnd_when_fullscreen;		//有程序全屏运行时隐藏悬浮窗
+	bool unit_byte{ true };				//使用字节(B)而不是比特(b)为单位
 	SpeedUnit speed_unit;		//网速的单位
 	bool hide_unit;			//隐藏单位
 	bool hide_percent;		//隐藏百分号
 	DoubleClickAction double_click_action;		//鼠标双击动作
 };
 
+#define MAIN_WND_COLOR_NUM 4		//主窗口颜色数量
+//选项设置中“主窗口设置”的数据
+struct MainWndSettingData : public PublicSettingData
+{
+	COLORREF text_colors[MAIN_WND_COLOR_NUM]{};		//文字颜色（分别为“上传”、“下载”、“CPU”、“内存”的颜色）
+	bool hide_main_wnd_when_fullscreen;		//有程序全屏运行时隐藏悬浮窗
+};
+
 #define TASKBAR_COLOR_NUM 8		//任务栏窗口颜色数量
 //选项设置中“任务栏窗口设置”的数据
-struct TaskBarSettingData
+struct TaskBarSettingData : public PublicSettingData
 {
 	COLORREF  back_color{ RGB(0, 0, 0) };	//背景颜色
 	COLORREF text_colors[TASKBAR_COLOR_NUM]{};		//文字颜色（依次为“上传”、“下载”、“CPU”、“内存”的标签和数据颜色）
-	bool specify_each_item_color{ false };		//是否指定每个项目的颜色
-	FontInfo font;			//字体
-	DispStrings disp_str;	//显示的文本
-	bool swap_up_down{ false };		//交换上传和下载显示的位置
-	bool speed_short_mode{ false };		//网速显示简洁模式（减少小数点的位数，单位不显示“B”）
 	bool value_right_align{ false };	//数值是否右对齐
 	int digits_number{ 4 };				//数据位数
 	bool horizontal_arrange{ true };	//水平排列
 	bool tbar_wnd_on_left{ false };		//如果为true，则任务栏窗口显示在任务栏的左侧（或上方）
-	bool separate_value_unit_with_space{ true };	//网速数值和单位用空格分隔
-	SpeedUnit speed_unit;		//网速的单位
-	bool hide_unit;			//隐藏单位
-	bool hide_percent;		//隐藏百分号
-	DoubleClickAction double_click_action;		//鼠标双击动作
 };
 
 //选项设置中“常规设置”的数据

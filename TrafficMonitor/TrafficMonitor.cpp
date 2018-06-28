@@ -78,6 +78,7 @@ void CTrafficMonitorApp::LoadConfig()
 
 	m_main_wnd_data.speed_short_mode = ini.GetBool(_T("config"), _T("speed_short_mode"), false);
 	m_main_wnd_data.separate_value_unit_with_space = ini.GetBool(_T("config"), _T("separate_value_unit_with_space"), true);
+	m_main_wnd_data.unit_byte = ini.GetBool(_T("config"), _T("unit_byte"), true);
 	m_main_wnd_data.speed_unit = static_cast<SpeedUnit>(ini.GetInt(_T("config"), _T("speed_unit"), 0));
 	m_main_wnd_data.hide_unit = ini.GetBool(_T("config"), _T("hide_unit"), false);
 	m_main_wnd_data.hide_percent = ini.GetBool(_T("config"), _T("hide_percent"), false);
@@ -114,6 +115,7 @@ void CTrafficMonitorApp::LoadConfig()
 
 	m_taskbar_data.tbar_wnd_on_left = ini.GetBool(_T("task_bar"), _T("task_bar_wnd_on_left"), false);
 	m_taskbar_data.speed_short_mode = ini.GetBool(_T("task_bar"), _T("task_bar_speed_short_mode"), false);
+	m_taskbar_data.unit_byte = ini.GetBool(_T("task_bar"), _T("unit_byte"), true);
 	m_taskbar_data.speed_unit = static_cast<SpeedUnit>(ini.GetInt(_T("task_bar"), _T("task_bar_speed_unit"), 0));
 	m_taskbar_data.hide_unit = ini.GetBool(_T("task_bar"), _T("task_bar_hide_unit"), false);
 	m_taskbar_data.hide_percent = ini.GetBool(_T("task_bar"), _T("task_bar_hide_percent"), false);
@@ -159,51 +161,45 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteInt(L"config", L"position_y", m_cfg_data.m_position_y);
 	ini.WriteBool(L"connection", L"auto_select", m_cfg_data.m_auto_select);
 	ini.WriteBool(L"connection", L"select_all", m_cfg_data.m_select_all);
-	//ini.WriteInt(L"config", L"text_color", theApp.m_main_wnd_data.text_color);
 	ini.WriteIntArray(L"config", L"text_color", (int*)m_main_wnd_data.text_colors, MAIN_WND_COLOR_NUM);
 	ini.WriteBool(_T("config"), _T("specify_each_item_color"), m_main_wnd_data.specify_each_item_color);
 	ini.WriteInt(L"config", L"hide_main_window", m_cfg_data.m_hide_main_window);
-	//m_connection_name = m_connections[m_connection_selected].description;
 	ini.WriteString(L"connection", L"connection_name", CCommon::StrToUnicode(m_cfg_data.m_connection_name.c_str()).c_str());
 	ini.WriteString(_T("config"), _T("skin_selected"), m_cfg_data.m_skin_name.c_str());
 	ini.WriteInt(L"config", L"notify_icon_selected", m_cfg_data.m_notify_icon_selected);
 
-	//ini.WriteString(_T("config"), _T("font_name"), wstring(theApp.m_main_wnd_data.font.name));
-	//ini.WriteInt(L"config", L"font_size", theApp.m_main_wnd_data.font.size);
-	ini.SaveFontData(L"config", theApp.m_main_wnd_data.font);
+	ini.SaveFontData(L"config", m_main_wnd_data.font);
 
-	ini.WriteBool(L"config", L"swap_up_down", theApp.m_main_wnd_data.swap_up_down);
-	ini.WriteBool(L"config", L"hide_main_wnd_when_fullscreen", theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen);
+	ini.WriteBool(L"config", L"swap_up_down", m_main_wnd_data.swap_up_down);
+	ini.WriteBool(L"config", L"hide_main_wnd_when_fullscreen", m_main_wnd_data.hide_main_wnd_when_fullscreen);
 
-	ini.WriteString(_T("config"), _T("up_string"), theApp.m_main_wnd_data.disp_str.up);
-	ini.WriteString(_T("config"), _T("down_string"), theApp.m_main_wnd_data.disp_str.down);
-	ini.WriteString(_T("config"), _T("cpu_string"), theApp.m_main_wnd_data.disp_str.cpu);
-	ini.WriteString(_T("config"), _T("memory_string"), theApp.m_main_wnd_data.disp_str.memory);
+	ini.WriteString(_T("config"), _T("up_string"), m_main_wnd_data.disp_str.up);
+	ini.WriteString(_T("config"), _T("down_string"), m_main_wnd_data.disp_str.down);
+	ini.WriteString(_T("config"), _T("cpu_string"), m_main_wnd_data.disp_str.cpu);
+	ini.WriteString(_T("config"), _T("memory_string"), m_main_wnd_data.disp_str.memory);
 
-	ini.WriteBool(L"config", L"speed_short_mode", theApp.m_main_wnd_data.speed_short_mode);
-	ini.WriteBool(L"config", L"separate_value_unit_with_space", theApp.m_main_wnd_data.separate_value_unit_with_space);
-	ini.WriteInt(L"config", L"speed_unit", static_cast<int>(theApp.m_main_wnd_data.speed_unit));
-	ini.WriteBool(L"config", L"hide_unit", theApp.m_main_wnd_data.hide_unit);
-	ini.WriteBool(L"config", L"hide_percent", theApp.m_main_wnd_data.hide_percent);
-	ini.WriteInt(L"config", L"double_click_action", static_cast<int>(theApp.m_main_wnd_data.double_click_action));
+	ini.WriteBool(L"config", L"speed_short_mode", m_main_wnd_data.speed_short_mode);
+	ini.WriteBool(L"config", L"separate_value_unit_with_space", m_main_wnd_data.separate_value_unit_with_space);
+	ini.WriteBool(L"config", L"unit_byte", m_main_wnd_data.unit_byte);
+	ini.WriteInt(L"config", L"speed_unit", static_cast<int>(m_main_wnd_data.speed_unit));
+	ini.WriteBool(L"config", L"hide_unit", m_main_wnd_data.hide_unit);
+	ini.WriteBool(L"config", L"hide_percent", m_main_wnd_data.hide_percent);
+	ini.WriteInt(L"config", L"double_click_action", static_cast<int>(m_main_wnd_data.double_click_action));
 
 	ini.WriteInt(L"config", L"alow_out_of_border", m_cfg_data.m_alow_out_of_border);
 
-	ini.WriteBool(L"notify_tip", L"traffic_tip_enable", theApp.m_general_data.traffic_tip_enable);
-	ini.WriteInt(L"notify_tip", L"traffic_tip_value", theApp.m_general_data.traffic_tip_value);
-	ini.WriteInt(L"notify_tip", L"traffic_tip_unit", theApp.m_general_data.traffic_tip_unit);
-	ini.WriteBool(L"notify_tip", L"memory_usage_tip_enable", theApp.m_general_data.memory_usage_tip_enable);
-	ini.WriteInt(L"notify_tip", L"memory_tip_value", theApp.m_general_data.memory_tip_value);
+	ini.WriteBool(L"notify_tip", L"traffic_tip_enable", m_general_data.traffic_tip_enable);
+	ini.WriteInt(L"notify_tip", L"traffic_tip_value", m_general_data.traffic_tip_value);
+	ini.WriteInt(L"notify_tip", L"traffic_tip_unit", m_general_data.traffic_tip_unit);
+	ini.WriteBool(L"notify_tip", L"memory_usage_tip_enable", m_general_data.memory_usage_tip_enable);
+	ini.WriteInt(L"notify_tip", L"memory_tip_value", m_general_data.memory_tip_value);
 
 
 	//任务栏窗口设置
 	ini.WriteInt(L"task_bar", L"task_bar_back_color", m_taskbar_data.back_color);
-	//ini.WriteInt(L"task_bar", L"task_bar_text_color", m_taskbar_data.text_color);
 	ini.WriteIntArray(L"task_bar", L"task_bar_text_color", (int*)m_taskbar_data.text_colors, TASKBAR_COLOR_NUM);
 	ini.WriteBool(L"task_bar", L"specify_each_item_color", m_taskbar_data.specify_each_item_color);
 	ini.WriteBool(L"task_bar", L"task_bar_show_cpu_memory", m_cfg_data.m_tbar_show_cpu_memory);
-	//ini.WriteString(_T("task_bar"), _T("tack_bar_font_name"), wstring(m_taskbar_data.font.name));
-	//ini.WriteInt(L"task_bar", L"tack_bar_font_size", m_taskbar_data.font.size);
 	ini.SaveFontData(L"task_bar", m_taskbar_data.font);
 	ini.WriteBool(L"task_bar", L"task_bar_swap_up_down", m_taskbar_data.swap_up_down);
 
@@ -214,6 +210,7 @@ void CTrafficMonitorApp::SaveConfig()
 
 	ini.WriteBool(L"task_bar", L"task_bar_wnd_on_left", m_taskbar_data.tbar_wnd_on_left);
 	ini.WriteBool(L"task_bar", L"task_bar_speed_short_mode", m_taskbar_data.speed_short_mode);
+	ini.WriteBool(L"task_bar", L"unit_byte", m_taskbar_data.unit_byte);
 	ini.WriteInt(L"task_bar", L"task_bar_speed_unit", static_cast<int>(m_taskbar_data.speed_unit));
 	ini.WriteBool(L"task_bar", L"task_bar_hide_unit", m_taskbar_data.hide_unit);
 	ini.WriteBool(L"task_bar", L"task_bar_hide_percent", m_taskbar_data.hide_percent);
@@ -238,7 +235,7 @@ void CTrafficMonitorApp::SaveConfig()
 		{
 			CString info;
 			info.LoadString(IDS_CONNOT_SAVE_CONFIG_WARNING);
-			info.Replace(_T("<%file_path%>"), theApp.m_config_path.c_str());
+			info.Replace(_T("<%file_path%>"), m_config_path.c_str());
 			AfxMessageBox(info, MB_ICONWARNING);
 		}
 		m_cannot_save_config_warning = false;
