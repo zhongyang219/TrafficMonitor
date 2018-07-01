@@ -433,7 +433,7 @@ void CTrafficMonitorDlg::OpenTaskBarWnd()
 	m_tBarDlg = new CTaskBarDlg;
 	m_tBarDlg->Create(IDD_TASK_BAR_DIALOG, this);
 	m_tBarDlg->ShowWindow(SW_SHOW);
-	m_tBarDlg->ShowInfo();
+	//m_tBarDlg->ShowInfo();
 	IniTaskBarConnectionMenu();
 }
 

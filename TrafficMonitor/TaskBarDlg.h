@@ -21,7 +21,7 @@ public:
 	CToolTipCtrl m_tool_tips;
 	CMenu m_menu;	//右键菜单
 
-	void ShowInfo();		//将信息显示到控件上
+	void ShowInfo(CDC* pDC);		//将信息绘制到控件上
 	bool AdjustWindowPos();	//设置窗口在任务栏中的位置
 
 // 对话框数据
@@ -60,7 +60,7 @@ protected:
 
 	CFont m_font;			//字体
 
-	CDC* m_pDC{};
+	CDC* m_pDC{};		//窗口的DC，用来计算窗口的宽度
 
 	bool IsTaskbarOnTopOrBottom();		//判断任务栏是否在屏幕的顶部或底部，如果是则返回false，如果任务栏在屏幕两侧，则返回false
 	CString GetMouseTipsInfo();		//获取鼠标提示
@@ -91,4 +91,5 @@ public:
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnPaint();
 };

@@ -33,15 +33,16 @@ BEGIN_MESSAGE_MAP(CTaskBarDlg, CDialogEx)
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_TIMER()
+	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 
 // CTaskBarDlg 消息处理程序
 
 
-void CTaskBarDlg::ShowInfo()
+void CTaskBarDlg::ShowInfo(CDC* pDC)
 {
-	if (this->m_hWnd == NULL || m_pDC == nullptr) return;
+	if (this->m_hWnd == NULL || pDC == nullptr) return;
 	CString str;
 	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data);
 	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data);
@@ -66,7 +67,7 @@ void CTaskBarDlg::ShowInfo()
 	CBitmap MemBitmap;
 	MemDC.CreateCompatibleDC(NULL);
 	int draw_width = (theApp.m_cfg_data.m_tbar_show_cpu_memory ? m_window_width : m_window_width_s);
-	MemBitmap.CreateCompatibleBitmap(m_pDC, draw_width, m_rect.Height());
+	MemBitmap.CreateCompatibleBitmap(pDC, draw_width, m_rect.Height());
 	MemDC.SelectObject(&MemBitmap);
 	//绘图
 	CRect value_rect{ m_rect };		//显示数值的矩形区域
@@ -211,7 +212,7 @@ void CTaskBarDlg::ShowInfo()
 		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.memory.c_str(), text_colors[6], Alignment::LEFT, true);
 	}
 	//将缓冲区DC中的图像拷贝到屏幕中显示
-	m_pDC->BitBlt(0,0, draw_width, m_rect.Height(), &MemDC, 0, 0, SRCCOPY);
+	pDC->BitBlt(0,0, draw_width, m_rect.Height(), &MemDC, 0, 0, SRCCOPY);
 	MemBitmap.DeleteObject();
 	MemDC.DeleteDC();
 }
@@ -704,7 +705,8 @@ void CTaskBarDlg::OnTimer(UINT_PTR nIDEvent)
 	if (nIDEvent == TASKBAR_TIMER)
 	{
 		AdjustWindowPos();
-		ShowInfo();
+		//ShowInfo();
+		Invalidate(FALSE);
 	}
 
 	CDialogEx::OnTimer(nIDEvent);
@@ -723,4 +725,13 @@ BOOL CTaskBarDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 	}
 
 	return CDialogEx::OnCommand(wParam, lParam);
+}
+
+
+void CTaskBarDlg::OnPaint()
+{
+	CPaintDC dc(this); // device context for painting
+					   // TODO: 在此处添加消息处理程序代码
+					   // 不为绘图消息调用 CDialogEx::OnPaint()
+	ShowInfo(&dc);
 }
