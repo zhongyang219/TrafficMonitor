@@ -367,7 +367,7 @@ void CTrafficMonitorDlg::IniConnection()
 			log_str += (const char*)m_pIfTable->table[i].bDescr;
 			log_str += _T("\n");
 		}
-		CCommon::WriteLog(log_str, (theApp.m_module_dir + L".\\connections.log").c_str());
+		CCommon::WriteLog(log_str, (theApp.m_config_dir + L".\\connections.log").c_str());
 	}
 
 	//if (m_connection_selected < 0 || m_connection_selected >= m_connections.size() || m_auto_select)

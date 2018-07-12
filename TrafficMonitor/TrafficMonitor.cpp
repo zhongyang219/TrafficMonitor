@@ -402,17 +402,19 @@ BOOL CTrafficMonitorApp::InitInstance()
 	}
 	m_module_dir = CCommon::GetModuleDir();
 	m_system_dir = CCommon::GetSystemDir();
-	m_app_data_cfg_dir = CCommon::GetAppDataConfigDir();
 #ifdef _DEBUG
-	m_config_path = L".\\config.ini";
-	m_history_traffic_path = L".\\history_traffic.dat";
-	m_log_path = L".\\error.log";
+	m_config_dir = L".\\";
 	m_skin_path = L".\\skins";
 #else
+	m_config_dir = CCommon::GetAppDataConfigDir();
+	m_skin_path = m_module_dir + L"skins";
+#endif
 	//AppData里面的程序配置文件路径
-	m_config_path = m_app_data_cfg_dir + L"config.ini";
-	m_history_traffic_path = m_app_data_cfg_dir + L"history_traffic.dat";
-	m_log_path = m_app_data_cfg_dir + L"error.log";
+	m_config_path = m_config_dir + L"config.ini";
+	m_history_traffic_path = m_config_dir + L"history_traffic.dat";
+	m_log_path = m_config_dir + L"error.log";
+
+#ifndef _DEBUG
 	//原来的、程序所在目录下的配置文件的路径
 	wstring config_path_old = m_module_dir + L"config.ini";
 	wstring history_traffic_path_old = m_module_dir + L"history_traffic.dat";
@@ -421,9 +423,9 @@ BOOL CTrafficMonitorApp::InitInstance()
 	CCommon::MoveAFile(config_path_old.c_str(), m_config_path.c_str());
 	CCommon::MoveAFile(history_traffic_path_old.c_str(), m_history_traffic_path.c_str());
 	CCommon::MoveAFile(log_path_old.c_str(), m_log_path.c_str());
+#endif // !_DEBUG
 
-	m_skin_path = m_module_dir + L"skins";
-#endif
+
 
 	bool is_windows10_fall_creator = m_win_version.IsWindows10FallCreatorOrLater();
 
