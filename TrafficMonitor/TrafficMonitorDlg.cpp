@@ -346,6 +346,30 @@ void CTrafficMonitorDlg::IniConnection()
 	GetIfTable(m_pIfTable, &m_dwSize, FALSE);
 	CAdapterCommon::GetIfTableInfo(m_connections, m_pIfTable);
 
+	//写入调试日志
+	if (theApp.m_debug_log)
+	{
+		CString log_str;
+		log_str += _T("正在初始化网络连接...\n");
+		log_str += _T("连接列表：\n");
+		for (size_t i{}; i < m_connections.size(); i++)
+		{
+			log_str += m_connections[i].description.c_str();
+			log_str += _T(", ");
+			log_str += CCommon::IntToString(m_connections[i].index);
+			log_str += _T("\n");
+		}
+		log_str += _T("IfTable:\n");
+		for (size_t i{}; i < m_pIfTable->dwNumEntries; i++)
+		{
+			log_str += CCommon::IntToString(i);
+			log_str += _T(" ");
+			log_str += (const char*)m_pIfTable->table[i].bDescr;
+			log_str += _T("\n");
+		}
+		CCommon::WriteLog(log_str, (theApp.m_module_dir + L".\\connections.log").c_str());
+	}
+
 	//if (m_connection_selected < 0 || m_connection_selected >= m_connections.size() || m_auto_select)
 	//	AutoSelect();
 	//选择网络连接
@@ -1823,7 +1847,7 @@ void CTrafficMonitorDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 		OnOptions();				//双击后弹出“选项设置”对话框
 		break;
 	case DoubleClickAction::TASK_MANAGER:
-		ShellExecuteW(NULL, _T("open"), (theApp.m_system_path + L"\\Taskmgr.exe").c_str(), NULL, NULL, SW_NORMAL);		//打开任务管理器
+		ShellExecuteW(NULL, _T("open"), (theApp.m_system_dir + L"\\Taskmgr.exe").c_str(), NULL, NULL, SW_NORMAL);		//打开任务管理器
 		break;
 	case DoubleClickAction::CHANGE_SKIN:
 		OnChangeSkin();				//双击后弹出“更换皮肤”对话框

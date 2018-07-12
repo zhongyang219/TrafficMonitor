@@ -56,17 +56,17 @@ public:
 	//计算两个SYSTEMTIME结构时间的差（a-b，只保留时、分、秒）
 	static SYSTEMTIME CompareSystemTime(SYSTEMTIME a, SYSTEMTIME b);
 
-	//获取当前程序的路径
-	static wstring GetExePath();
+	//获取当前程序的目录
+	static wstring GetModuleDir();
 
 	//获取system32文件夹的路径
-	static wstring GetSystemPath();
+	static wstring GetSystemDir();
 
 	//获取临时文件夹的路径
-	static wstring GetTemplatePath();
+	static wstring GetTemplateDir();
 
 	//获取Appdata/Local/TrafficMonitor的目录，如果不存在，则会自动创建
-	static wstring GetAppDataConfigPath();
+	static wstring GetAppDataConfigDir();
 
 	//在指定位置绘制文本
 	static void DrawWindowText(CDC* pDC, CRect rect, LPCTSTR lpszString, COLORREF color, COLORREF back_color);

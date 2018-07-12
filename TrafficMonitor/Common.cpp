@@ -410,7 +410,7 @@ SYSTEMTIME CCommon::CompareSystemTime(SYSTEMTIME a, SYSTEMTIME b)
 	return result;
 }
 
-wstring CCommon::GetExePath()
+wstring CCommon::GetModuleDir()
 {
 	wchar_t path[MAX_PATH];
 	GetModuleFileNameW(NULL, path, MAX_PATH);
@@ -421,14 +421,14 @@ wstring CCommon::GetExePath()
 	return current_path;
 }
 
-wstring CCommon::GetSystemPath()
+wstring CCommon::GetSystemDir()
 {
 	wchar_t buff[MAX_PATH];
 	GetSystemDirectory(buff, MAX_PATH);
 	return wstring(buff);
 }
 
-wstring CCommon::GetTemplatePath()
+wstring CCommon::GetTemplateDir()
 {
 	wstring result;
 	wchar_t buff[MAX_PATH];
@@ -439,7 +439,7 @@ wstring CCommon::GetTemplatePath()
 	return result;
 }
 
-wstring CCommon::GetAppDataConfigPath()
+wstring CCommon::GetAppDataConfigDir()
 {
 	LPITEMIDLIST ppidl;
 	TCHAR pszAppDataPath[MAX_PATH];

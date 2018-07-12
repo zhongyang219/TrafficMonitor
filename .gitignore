@@ -291,3 +291,4 @@ __pycache__/
 !skin.ini
 *.dat
 *.bak
+/TrafficMonitor/skins/test*

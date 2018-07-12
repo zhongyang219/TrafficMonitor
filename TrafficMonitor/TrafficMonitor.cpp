@@ -132,6 +132,7 @@ void CTrafficMonitorApp::LoadConfig()
 	m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), false);
 	m_notify_interval = ini.GetInt(_T("other"), _T("notify_interval"), 60);
 	m_exit_when_start_by_restart_manager = ini.GetBool(_T("other"), _T("exit_when_start_by_restart_manager"), true);
+	m_debug_log = ini.GetBool(_T("other"), _T("debug_log"), false);
 }
 
 void CTrafficMonitorApp::SaveConfig()
@@ -399,9 +400,9 @@ BOOL CTrafficMonitorApp::InitInstance()
 	{
 		m_module_path_reg = m_module_path;
 	}
-	m_system_path = CCommon::GetSystemPath();
-	m_temp_path = CCommon::GetTemplatePath();
-	m_app_data_cfg_path = CCommon::GetAppDataConfigPath();
+	m_module_dir = CCommon::GetModuleDir();
+	m_system_dir = CCommon::GetSystemDir();
+	m_app_data_cfg_dir = CCommon::GetAppDataConfigDir();
 #ifdef _DEBUG
 	m_config_path = L".\\config.ini";
 	m_history_traffic_path = L".\\history_traffic.dat";
@@ -409,20 +410,19 @@ BOOL CTrafficMonitorApp::InitInstance()
 	m_skin_path = L".\\skins";
 #else
 	//AppData里面的程序配置文件路径
-	m_config_path = m_app_data_cfg_path + L"config.ini";
-	m_history_traffic_path = m_app_data_cfg_path + L"history_traffic.dat";
-	m_log_path = m_app_data_cfg_path + L"error.log";
+	m_config_path = m_app_data_cfg_dir + L"config.ini";
+	m_history_traffic_path = m_app_data_cfg_dir + L"history_traffic.dat";
+	m_log_path = m_app_data_cfg_dir + L"error.log";
 	//原来的、程序所在目录下的配置文件的路径
-	wstring exe_path = CCommon::GetExePath();
-	wstring config_path_old = exe_path + L"config.ini";
-	wstring history_traffic_path_old = exe_path + L"history_traffic.dat";
-	wstring log_path_old = exe_path + L"error.log";
+	wstring config_path_old = m_module_dir + L"config.ini";
+	wstring history_traffic_path_old = m_module_dir + L"history_traffic.dat";
+	wstring log_path_old = m_module_dir + L"error.log";
 	//如果程序所在目录下含有配置文件，则将其移动到AppData对应的目录下面
 	CCommon::MoveAFile(config_path_old.c_str(), m_config_path.c_str());
 	CCommon::MoveAFile(history_traffic_path_old.c_str(), m_history_traffic_path.c_str());
 	CCommon::MoveAFile(log_path_old.c_str(), m_log_path.c_str());
 
-	m_skin_path = exe_path + L"skins";
+	m_skin_path = m_module_dir + L"skins";
 #endif
 
 	bool is_windows10_fall_creator = m_win_version.IsWindows10FallCreatorOrLater();

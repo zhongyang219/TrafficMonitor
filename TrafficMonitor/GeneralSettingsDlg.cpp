@@ -185,6 +185,6 @@ void CGeneralSettingsDlg::OnBnClickedOpenConfigPathButton()
 #ifdef _DEBUG
 	ShellExecute(NULL, _T("explore"), _T(".\\"), NULL, NULL, SW_SHOWNORMAL);
 #else
-	ShellExecute(NULL, _T("explore"), theApp.m_app_data_cfg_path.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	ShellExecute(NULL, _T("explore"), theApp.m_app_data_cfg_dir.c_str(), NULL, NULL, SW_SHOWNORMAL);
 #endif
 }

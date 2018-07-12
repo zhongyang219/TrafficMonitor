@@ -22,15 +22,15 @@ class CTrafficMonitorApp : public CWinApp
 {
 public:
 	//各种路径
+	wstring m_module_dir;		//程序exe文件的目录
 	wstring m_module_path;		//程序exe文件的路径
 	wstring m_module_path_reg;	//用于作为写入注册表开机自项的exe文件的路径（如果路径中有空格，加上引号）
 	wstring m_config_path;
 	wstring m_history_traffic_path;
 	wstring m_log_path;
 	wstring m_skin_path;
-	wstring m_system_path;
-	wstring m_temp_path;
-	wstring m_app_data_cfg_path;
+	wstring m_system_dir;
+	wstring m_app_data_cfg_dir;
 
 	//以下数据定义为App类中的公共成员，以便于在主对话框和任务栏窗口中都能访问
 	unsigned int m_in_speed{};		//下载速度
@@ -51,6 +51,7 @@ public:
 	//其他设置数据
 	MainConfigData m_cfg_data;
 	int m_notify_interval;		//弹出通知消息的时间间隔
+	bool m_debug_log;
 
 	//bool m_is_windows10_fall_creator;
 	CWinVersionHelper m_win_version;		//当前Windows的版本

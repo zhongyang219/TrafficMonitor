@@ -58,24 +58,47 @@ void CAdapterCommon::GetAdapterInfo(vector<NetWorkConection>& adapters)
 
 void CAdapterCommon::GetIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTABLE* pIfTable)
 {
-	for (unsigned int i{}; i < pIfTable->dwNumEntries; i++)
+	//依次在IfTable里查找每个连接
+	for (size_t i{}; i < adapters.size(); i++)
 	{
-		string descr = (const char*)pIfTable->table[i].bDescr;
-		int index = FindConnectionInAdapterList(descr, adapters);
+		if (adapters[i].description.empty())
+			continue;
+		int index;
+		index = FindConnectionInIfTable(adapters[i].description, pIfTable);
+		if (index == -1)		//如果使用精确匹配的方式没有找到，则采用部分匹配的方式再查找一次
+			index = FindConnectionInIfTableFuzzy(adapters[i].description, pIfTable);
 		if (index != -1)
 		{
-			adapters[index].index = i;
-			adapters[index].in_bytes = pIfTable->table[i].dwInOctets;
-			adapters[index].out_bytes = pIfTable->table[i].dwOutOctets;
+			adapters[i].index = index;
+			adapters[i].in_bytes = pIfTable->table[index].dwInOctets;
+			adapters[i].out_bytes = pIfTable->table[index].dwOutOctets;
 		}
 	}
 }
 
-int CAdapterCommon::FindConnectionInAdapterList(string connection, const vector<NetWorkConection>& adapters)
+int CAdapterCommon::FindConnectionInIfTable(string connection, MIB_IFTABLE* pIfTable)
 {
-	for (size_t i{}; i<adapters.size(); i++)
+	for (size_t i{}; i < pIfTable->dwNumEntries; i++)
 	{
-		if (adapters[i].description == connection)
+		string descr = (const char*)pIfTable->table[i].bDescr;
+		if (descr == connection)
+			return i;
+	}
+	return -1;
+}
+
+int CAdapterCommon::FindConnectionInIfTableFuzzy(string connection, MIB_IFTABLE* pIfTable)
+{
+	for (size_t i{}; i < pIfTable->dwNumEntries; i++)
+	{
+		string descr = (const char*)pIfTable->table[i].bDescr;
+		size_t index;
+		//在较长的字符串里查找较短的字符串
+		if (descr.size() >= connection.size())
+			index = descr.find(connection);
+		else
+			index = connection.find(descr);
+		if (index != wstring::npos)
 			return i;
 	}
 	return -1;
