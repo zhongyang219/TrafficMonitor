@@ -1061,6 +1061,18 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 				info.LoadString(IDS_CONNECTION_NOT_MATCH);
 				info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt));
 				CCommon::WriteLog(info, theApp.m_log_path.c_str());
+
+				//写入额外的调试信息
+				if (theApp.m_debug_log)
+				{
+					CString log_str;
+					log_str = _T("连接名称不匹配：\r\n");
+					log_str += _T("IfTable description: ");
+					log_str += descr.c_str();
+					log_str += _T("\r\nm_connection_name: ");
+					log_str += theApp.m_cfg_data.m_connection_name.c_str();
+					CCommon::WriteLog(log_str, (theApp.m_config_dir + L".\\connections.log").c_str());
+				}
 			}
 		}
 
