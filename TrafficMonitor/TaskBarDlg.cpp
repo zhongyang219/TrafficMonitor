@@ -622,6 +622,8 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
 	pMenu->CheckMenuItem(ID_SHOW_MAIN_WND, MF_BYCOMMAND | (!theApp.m_cfg_data.m_hide_main_window ? MF_CHECKED : MF_UNCHECKED));
 	pMenu->CheckMenuItem(ID_SHOW_NOTIFY_ICON, MF_BYCOMMAND | (theApp.m_cfg_data.m_show_notify_icon ? MF_CHECKED : MF_UNCHECKED));
 
+	pMenu->EnableMenuItem(ID_SELECT_ALL_CONNECTION, MF_BYCOMMAND | (theApp.m_general_data.show_all_interface ? MF_GRAYED : MF_ENABLED));
+
 	//pMenu->SetDefaultItem(ID_NETWORK_INFO);
 	//设置默认菜单项
 	switch (theApp.m_taskbar_data.double_click_action)

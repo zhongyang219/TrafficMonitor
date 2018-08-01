@@ -342,9 +342,23 @@ void CTrafficMonitorDlg::IniConnection()
 		m_pIfTable = (MIB_IFTABLE *)malloc(m_dwSize);	//用新的大小重新开辟一块内存
 	}
 	//获取当前所有的连接，并保存到m_connections容器中
-	CAdapterCommon::GetAdapterInfo(m_connections);
 	GetIfTable(m_pIfTable, &m_dwSize, FALSE);
-	CAdapterCommon::GetIfTableInfo(m_connections, m_pIfTable);
+	if (!theApp.m_general_data.show_all_interface)
+	{
+		CAdapterCommon::GetAdapterInfo(m_connections);
+		CAdapterCommon::GetIfTableInfo(m_connections, m_pIfTable);
+	}
+	else
+	{
+		CAdapterCommon::GetAllIfTableInfo(m_connections, m_pIfTable);
+	}
+
+	//如果在设置了“显示所有网络连接”时设置了“选择全部”，则改为“自动选择”
+	if (theApp.m_general_data.show_all_interface && theApp.m_cfg_data.m_select_all)
+	{
+		theApp.m_cfg_data.m_select_all = false;
+		theApp.m_cfg_data.m_auto_select = true;
+	}
 
 	//写入调试日志
 	if (theApp.m_debug_log)
@@ -600,6 +614,10 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 
 		if(optionsDlg.m_tab3_dlg.IsAutoRunModified())
 			theApp.SetAutoRun(theApp.m_general_data.auto_run);
+
+		if (optionsDlg.m_tab3_dlg.IsShowAllInterfaceModified())
+			IniConnection();
+
 		theApp.SaveConfig();
 	}
 }
@@ -1438,6 +1456,8 @@ void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
 		pMenu->EnableMenuItem(ID_SHOW_NOTIFY_ICON, MF_BYCOMMAND | MF_GRAYED);
 	else
 		pMenu->EnableMenuItem(ID_SHOW_NOTIFY_ICON, MF_BYCOMMAND | MF_ENABLED);
+
+	pMenu->EnableMenuItem(ID_SELECT_ALL_CONNECTION, MF_BYCOMMAND | (theApp.m_general_data.show_all_interface? MF_GRAYED : MF_ENABLED));
 
 	//pMenu->SetDefaultItem(ID_NETWORK_INFO);
 }

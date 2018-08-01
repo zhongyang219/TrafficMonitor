@@ -22,15 +22,18 @@ public:
 
 public:
 	bool IsAutoRunModified() const { return m_auto_run_modified; }
+	bool IsShowAllInterfaceModified() const { return m_show_all_interface_modified; }
 
 protected:
 	bool m_auto_run_modified{ false };		//如果更改了开机自动运行的设置，则会置为true
+	bool m_show_all_interface_modified{ false };
 
 	//控件变量
 	CSpinEdit m_traffic_tip_edit;
 	CComboBox m_traffic_tip_combo;
 	CSpinEdit m_memory_tip_edit;
 	CComboBox m_language_combo;
+	CToolTipCtrl m_toolTip;
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
@@ -50,4 +53,6 @@ public:
 	afx_msg void OnBnClickedTodayTrafficTipCheck();
 	afx_msg void OnBnClickedMemoryUsageTipCheck();
 	afx_msg void OnBnClickedOpenConfigPathButton();
+	afx_msg void OnBnClickedShowAllConnectionCheck();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };

@@ -39,6 +39,7 @@ void CTrafficMonitorApp::LoadConfig()
 	m_general_data.allow_skin_cover_font = ini.GetBool(_T("general"), _T("allow_skin_cover_font"), true);
 	m_general_data.allow_skin_cover_text = ini.GetBool(_T("general"), _T("allow_skin_cover_text"), true);
 	m_general_data.language = static_cast<Language>(ini.GetInt(_T("general"), _T("language"), 0));
+	m_general_data.show_all_interface = ini.GetBool(L"general", L"show_all_interface", false);
 
 	//主窗口设置
 	m_cfg_data.m_transparency = ini.GetInt(_T("config"), _T("transparency"), 80);
@@ -144,6 +145,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteBool(_T("general"), _T("allow_skin_cover_font"), m_general_data.allow_skin_cover_font);
 	ini.WriteBool(_T("general"), _T("allow_skin_cover_text"), m_general_data.allow_skin_cover_text);
 	ini.WriteInt(_T("general"), _T("language"), static_cast<int>(m_general_data.language));
+	ini.WriteBool(L"general", L"show_all_interface", m_general_data.show_all_interface);
 
 	//主窗口设置
 	//保存前先获取窗口的位置

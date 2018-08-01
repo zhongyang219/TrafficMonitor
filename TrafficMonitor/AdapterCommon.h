@@ -24,6 +24,9 @@ public:
 
 	//获取网络列表中每个网络连接的MIB_IFTABLE中的索引、初始时已接收/发送字节数的信息
 	static void GetIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTABLE* pIfTable);
+
+	//直接将MIB_IFTABLE中的所有连接添加到adapters容器中
+	static void GetAllIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTABLE* pIfTable);
 private:
 	//根据一个网络连接描述判断是否在IfTable列表里，返回索引，找不到则返回-1
 	static int FindConnectionInIfTable(string connection, MIB_IFTABLE* pIfTable);

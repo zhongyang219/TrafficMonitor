@@ -76,6 +76,32 @@ void CAdapterCommon::GetIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTA
 	}
 }
 
+void CAdapterCommon::GetAllIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTABLE * pIfTable)
+{
+	vector<NetWorkConection> adapters_tmp;
+	GetAdapterInfo(adapters_tmp);		//ªÒ»°IPµÿ÷∑
+	adapters.clear();
+	for (size_t i{}; i < pIfTable->dwNumEntries; i++)
+	{
+		NetWorkConection connection;
+		connection.description = (const char*)pIfTable->table[i].bDescr;
+		connection.index = i;
+		connection.in_bytes = pIfTable->table[i].dwInOctets;
+		connection.out_bytes = pIfTable->table[i].dwOutOctets;
+		for (size_t j{}; j < adapters_tmp.size(); j++)
+		{
+			if (connection.description.find(adapters_tmp[j].description) != string::npos)
+			{
+				connection.ip_address = adapters_tmp[j].ip_address;
+				connection.subnet_mask = adapters_tmp[j].subnet_mask;
+				connection.default_gateway = adapters_tmp[j].default_gateway;
+				break;
+			}
+		}
+		adapters.push_back(connection);
+	}
+}
+
 int CAdapterCommon::FindConnectionInIfTable(string connection, MIB_IFTABLE* pIfTable)
 {
 	for (size_t i{}; i < pIfTable->dwNumEntries; i++)

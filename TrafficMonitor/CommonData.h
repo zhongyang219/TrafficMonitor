@@ -184,6 +184,8 @@ struct GeneralSettingData
 	int memory_tip_value;			//要提示的内存使用率的临界值
 	//语言
 	Language language;
+
+	bool show_all_interface{ true };
 };
 
 enum class Alignment
