@@ -112,6 +112,12 @@ public:
 	//安全的字符串复制函数
 	static void WStringCopy(wchar_t* str_dest, int dest_size, const wchar_t* str_source, int source_size = INT_MAX);
 
+	/// <summary>
+	/// 字符串相似度算法-编辑距离法
+	/// </summary>
+	/// <returns>返回的值为0~1，越大相似度越高</returns>
+	static double StringSimilarDegree_LD(const string& srcString, const string& matchString);
+
 	//设置线程语言
 	static void SetThreadLanguage(Language language);
 };

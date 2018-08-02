@@ -719,6 +719,39 @@ void CCommon::WStringCopy(wchar_t * str_dest, int dest_size, const wchar_t * str
 		str_dest[dest_size - 1] = L'\0';
 }
 
+double CCommon::StringSimilarDegree_LD(const string & srcString, const string & matchString)
+{
+	int n = srcString.size();
+	int m = matchString.size();
+	//int[, ] d = new int[n + 1, m + 1]; // matrix
+	vector<vector<int>> d(n + 1, vector<int>(m + 1));
+	int cost; // cost
+			  // Step 1（如果其中一个字符串长度为0，则相似度为1）？
+			  //if (n == 0) return (double)m / max(srcString.size(), matchString.size());
+			  //if (m == 0) return (double)n / max(srcString.size(), matchString.size());
+	if (n == 0 || m == 0) return 0.0;	//如果其中一个字符串长度为0，则相似度为0
+										// Step 2
+	for (int i = 0; i <= n; d[i][0] = i++);
+	for (int j = 0; j <= m; d[0][j] = j++);
+	// Step 3
+	for (int i = 1; i <= n; i++)
+	{
+		//Step 4
+		for (int j = 1; j <= m; j++)
+		{
+			// Step 5
+			cost = (matchString.substr(j - 1, 1) == srcString.substr(i - 1, 1) ? 0 : 1);
+			// Step 6
+			d[i][j] = min(min(d[i - 1][j] + 1, d[i][j - 1] + 1), d[i - 1][j - 1] + cost);
+		}
+	}
+
+	// Step 7
+	double ds = 1 - (double)d[n][m] / max(srcString.size(), matchString.size());
+
+	return ds;
+}
+
 void CCommon::SetThreadLanguage(Language language)
 {
 	switch (language)

@@ -65,15 +65,15 @@ void CAdapterCommon::GetIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTA
 			continue;
 		int index;
 		index = FindConnectionInIfTable(adapters[i].description, pIfTable);
-		if (index == -1)		//如果使用精确匹配的方式没有找到，则采用部分匹配的方式再查找一次
+		if (index == -1)		//如果使用精确匹配的方式没有找到，则采用模糊匹配的方式再查找一次
 			index = FindConnectionInIfTableFuzzy(adapters[i].description, pIfTable);
-		if (index != -1)
-		{
-			adapters[i].index = index;
-			adapters[i].in_bytes = pIfTable->table[index].dwInOctets;
-			adapters[i].out_bytes = pIfTable->table[index].dwOutOctets;
-			adapters[i].description_2 = (const char*)pIfTable->table[index].bDescr;
-		}
+		//if (index != -1)
+		//{
+		adapters[i].index = index;
+		adapters[i].in_bytes = pIfTable->table[index].dwInOctets;
+		adapters[i].out_bytes = pIfTable->table[index].dwOutOctets;
+		adapters[i].description_2 = (const char*)pIfTable->table[index].bDescr;
+		//}
 	}
 }
 
@@ -128,5 +128,18 @@ int CAdapterCommon::FindConnectionInIfTableFuzzy(string connection, MIB_IFTABLE*
 		if (index != wstring::npos)
 			return i;
 	}
-	return -1;
+	//如果还是没有找到，则使用字符串匹配算法查找
+	double max_degree{};
+	int best_index{};
+	for (size_t i{}; i < pIfTable->dwNumEntries; i++)
+	{
+		string descr = (const char*)pIfTable->table[i].bDescr;
+		double degree = CCommon::StringSimilarDegree_LD(descr, connection);
+		if (degree > max_degree)
+		{
+			max_degree = degree;
+			best_index = i;
+		}
+	}
+	return best_index;
 }
