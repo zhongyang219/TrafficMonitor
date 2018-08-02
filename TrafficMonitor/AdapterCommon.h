@@ -5,7 +5,8 @@
 struct NetWorkConection
 {
 	int index{};			//该连接在MIB_IFTABLE中的索引
-	string description;		//网络描述
+	string description;		//网络描述（获取自GetAdapterInfo）
+	string description_2;	//网络描述（获取自GetIfTable）
 	unsigned int in_bytes;	//初始时已接收字节数
 	unsigned int out_bytes;	//初始时已发送字节数
 	wstring ip_address{ L"-.-.-.-" };	//IP地址

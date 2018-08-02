@@ -72,6 +72,7 @@ void CAdapterCommon::GetIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTA
 			adapters[i].index = index;
 			adapters[i].in_bytes = pIfTable->table[index].dwInOctets;
 			adapters[i].out_bytes = pIfTable->table[index].dwOutOctets;
+			adapters[i].description_2 = (const char*)pIfTable->table[index].bDescr;
 		}
 	}
 }
@@ -84,7 +85,7 @@ void CAdapterCommon::GetAllIfTableInfo(vector<NetWorkConection>& adapters, MIB_I
 	for (size_t i{}; i < pIfTable->dwNumEntries; i++)
 	{
 		NetWorkConection connection;
-		connection.description = (const char*)pIfTable->table[i].bDescr;
+		connection.description = connection.description_2 = (const char*)pIfTable->table[i].bDescr;
 		connection.index = i;
 		connection.in_bytes = pIfTable->table[i].dwInOctets;
 		connection.out_bytes = pIfTable->table[i].dwOutOctets;

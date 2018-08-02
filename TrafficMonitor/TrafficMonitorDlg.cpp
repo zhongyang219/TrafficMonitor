@@ -404,13 +404,13 @@ void CTrafficMonitorDlg::IniConnection()
 		m_connection_selected = 0;
 		for (size_t i{}; i < m_connections.size(); i++)
 		{
-			if (m_connections[i].description == theApp.m_cfg_data.m_connection_name)
+			if (m_connections[i].description_2 == theApp.m_cfg_data.m_connection_name)
 				m_connection_selected = i;
 		}
 	}
 	if (m_connection_selected < 0 || m_connection_selected >= m_connections.size())
 		m_connection_selected = 0;
-	theApp.m_cfg_data.m_connection_name = m_connections[m_connection_selected].description;
+	theApp.m_cfg_data.m_connection_name = m_connections[m_connection_selected].description_2;
 
 	//根据已获取到的连接在菜单中添加相应项目
 	m_menu.DestroyMenu();
@@ -1056,12 +1056,6 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			descr = (const char*)m_pIfTable->table[m_connections[m_connection_selected].index].bDescr;
 			if (descr != theApp.m_cfg_data.m_connection_name)
 			{
-				IniConnection();
-				CString info;
-				info.LoadString(IDS_CONNECTION_NOT_MATCH);
-				info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt));
-				CCommon::WriteLog(info, theApp.m_log_path.c_str());
-
 				//写入额外的调试信息
 				if (theApp.m_debug_log)
 				{
@@ -1073,6 +1067,12 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 					log_str += theApp.m_cfg_data.m_connection_name.c_str();
 					CCommon::WriteLog(log_str, (theApp.m_config_dir + L".\\connections.log").c_str());
 				}
+
+				IniConnection();
+				CString info;
+				info.LoadString(IDS_CONNECTION_NOT_MATCH);
+				info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt));
+				CCommon::WriteLog(info, theApp.m_log_path.c_str());
 			}
 		}
 
@@ -1432,7 +1432,7 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 	if (uMsg > ID_SELECT_ALL_CONNECTION && uMsg <= ID_SELECT_ALL_CONNECTION + m_connections.size())	//选择了一个网络连接
 	{
 		m_connection_selected = uMsg - ID_SELECT_ALL_CONNECTION - 1;
-		theApp.m_cfg_data.m_connection_name = m_connections[m_connection_selected].description;
+		theApp.m_cfg_data.m_connection_name = m_connections[m_connection_selected].description_2;
 		theApp.m_cfg_data.m_auto_select = false;
 		theApp.m_cfg_data.m_select_all = false;
 		theApp.SaveConfig();
