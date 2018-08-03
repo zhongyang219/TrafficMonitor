@@ -211,6 +211,7 @@
     <ClInclude Include="OptionsDlg.h" />
     <ClInclude Include="PictureStatic.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SimpleXML.h" />
     <ClInclude Include="SkinDlg.h" />
     <ClInclude Include="SpinEdit.h" />
     <ClInclude Include="StaticEx.h" />
@@ -247,6 +248,7 @@
     <ClCompile Include="NetworkInfoDlg.cpp" />
     <ClCompile Include="OptionsDlg.cpp" />
     <ClCompile Include="PictureStatic.cpp" />
+    <ClCompile Include="SimpleXML.cpp" />
     <ClCompile Include="SkinDlg.cpp" />
     <ClCompile Include="SpinEdit.cpp" />
     <ClCompile Include="StaticEx.cpp" />

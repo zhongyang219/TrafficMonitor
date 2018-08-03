@@ -100,6 +100,9 @@
     <Filter Include="源文件和头文件\对话框类\AboutDlg">
       <UniqueIdentifier>{1f240f1b-347d-4281-a4cf-18bfebfacb6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\SimpleXML">
+      <UniqueIdentifier>{8c35a0e3-e526-4f2f-9bc2-ed74dd37b238}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -216,6 +219,9 @@
     <ClInclude Include="AboutDlg.h">
       <Filter>源文件和头文件\对话框类\AboutDlg</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleXML.h">
+      <Filter>源文件和头文件\公共的类\SimpleXML</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -316,6 +322,9 @@
     </ClCompile>
     <ClCompile Include="AboutDlg.cpp">
       <Filter>源文件和头文件\对话框类\AboutDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleXML.cpp">
+      <Filter>源文件和头文件\公共的类\SimpleXML</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

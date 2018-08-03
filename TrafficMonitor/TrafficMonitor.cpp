@@ -277,22 +277,22 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
 		return;
 	}
 
-	size_t index, index1, index2, index3, index4, index5;
-	index = version_info.find(L"<version>");
-	index1 = version_info.find(L"</version>");
-	index2 = version_info.find(L"<link>");
-	index3 = version_info.find(L"</link>");
-	index4 = version_info.find(L"<contents>");
-	index5 = version_info.find(L"</contents>");
 	wstring version;		//程序版本
 	wstring link;			//下载链接
-	wstring contents;		//更新内容
-	version = version_info.substr(index + 9, index1 - index - 9);
-	link = version_info.substr(index2 + 6, index3 - index2 - 6);
-	contents = version_info.substr(index4 + 10, index5 - index4 - 10);
-	CString contents_str = contents.c_str();
-	contents_str.Replace(L"\\n", L"\r\n");
-	if (index == wstring::npos || index1 == wstring::npos || index2 == wstring::npos || index3 == wstring::npos || version.empty() || link.empty())
+	CString contents_zh_cn;	//更新内容（简体中文）
+	CString contents_en;	//更新内容（Englisg）
+	CString contents_zh_tw;	//更新内容（繁体中文）
+	CSimpleXML version_xml;
+	version_xml.LoadXMLContentDirect(version_info);
+	version = version_xml.GetNode(L"version");
+	link = version_xml.GetNode(L"link");
+	contents_zh_cn = version_xml.GetNode(L"contents_zh_cn", L"update_contents").c_str();
+	contents_en = version_xml.GetNode(L"contents_en", L"update_contents").c_str();
+	contents_zh_tw = version_xml.GetNode(L"contents_zh_tw", L"update_contents").c_str();
+	contents_zh_cn.Replace(L"\\n", L"\r\n");
+	contents_en.Replace(L"\\n", L"\r\n");
+	contents_zh_tw.Replace(L"\\n", L"\r\n");
+	if (version.empty() || link.empty())
 	{
 		if (message)
 			AfxMessageBox(CCommon::LoadText(IDS_CHECK_UPDATE_ERROR), MB_OK | MB_ICONWARNING);
@@ -301,10 +301,20 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
 	if (version > VERSION)		//如果服务器上的版本大于本地版本
 	{
 		CString info;
-		if (contents.empty())
+		//根据语言设置选择对应语言版本的更新内容
+		int language_code = _ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE));
+		CString contents_lan;
+		switch (language_code)
+		{
+		case 2: contents_lan = contents_zh_cn; break;
+		case 3: contents_lan = contents_zh_tw; break;
+		default: contents_lan = contents_en; break;
+		}
+
+		if (contents_lan.IsEmpty())
 			info.Format(CCommon::LoadText(IDS_UPDATE_AVLIABLE), version.c_str());
 		else
-			info.Format(CCommon::LoadText(IDS_UPDATE_AVLIABLE2), version.c_str(), contents_str);
+			info.Format(CCommon::LoadText(IDS_UPDATE_AVLIABLE2), version.c_str(), contents_lan.GetString());
 			
 		if (AfxMessageBox(info, MB_YESNO | MB_ICONQUESTION) == IDYES)
 		{
@@ -387,6 +397,10 @@ CTrafficMonitorApp theApp;
 
 BOOL CTrafficMonitorApp::InitInstance()
 {
+	//CSimpleXML xml(L"C:\\Temp\\xmldoc_test1.xml");
+	//wstring str;
+	//str = xml.GetNode(L"panorama", L"face1");
+
 	//设置配置文件的路径
 	wchar_t path[MAX_PATH];
 	GetModuleFileNameW(NULL, path, MAX_PATH);
