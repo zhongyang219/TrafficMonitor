@@ -326,6 +326,8 @@ void CTrafficMonitorDlg::AutoSelect()
 			}
 		}
 	}
+	theApp.m_cfg_data.m_connection_name = m_connections[m_connection_selected].description_2;
+	m_connection_change_flag = true;
 }
 
 void CTrafficMonitorDlg::IniConnection()
