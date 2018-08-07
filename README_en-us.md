@@ -26,4 +26,5 @@ Change Skins:<br>
 ![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/selecte_skin.png)<br>
 Options:<br>
 ![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/option.png)<br>
-
+# Update log
+**[Click here to view the update log.](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log.md)**
