@@ -1,3 +1,3 @@
-<version>1.74</version>
-<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.74/TrafficMonitor_V1.74.7z</link>
-<contents>修正两处导致程序崩溃的问题；\n新增：监控所有连接的网速的功能；\n右键菜单“选择网络连接”中显示所有的网络接口，不显示loopback接口；\n新增：任务栏窗口项目可以水平排列；\n新增：繁体中文语言支持；\n其他细节方面的改进。</contents>
+<version>1.75</version>
+<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.75/TrafficMonitor_V1.75.7z</link>
+<contents>任务栏窗口右键菜单增加“选择网络连接”菜单项；\n写入配置文件时改为使用UTF8编码；\n新增网速单位为B(字节)或b(比特)的设置；\n修正部分电脑中无法获取网速的问题；\n修正部分电脑中会反复产生错误日志的问题；\n皮肤11 UI调整，修正有时文本显示不全的问题；\n其他细节方面的改进。</contents>
