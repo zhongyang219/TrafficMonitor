@@ -15,16 +15,16 @@ If you encounter any problems, please [click here](https://github.com/zhongyang2
 * Historical traffic statistics.<br>
 # Screen shoots
 Main Suspension Window:<br>
-![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/main1.png)<br>
+![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/en_us/main1.png)<br>
 Right-Click Menu:<br>
-![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/main.png)<br>
+![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/en_us/main.png)<br>
 Taskbar Window<br>
-![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/taskbar.PNG)<br>
+![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/en_us/taskbar.png)<br>
 Colorful Skins:<br>
 ![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/skins.PNG)<br>
 Change Skins:<br>
-![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/selecte_skin.png)<br>
+![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/en_us/selecte_skin.png)<br>
 Options:<br>
-![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/option.png)<br>
+![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/en_us/option.png)<br>
 # Update log
 **[Click here to view the update log.](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log.md)**
