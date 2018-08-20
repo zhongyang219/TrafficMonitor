@@ -691,6 +691,11 @@ void CTrafficMonitorDlg::LoadBackGroundImage()
 	{
 		wnd_rgn.CreateRectRgnIndirect(CRect(CPoint(0, 0), image_size));		//载入掩码图片失败，则使用窗口大小作为窗口区域
 	}
+	//避免获取到的窗口区域为空
+	CRgn empty_rgn;
+	empty_rgn.CreateRectRgnIndirect(CRect{});	//创建一个空的CRgn对象
+	if(wnd_rgn.EqualRgn(&empty_rgn))
+		wnd_rgn.SetRectRgn(CRect(CPoint(0, 0), image_size));	//如果获取到的窗口区域为空，则使用窗口大小作为窗口区域
 	SetWindowRgn(wnd_rgn, TRUE);		//设置窗口区域
 }
 
