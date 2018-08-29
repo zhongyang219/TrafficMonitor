@@ -547,7 +547,8 @@ void CTrafficMonitorDlg::LoadHistoryTraffic()
 			traffic.day = atoi(temp.c_str());
 			temp = current_line.substr(11);
 			traffic.kBytes = atoi(temp.c_str());
-			m_history_traffics.push_back(traffic);
+			if (traffic.year > 0 && traffic.month > 0 && traffic.day > 0 && traffic.kBytes > 0)
+				m_history_traffics.push_back(traffic);
 		}
 	}
 
