@@ -186,6 +186,8 @@ struct GeneralSettingData
 	Language language;
 
 	bool show_all_interface{ true };
+
+	bool portable_mode{ false };		//便携模式，如果为true，则程序所有数据都保存到exe所在目录下，否则保存到Appdata\Romaing目录下
 };
 
 enum class Alignment

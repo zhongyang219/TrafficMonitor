@@ -246,6 +246,18 @@ void CTrafficMonitorApp::SaveConfig()
 	}
 }
 
+void CTrafficMonitorApp::LoadGlobalConfig()
+{
+	CIniHelper ini{ m_module_dir + L"global_cfg.ini" };
+	m_general_data.portable_mode = ini.GetBool(L"config", L"portable_mode", false);
+}
+
+void CTrafficMonitorApp::SaveGlobalConfig()
+{
+	CIniHelper ini{ m_module_dir + L"global_cfg.ini" };
+	ini.WriteBool(L"config", L"portable_mode", m_general_data.portable_mode);
+}
+
 int CTrafficMonitorApp::DPI(int pixel)
 {
 	return m_dpi * pixel / 96;

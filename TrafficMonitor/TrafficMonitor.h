@@ -65,6 +65,9 @@ public:
 	void LoadConfig();
 	void SaveConfig();
 
+	void LoadGlobalConfig();
+	void SaveGlobalConfig();
+
 	int DPI(int pixel);
 	void DPI(CRect& rect);
 	void GetDPI(CWnd* pWnd);
