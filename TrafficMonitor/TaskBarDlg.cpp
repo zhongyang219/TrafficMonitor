@@ -232,7 +232,7 @@ bool CTaskBarDlg::AdjustWindowPos()
 		CalculateWindowWidth();
 		last_taskbar_on_top_or_bottom = m_taskbar_on_top_or_bottom;
 	}
-	int wnd_x_pos{}, wnd_y_pos{};
+
 	if (m_taskbar_on_top_or_bottom)		//当任务栏在桌面顶部或底部时
 	{
 		//设置窗口大小
@@ -246,17 +246,17 @@ bool CTaskBarDlg::AdjustWindowPos()
 			if (!theApp.m_taskbar_data.tbar_wnd_on_left)
 			{
 				::MoveWindow(m_hMin, m_left_space, 0, m_rcMin.Width() - m_rect.Width(), m_rcMin.Height(), TRUE);	//设置最小化窗口的位置
-				wnd_x_pos = m_left_space + m_rcMin.Width() - m_rect.Width() + 2;
+				m_rect.MoveToX(m_left_space + m_rcMin.Width() - m_rect.Width() + 2);
 			}
 			else
 			{
 				::MoveWindow(m_hMin, m_left_space + m_rect.Width(), 0, m_rcMin.Width() - m_rect.Width(), m_rcMin.Height(), TRUE);
-				wnd_x_pos = m_left_space;
+				m_rect.MoveToX(m_left_space);
 			}
-			wnd_y_pos = (m_rcBar.Height() - m_rect.Height()) / 2;
+			m_rect.MoveToY((m_rcBar.Height() - m_rect.Height()) / 2);
 			if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())
-				wnd_y_pos += theApp.DPI(1);
-			::MoveWindow(this->m_hWnd, wnd_x_pos, wnd_y_pos, m_rect.Width(), m_rect.Height(), TRUE);		//设置任务栏窗口的位置
+				m_rect.MoveToY(m_rect.top + theApp.DPI(1));
+			MoveWindow(m_rect);
 		}
 	}
 	else		//当任务栏在屏幕在左侧或右侧时
@@ -274,25 +274,25 @@ bool CTaskBarDlg::AdjustWindowPos()
 			if (!theApp.m_taskbar_data.tbar_wnd_on_left)
 			{
 				::MoveWindow(m_hMin, 0, m_top_space, m_rcMin.Width(), m_rcMin.Height() - m_rect.Height(), TRUE);	//设置最小化窗口的位置
-				wnd_y_pos = m_top_space + m_rcMin.Height() - m_rect.Height() + 2;
+				m_rect.MoveToY(m_top_space + m_rcMin.Height() - m_rect.Height() + 2);
 			}
 			else
 			{
 				::MoveWindow(m_hMin, 0, m_top_space + m_rect.Height(), m_rcMin.Width(), m_rcMin.Height() - m_rect.Height(), TRUE);	//设置最小化窗口的位置
-				wnd_y_pos = m_top_space;
+				m_rect.MoveToY(m_top_space);
 			}
-			wnd_x_pos = (m_rcMin.Width() - window_width) / 2;
-			if (wnd_x_pos < theApp.DPI(2)) wnd_x_pos = theApp.DPI(2);
-			::MoveWindow(this->m_hWnd, wnd_x_pos, wnd_y_pos, m_rect.Width(), m_rect.Height(), TRUE);		//设置任务栏窗口的位置
+			m_rect.MoveToX((m_rcMin.Width() - window_width) / 2);
+			if (m_rect.left < theApp.DPI(2))
+				m_rect.MoveToX(theApp.DPI(2));
+			MoveWindow(m_rect);
 		}
 	}
 
-	CRect rect{};
-	GetWindowRect(rect);	//获取当前窗口的绝对位置
+	CRect rect{ m_rect };
 	//如果窗口没有被成功嵌入到任务栏，窗口移动到了基于屏幕左上角的绝对位置，则修正窗口的位置
-	if (rect.left == wnd_x_pos && rect.top == wnd_y_pos)
+	if (m_connot_insert_to_task_bar)
 	{
-		rect.MoveToXY(rect.left + m_rcBar.left, rect.top + m_rcBar.top);
+		rect.MoveToXY(rect.left + rcBar.left, rect.top + rcBar.top);
 		this->MoveWindow(rect);
 	}
 
@@ -499,7 +499,6 @@ BOOL CTaskBarDlg::OnInitDialog()
 	else
 		m_rect.right = m_rect.left + m_window_width;
 
-	int wnd_x_pos, wnd_y_pos;
 	if (m_taskbar_on_top_or_bottom)		//如果任务栏在桌面顶部或底部
 	{
 		m_min_bar_width = m_rcMin.Width() - m_rect.Width();	//保存最小化窗口宽度
@@ -510,20 +509,20 @@ BOOL CTaskBarDlg::OnInitDialog()
 		else
 			::MoveWindow(m_hMin, m_left_space + m_rect.Width(), 0, m_rcMin.Width() - m_rect.Width(), m_rcMin.Height(), TRUE);
 
-		::SetParent(this->m_hWnd, m_hBar);	//把程序窗口设置成任务栏的子窗口
+		m_connot_insert_to_task_bar = !(::SetParent(this->m_hWnd, m_hBar));	//把程序窗口设置成任务栏的子窗口
+		//m_connot_insert_to_task_bar = true;
 		m_error_code = GetLastError();
 
 		//调整程序窗口的大小和位置
-		//注：当把当前窗口设置为任务栏的子窗口后，MoveWindow函数移动的位置是基于任务栏的相对位置，
-		//在某些情况下，如被安全软件阻止时，窗口无法嵌入任务栏，窗口会移动到基于屏幕左上角的绝对位置。
 		if(!theApp.m_taskbar_data.tbar_wnd_on_left)
-			wnd_x_pos = m_left_space + m_rcMin.Width() - m_rect.Width() + 2;
+			m_rect.MoveToX(m_left_space + m_rcMin.Width() - m_rect.Width() + 2);
 		else
-			wnd_x_pos = m_left_space;
-		wnd_y_pos = (m_rcBar.Height() - m_rect.Height()) / 2;
+			m_rect.MoveToX(m_left_space);
+		m_rect.MoveToY((m_rcBar.Height() - m_rect.Height()) / 2);
 		if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())		//系统是Win7并且水平排列时，任务栏窗口位置向下调整一个像素
-			wnd_y_pos += theApp.DPI(1);
-		::MoveWindow(this->m_hWnd, wnd_x_pos, wnd_y_pos, m_rect.Width(), m_rect.Height(), TRUE);
+			m_rect.MoveToY(m_rect.top + theApp.DPI(1));
+		//::MoveWindow(this->m_hWnd, wnd_x_pos, wnd_y_pos, m_rect.Width(), m_rect.Height(), TRUE);
+		MoveWindow(m_rect);
 	}
 	else	//当任务栏在桌面左侧或右侧时
 	{
@@ -543,30 +542,26 @@ BOOL CTaskBarDlg::OnInitDialog()
 		else
 			::MoveWindow(m_hMin, 0, m_top_space + m_rect.Height(), m_rcMin.Width(), m_rcMin.Height() - m_rect.Height(), TRUE);
 
-		::SetParent(this->m_hWnd, m_hBar);	//把程序窗口设置成任务栏的子窗口
+		m_connot_insert_to_task_bar = (!::SetParent(this->m_hWnd, m_hBar));	//把程序窗口设置成任务栏的子窗口
+		//m_connot_insert_to_task_bar = true;
 		m_error_code = GetLastError();
 
 		//调整程序窗口的大小和位置
-		//注：当把当前窗口设置为任务栏的子窗口后，MoveWindow函数移动的位置是基于任务栏的相对位置，
-		//在某些情况下，如被安全软件阻止时，窗口无法嵌入任务栏，窗口会移动到基于屏幕左上角的绝对位置。
-		wnd_x_pos = (m_rcMin.Width() - window_width) / 2;
-		if (wnd_x_pos < theApp.DPI(2)) wnd_x_pos = theApp.DPI(2);
+		m_rect.MoveToX((m_rcMin.Width() - window_width) / 2);
+		if (m_rect.left < theApp.DPI(2))
+			m_rect.MoveToX(theApp.DPI(2));
 		if (!theApp.m_taskbar_data.tbar_wnd_on_left)
-			wnd_y_pos = m_top_space + m_rcMin.Height() - m_rect.Height() + 2;
+			m_rect.MoveToY(m_top_space + m_rcMin.Height() - m_rect.Height() + 2);
 		else
-			wnd_y_pos = m_top_space;
-		::MoveWindow(this->m_hWnd, wnd_x_pos, wnd_y_pos, m_rect.Width(), m_rect.Height(), TRUE);
-
+			m_rect.MoveToY(m_top_space);
+		MoveWindow(m_rect);
 	}
-	CRect rect;
-	GetWindowRect(rect);	//获取当前窗口的绝对位置
+	CRect rect{ m_rect };
 	//如果窗口没有被成功嵌入到任务栏，窗口移动到了基于屏幕左上角的绝对位置，则修正窗口的位置
-	if (rect.left == wnd_x_pos && rect.top == wnd_y_pos)
+	if (m_connot_insert_to_task_bar)
 	{
 		rect.MoveToXY(rect.left + m_rcBar.left, rect.top + m_rcBar.top);
 		this->MoveWindow(rect);
-		m_connot_insert_to_task_bar = true;
-		//MessageBox(_T("警告：窗口没有成功嵌入任务栏，可能已被安全软件阻止！"), NULL, MB_ICONWARNING);
 	}
 
 	m_menu.LoadMenu(IDR_TASK_BAR_MENU);
