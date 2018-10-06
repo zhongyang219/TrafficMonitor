@@ -605,6 +605,7 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 
 		ApplySettings();
 		theApp.SaveConfig();
+		theApp.SaveGlobalConfig();
 
 		//CTaskBarDlg::SaveConfig();
 		if (m_tBarDlg != nullptr)
@@ -1408,7 +1409,9 @@ void CTrafficMonitorDlg::OnClose()
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	theApp.m_cannot_save_config_warning = true;
+	theApp.m_cannot_save_global_config_warning = true;
 	theApp.SaveConfig();	//退出前保存设置到ini文件
+	theApp.SaveGlobalConfig();
 	SaveHistoryTraffic();
 
 	if (m_tBarDlg != nullptr)

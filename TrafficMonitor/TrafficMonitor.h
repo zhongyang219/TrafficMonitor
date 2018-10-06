@@ -24,6 +24,7 @@ class CTrafficMonitorApp : public CWinApp
 public:
 	//各种路径
 	wstring m_module_dir;		//程序exe文件的目录
+	wstring m_appdata_dir;
 	wstring m_module_path;		//程序exe文件的路径
 	wstring m_module_path_reg;	//用于作为写入注册表开机自项的exe文件的路径（如果路径中有空格，加上引号）
 	wstring m_config_path;
@@ -44,6 +45,7 @@ public:
 	__int64 m_today_traffic{};	//今天已使用的流量
 
 	bool m_cannot_save_config_warning{ true };	//指示是否会在无法保存设置时弹出提示框
+	bool m_cannot_save_global_config_warning{ true };	//指示是否会在无法保存设置时弹出提示框
 
 	//选项设置数据
 	MainWndSettingData m_main_wnd_data;
