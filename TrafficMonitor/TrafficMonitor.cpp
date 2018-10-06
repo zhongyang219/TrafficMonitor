@@ -248,8 +248,15 @@ void CTrafficMonitorApp::SaveConfig()
 
 void CTrafficMonitorApp::LoadGlobalConfig()
 {
-	CIniHelper ini{ m_module_dir + L"global_cfg.ini" };
-	m_general_data.portable_mode = ini.GetBool(L"config", L"portable_mode", false);
+	bool portable_mode_default{ false };
+	wstring global_cfg_path{ m_module_dir + L"global_cfg.ini" };
+	if (!CCommon::FileExist(global_cfg_path.c_str()))		//如果global_cfg.ini不存在，则根据AppData/Roaming/TrafficMonitor目录下是否存在config.ini来判断配置文件的保存位置
+	{
+		portable_mode_default = !CCommon::FileExist((m_appdata_dir + L"config.ini").c_str());
+	}
+
+	CIniHelper ini{ global_cfg_path };
+	m_general_data.portable_mode = ini.GetBool(L"config", L"portable_mode", portable_mode_default);
 }
 
 void CTrafficMonitorApp::SaveGlobalConfig()
