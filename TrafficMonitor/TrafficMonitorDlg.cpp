@@ -855,6 +855,8 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	if (theApp.m_cfg_data.m_hide_main_window || (theApp.m_cfg_data.m_position_x == 0 && theApp.m_cfg_data.m_position_y == 0))
 		SetTransparency(0);
 
+	SetTimer(TASKBAR_TIMER, 100, NULL);
+
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -1200,6 +1202,15 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 	{
 		AutoSelect();
 		KillTimer(DELAY_TIMER);
+	}
+
+	if (nIDEvent == TASKBAR_TIMER)
+	{
+		if (m_tBarDlg != nullptr)
+		{
+			m_tBarDlg->AdjustWindowPos();
+			m_tBarDlg->Invalidate(FALSE);
+		}
 	}
 
 	CDialogEx::OnTimer(nIDEvent);
