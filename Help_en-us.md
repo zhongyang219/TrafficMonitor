@@ -26,6 +26,9 @@ Note: The notification area icon will be automatically displayed in the followin
 * Hide the main window without displaying the taskbar window;
 * Close the taskbar window when the main window is hidden;
 * Close the taskbar window when the "Mouse Penetrate" is set.
+### 8. The CPU usage displayed on TrafficMonitor is not accurate, which is smaller than in the task manager.
+This problem exists not only in Trafficmonitor, but also in other software that has CPU usage display function. It seems to be due to the result of the CPU usage acquired by API after Windows 10 is inconsistent with whitch shown by the task Manager. <br>
+(The information displayed by the software is for reference only. I am not responsible for any loss caused by inaccurate data displayed.) ）
 <br><br>
 >If you have encountered any other problems, please click "Contact Author" in the "About" dialog box, or directly [click here](mailto:zhongyang219@hotmail.com) to send me an email.<br>
 Please describe the problems you have encountered in detail, the error prompts, what operations you have tried, it is better to attach the screenshots and configuration files ("Options"-"General Settings"-"Open configuration file path"). <br>
