@@ -574,7 +574,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 	m_tool_tips.AddTool(this, _T(""));
 	SetToolTipsTopMost();		//设置提示信息总是置顶
 
-	SetTimer(TASKBAR_TIMER, 100, NULL);
+	//SetTimer(TASKBAR_TIMER, 100, NULL);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -699,12 +699,12 @@ void CTaskBarDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 void CTaskBarDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	if (nIDEvent == TASKBAR_TIMER)
-	{
-		AdjustWindowPos();
-		//ShowInfo();
-		Invalidate(FALSE);
-	}
+	//if (nIDEvent == TASKBAR_TIMER)
+	//{
+	//	AdjustWindowPos();
+	//	//ShowInfo();
+	//	Invalidate(FALSE);
+	//}
 
 	CDialogEx::OnTimer(nIDEvent);
 }
