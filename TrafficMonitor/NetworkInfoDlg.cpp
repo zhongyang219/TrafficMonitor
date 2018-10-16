@@ -154,6 +154,7 @@ BEGIN_MESSAGE_MAP(CNetworkInfoDlg, CDialog)
 	ON_BN_CLICKED(IDC_NEXT_BUTTON, &CNetworkInfoDlg::OnBnClickedNextButton)
 	ON_WM_GETMINMAXINFO()
 	ON_WM_TIMER()
+	ON_WM_MOUSEWHEEL()
 END_MESSAGE_MAP()
 
 
@@ -172,6 +173,9 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	CRect rect;
 	GetWindowRect(rect);
 	m_min_size = rect.Size();
+
+	//重新获取IP地址
+	CAdapterCommon::RefreshIpAddress(m_connections);
 
 	//初始化列表控件
 	m_info_list.GetClientRect(rect);
@@ -325,4 +329,20 @@ void CNetworkInfoDlg::OnTimer(UINT_PTR nIDEvent)
 	}
 
 	CDialog::OnTimer(nIDEvent);
+}
+
+BOOL CNetworkInfoDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	//通过鼠标滚轮翻页
+	if (zDelta > 0)
+	{
+		OnBnClickedPreviousButton();
+	}
+	if (zDelta < 0)
+	{
+		OnBnClickedNextButton();
+	}
+
+	return CDialog::OnMouseWheel(nFlags, zDelta, pt);
 }

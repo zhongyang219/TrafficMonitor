@@ -56,6 +56,24 @@ void CAdapterCommon::GetAdapterInfo(vector<NetWorkConection>& adapters)
 	}
 }
 
+void CAdapterCommon::RefreshIpAddress(vector<NetWorkConection>& adapters)
+{
+	vector<NetWorkConection> adapters_tmp;
+	GetAdapterInfo(adapters_tmp);
+	for (const auto& adapter_tmp : adapters_tmp)
+	{
+		for (auto& adapter : adapters)
+		{
+			if (adapter_tmp.description == adapter.description)
+			{
+				adapter.ip_address = adapter_tmp.ip_address;
+				adapter.subnet_mask = adapter_tmp.subnet_mask;
+				adapter.default_gateway = adapter_tmp.default_gateway;
+			}
+		}
+	}
+}
+
 void CAdapterCommon::GetIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTABLE* pIfTable)
 {
 	//依次在IfTable里查找每个连接

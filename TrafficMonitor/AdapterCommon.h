@@ -23,6 +23,9 @@ public:
 	//获取网络连接列表，填充网络描述、IP地址、子网掩码、默认网关信息
 	static void GetAdapterInfo(vector<NetWorkConection>& adapters);
 
+	//刷新网络连接列表中的IP地址、子网掩码、默认网关信息
+	static void RefreshIpAddress(vector<NetWorkConection>& adapters);
+
 	//获取网络列表中每个网络连接的MIB_IFTABLE中的索引、初始时已接收/发送字节数的信息
 	static void GetIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTABLE* pIfTable);
 
