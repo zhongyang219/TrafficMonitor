@@ -253,7 +253,7 @@ bool CTaskBarDlg::AdjustWindowPos()
 				::MoveWindow(m_hMin, m_left_space + m_rect.Width(), 0, m_rcMin.Width() - m_rect.Width(), m_rcMin.Height(), TRUE);
 				m_rect.MoveToX(m_left_space);
 			}
-			m_rect.MoveToY((m_rcBar.Height() - m_rect.Height()) / 2);
+			m_rect.MoveToY((rcBar.Height() - m_rect.Height()) / 2);
 			if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())
 				m_rect.MoveToY(m_rect.top + theApp.DPI(1));
 			MoveWindow(m_rect);
