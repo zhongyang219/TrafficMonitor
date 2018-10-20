@@ -155,6 +155,7 @@ BEGIN_MESSAGE_MAP(CNetworkInfoDlg, CDialog)
 	ON_WM_GETMINMAXINFO()
 	ON_WM_TIMER()
 	ON_WM_MOUSEWHEEL()
+	ON_NOTIFY(NM_DBLCLK, IDC_INFO_LIST1, &CNetworkInfoDlg::OnNMDblclkInfoList1)
 END_MESSAGE_MAP()
 
 
@@ -201,10 +202,14 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	m_info_list.InsertItem(11, CCommon::LoadText(IDS_BYTES_RECEIVED_SINCE_START));
 	m_info_list.InsertItem(12, CCommon::LoadText(IDS_BYTES_SENT_SINCE_START));
 	m_info_list.InsertItem(13, CCommon::LoadText(IDS_PROGRAM_ELAPSED_TIME));
+	m_info_list.InsertItem(14, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS));
 	if (theApp.m_cfg_data.m_show_internet_ip)
 	{
-		m_info_list.InsertItem(14, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS));
 		m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
+	}
+	else
+	{
+		m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_DOUBLE_CLICK_TO_ACQUIRE));
 	}
 
 	//显示列表中的信息
@@ -345,4 +350,17 @@ BOOL CNetworkInfoDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	}
 
 	return CDialog::OnMouseWheel(nFlags, zDelta, pt);
+}
+
+
+void CNetworkInfoDlg::OnNMDblclkInfoList1(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: 在此添加控件通知处理程序代码
+	if (!theApp.m_cfg_data.m_show_internet_ip && pNMItemActivate->iItem == 14)		//双击了IP地址一行时
+	{
+		m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
+		m_pGetIPThread = AfxBeginThread(GetInternetIPThreadFunc, this);
+	}
+	*pResult = 0;
 }

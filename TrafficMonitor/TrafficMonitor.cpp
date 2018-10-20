@@ -231,6 +231,8 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteBool(_T("other"), _T("exit_when_start_by_restart_manager"), m_exit_when_start_by_restart_manager);
 	ini.WriteInt(_T("other"), _T("notify_interval"), m_notify_interval);
 
+	ini.WriteString(L"app", L"version", VERSION);
+
 	//检查是否保存成功
 	if (!ini.Save())
 	{
