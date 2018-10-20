@@ -941,8 +941,16 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			}
 		}
 
-		if (m_timer_cnt % 30 == 26)		//每隔30秒钟保存一次设置
-			theApp.SaveConfig();
+		if (m_timer_cnt % 30 == 26)		//每隔30秒钟检测一次窗口位置，当窗口位置发生变化时保存设置
+		{
+			static int last_pos_x{ -1 }, last_pos_y{ -1 };
+			if (last_pos_x != theApp.m_cfg_data.m_position_x || last_pos_y != theApp.m_cfg_data.m_position_y)
+			{
+				theApp.SaveConfig();
+				last_pos_x = theApp.m_cfg_data.m_position_x;
+				last_pos_y = theApp.m_cfg_data.m_position_y;
+			}
+		}
 
 		if (m_timer_cnt % 2 == 1)		//每隔2秒钟获取一次屏幕区域
 		{
@@ -1533,6 +1541,13 @@ void CTrafficMonitorDlg::OnMove(int x, int y)
 	CDialogEx::OnMove(x, y);
 
 	// TODO: 在此处添加消息处理程序代码
+
+	if (!m_first_start)
+	{
+		theApp.m_cfg_data.m_position_x = x;
+		theApp.m_cfg_data.m_position_y = y;
+	}
+
 	//确保窗口不会超出屏幕范围
 	CheckWindowPos();
 }

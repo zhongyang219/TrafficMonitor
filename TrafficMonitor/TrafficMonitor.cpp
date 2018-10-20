@@ -149,10 +149,10 @@ void CTrafficMonitorApp::SaveConfig()
 
 	//主窗口设置
 	//保存前先获取窗口的位置
-	CRect rect;
-	m_pMainWnd->GetWindowRect(rect);
-	m_cfg_data.m_position_x = rect.left;
-	m_cfg_data.m_position_y = rect.top;
+	//CRect rect;
+	//m_pMainWnd->GetWindowRect(rect);
+	//m_cfg_data.m_position_x = rect.left;
+	//m_cfg_data.m_position_y = rect.top;
 	ini.WriteInt(L"config", L"transparency", m_cfg_data.m_transparency);
 	ini.WriteBool(L"config", L"always_on_top", m_cfg_data.m_always_on_top);
 	ini.WriteBool(L"config", L"lock_window_pos", m_cfg_data.m_lock_window_pos);
