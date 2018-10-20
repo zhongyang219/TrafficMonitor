@@ -14,7 +14,7 @@ IMPLEMENT_DYNAMIC(CNetworkInfoDlg, CDialog)
 CNetworkInfoDlg::CNetworkInfoDlg(vector<NetWorkConection>& adapters, MIB_IFROW* pIfRow, int connection_selected, CWnd* pParent /*=NULL*/)
 	: CDialog(IDD_NETWORK_INFO_DIALOG, pParent), m_connections(adapters), m_pIfRow(pIfRow), m_connection_selected(connection_selected)
 {
-
+	m_current_connection = connection_selected;
 }
 
 CNetworkInfoDlg::~CNetworkInfoDlg()
@@ -102,6 +102,12 @@ void CNetworkInfoDlg::ShowInfo()
 	CString str;
 	str.Format(_T("%d/%d"), m_connection_selected + 1, m_connections.size());
 	SetDlgItemText(IDC_INDEX_STATIC, str);
+	CFont* font = GetFont();
+	CWnd* index_static = GetDlgItem(IDC_INDEX_STATIC);
+	if (m_current_connection == m_connection_selected)
+		index_static->SetFont(&m_font_bold);
+	else
+		index_static->SetFont(font);
 }
 
 void CNetworkInfoDlg::GetProgramElapsedTime()
@@ -213,6 +219,10 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	}
 
 	//显示列表中的信息
+	LOGFONT lf{};
+	GetFont()->GetLogFont(&lf);
+	lf.lfWeight = FW_BOLD;
+	m_font_bold.CreateFontIndirect(&lf);
 	ShowInfo();
 	GetProgramElapsedTime();
 
