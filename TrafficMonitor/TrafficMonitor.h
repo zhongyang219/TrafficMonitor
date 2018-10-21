@@ -42,7 +42,8 @@ public:
 	int m_used_memory{};	//可用物理内存（单位为KB）
 	int m_total_memory{};	//物理内存总量（单位为KB）
 
-	__int64 m_today_traffic{};	//今天已使用的流量
+	__int64 m_today_up_traffic{};	//今天已使用的上传流量
+	__int64 m_today_down_traffic{};	//今天已使用的下载流量
 
 	bool m_cannot_save_config_warning{ true };	//指示是否会在无法保存设置时弹出提示框
 	bool m_cannot_save_global_config_warning{ true };	//指示是否会在无法保存设置时弹出提示框

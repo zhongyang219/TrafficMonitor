@@ -148,8 +148,11 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 {
 	CString tip_info;
 	CString temp;
-	temp.Format(_T("%s: %s"), CCommon::LoadText(IDS_TRAFFIC_USED_TODAY),
-		CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_traffic / 1024)));
+	temp.Format(_T("%s: %s (%s: %s/%s: %s)"), CCommon::LoadText(IDS_TRAFFIC_USED_TODAY),
+		CCommon::KBytesToString(static_cast<unsigned int>((theApp.m_today_up_traffic + theApp.m_today_down_traffic)/ 1024)),
+		CCommon::LoadText(IDS_UPLOAD), CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_up_traffic / 1024)),
+		CCommon::LoadText(IDS_DOWNLOAD), CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_down_traffic / 1024))
+		);
 	tip_info += temp;
 	if (theApp.m_cfg_data.m_show_more_info)
 	{
@@ -521,10 +524,14 @@ void CTrafficMonitorDlg::SaveHistoryTraffic()
 	ofstream file{ theApp.m_history_traffic_path };
 	for (const auto& history_traffic : m_history_traffics)
 	{
-		char date_str[16];
-		sprintf_s(date_str, "%.4d/%.2d/%.2d ", history_traffic.year, history_traffic.month, history_traffic.day);
-		file << date_str << history_traffic.kBytes << std::endl;
+		char buff[64];
+		if (history_traffic.mixed)
+			sprintf_s(buff, "%.4d/%.2d/%.2d %u", history_traffic.year, history_traffic.month, history_traffic.day, history_traffic.down_kBytes);
+		else
+			sprintf_s(buff, "%.4d/%.2d/%.2d %u/%u", history_traffic.year, history_traffic.month, history_traffic.day, history_traffic.up_kBytes, history_traffic.down_kBytes);
+		file << buff << std::endl;
 	}
+	file.close();
 }
 
 void CTrafficMonitorDlg::LoadHistoryTraffic()
@@ -545,9 +552,23 @@ void CTrafficMonitorDlg::LoadHistoryTraffic()
 			traffic.month = atoi(temp.c_str());
 			temp = current_line.substr(8, 2);
 			traffic.day = atoi(temp.c_str());
-			temp = current_line.substr(11);
-			traffic.kBytes = atoi(temp.c_str());
-			if (traffic.year > 0 && traffic.month > 0 && traffic.day > 0 && traffic.kBytes > 0)
+
+			int index = current_line.find(L'/', 11);
+			traffic.mixed = (index == wstring::npos);
+			if (traffic.mixed)
+			{
+				temp = current_line.substr(11);
+				traffic.down_kBytes = atoi(temp.c_str());
+				traffic.up_kBytes = 0;
+			}
+			else
+			{
+				temp = current_line.substr(11, index - 11);
+				traffic.up_kBytes = atoi(temp.c_str());
+				temp = current_line.substr(index + 1);
+				traffic.down_kBytes = atoi(temp.c_str());
+			}
+			if (traffic.year > 0 && traffic.month > 0 && traffic.day > 0 && traffic.kBytes() > 0)
 				m_history_traffics.push_back(traffic);
 		}
 	}
@@ -557,7 +578,8 @@ void CTrafficMonitorDlg::LoadHistoryTraffic()
 	traffic.year = current_time.wYear;
 	traffic.month = current_time.wMonth;
 	traffic.day = current_time.wDay;
-	traffic.kBytes = 0;
+	traffic.up_kBytes = 0;
+	traffic.down_kBytes = 0;
 
 	if (m_history_traffics.empty())
 	{
@@ -574,7 +596,8 @@ void CTrafficMonitorDlg::LoadHistoryTraffic()
 		{
 			if (HistoryTraffic::DateEqual(m_history_traffics[i], m_history_traffics[i + 1]))
 			{
-				m_history_traffics[i].kBytes += m_history_traffics[i + 1].kBytes;
+				m_history_traffics[i].up_kBytes += m_history_traffics[i + 1].up_kBytes;
+				m_history_traffics[i].down_kBytes += m_history_traffics[i + 1].down_kBytes;
 				m_history_traffics.erase(m_history_traffics.begin() + i + 1);
 			}
 		}
@@ -582,9 +605,15 @@ void CTrafficMonitorDlg::LoadHistoryTraffic()
 
 	//如果列表第一个项目的日期是今天，则将第一个项目统计的流量作为今天使用的流量，否则，在列表的前面插入一个日期为今天的项目
 	if (HistoryTraffic::DateEqual(m_history_traffics[0], traffic))
-		theApp.m_today_traffic = static_cast<__int64>(m_history_traffics[0].kBytes) * 1024;
+	{
+		theApp.m_today_up_traffic = static_cast<__int64>(m_history_traffics[0].up_kBytes) * 1024;
+		theApp.m_today_down_traffic = static_cast<__int64>(m_history_traffics[0].down_kBytes) * 1024;
+		m_history_traffics[0].mixed = false;
+	}
 	else
+	{
 		m_history_traffics.push_front(traffic);
+	}
 
 }
 
@@ -1024,22 +1053,24 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			traffic.year = current_time.wYear;
 			traffic.month = current_time.wMonth;
 			traffic.day = current_time.wDay;
-			traffic.kBytes = 0;
 			m_history_traffics.push_front(traffic);
-			theApp.m_today_traffic = 0;
+			theApp.m_today_up_traffic = 0;
+			theApp.m_today_down_traffic = 0;
 		}
 
 		//统计今天已使用的流量
-		theApp.m_today_traffic += (theApp.m_in_speed + theApp.m_out_speed);
-		m_history_traffics[0].kBytes = static_cast<unsigned int>(theApp.m_today_traffic / 1024);
+		theApp.m_today_up_traffic += theApp.m_out_speed;
+		theApp.m_today_down_traffic += theApp.m_in_speed;
+		m_history_traffics[0].up_kBytes = static_cast<unsigned int>(theApp.m_today_up_traffic / 1024);
+		m_history_traffics[0].down_kBytes = static_cast<unsigned int>(theApp.m_today_down_traffic / 1024);
 		//每隔30秒保存一次流量历史记录
 		if (m_timer_cnt % 30 == 10)
 		{
 			static unsigned int last_today_kbytes;
-			if (m_history_traffics[0].kBytes - last_today_kbytes >= 100)	//只有当流量变化超过100KB时才保存历史流量记录，防止磁盘写入过于频繁
+			if (m_history_traffics[0].kBytes() - last_today_kbytes >= 100u)	//只有当流量变化超过100KB时才保存历史流量记录，防止磁盘写入过于频繁
 			{
 				SaveHistoryTraffic();
-				last_today_kbytes = m_history_traffics[0].kBytes;
+				last_today_kbytes = m_history_traffics[0].kBytes();
 			}
 		}
 
@@ -1194,13 +1225,13 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 				traffic_tip_value = static_cast<__int64>(theApp.m_general_data.traffic_tip_value) * 1024 * 1024;
 			else
 				traffic_tip_value = static_cast<__int64>(theApp.m_general_data.traffic_tip_value) * 1024 * 1024 * 1024;
-			if (last_today_traffic < traffic_tip_value && theApp.m_today_traffic >= traffic_tip_value)
+			if (last_today_traffic < traffic_tip_value && (theApp.m_today_up_traffic + theApp.m_today_down_traffic) >= traffic_tip_value)
 			{
 				CString info;
 				info.Format(CCommon::LoadText(IDS_TODAY_TRAFFIC_EXCEED, _T(" %d %s!")), theApp.m_general_data.traffic_tip_value, (theApp.m_general_data.traffic_tip_unit==0?_T("MB"):_T("GB")));
 				ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY), info.GetString());
 			}
-			last_today_traffic = theApp.m_today_traffic;
+			last_today_traffic = theApp.m_today_up_traffic + theApp.m_today_down_traffic;
 		}
 
 		m_timer_cnt++;

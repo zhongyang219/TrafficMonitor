@@ -5,10 +5,18 @@
 //储存某一天的历史流量
 struct HistoryTraffic
 {
-	int year;
-	int month;
-	int day;
-	unsigned int kBytes;	//当天使用的流量（以KB为单位）
+	int year{};
+	int month{};
+	int day{};
+	//unsigned int kBytes;	//当天使用的流量（以KB为单位）
+	unsigned int up_kBytes{};
+	unsigned int down_kBytes{};
+	bool mixed{ true };		//如果不区分上传和下载流量，则为true
+
+	unsigned int kBytes() const
+	{
+		return up_kBytes + down_kBytes;
+	}
 
 	//比较两个HistoryTraffic对象的日期，如果a的时间大于b，则返回true
 	static bool DateGreater(const HistoryTraffic& a, const HistoryTraffic& b)

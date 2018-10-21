@@ -330,25 +330,29 @@ bool CTaskBarDlg::IsTaskbarOnTopOrBottom()
 CString CTaskBarDlg::GetMouseTipsInfo()
 {
 	CString tip_info;
+	CString temp;
+	temp.Format(_T("%s: %s (%s: %s/%s: %s)"), CCommon::LoadText(IDS_TRAFFIC_USED_TODAY),
+		CCommon::KBytesToString(static_cast<unsigned int>((theApp.m_today_up_traffic + theApp.m_today_down_traffic) / 1024)),
+		CCommon::LoadText(IDS_UPLOAD), CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_up_traffic / 1024)),
+		CCommon::LoadText(IDS_DOWNLOAD), CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_down_traffic / 1024))
+	);
+	tip_info += temp;
 	if (theApp.m_cfg_data.m_tbar_show_cpu_memory)
 	{
-		tip_info.Format(_T("%s: %s\r\n%s: %s/%s"),
-			CCommon::LoadText(IDS_TRAFFIC_USED_TODAY),
-			CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_traffic / 1024)),
+		temp.Format(_T("\r\n%s: %s/%s"),
 			CCommon::LoadText(IDS_MEMORY_USAGE),
 			CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory));
 	}
 	else
 	{
-		tip_info.Format(_T("%s: %s\r\n%s: %d%%\r\n%s: %s/%s (%d%%)"),
-			CCommon::LoadText(IDS_TRAFFIC_USED_TODAY),
-			CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_traffic / 1024)),
+		temp.Format(_T("\r\n%s: %d%%\r\n%s: %s/%s (%d%%)"),
 			CCommon::LoadText(IDS_CPU_USAGE),
 			theApp.m_cpu_usage,
 			CCommon::LoadText(IDS_MEMORY_USAGE),
 			CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory),
 			theApp.m_memory_usage);
 	}
+	tip_info += temp;
 	return tip_info;
 }
 

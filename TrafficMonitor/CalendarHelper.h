@@ -5,8 +5,15 @@
 struct DayTraffic
 {
 	int day;
-	int traffic;
+	int up_traffic;
+	int down_traffic;
+	bool mixed;
 	CRect rect;
+
+	int traffic() const
+	{
+		return up_traffic + down_traffic;
+	}
 };
 
 class CCalendarHelper
