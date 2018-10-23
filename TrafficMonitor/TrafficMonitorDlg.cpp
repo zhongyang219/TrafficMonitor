@@ -580,6 +580,7 @@ void CTrafficMonitorDlg::LoadHistoryTraffic()
 	traffic.day = current_time.wDay;
 	traffic.up_kBytes = 0;
 	traffic.down_kBytes = 0;
+	traffic.mixed = false;
 
 	if (m_history_traffics.empty())
 	{
@@ -1053,6 +1054,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			traffic.year = current_time.wYear;
 			traffic.month = current_time.wMonth;
 			traffic.day = current_time.wDay;
+			traffic.mixed = false;
 			m_history_traffics.push_front(traffic);
 			theApp.m_today_up_traffic = 0;
 			theApp.m_today_down_traffic = 0;
