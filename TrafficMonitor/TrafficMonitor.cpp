@@ -128,7 +128,7 @@ void CTrafficMonitorApp::LoadConfig()
 
 	//其他设置
 	m_cfg_data.m_show_internet_ip = ini.GetBool(L"connection_details", L"show_internet_ip", false);
-	m_cfg_data.m_use_log_scale = ini.GetBool(_T("histroy_traffic"), _T("use_log_scale"), false);
+	m_cfg_data.m_use_log_scale = ini.GetBool(_T("histroy_traffic"), _T("use_log_scale"), true);
 
 	m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), false);
 	m_notify_interval = ini.GetInt(_T("other"), _T("notify_interval"), 60);
@@ -148,11 +148,6 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteBool(L"general", L"show_all_interface", m_general_data.show_all_interface);
 
 	//主窗口设置
-	//保存前先获取窗口的位置
-	//CRect rect;
-	//m_pMainWnd->GetWindowRect(rect);
-	//m_cfg_data.m_position_x = rect.left;
-	//m_cfg_data.m_position_y = rect.top;
 	ini.WriteInt(L"config", L"transparency", m_cfg_data.m_transparency);
 	ini.WriteBool(L"config", L"always_on_top", m_cfg_data.m_always_on_top);
 	ini.WriteBool(L"config", L"lock_window_pos", m_cfg_data.m_lock_window_pos);

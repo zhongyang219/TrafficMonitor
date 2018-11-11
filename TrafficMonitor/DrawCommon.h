@@ -22,7 +22,7 @@ public:
 	CDC* GetDC() { return m_pDC; }
 	void SetBackColor(COLORREF back_color) { m_back_color = back_color; }
 
-	void DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align = Alignment::LEFT, bool draw_back_ground = false);	//在指定的矩形区域内绘制文本
+	void DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align = Alignment::LEFT, bool draw_back_ground = false, bool multi_line = false);	//在指定的矩形区域内绘制文本
 
 	void SetDrawRect(CRect rect);		//设置绘图剪辑区域
 	static void SetDrawRect(CDC* pDC, CRect rect);
