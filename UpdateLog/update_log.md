@@ -1,4 +1,11 @@
+**简体中文 | [繁体中文](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_zh-tw.md) | [English](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_en-us.md)**<br>
 # TrafficMonitor 更新日志
+## V1.76 (2018/11/11)
+* 修正了分辨率更改可能会导致程序崩溃的问题；
+* 新增配置文件保存位置的选项；
+* 修正了当分辨率变化时任务栏窗口的垂直位置不正确的问题；
+* 新增今日上传和下载流量的显示，历史流量统计中增加上传和下载流量的统计；
+* 其他细节方面的改进。
 ## V1.75 (2018/08/11)
 * 任务栏窗口右键菜单增加“选择网络连接”菜单项
 * 写入配置文件时改为使用UTF8编码
