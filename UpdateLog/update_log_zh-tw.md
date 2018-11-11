@@ -1,4 +1,4 @@
-**[简体中文](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log.md) | 繁体中文 | [English](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_en-us.md)**<br>
+**[简体中文](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log.md) | 繁體中文 | [English](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_en-us.md)**<br>
 # TrafficMonitor 更新日誌
 ## V1.76 (2018/11/11)
 * 修正了解析度更改可能會導致程式崩潰的問題；
