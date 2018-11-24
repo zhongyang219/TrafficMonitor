@@ -762,3 +762,17 @@ void CCommon::SetThreadLanguage(Language language)
 	default: break;
 	}
 }
+
+void CCommon::SetDialogFont(CWnd * pDlg, CFont * pFont)
+{
+	if (pDlg->GetSafeHwnd() != NULL)
+	{
+		CWnd *pWndChild;
+		pWndChild = pDlg->GetWindow(GW_CHILD);
+		while (pWndChild)
+		{
+			pWndChild->SetFont(pFont);
+			pWndChild = pWndChild->GetWindow(GW_HWNDNEXT);
+		}
+	}
+}

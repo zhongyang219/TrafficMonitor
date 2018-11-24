@@ -103,6 +103,9 @@
     <Filter Include="源文件和头文件\公共的类\SimpleXML">
       <UniqueIdentifier>{8c35a0e3-e526-4f2f-9bc2-ed74dd37b238}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\对话框类\颜色设置对话框\MFCColorDialogEx">
+      <UniqueIdentifier>{dd737159-8653-44d0-bf51-f0e3afad4e5c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -222,6 +225,9 @@
     <ClInclude Include="SimpleXML.h">
       <Filter>源文件和头文件\公共的类\SimpleXML</Filter>
     </ClInclude>
+    <ClInclude Include="CMFCColorDialogEx.h">
+      <Filter>源文件和头文件\对话框类\颜色设置对话框\MFCColorDialogEx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -325,6 +331,9 @@
     </ClCompile>
     <ClCompile Include="SimpleXML.cpp">
       <Filter>源文件和头文件\公共的类\SimpleXML</Filter>
+    </ClCompile>
+    <ClCompile Include="CMFCColorDialogEx.cpp">
+      <Filter>源文件和头文件\对话框类\颜色设置对话框\MFCColorDialogEx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

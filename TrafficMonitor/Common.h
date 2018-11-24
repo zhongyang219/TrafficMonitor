@@ -120,5 +120,7 @@ public:
 
 	//…Ë÷√œﬂ≥Ã”Ô—‘
 	static void SetThreadLanguage(Language language);
+
+	static void SetDialogFont(CWnd* pDlg, CFont* pFont);
 };
 
