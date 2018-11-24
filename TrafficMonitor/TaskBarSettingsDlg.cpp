@@ -383,11 +383,7 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 		}
 		else
 		{
-#ifdef COMPILE_FOR_WINXP
-			CColorDialog colorDlg(m_data.text_colors[0], 0, this);
-#else
 			CMFCColorDialogEx colorDlg(m_data.text_colors[0], 0, this);
-#endif
 			if (colorDlg.DoModal() == IDOK)
 			{
 				m_data.text_colors[0] = colorDlg.GetColor();
@@ -401,11 +397,7 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 	case IDC_TEXT_COLOR_STATIC2:		//点击“背景颜色”时
 	{
 		//设置背景颜色
-#ifdef COMPILE_FOR_WINXP
-		CColorDialog colorDlg(m_data.back_color, 0, this);
-#else
 		CMFCColorDialogEx colorDlg(m_data.back_color, 0, this);
-#endif
 		if (colorDlg.DoModal() == IDOK)
 		{
 			m_data.back_color = colorDlg.GetColor();

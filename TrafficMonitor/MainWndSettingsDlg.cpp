@@ -371,11 +371,7 @@ afx_msg LRESULT CMainWndSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 		}
 		else
 		{
-#ifdef COMPILE_FOR_WINXP
-			CColorDialog colorDlg(m_data.text_colors[0], 0, this);
-#else
 			CMFCColorDialogEx colorDlg(m_data.text_colors[0], 0, this);
-#endif
 			if (colorDlg.DoModal() == IDOK)
 			{
 				m_data.text_colors[0] = colorDlg.GetColor();
