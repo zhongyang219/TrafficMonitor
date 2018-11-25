@@ -38,6 +38,13 @@ BOOL CMFCColorDialogEx::OnInitDialog()
 	if (pParent != nullptr)
 	{
 		CCommon::SetDialogFont(this, pParent->GetFont());
+
+		CWnd* pPropSheet = m_pColourSheetOne->GetParent();
+		if (pPropSheet != nullptr)
+			CCommon::SetDialogFont(pPropSheet, pParent->GetFont());
+
+		//CCommon::SetDialogFont(m_pColourSheetOne, pParent->GetFont());
+		//CCommon::SetDialogFont(m_pColourSheetTwo, pParent->GetFont());
 	}
 
 
