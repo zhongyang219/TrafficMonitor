@@ -33,6 +33,8 @@ void CTabCtrlEx::AddWindow(CWnd* pWnd, LPCTSTR lable_text)
 
 void CTabCtrlEx::SetCurTab(int index)
 {
+	SetCurSel(index);
+
 	int tab_size = m_tab_list.size();
 	for (int i = 0; i < tab_size; i++)
 	{
