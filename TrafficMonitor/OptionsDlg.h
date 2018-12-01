@@ -3,6 +3,7 @@
 #include "TaskBarSettingsDlg.h"
 #include "GeneralSettingsDlg.h"
 #include "afxcmn.h"
+#include "CTabCtrlEx.h"
 
 // COptionsDlg 对话框
 
@@ -24,7 +25,7 @@ public:
 	CGeneralSettingsDlg m_tab3_dlg{ this };
 
 protected:
-	CTabCtrl m_tab;
+	CTabCtrlEx m_tab;
 	int m_tab_selected;
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
@@ -32,6 +33,5 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnInitDialog();
-	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
 	virtual void OnOK();
 };

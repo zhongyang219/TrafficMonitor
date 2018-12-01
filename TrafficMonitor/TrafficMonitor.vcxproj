@@ -192,6 +192,7 @@
     <ClInclude Include="AdapterCommon.h" />
     <ClInclude Include="CalendarHelper.h" />
     <ClInclude Include="CMFCColorDialogEx.h" />
+    <ClInclude Include="CTabCtrlEx.h" />
     <ClInclude Include="HistoryTrafficCalendarDlg.h" />
     <ClInclude Include="HistoryTrafficListDlg.h" />
     <ClInclude Include="LinkStatic.h" />
@@ -232,6 +233,7 @@
     <ClCompile Include="AdapterCommon.cpp" />
     <ClCompile Include="CalendarHelper.cpp" />
     <ClCompile Include="CMFCColorDialogEx.cpp" />
+    <ClCompile Include="CTabCtrlEx.cpp" />
     <ClCompile Include="HistoryTrafficCalendarDlg.cpp" />
     <ClCompile Include="HistoryTrafficListDlg.cpp" />
     <ClCompile Include="LinkStatic.cpp" />

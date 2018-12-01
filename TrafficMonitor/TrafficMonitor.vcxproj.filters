@@ -106,6 +106,9 @@
     <Filter Include="源文件和头文件\对话框类\颜色设置对话框\MFCColorDialogEx">
       <UniqueIdentifier>{dd737159-8653-44d0-bf51-f0e3afad4e5c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\派生的控件类\CTabCtrlEx">
+      <UniqueIdentifier>{e5835851-f8d8-47dd-9669-f70b6f424386}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -228,6 +231,9 @@
     <ClInclude Include="CMFCColorDialogEx.h">
       <Filter>源文件和头文件\对话框类\颜色设置对话框\MFCColorDialogEx</Filter>
     </ClInclude>
+    <ClInclude Include="CTabCtrlEx.h">
+      <Filter>源文件和头文件\派生的控件类\CTabCtrlEx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -334,6 +340,9 @@
     </ClCompile>
     <ClCompile Include="CMFCColorDialogEx.cpp">
       <Filter>源文件和头文件\对话框类\颜色设置对话框\MFCColorDialogEx</Filter>
+    </ClCompile>
+    <ClCompile Include="CTabCtrlEx.cpp">
+      <Filter>源文件和头文件\派生的控件类\CTabCtrlEx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
