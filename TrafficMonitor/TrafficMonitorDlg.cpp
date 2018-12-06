@@ -1010,7 +1010,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		}
 
 		//如果发送和接收的字节数为0或上次发送和接收的字节数为0或当前连接已改变时，网速无效
-		if ((m_in_bytes == 0 && m_out_bytes == 0) || (m_last_in_bytes == 0 && m_last_out_bytes) || m_connection_change_flag)
+		if ((m_in_bytes == 0 && m_out_bytes == 0) || (m_last_in_bytes == 0 && m_last_out_bytes == 0) || m_connection_change_flag)
 		{
 			theApp.m_in_speed = 0;
 			theApp.m_out_speed = 0;
