@@ -18,7 +18,7 @@ public:
 	返回值：转换后的字符串
 	*/
 	static CString DataSizeToString(unsigned int size, const PublicSettingData& cfg);
-	static CString DataSizeToString(unsigned int size);
+	static CString DataSizeToString(unsigned long long size);
 
 	static CString KBytesToString(unsigned int kb_size);
 	static CString KBytesToStringL(__int64 kb_size);

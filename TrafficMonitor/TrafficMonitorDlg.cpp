@@ -1211,7 +1211,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			if (last_memory_usage < theApp.m_general_data.memory_tip_value && theApp.m_memory_usage >= theApp.m_general_data.memory_tip_value && (m_timer_cnt - notify_time > static_cast<unsigned int>(theApp.m_notify_interval)))
 			{
 				CString info;
-				info.Format(CCommon::LoadText(IDS_MEMORY_UDAGE_EXCEED, _T(" %d%%!")), theApp.m_general_data.memory_tip_value);
+				info.Format(CCommon::LoadText(IDS_MEMORY_UDAGE_EXCEED, _T(" %d%%!")), theApp.m_memory_usage);
 				ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY), info.GetString());
 				notify_time = m_timer_cnt;
 			}
@@ -1227,13 +1227,14 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 				traffic_tip_value = static_cast<__int64>(theApp.m_general_data.traffic_tip_value) * 1024 * 1024;
 			else
 				traffic_tip_value = static_cast<__int64>(theApp.m_general_data.traffic_tip_value) * 1024 * 1024 * 1024;
-			if (last_today_traffic < traffic_tip_value && (theApp.m_today_up_traffic + theApp.m_today_down_traffic) >= traffic_tip_value)
+
+			__int64 today_traffic = theApp.m_today_up_traffic + theApp.m_today_down_traffic;
+			if (last_today_traffic < traffic_tip_value && today_traffic >= traffic_tip_value)
 			{
-				CString info;
-				info.Format(CCommon::LoadText(IDS_TODAY_TRAFFIC_EXCEED, _T(" %d %s!")), theApp.m_general_data.traffic_tip_value, (theApp.m_general_data.traffic_tip_unit==0?_T("MB"):_T("GB")));
+				CString info = CCommon::LoadText(IDS_TODAY_TRAFFIC_EXCEED, CCommon::DataSizeToString(today_traffic));
 				ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY), info.GetString());
 			}
-			last_today_traffic = theApp.m_today_up_traffic + theApp.m_today_down_traffic;
+			last_today_traffic = today_traffic;
 		}
 
 		m_timer_cnt++;

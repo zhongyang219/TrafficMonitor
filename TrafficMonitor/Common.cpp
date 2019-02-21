@@ -165,17 +165,17 @@ CString CCommon::DataSizeToString(unsigned int size, const PublicSettingData& cf
 	return str;
 }
 
-CString CCommon::DataSizeToString(unsigned int size)
+CString CCommon::DataSizeToString(unsigned long long size)
 {
 	CString str;
 	if (size < 1024 * 10)					//10KB以下以KB为单位，保留2位小数
-		str.Format(_T("%.2f KB"), size / 1024.0f);
+		str.Format(_T("%.2f KB"), size / 1024.0);
 	else if (size < 1024 * 1024)			//1MB以下以KB为单位，保留1位小数
-		str.Format(_T("%.1f KB"), size / 1024.0f);
+		str.Format(_T("%.1f KB"), size / 1024.0);
 	else if (size < 1024 * 1024 * 1024)		//1GB以下以MB为单位，保留2位小数
-		str.Format(_T("%.2f MB"), size / 1024.0f / 1024.0f);
+		str.Format(_T("%.2f MB"), size / 1024.0 / 1024.0);
 	else
-		str.Format(_T("%.2f GB"), size / 1024.0f / 1024.0f / 1024.0f);
+		str.Format(_T("%.2f GB"), size / 1024.0 / 1024.0 / 1024.0);
 	return str;
 }
 
