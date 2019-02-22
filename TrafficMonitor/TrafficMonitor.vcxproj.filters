@@ -109,6 +109,9 @@
     <Filter Include="源文件和头文件\派生的控件类\CTabCtrlEx">
       <UniqueIdentifier>{e5835851-f8d8-47dd-9669-f70b6f424386}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\CrashTool">
+      <UniqueIdentifier>{12448ccc-0fa7-4f50-8261-dcb04f068e39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -234,6 +237,9 @@
     <ClInclude Include="CTabCtrlEx.h">
       <Filter>源文件和头文件\派生的控件类\CTabCtrlEx</Filter>
     </ClInclude>
+    <ClInclude Include="crashtool.h">
+      <Filter>源文件和头文件\公共的类\CrashTool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -343,6 +349,9 @@
     </ClCompile>
     <ClCompile Include="CTabCtrlEx.cpp">
       <Filter>源文件和头文件\派生的控件类\CTabCtrlEx</Filter>
+    </ClCompile>
+    <ClCompile Include="crashtool.cpp">
+      <Filter>源文件和头文件\公共的类\CrashTool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "TrafficMonitor.h"
 #include "TrafficMonitorDlg.h"
+#include "crashtool.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -28,6 +29,7 @@ CTrafficMonitorApp::CTrafficMonitorApp()
 
 	// TODO: 在此处添加构造代码，
 	// 将所有重要的初始化放置在 InitInstance 中
+	CRASHREPORT::StartCrashReport();
 }
 
 void CTrafficMonitorApp::LoadConfig()
