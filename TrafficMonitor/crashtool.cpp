@@ -4,6 +4,9 @@
 #include <strsafe.h>
 #include <DbgHelp.h>
 #include <tchar.h>
+#include "MessageDlg.h"
+#include "Common.h"
+#include "TrafficMonitor.h"
 
 #pragma comment(lib, "Dbghelp.lib")
 
@@ -32,6 +35,8 @@ public:
             return;
         }
 
+		m_dumpFile = szDumpFile;
+
         MINIDUMP_EXCEPTION_INFORMATION ExpParam;
         ExpParam.ThreadId = ::GetCurrentThreadId();
         ExpParam.ExceptionPointers = pEP;
@@ -41,6 +46,21 @@ public:
         BOOL bResult = ::MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hDumpFile, MiniDumpNormal, &ExpParam, NULL, NULL);
         ::CloseHandle(hDumpFile);
     }
+
+	void ShowCrashInfo()
+	{
+		CMessageDlg dlg;
+		dlg.SetWindowTitle(CCommon::LoadText(IDS_ERROR1));
+		dlg.SetInfoText(CCommon::LoadText(IDS_ERROR_MESSAGE));
+
+		CString info = CCommon::LoadTextFormat(IDS_CRASH_INFO, { m_dumpFile });
+		info += _T("\r\n");
+		info += theApp.GetSystemInfoString();
+
+		dlg.SetMessageText(info);
+		dlg.DoModal();
+	}
+
 private:
     void GetAppPath()
     {
@@ -67,6 +87,8 @@ private:
 private:
     wchar_t m_szDumpFilePath[MAX_PATH];
     wchar_t m_szModuleFileName[MAX_PATH];
+
+	CString m_dumpFile;
 };
 
 namespace CRASHREPORT
@@ -76,6 +98,7 @@ namespace CRASHREPORT
         ::SetErrorMode(0); //使用默认的
         CCrashReport cr;
         cr.CreateMiniDump(pEP);
+		cr.ShowCrashInfo();
         return EXCEPTION_CONTINUE_SEARCH;
     }
 

@@ -419,6 +419,23 @@ bool CTrafficMonitorApp::GetAutoRun()
 	}
 }
 
+CString CTrafficMonitorApp::GetSystemInfoString()
+{
+	CString info;
+	info += _T("System Info:\r\n");
+
+	CString strTmp;
+	strTmp.Format(_T("Windows Version: %d.%d build %d\r\n"), m_win_version.GetMajorVersion(),
+		m_win_version.GetMinorVersion(), m_win_version.GetBuildNumber());
+	info += strTmp;
+
+	strTmp.Format(_T("DPI: %d"), m_dpi);
+	info += strTmp;
+	info += _T("\r\n");
+
+	return info;
+}
+
 
 // 唯一的一个 CTrafficMonitorApp 对象
 

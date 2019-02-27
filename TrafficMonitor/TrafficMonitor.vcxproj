@@ -194,6 +194,7 @@
     <ClInclude Include="CMFCColorDialogEx.h" />
     <ClInclude Include="crashtool.h" />
     <ClInclude Include="CTabCtrlEx.h" />
+    <ClInclude Include="CVariant.h" />
     <ClInclude Include="HistoryTrafficCalendarDlg.h" />
     <ClInclude Include="HistoryTrafficListDlg.h" />
     <ClInclude Include="LinkStatic.h" />
@@ -210,6 +211,7 @@
     <ClInclude Include="ListCtrlEx.h" />
     <ClInclude Include="MainWndColorDlg.h" />
     <ClInclude Include="MainWndSettingsDlg.h" />
+    <ClInclude Include="MessageDlg.h" />
     <ClInclude Include="NetworkInfoDlg.h" />
     <ClInclude Include="OptionsDlg.h" />
     <ClInclude Include="PictureStatic.h" />
@@ -236,6 +238,7 @@
     <ClCompile Include="CMFCColorDialogEx.cpp" />
     <ClCompile Include="crashtool.cpp" />
     <ClCompile Include="CTabCtrlEx.cpp" />
+    <ClCompile Include="CVariant.cpp" />
     <ClCompile Include="HistoryTrafficCalendarDlg.cpp" />
     <ClCompile Include="HistoryTrafficListDlg.cpp" />
     <ClCompile Include="LinkStatic.cpp" />
@@ -251,6 +254,7 @@
     <ClCompile Include="ListCtrlEx.cpp" />
     <ClCompile Include="MainWndColorDlg.cpp" />
     <ClCompile Include="MainWndSettingsDlg.cpp" />
+    <ClCompile Include="MessageDlg.cpp" />
     <ClCompile Include="NetworkInfoDlg.cpp" />
     <ClCompile Include="OptionsDlg.cpp" />
     <ClCompile Include="PictureStatic.cpp" />

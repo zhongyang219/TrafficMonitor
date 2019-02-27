@@ -97,6 +97,18 @@ BOOL CAboutDlg::PreTranslateMessage(MSG* pMsg)
 	// TODO: 在此添加专用代码和/或调用基类
 	if (pMsg->message == WM_MOUSEMOVE)
 		m_tool_tip.RelayEvent(pMsg);
+
+	//if (pMsg->message == WM_KEYDOWN)
+	//{
+	//	if ((GetKeyState(VK_CONTROL) & 0x80) && (GetKeyState(VK_SHIFT) & 0x8000) && pMsg->wParam == 'Z')
+	//	{
+	//		//测试程序崩溃
+	//		CString* pStr = nullptr;
+	//		int a = pStr->GetLength();
+	//		printf("%d", a);
+	//	}
+	//}
+
 	return CDialog::PreTranslateMessage(pMsg);
 }
 

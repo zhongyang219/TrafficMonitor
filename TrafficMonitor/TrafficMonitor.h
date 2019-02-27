@@ -82,6 +82,9 @@ public:
 	void SetAutoRun(bool auto_run);
 	bool GetAutoRun();
 
+	//获取系统信息文本
+	CString GetSystemInfoString();
+
 private:
 	//int m_no_multistart_warning_time{};		//用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示
 	bool m_no_multistart_warning{};			//如果为false，则永远都不会弹出“已经有一个程序正在运行”的警告提示

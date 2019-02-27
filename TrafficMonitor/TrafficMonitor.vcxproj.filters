@@ -112,6 +112,12 @@
     <Filter Include="源文件和头文件\公共的类\CrashTool">
       <UniqueIdentifier>{12448ccc-0fa7-4f50-8261-dcb04f068e39}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\对话框类\MessageDlg">
+      <UniqueIdentifier>{645d28e7-da22-44f8-8e33-894109dde4b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\CVariant">
+      <UniqueIdentifier>{1ca17ad5-07ba-4361-bbeb-fdc5047697fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -240,6 +246,12 @@
     <ClInclude Include="crashtool.h">
       <Filter>源文件和头文件\公共的类\CrashTool</Filter>
     </ClInclude>
+    <ClInclude Include="MessageDlg.h">
+      <Filter>源文件和头文件\对话框类\MessageDlg</Filter>
+    </ClInclude>
+    <ClInclude Include="CVariant.h">
+      <Filter>源文件和头文件\公共的类\CVariant</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -352,6 +364,12 @@
     </ClCompile>
     <ClCompile Include="crashtool.cpp">
       <Filter>源文件和头文件\公共的类\CrashTool</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageDlg.cpp">
+      <Filter>源文件和头文件\对话框类\MessageDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="CVariant.cpp">
+      <Filter>源文件和头文件\公共的类\CVariant</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
