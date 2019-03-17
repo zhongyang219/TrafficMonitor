@@ -1248,7 +1248,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
 	if (nIDEvent == TASKBAR_TIMER)
 	{
-		if (m_tBarDlg != nullptr)
+		if (m_tBarDlg != nullptr && ::IsWindow(m_tBarDlg->GetSafeHwnd()))
 		{
 			m_tBarDlg->AdjustWindowPos();
 			m_tBarDlg->Invalidate(FALSE);
