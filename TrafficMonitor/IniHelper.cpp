@@ -217,7 +217,9 @@ void CIniHelper::_WriteString(const wchar_t * AppName, const wchar_t * KeyName, 
 		m_ini_str += app_str;
 		m_ini_str += L"\n";
 	}
-	app_end_pos = m_ini_str.find(L'[', app_pos + 2);
+	app_end_pos = m_ini_str.find(L"\n[", app_pos + 2);
+	if (app_end_pos != wstring::npos)
+		app_end_pos++;
 
 	key_pos = m_ini_str.find(wstring(L"\n") + KeyName + L' ', app_pos);		//查找“\nkey_name ”
 	if (key_pos >= app_end_pos)		//如果找不到“\nkey_name ”，则查找“\nkey_name=”
@@ -260,7 +262,10 @@ wstring CIniHelper::_GetString(const wchar_t * AppName, const wchar_t * KeyName,
 	if (app_pos == wstring::npos)		//找不到AppName，返回默认字符串
 		return default_str;
 
-	app_end_pos = m_ini_str.find(L'[', app_pos + 2);
+	app_end_pos = m_ini_str.find(L"\n[", app_pos + 2);
+	if (app_end_pos != wstring::npos)
+		app_end_pos++;
+
 	key_pos = m_ini_str.find(wstring(L"\n") + KeyName + L' ', app_pos);		//查找“\nkey_name ”
 	if (key_pos >= app_end_pos)		//如果找不到“\nkey_name ”，则查找“\nkey_name=”
 		key_pos = m_ini_str.find(wstring(L"\n") + KeyName + L'=', app_pos);
