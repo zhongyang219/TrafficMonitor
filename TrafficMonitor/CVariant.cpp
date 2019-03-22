@@ -8,9 +8,9 @@ CVariant::CVariant(int value)
 	m_type = eType::INT;
 }
 
-CVariant::CVariant(unsigned int value)
+CVariant::CVariant(size_t value)
 {
-	m_value_int = value;
+	m_value_int = static_cast<int>(value);
 	m_type = eType::UINT;
 }
 
