@@ -312,7 +312,7 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
 	wstring version;		//程序版本
 	wstring link;			//下载链接
 	CString contents_zh_cn;	//更新内容（简体中文）
-	CString contents_en;	//更新内容（Englisg）
+	CString contents_en;	//更新内容（English）
 	CString contents_zh_tw;	//更新内容（繁体中文）
 	CSimpleXML version_xml;
 	version_xml.LoadXMLContentDirect(version_info);
