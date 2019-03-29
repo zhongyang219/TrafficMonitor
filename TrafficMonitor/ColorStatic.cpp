@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "TrafficMonitor.h"
 #include "ColorStatic.h"
-
+#include "DrawCommon.h"
 
 // CColorStatic
 
@@ -119,6 +119,11 @@ void CColorStatic::OnPaint()
 			dc.FillSolidRect(rc_tmp, m_colors[i]);
 		}
 	}
+
+	//画边框
+	CDrawCommon draw;
+	draw.Create(&dc, this);
+	draw.DrawRectOutLine(rect, RGB(160, 160, 160));
 }
 
 
@@ -158,6 +163,7 @@ void CColorStatic::PreSubclassWindow()
 	// TODO: 在此添加专用代码和/或调用基类
 	DWORD dwStyle = GetStyle();
 	::SetWindowLong(GetSafeHwnd(), GWL_STYLE, dwStyle | SS_NOTIFY);
+	ModifyStyleEx(WS_EX_STATICEDGE, NULL);
 
 	CStatic::PreSubclassWindow();
 }
