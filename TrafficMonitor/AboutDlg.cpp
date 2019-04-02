@@ -58,9 +58,19 @@ BOOL CAboutDlg::OnInitDialog()
 	CString version_info;
 	GetDlgItemText(IDC_STATIC_VERSION, version_info);
 	version_info.Replace(_T("<version>"), VERSION);
+
 #ifdef COMPILE_FOR_WINXP
 	version_info += _T(" (For WinXP)");
 #endif // COMPILE_FOR_WINXP
+
+#ifdef _M_X64
+	version_info += _T(" (x64)");
+#endif
+
+#ifdef _DEBUG
+	version_info += _T(" (Debug)");
+#endif
+
 	SetDlgItemText(IDC_STATIC_VERSION, version_info);
 
 	//设置最后编译日期

@@ -568,10 +568,12 @@ BOOL CTrafficMonitorApp::InitInstance()
 	SetRegistryKey(_T("应用程序向导生成的本地应用程序"));
 
 	//启动时检查更新
+#ifndef _DEBUG		//DEBUG下不在启动时检查更新
 	if (m_general_data.check_update_when_start)
 	{
 		m_pUpdateThread = AfxBeginThread(CheckUpdateThreadFunc, NULL);
 	}
+#endif // !_DEBUG
 
 	CTrafficMonitorDlg dlg;
 	m_pMainWnd = &dlg;
