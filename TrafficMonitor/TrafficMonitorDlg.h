@@ -112,6 +112,7 @@ protected:
 	void AddNotifyIcon();		//添加通知区图标
 	void DeleteNotifyIcon();	
 	void ShowNotifyTip(const wchar_t* title, const wchar_t* message);		//显示通知区提示
+	void UpdateNotifyIconTip();		//更新通知区图标的鼠标提示
 
 	void SaveHistoryTraffic();
 	void LoadHistoryTraffic();

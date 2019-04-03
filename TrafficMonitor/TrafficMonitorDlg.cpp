@@ -519,6 +519,28 @@ void CTrafficMonitorDlg::ShowNotifyTip(const wchar_t * title, const wchar_t * me
 	m_ntIcon.uFlags &= ~NIF_INFO;
 }
 
+void CTrafficMonitorDlg::UpdateNotifyIconTip()
+{
+	CString strTip;			//鼠标指向图标时显示的提示
+#ifdef _DEBUG
+	strTip = CCommon::LoadText(IDS_TRAFFICMONITOR, _T(" (Debug)"));
+#else
+	atip = CCommon::LoadText(IDS_TRAFFICMONITOR);
+#endif
+
+	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed);
+	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed);
+
+	strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>/s"), { CCommon::LoadText(IDS_UPLOAD), out_speed });
+	strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>/s"), { CCommon::LoadText(IDS_DOWNLOAD), in_speed });
+	strTip += CCommon::StringFormat(_T("\r\nCPU: <%1%>%"), { theApp.m_cpu_usage });
+	strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>%"), { CCommon::LoadText(IDS_MEMORY), theApp.m_memory_usage });
+
+	CCommon::WStringCopy(m_ntIcon.szTip, 128, strTip);
+	::Shell_NotifyIcon(NIM_MODIFY, &m_ntIcon);
+
+}
+
 void CTrafficMonitorDlg::SaveHistoryTraffic()
 {
 	ofstream file{ theApp.m_history_traffic_path };
@@ -831,7 +853,7 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 #else
 	atip = CCommon::LoadText(IDS_TRAFFICMONITOR);
 #endif
-	//wcscpy_s(m_ntIcon.szTip, 128, atip);
+	//wcscpy_s(m_ntIcon.szTip, 128, strTip);
 	CCommon::WStringCopy(m_ntIcon.szTip, 128, atip.GetString());
 	m_ntIcon.uCallbackMessage = MY_WM_NOTIFYICON;	//应用程序定义的消息ID号
 	m_ntIcon.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;	//图标的属性：设置成员uCallbackMessage、hIcon、szTip有效
@@ -1236,6 +1258,8 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			}
 			last_today_traffic = today_traffic;
 		}
+
+		UpdateNotifyIconTip();
 
 		m_timer_cnt++;
 	}
