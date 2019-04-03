@@ -525,7 +525,7 @@ void CTrafficMonitorDlg::UpdateNotifyIconTip()
 #ifdef _DEBUG
 	strTip = CCommon::LoadText(IDS_TRAFFICMONITOR, _T(" (Debug)"));
 #else
-	atip = CCommon::LoadText(IDS_TRAFFICMONITOR);
+	strTip = CCommon::LoadText(IDS_TRAFFICMONITOR);
 #endif
 
 	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed);
