@@ -1,5 +1,6 @@
 ﻿<version>1.76</version>
 <link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.76/TrafficMonitor_V1.76.7z</link>
+<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.76/TrafficMonitor_V1.76.7z</link_x64>
 <update_contents>
 	<contents_zh_cn>修正了分辨率更改可能会导致程序崩溃的问题；\n新增配置文件保存位置的选项；\n修正了当分辨率变化时任务栏窗口的垂直位置不正确的问题；\n新增今日上传和下载流量的显示，历史流量统计中增加上传和下载流量的统计；\n其他细节方面的改进。</contents_zh_cn>
 	<contents_en>Fix the problem that the resolution changes may cause the program crash.\nAdd the options for the saving location of the configuration files.\nFix the problem that the vertical position of the taskbar window was incorrect when the resolution changed.\nAdd the display of today’s upload and download traffic. Add the upload and download traffic statics in the history traffic static dialog.\nImprovements in other details.</contents_en>
