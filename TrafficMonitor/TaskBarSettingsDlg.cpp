@@ -408,6 +408,7 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 				MessageBox(CCommon::LoadText(IDS_SAME_BACK_TEXT_COLOR_WARNING), NULL, MB_ICONWARNING);
 			DrawStaticColor();
 		}
+		break;
 	}
 	case IDC_TRANSPARENT_COLOR_STATIC:		//点击“透明色”时
 	{
@@ -417,6 +418,7 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 			m_data.transparent_color = colorDlg.GetColor();
 			DrawStaticColor();
 		}
+		break;
 	}
 	default:
 		break;
