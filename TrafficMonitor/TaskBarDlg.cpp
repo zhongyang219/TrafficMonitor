@@ -479,6 +479,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 
 	m_pDC = GetDC();
 
+
 	//设置字体
 	SetTextFont();
 	m_pDC->SelectObject(&m_font);
@@ -490,6 +491,13 @@ BOOL CTaskBarDlg::OnInitDialog()
 	m_hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL);		//寻找类名是Shell_TrayWnd的窗口句柄
 	m_hBar = ::FindWindowEx(m_hTaskbar, 0, L"ReBarWindow32", NULL);	//寻找二级容器的句柄
 	m_hMin = ::FindWindowEx(m_hBar, 0, L"MSTaskSwWClass", NULL);	//寻找最小化窗口的句柄
+
+	//设置窗口透明色
+	if(theApp.m_taskbar_data.transparent_color != 0)
+	{
+		SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
+		SetLayeredWindowAttributes(theApp.m_taskbar_data.transparent_color, 0, LWA_COLORKEY);
+	}
 
 	::GetWindowRect(m_hMin, m_rcMin);	//获得最小化窗口的区域
 	::GetWindowRect(m_hBar, m_rcBar);	//获得二级容器的区域

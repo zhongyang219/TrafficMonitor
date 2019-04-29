@@ -170,6 +170,7 @@ struct MainWndSettingData : public PublicSettingData
 struct TaskBarSettingData : public PublicSettingData
 {
 	COLORREF  back_color{ RGB(0, 0, 0) };	//背景颜色
+	COLORREF transparent_color{ RGB(0, 0, 0) };		//透明色
 	COLORREF text_colors[TASKBAR_COLOR_NUM]{};		//文字颜色（依次为“上传”、“下载”、“CPU”、“内存”的标签和数据颜色）
 	bool value_right_align{ false };	//数值是否右对齐
 	int digits_number{ 4 };				//数据位数

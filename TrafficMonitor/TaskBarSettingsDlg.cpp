@@ -38,6 +38,7 @@ void CTaskBarSettingsDlg::DrawStaticColor()
 		m_text_color_static.SetFillColor(m_data.text_colors[0]);
 	}
 	m_back_color_static.SetFillColor(m_data.back_color);
+	m_trans_color_static.SetFillColor(m_data.transparent_color);
 }
 
 void CTaskBarSettingsDlg::IniUnitCombo()
@@ -67,6 +68,7 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_FONT_SIZE_EDIT1, m_font_size_edit);
 	DDX_Control(pDX, IDC_DOUBLE_CLICK_COMBO, m_double_click_combo);
 	DDX_Control(pDX, IDC_DIGIT_NUMBER_COMBO, m_digit_number_combo);
+	DDX_Control(pDX, IDC_TRANSPARENT_COLOR_STATIC, m_trans_color_static);
 }
 
 
@@ -125,6 +127,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 
 	m_text_color_static.SetLinkCursor();
 	m_back_color_static.SetLinkCursor();
+	m_trans_color_static.SetLinkCursor();
 	DrawStaticColor();
 
 	m_toolTip.Create(this);
@@ -403,6 +406,15 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 			m_data.back_color = colorDlg.GetColor();
 			if (m_data.back_color == m_data.text_colors[0])
 				MessageBox(CCommon::LoadText(IDS_SAME_BACK_TEXT_COLOR_WARNING), NULL, MB_ICONWARNING);
+			DrawStaticColor();
+		}
+	}
+	case IDC_TRANSPARENT_COLOR_STATIC:		//点击“透明色”时
+	{
+		CMFCColorDialogEx colorDlg(m_data.transparent_color, 0, this);
+		if (colorDlg.DoModal() == IDOK)
+		{
+			m_data.transparent_color = colorDlg.GetColor();
 			DrawStaticColor();
 		}
 	}

@@ -27,6 +27,7 @@ protected:
 	//©ь╪Ч╠Да©
 	CColorStatic m_text_color_static;
 	CColorStatic m_back_color_static;
+	CColorStatic m_trans_color_static;
 	CToolTipCtrl m_toolTip;
 	CComboBox m_unit_combo;
 	CButton m_hide_unit_chk;
