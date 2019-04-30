@@ -1,6 +1,5 @@
 #pragma once
 #include "DonateDlg.h"
-#include "AcknowledgementDlg.h"
 #include "LinkStatic.h"
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
@@ -32,6 +31,7 @@ protected:
 	const int m_pic_height2{ theApp.DPI(61) };
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+	CString GetDonateList();		//从资源文件加载捐赠人员名单
 
 	// 实现
 protected:
