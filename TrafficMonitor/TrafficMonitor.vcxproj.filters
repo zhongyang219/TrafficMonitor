@@ -246,6 +246,9 @@
     <ClInclude Include="CVariant.h">
       <Filter>源文件和头文件\公共的类\CVariant</Filter>
     </ClInclude>
+    <ClInclude Include="DrawCommonEx.h">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -361,6 +364,9 @@
     </ClCompile>
     <ClCompile Include="CVariant.cpp">
       <Filter>源文件和头文件\公共的类\CVariant</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawCommonEx.cpp">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
