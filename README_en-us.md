@@ -1,4 +1,4 @@
-**[简体中文](https://github.com/zhongyang219/TrafficMonitor/blob/master/README.md) | English**<br>
+**[简体中文](https://github.com/zhongyang219/TrafficMonitor/blob/master/README.md) | [繁體中文](https://github.com/zhongyang219/TrafficMonitor/blob/master/README_zh-tw.md) | English**<br>
 # TrafficMonitor Introduction
 TrafficMonitor is a network monitoring suspension window software in Windows platform. It can display the current network speed, CPU and memory usage. It also support the functions of display in the taskbar, change skin and historical traffic statistics. <br>
 # Related Links<br>
