@@ -130,6 +130,11 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	m_trans_color_static.SetLinkCursor();
 	DrawStaticColor();
 
+#ifdef COMPILE_FOR_WINXP
+	m_trans_color_static.EnableWindow(FALSE);
+#endif // COMPILE_FOR_WINXP
+
+
 	m_toolTip.Create(this);
 	m_toolTip.SetMaxTipWidth(theApp.DPI(300));
 	m_toolTip.AddTool(GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK), CCommon::LoadText(IDS_SPEED_SHORT_MODE_TIP));
