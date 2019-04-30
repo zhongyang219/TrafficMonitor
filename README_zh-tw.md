@@ -13,7 +13,7 @@ Traffic Monitor是一款用於Windows平台的網速監控懸浮窗軟體，可�
 * 支援嵌入到工作列顯示<br>
 * 支援更換面板和自訂面板<br>
 * 歷史流量統計<br>
-# 擷圖畫面
+# 畫面擷圖
 主懸浮窗：<br>
 ![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/main1.png)<br>
 右鍵選單：<br>
@@ -37,5 +37,4 @@ Traffic Monitor是一款用於Windows平台的網速監控懸浮窗軟體，可�
 在「一般設定」選項分頁中，可以設定是否在程式時自動檢查更新，以及是否需要在開機時自動執行。可以設定在什麼時候需要發出訊息通知。<br>
 從1.72版本開始，支援每個專案文字顏色單獨設定。勾選「指定每個專案的顏色」後，點選「文字顏色」右邊的顏色框，會彈出詳細顏色設定的對話方塊，可以在這裡單獨指定每個專案的顏色。<br>
 # 更新日誌
-**[點選此處檢視更新日誌](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log.md)**
-
+**[點選此處檢視更新日誌](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_zh-tw.md)**
