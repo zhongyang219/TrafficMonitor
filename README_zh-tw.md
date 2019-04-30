@@ -26,10 +26,10 @@ Traffic Monitor是一款用於Windows平台的網速監控懸浮窗軟體，可�
 程式啟動後在視窗點選滑鼠右鍵可以彈出右鍵選單，主要功能都集中在這個選單中。如果需要讓它嵌入到工作列顯示，請勾選「顯示工作列視窗」。要顯示CPU和記憶體利用率，請勾選「顯示更多資訊」。
 # 自訂面板
 ![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/selecte_skin.png)<br>
-在主視窗或通知區域圖示右鍵選單上選擇「其他功能」——「更換面板」可以打開更換面板介面。[點選此處](https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/面板下載.md)可以下載更多面板。使用者還可以根據自己的需要編輯自己的面板。<br>
+在主視窗或通知區域圖示右鍵選單上選擇「其他功能」——「更換面板」可以打開更換面板介面。[點選此處](https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md)可以下載更多面板。使用者還可以根據自己的需要編輯自己的面板。<br>
 面板檔案放在程式所在目錄的「skins」目錄下，每個面板被放到單獨的資料夾下，資料夾的名稱就是面板的名稱。<br>
 其中「background.bmp」和「background_l.bmp」是背景圖片，「skin.ini」是面板的設定檔，可以透過「skin.ini」指定文字顏色、字型、面板作者、每個專案的大小和位置等資訊。<br>
-詳細的面板製作教程請[點選此處](https://github.com/zhongyang219/TrafficMonitor/blob/master/面板製作教程.md)。<br>
+詳細的面板製作教程請[點選此處](https://github.com/zhongyang219/TrafficMonitor/blob/master/皮肤制作教程.md)。<br>
 推薦使用[面板編輯器](https://github.com/zhongyang219/TrafficMonitorSkinEditor/releases)來建立或編輯面板。<br>
 # 選項設定
 ![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/option.png)<br>
