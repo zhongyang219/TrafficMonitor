@@ -134,6 +134,8 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	m_trans_color_static.EnableWindow(FALSE);
 #endif // COMPILE_FOR_WINXP
 
+	if(theApp.m_win_version.IsWindows7())
+		m_trans_color_static.EnableWindow(FALSE);
 
 	m_toolTip.Create(this);
 	m_toolTip.SetMaxTipWidth(theApp.DPI(300));

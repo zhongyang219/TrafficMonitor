@@ -494,7 +494,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 
 	//设置窗口透明色
 #ifndef COMPILE_FOR_WINXP
-	if(theApp.m_taskbar_data.transparent_color != 0)
+	if(theApp.m_taskbar_data.transparent_color != 0 && theApp.m_taksbar_transparent_color_enable)
 	{
 		SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
 		SetLayeredWindowAttributes(theApp.m_taskbar_data.transparent_color, 0, LWA_COLORKEY);
