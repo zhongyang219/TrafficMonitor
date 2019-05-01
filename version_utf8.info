@@ -1,8 +1,8 @@
-﻿<version>1.76</version>
-<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.76/TrafficMonitor_V1.76.7z</link>
-<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.76/TrafficMonitor_V1.76.7z</link_x64>
+﻿<version>1.77</version>
+<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.77/TrafficMonitor_V1.77_x86.7z</link>
+<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.77/TrafficMonitor_V1.77_x64.7z</link_x64>
 <update_contents>
-	<contents_zh_cn>修正了分辨率更改可能会导致程序崩溃的问题；\n新增配置文件保存位置的选项；\n修正了当分辨率变化时任务栏窗口的垂直位置不正确的问题；\n新增今日上传和下载流量的显示，历史流量统计中增加上传和下载流量的统计；\n其他细节方面的改进。</contents_zh_cn>
-	<contents_en>Fix the problem that the resolution changes may cause the program crash.\nAdd the options for the saving location of the configuration files.\nFix the problem that the vertical position of the taskbar window was incorrect when the resolution changed.\nAdd the display of today’s upload and download traffic. Add the upload and download traffic statics in the history traffic static dialog.\nImprovements in other details.</contents_en>
-	<contents_zh_tw>修正了解析度更改可能會導致程式崩潰的問題；\n新增設定檔儲存位置的選項；\n修正了當解析度更改時工作列視窗的垂直位置不正確的問題；\n新增今日上傳和下載流量的顯示，歷史流量統計中增加上傳和下載流量的統計；\n其他細節方面的改進。</contents_zh_tw>
+	<contents_zh_cn>增加任务栏窗口透明色设置，修正任务栏为白色时任务栏窗口文字颜色无法设置为黑色的问题（在“选项”——“任务栏窗口设置”中设置透明色）\n新增程序崩溃时显示崩溃信息的功能\n修正显示任务栏窗口的情况下，资源管理器重启时会导致屏幕闪烁的问题\n新增鼠标指向通知区图标时显示监控信息\n修正使用蓝牙网络时无法显示网速的问题\n新增x64的版本\n其他细节方面的改进</contents_zh_cn>
+	<contents_en>Add the transparent color setting of the task window. Fix the problem that the text color of the taskbar window cannot be set to black when the taskbar is white (Set the transparent color in "Options" - "Taskbar Window Settings").\nAdd the function to display crash information when the program crashes.\nFix the problem that the screen will flicker when the Windows Explorer restarts if the taskbar window is displayed.\nDisplay monitoring information when the mouse points to the notification area icon.\nFixed the problem that the network speed could not be displayed when using a Bluetooth network.\nAdded x64 version.\nImprovements in other details.</contents_en>
+	<contents_zh_tw>新增工作列視窗透明色設定，修正工作列為白色時工作列視窗文字顏色無法設定為黑色的問題（在 [選項] —— [工作列視窗設定] 中設定透明色）\n新增程式崩潰時顯示崩潰資訊的功能\n修正顯示工作列視窗的情况下，檔案總管重新啟動時會導致螢幕畫面閃爍的問題\n新增滑鼠指向通知區域圖示時顯示監控資訊\n修正使用藍牙網路時無法顯示網速的問題\n新增x64的版本\n其他細節方面的改進</contents_zh_tw>
 </update_contents>
