@@ -1,24 +1,24 @@
-//´ËÎÄ¼ş°üº¬È«¾Ö½á¹¹Ìå¡¢Ã¶¾ÙÀàĞÍµÄ¶¨Òå
+//æ­¤æ–‡ä»¶åŒ…å«å…¨å±€ç»“æ„ä½“ã€æšä¸¾ç±»å‹çš„å®šä¹‰
 #pragma once
 #include "stdafx.h"
 
-//´¢´æÄ³Ò»ÌìµÄÀúÊ·Á÷Á¿
+//å‚¨å­˜æŸä¸€å¤©çš„å†å²æµé‡
 struct HistoryTraffic
 {
 	int year{};
 	int month{};
 	int day{};
-	//unsigned int kBytes;	//µ±ÌìÊ¹ÓÃµÄÁ÷Á¿£¨ÒÔKBÎªµ¥Î»£©
+	//unsigned int kBytes;	//å½“å¤©ä½¿ç”¨çš„æµé‡ï¼ˆä»¥KBä¸ºå•ä½ï¼‰
 	unsigned int up_kBytes{};
 	unsigned int down_kBytes{};
-	bool mixed{ true };		//Èç¹û²»Çø·ÖÉÏ´«ºÍÏÂÔØÁ÷Á¿£¬ÔòÎªtrue
+	bool mixed{ true };		//å¦‚æœä¸åŒºåˆ†ä¸Šä¼ å’Œä¸‹è½½æµé‡ï¼Œåˆ™ä¸ºtrue
 
 	unsigned int kBytes() const
 	{
 		return up_kBytes + down_kBytes;
 	}
 
-	//±È½ÏÁ½¸öHistoryTraffic¶ÔÏóµÄÈÕÆÚ£¬Èç¹ûaµÄÊ±¼ä´óÓÚb£¬Ôò·µ»Øtrue
+	//æ¯”è¾ƒä¸¤ä¸ªHistoryTrafficå¯¹è±¡çš„æ—¥æœŸï¼Œå¦‚æœaçš„æ—¶é—´å¤§äºbï¼Œåˆ™è¿”å›true
 	static bool DateGreater(const HistoryTraffic& a, const HistoryTraffic& b)
 	{
 		if (a.year != b.year)
@@ -31,38 +31,38 @@ struct HistoryTraffic
 			return false;
 	}
 
-	//ÅĞ¶ÏÁ½¸öHistoryTraffic¶ÔÏóµÄÈÕÆÚÊÇ·ñÏàµÈ
+	//åˆ¤æ–­ä¸¤ä¸ªHistoryTrafficå¯¹è±¡çš„æ—¥æœŸæ˜¯å¦ç›¸ç­‰
 	static bool DateEqual(const HistoryTraffic& a, const HistoryTraffic& b)
 	{
 		return a.year == b.year && a.month == b.month && a.day == b.day;
 	}
 };
 
-//ÀúÊ·Á÷Á¿Í³¼ÆÖĞÓÃÓÚÖ¸Ê¾²»Í¬·¶Î§ÄÚµÄÁ÷Á¿µÄÑÕÉ«
+//å†å²æµé‡ç»Ÿè®¡ä¸­ç”¨äºæŒ‡ç¤ºä¸åŒèŒƒå›´å†…çš„æµé‡çš„é¢œè‰²
 #define TRAFFIC_COLOR_BLUE RGB(0, 183, 238)
 #define TRAFFIC_COLOR_GREEN RGB(128, 194, 105)
 #define TRAFFIC_COLOR_YELLOE RGB(255, 216, 58)
 #define TRAFFIC_COLOR_RED RGB(255, 95, 74)
 
-//ÍøËÙµ¥Î»
+//ç½‘é€Ÿå•ä½
 enum class SpeedUnit
 {
-	AUTO,		//×Ô¶¯
+	AUTO,		//è‡ªåŠ¨
 	KBPS,		//KB/s
 	MBPS		//MB/s
 };
 
-#define DEF_CH L'\"'		//Ğ´ÈëºÍ¶ÁÈ¡iniÎÄ¼ş×Ö·û´®Ê±£¬ÔÚ×Ö·û´®Ç°ºóÌí¼ÓµÄ×Ö·û
-#define NONE_STR L"@@@"		//ÓÃÓÚÖ¸¶¨Ò»¸öÎŞĞ§×Ö·û´®
-struct DispStrings		//ÏÔÊ¾µÄÎÄ±¾
+#define DEF_CH L'\"'		//å†™å…¥å’Œè¯»å–iniæ–‡ä»¶å­—ç¬¦ä¸²æ—¶ï¼Œåœ¨å­—ç¬¦ä¸²å‰åæ·»åŠ çš„å­—ç¬¦
+#define NONE_STR L"@@@"		//ç”¨äºæŒ‡å®šä¸€ä¸ªæ— æ•ˆå­—ç¬¦ä¸²
+struct DispStrings		//æ˜¾ç¤ºçš„æ–‡æœ¬
 {
 	wstring up;
 	wstring down;
 	wstring cpu;
 	wstring memory;
-	void operator=(const DispStrings& disp_str)		//ÖØÔØ¸³ÖµÔËËã·û
+	void operator=(const DispStrings& disp_str)		//é‡è½½èµ‹å€¼è¿ç®—ç¬¦
 	{
-		//Èç¹û¸³ÖµµÄ×Ö·û´®ÊÇ¶¨ÒåµÄÎŞĞ§×Ö·û´®£¬Ôò²»¸³Öµ
+		//å¦‚æœèµ‹å€¼çš„å­—ç¬¦ä¸²æ˜¯å®šä¹‰çš„æ— æ•ˆå­—ç¬¦ä¸²ï¼Œåˆ™ä¸èµ‹å€¼
 		if (disp_str.up != NONE_STR)
 			up = disp_str.up;
 		if (disp_str.down != NONE_STR)
@@ -78,125 +78,126 @@ struct DispStrings		//ÏÔÊ¾µÄÎÄ±¾
 	}
 };
 
-//Êó±êË«»÷´°¿ÚµÄ¶¯×÷
+//é¼ æ ‡åŒå‡»çª—å£çš„åŠ¨ä½œ
 enum class DoubleClickAction
 {
-	CONNECTION_INFO,	//Á¬½ÓÏêÇé
-	HISTORY_TRAFFIC,	//ÀúÊ·Á÷Á¿Í³¼Æ
-	SHOW_MORE_INFO,		//ÏÔÊ¾¸ü¶àĞÅÏ¢
-	OPTIONS,			//Ñ¡ÏîÉèÖÃ
-	TASK_MANAGER,		//ÈÎÎñ¹ÜÀíÆ÷
-	CHANGE_SKIN,		//¸ü»»Æ¤·ô
-	NONE				//²»Ö´ĞĞÈÎºÎ¶¯×÷
+	CONNECTION_INFO,	//è¿æ¥è¯¦æƒ…
+	HISTORY_TRAFFIC,	//å†å²æµé‡ç»Ÿè®¡
+	SHOW_MORE_INFO,		//æ˜¾ç¤ºæ›´å¤šä¿¡æ¯
+	OPTIONS,			//é€‰é¡¹è®¾ç½®
+	TASK_MANAGER,		//ä»»åŠ¡ç®¡ç†å™¨
+	CHANGE_SKIN,		//æ›´æ¢çš®è‚¤
+	NONE				//ä¸æ‰§è¡Œä»»ä½•åŠ¨ä½œ
 };
 
-//ÓïÑÔ
+//è¯­è¨€
 enum class Language
 {
-	FOLLOWING_SYSTEM,		//¸úËæÏµÍ³
-	ENGLISH,				//Ó¢Óï
-	SIMPLIFIED_CHINESE,		//¼òÌåÖĞÎÄ
-	TRADITIONAL_CHINESE		//·±ÌåÖĞÎÄ
+	FOLLOWING_SYSTEM,		//è·Ÿéšç³»ç»Ÿ
+	ENGLISH,				//è‹±è¯­
+	SIMPLIFIED_CHINESE,		//ç®€ä½“ä¸­æ–‡
+	TRADITIONAL_CHINESE		//ç¹ä½“ä¸­æ–‡
 };
 
-//×ÖÌå
+//å­—ä½“
 struct FontInfo
 {
-	CString name;	//×ÖÌåÃû³Æ
-	int size;		//×ÖÌå´óĞ¡
-	bool bold;			//´ÖÌå
-	bool italic;		//Ğ±Ìå
-	bool underline;		//ÏÂ»®Ïß
-	bool strike_out;	//É¾³ıÏß
+	CString name;	//å­—ä½“åç§°
+	int size;		//å­—ä½“å¤§å°
+	bool bold;			//ç²—ä½“
+	bool italic;		//æ–œä½“
+	bool underline;		//ä¸‹åˆ’çº¿
+	bool strike_out;	//åˆ é™¤çº¿
 };
 
-//½«×ÖºÅ×ª³ÉLOGFONT½á¹¹ÖĞµÄlfHeight
+//å°†å­—å·è½¬æˆLOGFONTç»“æ„ä¸­çš„lfHeight
 #define FONTSIZE_TO_LFHEIGHT(font_size) (-MulDiv(font_size, GetDeviceCaps(::GetDC(HWND_DESKTOP), LOGPIXELSY), 72))
 
-//Ñ¡ÏîÉèÖÃÊı¾İ
+//é€‰é¡¹è®¾ç½®æ•°æ®
 struct MainConfigData
 {
-	bool m_always_on_top{ false };		//´°¿ÚÖÃ¶¥
-	int m_transparency{ 100 };			//´°¿ÚÍ¸Ã÷¶È
-	bool m_lock_window_pos{ false };	//Ëø¶¨´°¿ÚÎ»ÖÃ
-	bool m_show_more_info{ false };		//ÏÔÊ¾¸ü¶àĞÅÏ¢
-	bool m_mouse_penetrate{ false };	//Êó±ê´©Í¸
-	bool m_show_task_bar_wnd{ false };	//ÏÔÊ¾ÈÎÎñÀ¸´°¿Ú
-	bool m_hide_main_window;			//Òş²ØÖ÷´°¿Ú
-	bool m_show_notify_icon{ true };	//ÏÔÊ¾Í¨ÖªÇøÓòÍ¼±ê
-	bool m_tbar_show_cpu_memory;		//ÈÎÎñÀ¸´°¿ÚÏÔÊ¾CPUºÍÄÚ´æÀûÓÃÂÊ
+	bool m_always_on_top{ false };		//çª—å£ç½®é¡¶
+	int m_transparency{ 100 };			//çª—å£é€æ˜åº¦
+	bool m_lock_window_pos{ false };	//é”å®šçª—å£ä½ç½®
+	bool m_show_more_info{ false };		//æ˜¾ç¤ºæ›´å¤šä¿¡æ¯
+	bool m_mouse_penetrate{ false };	//é¼ æ ‡ç©¿é€
+	bool m_show_task_bar_wnd{ false };	//æ˜¾ç¤ºä»»åŠ¡æ çª—å£
+	bool m_hide_main_window;			//éšè—ä¸»çª—å£
+	bool m_show_notify_icon{ true };	//æ˜¾ç¤ºé€šçŸ¥åŒºåŸŸå›¾æ ‡
+	bool m_tbar_show_cpu_memory;		//ä»»åŠ¡æ çª—å£æ˜¾ç¤ºCPUå’Œå†…å­˜åˆ©ç”¨ç‡
 
-	int m_position_x;	//´°¿ÚÎ»ÖÃµÄx×ø±ê
-	int m_position_y;	//´°¿ÚÎ»ÖÃµÄy×ø±ê
+	int m_position_x;	//çª—å£ä½ç½®çš„xåæ ‡
+	int m_position_y;	//çª—å£ä½ç½®çš„yåæ ‡
 
-	bool m_auto_select{ false };	//×Ô¶¯Ñ¡ÔñÁ¬½Ó
-	bool m_select_all{ false };		//Í³¼ÆËùÓĞÁ¬½ÓµÄÍøËÙ
-	string m_connection_name;		//µ±Ç°Ñ¡ÔñÍøÂçµÄÃû³Æ
+	bool m_auto_select{ false };	//è‡ªåŠ¨é€‰æ‹©è¿æ¥
+	bool m_select_all{ false };		//ç»Ÿè®¡æ‰€æœ‰è¿æ¥çš„ç½‘é€Ÿ
+	string m_connection_name;		//å½“å‰é€‰æ‹©ç½‘ç»œçš„åç§°
 
-	wstring m_skin_name;			//Ñ¡ÔñµÄÆ¤·ôµÄÃû³Æ
-	int m_notify_icon_selected{};	//ÒªÏÔÊ¾µÄÍ¨ÖªÇøÍ¼±ê
-	bool m_alow_out_of_border{ false };		//ÊÇ·ñÔÊĞíĞü¸¡´°³¬³öÆÁÄ»±ß½ç
+	wstring m_skin_name;			//é€‰æ‹©çš„çš®è‚¤çš„åç§°
+	int m_notify_icon_selected{};	//è¦æ˜¾ç¤ºçš„é€šçŸ¥åŒºå›¾æ ‡
+	bool m_alow_out_of_border{ false };		//æ˜¯å¦å…è®¸æ‚¬æµ®çª—è¶…å‡ºå±å¹•è¾¹ç•Œ
 
-	bool m_show_internet_ip{ false };		//ÊÇ·ñÔÚ¡°Á¬½ÓÏêÇé¡±¶Ô»°¿òÖĞÏÔÊ¾ÍâÍøIPµØÖ·
-	bool m_use_log_scale{ false };			//¡°ÀúÊ·Á÷Á¿Í³¼Æ¡±¶Ô»°¿òÖĞ»æÖÆ±íÊ¾ÀúÊ·Á÷Á¿ÊıÖµµÄ¾ØĞÎÊ±ÊÇ·ñÊ¹ÓÃ¶ÔÊı±ÈÀı
+	bool m_show_internet_ip{ false };		//æ˜¯å¦åœ¨â€œè¿æ¥è¯¦æƒ…â€å¯¹è¯æ¡†ä¸­æ˜¾ç¤ºå¤–ç½‘IPåœ°å€
+	bool m_use_log_scale{ false };			//â€œå†å²æµé‡ç»Ÿè®¡â€å¯¹è¯æ¡†ä¸­ç»˜åˆ¶è¡¨ç¤ºå†å²æµé‡æ•°å€¼çš„çŸ©å½¢æ—¶æ˜¯å¦ä½¿ç”¨å¯¹æ•°æ¯”ä¾‹
 };
 
-//Ñ¡ÏîÉèÖÃÖĞ¡°Ö÷´°¿ÚÉèÖÃ¡±ºÍ¡°ÈÎÎñÀ¸´°¿ÚÉèÖÃ¡±ÖĞ¹«¹²µÄÊı¾İ£¨²»Ê¹ÓÃ´Ë½á¹¹Ìå´´½¨¶ÔÏó£©
+//é€‰é¡¹è®¾ç½®ä¸­â€œä¸»çª—å£è®¾ç½®â€å’Œâ€œä»»åŠ¡æ çª—å£è®¾ç½®â€ä¸­å…¬å…±çš„æ•°æ®ï¼ˆä¸ä½¿ç”¨æ­¤ç»“æ„ä½“åˆ›å»ºå¯¹è±¡ï¼‰
 struct PublicSettingData
 {
-	bool specify_each_item_color{ false };		//ÊÇ·ñÖ¸¶¨Ã¿¸öÏîÄ¿µÄÑÕÉ«
-	FontInfo font;			//×ÖÌå
-	DispStrings disp_str;	//ÏÔÊ¾µÄÎÄ±¾
-	bool swap_up_down{ false };		//½»»»ÉÏ´«ºÍÏÂÔØÏÔÊ¾µÄÎ»ÖÃ
-	bool speed_short_mode{ false };		//ÍøËÙÏÔÊ¾¼ò½àÄ£Ê½£¨¼õÉÙĞ¡ÊıµãµÄÎ»Êı£¬µ¥Î»²»ÏÔÊ¾¡°B¡±£©
-	bool separate_value_unit_with_space{ true };	//ÍøËÙÊıÖµºÍµ¥Î»ÓÃ¿Õ¸ñ·Ö¸ô
-	bool unit_byte{ true };				//Ê¹ÓÃ×Ö½Ú(B)¶ø²»ÊÇ±ÈÌØ(b)Îªµ¥Î»
-	SpeedUnit speed_unit;		//ÍøËÙµÄµ¥Î»
-	bool hide_unit;			//Òş²Øµ¥Î»
-	bool hide_percent;		//Òş²Ø°Ù·ÖºÅ
-	DoubleClickAction double_click_action;		//Êó±êË«»÷¶¯×÷
+	bool specify_each_item_color{ false };		//æ˜¯å¦æŒ‡å®šæ¯ä¸ªé¡¹ç›®çš„é¢œè‰²
+	FontInfo font;			//å­—ä½“
+	DispStrings disp_str;	//æ˜¾ç¤ºçš„æ–‡æœ¬
+	bool swap_up_down{ false };		//äº¤æ¢ä¸Šä¼ å’Œä¸‹è½½æ˜¾ç¤ºçš„ä½ç½®
+	bool speed_short_mode{ false };		//ç½‘é€Ÿæ˜¾ç¤ºç®€æ´æ¨¡å¼ï¼ˆå‡å°‘å°æ•°ç‚¹çš„ä½æ•°ï¼Œå•ä½ä¸æ˜¾ç¤ºâ€œBâ€ï¼‰
+	bool separate_value_unit_with_space{ true };	//ç½‘é€Ÿæ•°å€¼å’Œå•ä½ç”¨ç©ºæ ¼åˆ†éš”
+	bool unit_byte{ true };				//ä½¿ç”¨å­—èŠ‚(B)è€Œä¸æ˜¯æ¯”ç‰¹(b)ä¸ºå•ä½
+	SpeedUnit speed_unit;		//ç½‘é€Ÿçš„å•ä½
+	bool hide_unit;			//éšè—å•ä½
+	bool hide_percent;		//éšè—ç™¾åˆ†å·
+	DoubleClickAction double_click_action;		//é¼ æ ‡åŒå‡»åŠ¨ä½œ
+	wstring double_click_exe;		//é¼ æ ‡åŒå‡»åŠ¨ä½œä¸º4æ—¶ï¼Œæ‰“å¼€çš„ç¨‹åºè·¯å¾„ï¼Œé»˜è®¤ä»»åŠ¡ç®¡ç†å™¨
 };
 
-#define MAIN_WND_COLOR_NUM 4		//Ö÷´°¿ÚÑÕÉ«ÊıÁ¿
-//Ñ¡ÏîÉèÖÃÖĞ¡°Ö÷´°¿ÚÉèÖÃ¡±µÄÊı¾İ
+#define MAIN_WND_COLOR_NUM 4		//ä¸»çª—å£é¢œè‰²æ•°é‡
+//é€‰é¡¹è®¾ç½®ä¸­â€œä¸»çª—å£è®¾ç½®â€çš„æ•°æ®
 struct MainWndSettingData : public PublicSettingData
 {
-	COLORREF text_colors[MAIN_WND_COLOR_NUM]{};		//ÎÄ×ÖÑÕÉ«£¨·Ö±ğÎª¡°ÉÏ´«¡±¡¢¡°ÏÂÔØ¡±¡¢¡°CPU¡±¡¢¡°ÄÚ´æ¡±µÄÑÕÉ«£©
-	bool hide_main_wnd_when_fullscreen;		//ÓĞ³ÌĞòÈ«ÆÁÔËĞĞÊ±Òş²ØĞü¸¡´°
+	COLORREF text_colors[MAIN_WND_COLOR_NUM]{};		//æ–‡å­—é¢œè‰²ï¼ˆåˆ†åˆ«ä¸ºâ€œä¸Šä¼ â€ã€â€œä¸‹è½½â€ã€â€œCPUâ€ã€â€œå†…å­˜â€çš„é¢œè‰²ï¼‰
+	bool hide_main_wnd_when_fullscreen;		//æœ‰ç¨‹åºå…¨å±è¿è¡Œæ—¶éšè—æ‚¬æµ®çª—
 };
 
-#define TASKBAR_COLOR_NUM 8		//ÈÎÎñÀ¸´°¿ÚÑÕÉ«ÊıÁ¿
-//Ñ¡ÏîÉèÖÃÖĞ¡°ÈÎÎñÀ¸´°¿ÚÉèÖÃ¡±µÄÊı¾İ
+#define TASKBAR_COLOR_NUM 8		//ä»»åŠ¡æ çª—å£é¢œè‰²æ•°é‡
+//é€‰é¡¹è®¾ç½®ä¸­â€œä»»åŠ¡æ çª—å£è®¾ç½®â€çš„æ•°æ®
 struct TaskBarSettingData : public PublicSettingData
 {
-	COLORREF  back_color{ RGB(0, 0, 0) };	//±³¾°ÑÕÉ«
-	COLORREF transparent_color{ RGB(0, 0, 0) };		//Í¸Ã÷É«
-	COLORREF text_colors[TASKBAR_COLOR_NUM]{};		//ÎÄ×ÖÑÕÉ«£¨ÒÀ´ÎÎª¡°ÉÏ´«¡±¡¢¡°ÏÂÔØ¡±¡¢¡°CPU¡±¡¢¡°ÄÚ´æ¡±µÄ±êÇ©ºÍÊı¾İÑÕÉ«£©
-	bool value_right_align{ false };	//ÊıÖµÊÇ·ñÓÒ¶ÔÆë
-	int digits_number{ 4 };				//Êı¾İÎ»Êı
-	bool horizontal_arrange{ true };	//Ë®Æ½ÅÅÁĞ
-	bool tbar_wnd_on_left{ false };		//Èç¹ûÎªtrue£¬ÔòÈÎÎñÀ¸´°¿ÚÏÔÊ¾ÔÚÈÎÎñÀ¸µÄ×ó²à£¨»òÉÏ·½£©
+	COLORREF  back_color{ RGB(0, 0, 0) };	//èƒŒæ™¯é¢œè‰²
+	COLORREF transparent_color{ RGB(0, 0, 0) };		//é€æ˜è‰²
+	COLORREF text_colors[TASKBAR_COLOR_NUM]{};		//æ–‡å­—é¢œè‰²ï¼ˆä¾æ¬¡ä¸ºâ€œä¸Šä¼ â€ã€â€œä¸‹è½½â€ã€â€œCPUâ€ã€â€œå†…å­˜â€çš„æ ‡ç­¾å’Œæ•°æ®é¢œè‰²ï¼‰
+	bool value_right_align{ false };	//æ•°å€¼æ˜¯å¦å³å¯¹é½
+	int digits_number{ 4 };				//æ•°æ®ä½æ•°
+	bool horizontal_arrange{ true };	//æ°´å¹³æ’åˆ—
+	bool tbar_wnd_on_left{ false };		//å¦‚æœä¸ºtrueï¼Œåˆ™ä»»åŠ¡æ çª—å£æ˜¾ç¤ºåœ¨ä»»åŠ¡æ çš„å·¦ä¾§ï¼ˆæˆ–ä¸Šæ–¹ï¼‰
 };
 
-//Ñ¡ÏîÉèÖÃÖĞ¡°³£¹æÉèÖÃ¡±µÄÊı¾İ
+//é€‰é¡¹è®¾ç½®ä¸­â€œå¸¸è§„è®¾ç½®â€çš„æ•°æ®
 struct GeneralSettingData
 {
 	bool check_update_when_start{ true };
 	bool auto_run{ false };
 	bool allow_skin_cover_font{ true };
 	bool allow_skin_cover_text{ true };
-	//Í¨ÖªÏûÏ¢
-	bool traffic_tip_enable{ false };		//ÊÇ·ñÆôÓÃÁ÷Á¿³¬³öÊ±ÌáÊ¾
-	int traffic_tip_value;					//ÒªÌáÊ¾µÄÁ÷Á¿ÁÙ½çÖµ
-	int traffic_tip_unit{};					//ÒªÌáÊ¾µÄÁ÷Á¿ÖµµÄµ¥Î»£¨0: MB, 1: GB£©
-	bool memory_usage_tip_enable{ false };	//ÊÇ·ñÆôÓÃÄÚ´æÊ¹ÓÃÂÊ³¬³öÌáÊ¾
-	int memory_tip_value;			//ÒªÌáÊ¾µÄÄÚ´æÊ¹ÓÃÂÊµÄÁÙ½çÖµ
-	//ÓïÑÔ
+	//é€šçŸ¥æ¶ˆæ¯
+	bool traffic_tip_enable{ false };		//æ˜¯å¦å¯ç”¨æµé‡è¶…å‡ºæ—¶æç¤º
+	int traffic_tip_value;					//è¦æç¤ºçš„æµé‡ä¸´ç•Œå€¼
+	int traffic_tip_unit{};					//è¦æç¤ºçš„æµé‡å€¼çš„å•ä½ï¼ˆ0: MB, 1: GBï¼‰
+	bool memory_usage_tip_enable{ false };	//æ˜¯å¦å¯ç”¨å†…å­˜ä½¿ç”¨ç‡è¶…å‡ºæç¤º
+	int memory_tip_value;			//è¦æç¤ºçš„å†…å­˜ä½¿ç”¨ç‡çš„ä¸´ç•Œå€¼
+	//è¯­è¨€
 	Language language;
 
 	bool show_all_interface{ true };
 
-	bool portable_mode{ false };		//±ãĞ¯Ä£Ê½£¬Èç¹ûÎªtrue£¬Ôò³ÌĞòËùÓĞÊı¾İ¶¼±£´æµ½exeËùÔÚÄ¿Â¼ÏÂ£¬·ñÔò±£´æµ½Appdata\RomaingÄ¿Â¼ÏÂ
+	bool portable_mode{ false };		//ä¾¿æºæ¨¡å¼ï¼Œå¦‚æœä¸ºtrueï¼Œåˆ™ç¨‹åºæ‰€æœ‰æ•°æ®éƒ½ä¿å­˜åˆ°exeæ‰€åœ¨ç›®å½•ä¸‹ï¼Œå¦åˆ™ä¿å­˜åˆ°Appdata\Romaingç›®å½•ä¸‹
 };
 
 enum class Alignment
@@ -206,76 +207,76 @@ enum class Alignment
 	CENTER
 };
 
-//Ö÷´°¿Ú²¼¾ÖÊı¾İ
+//ä¸»çª—å£å¸ƒå±€æ•°æ®
 struct LayoutData
 {
-	int text_height;	//ÎÄ±¾ÇøÓòµÄ¸ß¶È
-	bool no_text;		//²»ÏÔÊ¾ÊıÖµÇ°µÄ¡°ÉÏ´«¡±¡¢¡°ÏÂÔØ¡±µÈÎÄ±¾
-	int preview_width;		//Ô¤ÀÀÇø»­²¼¿í¶È
-	int preview_height;		//Ô¤ÀÀÇø»­²¼¸ß¶È
+	int text_height;	//æ–‡æœ¬åŒºåŸŸçš„é«˜åº¦
+	bool no_text;		//ä¸æ˜¾ç¤ºæ•°å€¼å‰çš„â€œä¸Šä¼ â€ã€â€œä¸‹è½½â€ç­‰æ–‡æœ¬
+	int preview_width;		//é¢„è§ˆåŒºç”»å¸ƒå®½åº¦
+	int preview_height;		//é¢„è§ˆåŒºç”»å¸ƒé«˜åº¦
 
-	//´ó´°¿ÚÄ£Ê½£¨¹´Ñ¡¡°ÏÔÊ¾¸ü¶àĞÅÏ¢¡±Ê±µÄ²¼¾Ö£©
-	int width_l;	//´°¿ÚµÄ¿í¶È
-	int height_l;	//´°¿ÚµÄ¸ß¶È
-	int up_x_l;		//¡°ÉÏ´«¡±µÄx×ø±ê
-	int up_y_l;		//¡°ÉÏ´«¡±µÄy×ø±ê
-	int up_width_l;		//¡°ÉÏ´«¡±µÄ¿í¶È
-	Alignment up_align_l;	//¡°ÉÏ´«¡±µÄ¶ÔÆë·½Ê½
-	bool show_up_l;			//ÊÇ·ñÏÔÊ¾¡°ÉÏ´«¡±
-	int down_x_l;			//¡°ÏÂÔØ¡±µÄx×ø±ê
-	int down_y_l;			//¡°ÏÂÔØ¡±µÄy×ø±ê
-	int down_width_l;		//¡°ÏÂÔØ¡±µÄ¿í¶È
-	Alignment down_align_l;	//¡°ÏÂÔØ¡±µÄ¶ÔÆë·½Ê½
-	bool show_down_l;		//ÊÇ·ñÏÔÊ¾¡°ÏÂÔØ¡±
-	int cpu_x_l;			//¡°CPU¡±µÄx×ø±ê
-	int cpu_y_l;			//¡°CPU¡±µÄy×ø±ê
-	int cpu_width_l;		//¡°CPU¡±µÄ¿í¶È
-	Alignment cpu_align_l;	//¡°CPU¡±µÄ¶ÔÆë·½Ê½
-	bool show_cpu_l;		//ÊÇ·ñÏÔÊ¾¡°CPU¡±
-	int memory_x_l;			//¡°ÄÚ´æ¡±µÄx×ø±ê
-	int memory_y_l;			//¡°ÄÚ´æ¡±µÄy×ø±ê
-	int memory_width_l;		//¡°ÄÚ´æ¡±µÄ¿í¶È
-	Alignment memory_align_l;	//¡°ÄÚ´æ¡±µÄ¶ÔÆë·½Ê½
-	bool show_memory_l;		//ÊÇ·ñÏÔÊ¾¡°ÄÚ´æ¡±
-	int preview_x_l;		//ÔÚ¡°Ñ¡ÔñÆ¤·ô¡±½çÃæÖĞÔ¤ÀÀÍ¼µÄx×ø±ê
-	int preview_y_l;		//ÔÚ¡°Ñ¡ÔñÆ¤·ô¡±½çÃæÖĞÔ¤ÀÀÍ¼µÄy×ø±ê
+	//å¤§çª—å£æ¨¡å¼ï¼ˆå‹¾é€‰â€œæ˜¾ç¤ºæ›´å¤šä¿¡æ¯â€æ—¶çš„å¸ƒå±€ï¼‰
+	int width_l;	//çª—å£çš„å®½åº¦
+	int height_l;	//çª—å£çš„é«˜åº¦
+	int up_x_l;		//â€œä¸Šä¼ â€çš„xåæ ‡
+	int up_y_l;		//â€œä¸Šä¼ â€çš„yåæ ‡
+	int up_width_l;		//â€œä¸Šä¼ â€çš„å®½åº¦
+	Alignment up_align_l;	//â€œä¸Šä¼ â€çš„å¯¹é½æ–¹å¼
+	bool show_up_l;			//æ˜¯å¦æ˜¾ç¤ºâ€œä¸Šä¼ â€
+	int down_x_l;			//â€œä¸‹è½½â€çš„xåæ ‡
+	int down_y_l;			//â€œä¸‹è½½â€çš„yåæ ‡
+	int down_width_l;		//â€œä¸‹è½½â€çš„å®½åº¦
+	Alignment down_align_l;	//â€œä¸‹è½½â€çš„å¯¹é½æ–¹å¼
+	bool show_down_l;		//æ˜¯å¦æ˜¾ç¤ºâ€œä¸‹è½½â€
+	int cpu_x_l;			//â€œCPUâ€çš„xåæ ‡
+	int cpu_y_l;			//â€œCPUâ€çš„yåæ ‡
+	int cpu_width_l;		//â€œCPUâ€çš„å®½åº¦
+	Alignment cpu_align_l;	//â€œCPUâ€çš„å¯¹é½æ–¹å¼
+	bool show_cpu_l;		//æ˜¯å¦æ˜¾ç¤ºâ€œCPUâ€
+	int memory_x_l;			//â€œå†…å­˜â€çš„xåæ ‡
+	int memory_y_l;			//â€œå†…å­˜â€çš„yåæ ‡
+	int memory_width_l;		//â€œå†…å­˜â€çš„å®½åº¦
+	Alignment memory_align_l;	//â€œå†…å­˜â€çš„å¯¹é½æ–¹å¼
+	bool show_memory_l;		//æ˜¯å¦æ˜¾ç¤ºâ€œå†…å­˜â€
+	int preview_x_l;		//åœ¨â€œé€‰æ‹©çš®è‚¤â€ç•Œé¢ä¸­é¢„è§ˆå›¾çš„xåæ ‡
+	int preview_y_l;		//åœ¨â€œé€‰æ‹©çš®è‚¤â€ç•Œé¢ä¸­é¢„è§ˆå›¾çš„yåæ ‡
 
-	//Ğ¡´°¿ÚÄ£Ê½£¨²»¹´Ñ¡¡°ÏÔÊ¾¸ü¶àĞÅÏ¢¡±Ê±µÄ²¼¾Ö£©
-	int width_s;	//´°¿ÚµÄ¿í¶È
-	int height_s;	//´°¿ÚµÄ¸ß¶È
-	int up_x_s;		//¡°ÉÏ´«¡±µÄx×ø±ê
-	int up_y_s;		//¡°ÉÏ´«¡±µÄy×ø±ê
-	int up_width_s;		//¡°ÉÏ´«¡±µÄ¿í¶È
-	Alignment up_align_s;	//¡°ÉÏ´«¡±µÄ¶ÔÆë·½Ê½
-	bool show_up_s;			//ÊÇ·ñÏÔÊ¾¡°ÉÏ´«¡±
-	int down_x_s;			//¡°ÏÂÔØ¡±µÄx×ø±ê
-	int down_y_s;			//¡°ÏÂÔØ¡±µÄy×ø±ê
-	int down_width_s;		//¡°ÏÂÔØ¡±µÄ¿í¶È
-	Alignment down_align_s;	//¡°ÏÂÔØ¡±µÄ¶ÔÆë·½Ê½
-	bool show_down_s;		//ÊÇ·ñÏÔÊ¾¡°ÏÂÔØ¡±
-	int cpu_x_s;			//¡°CPU¡±µÄx×ø±ê
-	int cpu_y_s;			//¡°CPU¡±µÄy×ø±ê
-	int cpu_width_s;		//¡°CPU¡±µÄ¿í¶È
-	Alignment cpu_align_s;	//¡°CPU¡±µÄ¶ÔÆë·½Ê½
-	bool show_cpu_s;		//ÊÇ·ñÏÔÊ¾¡°CPU¡±
-	int memory_x_s;			//¡°ÄÚ´æ¡±µÄx×ø±ê
-	int memory_y_s;			//¡°ÄÚ´æ¡±µÄy×ø±ê
-	int memory_width_s;		//¡°ÄÚ´æ¡±µÄ¿í¶È
-	Alignment memory_align_s;	//¡°ÄÚ´æ¡±µÄ¶ÔÆë·½Ê½
-	bool show_memory_s;		//ÊÇ·ñÏÔÊ¾¡°ÄÚ´æ¡±
-	int preview_x_s;	//ÔÚ¡°Ñ¡ÔñÆ¤·ô¡±½çÃæÖĞÔ¤ÀÀÍ¼µÄx×ø±ê
-	int preview_y_s;	//ÔÚ¡°Ñ¡ÔñÆ¤·ô¡±½çÃæÖĞÔ¤ÀÀÍ¼µÄy×ø±ê
+	//å°çª—å£æ¨¡å¼ï¼ˆä¸å‹¾é€‰â€œæ˜¾ç¤ºæ›´å¤šä¿¡æ¯â€æ—¶çš„å¸ƒå±€ï¼‰
+	int width_s;	//çª—å£çš„å®½åº¦
+	int height_s;	//çª—å£çš„é«˜åº¦
+	int up_x_s;		//â€œä¸Šä¼ â€çš„xåæ ‡
+	int up_y_s;		//â€œä¸Šä¼ â€çš„yåæ ‡
+	int up_width_s;		//â€œä¸Šä¼ â€çš„å®½åº¦
+	Alignment up_align_s;	//â€œä¸Šä¼ â€çš„å¯¹é½æ–¹å¼
+	bool show_up_s;			//æ˜¯å¦æ˜¾ç¤ºâ€œä¸Šä¼ â€
+	int down_x_s;			//â€œä¸‹è½½â€çš„xåæ ‡
+	int down_y_s;			//â€œä¸‹è½½â€çš„yåæ ‡
+	int down_width_s;		//â€œä¸‹è½½â€çš„å®½åº¦
+	Alignment down_align_s;	//â€œä¸‹è½½â€çš„å¯¹é½æ–¹å¼
+	bool show_down_s;		//æ˜¯å¦æ˜¾ç¤ºâ€œä¸‹è½½â€
+	int cpu_x_s;			//â€œCPUâ€çš„xåæ ‡
+	int cpu_y_s;			//â€œCPUâ€çš„yåæ ‡
+	int cpu_width_s;		//â€œCPUâ€çš„å®½åº¦
+	Alignment cpu_align_s;	//â€œCPUâ€çš„å¯¹é½æ–¹å¼
+	bool show_cpu_s;		//æ˜¯å¦æ˜¾ç¤ºâ€œCPUâ€
+	int memory_x_s;			//â€œå†…å­˜â€çš„xåæ ‡
+	int memory_y_s;			//â€œå†…å­˜â€çš„yåæ ‡
+	int memory_width_s;		//â€œå†…å­˜â€çš„å®½åº¦
+	Alignment memory_align_s;	//â€œå†…å­˜â€çš„å¯¹é½æ–¹å¼
+	bool show_memory_s;		//æ˜¯å¦æ˜¾ç¤ºâ€œå†…å­˜â€
+	int preview_x_s;	//åœ¨â€œé€‰æ‹©çš®è‚¤â€ç•Œé¢ä¸­é¢„è§ˆå›¾çš„xåæ ‡
+	int preview_y_s;	//åœ¨â€œé€‰æ‹©çš®è‚¤â€ç•Œé¢ä¸­é¢„è§ˆå›¾çš„yåæ ‡
 };
 
 
 struct SkinData
 {
 	LayoutData layout;
-	COLORREF text_colors[MAIN_WND_COLOR_NUM]{};		//ÎÄ×ÖÑÕÉ«£¨·Ö±ğÎª¡°ÉÏ´«¡±¡¢¡°ÏÂÔØ¡±¡¢¡°CPU¡±¡¢¡°ÄÚ´æ¡±µÄÑÕÉ«£©
-	bool specify_each_item_color;		//ÊÇ·ñÖ¸¶¨Ã¿¸öÏîÄ¿µÄÑÕÉ«
+	COLORREF text_colors[MAIN_WND_COLOR_NUM]{};		//æ–‡å­—é¢œè‰²ï¼ˆåˆ†åˆ«ä¸ºâ€œä¸Šä¼ â€ã€â€œä¸‹è½½â€ã€â€œCPUâ€ã€â€œå†…å­˜â€çš„é¢œè‰²ï¼‰
+	bool specify_each_item_color;		//æ˜¯å¦æŒ‡å®šæ¯ä¸ªé¡¹ç›®çš„é¢œè‰²
 	//wstring skin_author;
 	DispStrings disp_str;
 	//wstring font_name;
 	//int font_size
-	FontInfo font;			//×ÖÌå
+	FontInfo font;			//å­—ä½“
 };
