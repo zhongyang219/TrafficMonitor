@@ -1,4 +1,4 @@
-// TaskBarDlg.cpp : ÊµÏÖÎÄ¼ş
+// TaskBarDlg.cpp : å®ç°æ–‡ä»¶
 //
 
 #include "stdafx.h"
@@ -7,7 +7,7 @@
 #include "afxdialogex.h"
 
 
-// CTaskBarDlg ¶Ô»°¿ò
+// CTaskBarDlg å¯¹è¯æ¡†
 
 IMPLEMENT_DYNAMIC(CTaskBarDlg, CDialogEx)
 
@@ -37,7 +37,7 @@ BEGIN_MESSAGE_MAP(CTaskBarDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
-// CTaskBarDlg ÏûÏ¢´¦Àí³ÌĞò
+// CTaskBarDlg æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 
 void CTaskBarDlg::ShowInfo(CDC* pDC)
@@ -49,7 +49,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 
 	if (m_rect.IsRectEmpty() || m_rect.IsRectNull()) return;
 
-	//ÉèÖÃÒª»æÖÆµÄÎÄ±¾ÑÕÉ«
+	//è®¾ç½®è¦ç»˜åˆ¶çš„æ–‡æœ¬é¢œè‰²
 	COLORREF text_colors[TASKBAR_COLOR_NUM];
 	if (theApp.m_taskbar_data.specify_each_item_color)
 	{
@@ -62,24 +62,24 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 			text_colors[i] = theApp.m_taskbar_data.text_colors[0];
 	}
 
-	//ÉèÖÃ»º³åµÄDC
+	//è®¾ç½®ç¼“å†²çš„DC
 	CDC MemDC;
 	CBitmap MemBitmap;
 	MemDC.CreateCompatibleDC(NULL);
 	int draw_width = (theApp.m_cfg_data.m_tbar_show_cpu_memory ? m_window_width : m_window_width_s);
 	MemBitmap.CreateCompatibleBitmap(pDC, draw_width, m_rect.Height());
 	MemDC.SelectObject(&MemBitmap);
-	//»æÍ¼
-	CRect value_rect{ m_rect };		//ÏÔÊ¾ÊıÖµµÄ¾ØĞÎÇøÓò
-	CRect lable_rect;				//ÏÔÊ¾ÎÄ±¾±êÇ©µÄ¾ØĞÎÇøÓò
+	//ç»˜å›¾
+	CRect value_rect{ m_rect };		//æ˜¾ç¤ºæ•°å€¼çš„çŸ©å½¢åŒºåŸŸ
+	CRect lable_rect;				//æ˜¾ç¤ºæ–‡æœ¬æ ‡ç­¾çš„çŸ©å½¢åŒºåŸŸ
 	value_rect.MoveToXY(0, 0);
-	MemDC.FillSolidRect(value_rect, theApp.m_taskbar_data.back_color);		//Ìî³ä±³¾°É«
+	MemDC.FillSolidRect(value_rect, theApp.m_taskbar_data.back_color);		//å¡«å……èƒŒæ™¯è‰²
 	CDrawCommon draw;
 	draw.Create(&MemDC, nullptr);
 	draw.SetFont(&m_font);
 	draw.SetBackColor(theApp.m_taskbar_data.back_color);
-	Alignment value_alignment{ theApp.m_taskbar_data.value_right_align ? Alignment::RIGHT : Alignment::LEFT };		//ÊıÖµµÄ¶ÔÆë·½Ê½
-	//»æÖÆÉÏ´«ËÙ¶È
+	Alignment value_alignment{ theApp.m_taskbar_data.value_right_align ? Alignment::RIGHT : Alignment::LEFT };		//æ•°å€¼çš„å¯¹é½æ–¹å¼
+	//ç»˜åˆ¶ä¸Šä¼ é€Ÿåº¦
 	if (theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom)
 	{
 		value_rect.right = m_up_lable_width + m_ud_value_width;
@@ -119,12 +119,12 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 		str.Format(format_str, in_speed.GetString());
 		draw.DrawWindowText(value_rect, str, text_colors[3], value_alignment, true);
 	}
-	//»æÖÆÉÏ´«±êÇ©
+	//ç»˜åˆ¶ä¸Šä¼ æ ‡ç­¾
 	if (!theApp.m_taskbar_data.swap_up_down)
 		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.up.c_str(), text_colors[0], Alignment::LEFT, true);
 	else
 		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.down.c_str(), text_colors[2], Alignment::LEFT, true);
-	//»æÖÆÏÂÔØËÙ¶È
+	//ç»˜åˆ¶ä¸‹è½½é€Ÿåº¦
 	if (theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom)
 	{
 		lable_rect.MoveToX(value_rect.right + theApp.DPI(4));
@@ -146,7 +146,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 		str.Format(format_str, out_speed.GetString());
 		draw.DrawWindowText(value_rect, str, text_colors[1], value_alignment, true);
 	}
-	//»æÖÆÏÂÔØ±êÇ©
+	//ç»˜åˆ¶ä¸‹è½½æ ‡ç­¾
 	if (!theApp.m_taskbar_data.swap_up_down)
 		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.down.c_str(), text_colors[2], Alignment::LEFT, true);
 	else
@@ -154,7 +154,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 
 	if (theApp.m_cfg_data.m_tbar_show_cpu_memory)
 	{
-		//»æÖÆCPUÀûÓÃÂÊ
+		//ç»˜åˆ¶CPUåˆ©ç”¨ç‡
 		if (theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom)
 		{
 			value_rect.MoveToXY(m_window_width_s + theApp.DPI(4), 0);
@@ -188,11 +188,11 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 			format_str = _T("%d%%");
 		str.Format(format_str, theApp.m_cpu_usage);
 		CRect rect_tmp{ value_rect };
-		if (theApp.m_cpu_usage == 100)		//Èç¹ûCPUÀûÓÃÎª100%£¬Ôò½«¾ØĞÎ¿òÓÒ²àÀ©´óÒ»Ğ©£¬·ÀÖ¹ÏÔÊ¾²»È«
+		if (theApp.m_cpu_usage == 100)		//å¦‚æœCPUåˆ©ç”¨ä¸º100%ï¼Œåˆ™å°†çŸ©å½¢æ¡†å³ä¾§æ‰©å¤§ä¸€äº›ï¼Œé˜²æ­¢æ˜¾ç¤ºä¸å…¨
 			rect_tmp.right += theApp.DPI(5);
-		draw.DrawWindowText(rect_tmp, str, text_colors[5], value_alignment, true);		//»æÖÆÊıÖµ
-		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.cpu.c_str(), text_colors[4], Alignment::LEFT, true);				//»æÖÆ±êÇ©
-		//»æÖÆÄÚ´æÀûÓÃÂÊ
+		draw.DrawWindowText(rect_tmp, str, text_colors[5], value_alignment, true);		//ç»˜åˆ¶æ•°å€¼
+		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.cpu.c_str(), text_colors[4], Alignment::LEFT, true);				//ç»˜åˆ¶æ ‡ç­¾
+		//ç»˜åˆ¶å†…å­˜åˆ©ç”¨ç‡
 		if (theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom)
 		{
 			lable_rect.MoveToX(value_rect.right + theApp.DPI(4));
@@ -206,12 +206,12 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 		}
 		str.Format(format_str, theApp.m_memory_usage);
 		rect_tmp = value_rect;
-		if (theApp.m_memory_usage == 100)		//Èç¹ûÄÚ´æÀûÓÃÎª100%£¬Ôò½«¾ØĞÎ¿òÓÒ²àÀ©´óÒ»Ğ©£¬·ÀÖ¹ÏÔÊ¾²»È«
+		if (theApp.m_memory_usage == 100)		//å¦‚æœå†…å­˜åˆ©ç”¨ä¸º100%ï¼Œåˆ™å°†çŸ©å½¢æ¡†å³ä¾§æ‰©å¤§ä¸€äº›ï¼Œé˜²æ­¢æ˜¾ç¤ºä¸å…¨
 			rect_tmp.right += theApp.DPI(5);
 		draw.DrawWindowText(rect_tmp, str, text_colors[7], value_alignment, true);
 		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.memory.c_str(), text_colors[6], Alignment::LEFT, true);
 	}
-	//½«»º³åÇøDCÖĞµÄÍ¼Ïñ¿½±´µ½ÆÁÄ»ÖĞÏÔÊ¾
+	//å°†ç¼“å†²åŒºDCä¸­çš„å›¾åƒæ‹·è´åˆ°å±å¹•ä¸­æ˜¾ç¤º
 	pDC->BitBlt(0,0, draw_width, m_rect.Height(), &MemDC, 0, 0, SRCCOPY);
 	MemBitmap.DeleteObject();
 	MemDC.DeleteDC();
@@ -223,8 +223,8 @@ bool CTaskBarDlg::AdjustWindowPos()
 	if (this->m_hWnd == NULL)
 		return false;
 	CRect rcMin, rcBar;
-	::GetWindowRect(m_hMin, rcMin);	//»ñµÃ×îĞ¡»¯´°¿ÚµÄÇøÓò
-	::GetWindowRect(m_hBar, rcBar);	//»ñµÃ¶ş¼¶ÈİÆ÷µÄÇøÓò
+	::GetWindowRect(m_hMin, rcMin);	//è·å¾—æœ€å°åŒ–çª—å£çš„åŒºåŸŸ
+	::GetWindowRect(m_hBar, rcBar);	//è·å¾—äºŒçº§å®¹å™¨çš„åŒºåŸŸ
 	static bool last_taskbar_on_top_or_bottom;
 	m_taskbar_on_top_or_bottom = IsTaskbarOnTopOrBottom();
 	if (m_taskbar_on_top_or_bottom != last_taskbar_on_top_or_bottom)
@@ -233,19 +233,19 @@ bool CTaskBarDlg::AdjustWindowPos()
 		last_taskbar_on_top_or_bottom = m_taskbar_on_top_or_bottom;
 	}
 
-	if (m_taskbar_on_top_or_bottom)		//µ±ÈÎÎñÀ¸ÔÚ×ÀÃæ¶¥²¿»òµ×²¿Ê±
+	if (m_taskbar_on_top_or_bottom)		//å½“ä»»åŠ¡æ åœ¨æ¡Œé¢é¡¶éƒ¨æˆ–åº•éƒ¨æ—¶
 	{
-		//ÉèÖÃ´°¿Ú´óĞ¡
+		//è®¾ç½®çª—å£å¤§å°
 		m_rect.right = m_rect.left + (theApp.m_cfg_data.m_tbar_show_cpu_memory ? m_window_width : m_window_width_s);
 		m_rect.bottom = m_rect.top + m_window_height;
-		if (rcMin.Width() != m_min_bar_width)	//Èç¹û×îĞ¡»¯´°¿ÚµÄ¿í¶È¸Ä±äÁË£¬ÖØĞÂÉèÖÃÈÎÎñÀ¸´°¿ÚµÄÎ»ÖÃ
+		if (rcMin.Width() != m_min_bar_width)	//å¦‚æœæœ€å°åŒ–çª—å£çš„å®½åº¦æ”¹å˜äº†ï¼Œé‡æ–°è®¾ç½®ä»»åŠ¡æ çª—å£çš„ä½ç½®
 		{
 			m_left_space = rcMin.left - rcBar.left;
 			m_rcMin = rcMin;
-			m_min_bar_width = m_rcMin.Width() - m_rect.Width();	//±£´æ×îĞ¡»¯´°¿Ú¿í¶È
+			m_min_bar_width = m_rcMin.Width() - m_rect.Width();	//ä¿å­˜æœ€å°åŒ–çª—å£å®½åº¦
 			if (!theApp.m_taskbar_data.tbar_wnd_on_left)
 			{
-				::MoveWindow(m_hMin, m_left_space, 0, m_rcMin.Width() - m_rect.Width(), m_rcMin.Height(), TRUE);	//ÉèÖÃ×îĞ¡»¯´°¿ÚµÄÎ»ÖÃ
+				::MoveWindow(m_hMin, m_left_space, 0, m_rcMin.Width() - m_rect.Width(), m_rcMin.Height(), TRUE);	//è®¾ç½®æœ€å°åŒ–çª—å£çš„ä½ç½®
 				m_rect.MoveToX(m_left_space + m_rcMin.Width() - m_rect.Width() + 2);
 			}
 			else
@@ -259,26 +259,26 @@ bool CTaskBarDlg::AdjustWindowPos()
 			MoveWindow(m_rect);
 		}
 	}
-	else		//µ±ÈÎÎñÀ¸ÔÚÆÁÄ»ÔÚ×ó²à»òÓÒ²àÊ±
+	else		//å½“ä»»åŠ¡æ åœ¨å±å¹•åœ¨å·¦ä¾§æˆ–å³ä¾§æ—¶
 	{
-		//ÉèÖÃ´°¿Ú´óĞ¡
+		//è®¾ç½®çª—å£å¤§å°
 		int window_width;
 		window_width = max(m_window_width_s, (m_window_width - m_window_width_s));
 		m_rect.right = m_rect.left + window_width;
 		m_rect.bottom = m_rect.top + (theApp.m_cfg_data.m_tbar_show_cpu_memory ? (2 * m_window_height + theApp.DPI(2)) : m_window_height);
-		if (rcMin.Height() != m_min_bar_height)	//Èç¹û×îĞ¡»¯´°¿ÚµÄ¸ß¶È¸Ä±äÁË£¬ÖØĞÂÉèÖÃÈÎÎñÀ¸´°¿ÚµÄÎ»ÖÃ
+		if (rcMin.Height() != m_min_bar_height)	//å¦‚æœæœ€å°åŒ–çª—å£çš„é«˜åº¦æ”¹å˜äº†ï¼Œé‡æ–°è®¾ç½®ä»»åŠ¡æ çª—å£çš„ä½ç½®
 		{
 			m_top_space = rcMin.top - rcBar.top;
 			m_rcMin = rcMin;
-			m_min_bar_height = m_rcMin.Height() - m_rect.Height();	//±£´æ×îĞ¡»¯´°¿Ú¸ß¶È
+			m_min_bar_height = m_rcMin.Height() - m_rect.Height();	//ä¿å­˜æœ€å°åŒ–çª—å£é«˜åº¦
 			if (!theApp.m_taskbar_data.tbar_wnd_on_left)
 			{
-				::MoveWindow(m_hMin, 0, m_top_space, m_rcMin.Width(), m_rcMin.Height() - m_rect.Height(), TRUE);	//ÉèÖÃ×îĞ¡»¯´°¿ÚµÄÎ»ÖÃ
+				::MoveWindow(m_hMin, 0, m_top_space, m_rcMin.Width(), m_rcMin.Height() - m_rect.Height(), TRUE);	//è®¾ç½®æœ€å°åŒ–çª—å£çš„ä½ç½®
 				m_rect.MoveToY(m_top_space + m_rcMin.Height() - m_rect.Height() + 2);
 			}
 			else
 			{
-				::MoveWindow(m_hMin, 0, m_top_space + m_rect.Height(), m_rcMin.Width(), m_rcMin.Height() - m_rect.Height(), TRUE);	//ÉèÖÃ×îĞ¡»¯´°¿ÚµÄÎ»ÖÃ
+				::MoveWindow(m_hMin, 0, m_top_space + m_rect.Height(), m_rcMin.Width(), m_rcMin.Height() - m_rect.Height(), TRUE);	//è®¾ç½®æœ€å°åŒ–çª—å£çš„ä½ç½®
 				m_rect.MoveToY(m_top_space);
 			}
 			m_rect.MoveToX((m_rcMin.Width() - window_width) / 2);
@@ -289,16 +289,16 @@ bool CTaskBarDlg::AdjustWindowPos()
 	}
 
 	CRect rect{ m_rect };
-	//Èç¹û´°¿ÚÃ»ÓĞ±»³É¹¦Ç¶Èëµ½ÈÎÎñÀ¸£¬´°¿ÚÒÆ¶¯µ½ÁË»ùÓÚÆÁÄ»×óÉÏ½ÇµÄ¾ø¶ÔÎ»ÖÃ£¬ÔòĞŞÕı´°¿ÚµÄÎ»ÖÃ
+	//å¦‚æœçª—å£æ²¡æœ‰è¢«æˆåŠŸåµŒå…¥åˆ°ä»»åŠ¡æ ï¼Œçª—å£ç§»åŠ¨åˆ°äº†åŸºäºå±å¹•å·¦ä¸Šè§’çš„ç»å¯¹ä½ç½®ï¼Œåˆ™ä¿®æ­£çª—å£çš„ä½ç½®
 	if (m_connot_insert_to_task_bar)
 	{
 		rect.MoveToXY(rect.left + rcBar.left, rect.top + rcBar.top);
 		this->MoveWindow(rect);
 	}
 
-	if (m_connot_insert_to_task_bar && ::GetForegroundWindow() == m_hTaskbar)	//ÔÚ´°¿ÚÎŞ·¨Ç¶ÈëÈÎÎñÀ¸Ê±£¬Èç¹û½¹µãÉèÖÃÔÚÁËÈÎÎñÀ¸ÉÏ£¬ÔòÈÃ´°¿ÚÖÃ¶¥
+	if (m_connot_insert_to_task_bar && ::GetForegroundWindow() == m_hTaskbar)	//åœ¨çª—å£æ— æ³•åµŒå…¥ä»»åŠ¡æ æ—¶ï¼Œå¦‚æœç„¦ç‚¹è®¾ç½®åœ¨äº†ä»»åŠ¡æ ä¸Šï¼Œåˆ™è®©çª—å£ç½®é¡¶
 	{
-		SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);			//ÉèÖÃÖÃ¶¥
+		SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);			//è®¾ç½®ç½®é¡¶
 	}
 	return true;
 }
@@ -311,15 +311,15 @@ bool CTaskBarDlg::IsTaskbarOnTopOrBottom()
 	CRect rcBar;
 	if (m_hTaskbar != 0)
 	{
-		::GetWindowRect(m_hMin, rcMin);	//»ñµÃ×îĞ¡»¯´°¿ÚµÄÇøÓò
-		::GetWindowRect(m_hBar, rcBar);	//»ñµÃ¶ş¼¶ÈİÆ÷µÄÇøÓò
+		::GetWindowRect(m_hMin, rcMin);	//è·å¾—æœ€å°åŒ–çª—å£çš„åŒºåŸŸ
+		::GetWindowRect(m_hBar, rcBar);	//è·å¾—äºŒçº§å®¹å™¨çš„åŒºåŸŸ
 		if(m_left_space==0)
 			m_left_space = rcMin.left - rcBar.left;
 		if(m_top_space==0)
 			m_top_space = rcMin.top - rcBar.top;
 
-		::GetWindowRect(m_hTaskbar, rect);			//»ñÈ¡ÈÎÎñÀ¸µÄ¾ØĞÎÇøÓò
-		return (rect.Width()>=rect.Height());		//Èç¹ûÈÎÎñÀ¸µÄ¿í¶È´óÓÚ¸ß¶È£¬ÔòÈÎÎñÔÚÆÁÄ»µÄ¶¥²¿»òµ×²¿
+		::GetWindowRect(m_hTaskbar, rect);			//è·å–ä»»åŠ¡æ çš„çŸ©å½¢åŒºåŸŸ
+		return (rect.Width()>=rect.Height());		//å¦‚æœä»»åŠ¡æ çš„å®½åº¦å¤§äºé«˜åº¦ï¼Œåˆ™ä»»åŠ¡åœ¨å±å¹•çš„é¡¶éƒ¨æˆ–åº•éƒ¨
 	}
 	else
 	{
@@ -358,12 +358,12 @@ CString CTaskBarDlg::GetMouseTipsInfo()
 
 void CTaskBarDlg::SetTextFont()
 {
-	//Èç¹ûm_fontÒÑ¾­¹ØÁªÁËÒ»¸ö×ÖÌå×ÊÔ´¶ÔÏó£¬ÔòÊÍ·ÅËü
+	//å¦‚æœm_fontå·²ç»å…³è”äº†ä¸€ä¸ªå­—ä½“èµ„æºå¯¹è±¡ï¼Œåˆ™é‡Šæ”¾å®ƒ
 	if (m_font.m_hObject)
 	{
 		m_font.DeleteObject();
 	}
-	//´´½¨ĞÂµÄ×ÖÌå
+	//åˆ›å»ºæ–°çš„å­—ä½“
 	m_font.CreateFont(
 		FONTSIZE_TO_LFHEIGHT(theApp.m_taskbar_data.font.size), // nHeight
 		0, // nWidth
@@ -390,16 +390,16 @@ void CTaskBarDlg::ApplySettings()
 void CTaskBarDlg::CalculateWindowWidth()
 {
 	bool horizontal_arrange = theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom;
-	//¼ÆËã±êÇ©¿í¶È
+	//è®¡ç®—æ ‡ç­¾å®½åº¦
 	m_up_lable_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.up.c_str()).cx;
 	m_down_lable_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.down.c_str()).cx;
 	m_cpu_lable_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.cpu.c_str()).cx;
 	m_memory_lable_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.memory.c_str()).cx;
-	//¼ÆËãÏÔÊ¾ÉÏ´«ÏÂÔØ²¿·ÖËùĞèÒªµÄ¿í¶È
+	//è®¡ç®—æ˜¾ç¤ºä¸Šä¼ ä¸‹è½½éƒ¨åˆ†æ‰€éœ€è¦çš„å®½åº¦
 	CString str1, str2;
 	int width1, width2;
 	CString sample_str;
-	wstring digits(theApp.m_taskbar_data.digits_number, L'8');		//¸ù¾İÊı¾İÎ»ÊıÉú³ÉÖ¸¶¨¸öÊıµÄ¡°8¡±
+	wstring digits(theApp.m_taskbar_data.digits_number, L'8');		//æ ¹æ®æ•°æ®ä½æ•°ç”ŸæˆæŒ‡å®šä¸ªæ•°çš„â€œ8â€
 	bool hide_unit{ theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO };
 	if (theApp.m_taskbar_data.speed_short_mode)
 	{
@@ -421,7 +421,7 @@ void CTaskBarDlg::CalculateWindowWidth()
 		sample_str += _T('b');
 	str1 = theApp.m_taskbar_data.disp_str.up.c_str() + sample_str;
 	str2 = theApp.m_taskbar_data.disp_str.down.c_str() + sample_str;
-	width1= m_pDC->GetTextExtent(str1).cx;		//¼ÆËãÊ¹ÓÃµ±Ç°×ÖÌåÏÔÊ¾ÎÄ±¾ĞèÒªµÄ¿í¶ÈÖµ
+	width1= m_pDC->GetTextExtent(str1).cx;		//è®¡ç®—ä½¿ç”¨å½“å‰å­—ä½“æ˜¾ç¤ºæ–‡æœ¬éœ€è¦çš„å®½åº¦å€¼
 	width2= m_pDC->GetTextExtent(str2).cx;
 	if (!horizontal_arrange)
 		m_window_width_s = max(width1, width2);
@@ -429,7 +429,7 @@ void CTaskBarDlg::CalculateWindowWidth()
 		m_window_width_s = width1 + width2 + theApp.DPI(8);
 	m_ud_value_width = width1 - m_up_lable_width;
 
-	//¼ÆËãÏÔÊ¾CPU¡¢ÄÚ´æ²¿·ÖËùĞèÒªµÄ¿í¶È
+	//è®¡ç®—æ˜¾ç¤ºCPUã€å†…å­˜éƒ¨åˆ†æ‰€éœ€è¦çš„å®½åº¦
 	int width_cpu_memory;
 	if (theApp.m_taskbar_data.hide_percent)
 	{
@@ -473,14 +473,14 @@ BOOL CTaskBarDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	// TODO:  ÔÚ´ËÌí¼Ó¶îÍâµÄ³õÊ¼»¯
-	//ÉèÖÃÒş²ØÈÎÎñÀ¸Í¼±ê
+	// TODO:  åœ¨æ­¤æ·»åŠ é¢å¤–çš„åˆå§‹åŒ–
+	//è®¾ç½®éšè—ä»»åŠ¡æ å›¾æ ‡
 	ModifyStyleEx(0, WS_EX_TOOLWINDOW);
 
 	m_pDC = GetDC();
 
 
-	//ÉèÖÃ×ÖÌå
+	//è®¾ç½®å­—ä½“
 	SetTextFont();
 	m_pDC->SelectObject(&m_font);
 
@@ -488,11 +488,11 @@ BOOL CTaskBarDlg::OnInitDialog()
 	m_rect.SetRectEmpty();
 	m_rect.bottom = m_window_height;
 
-	m_hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL);		//Ñ°ÕÒÀàÃûÊÇShell_TrayWndµÄ´°¿Ú¾ä±ú
-	m_hBar = ::FindWindowEx(m_hTaskbar, 0, L"ReBarWindow32", NULL);	//Ñ°ÕÒ¶ş¼¶ÈİÆ÷µÄ¾ä±ú
-	m_hMin = ::FindWindowEx(m_hBar, 0, L"MSTaskSwWClass", NULL);	//Ñ°ÕÒ×îĞ¡»¯´°¿ÚµÄ¾ä±ú
+	m_hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL);		//å¯»æ‰¾ç±»åæ˜¯Shell_TrayWndçš„çª—å£å¥æŸ„
+	m_hBar = ::FindWindowEx(m_hTaskbar, 0, L"ReBarWindow32", NULL);	//å¯»æ‰¾äºŒçº§å®¹å™¨çš„å¥æŸ„
+	m_hMin = ::FindWindowEx(m_hBar, 0, L"MSTaskSwWClass", NULL);	//å¯»æ‰¾æœ€å°åŒ–çª—å£çš„å¥æŸ„
 
-	//ÉèÖÃ´°¿ÚÍ¸Ã÷É«
+	//è®¾ç½®çª—å£é€æ˜è‰²
 #ifndef COMPILE_FOR_WINXP
 	if(theApp.m_taskbar_data.transparent_color != 0 && theApp.m_taksbar_transparent_color_enable)
 	{
@@ -501,8 +501,8 @@ BOOL CTaskBarDlg::OnInitDialog()
 	}
 #endif // !COMPILE_FOR_WINXP
 
-	::GetWindowRect(m_hMin, m_rcMin);	//»ñµÃ×îĞ¡»¯´°¿ÚµÄÇøÓò
-	::GetWindowRect(m_hBar, m_rcBar);	//»ñµÃ¶ş¼¶ÈİÆ÷µÄÇøÓò
+	::GetWindowRect(m_hMin, m_rcMin);	//è·å¾—æœ€å°åŒ–çª—å£çš„åŒºåŸŸ
+	::GetWindowRect(m_hBar, m_rcBar);	//è·å¾—äºŒçº§å®¹å™¨çš„åŒºåŸŸ
 	m_left_space = m_rcMin.left - m_rcBar.left;
 	m_top_space = m_rcMin.top - m_rcBar.top;
 
@@ -513,54 +513,54 @@ BOOL CTaskBarDlg::OnInitDialog()
 	else
 		m_rect.right = m_rect.left + m_window_width;
 
-	if (m_taskbar_on_top_or_bottom)		//Èç¹ûÈÎÎñÀ¸ÔÚ×ÀÃæ¶¥²¿»òµ×²¿
+	if (m_taskbar_on_top_or_bottom)		//å¦‚æœä»»åŠ¡æ åœ¨æ¡Œé¢é¡¶éƒ¨æˆ–åº•éƒ¨
 	{
-		m_min_bar_width = m_rcMin.Width() - m_rect.Width();	//±£´æ×îĞ¡»¯´°¿Ú¿í¶È
+		m_min_bar_width = m_rcMin.Width() - m_rect.Width();	//ä¿å­˜æœ€å°åŒ–çª—å£å®½åº¦
 
-		//Í¨¹ıÓÃMoveWindowº¯ÊıÀ´¸Ä±äĞ¡»¯´°¿ÚµÄ¿í¶È
+		//é€šè¿‡ç”¨MoveWindowå‡½æ•°æ¥æ”¹å˜å°åŒ–çª—å£çš„å®½åº¦
 		if(!theApp.m_taskbar_data.tbar_wnd_on_left)
 			::MoveWindow(m_hMin, m_left_space, 0, m_rcMin.Width() - m_rect.Width(), m_rcMin.Height(), TRUE);
 		else
 			::MoveWindow(m_hMin, m_left_space + m_rect.Width(), 0, m_rcMin.Width() - m_rect.Width(), m_rcMin.Height(), TRUE);
 
-		m_connot_insert_to_task_bar = !(::SetParent(this->m_hWnd, m_hBar));	//°Ñ³ÌĞò´°¿ÚÉèÖÃ³ÉÈÎÎñÀ¸µÄ×Ó´°¿Ú
+		m_connot_insert_to_task_bar = !(::SetParent(this->m_hWnd, m_hBar));	//æŠŠç¨‹åºçª—å£è®¾ç½®æˆä»»åŠ¡æ çš„å­çª—å£
 		//m_connot_insert_to_task_bar = true;
 		m_error_code = GetLastError();
 
-		//µ÷Õû³ÌĞò´°¿ÚµÄ´óĞ¡ºÍÎ»ÖÃ
+		//è°ƒæ•´ç¨‹åºçª—å£çš„å¤§å°å’Œä½ç½®
 		if(!theApp.m_taskbar_data.tbar_wnd_on_left)
 			m_rect.MoveToX(m_left_space + m_rcMin.Width() - m_rect.Width() + 2);
 		else
 			m_rect.MoveToX(m_left_space);
 		m_rect.MoveToY((m_rcBar.Height() - m_rect.Height()) / 2);
-		if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())		//ÏµÍ³ÊÇWin7²¢ÇÒË®Æ½ÅÅÁĞÊ±£¬ÈÎÎñÀ¸´°¿ÚÎ»ÖÃÏòÏÂµ÷ÕûÒ»¸öÏñËØ
+		if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())		//ç³»ç»Ÿæ˜¯Win7å¹¶ä¸”æ°´å¹³æ’åˆ—æ—¶ï¼Œä»»åŠ¡æ çª—å£ä½ç½®å‘ä¸‹è°ƒæ•´ä¸€ä¸ªåƒç´ 
 			m_rect.MoveToY(m_rect.top + theApp.DPI(1));
 		//::MoveWindow(this->m_hWnd, wnd_x_pos, wnd_y_pos, m_rect.Width(), m_rect.Height(), TRUE);
 		MoveWindow(m_rect);
 	}
-	else	//µ±ÈÎÎñÀ¸ÔÚ×ÀÃæ×ó²à»òÓÒ²àÊ±
+	else	//å½“ä»»åŠ¡æ åœ¨æ¡Œé¢å·¦ä¾§æˆ–å³ä¾§æ—¶
 	{
-		//ÉèÖÃ´°¿Ú´óĞ¡
+		//è®¾ç½®çª—å£å¤§å°
 		int window_width;
 		window_width = max(m_window_width_s, (m_window_width - m_window_width_s));
-		if (theApp.m_cfg_data.m_tbar_show_cpu_memory)	//½«CPUºÍÄÚ´æÀûÓÃÂÊ·Åµ½ÍøËÙµÄÏÂÃæ
+		if (theApp.m_cfg_data.m_tbar_show_cpu_memory)	//å°†CPUå’Œå†…å­˜åˆ©ç”¨ç‡æ”¾åˆ°ç½‘é€Ÿçš„ä¸‹é¢
 		{
 			m_rect.right = m_rect.left + window_width;
 			m_rect.bottom = m_rect.top + m_rect.Height() * 2 + theApp.DPI(2);
 		}
-		m_min_bar_height = m_rcMin.Height() - m_rect.Height();	//±£´æ×îĞ¡»¯´°¿Ú¸ß¶È
+		m_min_bar_height = m_rcMin.Height() - m_rect.Height();	//ä¿å­˜æœ€å°åŒ–çª—å£é«˜åº¦
 
-		//Í¨¹ıÓÃMoveWindowº¯ÊıÀ´¸Ä±äĞ¡»¯´°¿ÚµÄ¸ß¶È
+		//é€šè¿‡ç”¨MoveWindowå‡½æ•°æ¥æ”¹å˜å°åŒ–çª—å£çš„é«˜åº¦
 		if (!theApp.m_taskbar_data.tbar_wnd_on_left)
 			::MoveWindow(m_hMin, 0, m_top_space, m_rcMin.Width(), m_rcMin.Height() - m_rect.Height(), TRUE);
 		else
 			::MoveWindow(m_hMin, 0, m_top_space + m_rect.Height(), m_rcMin.Width(), m_rcMin.Height() - m_rect.Height(), TRUE);
 
-		m_connot_insert_to_task_bar = (!::SetParent(this->m_hWnd, m_hBar));	//°Ñ³ÌĞò´°¿ÚÉèÖÃ³ÉÈÎÎñÀ¸µÄ×Ó´°¿Ú
+		m_connot_insert_to_task_bar = (!::SetParent(this->m_hWnd, m_hBar));	//æŠŠç¨‹åºçª—å£è®¾ç½®æˆä»»åŠ¡æ çš„å­çª—å£
 		//m_connot_insert_to_task_bar = true;
 		m_error_code = GetLastError();
 
-		//µ÷Õû³ÌĞò´°¿ÚµÄ´óĞ¡ºÍÎ»ÖÃ
+		//è°ƒæ•´ç¨‹åºçª—å£çš„å¤§å°å’Œä½ç½®
 		m_rect.MoveToX((m_rcMin.Width() - window_width) / 2);
 		if (m_rect.left < theApp.DPI(2))
 			m_rect.MoveToX(theApp.DPI(2));
@@ -571,7 +571,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 		MoveWindow(m_rect);
 	}
 	CRect rect{ m_rect };
-	//Èç¹û´°¿ÚÃ»ÓĞ±»³É¹¦Ç¶Èëµ½ÈÎÎñÀ¸£¬´°¿ÚÒÆ¶¯µ½ÁË»ùÓÚÆÁÄ»×óÉÏ½ÇµÄ¾ø¶ÔÎ»ÖÃ£¬ÔòĞŞÕı´°¿ÚµÄÎ»ÖÃ
+	//å¦‚æœçª—å£æ²¡æœ‰è¢«æˆåŠŸåµŒå…¥åˆ°ä»»åŠ¡æ ï¼Œçª—å£ç§»åŠ¨åˆ°äº†åŸºäºå±å¹•å·¦ä¸Šè§’çš„ç»å¯¹ä½ç½®ï¼Œåˆ™ä¿®æ­£çª—å£çš„ä½ç½®
 	if (m_connot_insert_to_task_bar)
 	{
 		rect.MoveToXY(rect.left + m_rcBar.left, rect.top + m_rcBar.top);
@@ -582,25 +582,25 @@ BOOL CTaskBarDlg::OnInitDialog()
 
 	SetBackgroundColor(theApp.m_taskbar_data.back_color);
 
-	//³õÊ¼»¯Êó±êÌáÊ¾
+	//åˆå§‹åŒ–é¼ æ ‡æç¤º
 	m_tool_tips.Create(this, TTS_ALWAYSTIP);
 	m_tool_tips.SetMaxTipWidth(600);
 	m_tool_tips.AddTool(this, _T(""));
-	SetToolTipsTopMost();		//ÉèÖÃÌáÊ¾ĞÅÏ¢×ÜÊÇÖÃ¶¥
+	SetToolTipsTopMost();		//è®¾ç½®æç¤ºä¿¡æ¯æ€»æ˜¯ç½®é¡¶
 
 	//SetTimer(TASKBAR_TIMER, 100, NULL);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-				  // Òì³£: OCX ÊôĞÔÒ³Ó¦·µ»Ø FALSE
+				  // å¼‚å¸¸: OCX å±æ€§é¡µåº”è¿”å› FALSE
 }
 
 
 void CTaskBarDlg::OnCancel()
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
 	//SaveConfig();
 	DestroyWindow();
-	//³ÌĞò¹Ø±ÕµÄÊ±ºò£¬°Ñ×îĞ¡»¯´°¿ÚµÄwidth»Ö¸´»ØÈ¥
+	//ç¨‹åºå…³é—­çš„æ—¶å€™ï¼ŒæŠŠæœ€å°åŒ–çª—å£çš„widthæ¢å¤å›å»
 	if (IsTaskbarOnTopOrBottom())
 		::MoveWindow(m_hMin, m_left_space, 0, m_rcMin.Width(), m_rcMin.Height(), TRUE);
 	else
@@ -613,11 +613,11 @@ void CTaskBarDlg::OnCancel()
 
 void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 
-	CPoint point1;	//¶¨ÒåÒ»¸öÓÃÓÚÈ·¶¨¹â±êÎ»ÖÃµÄÎ»ÖÃ  
-	GetCursorPos(&point1);	//»ñÈ¡µ±Ç°¹â±êµÄÎ»ÖÃ£¬ÒÔ±ãÊ¹µÃ²Ëµ¥¿ÉÒÔ¸úËæ¹â±ê  
-	m_menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //ÔÚÖ¸¶¨Î»ÖÃÏÔÊ¾µ¯³ö²Ëµ¥
+	CPoint point1;	//å®šä¹‰ä¸€ä¸ªç”¨äºç¡®å®šå…‰æ ‡ä½ç½®çš„ä½ç½®  
+	GetCursorPos(&point1);	//è·å–å½“å‰å…‰æ ‡çš„ä½ç½®ï¼Œä»¥ä¾¿ä½¿å¾—èœå•å¯ä»¥è·Ÿéšå…‰æ ‡  
+	m_menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //åœ¨æŒ‡å®šä½ç½®æ˜¾ç¤ºå¼¹å‡ºèœå•
 	CDialogEx::OnRButtonUp(nFlags, point1);
 }
 
@@ -626,7 +626,7 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
 {
 	CDialogEx::OnInitMenu(pMenu);
 
-	// TODO: ÔÚ´Ë´¦Ìí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
 	pMenu->CheckMenuItem(ID_SHOW_CPU_MEMORY2, MF_BYCOMMAND | (theApp.m_cfg_data.m_tbar_show_cpu_memory ? MF_CHECKED : MF_UNCHECKED));
 	pMenu->CheckMenuItem(ID_SHOW_MAIN_WND, MF_BYCOMMAND | (!theApp.m_cfg_data.m_hide_main_window ? MF_CHECKED : MF_UNCHECKED));
 	pMenu->CheckMenuItem(ID_SHOW_NOTIFY_ICON, MF_BYCOMMAND | (theApp.m_cfg_data.m_show_notify_icon ? MF_CHECKED : MF_UNCHECKED));
@@ -634,7 +634,7 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
 	pMenu->EnableMenuItem(ID_SELECT_ALL_CONNECTION, MF_BYCOMMAND | (theApp.m_general_data.show_all_interface ? MF_GRAYED : MF_ENABLED));
 
 	//pMenu->SetDefaultItem(ID_NETWORK_INFO);
-	//ÉèÖÃÄ¬ÈÏ²Ëµ¥Ïî
+	//è®¾ç½®é»˜è®¤èœå•é¡¹
 	switch (theApp.m_taskbar_data.double_click_action)
 	{
 	case DoubleClickAction::CONNECTION_INFO:
@@ -653,14 +653,14 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
 		pMenu->SetDefaultItem(-1);
 		break;
 	}
-	::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_TASKBAR_MENU_POPED_UP, 0, 0);		//Í¨ÖªÖ÷´°¿Ú²Ëµ¥ÒÑµ¯³ö
+	::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_TASKBAR_MENU_POPED_UP, 0, 0);		//é€šçŸ¥ä¸»çª—å£èœå•å·²å¼¹å‡º
 }
 
 
 BOOL CTaskBarDlg::PreTranslateMessage(MSG* pMsg)
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
-	//ÆÁ±Î°´»Ø³µ¼üºÍESC¼üÍË³ö
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
+	//å±è”½æŒ‰å›è½¦é”®å’ŒESCé”®é€€å‡º
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE) return TRUE;
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN) return TRUE;
 
@@ -677,7 +677,7 @@ BOOL CTaskBarDlg::PreTranslateMessage(MSG* pMsg)
 
 void CTaskBarDlg::OnMouseMove(UINT nFlags, CPoint point)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 
 	CDialogEx::OnMouseMove(nFlags, point);
 }
@@ -685,23 +685,23 @@ void CTaskBarDlg::OnMouseMove(UINT nFlags, CPoint point)
 
 void CTaskBarDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 	switch (theApp.m_taskbar_data.double_click_action)
 	{
 	case DoubleClickAction::CONNECTION_INFO:
-		SendMessage(WM_COMMAND,ID_NETWORK_INFO);		//Ë«»÷ºóµ¯³ö¡°Á¬½ÓÏêÇé¡±¶Ô»°¿ò
+		SendMessage(WM_COMMAND,ID_NETWORK_INFO);		//åŒå‡»åå¼¹å‡ºâ€œè¿æ¥è¯¦æƒ…â€å¯¹è¯æ¡†
 		break;
 	case DoubleClickAction::HISTORY_TRAFFIC:
-		SendMessage(WM_COMMAND, ID_TRAFFIC_HISTORY);		//Ë«»÷ºóµ¯³ö¡°ÀúÊ·Á÷Á¿Í³¼Æ¡±¶Ô»°¿ò
+		SendMessage(WM_COMMAND, ID_TRAFFIC_HISTORY);		//åŒå‡»åå¼¹å‡ºâ€œå†å²æµé‡ç»Ÿè®¡â€å¯¹è¯æ¡†
 		break;
 	case DoubleClickAction::SHOW_MORE_INFO:
-		PostMessage(WM_COMMAND, ID_SHOW_CPU_MEMORY2);		//ÇĞ»»ÏÔÊ¾CPUºÍÄÚ´æÀûÓÃÂÊ
+		PostMessage(WM_COMMAND, ID_SHOW_CPU_MEMORY2);		//åˆ‡æ¢æ˜¾ç¤ºCPUå’Œå†…å­˜åˆ©ç”¨ç‡
 		break;
 	case DoubleClickAction::OPTIONS:
-		SendMessage(WM_COMMAND, ID_OPTIONS2);		//Ë«»÷ºóµ¯³ö¡°Ñ¡ÏîÉèÖÃ¡±¶Ô»°¿ò
+		SendMessage(WM_COMMAND, ID_OPTIONS2);		//åŒå‡»åå¼¹å‡ºâ€œé€‰é¡¹è®¾ç½®â€å¯¹è¯æ¡†
 		break;
 	case DoubleClickAction::TASK_MANAGER:
-		ShellExecuteW(NULL, _T("open"), (theApp.m_system_dir+L"\\Taskmgr.exe").c_str(), NULL, NULL, SW_NORMAL);		//´ò¿ªÈÎÎñ¹ÜÀíÆ÷
+		ShellExecuteW(NULL, _T("open"), (theApp.m_taskbar_data.double_click_exe).c_str(), NULL, NULL, SW_NORMAL);	//æ‰“å¼€æŒ‡å®šç¨‹åºï¼Œé»˜è®¤ä»»åŠ¡ç®¡ç†å™¨
 		break;
 	default:
 		break;
@@ -712,7 +712,7 @@ void CTaskBarDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 
 void CTaskBarDlg::OnTimer(UINT_PTR nIDEvent)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 	//if (nIDEvent == TASKBAR_TIMER)
 	//{
 	//	AdjustWindowPos();
@@ -726,12 +726,12 @@ void CTaskBarDlg::OnTimer(UINT_PTR nIDEvent)
 
 BOOL CTaskBarDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
 	UINT uMsg = LOWORD(wParam);
 	if (uMsg == ID_SELECT_ALL_CONNECTION || uMsg == ID_SELETE_CONNECTION
 		|| (uMsg > ID_SELECT_ALL_CONNECTION && uMsg <= ID_SELECT_ALL_CONNECTION + 98))
 	{
-		::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_COMMAND, wParam, lParam);	//Èç¹ûµã»÷ÁË¡°Ñ¡ÔñÍøÂçÁ¬½Ó¡±×Ó²Ëµ¥Ïî£¬½«ÏûÏ¢×ª·¢µ½Ö÷´°¿Ú
+		::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_COMMAND, wParam, lParam);	//å¦‚æœç‚¹å‡»äº†â€œé€‰æ‹©ç½‘ç»œè¿æ¥â€å­èœå•é¡¹ï¼Œå°†æ¶ˆæ¯è½¬å‘åˆ°ä¸»çª—å£
 		return TRUE;
 	}
 
@@ -742,7 +742,7 @@ BOOL CTaskBarDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 void CTaskBarDlg::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
-					   // TODO: ÔÚ´Ë´¦Ìí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂë
-					   // ²»Îª»æÍ¼ÏûÏ¢µ÷ÓÃ CDialogEx::OnPaint()
+					   // TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
+					   // ä¸ä¸ºç»˜å›¾æ¶ˆæ¯è°ƒç”¨ CDialogEx::OnPaint()
 	ShowInfo(&dc);
 }
