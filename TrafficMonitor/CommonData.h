@@ -155,6 +155,7 @@ struct PublicSettingData
 	bool hide_unit;			//隐藏单位
 	bool hide_percent;		//隐藏百分号
 	DoubleClickAction double_click_action;		//鼠标双击动作
+	wstring double_click_exe;	//鼠标双击动作为4时，打开的程序路径，默认任务管理器
 };
 
 #define MAIN_WND_COLOR_NUM 4		//主窗口颜色数量
