@@ -1,5 +1,5 @@
 
-// TrafficMonitor.cpp : ¶¨ÒåÓ¦ÓÃ³ÌĞòµÄÀàĞĞÎª¡£
+// TrafficMonitor.cpp : å®šä¹‰åº”ç”¨ç¨‹åºçš„ç±»è¡Œä¸ºã€‚
 //
 
 #include "stdafx.h"
@@ -20,15 +20,15 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorApp, CWinApp)
 END_MESSAGE_MAP()
 
 
-// CTrafficMonitorApp ¹¹Ôì
+// CTrafficMonitorApp æ„é€ 
 
 CTrafficMonitorApp::CTrafficMonitorApp()
 {
-	// Ö§³ÖÖØĞÂÆô¶¯¹ÜÀíÆ÷
+	// æ”¯æŒé‡æ–°å¯åŠ¨ç®¡ç†å™¨
 	m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_RESTART;
 
-	// TODO: ÔÚ´Ë´¦Ìí¼Ó¹¹Ôì´úÂë£¬
-	// ½«ËùÓĞÖØÒªµÄ³õÊ¼»¯·ÅÖÃÔÚ InitInstance ÖĞ
+	// TODO: åœ¨æ­¤å¤„æ·»åŠ æ„é€ ä»£ç ï¼Œ
+	// å°†æ‰€æœ‰é‡è¦çš„åˆå§‹åŒ–æ”¾ç½®åœ¨ InitInstance ä¸­
 	CRASHREPORT::StartCrashReport();
 }
 
@@ -36,14 +36,14 @@ void CTrafficMonitorApp::LoadConfig()
 {
 	CIniHelper ini{ m_config_path };
 
-	//³£¹æÉèÖÃ
+	//å¸¸è§„è®¾ç½®
 	m_general_data.check_update_when_start = ini.GetBool(_T("general"), _T("check_update_when_start"), true);
 	m_general_data.allow_skin_cover_font = ini.GetBool(_T("general"), _T("allow_skin_cover_font"), true);
 	m_general_data.allow_skin_cover_text = ini.GetBool(_T("general"), _T("allow_skin_cover_text"), true);
 	m_general_data.language = static_cast<Language>(ini.GetInt(_T("general"), _T("language"), 0));
 	m_general_data.show_all_interface = ini.GetBool(L"general", L"show_all_interface", false);
 
-	//Ö÷´°¿ÚÉèÖÃ
+	//ä¸»çª—å£è®¾ç½®
 	m_cfg_data.m_transparency = ini.GetInt(_T("config"), _T("transparency"), 80);
 	m_cfg_data.m_always_on_top = ini.GetBool(_T("config"), _T("always_on_top"), true);
 	m_cfg_data.m_lock_window_pos = ini.GetBool(_T("config"), _T("lock_window_pos"), false);
@@ -61,9 +61,9 @@ void CTrafficMonitorApp::LoadConfig()
 	m_cfg_data.m_hide_main_window = ini.GetBool(_T("config"), _T("hide_main_window"), false);
 	m_cfg_data.m_connection_name = CCommon::UnicodeToStr(ini.GetString(L"connection", L"connection_name", L"").c_str());
 	m_cfg_data.m_skin_name = ini.GetString(_T("config"), _T("skin_selected"), _T(""));
-	if (m_cfg_data.m_skin_name.substr(0, 8) == L".\\skins\\")		//Èç¹û¶ÁÈ¡µ½µÄÆ¤·ôÃû³ÆÇ°ÃæÓĞ".\\skins\\"£¬Ôò°ÑËüÉ¾³ı¡££¨ÓÃÓÚºÍÇ°Ò»¸ö°æ±¾±£³Ö¼æÈİĞÔ£©
+	if (m_cfg_data.m_skin_name.substr(0, 8) == L".\\skins\\")		//å¦‚æœè¯»å–åˆ°çš„çš®è‚¤åç§°å‰é¢æœ‰".\\skins\\"ï¼Œåˆ™æŠŠå®ƒåˆ é™¤ã€‚ï¼ˆç”¨äºå’Œå‰ä¸€ä¸ªç‰ˆæœ¬ä¿æŒå…¼å®¹æ€§ï¼‰
 		m_cfg_data.m_skin_name = m_cfg_data.m_skin_name.substr(7);
-	m_cfg_data.m_notify_icon_selected = ini.GetInt(_T("config"), _T("notify_icon_selected"), (m_win_version.IsWindows7() || m_win_version.IsWindows8Or8point1() ? 2 : 0));		//Win7/8/8.1Ä¬ÈÏÊ¹ÓÃÀ¶É«Í¨ÖªÇøÍ¼±ê£¬ÒòÎªÒş²ØÍ¨ÖªÇøÍ¼±êºó°×É«Í¼±ê»á¿´²»Çå£¬ÆäËûÏµÍ³Ä¬ÈÏÊ¹ÓÃ°×É«Í¼±ê
+	m_cfg_data.m_notify_icon_selected = ini.GetInt(_T("config"), _T("notify_icon_selected"), (m_win_version.IsWindows7() || m_win_version.IsWindows8Or8point1() ? 2 : 0));		//Win7/8/8.1é»˜è®¤ä½¿ç”¨è“è‰²é€šçŸ¥åŒºå›¾æ ‡ï¼Œå› ä¸ºéšè—é€šçŸ¥åŒºå›¾æ ‡åç™½è‰²å›¾æ ‡ä¼šçœ‹ä¸æ¸…ï¼Œå…¶ä»–ç³»ç»Ÿé»˜è®¤ä½¿ç”¨ç™½è‰²å›¾æ ‡
 	m_main_wnd_data.swap_up_down = ini.GetBool(_T("config"), _T("swap_up_down"), false);
 	m_main_wnd_data.hide_main_wnd_when_fullscreen = ini.GetBool(_T("config"), _T("hide_main_wnd_when_fullscreen"), true);
 
@@ -96,7 +96,7 @@ void CTrafficMonitorApp::LoadConfig()
 	m_general_data.memory_tip_value = ini.GetInt(L"notify_tip", L"memory_tip_value", 80);
 
 
-	//ÈÎÎñÀ¸´°¿ÚÉèÖÃ
+	//ä»»åŠ¡æ çª—å£è®¾ç½®
 	m_taskbar_data.back_color = ini.GetInt(_T("task_bar"), _T("task_bar_back_color"), 0);
 	m_taskbar_data.transparent_color = ini.GetInt(_T("task_bar"), _T("transparent_color"), 0);
 	//m_taskbar_data.text_color = GetPrivateProfileInt(_T("task_bar"), _T("task_bar_text_color"), 0x00ffffffU, m_config_path.c_str());
@@ -112,8 +112,8 @@ void CTrafficMonitorApp::LoadConfig()
 	default_font.size = 9;
 	ini.LoadFontData(_T("task_bar"), m_taskbar_data.font, default_font);
 
-	m_taskbar_data.disp_str.up = ini.GetString(L"task_bar", L"up_string", L"¡ü: $");
-	m_taskbar_data.disp_str.down = ini.GetString(L"task_bar", L"down_string", L"¡ı: $");
+	m_taskbar_data.disp_str.up = ini.GetString(L"task_bar", L"up_string", L"â†‘: $");
+	m_taskbar_data.disp_str.down = ini.GetString(L"task_bar", L"down_string", L"â†“: $");
 	m_taskbar_data.disp_str.cpu = ini.GetString(L"task_bar", L"cpu_string", L"CPU: $");
 	m_taskbar_data.disp_str.memory = ini.GetString(L"task_bar", L"memory_string", CCommon::LoadText(IDS_MEMORY_DISP, _T(": $")));
 
@@ -128,8 +128,9 @@ void CTrafficMonitorApp::LoadConfig()
 	m_taskbar_data.separate_value_unit_with_space = ini.GetBool(_T("task_bar"), _T("separate_value_unit_with_space"), true);
 	m_taskbar_data.digits_number = ini.GetInt(_T("task_bar"), _T("digits_number"), 4);
 	m_taskbar_data.double_click_action = static_cast<DoubleClickAction>(ini.GetInt(_T("task_bar"), _T("double_click_action"), 0));
+	m_taskbar_data.double_click_exe = ini.GetString(L"task_bar", L"double_click_exe", (theApp.m_system_dir + L"\\Taskmgr.exe").c_str());
 
-	//ÆäËûÉèÖÃ
+	//å…¶ä»–è®¾ç½®
 	m_cfg_data.m_show_internet_ip = ini.GetBool(L"connection_details", L"show_internet_ip", false);
 	m_cfg_data.m_use_log_scale = ini.GetBool(_T("histroy_traffic"), _T("use_log_scale"), true);
 
@@ -137,7 +138,7 @@ void CTrafficMonitorApp::LoadConfig()
 	m_notify_interval = ini.GetInt(_T("other"), _T("notify_interval"), 60);
 	m_exit_when_start_by_restart_manager = ini.GetBool(_T("other"), _T("exit_when_start_by_restart_manager"), true);
 	m_debug_log = ini.GetBool(_T("other"), _T("debug_log"), false);
-	//ÓÉÓÚWin7ÏµÍ³ÖĞÉèÖÃÈÎÎñÀ¸´°¿ÚÍ¸Ã÷É«»áµ¼ÖÂÈÎÎñÀ¸´°¿Ú²»¿É¼û£¬Òò´ËÄ¬ÈÏÔÚWin7ÖĞ½ûÓÃÍ¸Ã÷É«µÄÉè¶¨
+	//ç”±äºWin7ç³»ç»Ÿä¸­è®¾ç½®ä»»åŠ¡æ çª—å£é€æ˜è‰²ä¼šå¯¼è‡´ä»»åŠ¡æ çª—å£ä¸å¯è§ï¼Œå› æ­¤é»˜è®¤åœ¨Win7ä¸­ç¦ç”¨é€æ˜è‰²çš„è®¾å®š
 	m_taksbar_transparent_color_enable = ini.GetBool(L"other", L"taksbar_transparent_color_enable", !m_win_version.IsWindows7());
 }
 
@@ -145,14 +146,14 @@ void CTrafficMonitorApp::SaveConfig()
 {
 	CIniHelper ini{ m_config_path };
 
-	//³£¹æÉèÖÃ
+	//å¸¸è§„è®¾ç½®
 	ini.WriteBool(_T("general"), _T("check_update_when_start"), m_general_data.check_update_when_start);
 	ini.WriteBool(_T("general"), _T("allow_skin_cover_font"), m_general_data.allow_skin_cover_font);
 	ini.WriteBool(_T("general"), _T("allow_skin_cover_text"), m_general_data.allow_skin_cover_text);
 	ini.WriteInt(_T("general"), _T("language"), static_cast<int>(m_general_data.language));
 	ini.WriteBool(L"general", L"show_all_interface", m_general_data.show_all_interface);
 
-	//Ö÷´°¿ÚÉèÖÃ
+	//ä¸»çª—å£è®¾ç½®
 	ini.WriteInt(L"config", L"transparency", m_cfg_data.m_transparency);
 	ini.WriteBool(L"config", L"always_on_top", m_cfg_data.m_always_on_top);
 	ini.WriteBool(L"config", L"lock_window_pos", m_cfg_data.m_lock_window_pos);
@@ -198,7 +199,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteInt(L"notify_tip", L"memory_tip_value", m_general_data.memory_tip_value);
 
 
-	//ÈÎÎñÀ¸´°¿ÚÉèÖÃ
+	//ä»»åŠ¡æ çª—å£è®¾ç½®
 	ini.WriteInt(L"task_bar", L"task_bar_back_color", m_taskbar_data.back_color);
 	ini.WriteInt(L"task_bar", L"transparent_color", m_taskbar_data.transparent_color);
 	ini.WriteIntArray(L"task_bar", L"task_bar_text_color", (int*)m_taskbar_data.text_colors, TASKBAR_COLOR_NUM);
@@ -224,7 +225,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteInt(L"task_bar", L"digits_number", m_taskbar_data.digits_number);
 	ini.WriteInt(L"task_bar", L"double_click_action", static_cast<int>(m_taskbar_data.double_click_action));
 
-	//ÆäËûÉèÖÃ
+	//å…¶ä»–è®¾ç½®
 	ini.WriteBool(L"connection_details", L"show_internet_ip", m_cfg_data.m_show_internet_ip);
 	ini.WriteBool(L"histroy_traffic", L"use_log_scale", m_cfg_data.m_use_log_scale);
 
@@ -235,7 +236,7 @@ void CTrafficMonitorApp::SaveConfig()
 
 	ini.WriteString(L"app", L"version", VERSION);
 
-	//¼ì²éÊÇ·ñ±£´æ³É¹¦
+	//æ£€æŸ¥æ˜¯å¦ä¿å­˜æˆåŠŸ
 	if (!ini.Save())
 	{
 		if (m_cannot_save_config_warning)
@@ -254,7 +255,7 @@ void CTrafficMonitorApp::LoadGlobalConfig()
 {
 	bool portable_mode_default{ false };
 	wstring global_cfg_path{ m_module_dir + L"global_cfg.ini" };
-	if (!CCommon::FileExist(global_cfg_path.c_str()))		//Èç¹ûglobal_cfg.ini²»´æÔÚ£¬Ôò¸ù¾İAppData/Roaming/TrafficMonitorÄ¿Â¼ÏÂÊÇ·ñ´æÔÚconfig.iniÀ´ÅĞ¶ÏÅäÖÃÎÄ¼şµÄ±£´æÎ»ÖÃ
+	if (!CCommon::FileExist(global_cfg_path.c_str()))		//å¦‚æœglobal_cfg.iniä¸å­˜åœ¨ï¼Œåˆ™æ ¹æ®AppData/Roaming/TrafficMonitorç›®å½•ä¸‹æ˜¯å¦å­˜åœ¨config.iniæ¥åˆ¤æ–­é…ç½®æ–‡ä»¶çš„ä¿å­˜ä½ç½®
 	{
 		portable_mode_default = !CCommon::FileExist((m_appdata_dir + L"config.ini").c_str());
 	}
@@ -268,7 +269,7 @@ void CTrafficMonitorApp::SaveGlobalConfig()
 	CIniHelper ini{ m_module_dir + L"global_cfg.ini" };
 	ini.WriteBool(L"config", L"portable_mode", m_general_data.portable_mode);
 
-	//¼ì²éÊÇ·ñ±£´æ³É¹¦
+	//æ£€æŸ¥æ˜¯å¦ä¿å­˜æˆåŠŸ
 	if (!ini.Save())
 	{
 		if (m_cannot_save_global_config_warning)
@@ -307,18 +308,18 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
 {
 	CWaitCursor wait_cursor;
 	wstring version_info;
-	if (!CCommon::GetURL(L"https://raw.githubusercontent.com/zhongyang219/TrafficMonitor/master/version_utf8.info", version_info, true))		//»ñÈ¡°æ±¾ĞÅÏ¢
+	if (!CCommon::GetURL(L"https://raw.githubusercontent.com/zhongyang219/TrafficMonitor/master/version_utf8.info", version_info, true))		//è·å–ç‰ˆæœ¬ä¿¡æ¯
 	{
 		if(message)
 			AfxMessageBox(CCommon::LoadText(IDS_CHECK_UPDATE_FAILD), MB_OK | MB_ICONWARNING);
 		return;
 	}
 
-	wstring version;		//³ÌĞò°æ±¾
-	wstring link;			//ÏÂÔØÁ´½Ó
-	CString contents_zh_cn;	//¸üĞÂÄÚÈİ£¨¼òÌåÖĞÎÄ£©
-	CString contents_en;	//¸üĞÂÄÚÈİ£¨English£©
-	CString contents_zh_tw;	//¸üĞÂÄÚÈİ£¨·±ÌåÖĞÎÄ£©
+	wstring version;		//ç¨‹åºç‰ˆæœ¬
+	wstring link;			//ä¸‹è½½é“¾æ¥
+	CString contents_zh_cn;	//æ›´æ–°å†…å®¹ï¼ˆç®€ä½“ä¸­æ–‡ï¼‰
+	CString contents_en;	//æ›´æ–°å†…å®¹ï¼ˆEnglishï¼‰
+	CString contents_zh_tw;	//æ›´æ–°å†…å®¹ï¼ˆç¹ä½“ä¸­æ–‡ï¼‰
 	CSimpleXML version_xml;
 	version_xml.LoadXMLContentDirect(version_info);
 	version = version_xml.GetNode(L"version");
@@ -339,10 +340,10 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
 			AfxMessageBox(CCommon::LoadText(IDS_CHECK_UPDATE_ERROR), MB_OK | MB_ICONWARNING);
 		return;
 	}
-	if (version > VERSION)		//Èç¹û·şÎñÆ÷ÉÏµÄ°æ±¾´óÓÚ±¾µØ°æ±¾
+	if (version > VERSION)		//å¦‚æœæœåŠ¡å™¨ä¸Šçš„ç‰ˆæœ¬å¤§äºæœ¬åœ°ç‰ˆæœ¬
 	{
 		CString info;
-		//¸ù¾İÓïÑÔÉèÖÃÑ¡Ôñ¶ÔÓ¦ÓïÑÔ°æ±¾µÄ¸üĞÂÄÚÈİ
+		//æ ¹æ®è¯­è¨€è®¾ç½®é€‰æ‹©å¯¹åº”è¯­è¨€ç‰ˆæœ¬çš„æ›´æ–°å†…å®¹
 		int language_code = _ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE));
 		CString contents_lan;
 		switch (language_code)
@@ -359,7 +360,7 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
 			
 		if (AfxMessageBox(info, MB_YESNO | MB_ICONQUESTION) == IDYES)
 		{
-			ShellExecute(NULL, _T("open"), link.c_str(), NULL, NULL, SW_SHOW);		//×ªµ½ÏÂÔØÁ´½Ó
+			ShellExecute(NULL, _T("open"), link.c_str(), NULL, NULL, SW_SHOW);		//è½¬åˆ°ä¸‹è½½é“¾æ¥
 		}
 	}
 	else
@@ -371,21 +372,21 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
 
 UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
 {
-	CCommon::SetThreadLanguage(theApp.m_general_data.language);		//ÉèÖÃÏß³ÌÓïÑÔ
-	CheckUpdate(false);		//¼ì²é¸üĞÂ
+	CCommon::SetThreadLanguage(theApp.m_general_data.language);		//è®¾ç½®çº¿ç¨‹è¯­è¨€
+	CheckUpdate(false);		//æ£€æŸ¥æ›´æ–°
 	return 0;
 }
 
 void CTrafficMonitorApp::SetAutoRun(bool auto_run)
 {
 	CRegKey key;
-	//´ò¿ª×¢²á±íÏî
+	//æ‰“å¼€æ³¨å†Œè¡¨é¡¹
 	if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
 	{
 		AfxMessageBox(CCommon::LoadText(IDS_AUTORUN_FAILED_NO_KEY), MB_OK | MB_ICONWARNING);
 		return;
 	}
-	if (auto_run)		//Ğ´Èë×¢²á±íÏî
+	if (auto_run)		//å†™å…¥æ³¨å†Œè¡¨é¡¹
 	{
 		if (key.SetStringValue(_T("TrafficMonitor"), m_module_path_reg.c_str()) != ERROR_SUCCESS)
 		{
@@ -393,9 +394,9 @@ void CTrafficMonitorApp::SetAutoRun(bool auto_run)
 			return;
 		}
 	}
-	else		//É¾³ı×¢²á±íÏî
+	else		//åˆ é™¤æ³¨å†Œè¡¨é¡¹
 	{
-		//É¾³ıÇ°ÏÈ¼ì²é×¢²á±íÏîÊÇ·ñ´æÔÚ£¬Èç¹û²»´æÔÚ£¬ÔòÖ±½Ó·µ»Ø
+		//åˆ é™¤å‰å…ˆæ£€æŸ¥æ³¨å†Œè¡¨é¡¹æ˜¯å¦å­˜åœ¨ï¼Œå¦‚æœä¸å­˜åœ¨ï¼Œåˆ™ç›´æ¥è¿”å›
 		wchar_t buff[256];
 		ULONG size{ 256 };
 		if (key.QueryStringValue(_T("TrafficMonitor"), buff, &size) != ERROR_SUCCESS)
@@ -413,18 +414,18 @@ bool CTrafficMonitorApp::GetAutoRun()
 	CRegKey key;
 	if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
 	{
-		//´ò¿ª×¢²á±í¡°Software\\Microsoft\\Windows\\CurrentVersion\\Run¡±Ê§°Ü£¬Ôò·µ»Øfalse
+		//æ‰“å¼€æ³¨å†Œè¡¨â€œSoftware\\Microsoft\\Windows\\CurrentVersion\\Runâ€å¤±è´¥ï¼Œåˆ™è¿”å›false
 		return false;
 	}
 	wchar_t buff[256];
 	ULONG size{ 256 };
-	if (key.QueryStringValue(_T("TrafficMonitor"), buff, &size) == ERROR_SUCCESS)		//Èç¹ûÕÒµ½ÁË¡°TrafficMonitor¡±¼ü
+	if (key.QueryStringValue(_T("TrafficMonitor"), buff, &size) == ERROR_SUCCESS)		//å¦‚æœæ‰¾åˆ°äº†â€œTrafficMonitorâ€é”®
 	{
-		return (m_module_path_reg == buff);	//Èç¹û¡°TrafficMonitor¡±µÄÖµÊÇµ±Ç°³ÌĞòµÄÂ·¾¶£¬¾Í·µ»Øtrue£¬·ñÔò·µ»Øfalse
+		return (m_module_path_reg == buff);	//å¦‚æœâ€œTrafficMonitorâ€çš„å€¼æ˜¯å½“å‰ç¨‹åºçš„è·¯å¾„ï¼Œå°±è¿”å›trueï¼Œå¦åˆ™è¿”å›false
 	}
 	else
 	{
-		return false;		//Ã»ÓĞÕÒµ½¡°TrafficMonitor¡±¼ü£¬·µ»Øfalse
+		return false;		//æ²¡æœ‰æ‰¾åˆ°â€œTrafficMonitorâ€é”®ï¼Œè¿”å›false
 	}
 }
 
@@ -446,12 +447,12 @@ CString CTrafficMonitorApp::GetSystemInfoString()
 }
 
 
-// Î¨Ò»µÄÒ»¸ö CTrafficMonitorApp ¶ÔÏó
+// å”¯ä¸€çš„ä¸€ä¸ª CTrafficMonitorApp å¯¹è±¡
 
 CTrafficMonitorApp theApp;
 
 
-// CTrafficMonitorApp ³õÊ¼»¯
+// CTrafficMonitorApp åˆå§‹åŒ–
 
 BOOL CTrafficMonitorApp::InitInstance()
 {
@@ -459,13 +460,13 @@ BOOL CTrafficMonitorApp::InitInstance()
 	//wstring str;
 	//str = xml.GetNode(L"panorama", L"face1");
 
-	//ÉèÖÃÅäÖÃÎÄ¼şµÄÂ·¾¶
+	//è®¾ç½®é…ç½®æ–‡ä»¶çš„è·¯å¾„
 	wchar_t path[MAX_PATH];
 	GetModuleFileNameW(NULL, path, MAX_PATH);
 	m_module_path = path;
 	if (m_module_path.find(L' ') != wstring::npos)
 	{
-		//Èç¹ûÂ·¾¶ÖĞÓĞ¿Õ¸ñ£¬ÔòÔÚ³ÌĞòÂ·¾¶Ç°ºóÌí¼ÓË«ÒıºÅ
+		//å¦‚æœè·¯å¾„ä¸­æœ‰ç©ºæ ¼ï¼Œåˆ™åœ¨ç¨‹åºè·¯å¾„å‰åæ·»åŠ åŒå¼•å·
 		m_module_path_reg = L'\"';
 		m_module_path_reg += m_module_path;
 		m_module_path_reg += L'\"';
@@ -490,17 +491,17 @@ BOOL CTrafficMonitorApp::InitInstance()
 		m_config_dir = m_appdata_dir;
 	m_skin_path = m_module_dir + L"skins";
 #endif
-	//AppDataÀïÃæµÄ³ÌĞòÅäÖÃÎÄ¼şÂ·¾¶
+	//AppDataé‡Œé¢çš„ç¨‹åºé…ç½®æ–‡ä»¶è·¯å¾„
 	m_config_path = m_config_dir + L"config.ini";
 	m_history_traffic_path = m_config_dir + L"history_traffic.dat";
 	m_log_path = m_config_dir + L"error.log";
 
 //#ifndef _DEBUG
-//	//Ô­À´µÄ¡¢³ÌĞòËùÔÚÄ¿Â¼ÏÂµÄÅäÖÃÎÄ¼şµÄÂ·¾¶
+//	//åŸæ¥çš„ã€ç¨‹åºæ‰€åœ¨ç›®å½•ä¸‹çš„é…ç½®æ–‡ä»¶çš„è·¯å¾„
 //	wstring config_path_old = m_module_dir + L"config.ini";
 //	wstring history_traffic_path_old = m_module_dir + L"history_traffic.dat";
 //	wstring log_path_old = m_module_dir + L"error.log";
-//	//Èç¹û³ÌĞòËùÔÚÄ¿Â¼ÏÂº¬ÓĞÅäÖÃÎÄ¼ş£¬Ôò½«ÆäÒÆ¶¯µ½AppData¶ÔÓ¦µÄÄ¿Â¼ÏÂÃæ
+//	//å¦‚æœç¨‹åºæ‰€åœ¨ç›®å½•ä¸‹å«æœ‰é…ç½®æ–‡ä»¶ï¼Œåˆ™å°†å…¶ç§»åŠ¨åˆ°AppDataå¯¹åº”çš„ç›®å½•ä¸‹é¢
 //	CCommon::MoveAFile(config_path_old.c_str(), m_config_path.c_str());
 //	CCommon::MoveAFile(history_traffic_path_old.c_str(), m_history_traffic_path.c_str());
 //	CCommon::MoveAFile(log_path_old.c_str(), m_log_path.c_str());
@@ -508,23 +509,23 @@ BOOL CTrafficMonitorApp::InitInstance()
 
 	bool is_windows10_fall_creator = m_win_version.IsWindows10FallCreatorOrLater();
 
-	//´ÓiniÎÄ¼şÔØÈëÉèÖÃ
+	//ä»iniæ–‡ä»¶è½½å…¥è®¾ç½®
 	LoadConfig();
 
-	//³õÊ¼»¯½çÃæÓïÑÔ
+	//åˆå§‹åŒ–ç•Œé¢è¯­è¨€
 	CCommon::SetThreadLanguage(m_general_data.language);
 
 #ifndef _DEBUG
 	wstring cmd_line{ m_lpCmdLine };
-	bool is_restart{ cmd_line.find(L"RestartByRestartManager") != wstring::npos };		//Èç¹ûÃüÁîĞĞ²ÎÊıÖĞº¬ÓĞ×Ö·û´®¡°RestartByRestartManager¡±ÔòËµÃ÷³ÌĞòÊÇ±»WindowsÖØĞÂÆô¶¯µÄ
+	bool is_restart{ cmd_line.find(L"RestartByRestartManager") != wstring::npos };		//å¦‚æœå‘½ä»¤è¡Œå‚æ•°ä¸­å«æœ‰å­—ç¬¦ä¸²â€œRestartByRestartManagerâ€åˆ™è¯´æ˜ç¨‹åºæ˜¯è¢«Windowsé‡æ–°å¯åŠ¨çš„
 	//bool when_start{ CCommon::WhenStart(m_no_multistart_warning_time) };
-	if (m_exit_when_start_by_restart_manager && is_restart && is_windows10_fall_creator)		//µ±Ç°Windows°æ±¾ÊÇÇï¼¾´´ÒâÕß¸üĞÂÊ±£¬Èç¹û³ÌĞò±»ÖØĞÂÆô¶¯£¬ÔòÖ±½ÓÍË³ö³ÌĞò
+	if (m_exit_when_start_by_restart_manager && is_restart && is_windows10_fall_creator)		//å½“å‰Windowsç‰ˆæœ¬æ˜¯ç§‹å­£åˆ›æ„è€…æ›´æ–°æ—¶ï¼Œå¦‚æœç¨‹åºè¢«é‡æ–°å¯åŠ¨ï¼Œåˆ™ç›´æ¥é€€å‡ºç¨‹åº
 	{
-		//AfxMessageBox(_T("µ÷ÊÔĞÅÏ¢£º³ÌĞòÒÑ±»WindowsµÄÖØÆô¹ÜÀíÆ÷ÖØĞÂÆô¶¯¡£"));
+		//AfxMessageBox(_T("è°ƒè¯•ä¿¡æ¯ï¼šç¨‹åºå·²è¢«Windowsçš„é‡å¯ç®¡ç†å™¨é‡æ–°å¯åŠ¨ã€‚"));
 		return FALSE;
 	}
 
-	//¼ì²éÊÇ·ñÒÑÓĞÊµÀıÕıÔÚÔËĞĞ
+	//æ£€æŸ¥æ˜¯å¦å·²æœ‰å®ä¾‹æ­£åœ¨è¿è¡Œ
 	HANDLE hMutex = ::CreateMutex(NULL, TRUE, _T("TrafficMonitor-1419J3XLKL1w8OZc"));
 	if (hMutex != NULL)
 	{
@@ -545,13 +546,13 @@ BOOL CTrafficMonitorApp::InitInstance()
 
 	//SaveConfig();
 
-	// Èç¹ûÒ»¸öÔËĞĞÔÚ Windows XP ÉÏµÄÓ¦ÓÃ³ÌĞòÇåµ¥Ö¸¶¨Òª
-	// Ê¹ÓÃ ComCtl32.dll °æ±¾ 6 »ò¸ü¸ß°æ±¾À´ÆôÓÃ¿ÉÊÓ»¯·½Ê½£¬
-	//ÔòĞèÒª InitCommonControlsEx()¡£  ·ñÔò£¬½«ÎŞ·¨´´½¨´°¿Ú¡£
+	// å¦‚æœä¸€ä¸ªè¿è¡Œåœ¨ Windows XP ä¸Šçš„åº”ç”¨ç¨‹åºæ¸…å•æŒ‡å®šè¦
+	// ä½¿ç”¨ ComCtl32.dll ç‰ˆæœ¬ 6 æˆ–æ›´é«˜ç‰ˆæœ¬æ¥å¯ç”¨å¯è§†åŒ–æ–¹å¼ï¼Œ
+	//åˆ™éœ€è¦ InitCommonControlsEx()ã€‚  å¦åˆ™ï¼Œå°†æ— æ³•åˆ›å»ºçª—å£ã€‚
 	INITCOMMONCONTROLSEX InitCtrls;
 	InitCtrls.dwSize = sizeof(InitCtrls);
-	// ½«ËüÉèÖÃÎª°üÀ¨ËùÓĞÒªÔÚÓ¦ÓÃ³ÌĞòÖĞÊ¹ÓÃµÄ
-	// ¹«¹²¿Ø¼şÀà¡£
+	// å°†å®ƒè®¾ç½®ä¸ºåŒ…æ‹¬æ‰€æœ‰è¦åœ¨åº”ç”¨ç¨‹åºä¸­ä½¿ç”¨çš„
+	// å…¬å…±æ§ä»¶ç±»ã€‚
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
@@ -560,24 +561,24 @@ BOOL CTrafficMonitorApp::InitInstance()
 
 	AfxEnableControlContainer();
 
-	// ´´½¨ shell ¹ÜÀíÆ÷£¬ÒÔ·À¶Ô»°¿ò°üº¬
-	// ÈÎºÎ shell Ê÷ÊÓÍ¼¿Ø¼ş»ò shell ÁĞ±íÊÓÍ¼¿Ø¼ş¡£
+	// åˆ›å»º shell ç®¡ç†å™¨ï¼Œä»¥é˜²å¯¹è¯æ¡†åŒ…å«
+	// ä»»ä½• shell æ ‘è§†å›¾æ§ä»¶æˆ– shell åˆ—è¡¨è§†å›¾æ§ä»¶ã€‚
 	CShellManager *pShellManager = new CShellManager;
 
-	// ¼¤»î¡°Windows Native¡±ÊÓ¾õ¹ÜÀíÆ÷£¬ÒÔ±ãÔÚ MFC ¿Ø¼şÖĞÆôÓÃÖ÷Ìâ
+	// æ¿€æ´»â€œWindows Nativeâ€è§†è§‰ç®¡ç†å™¨ï¼Œä»¥ä¾¿åœ¨ MFC æ§ä»¶ä¸­å¯ç”¨ä¸»é¢˜
 	CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
 
-	// ±ê×¼³õÊ¼»¯
-	// Èç¹ûÎ´Ê¹ÓÃÕâĞ©¹¦ÄÜ²¢Ï£Íû¼õĞ¡
-	// ×îÖÕ¿ÉÖ´ĞĞÎÄ¼şµÄ´óĞ¡£¬ÔòÓ¦ÒÆ³ıÏÂÁĞ
-	// ²»ĞèÒªµÄÌØ¶¨³õÊ¼»¯Àı³Ì
-	// ¸ü¸ÄÓÃÓÚ´æ´¢ÉèÖÃµÄ×¢²á±íÏî
-	// TODO: Ó¦ÊÊµ±ĞŞ¸Ä¸Ã×Ö·û´®£¬
-	// ÀıÈçĞŞ¸ÄÎª¹«Ë¾»ò×éÖ¯Ãû
-	SetRegistryKey(_T("Ó¦ÓÃ³ÌĞòÏòµ¼Éú³ÉµÄ±¾µØÓ¦ÓÃ³ÌĞò"));
+	// æ ‡å‡†åˆå§‹åŒ–
+	// å¦‚æœæœªä½¿ç”¨è¿™äº›åŠŸèƒ½å¹¶å¸Œæœ›å‡å°
+	// æœ€ç»ˆå¯æ‰§è¡Œæ–‡ä»¶çš„å¤§å°ï¼Œåˆ™åº”ç§»é™¤ä¸‹åˆ—
+	// ä¸éœ€è¦çš„ç‰¹å®šåˆå§‹åŒ–ä¾‹ç¨‹
+	// æ›´æ”¹ç”¨äºå­˜å‚¨è®¾ç½®çš„æ³¨å†Œè¡¨é¡¹
+	// TODO: åº”é€‚å½“ä¿®æ”¹è¯¥å­—ç¬¦ä¸²ï¼Œ
+	// ä¾‹å¦‚ä¿®æ”¹ä¸ºå…¬å¸æˆ–ç»„ç»‡å
+	SetRegistryKey(_T("åº”ç”¨ç¨‹åºå‘å¯¼ç”Ÿæˆçš„æœ¬åœ°åº”ç”¨ç¨‹åº"));
 
-	//Æô¶¯Ê±¼ì²é¸üĞÂ
-#ifndef _DEBUG		//DEBUGÏÂ²»ÔÚÆô¶¯Ê±¼ì²é¸üĞÂ
+	//å¯åŠ¨æ—¶æ£€æŸ¥æ›´æ–°
+#ifndef _DEBUG		//DEBUGä¸‹ä¸åœ¨å¯åŠ¨æ—¶æ£€æŸ¥æ›´æ–°
 	if (m_general_data.check_update_when_start)
 	{
 		m_pUpdateThread = AfxBeginThread(CheckUpdateThreadFunc, NULL);
@@ -589,21 +590,21 @@ BOOL CTrafficMonitorApp::InitInstance()
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)
 	{
-		// TODO: ÔÚ´Ë·ÅÖÃ´¦ÀíºÎÊ±ÓÃ
-		//  ¡°È·¶¨¡±À´¹Ø±Õ¶Ô»°¿òµÄ´úÂë
+		// TODO: åœ¨æ­¤æ”¾ç½®å¤„ç†ä½•æ—¶ç”¨
+		//  â€œç¡®å®šâ€æ¥å…³é—­å¯¹è¯æ¡†çš„ä»£ç 
 	}
 	else if (nResponse == IDCANCEL)
 	{
-		// TODO: ÔÚ´Ë·ÅÖÃ´¦ÀíºÎÊ±ÓÃ
-		//  ¡°È¡Ïû¡±À´¹Ø±Õ¶Ô»°¿òµÄ´úÂë
+		// TODO: åœ¨æ­¤æ”¾ç½®å¤„ç†ä½•æ—¶ç”¨
+		//  â€œå–æ¶ˆâ€æ¥å…³é—­å¯¹è¯æ¡†çš„ä»£ç 
 	}
 	else if (nResponse == -1)
 	{
-		TRACE(traceAppMsg, 0, "¾¯¸æ: ¶Ô»°¿ò´´½¨Ê§°Ü£¬Ó¦ÓÃ³ÌĞò½«ÒâÍâÖÕÖ¹¡£\n");
-		TRACE(traceAppMsg, 0, "¾¯¸æ: Èç¹ûÄúÔÚ¶Ô»°¿òÉÏÊ¹ÓÃ MFC ¿Ø¼ş£¬ÔòÎŞ·¨ #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS¡£\n");
+		TRACE(traceAppMsg, 0, "è­¦å‘Š: å¯¹è¯æ¡†åˆ›å»ºå¤±è´¥ï¼Œåº”ç”¨ç¨‹åºå°†æ„å¤–ç»ˆæ­¢ã€‚\n");
+		TRACE(traceAppMsg, 0, "è­¦å‘Š: å¦‚æœæ‚¨åœ¨å¯¹è¯æ¡†ä¸Šä½¿ç”¨ MFC æ§ä»¶ï¼Œåˆ™æ— æ³• #define _AFX_NO_MFC_CONTROLS_IN_DIALOGSã€‚\n");
 	}
 
-	// É¾³ıÉÏÃæ´´½¨µÄ shell ¹ÜÀíÆ÷¡£
+	// åˆ é™¤ä¸Šé¢åˆ›å»ºçš„ shell ç®¡ç†å™¨ã€‚
 	if (pShellManager != NULL)
 	{
 		delete pShellManager;
@@ -613,8 +614,8 @@ BOOL CTrafficMonitorApp::InitInstance()
 	ControlBarCleanUp();
 #endif
 
-	// ÓÉÓÚ¶Ô»°¿òÒÑ¹Ø±Õ£¬ËùÒÔ½«·µ»Ø FALSE ÒÔ±ãÍË³öÓ¦ÓÃ³ÌĞò£¬
-	//  ¶ø²»ÊÇÆô¶¯Ó¦ÓÃ³ÌĞòµÄÏûÏ¢±Ã¡£
+	// ç”±äºå¯¹è¯æ¡†å·²å…³é—­ï¼Œæ‰€ä»¥å°†è¿”å› FALSE ä»¥ä¾¿é€€å‡ºåº”ç”¨ç¨‹åºï¼Œ
+	//  è€Œä¸æ˜¯å¯åŠ¨åº”ç”¨ç¨‹åºçš„æ¶ˆæ¯æ³µã€‚
 	return FALSE;
 }
 
@@ -622,11 +623,11 @@ BOOL CTrafficMonitorApp::InitInstance()
 
 void CTrafficMonitorApp::OnHelp()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	CString language_code;
 	language_code.LoadString(IDS_LANGUAGE_CODE);
 	if (language_code == _T("2"))
-		ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/Help.md"), NULL, NULL, SW_SHOW);	//´ò¿ª³¬Á´½Ó;
+		ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/Help.md"), NULL, NULL, SW_SHOW);	//æ‰“å¼€è¶…é“¾æ¥;
 	else
 		ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/Help_en-us.md"), NULL, NULL, SW_SHOW);
 }
