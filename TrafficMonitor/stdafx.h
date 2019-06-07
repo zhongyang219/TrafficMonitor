@@ -91,5 +91,14 @@ using std::ofstream;
 #define MIN_FONT_SIZE 5
 #define MAX_FONT_SIZE 72
 
+#define SAFE_DELETE(p) do \
+{\
+    if(p != nullptr) \
+    { \
+        delete p; \
+        p = nullptr; \
+    } \
+} while (false)
+
 //如果需要为Windows XP系统编译，请去掉下面一行代码的注释
 //#define COMPILE_FOR_WINXP

@@ -520,12 +520,13 @@ bool CCommon::CopyStringToClipboard(const wstring & str)
 
 bool CCommon::GetURL(const wstring & url, wstring & result, bool utf8)
 {
-	bool sucessed{ false };
-	CInternetSession session{};
-	CHttpFile* pfile{};
+	bool succeed{ false };
+    CInternetSession* pSession{};
+    CHttpFile* pfile{};
 	try
 	{
-		pfile = (CHttpFile *)session.OpenURL(url.c_str());
+        pSession = new CInternetSession();
+		pfile = (CHttpFile *)pSession->OpenURL(url.c_str());
 		DWORD dwStatusCode;
 		pfile->QueryInfoStatusCode(dwStatusCode);
 		if (dwStatusCode == HTTP_STATUS_OK)
@@ -537,11 +538,11 @@ bool CCommon::GetURL(const wstring & url, wstring & result, bool utf8)
 				content += data;
 			}
 			result = StrToUnicode((const char*)content.GetString(), utf8);
-			sucessed = true;
+			succeed = true;
 		}
 		pfile->Close();
 		delete pfile;
-		session.Close();
+        pSession->Close();
 	}
 	catch (CInternetException* e)
 	{
@@ -550,11 +551,14 @@ bool CCommon::GetURL(const wstring & url, wstring & result, bool utf8)
 			pfile->Close();
 			delete pfile;
 		}
-		session.Close();
-		sucessed = false;
+        if (pSession != nullptr)
+            pSession->Close();
+		succeed = false;
 		e->Delete();		//没有这句会造成内存泄露
+        SAFE_DELETE(pSession);
 	}
-	return sucessed;
+    SAFE_DELETE(pSession);
+    return succeed;
 }
 
 void CCommon::GetInternetIp(wstring& ip_address, wstring& ip_location, bool global)
