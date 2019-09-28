@@ -99,7 +99,7 @@ void CTrafficMonitorApp::LoadConfig()
 	//任务栏窗口设置
 	m_taskbar_data.back_color = ini.GetInt(_T("task_bar"), _T("task_bar_back_color"), 0);
 	m_taskbar_data.transparent_color = ini.GetInt(_T("task_bar"), _T("transparent_color"), 0);
-	m_taskbar_data.status_bar_color = ini.GetInt(_T("task_bar"), _T("status_bar_color"), 0);
+	m_taskbar_data.status_bar_color = ini.GetInt(_T("task_bar"), _T("status_bar_color"), 0x005A5A5A);
 	//m_taskbar_data.text_color = GetPrivateProfileInt(_T("task_bar"), _T("task_bar_text_color"), 0x00ffffffU, m_config_path.c_str());
 	ini.GetIntArray(_T("task_bar"), _T("task_bar_text_color"), (int*)m_taskbar_data.text_colors, TASKBAR_COLOR_NUM, 0x00ffffffU);
 	m_taskbar_data.specify_each_item_color = ini.GetBool(L"task_bar", L"specify_each_item_color", false);
