@@ -99,6 +99,7 @@ void CTrafficMonitorApp::LoadConfig()
 	//任务栏窗口设置
 	m_taskbar_data.back_color = ini.GetInt(_T("task_bar"), _T("task_bar_back_color"), 0);
 	m_taskbar_data.transparent_color = ini.GetInt(_T("task_bar"), _T("transparent_color"), 0);
+	m_taskbar_data.status_bar_color = ini.GetInt(_T("task_bar"), _T("status_bar_color"), 0);
 	//m_taskbar_data.text_color = GetPrivateProfileInt(_T("task_bar"), _T("task_bar_text_color"), 0x00ffffffU, m_config_path.c_str());
 	ini.GetIntArray(_T("task_bar"), _T("task_bar_text_color"), (int*)m_taskbar_data.text_colors, TASKBAR_COLOR_NUM, 0x00ffffffU);
 	m_taskbar_data.specify_each_item_color = ini.GetBool(L"task_bar", L"specify_each_item_color", false);
@@ -125,6 +126,7 @@ void CTrafficMonitorApp::LoadConfig()
 	m_taskbar_data.hide_percent = ini.GetBool(_T("task_bar"), _T("task_bar_hide_percent"), false);
 	m_taskbar_data.value_right_align = ini.GetBool(_T("task_bar"), _T("value_right_align"), false);
 	m_taskbar_data.horizontal_arrange = ini.GetBool(_T("task_bar"), _T("horizontal_arrange"), false);
+	m_taskbar_data.show_status_bar = ini.GetBool(_T("task_bar"), _T("show_status_bar"), true);
 	m_taskbar_data.separate_value_unit_with_space = ini.GetBool(_T("task_bar"), _T("separate_value_unit_with_space"), true);
 	m_taskbar_data.digits_number = ini.GetInt(_T("task_bar"), _T("digits_number"), 4);
 	m_taskbar_data.double_click_action = static_cast<DoubleClickAction>(ini.GetInt(_T("task_bar"), _T("double_click_action"), 0));
@@ -202,6 +204,7 @@ void CTrafficMonitorApp::SaveConfig()
 	//任务栏窗口设置
 	ini.WriteInt(L"task_bar", L"task_bar_back_color", m_taskbar_data.back_color);
 	ini.WriteInt(L"task_bar", L"transparent_color", m_taskbar_data.transparent_color);
+	ini.WriteInt(L"task_bar", L"status_bar_color", m_taskbar_data.status_bar_color);
 	ini.WriteIntArray(L"task_bar", L"task_bar_text_color", (int*)m_taskbar_data.text_colors, TASKBAR_COLOR_NUM);
 	ini.WriteBool(L"task_bar", L"specify_each_item_color", m_taskbar_data.specify_each_item_color);
 	ini.WriteBool(L"task_bar", L"task_bar_show_cpu_memory", m_cfg_data.m_tbar_show_cpu_memory);
@@ -221,6 +224,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteBool(L"task_bar", L"task_bar_hide_percent", m_taskbar_data.hide_percent);
 	ini.WriteBool(L"task_bar", L"value_right_align", m_taskbar_data.value_right_align);
 	ini.WriteBool(L"task_bar", L"horizontal_arrange", m_taskbar_data.horizontal_arrange);
+	ini.WriteBool(L"task_bar", L"show_status_bar", m_taskbar_data.show_status_bar);
 	ini.WriteBool(L"task_bar", L"separate_value_unit_with_space", m_taskbar_data.separate_value_unit_with_space);
 	ini.WriteInt(L"task_bar", L"digits_number", m_taskbar_data.digits_number);
 	ini.WriteInt(L"task_bar", L"double_click_action", static_cast<int>(m_taskbar_data.double_click_action));

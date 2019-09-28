@@ -28,6 +28,7 @@ protected:
 	CColorStatic m_text_color_static;
 	CColorStatic m_back_color_static;
 	CColorStatic m_trans_color_static;
+	CColorStatic m_status_bar_color_static;
 	CToolTipCtrl m_toolTip;
 	CComboBox m_unit_combo;
 	CButton m_hide_unit_chk;
@@ -64,6 +65,7 @@ public:
 	afx_msg void OnBnClickedSpecifyEachItemColorCheck();
 	afx_msg void OnCbnSelchangeDoubleClickCombo();
 	afx_msg void OnBnClickedHorizontalArrangeCheck();
+	afx_msg void OnBnClickedShowStatusBarCheck();
 	afx_msg void OnBnClickedSeparateValueUnitCheck();
 	afx_msg void OnBnClickedUnitByteRadio();
 	afx_msg void OnBnClickedUnitBitRadio();

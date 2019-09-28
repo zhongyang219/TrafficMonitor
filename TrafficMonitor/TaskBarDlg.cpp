@@ -190,8 +190,13 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 		CRect rect_tmp{ value_rect };
 		if (theApp.m_cpu_usage == 100)		//如果CPU利用为100%，则将矩形框右侧扩大一些，防止显示不全
 			rect_tmp.right += theApp.DPI(5);
-		draw.DrawWindowText(rect_tmp, str, text_colors[5], value_alignment, true);		//绘制数值
-		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.cpu.c_str(), text_colors[4], Alignment::LEFT, true);				//绘制标签
+
+		// 绘制状态条
+		TryDrawStatusBar(draw, CRect(lable_rect.TopLeft(), rect_tmp.BottomRight()), theApp.m_cpu_usage);
+		// 绘制文本
+		draw.DrawWindowText(rect_tmp, str, text_colors[5], value_alignment, false);		//绘制数值
+		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.cpu.c_str(), text_colors[4], Alignment::LEFT, false);				//绘制标签
+
 		//绘制内存利用率
 		if (theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom)
 		{
@@ -208,8 +213,13 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 		rect_tmp = value_rect;
 		if (theApp.m_memory_usage == 100)		//如果内存利用为100%，则将矩形框右侧扩大一些，防止显示不全
 			rect_tmp.right += theApp.DPI(5);
-		draw.DrawWindowText(rect_tmp, str, text_colors[7], value_alignment, true);
-		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.memory.c_str(), text_colors[6], Alignment::LEFT, true);
+
+		// 绘制状态条
+		TryDrawStatusBar(draw, CRect(lable_rect.TopLeft(), rect_tmp.BottomRight()), theApp.m_memory_usage);
+		// 绘制文本
+		draw.DrawWindowText(rect_tmp, str, text_colors[7], value_alignment, false);
+		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.memory.c_str(), text_colors[6], Alignment::LEFT, false);
+
 	}
 	//将缓冲区DC中的图像拷贝到屏幕中显示
 	pDC->BitBlt(0,0, draw_width, m_rect.Height(), &MemDC, 0, 0, SRCCOPY);
@@ -217,6 +227,18 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 	MemDC.DeleteDC();
 }
 
+void CTaskBarDlg::TryDrawStatusBar(CDrawCommon& drawer, const CRect& rect_bar, int usage_percent)
+{
+	if (!theApp.m_taskbar_data.show_status_bar)
+	{
+		return;
+	}
+
+	CSize fill_size = CSize(rect_bar.Width() * usage_percent / 100, rect_bar.Height());
+	CRect rect_fill(rect_bar.TopLeft(), fill_size);
+	drawer.DrawRectOutLine(rect_bar, theApp.m_taskbar_data.status_bar_color, 1, true);
+	drawer.FillRect(rect_fill, theApp.m_taskbar_data.status_bar_color);
+}
 
 bool CTaskBarDlg::AdjustWindowPos()
 {
