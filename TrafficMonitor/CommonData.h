@@ -172,10 +172,12 @@ struct TaskBarSettingData : public PublicSettingData
 {
 	COLORREF  back_color{ RGB(0, 0, 0) };	//背景颜色
 	COLORREF transparent_color{ RGB(0, 0, 0) };		//透明色
+	COLORREF status_bar_color{ RGB(0, 0, 0) };		// CPU/内存 状态条颜色
 	COLORREF text_colors[TASKBAR_COLOR_NUM]{};		//文字颜色（依次为“上传”、“下载”、“CPU”、“内存”的标签和数据颜色）
 	bool value_right_align{ false };	//数值是否右对齐
 	int digits_number{ 4 };				//数据位数
 	bool horizontal_arrange{ true };	//水平排列
+	bool show_status_bar{ true };		//显示 CPU/内存的状态条
 	bool tbar_wnd_on_left{ false };		//如果为true，则任务栏窗口显示在任务栏的左侧（或上方）
 };
 
