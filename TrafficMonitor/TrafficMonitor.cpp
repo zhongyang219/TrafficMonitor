@@ -81,6 +81,7 @@ void CTrafficMonitorApp::LoadConfig()
 
 	m_main_wnd_data.speed_short_mode = ini.GetBool(_T("config"), _T("speed_short_mode"), false);
 	m_main_wnd_data.separate_value_unit_with_space = ini.GetBool(_T("config"), _T("separate_value_unit_with_space"), true);
+	m_main_wnd_data.show_tool_tip = ini.GetBool(_T("config"), _T("show_tool_tip"), true);
 	m_main_wnd_data.unit_byte = ini.GetBool(_T("config"), _T("unit_byte"), true);
 	m_main_wnd_data.speed_unit = static_cast<SpeedUnit>(ini.GetInt(_T("config"), _T("speed_unit"), 0));
 	m_main_wnd_data.hide_unit = ini.GetBool(_T("config"), _T("hide_unit"), false);
@@ -128,6 +129,7 @@ void CTrafficMonitorApp::LoadConfig()
 	m_taskbar_data.horizontal_arrange = ini.GetBool(_T("task_bar"), _T("horizontal_arrange"), false);
 	m_taskbar_data.show_status_bar = ini.GetBool(_T("task_bar"), _T("show_status_bar"), true);
 	m_taskbar_data.separate_value_unit_with_space = ini.GetBool(_T("task_bar"), _T("separate_value_unit_with_space"), true);
+	m_taskbar_data.show_tool_tip = ini.GetBool(_T("task_bar"), _T("show_tool_tip"), true);
 	m_taskbar_data.digits_number = ini.GetInt(_T("task_bar"), _T("digits_number"), 4);
 	m_taskbar_data.double_click_action = static_cast<DoubleClickAction>(ini.GetInt(_T("task_bar"), _T("double_click_action"), 0));
 	m_taskbar_data.double_click_exe = ini.GetString(L"task_bar", L"double_click_exe", (theApp.m_system_dir + L"\\Taskmgr.exe").c_str());
@@ -186,6 +188,7 @@ void CTrafficMonitorApp::SaveConfig()
 
 	ini.WriteBool(L"config", L"speed_short_mode", m_main_wnd_data.speed_short_mode);
 	ini.WriteBool(L"config", L"separate_value_unit_with_space", m_main_wnd_data.separate_value_unit_with_space);
+	ini.WriteBool(L"config", L"show_tool_tip", m_main_wnd_data.show_tool_tip);
 	ini.WriteBool(L"config", L"unit_byte", m_main_wnd_data.unit_byte);
 	ini.WriteInt(L"config", L"speed_unit", static_cast<int>(m_main_wnd_data.speed_unit));
 	ini.WriteBool(L"config", L"hide_unit", m_main_wnd_data.hide_unit);
@@ -226,6 +229,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteBool(L"task_bar", L"horizontal_arrange", m_taskbar_data.horizontal_arrange);
 	ini.WriteBool(L"task_bar", L"show_status_bar", m_taskbar_data.show_status_bar);
 	ini.WriteBool(L"task_bar", L"separate_value_unit_with_space", m_taskbar_data.separate_value_unit_with_space);
+	ini.WriteBool(L"task_bar", L"show_tool_tip", m_taskbar_data.show_tool_tip);
 	ini.WriteInt(L"task_bar", L"digits_number", m_taskbar_data.digits_number);
 	ini.WriteInt(L"task_bar", L"double_click_action", static_cast<int>(m_taskbar_data.double_click_action));
 

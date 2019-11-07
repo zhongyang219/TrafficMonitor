@@ -64,4 +64,5 @@ public:
 	afx_msg void OnBnClickedSeparateValueUnitCheck();
 	afx_msg void OnBnClickedUnitByteRadio();
 	afx_msg void OnBnClickedUnitBitRadio();
+    afx_msg void OnBnClickedShowToolTipChk();
 };

@@ -1187,9 +1187,12 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			ShowInfo();		//刷新窗口信息
 	
 			//更新鼠标提示
-			CString tip_info;
-			tip_info = GetMouseTipsInfo();
-			m_tool_tips.UpdateTipText(tip_info, this);
+            if (theApp.m_main_wnd_data.show_tool_tip)
+            {
+                CString tip_info;
+                tip_info = GetMouseTipsInfo();
+                m_tool_tips.UpdateTipText(tip_info, this);
+            }
 			//更新任务栏窗口鼠标提示
 			if (m_tBarDlg != nullptr)
 				m_tBarDlg->UpdateToolTips();
@@ -1570,7 +1573,7 @@ BOOL CTrafficMonitorDlg::PreTranslateMessage(MSG* pMsg)
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE) return TRUE;
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN) return TRUE;
 
-	if (m_tool_tips.GetSafeHwnd())
+	if (theApp.m_main_wnd_data.show_tool_tip && m_tool_tips.GetSafeHwnd())
 	{
 		m_tool_tips.RelayEvent(pMsg);
 	}

@@ -96,6 +96,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_SEPARATE_VALUE_UNIT_CHECK, &CTaskBarSettingsDlg::OnBnClickedSeparateValueUnitCheck)
 	ON_BN_CLICKED(IDC_UNIT_BYTE_RADIO, &CTaskBarSettingsDlg::OnBnClickedUnitByteRadio)
 	ON_BN_CLICKED(IDC_UNIT_BIT_RADIO, &CTaskBarSettingsDlg::OnBnClickedUnitBitRadio)
+    ON_BN_CLICKED(IDC_SHOW_TOOL_TIP_CHK, &CTaskBarSettingsDlg::OnBnClickedShowToolTipChk)
 END_MESSAGE_MAP()
 
 
@@ -128,6 +129,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	((CButton*)GetDlgItem(IDC_HORIZONTAL_ARRANGE_CHECK))->SetCheck(m_data.horizontal_arrange);
 	((CButton*)GetDlgItem(IDC_SHOW_STATUS_BAR_CHECK))->SetCheck(m_data.show_status_bar);
 	((CButton*)GetDlgItem(IDC_SEPARATE_VALUE_UNIT_CHECK))->SetCheck(m_data.separate_value_unit_with_space);
+	((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->SetCheck(m_data.show_tool_tip);
 
 	m_text_color_static.SetLinkCursor();
 	m_back_color_static.SetLinkCursor();
@@ -498,4 +500,11 @@ void CTaskBarSettingsDlg::OnBnClickedUnitBitRadio()
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.unit_byte = false;
 	IniUnitCombo();
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedShowToolTipChk()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    m_data.show_tool_tip = (((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->GetCheck() != 0);
 }
