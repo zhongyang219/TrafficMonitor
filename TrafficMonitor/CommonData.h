@@ -150,6 +150,7 @@ struct PublicSettingData
 	bool swap_up_down{ false };		//交换上传和下载显示的位置
 	bool speed_short_mode{ false };		//网速显示简洁模式（减少小数点的位数，单位不显示“B”）
 	bool separate_value_unit_with_space{ true };	//网速数值和单位用空格分隔
+    bool show_tool_tip{ true };         //显示鼠标提示
 	bool unit_byte{ true };				//使用字节(B)而不是比特(b)为单位
 	SpeedUnit speed_unit;		//网速的单位
 	bool hide_unit;			//隐藏单位

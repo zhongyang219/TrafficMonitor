@@ -85,6 +85,7 @@ BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_SEPARATE_VALUE_UNIT_CHECK, &CMainWndSettingsDlg::OnBnClickedSeparateValueUnitCheck)
 	ON_BN_CLICKED(IDC_UNIT_BYTE_RADIO, &CMainWndSettingsDlg::OnBnClickedUnitByteRadio)
 	ON_BN_CLICKED(IDC_UNIT_BIT_RADIO, &CMainWndSettingsDlg::OnBnClickedUnitBitRadio)
+    ON_BN_CLICKED(IDC_SHOW_TOOL_TIP_CHK, &CMainWndSettingsDlg::OnBnClickedShowToolTipChk)
 END_MESSAGE_MAP()
 
 
@@ -114,6 +115,7 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 	((CButton*)GetDlgItem(IDC_FULLSCREEN_HIDE_CHECK))->SetCheck(m_data.hide_main_wnd_when_fullscreen);
 	((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK2))->SetCheck(m_data.speed_short_mode);
 	((CButton*)GetDlgItem(IDC_SEPARATE_VALUE_UNIT_CHECK))->SetCheck(m_data.separate_value_unit_with_space);
+    ((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->SetCheck(m_data.show_tool_tip);
 
 	m_color_static.SetLinkCursor();
 	DrawStaticColor();
@@ -422,4 +424,11 @@ void CMainWndSettingsDlg::OnBnClickedUnitBitRadio()
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.unit_byte = false;
 	IniUnitCombo();
+}
+
+
+void CMainWndSettingsDlg::OnBnClickedShowToolTipChk()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    m_data.show_tool_tip = (((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->GetCheck() != 0);
 }

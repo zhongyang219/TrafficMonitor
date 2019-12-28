@@ -486,9 +486,12 @@ void CTaskBarDlg::SetToolTipsTopMost()
 
 void CTaskBarDlg::UpdateToolTips()
 {
-	CString tip_info;
-	tip_info = GetMouseTipsInfo();
-	m_tool_tips.UpdateTipText(tip_info, this);
+    if (theApp.m_taskbar_data.show_tool_tip)
+    {
+        CString tip_info;
+        tip_info = GetMouseTipsInfo();
+        m_tool_tips.UpdateTipText(tip_info, this);
+    }
 }
 
 BOOL CTaskBarDlg::OnInitDialog()
@@ -686,7 +689,7 @@ BOOL CTaskBarDlg::PreTranslateMessage(MSG* pMsg)
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE) return TRUE;
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN) return TRUE;
 
-	if (m_tool_tips.GetSafeHwnd() && (pMsg->message == WM_LBUTTONDOWN ||
+	if (theApp.m_taskbar_data.show_tool_tip && m_tool_tips.GetSafeHwnd() && (pMsg->message == WM_LBUTTONDOWN ||
 		pMsg->message == WM_LBUTTONUP ||
 		pMsg->message == WM_MOUSEMOVE))
 	{
