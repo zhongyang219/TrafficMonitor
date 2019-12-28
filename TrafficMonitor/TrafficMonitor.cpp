@@ -6,6 +6,7 @@
 #include "TrafficMonitor.h"
 #include "TrafficMonitorDlg.h"
 #include "crashtool.h"
+#include "UpdateHelper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -311,37 +312,38 @@ void CTrafficMonitorApp::GetDPI(CWnd* pWnd)
 void CTrafficMonitorApp::CheckUpdate(bool message)
 {
 	CWaitCursor wait_cursor;
-	wstring version_info;
-	if (!CCommon::GetURL(L"https://raw.githubusercontent.com/zhongyang219/TrafficMonitor/master/version_utf8.info", version_info, true))		//获取版本信息
-	{
-		if(message)
-			AfxMessageBox(CCommon::LoadText(IDS_CHECK_UPDATE_FAILD), MB_OK | MB_ICONWARNING);
-		return;
-	}
 
 	wstring version;		//程序版本
 	wstring link;			//下载链接
-	CString contents_zh_cn;	//更新内容（简体中文）
-	CString contents_en;	//更新内容（English）
-	CString contents_zh_tw;	//更新内容（繁体中文）
-	CSimpleXML version_xml;
-	version_xml.LoadXMLContentDirect(version_info);
-	version = version_xml.GetNode(L"version");
+    wstring contents_zh_cn;	//更新内容（简体中文）
+    wstring contents_en;	//更新内容（English）
+    wstring contents_zh_tw;	//更新内容（繁体中文）
+	CUpdateHelper update_helper;
+    if (!update_helper.CheckForUpdate())
+    {
+        if (message)
+            AfxMessageBox(CCommon::LoadText(IDS_CHECK_UPDATE_FAILD), MB_OK | MB_ICONWARNING);
+        return;
+    }
+    version = update_helper.GetVersion();
 #ifdef _M_X64
-	link = version_xml.GetNode(L"link_x64");
+	link = update_helper.GetLink64();
 #else
-	link = version_xml.GetNode(L"link");
+	link = update_helper.GetLink();
 #endif
-	contents_zh_cn = version_xml.GetNode(L"contents_zh_cn", L"update_contents").c_str();
-	contents_en = version_xml.GetNode(L"contents_en", L"update_contents").c_str();
-	contents_zh_tw = version_xml.GetNode(L"contents_zh_tw", L"update_contents").c_str();
-	contents_zh_cn.Replace(L"\\n", L"\r\n");
-	contents_en.Replace(L"\\n", L"\r\n");
-	contents_zh_tw.Replace(L"\\n", L"\r\n");
+	contents_zh_cn = update_helper.GetContentsZhCn();
+	contents_en = update_helper.GetContentsEn();
+	contents_zh_tw = update_helper.GetContentsZhTw();
 	if (version.empty() || link.empty())
 	{
 		if (message)
-			AfxMessageBox(CCommon::LoadText(IDS_CHECK_UPDATE_ERROR), MB_OK | MB_ICONWARNING);
+        {
+            CString info = CCommon::LoadText(IDS_CHECK_UPDATE_ERROR);
+            info += _T("\r\nrow_data=");
+            info += std::to_wstring(update_helper.IsRowData()).c_str();
+
+            AfxMessageBox(info, MB_OK | MB_ICONWARNING);
+        }
 		return;
 	}
 	if (version > VERSION)		//如果服务器上的版本大于本地版本
@@ -349,7 +351,7 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
 		CString info;
 		//根据语言设置选择对应语言版本的更新内容
 		int language_code = _ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE));
-		CString contents_lan;
+		wstring contents_lan;
 		switch (language_code)
 		{
 		case 2: contents_lan = contents_zh_cn; break;
@@ -357,10 +359,10 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
 		default: contents_lan = contents_en; break;
 		}
 
-		if (contents_lan.IsEmpty())
+		if (contents_lan.empty())
 			info.Format(CCommon::LoadText(IDS_UPDATE_AVLIABLE), version.c_str());
 		else
-			info.Format(CCommon::LoadText(IDS_UPDATE_AVLIABLE2), version.c_str(), contents_lan.GetString());
+			info.Format(CCommon::LoadText(IDS_UPDATE_AVLIABLE2), version.c_str(), contents_lan.c_str());
 			
 		if (AfxMessageBox(info, MB_YESNO | MB_ICONQUESTION) == IDYES)
 		{

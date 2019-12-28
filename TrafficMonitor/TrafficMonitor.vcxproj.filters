@@ -115,6 +115,9 @@
     <Filter Include="源文件和头文件\公共的类\CVariant">
       <UniqueIdentifier>{1ca17ad5-07ba-4361-bbeb-fdc5047697fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\UpdateHelper">
+      <UniqueIdentifier>{2b0e9f5d-dbce-4ba7-a158-7d9b705fcc02}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -249,6 +252,9 @@
     <ClInclude Include="DrawCommonEx.h">
       <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
     </ClInclude>
+    <ClInclude Include="UpdateHelper.h">
+      <Filter>源文件和头文件\公共的类\UpdateHelper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -367,6 +373,9 @@
     </ClCompile>
     <ClCompile Include="DrawCommonEx.cpp">
       <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="UpdateHelper.cpp">
+      <Filter>源文件和头文件\公共的类\UpdateHelper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
