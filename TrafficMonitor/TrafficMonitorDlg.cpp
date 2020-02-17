@@ -1154,27 +1154,23 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		if (!theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_show_task_bar_wnd)
 		{
 			//获取CPU利用率
-			FILETIME idleTime;
-			FILETIME kernelTime;
-			FILETIME userTime;
-			GetSystemTimes(&idleTime, &kernelTime, &userTime);
+			HQUERY query;
+			PDH_STATUS status = PdhOpenQuery(NULL, NULL, &query);
+			HCOUNTER counter = (HCOUNTER*)GlobalAlloc(GPTR, sizeof(HCOUNTER));
 
-			__int64 idle = CCommon::CompareFileTime2(m_preidleTime, idleTime);
-			__int64 kernel = CCommon::CompareFileTime2(m_prekernelTime, kernelTime);
-			__int64 user = CCommon::CompareFileTime2(m_preuserTime, userTime);
+			status = PdhAddCounter(query, stringToLPCWSTR("\\Processor Information(_Total)\\% Processor Utility"), NULL, &counter);
 
-			if (kernel + user == 0)
-			{
-				theApp.m_cpu_usage = 0;
-			}
-			else
-			{
-				//（总的时间-空闲时间）/总的时间=占用cpu的时间就是使用率
-				theApp.m_cpu_usage = static_cast<int>(abs((kernel + user - idle) * 100 / (kernel + user)));
-			}
-			m_preidleTime = idleTime;
-			m_prekernelTime = kernelTime;
-			m_preuserTime = userTime;
+			PdhCollectQueryData(query);
+			Sleep(1000);
+			PdhCollectQueryData(query);
+
+			PDH_FMT_COUNTERVALUE pdhValue;
+			DWORD dwValue;
+
+			status = PdhGetFormattedCounterValue(counter, PDH_FMT_DOUBLE, &dwValue, &pdhValue);
+
+			theApp.m_cpu_usage = (int)pdhValue.doubleValue;
+			PdhCloseQuery(query);
 		
 			//获取内存利用率
 			MEMORYSTATUSEX statex;
@@ -2065,4 +2061,15 @@ afx_msg LRESULT CTrafficMonitorDlg::OnTaskbarMenuPopedUp(WPARAM wParam, LPARAM l
 	CMenu* select_connection_menu = m_tBarDlg->m_menu.GetSubMenu(0)->GetSubMenu(0);
 	SetConnectionMenuState(select_connection_menu);
 	return 0;
+}
+
+LPCWSTR CTrafficMonitorDlg::stringToLPCWSTR(std::string orig)
+{
+	size_t origsize = orig.length() + 1;
+	const size_t newsize = 100;
+	size_t convertedChars = 0;
+	wchar_t* wcstring = (wchar_t*)malloc(sizeof(wchar_t) * (orig.length() - 1));
+	mbstowcs_s(&convertedChars, wcstring, origsize, orig.c_str(), _TRUNCATE);
+
+	return wcstring;
 }

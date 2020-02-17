@@ -4,6 +4,10 @@
 
 #pragma once
 #pragma comment (lib, "iphlpapi.lib")
+#pragma comment(lib,"pdh.lib")
+
+#include <Pdh.h>
+#include <PdhMsg.h>
 #include"NetworkInfoDlg.h"
 #include "afxwin.h"
 #include "StaticEx.h"
@@ -192,4 +196,8 @@ public:
 	afx_msg void OnCheckUpdate();
 protected:
 	afx_msg LRESULT OnTaskbarMenuPopedUp(WPARAM wParam, LPARAM lParam);
+
+protected:
+	//计算保持和任务管理器一致的CPU使用率
+	LPCWSTR stringToLPCWSTR(std::string orig);
 };
