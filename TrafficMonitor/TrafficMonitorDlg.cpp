@@ -1153,25 +1153,44 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		//只有主窗口和任务栏窗口至少有一个显示时才执行下面的处理
 		if (!theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_show_task_bar_wnd)
 		{
-			//获取CPU利用率
-			HQUERY query;
-			PDH_STATUS status = PdhOpenQuery(NULL, NULL, &query);
-			HCOUNTER counter = (HCOUNTER*)GlobalAlloc(GPTR, sizeof(HCOUNTER));
+			//获取CPU使用率
+			/*需要抓两次数据才能计算出使用率*/
+			DWORD   counterType;
+			HQUERY          hQuery;
+			HCOUNTER        hCounter;
+			static PDH_RAW_COUNTER lastrawdata;//保存上一次进入时的数据
+			PDH_RAW_COUNTER rawdata2;
+			PDH_FMT_COUNTERVALUE fmtValue;
+			static bool first = true;//判断是否是第一次
 
-			status = PdhAddCounter(query, stringToLPCWSTR("\\Processor Information(_Total)\\% Processor Utility"), NULL, &counter);
+			PdhOpenQuery(NULL, 0, &hQuery);
+			PdhAddCounter(hQuery, L"\\Processor Information(_Total)\\% Processor Utility", NULL, &hCounter);
 
-			PdhCollectQueryData(query);
-			Sleep(1000);
-			PdhCollectQueryData(query);
+			//抓取第一个数据包
+			PdhCollectQueryData(hQuery);
+			PdhGetRawCounterValue(hCounter, &counterType, &rawdata2);
+			if (first)//第一次打开时未获得足够计算的数据
+			{
+				lastrawdata = rawdata2;
+				PdhCloseQuery(hQuery);
+			}
 
-			PDH_FMT_COUNTERVALUE pdhValue;
-			DWORD dwValue;
+			//抓取第二个数据包
+			PdhCollectQueryData(hQuery);
+			PdhGetRawCounterValue(hCounter, &counterType, &rawdata2);
+			PdhCalculateCounterFromRawValue(hCounter, PDH_FMT_DOUBLE, &rawdata2, &lastrawdata, &fmtValue);//计算使用率
+			lastrawdata = rawdata2;//交换数据
 
-			status = PdhGetFormattedCounterValue(counter, PDH_FMT_DOUBLE, &dwValue, &pdhValue);
+			if (first) {
+				first = false;
+				theApp.m_cpu_usage = 0;
+			} else {
+				theApp.m_cpu_usage = fmtValue.doubleValue;
+			}
 
-			theApp.m_cpu_usage = (int)pdhValue.doubleValue;
-			PdhCloseQuery(query);
-		
+			PdhCloseQuery(hQuery);
+
+
 			//获取内存利用率
 			MEMORYSTATUSEX statex;
 			statex.dwLength = sizeof(statex);
@@ -2061,15 +2080,4 @@ afx_msg LRESULT CTrafficMonitorDlg::OnTaskbarMenuPopedUp(WPARAM wParam, LPARAM l
 	CMenu* select_connection_menu = m_tBarDlg->m_menu.GetSubMenu(0)->GetSubMenu(0);
 	SetConnectionMenuState(select_connection_menu);
 	return 0;
-}
-
-LPCWSTR CTrafficMonitorDlg::stringToLPCWSTR(std::string orig)
-{
-	size_t origsize = orig.length() + 1;
-	const size_t newsize = 100;
-	size_t convertedChars = 0;
-	wchar_t* wcstring = (wchar_t*)malloc(sizeof(wchar_t) * (orig.length() - 1));
-	mbstowcs_s(&convertedChars, wcstring, origsize, orig.c_str(), _TRUNCATE);
-
-	return wcstring;
 }

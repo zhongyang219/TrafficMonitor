@@ -57,10 +57,6 @@ protected:
 	unsigned __int64 m_last_in_bytes{};	//上次已接收的字节数
 	unsigned __int64 m_last_out_bytes{};	//上次已发送的字节数
 
-	FILETIME m_preidleTime;
-	FILETIME m_prekernelTime;
-	FILETIME m_preuserTime;
-
 	bool m_first_start{ true };		//初始时为true，在定时器第一次启动后置为flase
 	CRect m_screen_rect;		//屏幕的范围（不包含任务栏）
 	LayoutData m_layout_data;
@@ -196,8 +192,4 @@ public:
 	afx_msg void OnCheckUpdate();
 protected:
 	afx_msg LRESULT OnTaskbarMenuPopedUp(WPARAM wParam, LPARAM lParam);
-
-protected:
-	//计算保持和任务管理器一致的CPU使用率
-	LPCWSTR stringToLPCWSTR(std::string orig);
 };
