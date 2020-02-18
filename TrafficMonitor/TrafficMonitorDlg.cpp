@@ -1158,25 +1158,21 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			HCOUNTER hCounter;
 			DWORD counterType;
 			PDH_RAW_COUNTER rawData;
+
 			PdhOpenQuery(NULL, 0, &hQuery);//开始查询
 			PdhAddCounter(hQuery, L"\\Processor Information(_Total)\\% Processor Utility", NULL, &hCounter);
-
-			if (m_first_start)//需要抓两次数据才能计算出使用率,第一次打开时未获得足够计算的数据
-			{
-				PdhCollectQueryData(hQuery);
-				PdhGetRawCounterValue(hCounter, &counterType, &rawData);
-				m_last_rawData = rawData;
-				PdhCloseQuery(hQuery);
-			}
-
-			//抓取数据包并计算
 			PdhCollectQueryData(hQuery);
 			PdhGetRawCounterValue(hCounter, &counterType, &rawData);
-			PDH_FMT_COUNTERVALUE fmtValue;
-			PdhCalculateCounterFromRawValue(hCounter, PDH_FMT_DOUBLE, &rawData, &m_last_rawData, &fmtValue);//计算使用率
-			m_last_rawData = rawData;//保存上一次数据
 
-			theApp.m_cpu_usage = fmtValue.doubleValue;//传出数据
+			if (m_first_get_CPU_utility) {//需要获得两次数据才能计算CPU使用率
+				theApp.m_cpu_usage = 0;
+				m_first_get_CPU_utility = false;
+			} else {
+				PDH_FMT_COUNTERVALUE fmtValue;
+				PdhCalculateCounterFromRawValue(hCounter, PDH_FMT_DOUBLE, &rawData, &m_last_rawData, &fmtValue);//计算使用率
+				theApp.m_cpu_usage = fmtValue.doubleValue;//传出数据
+			}
+			m_last_rawData = rawData;//保存上一次数据
 			PdhCloseQuery(hQuery);//关闭查询
 
 			//获取内存利用率

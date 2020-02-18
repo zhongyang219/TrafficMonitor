@@ -58,6 +58,7 @@ protected:
 	unsigned __int64 m_last_out_bytes{};	//上次已发送的字节数
 
 	PDH_RAW_COUNTER m_last_rawData;//保存计算CPU使用率的上一次数据
+	bool m_first_get_CPU_utility{true};
 
 	bool m_first_start{ true };		//初始时为true，在定时器第一次启动后置为flase
 	CRect m_screen_rect;		//屏幕的范围（不包含任务栏）
