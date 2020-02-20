@@ -1153,29 +1153,28 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		//只有主窗口和任务栏窗口至少有一个显示时才执行下面的处理
 		if (!theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_show_task_bar_wnd)
 		{
-			//获取CPU利用率
-			FILETIME idleTime;
-			FILETIME kernelTime;
-			FILETIME userTime;
-			GetSystemTimes(&idleTime, &kernelTime, &userTime);
+			//获取CPU使用率
+			HQUERY hQuery;
+			HCOUNTER hCounter;
+			DWORD counterType;
+			PDH_RAW_COUNTER rawData;
 
-			__int64 idle = CCommon::CompareFileTime2(m_preidleTime, idleTime);
-			__int64 kernel = CCommon::CompareFileTime2(m_prekernelTime, kernelTime);
-			__int64 user = CCommon::CompareFileTime2(m_preuserTime, userTime);
+			PdhOpenQuery(NULL, 0, &hQuery);//开始查询
+			PdhAddCounter(hQuery, L"\\Processor Information(_Total)\\% Processor Utility", NULL, &hCounter);
+			PdhCollectQueryData(hQuery);
+			PdhGetRawCounterValue(hCounter, &counterType, &rawData);
 
-			if (kernel + user == 0)
-			{
+			if (m_first_get_CPU_utility) {//需要获得两次数据才能计算CPU使用率
 				theApp.m_cpu_usage = 0;
+				m_first_get_CPU_utility = false;
+			} else {
+				PDH_FMT_COUNTERVALUE fmtValue;
+				PdhCalculateCounterFromRawValue(hCounter, PDH_FMT_DOUBLE, &rawData, &m_last_rawData, &fmtValue);//计算使用率
+				theApp.m_cpu_usage = fmtValue.doubleValue;//传出数据
 			}
-			else
-			{
-				//（总的时间-空闲时间）/总的时间=占用cpu的时间就是使用率
-				theApp.m_cpu_usage = static_cast<int>(abs((kernel + user - idle) * 100 / (kernel + user)));
-			}
-			m_preidleTime = idleTime;
-			m_prekernelTime = kernelTime;
-			m_preuserTime = userTime;
-		
+			m_last_rawData = rawData;//保存上一次数据
+			PdhCloseQuery(hQuery);//关闭查询
+
 			//获取内存利用率
 			MEMORYSTATUSEX statex;
 			statex.dwLength = sizeof(statex);
