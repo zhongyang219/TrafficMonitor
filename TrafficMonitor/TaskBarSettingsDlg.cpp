@@ -97,6 +97,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_UNIT_BYTE_RADIO, &CTaskBarSettingsDlg::OnBnClickedUnitByteRadio)
 	ON_BN_CLICKED(IDC_UNIT_BIT_RADIO, &CTaskBarSettingsDlg::OnBnClickedUnitBitRadio)
     ON_BN_CLICKED(IDC_SHOW_TOOL_TIP_CHK, &CTaskBarSettingsDlg::OnBnClickedShowToolTipChk)
+	ON_BN_CLICKED(IDC_SET_LIGHT_MODE_BUTTON, &CTaskBarSettingsDlg::OnBnClickedSetLightMode)
 END_MESSAGE_MAP()
 
 
@@ -507,4 +508,14 @@ void CTaskBarSettingsDlg::OnBnClickedShowToolTipChk()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.show_tool_tip = (((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->GetCheck() != 0);
+}
+
+void CTaskBarSettingsDlg::OnBnClickedSetLightMode()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	for (int i{}; i < TASKBAR_COLOR_NUM; i++)
+		m_data.text_colors[i] = RGB(0, 0, 0);
+	m_data.back_color = RGB(210, 210, 210);
+	m_data.transparent_color = RGB(210, 210, 210);
+	DrawStaticColor();
 }

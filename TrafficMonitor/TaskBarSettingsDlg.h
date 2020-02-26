@@ -70,4 +70,5 @@ public:
 	afx_msg void OnBnClickedUnitByteRadio();
 	afx_msg void OnBnClickedUnitBitRadio();
     afx_msg void OnBnClickedShowToolTipChk();
+	afx_msg void OnBnClickedSetLightMode();
 };
