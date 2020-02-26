@@ -98,7 +98,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 		{
 			int window_width;
 			window_width = max(m_window_width_s, (m_window_width - m_window_width_s));
-			value_rect.right = value_rect.left + window_width - theApp.DPI(5);
+			value_rect.right = value_rect.left + ((m_rect.Width() - value_rect.left) > window_width ? window_width : (m_rect.Width() - value_rect.left)) - theApp.DPI(1);
 		}
 		lable_rect = value_rect;
 		lable_rect.right = lable_rect.left + max(m_up_lable_width, m_down_lable_width);
@@ -176,7 +176,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 			value_rect.MoveToXY(0, m_window_height);
 			int window_width;
 			window_width = max(m_window_width_s, (m_window_width - m_window_width_s));
-			value_rect.right = value_rect.left + window_width - theApp.DPI(5);
+			value_rect.right = value_rect.left + ((m_rect.Width() - value_rect.left) > window_width ? window_width : (m_rect.Width() - value_rect.left)) - theApp.DPI(1);
 			lable_rect = value_rect;
 			lable_rect.right = lable_rect.left + max(m_cpu_lable_width, m_memory_lable_width);
 			value_rect.left += max(m_cpu_lable_width, m_memory_lable_width);
@@ -286,7 +286,7 @@ bool CTaskBarDlg::AdjustWindowPos()
 		//设置窗口大小
 		int window_width;
 		window_width = max(m_window_width_s, (m_window_width - m_window_width_s));
-		m_rect.right = m_rect.left + window_width;
+		m_rect.right = m_rect.left + ((rcMin.Width() - m_rect.left) > window_width ? window_width : (rcMin.Width() - m_rect.left));
 		m_rect.bottom = m_rect.top + (theApp.m_cfg_data.m_tbar_show_cpu_memory ? (2 * m_window_height + theApp.DPI(2)) : m_window_height);
 		if (rcMin.Height() != m_min_bar_height)	//如果最小化窗口的高度改变了，重新设置任务栏窗口的位置
 		{
@@ -486,12 +486,12 @@ void CTaskBarDlg::SetToolTipsTopMost()
 
 void CTaskBarDlg::UpdateToolTips()
 {
-    if (theApp.m_taskbar_data.show_tool_tip)
-    {
-        CString tip_info;
-        tip_info = GetMouseTipsInfo();
-        m_tool_tips.UpdateTipText(tip_info, this);
-    }
+	if (theApp.m_taskbar_data.show_tool_tip)
+	{
+		CString tip_info;
+		tip_info = GetMouseTipsInfo();
+		m_tool_tips.UpdateTipText(tip_info, this);
+	}
 }
 
 BOOL CTaskBarDlg::OnInitDialog()
