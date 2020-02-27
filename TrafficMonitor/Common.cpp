@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Common.h"
+#include "TrafficMonitor.h"
 
 
 CCommon::CCommon()
@@ -787,6 +788,29 @@ void CCommon::SetThreadLanguage(Language language)
 	case Language::SIMPLIFIED_CHINESE: SetThreadUILanguage(MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)); break;
 	case Language::TRADITIONAL_CHINESE: SetThreadUILanguage(MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL)); break;
 	default: break;
+	}
+}
+
+void CCommon::SetColorMode(ColorMode mode)
+{
+	switch (mode)
+	{
+	case ColorMode::Default:
+		CTrafficMonitorApp::self->m_taskbar_data.dft_back_color = 0;
+		CTrafficMonitorApp::self->m_taskbar_data.dft_transparent_color = 0;
+		CTrafficMonitorApp::self->m_taskbar_data.dft_status_bar_color = 0x005A5A5A;
+		CTrafficMonitorApp::self->m_taskbar_data.dft_text_colors = 0x00ffffffU;
+		CTrafficMonitorApp::self->m_cfg_data.m_dft_notify_icon = 0;
+		break;
+	case ColorMode::Light:
+		CTrafficMonitorApp::self->m_taskbar_data.dft_back_color = 0x00D2D2D2;
+		CTrafficMonitorApp::self->m_taskbar_data.dft_transparent_color = 0x00D2D2D2;
+		CTrafficMonitorApp::self->m_taskbar_data.dft_status_bar_color = 0x00A5A5A5;
+		CTrafficMonitorApp::self->m_taskbar_data.dft_text_colors = 0x00000000U;
+		CTrafficMonitorApp::self->m_cfg_data.m_dft_notify_icon = 4;
+		break;
+	default:
+		break;
 	}
 }
 

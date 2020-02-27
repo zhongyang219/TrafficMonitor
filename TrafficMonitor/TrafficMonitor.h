@@ -23,6 +23,7 @@ class CTrafficMonitorApp : public CWinApp
 {
 public:
 	//各种路径
+	static CTrafficMonitorApp* self;
 	wstring m_module_dir;		//程序exe文件的目录
 	wstring m_appdata_dir;
 	wstring m_module_path;		//程序exe文件的路径

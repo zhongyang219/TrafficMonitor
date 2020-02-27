@@ -291,7 +291,9 @@
     <Image Include="res\notifyicon.ico" />
     <Image Include="res\notifyicon2.ico" />
     <Image Include="res\notifyicon3.ico" />
+    <Image Include="res\notifyicon4.ico" />
     <Image Include="res\notify_preview.bmp" />
+    <Image Include="res\notify_preview_light.bmp" />
     <Image Include="res\TrafficMonitor.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

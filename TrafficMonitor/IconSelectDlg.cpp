@@ -37,7 +37,7 @@ void CIconSelectDlg::DoDataExchange(CDataExchange* pDX)
 
 void CIconSelectDlg::DrawPreviewIcon(CDC* pDC)
 {
-	pDC->FillSolidRect(CRect(CPoint(ICON_X, ICON_Y), CSize(theApp.DPI(16), theApp.DPI(16))), RGB(0, 0, 0));
+	//pDC->FillSolidRect(CRect(CPoint(ICON_X, ICON_Y), CSize(theApp.DPI(16), theApp.DPI(16))), RGB(0, 0, 0));
 	//pDC->DrawIcon(ICON_X, ICON_Y, m_icons[m_icon_selected]);
 	::DrawIconEx(pDC->m_hDC, ICON_X, ICON_Y, theApp.m_notify_icons[GetIconSelected()], theApp.DPI(16), theApp.DPI(16), 0, NULL, DI_NORMAL);
 }
@@ -62,13 +62,19 @@ BOOL CIconSelectDlg::OnInitDialog()
 
 	//设置预览图大小
 	m_preview_pic.SetWindowPos(nullptr, 0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT, SWP_NOZORDER | SWP_NOMOVE);
-	m_preview_pic.SetPicture(IDB_NOTIFY_ICON_PREVIEW);
+	if (m_icon_selected == 4)
+		m_preview_pic.SetPicture((HBITMAP)LoadImage(AfxGetInstanceHandle(),
+			MAKEINTRESOURCE(IDB_NOTIFY_ICON_PREVIEW_LIGHT), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR | LR_CREATEDIBSECTION));
+	else
+		m_preview_pic.SetPicture((HBITMAP)LoadImage(AfxGetInstanceHandle(),
+			MAKEINTRESOURCE(IDB_NOTIFY_ICON_PREVIEW), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR | LR_CREATEDIBSECTION));
 
 	//初始化下拉列表
 	m_icon_select_combo.AddString(CCommon::LoadText(IDS_DEFAULT_ICON));
 	m_icon_select_combo.AddString(CCommon::LoadText(IDS_ICON, _T(" 1")));
 	m_icon_select_combo.AddString(CCommon::LoadText(IDS_ICON, _T(" 2")));
 	m_icon_select_combo.AddString(CCommon::LoadText(IDS_ICON, _T(" 3")));
+	m_icon_select_combo.AddString(CCommon::LoadText(IDS_ICON, _T(" 4")));
 	m_icon_select_combo.SetCurSel(m_icon_selected);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -80,6 +86,12 @@ void CIconSelectDlg::OnCbnSelchangeCombo1()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	m_icon_selected = m_icon_select_combo.GetCurSel();
+	if (m_icon_selected == 4)
+		m_preview_pic.SetPicture((HBITMAP)LoadImage(AfxGetInstanceHandle(),
+			MAKEINTRESOURCE(IDB_NOTIFY_ICON_PREVIEW_LIGHT), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR | LR_CREATEDIBSECTION));
+	else
+		m_preview_pic.SetPicture((HBITMAP)LoadImage(AfxGetInstanceHandle(),
+			MAKEINTRESOURCE(IDB_NOTIFY_ICON_PREVIEW), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR | LR_CREATEDIBSECTION));
 	DrawPreviewIcon(m_preview_pic.GetDC());
 	}
 

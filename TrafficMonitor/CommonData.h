@@ -99,6 +99,13 @@ enum class Language
 	TRADITIONAL_CHINESE		//繁体中文
 };
 
+//颜色模式
+enum class ColorMode
+{
+	Default, //默认颜色
+	Light	//浅色
+};
+
 //字体
 struct FontInfo
 {
@@ -134,6 +141,7 @@ struct MainConfigData
 	string m_connection_name;		//当前选择网络的名称
 
 	wstring m_skin_name;			//选择的皮肤的名称
+	int m_dft_notify_icon = 0;		//默认的通知图标(用于区分win10的深色和浅色模式)
 	int m_notify_icon_selected{};	//要显示的通知区图标
 	bool m_alow_out_of_border{ false };		//是否允许悬浮窗超出屏幕边界
 
@@ -175,6 +183,10 @@ struct TaskBarSettingData : public PublicSettingData
 	COLORREF transparent_color{ RGB(0, 0, 0) };		//透明色
 	COLORREF status_bar_color{ RGB(0, 0, 0) };		// CPU/内存 状态条颜色
 	COLORREF text_colors[TASKBAR_COLOR_NUM]{};		//文字颜色（依次为“上传”、“下载”、“CPU”、“内存”的标签和数据颜色）
+	int dft_back_color = 0;							//默认背景颜色
+	int dft_transparent_color = 0;					//默认透明色
+	int dft_status_bar_color = 0x005A5A5A;			//默认CPU/内存 状态条颜色
+	int dft_text_colors = 0x00ffffffU;				//默认文字颜色（依次为“上传”、“下载”、“CPU”、“内存”的标签和数据颜色）
 	bool value_right_align{ false };	//数值是否右对齐
 	int digits_number{ 4 };				//数据位数
 	bool horizontal_arrange{ true };	//水平排列
