@@ -517,5 +517,6 @@ void CTaskBarSettingsDlg::OnBnClickedSetLightMode()
 		m_data.text_colors[i] = RGB(0, 0, 0);
 	m_data.back_color = RGB(210, 210, 210);
 	m_data.transparent_color = RGB(210, 210, 210);
+	m_data.status_bar_color = RGB(165, 165, 165);
 	DrawStaticColor();
 }
