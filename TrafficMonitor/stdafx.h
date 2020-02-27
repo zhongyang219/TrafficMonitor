@@ -80,7 +80,7 @@ using std::ofstream;
 #define VERSION L"1.77"
 #define COMPILE_DATE L"2019/05/01"
 
-#define MAX_NOTIFY_ICON 4		//可选的通知区图标数量
+#define MAX_NOTIFY_ICON 5		//可选的通知区图标数量
 
 //背景图片的文件名
 #define BACKGROUND_IMAGE_S L"\\background.bmp"

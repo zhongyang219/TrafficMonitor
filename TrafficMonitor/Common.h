@@ -128,6 +128,9 @@ public:
 	//设置线程语言
 	static void SetThreadLanguage(Language language);
 
+	//设置颜色模式
+	static void SetColorMode(ColorMode mode);
+
 	static void SetDialogFont(CWnd* pDlg, CFont* pFont);
 };
 
