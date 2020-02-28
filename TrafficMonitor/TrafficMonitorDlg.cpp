@@ -1170,7 +1170,11 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			} else {
 				PDH_FMT_COUNTERVALUE fmtValue;
 				PdhCalculateCounterFromRawValue(hCounter, PDH_FMT_DOUBLE, &rawData, &m_last_rawData, &fmtValue);//计算使用率
-				theApp.m_cpu_usage = fmtValue.doubleValue;//传出数据
+				if (fmtValue.doubleValue > 100.0) {//传出数据,因为睿频原因会有大于100的问题
+					theApp.m_cpu_usage = 100.0;
+				} else {
+					theApp.m_cpu_usage = fmtValue.doubleValue;
+				}
 			}
 			m_last_rawData = rawData;//保存上一次数据
 			PdhCloseQuery(hQuery);//关闭查询
