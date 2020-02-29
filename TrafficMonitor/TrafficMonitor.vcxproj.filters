@@ -413,5 +413,11 @@
     <Image Include="res\notify_preview.bmp">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="res\notifyicon4.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\notify_preview_light.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -22,9 +22,11 @@ END_MESSAGE_MAP()
 
 
 // CTrafficMonitorApp 构造
+CTrafficMonitorApp* CTrafficMonitorApp::self = NULL;
 
 CTrafficMonitorApp::CTrafficMonitorApp()
 {
+	self = this;
 	// 支持重新启动管理器
 	m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_RESTART;
 
@@ -43,6 +45,13 @@ void CTrafficMonitorApp::LoadConfig()
 	m_general_data.allow_skin_cover_text = ini.GetBool(_T("general"), _T("allow_skin_cover_text"), true);
 	m_general_data.language = static_cast<Language>(ini.GetInt(_T("general"), _T("language"), 0));
 	m_general_data.show_all_interface = ini.GetBool(L"general", L"show_all_interface", false);
+
+	//Windows10颜色模式设置
+	bool is_windows10_light_theme = m_win_version.IsWindows10LightTheme();
+	if (is_windows10_light_theme)
+		CCommon::SetColorMode(ColorMode::Light);
+	else
+		CCommon::SetColorMode(ColorMode::Default);
 
 	//主窗口设置
 	m_cfg_data.m_transparency = ini.GetInt(_T("config"), _T("transparency"), 80);
@@ -64,7 +73,7 @@ void CTrafficMonitorApp::LoadConfig()
 	m_cfg_data.m_skin_name = ini.GetString(_T("config"), _T("skin_selected"), _T(""));
 	if (m_cfg_data.m_skin_name.substr(0, 8) == L".\\skins\\")		//如果读取到的皮肤名称前面有".\\skins\\"，则把它删除。（用于和前一个版本保持兼容性）
 		m_cfg_data.m_skin_name = m_cfg_data.m_skin_name.substr(7);
-	m_cfg_data.m_notify_icon_selected = ini.GetInt(_T("config"), _T("notify_icon_selected"), (m_win_version.IsWindows7() || m_win_version.IsWindows8Or8point1() ? 2 : 0));		//Win7/8/8.1默认使用蓝色通知区图标，因为隐藏通知区图标后白色图标会看不清，其他系统默认使用白色图标
+	m_cfg_data.m_notify_icon_selected = ini.GetInt(_T("config"), _T("notify_icon_selected"), (m_win_version.IsWindows7() || m_win_version.IsWindows8Or8point1() ? 2 : m_cfg_data.m_dft_notify_icon));		//Win7/8/8.1默认使用蓝色通知区图标，因为隐藏通知区图标后白色图标会看不清，其他系统默认使用白色图标
 	m_main_wnd_data.swap_up_down = ini.GetBool(_T("config"), _T("swap_up_down"), false);
 	m_main_wnd_data.hide_main_wnd_when_fullscreen = ini.GetBool(_T("config"), _T("hide_main_wnd_when_fullscreen"), true);
 
@@ -99,11 +108,11 @@ void CTrafficMonitorApp::LoadConfig()
 
 
 	//任务栏窗口设置
-	m_taskbar_data.back_color = ini.GetInt(_T("task_bar"), _T("task_bar_back_color"), 0);
-	m_taskbar_data.transparent_color = ini.GetInt(_T("task_bar"), _T("transparent_color"), 0);
-	m_taskbar_data.status_bar_color = ini.GetInt(_T("task_bar"), _T("status_bar_color"), 0x005A5A5A);
+	m_taskbar_data.back_color = ini.GetInt(_T("task_bar"), _T("task_bar_back_color"), m_taskbar_data.dft_back_color);
+	m_taskbar_data.transparent_color = ini.GetInt(_T("task_bar"), _T("transparent_color"), m_taskbar_data.dft_transparent_color);
+	m_taskbar_data.status_bar_color = ini.GetInt(_T("task_bar"), _T("status_bar_color"), m_taskbar_data.dft_status_bar_color);
 	//m_taskbar_data.text_color = GetPrivateProfileInt(_T("task_bar"), _T("task_bar_text_color"), 0x00ffffffU, m_config_path.c_str());
-	ini.GetIntArray(_T("task_bar"), _T("task_bar_text_color"), (int*)m_taskbar_data.text_colors, TASKBAR_COLOR_NUM, 0x00ffffffU);
+	ini.GetIntArray(_T("task_bar"), _T("task_bar_text_color"), (int*)m_taskbar_data.text_colors, TASKBAR_COLOR_NUM, m_taskbar_data.dft_text_colors);
 	m_taskbar_data.specify_each_item_color = ini.GetBool(L"task_bar", L"specify_each_item_color", false);
 	m_cfg_data.m_tbar_show_cpu_memory = ini.GetBool(_T("task_bar"), _T("task_bar_show_cpu_memory"), false);
 	m_taskbar_data.swap_up_down = ini.GetBool(_T("task_bar"), _T("task_bar_swap_up_down"), false);
