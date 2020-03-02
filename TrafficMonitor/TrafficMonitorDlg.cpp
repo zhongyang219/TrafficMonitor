@@ -840,6 +840,7 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	theApp.m_notify_icons[1] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_NOFITY_ICON2), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
 	theApp.m_notify_icons[2] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_NOFITY_ICON3), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
 	theApp.m_notify_icons[3] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR_MAINFRAME), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
+	theApp.m_notify_icons[4] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_NOFITY_ICON4), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
 
 	//设置通知区域图标
 	m_ntIcon.cbSize = sizeof(NOTIFYICONDATA);	//该结构体变量的大小
@@ -1170,11 +1171,9 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			} else {
 				PDH_FMT_COUNTERVALUE fmtValue;
 				PdhCalculateCounterFromRawValue(hCounter, PDH_FMT_DOUBLE, &rawData, &m_last_rawData, &fmtValue);//计算使用率
-				if (fmtValue.doubleValue > 100.0) {//传出数据,因为睿频原因会有大于100的问题
-					theApp.m_cpu_usage = 100.0;
-				} else {
-					theApp.m_cpu_usage = fmtValue.doubleValue;
-				}
+				theApp.m_cpu_usage = fmtValue.doubleValue;//传出数据
+				if (theApp.m_cpu_usage > 100)
+					theApp.m_cpu_usage = 100;
 			}
 			m_last_rawData = rawData;//保存上一次数据
 			PdhCloseQuery(hQuery);//关闭查询
