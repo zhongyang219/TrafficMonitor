@@ -10,7 +10,7 @@ Please [click here](https://github.com/zhongyang219/TrafficMonitor/releases) to 
 Alternate link: Download from [Baidu Netdisk](https://pan.baidu.com/s/1c1LkPQ4)<br>
 If you encounter any problems, please [click here](https://github.com/zhongyang219/TrafficMonitor/blob/master/Help_en-us.md).<br>
 
-Please [click here](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI") to download the pre-release build version of TrafficMonitor.
+You can also [click here](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI") to download the pre-release build version of TrafficMonitor.
 
 # Main Features
 * Displays the current network transfer speed, CPU and memory usage.<br>
