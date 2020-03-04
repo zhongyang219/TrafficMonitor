@@ -1155,29 +1155,58 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		if (!theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_show_task_bar_wnd)
 		{
 			//获取CPU使用率
-			HQUERY hQuery;
-			HCOUNTER hCounter;
-			DWORD counterType;
-			PDH_RAW_COUNTER rawData;
+			HQUERY hQuery_CPU;
+			HCOUNTER hCounter_CPU;
+			DWORD counterType_CPU;
+			PDH_RAW_COUNTER rawData_CPU;
 
-			PdhOpenQuery(NULL, 0, &hQuery);//开始查询
-			PdhAddCounter(hQuery, L"\\Processor Information(_Total)\\% Processor Utility", NULL, &hCounter);
-			PdhCollectQueryData(hQuery);
-			PdhGetRawCounterValue(hCounter, &counterType, &rawData);
+			PdhOpenQuery(NULL, 0, &hQuery_CPU);//开始查询
+			PdhAddCounter(hQuery_CPU, L"\\Processor Information(_Total)\\% Processor Utility", NULL, &hCounter_CPU);
+			PdhCollectQueryData(hQuery_CPU);
+			PdhGetRawCounterValue(hCounter_CPU, &counterType_CPU, &rawData_CPU);
 
 			if (m_first_get_CPU_utility) {//需要获得两次数据才能计算CPU使用率
 				theApp.m_cpu_usage = 0;
 				m_first_get_CPU_utility = false;
 			} else {
-				PDH_FMT_COUNTERVALUE fmtValue;
-				PdhCalculateCounterFromRawValue(hCounter, PDH_FMT_DOUBLE, &rawData, &m_last_rawData, &fmtValue);//计算使用率
-				theApp.m_cpu_usage = fmtValue.doubleValue;//传出数据
+				PDH_FMT_COUNTERVALUE fmtValue_CPU;
+				PdhCalculateCounterFromRawValue(hCounter_CPU, PDH_FMT_DOUBLE, &rawData_CPU, &m_last_rawData_CPU, &fmtValue_CPU);//计算使用率
+				theApp.m_cpu_usage = fmtValue_CPU.doubleValue;//传出数据
 				if (theApp.m_cpu_usage > 100)
 					theApp.m_cpu_usage = 100;
 			}
-			m_last_rawData = rawData;//保存上一次数据
-			PdhCloseQuery(hQuery);//关闭查询
+			m_last_rawData_CPU = rawData_CPU;//保存上一次数据
+			PdhCloseQuery(hQuery_CPU);//关闭查询
 
+			//获取硬盘总体使用率,未完成需要界面代码支持
+			HQUERY hQuery_Disk;
+			HCOUNTER hCounter_Disk;
+			DWORD counterType_Disk;
+			PDH_RAW_COUNTER rawData_Disk;
+
+			PdhOpenQuery(NULL, 0, &hQuery_Disk);//开始查询
+			PdhAddCounter(hQuery_Disk, L"\\PhysicalDisk(_Total)\\% Idle Time", NULL, &hCounter_Disk);
+			PdhCollectQueryData(hQuery_Disk);
+			PdhGetRawCounterValue(hCounter_Disk, &counterType_Disk, &rawData_Disk);
+
+			if (m_first_get_Disk_utility) {//需要获得两次数据才能计算磁盘使用率
+
+				//TO - DO:这里需要传出数据，界面做好后支持即可
+
+				//theApp.m_disk_usage = 0;
+				m_first_get_Disk_utility = false;
+			}
+			else {
+				PDH_FMT_COUNTERVALUE fmtValue_Disk;
+				PdhCalculateCounterFromRawValue(hCounter_Disk, PDH_FMT_DOUBLE, &rawData_Disk, &m_last_rawData_Disk, &fmtValue_Disk);//计算使用率
+
+				//TO - DO:这里需要传出数据,界面好后去掉注释
+
+				//theApp.m_disk_usage = 100- fmtValue_Disk.doubleValue;//传出数据
+			}
+			m_last_rawData_Disk = rawData_Disk;//保存上一次数据
+			PdhCloseQuery(hQuery_Disk);//关闭查询
+			
 			//获取内存利用率
 			MEMORYSTATUSEX statex;
 			statex.dwLength = sizeof(statex);
