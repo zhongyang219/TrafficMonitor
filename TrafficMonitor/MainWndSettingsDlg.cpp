@@ -54,6 +54,21 @@ void CMainWndSettingsDlg::IniUnitCombo()
 	m_unit_combo.SetCurSel(static_cast<int>(m_data.speed_unit));
 }
 
+void CMainWndSettingsDlg::EnableControl()
+{
+    bool exe_path_enable = (m_data.double_click_action == DoubleClickAction::SEPCIFIC_APP);
+    CWnd* pWnd{};
+    pWnd = GetDlgItem(IDC_EXE_PATH_STATIC);
+    if (pWnd != nullptr)
+        pWnd->ShowWindow(exe_path_enable ? SW_SHOW : SW_HIDE);
+    pWnd = GetDlgItem(IDC_EXE_PATH_EDIT);
+    if (pWnd != nullptr)
+        pWnd->ShowWindow(exe_path_enable ? SW_SHOW : SW_HIDE);
+    pWnd = GetDlgItem(IDC_BROWSE_BUTTON);
+    if (pWnd != nullptr)
+        pWnd->ShowWindow(exe_path_enable ? SW_SHOW : SW_HIDE);
+}
+
 void CMainWndSettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_TEXT_COLOR_STATIC, m_color_static);
@@ -86,6 +101,7 @@ BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_UNIT_BYTE_RADIO, &CMainWndSettingsDlg::OnBnClickedUnitByteRadio)
 	ON_BN_CLICKED(IDC_UNIT_BIT_RADIO, &CMainWndSettingsDlg::OnBnClickedUnitBitRadio)
     ON_BN_CLICKED(IDC_SHOW_TOOL_TIP_CHK, &CMainWndSettingsDlg::OnBnClickedShowToolTipChk)
+    ON_BN_CLICKED(IDC_BROWSE_BUTTON, &CMainWndSettingsDlg::OnBnClickedBrowseButton)
 END_MESSAGE_MAP()
 
 
@@ -159,9 +175,13 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 	m_double_click_combo.AddString(CCommon::LoadText(IDS_SHOW_HIDE_MORE_INFO));
 	m_double_click_combo.AddString(CCommon::LoadText(IDS_OPEN_OPTION_SETTINGS));
 	m_double_click_combo.AddString(CCommon::LoadText(IDS_OPEN_TASK_MANAGER));
-	m_double_click_combo.AddString(CCommon::LoadText(IDS_CHANGE_SKIN));
+    m_double_click_combo.AddString(CCommon::LoadText(IDS_SPECIFIC_APP));
+    m_double_click_combo.AddString(CCommon::LoadText(IDS_CHANGE_SKIN));
 	m_double_click_combo.AddString(CCommon::LoadText(IDS_NONE));
 	m_double_click_combo.SetCurSel(static_cast<int>(m_data.double_click_action));
+
+    SetDlgItemText(IDC_EXE_PATH_EDIT, m_data.double_click_exe.c_str());
+    EnableControl();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -401,6 +421,7 @@ void CMainWndSettingsDlg::OnCbnSelchangeDoubleClickCombo()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.double_click_action = static_cast<DoubleClickAction>(m_double_click_combo.GetCurSel());
+    EnableControl();
 }
 
 
@@ -431,4 +452,17 @@ void CMainWndSettingsDlg::OnBnClickedShowToolTipChk()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.show_tool_tip = (((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->GetCheck() != 0);
+}
+
+
+void CMainWndSettingsDlg::OnBnClickedBrowseButton()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    CString szFilter = CCommon::LoadText(IDS_EXE_FILTER);
+    CFileDialog fileDlg(TRUE, NULL, NULL, 0, szFilter, this);
+    if (IDOK == fileDlg.DoModal())
+    {
+        m_data.double_click_exe = fileDlg.GetPathName();
+        SetDlgItemText(IDC_EXE_PATH_EDIT, m_data.double_click_exe.c_str());
+    }
 }

@@ -116,6 +116,21 @@ void CTaskBarSettingsDlg::ModifyDefaultStyle(int index)
 
 }
 
+void CTaskBarSettingsDlg::EnableControl()
+{
+    bool exe_path_enable = (m_data.double_click_action == DoubleClickAction::SEPCIFIC_APP);
+    CWnd* pWnd{};
+    pWnd = GetDlgItem(IDC_EXE_PATH_STATIC);
+    if (pWnd != nullptr)
+        pWnd->ShowWindow(exe_path_enable ? SW_SHOW : SW_HIDE);
+    pWnd = GetDlgItem(IDC_EXE_PATH_EDIT);
+    if (pWnd != nullptr)
+        pWnd->ShowWindow(exe_path_enable ? SW_SHOW : SW_HIDE);
+    pWnd = GetDlgItem(IDC_BROWSE_BUTTON);
+    if (pWnd != nullptr)
+        pWnd->ShowWindow(exe_path_enable ? SW_SHOW : SW_HIDE);
+}
+
 void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_TEXT_COLOR_STATIC1, m_text_color_static);
@@ -164,6 +179,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_COMMAND(ID_LIGHT_MODE_STYLE, &CTaskBarSettingsDlg::OnLightModeStyle)
     ON_BN_CLICKED(IDC_DEFAULT_STYLE_BUTTON, &CTaskBarSettingsDlg::OnBnClickedDefaultStyleButton)
     ON_WM_DESTROY()
+    ON_BN_CLICKED(IDC_BROWSE_BUTTON, &CTaskBarSettingsDlg::OnBnClickedBrowseButton)
 END_MESSAGE_MAP()
 
 
@@ -239,6 +255,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	m_double_click_combo.AddString(CCommon::LoadText(IDS_SHOW_HIDE_CPU_MEMORY));
 	m_double_click_combo.AddString(CCommon::LoadText(IDS_OPEN_OPTION_SETTINGS));
 	m_double_click_combo.AddString(CCommon::LoadText(IDS_OPEN_TASK_MANAGER));
+	m_double_click_combo.AddString(CCommon::LoadText(IDS_SPECIFIC_APP));
 	m_double_click_combo.AddString(CCommon::LoadText(IDS_NONE));
 	m_double_click_combo.SetCurSel(static_cast<int>(m_data.double_click_action));
 
@@ -248,6 +265,9 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	m_digit_number_combo.AddString(_T("6"));
 	m_digit_number_combo.AddString(_T("7"));
 	m_digit_number_combo.SetCurSel(m_data.digits_number - 3);
+
+    SetDlgItemText(IDC_EXE_PATH_EDIT, m_data.double_click_exe.c_str());
+    EnableControl();
 
     m_default_style_menu.LoadMenu(IDR_TASKBAR_STYLE_MENU);
 
@@ -535,6 +555,7 @@ void CTaskBarSettingsDlg::OnCbnSelchangeDoubleClickCombo()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.double_click_action = static_cast<DoubleClickAction>(m_double_click_combo.GetCurSel());
+    EnableControl();
 }
 
 
@@ -681,4 +702,17 @@ void CTaskBarSettingsDlg::OnDestroy()
 
     // TODO: 在此处添加消息处理程序代码
     SaveConfig();
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedBrowseButton()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    CString szFilter = CCommon::LoadText(IDS_EXE_FILTER);
+    CFileDialog fileDlg(TRUE, NULL, NULL, 0, szFilter, this);
+    if (IDOK == fileDlg.DoModal())
+    {
+        m_data.double_click_exe = fileDlg.GetPathName();
+        SetDlgItemText(IDC_EXE_PATH_EDIT, m_data.double_click_exe.c_str());
+    }
 }

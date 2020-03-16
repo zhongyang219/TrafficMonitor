@@ -97,6 +97,7 @@ void CTrafficMonitorApp::LoadConfig()
 	m_main_wnd_data.hide_unit = ini.GetBool(_T("config"), _T("hide_unit"), false);
 	m_main_wnd_data.hide_percent = ini.GetBool(_T("config"), _T("hide_percent"), false);
 	m_main_wnd_data.double_click_action = static_cast<DoubleClickAction>(ini.GetInt(_T("config"), _T("double_click_action"), 0));
+    m_main_wnd_data.double_click_exe = ini.GetString(L"config", L"double_click_exe", (theApp.m_system_dir + L"\\Taskmgr.exe").c_str());
 
 	m_cfg_data.m_alow_out_of_border = ini.GetBool(_T("config"), _T("alow_out_of_border"), false);
 
@@ -204,6 +205,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteBool(L"config", L"hide_unit", m_main_wnd_data.hide_unit);
 	ini.WriteBool(L"config", L"hide_percent", m_main_wnd_data.hide_percent);
 	ini.WriteInt(L"config", L"double_click_action", static_cast<int>(m_main_wnd_data.double_click_action));
+    ini.WriteString(L"config", L"double_click_exe", m_main_wnd_data.double_click_exe);
 
 	ini.WriteInt(L"config", L"alow_out_of_border", m_cfg_data.m_alow_out_of_border);
 
@@ -242,6 +244,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteBool(L"task_bar", L"show_tool_tip", m_taskbar_data.show_tool_tip);
 	ini.WriteInt(L"task_bar", L"digits_number", m_taskbar_data.digits_number);
 	ini.WriteInt(L"task_bar", L"double_click_action", static_cast<int>(m_taskbar_data.double_click_action));
+    ini.WriteString(L"task_bar", L"double_click_exe", m_taskbar_data.double_click_exe);
 
 	//∆‰À˚…Ë÷√
 	ini.WriteBool(L"connection_details", L"show_internet_ip", m_cfg_data.m_show_internet_ip);

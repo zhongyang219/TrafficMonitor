@@ -86,6 +86,7 @@ enum class DoubleClickAction
 	SHOW_MORE_INFO,		//显示更多信息
 	OPTIONS,			//选项设置
 	TASK_MANAGER,		//任务管理器
+    SEPCIFIC_APP,       //指定应用程序
 	CHANGE_SKIN,		//更换皮肤
 	NONE				//不执行任何动作
 };
@@ -164,7 +165,7 @@ struct PublicSettingData
 	bool hide_unit;			//隐藏单位
 	bool hide_percent;		//隐藏百分号
 	DoubleClickAction double_click_action;		//鼠标双击动作
-	wstring double_click_exe;	//鼠标双击动作为4时，打开的程序路径，默认任务管理器
+	wstring double_click_exe;	//鼠标双击动作为打开指定应用程序时，打开的程序路径
 };
 
 #define MAIN_WND_COLOR_NUM 4		//主窗口颜色数量

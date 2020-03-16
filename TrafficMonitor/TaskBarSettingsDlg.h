@@ -59,6 +59,8 @@ protected:
     void ApplyDefaultStyle(int index);      //应用一个预设方案
     void ModifyDefaultStyle(int index);     //将当前颜色设置保存到一个预设方案
 
+    void EnableControl();
+
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 	DECLARE_MESSAGE_MAP()
@@ -100,4 +102,5 @@ public:
     afx_msg void OnLightModeStyle();
     afx_msg void OnBnClickedDefaultStyleButton();
     afx_msg void OnDestroy();
+    afx_msg void OnBnClickedBrowseButton();
 };

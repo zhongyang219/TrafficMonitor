@@ -726,6 +726,9 @@ void CTaskBarDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 		SendMessage(WM_COMMAND, ID_OPTIONS2);		//双击后弹出“选项设置”对话框
 		break;
 	case DoubleClickAction::TASK_MANAGER:
+        ShellExecuteW(NULL, _T("open"), (theApp.m_system_dir + L"\\Taskmgr.exe").c_str(), NULL, NULL, SW_NORMAL);		//打开任务管理器
+        break;
+    case DoubleClickAction::SEPCIFIC_APP:
 		ShellExecuteW(NULL, _T("open"), (theApp.m_taskbar_data.double_click_exe).c_str(), NULL, NULL, SW_NORMAL);	//打开指定程序，默认任务管理器
 		break;
 	default:
