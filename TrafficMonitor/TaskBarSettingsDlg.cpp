@@ -71,6 +71,7 @@ void CTaskBarSettingsDlg::LoadConfig()
         m_default_style[i].back_color = ini.GetInt(L"taskbar_default_style", (key_name + L"back_color").c_str(), 0);
         m_default_style[i].transparent_color = ini.GetInt(L"taskbar_default_style", (key_name + L"transparent_color").c_str(), 0);
         m_default_style[i].status_bar_color = ini.GetInt(L"taskbar_default_style", (key_name + L"status_bar_color").c_str(), 0x005A5A5A);
+        m_default_style[i].specify_each_item_color = ini.GetBool(L"taskbar_default_style", (key_name + L"specify_each_item_color").c_str(), false);
     }
 }
 
@@ -86,6 +87,7 @@ void CTaskBarSettingsDlg::SaveConfig() const
         ini.WriteInt(L"taskbar_default_style", (key_name + L"back_color").c_str(), m_default_style[i].back_color);
         ini.WriteInt(L"taskbar_default_style", (key_name + L"transparent_color").c_str(), m_default_style[i].transparent_color);
         ini.WriteInt(L"taskbar_default_style", (key_name + L"status_bar_color").c_str(), m_default_style[i].status_bar_color);
+        ini.WriteBool(L"taskbar_default_style", (key_name + L"specify_each_item_color").c_str(), m_default_style[i].specify_each_item_color);
     }
     ini.Save();
 }
@@ -100,7 +102,9 @@ void CTaskBarSettingsDlg::ApplyDefaultStyle(int index)
     m_data.back_color = m_default_style[index].back_color;
     m_data.transparent_color = m_default_style[index].transparent_color;
     m_data.status_bar_color = m_default_style[index].status_bar_color;
+    m_data.specify_each_item_color = m_default_style[index].specify_each_item_color;
     DrawStaticColor();
+    ((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->SetCheck(m_data.specify_each_item_color);
 }
 
 void CTaskBarSettingsDlg::ModifyDefaultStyle(int index)
@@ -113,7 +117,7 @@ void CTaskBarSettingsDlg::ModifyDefaultStyle(int index)
     m_default_style[index].back_color = m_data.back_color;
     m_default_style[index].transparent_color = m_data.transparent_color;
     m_default_style[index].status_bar_color = m_data.status_bar_color;
-
+    m_default_style[index].specify_each_item_color = m_data.specify_each_item_color;
 }
 
 void CTaskBarSettingsDlg::EnableControl()
