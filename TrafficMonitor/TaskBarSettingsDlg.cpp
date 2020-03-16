@@ -59,6 +59,63 @@ void CTaskBarSettingsDlg::IniUnitCombo()
 	m_unit_combo.SetCurSel(static_cast<int>(m_data.speed_unit));
 }
 
+void CTaskBarSettingsDlg::LoadConfig()
+{
+    CIniHelper ini{ theApp.m_config_path };
+    for (int i = 0; i < TASKBAR_DEFAULT_STYLE_NUM; i++)
+    {
+        wchar_t buff[64];
+        swprintf_s(buff, L"default%d_", i + 1);
+        wstring key_name = buff;
+        ini.GetIntArray(L"taskbar_default_style", (key_name + L"text_color").c_str(), (int*)m_default_style[i].text_colors, TASKBAR_COLOR_NUM, RGB(255, 255, 255));
+        m_default_style[i].back_color = ini.GetInt(L"taskbar_default_style", (key_name + L"back_color").c_str(), 0);
+        m_default_style[i].transparent_color = ini.GetInt(L"taskbar_default_style", (key_name + L"transparent_color").c_str(), 0);
+        m_default_style[i].status_bar_color = ini.GetInt(L"taskbar_default_style", (key_name + L"status_bar_color").c_str(), 0x005A5A5A);
+    }
+}
+
+void CTaskBarSettingsDlg::SaveConfig() const
+{
+    CIniHelper ini{ theApp.m_config_path };
+    for (int i = 0; i < TASKBAR_DEFAULT_STYLE_NUM; i++)
+    {
+        wchar_t buff[64];
+        swprintf_s(buff, L"default%d_", i + 1);
+        wstring key_name = buff;
+        ini.WriteIntArray(L"taskbar_default_style", (key_name + L"text_color").c_str(), (int*)m_default_style[i].text_colors, TASKBAR_COLOR_NUM);
+        ini.WriteInt(L"taskbar_default_style", (key_name + L"back_color").c_str(), m_default_style[i].back_color);
+        ini.WriteInt(L"taskbar_default_style", (key_name + L"transparent_color").c_str(), m_default_style[i].transparent_color);
+        ini.WriteInt(L"taskbar_default_style", (key_name + L"status_bar_color").c_str(), m_default_style[i].status_bar_color);
+    }
+    ini.Save();
+}
+
+void CTaskBarSettingsDlg::ApplyDefaultStyle(int index)
+{
+    if (index < 0 || index >= TASKBAR_DEFAULT_STYLE_NUM)
+        return;
+
+    for (int i{}; i < TASKBAR_COLOR_NUM; i++)
+        m_data.text_colors[i] = m_default_style[index].text_colors[i];
+    m_data.back_color = m_default_style[index].back_color;
+    m_data.transparent_color = m_default_style[index].transparent_color;
+    m_data.status_bar_color = m_default_style[index].status_bar_color;
+    DrawStaticColor();
+}
+
+void CTaskBarSettingsDlg::ModifyDefaultStyle(int index)
+{
+    if (index < 0 || index >= TASKBAR_DEFAULT_STYLE_NUM)
+        return;
+
+    for (int i{}; i < TASKBAR_COLOR_NUM; i++)
+        m_default_style[index].text_colors[i] = m_data.text_colors[i];
+    m_default_style[index].back_color = m_data.back_color;
+    m_default_style[index].transparent_color = m_data.transparent_color;
+    m_default_style[index].status_bar_color = m_data.status_bar_color;
+
+}
+
 void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_TEXT_COLOR_STATIC1, m_text_color_static);
@@ -97,7 +154,16 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_UNIT_BYTE_RADIO, &CTaskBarSettingsDlg::OnBnClickedUnitByteRadio)
 	ON_BN_CLICKED(IDC_UNIT_BIT_RADIO, &CTaskBarSettingsDlg::OnBnClickedUnitBitRadio)
     ON_BN_CLICKED(IDC_SHOW_TOOL_TIP_CHK, &CTaskBarSettingsDlg::OnBnClickedShowToolTipChk)
-	ON_BN_CLICKED(IDC_SET_LIGHT_MODE_BUTTON, &CTaskBarSettingsDlg::OnBnClickedSetLightMode)
+	//ON_BN_CLICKED(IDC_SET_LIGHT_MODE_BUTTON, &CTaskBarSettingsDlg::OnBnClickedSetLightMode)
+    ON_COMMAND(ID_DEFAULT_STYLE1, &CTaskBarSettingsDlg::OnDefaultStyle1)
+    ON_COMMAND(ID_DEFAULT_STYLE2, &CTaskBarSettingsDlg::OnDefaultStyle2)
+    ON_COMMAND(ID_DEFAULT_STYLE3, &CTaskBarSettingsDlg::OnDefaultStyle3)
+    ON_COMMAND(ID_MODIFY_DEFAULT_STYLE1, &CTaskBarSettingsDlg::OnModifyDefaultStyle1)
+    ON_COMMAND(ID_MODIFY_DEFAULT_STYLE2, &CTaskBarSettingsDlg::OnModifyDefaultStyle2)
+    ON_COMMAND(ID_MODIFY_DEFAULT_STYLE3, &CTaskBarSettingsDlg::OnModifyDefaultStyle3)
+    ON_COMMAND(ID_LIGHT_MODE_STYLE, &CTaskBarSettingsDlg::OnLightModeStyle)
+    ON_BN_CLICKED(IDC_DEFAULT_STYLE_BUTTON, &CTaskBarSettingsDlg::OnBnClickedDefaultStyleButton)
+    ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -109,6 +175,8 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	CTabDlg::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
+
+    LoadConfig();
 
 	//初始化各控件状态
 	SetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font.name);
@@ -180,6 +248,9 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	m_digit_number_combo.AddString(_T("6"));
 	m_digit_number_combo.AddString(_T("7"));
 	m_digit_number_combo.SetCurSel(m_data.digits_number - 3);
+
+    m_default_style_menu.LoadMenu(IDR_TASKBAR_STYLE_MENU);
+
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -510,13 +581,104 @@ void CTaskBarSettingsDlg::OnBnClickedShowToolTipChk()
     m_data.show_tool_tip = (((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->GetCheck() != 0);
 }
 
-void CTaskBarSettingsDlg::OnBnClickedSetLightMode()
+//void CTaskBarSettingsDlg::OnBnClickedSetLightMode()
+//{
+//	// TODO: 在此添加控件通知处理程序代码
+//	for (int i{}; i < TASKBAR_COLOR_NUM; i++)
+//		m_data.text_colors[i] = RGB(0, 0, 0);
+//	m_data.back_color = RGB(210, 210, 210);
+//	m_data.transparent_color = RGB(210, 210, 210);
+//	m_data.status_bar_color = RGB(165, 165, 165);
+//	DrawStaticColor();
+//}
+
+
+void CTaskBarSettingsDlg::OnDefaultStyle1()
 {
-	// TODO: 在此添加控件通知处理程序代码
-	for (int i{}; i < TASKBAR_COLOR_NUM; i++)
-		m_data.text_colors[i] = RGB(0, 0, 0);
-	m_data.back_color = RGB(210, 210, 210);
-	m_data.transparent_color = RGB(210, 210, 210);
-	m_data.status_bar_color = RGB(165, 165, 165);
-	DrawStaticColor();
+    // TODO: 在此添加命令处理程序代码
+    ApplyDefaultStyle(0);
+}
+
+
+void CTaskBarSettingsDlg::OnDefaultStyle2()
+{
+    // TODO: 在此添加命令处理程序代码
+    ApplyDefaultStyle(1);
+}
+
+
+void CTaskBarSettingsDlg::OnDefaultStyle3()
+{
+    // TODO: 在此添加命令处理程序代码
+    ApplyDefaultStyle(2);
+}
+
+
+void CTaskBarSettingsDlg::OnModifyDefaultStyle1()
+{
+    // TODO: 在此添加命令处理程序代码
+    if (MessageBox(CCommon::LoadTextFormat(IDS_SAVE_DEFAULT_STYLE_INQUIRY, { 1 }), NULL, MB_ICONQUESTION | MB_YESNO) == IDYES)
+    {
+        ModifyDefaultStyle(0);
+    }
+}
+
+
+void CTaskBarSettingsDlg::OnModifyDefaultStyle2()
+{
+    // TODO: 在此添加命令处理程序代码
+    if (MessageBox(CCommon::LoadTextFormat(IDS_SAVE_DEFAULT_STYLE_INQUIRY, { 2 }), NULL, MB_ICONQUESTION | MB_YESNO) == IDYES)
+    {
+        ModifyDefaultStyle(1);
+    }
+}
+
+
+void CTaskBarSettingsDlg::OnModifyDefaultStyle3()
+{
+    // TODO: 在此添加命令处理程序代码
+    if (MessageBox(CCommon::LoadTextFormat(IDS_SAVE_DEFAULT_STYLE_INQUIRY, { 3 }), NULL, MB_ICONQUESTION | MB_YESNO) == IDYES)
+    {
+        ModifyDefaultStyle(2);
+    }
+}
+
+
+void CTaskBarSettingsDlg::OnLightModeStyle()
+{
+    // TODO: 在此添加命令处理程序代码
+    for (int i{}; i < TASKBAR_COLOR_NUM; i++)
+        m_data.text_colors[i] = RGB(0, 0, 0);
+    m_data.back_color = RGB(210, 210, 210);
+    m_data.transparent_color = RGB(210, 210, 210);
+    m_data.status_bar_color = RGB(165, 165, 165);
+    DrawStaticColor();
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedDefaultStyleButton()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    CWnd* pBtn = GetDlgItem(IDC_DEFAULT_STYLE_BUTTON);
+    CPoint point;
+    if (pBtn != nullptr)
+    {
+        CRect rect;
+        pBtn->GetWindowRect(rect);
+        point.x = rect.left;
+        point.y = rect.bottom;
+        CMenu* pMenu = m_default_style_menu.GetSubMenu(0);
+        if (pMenu != NULL)
+            pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+    }
+
+}
+
+
+void CTaskBarSettingsDlg::OnDestroy()
+{
+    CTabDlg::OnDestroy();
+
+    // TODO: 在此处添加消息处理程序代码
+    SaveConfig();
 }
