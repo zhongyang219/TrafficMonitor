@@ -1,12 +1,16 @@
 **[簡體中文](https://github.com/zhongyang219/TrafficMonitor/blob/master/README.md) | 繁體中文 | [English](https://github.com/zhongyang219/TrafficMonitor/blob/master/README_en-us.md)**<br>
 [![Badge](https://img.shields.io/badge/link-996.icu-%23FF4D5B.svg?style=flat-square)](https://996.icu/#/en_US)
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg?style=flat-square)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/zhongyang219/TrafficMonitor/Release%20CI?label=Release%20CI&logo=github&style=flat-square)](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI")
+[![GitHub release](https://img.shields.io/github/release/zhongyang219/TrafficMonitor.svg?style=flat-square)](https://github.com/zhongyang219/TrafficMonitor/releases/latest)
 # TrafficMonitor 簡介
 Traffic Monitor是一款用於Windows平台的網速監控懸浮窗軟體，可以顯示目前網路速度、CPU及記憶體使用率，支援嵌入到工作列顯示，支援更換面板、歷史流量統計等功能。<br>
 # 相關連結：<br>
 請[點選此處](https://github.com/zhongyang219/TrafficMonitor/releases)下載TrafficMonitor的最新版本。<br>
 備用連結：[百度網盤下載](https://pan.baidu.com/s/1c1LkPQ4)<br>
-如果遇到問題，請[點選此處](https://github.com/zhongyang219/TrafficMonitor/blob/master/Help.md)。
+如果遇到問題，請[點選此處](https://github.com/zhongyang219/TrafficMonitor/blob/master/Help.md)。<br>
+
+你也可以[點擊此處](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI")下載TrafficMonitor的預發行構建版本。
 
 # 主要特性
 * 顯示目前實現網路傳輸速率、CPU和記憶體使用率<br>

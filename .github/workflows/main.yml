@@ -1,0 +1,80 @@
+name: Release CI
+on: push
+jobs:
+  x64_build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1
+      
+    - name: Run msbuild
+      run: msbuild -p:configuration=release -p:platform=x64 -p:platformToolset=v142
+      
+    - name: Get current time
+      uses: 1466587594/current-time@v1
+      id: current-time
+      with:
+        format: YYYYMMDD_HHmmss
+        utcOffset: "+08:00"
+      
+    - name : Upload artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: x64_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
+        path: x64/Release/TrafficMonitor.exe
+
+  x86_build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1
+      
+    - name: Run msbuild
+      run: msbuild -p:configuration=release -p:platform=x86 -p:platformToolset=v142
+      
+    - name: Get current time
+      uses: 1466587594/current-time@v1
+      id: current-time
+      with:
+        format: YYYYMMDD_HHmmss
+        utcOffset: "+08:00"
+      
+    - name : Upload artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: x86_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
+        path: Release/TrafficMonitor.exe
+
+  winXP_build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1
+      
+    - name: Run msbuild
+      run: |
+        set ExternalCompilerOptions=/DCOMPILE_FOR_WINXP
+        msbuild -p:configuration=release -p:platform=x86 -p:platformToolset=v140_xp
+      shell: cmd
+      
+    - name: Get current time
+      uses: 1466587594/current-time@v1
+      id: current-time
+      with:
+        format: YYYYMMDD_HHmmss
+        utcOffset: "+08:00"
+      
+    - name : Upload artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: winXP_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
+        path: Release/TrafficMonitor.exe
