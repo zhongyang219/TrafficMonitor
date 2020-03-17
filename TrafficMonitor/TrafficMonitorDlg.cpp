@@ -1167,7 +1167,12 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			PDH_RAW_COUNTER rawData;
 
 			PdhOpenQuery(NULL, 0, &hQuery);//¿ªÊ¼²éÑ¯
-			PdhAddCounter(hQuery, L"\\Processor Information(_Total)\\% Processor Utility", NULL, &hCounter);
+            const wchar_t* query_str{};
+            if (theApp.m_win_version.GetMajorVersion() >= 10)
+                query_str = L"\\Processor Information(_Total)\\% Processor Utility";
+            else
+                query_str = L"\\Processor Information(_Total)\\% Processor Time";
+            PdhAddCounter(hQuery, query_str, NULL, &hCounter);
 			PdhCollectQueryData(hQuery);
 			PdhGetRawCounterValue(hCounter, &counterType, &rawData);
 
