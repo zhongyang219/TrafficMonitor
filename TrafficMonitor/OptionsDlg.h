@@ -27,6 +27,9 @@ public:
 protected:
 	CTabCtrlEx m_tab;
 	int m_tab_selected;
+    std::vector<CTabDlg*> m_tab_vect;
+    std::vector<int> m_tab_height;
+    CSize m_min_size{};
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
 
@@ -34,4 +37,6 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 	virtual void OnOK();
+    afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
+    afx_msg void OnSize(UINT nType, int cx, int cy);
 };

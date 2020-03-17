@@ -13,8 +13,12 @@ public:
 
 	void AddWindow(CWnd* pWnd, LPCTSTR lable_text);		//向当前tab控件添加一个子窗口
 	void SetCurTab(int index);
+    CWnd* GetCurrentTab();
+    void AdjustTabWindowSize();
 
 protected:
+    void CalSubWindowSize();
+
 	DECLARE_MESSAGE_MAP()
 
 protected:
@@ -24,6 +28,7 @@ public:
 	virtual void PreSubclassWindow();
 
 	CRect m_tab_rect;
+    afx_msg void OnSize(UINT nType, int cx, int cy);
 };
 
 
