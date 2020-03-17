@@ -442,7 +442,7 @@ void CTrafficMonitorDlg::IniConnectionMenu(CMenu * pMenu)
 void CTrafficMonitorDlg::IniTaskBarConnectionMenu()
 {
 	//初始化任务栏窗口中的“选择网络连接”子菜单项
-	if (m_tBarDlg != nullptr)
+	if (IsTaskbarWndValid())
 	{
 		m_tBarDlg->m_menu.DestroyMenu();
 		m_tBarDlg->m_menu.LoadMenu(IDR_TASK_BAR_MENU);
@@ -465,7 +465,8 @@ void CTrafficMonitorDlg::CloseTaskBarWnd()
 {
 	if (m_tBarDlg != nullptr)
 	{
-		m_tBarDlg->OnCancel();
+        if(IsTaskbarWndValid())
+            m_tBarDlg->OnCancel();
 		delete m_tBarDlg;
 		m_tBarDlg = nullptr;
 	}
@@ -660,7 +661,7 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 		theApp.SaveGlobalConfig();
 
 		//CTaskBarDlg::SaveConfig();
-		if (m_tBarDlg != nullptr)
+		if (IsTaskbarWndValid())
 		{
 			m_tBarDlg->ApplySettings();
 			//如果更改了任务栏窗口字体或显示的文本，则任务栏窗口可能要变化，于是关闭再打开任务栏窗口
@@ -796,6 +797,11 @@ void CTrafficMonitorDlg::SetTextFont()
 	m_disp_memory.SetFont(&m_font);
 	m_disp_up.SetFont(&m_font);
 	m_disp_down.SetFont(&m_font);
+}
+
+bool CTrafficMonitorDlg::IsTaskbarWndValid() const
+{
+    return m_tBarDlg != nullptr && ::IsWindow(m_tBarDlg->GetSafeHwnd());
 }
 
 void CTrafficMonitorDlg::ApplySettings()
@@ -1196,11 +1202,11 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                 m_tool_tips.UpdateTipText(tip_info, this);
             }
 			//更新任务栏窗口鼠标提示
-			if (m_tBarDlg != nullptr)
+			if (IsTaskbarWndValid())
 				m_tBarDlg->UpdateToolTips();
 
 			//每隔10秒钟检测一次是否可以嵌入任务栏
-			if (m_tBarDlg != nullptr && m_timer_cnt % 10 == 1)
+			if (IsTaskbarWndValid() && m_timer_cnt % 10 == 1)
 			{
 				if (m_tBarDlg->GetCannotInsertToTaskBar() && m_insert_to_taskbar_cnt < MAX_INSERT_TO_TASKBAR_CNT)
 				{
@@ -1277,7 +1283,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
 	if (nIDEvent == TASKBAR_TIMER)
 	{
-		if (m_tBarDlg != nullptr && ::IsWindow(m_tBarDlg->GetSafeHwnd()))
+		if (IsTaskbarWndValid())
 		{
 			m_tBarDlg->AdjustWindowPos();
 			m_tBarDlg->Invalidate(FALSE);
@@ -1496,7 +1502,7 @@ void CTrafficMonitorDlg::OnClose()
 	theApp.SaveGlobalConfig();
 	SaveHistoryTraffic();
 
-	if (m_tBarDlg != nullptr)
+	if (IsTaskbarWndValid())
 		m_tBarDlg->OnCancel();
 
 	CDialogEx::OnClose();
@@ -1666,7 +1672,7 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
 	if (lParam == WM_RBUTTONUP && !dialog_exist)
 	{
 		//在通知区点击右键弹出右键菜单
-		if (m_tBarDlg != nullptr)		//如果显示了任务栏窗口，则在右击了通知区图标后将焦点设置到任务栏窗口
+        if (IsTaskbarWndValid())		//如果显示了任务栏窗口，则在右击了通知区图标后将焦点设置到任务栏窗口
 			m_tBarDlg->SetForegroundWindow();
 		else				//否则将焦点设置到主窗口
 			SetForegroundWindow();

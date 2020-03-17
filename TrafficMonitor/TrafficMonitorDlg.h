@@ -129,6 +129,8 @@ protected:
 	void SetTextColor();
 	void SetTextFont();
 
+    bool IsTaskbarWndValid() const;
+
 public:
 	void ApplySettings();
 
