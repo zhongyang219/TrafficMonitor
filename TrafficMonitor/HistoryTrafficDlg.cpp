@@ -19,6 +19,7 @@ CHistoryTrafficDlg::CHistoryTrafficDlg(deque<HistoryTraffic>& history_traffics, 
 
 CHistoryTrafficDlg::~CHistoryTrafficDlg()
 {
+    SaveConfig();
 }
 
 
@@ -40,6 +41,21 @@ void CHistoryTrafficDlg::SetTabWndSize()
 	rect.right -= 4;
 	m_tab1_dlg.MoveWindow(&rect);
 	m_tab2_dlg.MoveWindow(&rect);
+}
+
+void CHistoryTrafficDlg::LoadConfig()
+{
+    CIniHelper ini{ theApp.m_config_path };
+    m_window_size.cx = ini.GetInt(L"histroy_traffic", L"width", -1);
+    m_window_size.cy = ini.GetInt(L"histroy_traffic", L"height", -1);
+}
+
+void CHistoryTrafficDlg::SaveConfig() const
+{
+    CIniHelper ini{ theApp.m_config_path };
+    ini.WriteInt(L"histroy_traffic", L"width", m_window_size.cx);
+    ini.WriteInt(L"histroy_traffic", L"height", m_window_size.cy);
+    ini.Save();
 }
 
 
@@ -88,6 +104,12 @@ BOOL CHistoryTrafficDlg::OnInitDialog()
 	m_min_size.cx = rect.Width();
 	m_min_size.cy = rect.Height();
 
+    //载入窗口大小设置
+    LoadConfig();
+    if (m_window_size.cx > 0 && m_window_size.cy > 0)
+    {
+        SetWindowPos(nullptr, 0, 0, m_window_size.cx, m_window_size.cy, SWP_NOMOVE | SWP_NOZORDER);
+    }
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -150,9 +172,17 @@ void CHistoryTrafficDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 void CHistoryTrafficDlg::OnSize(UINT nType, int cx, int cy)
 {
 	CDialog::OnSize(nType, cx, cy);
+
+	// TODO: 在此处添加消息处理程序代码
 	if (nType != SIZE_MINIMIZED && m_tab1_dlg.GetSafeHwnd() != NULL && m_tab2_dlg.GetSafeHwnd() != NULL)
 	{
 		SetTabWndSize();
 	}
-	// TODO: 在此处添加消息处理程序代码
+    if (nType != SIZE_MINIMIZED && nType != SIZE_MAXIMIZED)
+    {
+        CRect rect;
+        GetWindowRect(&rect);
+        m_window_size = rect.Size();
+    }
+
 }

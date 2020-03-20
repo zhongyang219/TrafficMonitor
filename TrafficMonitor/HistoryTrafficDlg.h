@@ -26,6 +26,7 @@ public:
 protected:
 	deque<HistoryTraffic>& m_history_traffics;
 	CSize m_min_size;
+    CSize m_window_size{};
 
 	CTabCtrl m_tab;
 	int m_tab_selected;
@@ -33,6 +34,9 @@ protected:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
 	void SetTabWndSize();
+
+    void LoadConfig();
+    void SaveConfig() const;
 
 	DECLARE_MESSAGE_MAP()
 public:
