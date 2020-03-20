@@ -18,11 +18,14 @@ public:
 #endif
 
 protected:
-	CPictureStatic m_donate_pic;
+	//CPictureStatic m_donate_pic;
+    CRect m_pic1_rect;
+    CRect m_pic2_rect;
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
 
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnInitDialog();
+    afx_msg void OnPaint();
 };

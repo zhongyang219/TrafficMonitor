@@ -292,7 +292,9 @@
   <ItemGroup>
     <Image Include="res\about_background.bmp" />
     <Image Include="res\about_background_hd.bmp" />
+    <Image Include="res\bitmap3.bmp" />
     <Image Include="res\donate.bmp" />
+    <Image Include="res\donate_wechart.bmp" />
     <Image Include="res\notifyicon.ico" />
     <Image Include="res\notifyicon2.ico" />
     <Image Include="res\notifyicon3.ico" />
