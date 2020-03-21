@@ -1,5 +1,15 @@
 **[简体中文](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log.md) | 繁體中文 | [English](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_en-us.md)**<br>
 # TrafficMonitor 更新日誌
+## V1.78 (2020/03/21)
+
+* 新增按兩下主視窗或工作列視窗開啟指定應用程式的功能
+* 新增工作列視窗中顯示CPU和RAM可用狀態條的功能
+* 修正 Windows 10 中 CPU 使用量和工作管理員不一致的問題
+* 新增是否顯示游標提示的選項
+* 新增程式首次啟動時根據 Windows 10 淺色模式設定工作列顏色的功能
+* 工作列設定中增加預設方案的功能
+* 其他細節方面的改進
+
 ## V1.77 (2019/05/01)
 * 新增工作列視窗透明色設定，修正工作列為白色時工作列視窗文字顏色無法設定為黑色的問題（在 [選項] —— [工作列視窗設定] 中設定透明色）
 * 新增程式崩潰時顯示崩潰資訊的功能

@@ -1,5 +1,15 @@
 **简体中文 | [繁體中文](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_zh-tw.md) | [English](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_en-us.md)**<br>
 # TrafficMonitor 更新日志
+## V1.78 (2020/03/21)
+
+* 新增双击主窗口或任务栏窗口打开指定应用程序的功能
+* 新增任务栏窗口中显示CPU和内存利用率状态条的功能
+* 修正Windows10中CPU利用率和任务管理器不一致的问题
+* 新增是否显示鼠标提示的选项
+* 新增程序首次启启动时根据Windows10浅色模式设置任务栏颜色的功能
+* 任务栏设置中增加预设方案的功能
+* 其他细节方面的改进
+
 ## V1.77 (2019/05/01)
 * 增加任务窗口透明色设置，修正任务栏为白色时任务栏窗口文字颜色无法设置为黑色的问题（在“选项”——“任务栏窗口设置”中设置透明色）
 * 新增程序崩溃时显示崩溃信息的功能

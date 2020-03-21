@@ -1,4 +1,4 @@
-<version>1.77</version>
-<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.77/TrafficMonitor_V1.77_x86.7z</link>
-<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.77/TrafficMonitor_V1.77_x64.7z</link_x64>
-<contents>增加任务栏窗口透明色设置，修正任务栏为白色时任务栏窗口文字颜色无法设置为黑色的问题（在“选项”——“任务栏窗口设置”中设置透明色）\n新增程序崩溃时显示崩溃信息的功能\n修正显示任务栏窗口的情况下，资源管理器重启时会导致屏幕闪烁的问题\n新增鼠标指向通知区图标时显示监控信息\n修正使用蓝牙网络时无法显示网速的问题\n新增x64的版本\n其他细节方面的改进</contents>
+<version>1.78</version>
+<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.78/TrafficMonitor_V1.78_x86.7z</link>
+<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.78/TrafficMonitor_V1.78_x64.7z</link_x64>
+<contents>新增双击主窗口或任务栏窗口打开指定应用程序的功能\n新增任务栏窗口中显示CPU和内存利用率状态条的功能\n修正Windows10中CPU利用率和任务管理器不一致的问题\n新增是否显示鼠标提示的选项\n新增程序首次启启动时根据Windows10浅色模式设置任务栏颜色的功能\n任务栏设置中增加预设方案的功能\n其他细节方面的改进</contents>

@@ -26,10 +26,24 @@ Note: The notification area icon will be automatically displayed in the followin
 * Hide the main window without displaying the taskbar window;
 * Close the taskbar window when the main window is hidden;
 * Close the taskbar window when the "Mouse Penetrate" is set.
-### 8. The CPU usage displayed on TrafficMonitor is not accurate, which is smaller than in the task manager.
-This problem exists not only in Trafficmonitor, but also in other software that has CPU usage display function. It seems to be due to the result of the CPU usage acquired by API after Windows 10 is inconsistent with whitch shown by the task Manager. <br>
-(The information displayed by the software is for reference only. I am not responsible for any loss caused by inaccurate data displayed.) ）
+### 8. Problems with the taskbar window color in Windows 10 white taskbar theme
+When using the white taskbar theme, you can click the "Preset" button in the "Taskbar Window Settings" and select "Light Mode" to set the taskbar color in light mode. As the picture shows:
+
+<img src="./Screenshots/images/image2.jpg" style="zoom:80%;" />
+
+However, if you encounter the problem that clicking the blank area of the taskbar window (the area pointed by the arrow at "3" in the figure below) will pop up the taskbar right-click menu instead of the TrafficMonitor right-click menu, you can try the following steps:
+
+<img src="./Screenshots/images/image1.jpg" style="zoom:80%;" />
+
+1. Click "Background color" to bring up the "Color" dialog box.
+2. Click the "Select" button to choose a color from the screen.
+3. Select the color of the blank area of the taskbar window (the area pointed by the arrow at "3" in the figure). (Yes, it doesn't matter whether the taskbar is transparent or what color your wallpaper is. Just select it directly, I don't know why ...)
+4. Set the transparent color to exactly the same as the background color just now.
+
+After doing this, click on the empty area of the taskbar window will pop up the TrafficMonitor right-click menu normally, even if you change the wallpaper or restart the computer.
+
 <br><br>
+
 >If you have encountered any other problems, please click "Contact Author" in the "About" dialog box, or directly [click here](mailto:zhongyang219@hotmail.com) to send me an email.<br>
 Please describe the problems you have encountered in detail, the error prompts, what operations you have tried, it is better to attach the screenshots and configuration files ("Options"-"General Settings"-"Open configuration file path"). <br>
 Note: Please confirm the email address that you used before sending the email. If your email address is form like "Outlook_\<random string\>@outlook.com", then such email address is unable to reply.

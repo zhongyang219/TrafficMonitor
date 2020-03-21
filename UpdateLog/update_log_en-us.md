@@ -1,5 +1,15 @@
 **[简体中文](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log.md) | [繁體中文](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_zh-tw.md) | English**<br>
 # TrafficMonitor Update log
+## V1.78 (2020/03/21)
+
+* Add the function to open the specified application by double-clicking the main window or taskbar window.
+* Add the function to display the CPU and memory utilization status bar in the taskbar window.
+* Fix the inconsistence of CPU usage with the task manager in Windows 10.
+* Added option to show mouse tool tips.
+* Added the function to set the taskbar color according to Windows 10 light mode when the program is first started.
+* Added the function of preset schemes in the taskbar settings.
+* Improvements in other details.
+
 ## V1.77 (2019/05/01)
 * Add the transparent color setting of the task window. Fix the problem that the text color of the taskbar window cannot be set to black when the taskbar is white (Set the transparent color in "Options" - "Taskbar Window Settings").
 * Add the function to display crash information when the program crashes.
