@@ -1,6 +1,6 @@
-﻿<version>1.77</version>
-<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.77/TrafficMonitor_V1.77_x86.7z</link>
-<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.77/TrafficMonitor_V1.77_x64.7z</link_x64>
+﻿<version>1.78</version>
+<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.78/TrafficMonitor_V1.78_x86.7z</link>
+<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.78/TrafficMonitor_V1.78_x64.7z</link_x64>
 <update_contents>
 	<contents_zh_cn>新增双击主窗口或任务栏窗口打开指定应用程序的功能\n新增任务栏窗口中显示CPU和内存利用率状态条的功能\n修正Windows10中CPU利用率和任务管理器不一致的问题\n新增是否显示鼠标提示的选项\n新增程序首次启启动时根据Windows10浅色模式设置任务栏颜色的功能\n任务栏设置中增加预设方案的功能\n其他细节方面的改进</contents_zh_cn>
 	<contents_en>Add the function to open the specified application by double-clicking the main window or taskbar window.\nAdd the function to display the CPU and memory utilization status bar in the taskbar window.\nFix the inconsistence of CPU usage with the task manager in Windows 10.\nAdded option to show mouse tool tips.\nAdded the function to set the taskbar color according to Windows 10 light mode when the program is first started.\nAdded the function of preset schemes in the taskbar settings.\nImprovements in other details.</contents_en>
