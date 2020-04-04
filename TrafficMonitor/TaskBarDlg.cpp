@@ -19,6 +19,8 @@ CTaskBarDlg::CTaskBarDlg(CWnd* pParent /*=NULL*/)
 
 CTaskBarDlg::~CTaskBarDlg()
 {
+	m_cpu_his.RemoveAll();
+	m_memory_his.RemoveAll();
 }
 
 void CTaskBarDlg::DoDataExchange(CDataExchange* pDX)
@@ -192,7 +194,18 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 			rect_tmp.right += theApp.DPI(5);
 
 		// 绘制状态条
-		TryDrawStatusBar(draw, CRect(lable_rect.TopLeft(), rect_tmp.BottomRight()), theApp.m_cpu_usage);
+		//TryDrawStatusBar(draw, CRect(lable_rect.TopLeft(), rect_tmp.BottomRight()), theApp.m_cpu_usage);
+		//TryDrawStatusBar1(draw, CRect(lable_rect.TopLeft(), lable_rect.BottomRight()), theApp.m_cpu_usage);
+		if (theApp.m_taskbar_data.cm_graph_type)
+		{
+			//保存当前CPU利用率
+			AddHisToList(m_cpu_his, theApp.m_cpu_usage);
+			TryDrawGraph(draw, CRect(lable_rect.TopLeft(), rect_tmp.BottomRight()), m_cpu_his);
+		}
+		else
+		{
+			TryDrawStatusBar(draw, CRect(lable_rect.TopLeft(), rect_tmp.BottomRight()), theApp.m_cpu_usage);
+		}
 		// 绘制文本
 		draw.DrawWindowText(rect_tmp, str, text_colors[5], value_alignment, false);		//绘制数值
 		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.cpu.c_str(), text_colors[4], Alignment::LEFT, false);				//绘制标签
@@ -215,7 +228,17 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 			rect_tmp.right += theApp.DPI(5);
 
 		// 绘制状态条
-		TryDrawStatusBar(draw, CRect(lable_rect.TopLeft(), rect_tmp.BottomRight()), theApp.m_memory_usage);
+		//TryDrawStatusBar(draw, CRect(lable_rect.TopLeft(), rect_tmp.BottomRight()), theApp.m_memory_usage);
+		//TryDrawStatusBar1(draw, CRect(lable_rect.TopLeft(), lable_rect.BottomRight()), theApp.m_memory_usage);
+		if (theApp.m_taskbar_data.cm_graph_type)
+		{
+			AddHisToList(m_memory_his, theApp.m_memory_usage);
+			TryDrawGraph(draw, CRect(lable_rect.TopLeft(), rect_tmp.BottomRight()), m_memory_his);
+		}
+		else
+		{
+			TryDrawStatusBar(draw, CRect(lable_rect.TopLeft(), rect_tmp.BottomRight()), theApp.m_memory_usage);
+		}
 		// 绘制文本
 		draw.DrawWindowText(rect_tmp, str, text_colors[7], value_alignment, false);
 		draw.DrawWindowText(lable_rect, theApp.m_taskbar_data.disp_str.memory.c_str(), text_colors[6], Alignment::LEFT, false);
@@ -773,4 +796,47 @@ void CTaskBarDlg::OnPaint()
 					   // TODO: 在此处添加消息处理程序代码
 					   // 不为绘图消息调用 CDialogEx::OnPaint()
 	ShowInfo(&dc);
+}
+
+void CTaskBarDlg::AddHisToList(CList<int,int> &list, int current_usage_percent)
+{
+	list.AddHead(current_usage_percent);
+	//判断是否超过最大长度，如果超过，将链表尾部数据移除
+	if (list.GetCount() > TASKBAR_GRAPH_MAX_LEN)
+	{
+		list.RemoveTail();
+	}
+}
+
+void CTaskBarDlg::TryDrawGraph(CDrawCommon& drawer, const CRect &value_rect, CList<int,int> &list)
+{
+	if (!theApp.m_taskbar_data.show_status_bar)
+	{
+		return;
+	}
+	drawer.DrawRectOutLine(value_rect, theApp.m_taskbar_data.status_bar_color, 1, true);
+	POSITION pos = list.GetHeadPosition();
+	if (NULL != pos)
+	{
+		//有数据才需要画线
+		for (int i = 0; i < value_rect.Width(); i++)
+		{
+			//从右往左画线
+
+			CPoint start_point = CPoint(value_rect.right - i, value_rect.bottom);
+			int height = 0;
+
+			for (int j = 0; j < TASKBAR_GRAPH_STEP; j++)
+			{
+				height = list.GetNext(pos)*value_rect.Height() / 100;
+				if (NULL == pos) 
+				{
+					//没数据了直接返回。
+					return;
+				}
+
+			}
+			drawer.DrawLine(start_point, height, theApp.m_taskbar_data.status_bar_color);
+		}
+	}
 }

@@ -193,6 +193,7 @@ struct TaskBarSettingData : public PublicSettingData
 	bool horizontal_arrange{ true };	//水平排列
 	bool show_status_bar{ true };		//显示 CPU/内存的状态条
 	bool tbar_wnd_on_left{ false };		//如果为true，则任务栏窗口显示在任务栏的左侧（或上方）
+	bool cm_graph_type{ false };		//如果为false，默认原样式，柱状图显示占用率，如为true，滚动显示占用率
 };
 
 //选项设置中“常规设置”的数据

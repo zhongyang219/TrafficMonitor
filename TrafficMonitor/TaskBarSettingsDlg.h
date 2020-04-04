@@ -104,4 +104,6 @@ public:
     afx_msg void OnBnClickedDefaultStyleButton();
     afx_msg void OnDestroy();
     afx_msg void OnBnClickedBrowseButton();
+	afx_msg void OnBnClickedCMGraphBarRadio();
+	afx_msg void OnBnClickedCMGraphPLOTRadio();
 };

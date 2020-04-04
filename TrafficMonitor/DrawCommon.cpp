@@ -252,3 +252,16 @@ int CDrawCommon::GetColorBritness(COLORREF color)
 {
 	return (GetRValue(color) + GetGValue(color) + GetBValue(color)) / 3;
 }
+
+void CDrawCommon::DrawLine(CPoint start_point, int height, COLORREF color)
+{
+	CPen aPen, *pOldPen;
+	aPen.CreatePen( PS_SOLID, 1, color);
+	pOldPen = m_pDC->SelectObject(&aPen);
+	CBrush* pOldBrush{ dynamic_cast<CBrush*>(m_pDC->SelectStockObject(NULL_BRUSH)) };
+
+	m_pDC->MoveTo(start_point); //移动到起始点，默认是从下向上画
+	m_pDC->LineTo(CPoint(start_point.x,start_point.y - height));
+	m_pDC->SelectObject(pOldPen);
+	m_pDC->SelectObject(pOldBrush);       // Restore the old brush
+}

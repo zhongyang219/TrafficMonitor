@@ -144,6 +144,7 @@ void CTrafficMonitorApp::LoadConfig()
 	m_taskbar_data.digits_number = ini.GetInt(_T("task_bar"), _T("digits_number"), 4);
 	m_taskbar_data.double_click_action = static_cast<DoubleClickAction>(ini.GetInt(_T("task_bar"), _T("double_click_action"), 0));
 	m_taskbar_data.double_click_exe = ini.GetString(L"task_bar", L"double_click_exe", (theApp.m_system_dir + L"\\Taskmgr.exe").c_str());
+	m_taskbar_data.cm_graph_type = ini.GetBool(_T("task_bar"), _T("cm_graph_type"), false);
 
 	//其他设置
 	m_cfg_data.m_show_internet_ip = ini.GetBool(L"connection_details", L"show_internet_ip", false);
@@ -245,6 +246,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteInt(L"task_bar", L"digits_number", m_taskbar_data.digits_number);
 	ini.WriteInt(L"task_bar", L"double_click_action", static_cast<int>(m_taskbar_data.double_click_action));
     ini.WriteString(L"task_bar", L"double_click_exe", m_taskbar_data.double_click_exe);
+	ini.WriteBool(L"task_bar", L"cm_graph_type", m_taskbar_data.cm_graph_type);
 
 	//其他设置
 	ini.WriteBool(L"connection_details", L"show_internet_ip", m_cfg_data.m_show_internet_ip);

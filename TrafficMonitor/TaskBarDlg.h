@@ -9,6 +9,8 @@
 // CTaskBarDlg 对话框
 #define TASKBAR_WND_HEIGHT theApp.DPI(32)				//任务栏窗口的高度
 #define WM_TASKBAR_MENU_POPED_UP (WM_USER + 1004)		//定义任务栏窗口右键菜单弹出时发出的消息
+#define TASKBAR_GRAPH_MAX_LEN 500						//历史数据存储最大长度
+#define TASKBAR_GRAPH_STEP 5							//几秒钟画一条线
 
 class CTaskBarDlg : public CDialogEx
 {
@@ -23,6 +25,8 @@ public:
 
 	void ShowInfo(CDC* pDC); 	//将信息绘制到控件上
 	void TryDrawStatusBar(CDrawCommon& drawer, const CRect& rect_bar, int usage_percent); //绘制CPU/内存状态条
+
+	void TryDrawGraph(CDrawCommon& drawer, const CRect &value_rect, CList<int,int> &list);		// 绘制CPU/内存动态图
 
 	bool AdjustWindowPos();	//设置窗口在任务栏中的位置
 
@@ -53,6 +57,9 @@ protected:
 	int m_min_bar_width;	//最小化窗口缩小宽度后的宽度
 	int m_min_bar_height;	//最小化窗口缩小高度后的高度（用于任务栏在屏幕左侧或右侧时）
 
+	CList<int, int> m_cpu_his;		//保存cpu使用率历史数据的链表，链表保存按照时间顺序，越靠近头部数据越新
+	CList<int, int> m_memory_his;	//保存内存占用率历史数据的链表，链表保存按照时间顺序，越靠近头部数据越新
+
 	int m_left_space{};			//最小化窗口和二级窗口窗口左侧的边距
 	int m_top_space{};			//最小化窗口和二级窗口窗口顶部的边距（用于任务栏在屏幕左侧或右侧时）
 
@@ -66,6 +73,8 @@ protected:
 
 	bool IsTaskbarOnTopOrBottom();		//判断任务栏是否在屏幕的顶部或底部，如果是则返回false，如果任务栏在屏幕两侧，则返回false
 	CString GetMouseTipsInfo();		//获取鼠标提示
+
+	void AddHisToList(CList<int,int> &list, int current_usage_percent);		//将当前利用率数值添加进链表
 
 public:
 	void SetTextFont();
