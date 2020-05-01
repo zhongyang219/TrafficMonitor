@@ -45,6 +45,8 @@ public:
 	//https://blog.csdn.net/tajon1226/article/details/6589180
 	static void GetRegionFromImage(CRgn& rgn, CBitmap &cBitmap, int threshold);
 
+	void DrawLine(CPoint start_point, int height, COLORREF color);  //使用当前画笔画线
+
 private:
 	CDC* m_pDC{};		//用于绘图的CDC类的指针
 	CWnd* m_pMainWnd{};	//绘图窗口的句柄

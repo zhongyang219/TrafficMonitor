@@ -184,6 +184,8 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_DEFAULT_STYLE_BUTTON, &CTaskBarSettingsDlg::OnBnClickedDefaultStyleButton)
     ON_WM_DESTROY()
     ON_BN_CLICKED(IDC_BROWSE_BUTTON, &CTaskBarSettingsDlg::OnBnClickedBrowseButton)
+	ON_BN_CLICKED(IDC_CM_GRAPH_BAR_RADIO, &CTaskBarSettingsDlg::OnBnClickedCMGraphBarRadio)
+	ON_BN_CLICKED(IDC_CM_GRAPH_PLOT_RADIO, &CTaskBarSettingsDlg::OnBnClickedCMGraphPLOTRadio)
 END_MESSAGE_MAP()
 
 
@@ -274,6 +276,11 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     EnableControl();
 
     m_default_style_menu.LoadMenu(IDR_TASKBAR_STYLE_MENU);
+
+	if (m_data.cm_graph_type)
+		((CButton*)GetDlgItem(IDC_CM_GRAPH_PLOT_RADIO))->SetCheck(TRUE);
+	else
+		((CButton*)GetDlgItem(IDC_CM_GRAPH_BAR_RADIO))->SetCheck(TRUE);
 
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -719,4 +726,14 @@ void CTaskBarSettingsDlg::OnBnClickedBrowseButton()
         m_data.double_click_exe = fileDlg.GetPathName();
         SetDlgItemText(IDC_EXE_PATH_EDIT, m_data.double_click_exe.c_str());
     }
+}
+
+void CTaskBarSettingsDlg::OnBnClickedCMGraphPLOTRadio()
+{
+	m_data.cm_graph_type = true;
+}
+
+void CTaskBarSettingsDlg::OnBnClickedCMGraphBarRadio()
+{
+	m_data.cm_graph_type = false;
 }
