@@ -910,6 +910,9 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	m_tool_tips.SetMaxTipWidth(600);
 	m_tool_tips.AddTool(this, _T(""));
 
+	//设置获取CPU利用率的方式
+	m_cpu_usage.SetUseGetSystemTimes(theApp.m_cfg_data.m_get_cpu_usage_by_get_system_times);
+
 	//如果程序启动时设置了隐藏主窗口，或窗口的位置在左上角，则先将其不透明度设为0
 	if (theApp.m_cfg_data.m_hide_main_window || (theApp.m_cfg_data.m_position_x == 0 && theApp.m_cfg_data.m_position_y == 0))
 		SetTransparency(0);
@@ -1161,33 +1164,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		if (!theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_show_task_bar_wnd)
 		{
 			//获取CPU使用率
-			HQUERY hQuery;
-			HCOUNTER hCounter;
-			DWORD counterType;
-			PDH_RAW_COUNTER rawData;
-
-			PdhOpenQuery(NULL, 0, &hQuery);//开始查询
-            const wchar_t* query_str{};
-            if (theApp.m_win_version.GetMajorVersion() >= 10)
-                query_str = L"\\Processor Information(_Total)\\% Processor Utility";
-            else
-                query_str = L"\\Processor Information(_Total)\\% Processor Time";
-            PdhAddCounter(hQuery, query_str, NULL, &hCounter);
-			PdhCollectQueryData(hQuery);
-			PdhGetRawCounterValue(hCounter, &counterType, &rawData);
-
-			if (m_first_get_CPU_utility) {//需要获得两次数据才能计算CPU使用率
-				theApp.m_cpu_usage = 0;
-				m_first_get_CPU_utility = false;
-			} else {
-				PDH_FMT_COUNTERVALUE fmtValue;
-				PdhCalculateCounterFromRawValue(hCounter, PDH_FMT_DOUBLE, &rawData, &m_last_rawData, &fmtValue);//计算使用率
-				theApp.m_cpu_usage = fmtValue.doubleValue;//传出数据
-				if (theApp.m_cpu_usage > 100)
-					theApp.m_cpu_usage = 100;
-			}
-			m_last_rawData = rawData;//保存上一次数据
-			PdhCloseQuery(hQuery);//关闭查询
+			theApp.m_cpu_usage = m_cpu_usage.GetCPUUsage();
 
 			//获取内存利用率
 			MEMORYSTATUSEX statex;

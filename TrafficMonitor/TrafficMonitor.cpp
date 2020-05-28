@@ -156,6 +156,9 @@ void CTrafficMonitorApp::LoadConfig()
 	m_debug_log = ini.GetBool(_T("other"), _T("debug_log"), false);
 	//由于Win7系统中设置任务栏窗口透明色会导致任务栏窗口不可见，因此默认在Win7中禁用透明色的设定
 	m_taksbar_transparent_color_enable = ini.GetBool(L"other", L"taksbar_transparent_color_enable", !m_win_version.IsWindows7());
+
+	//载入获取CPU利用率的方式，Win10以下使用GetSystemTimes获取，由于此种方式在win10上会导致和任务管理器不一致，因此win10上使用新的获取方式
+	m_cfg_data.m_get_cpu_usage_by_get_system_times = ini.GetBool(L"other", L"m_get_cpu_usage_by_GetSystemTimes", m_win_version.GetMajorVersion() < 10);
 }
 
 void CTrafficMonitorApp::SaveConfig()
@@ -256,6 +259,8 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteBool(_T("other"), _T("exit_when_start_by_restart_manager"), m_exit_when_start_by_restart_manager);
 	ini.WriteInt(_T("other"), _T("notify_interval"), m_notify_interval);
 	ini.WriteBool(_T("other"), _T("taksbar_transparent_color_enable"), m_taksbar_transparent_color_enable);
+
+	ini.WriteBool(L"other", L"m_get_cpu_usage_by_GetSystemTimes", m_cfg_data.m_get_cpu_usage_by_get_system_times);
 
 	ini.WriteString(L"app", L"version", VERSION);
 
