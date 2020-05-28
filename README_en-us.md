@@ -19,7 +19,7 @@ You can also [click here](https://github.com/zhongyang219/TrafficMonitor/actions
 * Support the window displayed in the taskbar.<br>
 * Support for changing skin and customizing skin.<br>
 * Historical traffic statistics.<br>
-# Screen shoots
+# Screen Shots
 Main Suspension Window:<br>
 ![](https://github.com/zhongyang219/TrafficMonitor/raw/master/Screenshots/en_us/main1.png)<br>
 Right-Click Menu:<br>
