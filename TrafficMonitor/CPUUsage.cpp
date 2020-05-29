@@ -3,10 +3,13 @@
 #include "Common.h"
 #include "TrafficMonitor.h"
 
-void CCPUUsage::SetUseGetSystemTimes(bool use_get_system_times)
+void CCPUUsage::SetUseCPUTimes(bool use_get_system_times)
 {
-	m_use_get_system_times = use_get_system_times;
-	m_first_get_CPU_utility = true;
+	if (m_use_get_system_times != use_get_system_times)
+	{
+		m_use_get_system_times = use_get_system_times;
+		m_first_get_CPU_utility = true;
+	}
 }
 
 int CCPUUsage::GetCPUUsage()

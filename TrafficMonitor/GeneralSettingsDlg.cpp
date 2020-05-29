@@ -52,6 +52,8 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_MEMORY_USAGE_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedMemoryUsageTipCheck)
 	ON_BN_CLICKED(IDC_OPEN_CONFIG_PATH_BUTTON, &CGeneralSettingsDlg::OnBnClickedOpenConfigPathButton)
 	ON_BN_CLICKED(IDC_SHOW_ALL_CONNECTION_CHECK, &CGeneralSettingsDlg::OnBnClickedShowAllConnectionCheck)
+	ON_BN_CLICKED(IDC_USE_CPU_TIME_RADIO, &CGeneralSettingsDlg::OnBnClickedUseCpuTimeRadio)
+	ON_BN_CLICKED(IDC_USE_PDH_RADIO, &CGeneralSettingsDlg::OnBnClickedUsePdhRadio)
 END_MESSAGE_MAP()
 
 
@@ -112,6 +114,9 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
 	m_toolTip.AddTool(GetDlgItem(IDC_SHOW_ALL_CONNECTION_CHECK), CCommon::LoadText(IDS_SHOW_ALL_INFO_TIP));
 	m_toolTip.AddTool(GetDlgItem(IDC_SAVE_TO_APPDATA_RADIO), theApp.m_appdata_dir.c_str());
 	m_toolTip.AddTool(GetDlgItem(IDC_SAVE_TO_PROGRAM_DIR_RADIO), theApp.m_module_dir.c_str());
+
+	((CButton*)GetDlgItem(IDC_USE_CPU_TIME_RADIO))->SetCheck(m_data.m_get_cpu_usage_by_cpu_times);
+	((CButton*)GetDlgItem(IDC_USE_PDH_RADIO))->SetCheck(!m_data.m_get_cpu_usage_by_cpu_times);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -221,4 +226,18 @@ BOOL CGeneralSettingsDlg::PreTranslateMessage(MSG* pMsg)
 		m_toolTip.RelayEvent(pMsg);
 
 	return CTabDlg::PreTranslateMessage(pMsg);
+}
+
+
+void CGeneralSettingsDlg::OnBnClickedUseCpuTimeRadio()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_data.m_get_cpu_usage_by_cpu_times = true;
+}
+
+
+void CGeneralSettingsDlg::OnBnClickedUsePdhRadio()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_data.m_get_cpu_usage_by_cpu_times = false;
 }

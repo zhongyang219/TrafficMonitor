@@ -12,7 +12,7 @@ public:
 	~CCPUUsage()
 	{}
 
-	void SetUseGetSystemTimes(bool use_get_system_times);		//设置获取CPU利用率的方式，是通过GetSystemTimes还是Pdh
+	void SetUseCPUTimes(bool use_get_system_times);		//设置获取CPU利用率的方式，是通过GetSystemTimes还是Pdh
 	int GetCPUUsage();
 
 private:

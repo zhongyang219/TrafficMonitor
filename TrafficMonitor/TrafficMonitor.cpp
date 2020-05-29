@@ -45,6 +45,8 @@ void CTrafficMonitorApp::LoadConfig()
 	m_general_data.allow_skin_cover_text = ini.GetBool(_T("general"), _T("allow_skin_cover_text"), true);
 	m_general_data.language = static_cast<Language>(ini.GetInt(_T("general"), _T("language"), 0));
 	m_general_data.show_all_interface = ini.GetBool(L"general", L"show_all_interface", false);
+	//载入获取CPU利用率的方式，Win10以下使用GetSystemTimes获取，由于此种方式在win10上会导致和任务管理器不一致，因此win10上默认通过性能计数器获取
+	m_general_data.m_get_cpu_usage_by_cpu_times = ini.GetBool(L"general", L"get_cpu_usage_by_cpu_times", m_win_version.GetMajorVersion() < 10);
 
 	//Windows10颜色模式设置
 	bool is_windows10_light_theme = m_win_version.IsWindows10LightTheme();
@@ -156,9 +158,6 @@ void CTrafficMonitorApp::LoadConfig()
 	m_debug_log = ini.GetBool(_T("other"), _T("debug_log"), false);
 	//由于Win7系统中设置任务栏窗口透明色会导致任务栏窗口不可见，因此默认在Win7中禁用透明色的设定
 	m_taksbar_transparent_color_enable = ini.GetBool(L"other", L"taksbar_transparent_color_enable", !m_win_version.IsWindows7());
-
-	//载入获取CPU利用率的方式，Win10以下使用GetSystemTimes获取，由于此种方式在win10上会导致和任务管理器不一致，因此win10上使用新的获取方式
-	m_cfg_data.m_get_cpu_usage_by_get_system_times = ini.GetBool(L"other", L"m_get_cpu_usage_by_GetSystemTimes", m_win_version.GetMajorVersion() < 10);
 }
 
 void CTrafficMonitorApp::SaveConfig()
@@ -171,6 +170,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteBool(_T("general"), _T("allow_skin_cover_text"), m_general_data.allow_skin_cover_text);
 	ini.WriteInt(_T("general"), _T("language"), static_cast<int>(m_general_data.language));
 	ini.WriteBool(L"general", L"show_all_interface", m_general_data.show_all_interface);
+	ini.WriteBool(L"general", L"get_cpu_usage_by_cpu_times", m_general_data.m_get_cpu_usage_by_cpu_times);
 
 	//主窗口设置
 	ini.WriteInt(L"config", L"transparency", m_cfg_data.m_transparency);
@@ -259,8 +259,6 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteBool(_T("other"), _T("exit_when_start_by_restart_manager"), m_exit_when_start_by_restart_manager);
 	ini.WriteInt(_T("other"), _T("notify_interval"), m_notify_interval);
 	ini.WriteBool(_T("other"), _T("taksbar_transparent_color_enable"), m_taksbar_transparent_color_enable);
-
-	ini.WriteBool(L"other", L"m_get_cpu_usage_by_GetSystemTimes", m_cfg_data.m_get_cpu_usage_by_get_system_times);
 
 	ini.WriteString(L"app", L"version", VERSION);
 

@@ -55,4 +55,6 @@ public:
 	afx_msg void OnBnClickedOpenConfigPathButton();
 	afx_msg void OnBnClickedShowAllConnectionCheck();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	afx_msg void OnBnClickedUseCpuTimeRadio();
+	afx_msg void OnBnClickedUsePdhRadio();
 };

@@ -657,8 +657,6 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 		theApp.m_general_data = optionsDlg.m_tab3_dlg.m_data;
 
 		ApplySettings();
-		theApp.SaveConfig();
-		theApp.SaveGlobalConfig();
 
 		//CTaskBarDlg::SaveConfig();
 		if (IsTaskbarWndValid())
@@ -675,7 +673,11 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 		if (optionsDlg.m_tab3_dlg.IsShowAllInterfaceModified())
 			IniConnection();
 
+		//设置获取CPU利用率的方式
+		m_cpu_usage.SetUseCPUTimes(theApp.m_general_data.m_get_cpu_usage_by_cpu_times);
+
 		theApp.SaveConfig();
+		theApp.SaveGlobalConfig();
 	}
 }
 
@@ -911,7 +913,7 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	m_tool_tips.AddTool(this, _T(""));
 
 	//设置获取CPU利用率的方式
-	m_cpu_usage.SetUseGetSystemTimes(theApp.m_cfg_data.m_get_cpu_usage_by_get_system_times);
+	m_cpu_usage.SetUseCPUTimes(theApp.m_general_data.m_get_cpu_usage_by_cpu_times);
 
 	//如果程序启动时设置了隐藏主窗口，或窗口的位置在左上角，则先将其不透明度设为0
 	if (theApp.m_cfg_data.m_hide_main_window || (theApp.m_cfg_data.m_position_x == 0 && theApp.m_cfg_data.m_position_y == 0))
