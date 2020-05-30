@@ -113,6 +113,11 @@ void CTrafficMonitorApp::LoadConfig()
 	//任务栏窗口设置
 	m_taskbar_data.back_color = ini.GetInt(_T("task_bar"), _T("task_bar_back_color"), m_taskbar_data.dft_back_color);
 	m_taskbar_data.transparent_color = ini.GetInt(_T("task_bar"), _T("transparent_color"), m_taskbar_data.dft_transparent_color);
+	if (m_taskbar_data.back_color == m_taskbar_data.transparent_color)	//如果读取到的任务栏背景色和透明色相同，即任务栏背景透明，则如果颜色是灰色，需要将其转换成不是灰色的颜色
+	{
+		CCommon::TransparentColorConvert(m_taskbar_data.back_color);
+		CCommon::TransparentColorConvert(m_taskbar_data.transparent_color);
+	}
 	m_taskbar_data.status_bar_color = ini.GetInt(_T("task_bar"), _T("status_bar_color"), m_taskbar_data.dft_status_bar_color);
 	//m_taskbar_data.text_color = GetPrivateProfileInt(_T("task_bar"), _T("task_bar_text_color"), 0x00ffffffU, m_config_path.c_str());
 	ini.GetIntArray(_T("task_bar"), _T("task_bar_text_color"), (int*)m_taskbar_data.text_colors, TASKBAR_COLOR_NUM, m_taskbar_data.dft_text_colors);

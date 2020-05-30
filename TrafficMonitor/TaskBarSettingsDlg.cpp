@@ -103,8 +103,14 @@ void CTaskBarSettingsDlg::ApplyDefaultStyle(int index)
     m_data.transparent_color = m_default_style[index].transparent_color;
     m_data.status_bar_color = m_default_style[index].status_bar_color;
     m_data.specify_each_item_color = m_default_style[index].specify_each_item_color;
+	if (IsTaskbarTransparent())
+	{
+		CCommon::TransparentColorConvert(m_data.back_color);
+		CCommon::TransparentColorConvert(m_data.transparent_color);
+	}
     DrawStaticColor();
     ((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->SetCheck(m_data.specify_each_item_color);
+	m_background_transparent_chk.SetCheck(IsTaskbarTransparent());
 }
 
 void CTaskBarSettingsDlg::ModifyDefaultStyle(int index)
@@ -551,6 +557,7 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 				MessageBox(CCommon::LoadText(IDS_SAME_BACK_TEXT_COLOR_WARNING), NULL, MB_ICONWARNING);
 			if (background_transparent)
 			{
+				CCommon::TransparentColorConvert(m_data.back_color);
 				//如果当前设置了背景透明，则更改了背景色后同时将透明色设置成和背景色一样的颜色，以保持背景透明
 				m_data.transparent_color = m_data.back_color;
 			}
@@ -712,10 +719,11 @@ void CTaskBarSettingsDlg::OnLightModeStyle()
     // TODO: 在此添加命令处理程序代码
     for (int i{}; i < TASKBAR_COLOR_NUM; i++)
         m_data.text_colors[i] = RGB(0, 0, 0);
-    m_data.back_color = RGB(210, 210, 210);
-    m_data.transparent_color = RGB(210, 210, 210);
+    m_data.back_color = RGB(210, 210, 211);
+    m_data.transparent_color = RGB(210, 210, 211);
     m_data.status_bar_color = RGB(165, 165, 165);
     DrawStaticColor();
+	m_background_transparent_chk.SetCheck(IsTaskbarTransparent());
 }
 
 

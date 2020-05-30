@@ -803,8 +803,8 @@ void CCommon::SetColorMode(ColorMode mode)
 		CTrafficMonitorApp::self->m_cfg_data.m_dft_notify_icon = 0;
 		break;
 	case ColorMode::Light:
-		CTrafficMonitorApp::self->m_taskbar_data.dft_back_color = 0x00D2D2D2;
-		CTrafficMonitorApp::self->m_taskbar_data.dft_transparent_color = 0x00D2D2D2;
+		CTrafficMonitorApp::self->m_taskbar_data.dft_back_color = 0x00D3D2D2;
+		CTrafficMonitorApp::self->m_taskbar_data.dft_transparent_color = 0x00D3D2D2;
 		CTrafficMonitorApp::self->m_taskbar_data.dft_status_bar_color = 0x00A5A5A5;
 		CTrafficMonitorApp::self->m_taskbar_data.dft_text_colors = 0x00000000U;
 		CTrafficMonitorApp::self->m_cfg_data.m_dft_notify_icon = 4;
@@ -812,6 +812,23 @@ void CCommon::SetColorMode(ColorMode mode)
 	default:
 		break;
 	}
+}
+
+void CCommon::TransparentColorConvert(COLORREF& transparent_color)
+{
+	if (transparent_color == 0)
+		return;
+	BYTE r = GetRValue(transparent_color);
+	BYTE g = GetGValue(transparent_color);
+	BYTE b = GetRValue(transparent_color);
+	if (r == g && g == b)
+	{
+		if (b >= 255)
+			b--;
+		else
+			b++;
+	}
+	transparent_color = RGB(r, g, b);
 }
 
 void CCommon::SetDialogFont(CWnd * pDlg, CFont * pFont)
