@@ -820,15 +820,15 @@ void CCommon::TransparentColorConvert(COLORREF& transparent_color)
 		return;
 	BYTE r = GetRValue(transparent_color);
 	BYTE g = GetGValue(transparent_color);
-	BYTE b = GetRValue(transparent_color);
+	BYTE b = GetBValue(transparent_color);
 	if (r == g && g == b)
 	{
 		if (b >= 255)
 			b--;
 		else
 			b++;
+		transparent_color = RGB(r, g, b);
 	}
-	transparent_color = RGB(r, g, b);
 }
 
 void CCommon::SetDialogFont(CWnd * pDlg, CFont * pFont)
