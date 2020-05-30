@@ -100,5 +100,9 @@ using std::ofstream;
     } \
 } while (false)
 
+//定义两个用于作为任务栏透明色的颜色（随便选取了两个不常用的颜色，当需要设置任务栏窗口不透明时使用）
+#define TASKBAR_TRANSPARENT_COLOR1 RGB(52, 28, 41)
+#define TASKBAR_TRANSPARENT_COLOR2 RGB(38, 67, 55)
+
 //如果需要为Windows XP系统编译，请去掉下面一行代码的注释
 //#define COMPILE_FOR_WINXP

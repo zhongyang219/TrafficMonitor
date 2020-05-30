@@ -38,7 +38,7 @@ void CTaskBarSettingsDlg::DrawStaticColor()
 		m_text_color_static.SetFillColor(m_data.text_colors[0]);
 	}
 	m_back_color_static.SetFillColor(m_data.back_color);
-	m_trans_color_static.SetFillColor(m_data.transparent_color);
+	//m_trans_color_static.SetFillColor(m_data.transparent_color);
 	m_status_bar_color_static.SetFillColor(m_data.status_bar_color);
 }
 
@@ -135,6 +135,28 @@ void CTaskBarSettingsDlg::EnableControl()
         pWnd->ShowWindow(exe_path_enable ? SW_SHOW : SW_HIDE);
 }
 
+void CTaskBarSettingsDlg::SetTaskabrTransparent(bool transparent)
+{
+	if (transparent)
+	{
+		//要设置任务栏窗口透明，只需将透明色设置成和背景色一样即可
+		m_data.transparent_color = m_data.back_color;
+	}
+	else
+	{
+		//要设置任务栏窗口不透明，只需将透明色设置成和背景色不一样即可
+		if (m_data.back_color != TASKBAR_TRANSPARENT_COLOR1)
+			m_data.transparent_color = TASKBAR_TRANSPARENT_COLOR1;
+		else
+			m_data.transparent_color = TASKBAR_TRANSPARENT_COLOR2;
+	}
+}
+
+bool CTaskBarSettingsDlg::IsTaskbarTransparent()
+{
+	return (m_data.transparent_color == m_data.back_color);
+}
+
 void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_TEXT_COLOR_STATIC1, m_text_color_static);
@@ -146,7 +168,8 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_FONT_SIZE_EDIT1, m_font_size_edit);
 	DDX_Control(pDX, IDC_DOUBLE_CLICK_COMBO, m_double_click_combo);
 	DDX_Control(pDX, IDC_DIGIT_NUMBER_COMBO, m_digit_number_combo);
-	DDX_Control(pDX, IDC_TRANSPARENT_COLOR_STATIC, m_trans_color_static);
+	//DDX_Control(pDX, IDC_TRANSPARENT_COLOR_STATIC, m_trans_color_static);
+	DDX_Control(pDX, IDC_BACKGROUND_TRANSPARENT_CHECK, m_background_transparent_chk);
 }
 
 
@@ -186,6 +209,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_BROWSE_BUTTON, &CTaskBarSettingsDlg::OnBnClickedBrowseButton)
 	ON_BN_CLICKED(IDC_CM_GRAPH_BAR_RADIO, &CTaskBarSettingsDlg::OnBnClickedCMGraphBarRadio)
 	ON_BN_CLICKED(IDC_CM_GRAPH_PLOT_RADIO, &CTaskBarSettingsDlg::OnBnClickedCMGraphPLOTRadio)
+	ON_BN_CLICKED(IDC_BACKGROUND_TRANSPARENT_CHECK, &CTaskBarSettingsDlg::OnBnClickedBackgroundTransparentCheck)
 END_MESSAGE_MAP()
 
 
@@ -224,16 +248,16 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 
 	m_text_color_static.SetLinkCursor();
 	m_back_color_static.SetLinkCursor();
-	m_trans_color_static.SetLinkCursor();
+	//m_trans_color_static.SetLinkCursor();
 	m_status_bar_color_static.SetLinkCursor();
 	DrawStaticColor();
 
 #ifdef COMPILE_FOR_WINXP
-	m_trans_color_static.EnableWindow(FALSE);
+	m_background_transparent_chk.EnableWindow(FALSE);
 #endif // COMPILE_FOR_WINXP
 
 	if(theApp.m_win_version.IsWindows7())
-		m_trans_color_static.EnableWindow(FALSE);
+		m_background_transparent_chk.EnableWindow(FALSE);
 
 	m_toolTip.Create(this);
 	m_toolTip.SetMaxTipWidth(theApp.DPI(300));
@@ -255,6 +279,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	}
 	((CButton*)GetDlgItem(IDC_HIDE_PERCENTAGE_CHECK))->SetCheck(m_data.hide_percent);
 	((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->SetCheck(m_data.specify_each_item_color);
+	m_background_transparent_chk.SetCheck(IsTaskbarTransparent());
 
 	m_double_click_combo.AddString(CCommon::LoadText(IDS_OPEN_CONNECTION_DETIAL));
 	m_double_click_combo.AddString(CCommon::LoadText(IDS_OPEN_HISTORICAL_TRAFFIC));
@@ -736,4 +761,12 @@ void CTaskBarSettingsDlg::OnBnClickedCMGraphPLOTRadio()
 void CTaskBarSettingsDlg::OnBnClickedCMGraphBarRadio()
 {
 	m_data.cm_graph_type = false;
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedBackgroundTransparentCheck()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	bool checked = (m_background_transparent_chk.GetCheck() != 0);
+	SetTaskabrTransparent(checked);
 }
