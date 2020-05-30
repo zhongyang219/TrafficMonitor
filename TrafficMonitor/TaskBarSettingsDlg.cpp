@@ -545,23 +545,29 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 		CMFCColorDialogEx colorDlg(m_data.back_color, 0, this);
 		if (colorDlg.DoModal() == IDOK)
 		{
+			bool background_transparent = IsTaskbarTransparent();
 			m_data.back_color = colorDlg.GetColor();
 			if (m_data.back_color == m_data.text_colors[0])
 				MessageBox(CCommon::LoadText(IDS_SAME_BACK_TEXT_COLOR_WARNING), NULL, MB_ICONWARNING);
+			if (background_transparent)
+			{
+				//如果当前设置了背景透明，则更改了背景色后同时将透明色设置成和背景色一样的颜色，以保持背景透明
+				m_data.transparent_color = m_data.back_color;
+			}
 			DrawStaticColor();
 		}
 		break;
 	}
-	case IDC_TRANSPARENT_COLOR_STATIC:		//点击“透明色”时
-	{
-		CMFCColorDialogEx colorDlg(m_data.transparent_color, 0, this);
-		if (colorDlg.DoModal() == IDOK)
-		{
-			m_data.transparent_color = colorDlg.GetColor();
-			DrawStaticColor();
-		}
-		break;
-	}
+	//case IDC_TRANSPARENT_COLOR_STATIC:		//点击“透明色”时
+	//{
+	//	CMFCColorDialogEx colorDlg(m_data.transparent_color, 0, this);
+	//	if (colorDlg.DoModal() == IDOK)
+	//	{
+	//		m_data.transparent_color = colorDlg.GetColor();
+	//		DrawStaticColor();
+	//	}
+	//	break;
+	//}
 	case IDC_TEXT_COLOR_STATIC3:		//点击“状态条颜色”时
 	{
 		CMFCColorDialogEx colorDlg(m_data.status_bar_color, 0, this);
