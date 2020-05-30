@@ -4,10 +4,11 @@
 #include "PictureStatic.h"
 #include "CSkinPreviewView.h"
 #include "LinkStatic.h"
+#include "BaseDialog.h"
 
 // CSkinDlg 对话框
 
-class CSkinDlg : public CDialog
+class CSkinDlg : public CBaseDialog
 {
 	DECLARE_DYNAMIC(CSkinDlg)
 
@@ -30,6 +31,7 @@ public:
 	static void LoadSkinLayout(const wstring& cfg_path, LayoutData& layout_data);
 
 protected:
+	virtual CString GetDialogName() const override;
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 protected:
@@ -44,7 +46,6 @@ protected:
 	SkinData m_skin_data;		//皮肤数据
 	CImage m_background_s;		//小预览图背景图
 	CImage m_background_l;		//大预览图背景图
-	CSize m_min_size;		//窗口的最小大小
 
 	void ShowPreview();		//显示皮肤预览
 	void LoadBackImage(const wstring& path, bool small_image);		//载入背景图，path为皮肤所在路径；small_image指定载入小背景图还是大背景图
@@ -55,5 +56,4 @@ public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnCbnSelchangeCombo1();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 };

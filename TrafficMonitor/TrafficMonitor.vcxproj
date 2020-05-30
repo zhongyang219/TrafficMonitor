@@ -194,6 +194,7 @@
   <ItemGroup>
     <ClInclude Include="AboutDlg.h" />
     <ClInclude Include="AdapterCommon.h" />
+    <ClInclude Include="BaseDialog.h" />
     <ClInclude Include="CalendarHelper.h" />
     <ClInclude Include="CMFCColorDialogEx.h" />
     <ClInclude Include="CPUUsage.h" />
@@ -240,6 +241,7 @@
   <ItemGroup>
     <ClCompile Include="AboutDlg.cpp" />
     <ClCompile Include="AdapterCommon.cpp" />
+    <ClCompile Include="BaseDialog.cpp" />
     <ClCompile Include="CalendarHelper.cpp" />
     <ClCompile Include="CMFCColorDialogEx.cpp" />
     <ClCompile Include="CPUUsage.cpp" />

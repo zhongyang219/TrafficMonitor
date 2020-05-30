@@ -9,10 +9,10 @@
 
 // COptionsDlg 对话框
 
-IMPLEMENT_DYNAMIC(COptionsDlg, CDialog)
+IMPLEMENT_DYNAMIC(COptionsDlg, CBaseDialog)
 
 COptionsDlg::COptionsDlg(int tab, CWnd* pParent /*=NULL*/)
-	: CDialog(IDD_OPTIONS_DIALOG, pParent), m_tab_selected{ tab }
+	: CBaseDialog(IDD_OPTIONS_DIALOG, pParent), m_tab_selected{ tab }
 {
 
 }
@@ -21,15 +21,19 @@ COptionsDlg::~COptionsDlg()
 {
 }
 
+CString COptionsDlg::GetDialogName() const
+{
+	return _T("OptionsDlg");
+}
+
 void COptionsDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CBaseDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_TAB1, m_tab);
 }
 
 
-BEGIN_MESSAGE_MAP(COptionsDlg, CDialog)
-    ON_WM_GETMINMAXINFO()
+BEGIN_MESSAGE_MAP(COptionsDlg, CBaseDialog)
     ON_WM_SIZE()
 END_MESSAGE_MAP()
 
@@ -39,17 +43,11 @@ END_MESSAGE_MAP()
 
 BOOL COptionsDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	CBaseDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
 	SetWindowText(CCommon::LoadText(IDS_TITLE_OPTION));
     SetIcon(AfxGetApp()->LoadIcon(IDR_MAINFRAME), FALSE);		// 设置小图标
-
-    //获取初始时窗口的大小
-    CRect rect;
-    GetWindowRect(rect);
-    m_min_size.cx = rect.Width();
-    m_min_size.cy = rect.Height();
 
 	//创建子对话框
 	m_tab1_dlg.Create(IDD_MAIN_WND_SETTINGS_DIALOG, &m_tab);
@@ -97,24 +95,13 @@ void COptionsDlg::OnOK()
 	m_tab2_dlg.OnOK();
 	m_tab3_dlg.OnOK();
 
-	CDialog::OnOK();
-}
-
-
-void COptionsDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
-{
-    // TODO: 在此添加消息处理程序代码和/或调用默认值
-    //限制窗口最小大小
-    lpMMI->ptMinTrackSize.x = m_min_size.cx;		//设置最小宽度
-    lpMMI->ptMinTrackSize.y = m_min_size.cy;		//设置最小高度
-
-    CDialog::OnGetMinMaxInfo(lpMMI);
+	CBaseDialog::OnOK();
 }
 
 
 void COptionsDlg::OnSize(UINT nType, int cx, int cy)
 {
-    CDialog::OnSize(nType, cx, cy);
+    CBaseDialog::OnSize(nType, cx, cy);
 
     // TODO: 在此处添加消息处理程序代码
     if (nType != SIZE_MINIMIZED)

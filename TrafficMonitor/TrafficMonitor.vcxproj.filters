@@ -121,6 +121,9 @@
     <Filter Include="源文件和头文件\公共的类\CPUUsage">
       <UniqueIdentifier>{926ebc77-cc7f-431a-896d-3a4019b41991}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\对话框类\BaseDialog">
+      <UniqueIdentifier>{6f91f987-8834-4e89-b14e-d3ae15040848}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -261,6 +264,9 @@
     <ClInclude Include="CPUUsage.h">
       <Filter>源文件和头文件\公共的类\CPUUsage</Filter>
     </ClInclude>
+    <ClInclude Include="BaseDialog.h">
+      <Filter>源文件和头文件\对话框类\BaseDialog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -385,6 +391,9 @@
     </ClCompile>
     <ClCompile Include="CPUUsage.cpp">
       <Filter>源文件和头文件\公共的类\CPUUsage</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseDialog.cpp">
+      <Filter>源文件和头文件\对话框类\BaseDialog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
