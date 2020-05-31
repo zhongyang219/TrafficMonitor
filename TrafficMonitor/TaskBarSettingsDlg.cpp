@@ -6,6 +6,7 @@
 #include "TaskBarSettingsDlg.h"
 #include "afxdialogex.h"
 #include "CMFCColorDialogEx.h"
+#include "CAutoAdaptSettingsDlg.h"
 
 
 // CTaskBarSettingsDlg 对话框
@@ -59,71 +60,17 @@ void CTaskBarSettingsDlg::IniUnitCombo()
 	m_unit_combo.SetCurSel(static_cast<int>(m_data.speed_unit));
 }
 
-void CTaskBarSettingsDlg::LoadConfig()
-{
-    CIniHelper ini{ theApp.m_config_path };
-    for (int i = 0; i < TASKBAR_DEFAULT_STYLE_NUM; i++)
-    {
-        wchar_t buff[64];
-        swprintf_s(buff, L"default%d_", i + 1);
-        wstring key_name = buff;
-        ini.GetIntArray(L"taskbar_default_style", (key_name + L"text_color").c_str(), (int*)m_default_style[i].text_colors, TASKBAR_COLOR_NUM, RGB(255, 255, 255));
-        m_default_style[i].back_color = ini.GetInt(L"taskbar_default_style", (key_name + L"back_color").c_str(), 0);
-        m_default_style[i].transparent_color = ini.GetInt(L"taskbar_default_style", (key_name + L"transparent_color").c_str(), 0);
-        m_default_style[i].status_bar_color = ini.GetInt(L"taskbar_default_style", (key_name + L"status_bar_color").c_str(), 0x005A5A5A);
-        m_default_style[i].specify_each_item_color = ini.GetBool(L"taskbar_default_style", (key_name + L"specify_each_item_color").c_str(), false);
-    }
-}
-
-void CTaskBarSettingsDlg::SaveConfig() const
-{
-    CIniHelper ini{ theApp.m_config_path };
-    for (int i = 0; i < TASKBAR_DEFAULT_STYLE_NUM; i++)
-    {
-        wchar_t buff[64];
-        swprintf_s(buff, L"default%d_", i + 1);
-        wstring key_name = buff;
-        ini.WriteIntArray(L"taskbar_default_style", (key_name + L"text_color").c_str(), (int*)m_default_style[i].text_colors, TASKBAR_COLOR_NUM);
-        ini.WriteInt(L"taskbar_default_style", (key_name + L"back_color").c_str(), m_default_style[i].back_color);
-        ini.WriteInt(L"taskbar_default_style", (key_name + L"transparent_color").c_str(), m_default_style[i].transparent_color);
-        ini.WriteInt(L"taskbar_default_style", (key_name + L"status_bar_color").c_str(), m_default_style[i].status_bar_color);
-        ini.WriteBool(L"taskbar_default_style", (key_name + L"specify_each_item_color").c_str(), m_default_style[i].specify_each_item_color);
-    }
-    ini.Save();
-}
-
 void CTaskBarSettingsDlg::ApplyDefaultStyle(int index)
 {
-    if (index < 0 || index >= TASKBAR_DEFAULT_STYLE_NUM)
-        return;
-
-    for (int i{}; i < TASKBAR_COLOR_NUM; i++)
-        m_data.text_colors[i] = m_default_style[index].text_colors[i];
-    m_data.back_color = m_default_style[index].back_color;
-    m_data.transparent_color = m_default_style[index].transparent_color;
-    m_data.status_bar_color = m_default_style[index].status_bar_color;
-    m_data.specify_each_item_color = m_default_style[index].specify_each_item_color;
-	if (IsTaskbarTransparent())
-	{
-		CCommon::TransparentColorConvert(m_data.back_color);
-		CCommon::TransparentColorConvert(m_data.transparent_color);
-	}
-    DrawStaticColor();
+	theApp.m_taskbar_default_style.ApplyDefaultStyle(index, m_data);
+	DrawStaticColor();
     ((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->SetCheck(m_data.specify_each_item_color);
 	m_background_transparent_chk.SetCheck(IsTaskbarTransparent());
 }
 
 void CTaskBarSettingsDlg::ModifyDefaultStyle(int index)
 {
-    if (index < 0 || index >= TASKBAR_DEFAULT_STYLE_NUM)
-        return;
-
-    for (int i{}; i < TASKBAR_COLOR_NUM; i++)
-        m_default_style[index].text_colors[i] = m_data.text_colors[i];
-    m_default_style[index].back_color = m_data.back_color;
-    m_default_style[index].transparent_color = m_data.transparent_color;
-    m_default_style[index].status_bar_color = m_data.status_bar_color;
-    m_default_style[index].specify_each_item_color = m_data.specify_each_item_color;
+	theApp.m_taskbar_default_style.ModifyDefaultStyle(index, m_data);
 }
 
 void CTaskBarSettingsDlg::EnableControl()
@@ -133,35 +80,28 @@ void CTaskBarSettingsDlg::EnableControl()
     pWnd = GetDlgItem(IDC_EXE_PATH_STATIC);
     if (pWnd != nullptr)
         pWnd->ShowWindow(exe_path_enable ? SW_SHOW : SW_HIDE);
+
     pWnd = GetDlgItem(IDC_EXE_PATH_EDIT);
     if (pWnd != nullptr)
         pWnd->ShowWindow(exe_path_enable ? SW_SHOW : SW_HIDE);
+
     pWnd = GetDlgItem(IDC_BROWSE_BUTTON);
     if (pWnd != nullptr)
         pWnd->ShowWindow(exe_path_enable ? SW_SHOW : SW_HIDE);
+
+	pWnd = GetDlgItem(IDC_AUTO_ADAPT_SETTINGS_BUTTON);
+	if (pWnd != nullptr)
+		pWnd->EnableWindow(m_data.auto_adapt_light_theme);
 }
 
 void CTaskBarSettingsDlg::SetTaskabrTransparent(bool transparent)
 {
-	if (transparent)
-	{
-		//要设置任务栏窗口透明，只需将透明色设置成和背景色一样即可
-		CCommon::TransparentColorConvert(m_data.back_color);
-		m_data.transparent_color = m_data.back_color;
-	}
-	else
-	{
-		//要设置任务栏窗口不透明，只需将透明色设置成和背景色不一样即可
-		if (m_data.back_color != TASKBAR_TRANSPARENT_COLOR1)
-			m_data.transparent_color = TASKBAR_TRANSPARENT_COLOR1;
-		else
-			m_data.transparent_color = TASKBAR_TRANSPARENT_COLOR2;
-	}
+	CTaskbarDefaultStyle::SetTaskabrTransparent(transparent, m_data);
 }
 
 bool CTaskBarSettingsDlg::IsTaskbarTransparent()
 {
-	return (m_data.transparent_color == m_data.back_color);
+	return CTaskbarDefaultStyle::IsTaskbarTransparent(m_data);
 }
 
 void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
@@ -177,6 +117,7 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_DIGIT_NUMBER_COMBO, m_digit_number_combo);
 	//DDX_Control(pDX, IDC_TRANSPARENT_COLOR_STATIC, m_trans_color_static);
 	DDX_Control(pDX, IDC_BACKGROUND_TRANSPARENT_CHECK, m_background_transparent_chk);
+	DDX_Control(pDX, IDC_AUTO_ADAPT_LIGHT_THEME_CHECK, m_atuo_adapt_light_theme_chk);
 }
 
 
@@ -217,6 +158,8 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_CM_GRAPH_BAR_RADIO, &CTaskBarSettingsDlg::OnBnClickedCMGraphBarRadio)
 	ON_BN_CLICKED(IDC_CM_GRAPH_PLOT_RADIO, &CTaskBarSettingsDlg::OnBnClickedCMGraphPLOTRadio)
 	ON_BN_CLICKED(IDC_BACKGROUND_TRANSPARENT_CHECK, &CTaskBarSettingsDlg::OnBnClickedBackgroundTransparentCheck)
+	ON_BN_CLICKED(IDC_AUTO_ADAPT_SETTINGS_BUTTON, &CTaskBarSettingsDlg::OnBnClickedAutoAdaptSettingsButton)
+	ON_BN_CLICKED(IDC_AUTO_ADAPT_LIGHT_THEME_CHECK, &CTaskBarSettingsDlg::OnBnClickedAutoAdaptLightThemeCheck)
 END_MESSAGE_MAP()
 
 
@@ -229,7 +172,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 
 	// TODO:  在此添加额外的初始化
 
-    LoadConfig();
+	theApp.m_taskbar_default_style.LoadConfig();
 
 	//初始化各控件状态
 	SetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font.name);
@@ -263,12 +206,13 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	m_background_transparent_chk.EnableWindow(FALSE);
 #endif // COMPILE_FOR_WINXP
 
-	if(theApp.m_win_version.IsWindows7())
+	if (theApp.m_win_version.IsWindows7())
 		m_background_transparent_chk.EnableWindow(FALSE);
 
 	m_toolTip.Create(this);
 	m_toolTip.SetMaxTipWidth(theApp.DPI(300));
 	m_toolTip.AddTool(GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK), CCommon::LoadText(IDS_SPEED_SHORT_MODE_TIP));
+	m_toolTip.AddTool(&m_atuo_adapt_light_theme_chk, CCommon::LoadText(IDS_AUTO_ADAPT_TIP_INFO));
 
 	if(m_data.unit_byte)
 		((CButton*)GetDlgItem(IDC_UNIT_BYTE_RADIO))->SetCheck(TRUE);
@@ -287,6 +231,13 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	((CButton*)GetDlgItem(IDC_HIDE_PERCENTAGE_CHECK))->SetCheck(m_data.hide_percent);
 	((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->SetCheck(m_data.specify_each_item_color);
 	m_background_transparent_chk.SetCheck(IsTaskbarTransparent());
+	m_atuo_adapt_light_theme_chk.SetCheck(m_data.auto_adapt_light_theme);
+
+	if (theApp.m_win_version.GetMajorVersion() < 10)
+	{
+		m_data.auto_adapt_light_theme = false;
+		m_atuo_adapt_light_theme_chk.EnableWindow(FALSE);
+	}
 
 	m_double_click_combo.AddString(CCommon::LoadText(IDS_OPEN_CONNECTION_DETIAL));
 	m_double_click_combo.AddString(CCommon::LoadText(IDS_OPEN_HISTORICAL_TRAFFIC));
@@ -718,12 +669,8 @@ void CTaskBarSettingsDlg::OnModifyDefaultStyle3()
 void CTaskBarSettingsDlg::OnLightModeStyle()
 {
     // TODO: 在此添加命令处理程序代码
-    for (int i{}; i < TASKBAR_COLOR_NUM; i++)
-        m_data.text_colors[i] = RGB(0, 0, 0);
-    m_data.back_color = RGB(210, 210, 211);
-    m_data.transparent_color = RGB(210, 210, 211);
-    m_data.status_bar_color = RGB(165, 165, 165);
-    DrawStaticColor();
+	CTaskbarDefaultStyle::ApplyDefaultLightStyle(m_data);
+	DrawStaticColor();
 	m_background_transparent_chk.SetCheck(IsTaskbarTransparent());
 }
 
@@ -752,7 +699,7 @@ void CTaskBarSettingsDlg::OnDestroy()
     CTabDlg::OnDestroy();
 
     // TODO: 在此处添加消息处理程序代码
-    SaveConfig();
+	theApp.m_taskbar_default_style.SaveConfig();
 }
 
 
@@ -784,4 +731,20 @@ void CTaskBarSettingsDlg::OnBnClickedBackgroundTransparentCheck()
 	// TODO: 在此添加控件通知处理程序代码
 	bool checked = (m_background_transparent_chk.GetCheck() != 0);
 	SetTaskabrTransparent(checked);
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedAutoAdaptSettingsButton()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CAutoAdaptSettingsDlg dlg(m_data);
+	dlg.DoModal();
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedAutoAdaptLightThemeCheck()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_data.auto_adapt_light_theme = (m_atuo_adapt_light_theme_chk.GetCheck() != 0);
+	EnableControl();
 }

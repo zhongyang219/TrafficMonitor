@@ -124,6 +124,12 @@
     <Filter Include="源文件和头文件\对话框类\BaseDialog">
       <UniqueIdentifier>{6f91f987-8834-4e89-b14e-d3ae15040848}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\TaskbarDefaultStyle">
+      <UniqueIdentifier>{d2389f34-94a7-409a-97d0-47890e629c20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\对话框类\选项设置对话框\AutoAdaptSettingsDlg">
+      <UniqueIdentifier>{2393c651-03a5-467c-a927-a3e99fdc48c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -267,6 +273,12 @@
     <ClInclude Include="BaseDialog.h">
       <Filter>源文件和头文件\对话框类\BaseDialog</Filter>
     </ClInclude>
+    <ClInclude Include="TaskbarDefaultStyle.h">
+      <Filter>源文件和头文件\公共的类\TaskbarDefaultStyle</Filter>
+    </ClInclude>
+    <ClInclude Include="CAutoAdaptSettingsDlg.h">
+      <Filter>源文件和头文件\对话框类\选项设置对话框\AutoAdaptSettingsDlg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -394,6 +406,12 @@
     </ClCompile>
     <ClCompile Include="BaseDialog.cpp">
       <Filter>源文件和头文件\对话框类\BaseDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskbarDefaultStyle.cpp">
+      <Filter>源文件和头文件\公共的类\TaskbarDefaultStyle</Filter>
+    </ClCompile>
+    <ClCompile Include="CAutoAdaptSettingsDlg.cpp">
+      <Filter>源文件和头文件\对话框类\选项设置对话框\AutoAdaptSettingsDlg</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

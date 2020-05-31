@@ -7,21 +7,9 @@
 
 // CTaskBarSettingsDlg 对话框
 
-#define TASKBAR_DEFAULT_STYLE_NUM 3
-
 class CTaskBarSettingsDlg : public CTabDlg
 {
 	DECLARE_DYNAMIC(CTaskBarSettingsDlg)
-
-public:
-    struct TaskBarStyleData
-    {
-        COLORREF text_colors[TASKBAR_COLOR_NUM]{};
-        COLORREF back_color{};
-        COLORREF transparent_color{};
-        COLORREF status_bar_color{};
-        bool specify_each_item_color{};
-    };
 
 public:
 	CTaskBarSettingsDlg(CWnd* pParent = NULL);   // 标准构造函数
@@ -29,8 +17,6 @@ public:
 
 	//选项设置数据
 	TaskBarSettingData m_data;
-
-    TaskBarStyleData m_default_style[TASKBAR_DEFAULT_STYLE_NUM];    //预设样式
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
@@ -51,13 +37,12 @@ protected:
 	CComboBox m_digit_number_combo;
     CMenu m_default_style_menu;
 	CButton m_background_transparent_chk;
+	CButton m_atuo_adapt_light_theme_chk;
 
 protected:
 	void DrawStaticColor();
 	void IniUnitCombo();
 
-    void LoadConfig();
-    void SaveConfig() const;
     void ApplyDefaultStyle(int index);      //应用一个预设方案
     void ModifyDefaultStyle(int index);     //将当前颜色设置保存到一个预设方案
 
@@ -111,4 +96,6 @@ public:
 	afx_msg void OnBnClickedCMGraphBarRadio();
 	afx_msg void OnBnClickedCMGraphPLOTRadio();
 	afx_msg void OnBnClickedBackgroundTransparentCheck();
+	afx_msg void OnBnClickedAutoAdaptSettingsButton();
+	afx_msg void OnBnClickedAutoAdaptLightThemeCheck();
 };

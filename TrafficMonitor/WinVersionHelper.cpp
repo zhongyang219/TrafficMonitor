@@ -23,14 +23,7 @@ CWinVersionHelper::CWinVersionHelper()
 	m_minor_version = dwMinorVer;
 	m_build_number = dwBuildNumber;
 
-	HKEY hKey;
-	DWORD dwThemeData(0);
-	LONG lRes = RegOpenKeyExW(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", 0, KEY_READ, &hKey);
-	if (lRes == ERROR_SUCCESS) {
-		GetDWORDRegKeyData(hKey, L"SystemUsesLightTheme", dwThemeData);
-		if (dwThemeData == 1)
-			m_light_theme = true;
-	}
+	CheckWindows10LightTheme();
 }
 
 
@@ -62,6 +55,28 @@ bool CWinVersionHelper::IsWindows8Or8point1() const
 bool CWinVersionHelper::IsWindows10LightTheme() const
 {
 	return m_light_theme;
+}
+
+void CWinVersionHelper::CheckWindows10LightTheme()
+{
+	if (m_major_version >= 10)
+	{
+		HKEY hKey;
+		DWORD dwThemeData(0);
+		LONG lRes = RegOpenKeyExW(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", 0, KEY_READ, &hKey);
+		if (lRes == ERROR_SUCCESS) {
+			GetDWORDRegKeyData(hKey, L"SystemUsesLightTheme", dwThemeData);
+			m_light_theme = (dwThemeData != 0);
+		}
+		else
+		{
+			m_light_theme = false;
+		}
+	}
+	else
+	{
+		m_light_theme = false;
+	}
 }
 
 LONG CWinVersionHelper::GetDWORDRegKeyData(HKEY hKey, const wstring& strValueName, DWORD& dwValueData)

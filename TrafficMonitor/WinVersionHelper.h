@@ -10,6 +10,8 @@ public:
 	bool IsWindows8Or8point1() const;			//判断Windows版本是否为Windows8或Windows8.1
 	bool IsWindows10LightTheme() const;				//判断Windows是否为浅色主题
 
+	void CheckWindows10LightTheme();
+
 	LONG GetDWORDRegKeyData(HKEY hKey, const wstring& strValueName, DWORD& dwValueData);
 
 	int GetMajorVersion() const { return m_major_version; }

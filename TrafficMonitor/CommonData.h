@@ -187,7 +187,12 @@ struct TaskBarSettingData : public PublicSettingData
 	int dft_back_color = 0;							//默认背景颜色
 	int dft_transparent_color = 0;					//默认透明色
 	int dft_status_bar_color = 0x005A5A5A;			//默认CPU/内存 状态条颜色
-	int dft_text_colors = 0x00ffffffU;				//默认文字颜色（依次为“上传”、“下载”、“CPU”、“内存”的标签和数据颜色）
+	int dft_text_colors = 0x00ffffffU;				//默认文字颜色
+
+	bool auto_adapt_light_theme{ true };			//是否自动适应浅色主题
+	int dark_default_style{ 0 };					//深色主题时使用的预设方案
+	int light_default_style{ -1 };					//浅色主题时使用的预设方案
+
 	bool value_right_align{ false };	//数值是否右对齐
 	int digits_number{ 4 };				//数据位数
 	bool horizontal_arrange{ true };	//水平排列

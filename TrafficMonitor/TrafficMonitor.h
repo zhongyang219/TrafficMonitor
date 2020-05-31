@@ -13,6 +13,7 @@
 #include "IniHelper.h"
 #include "WinVersionHelper.h"
 #include "SimpleXML.h"
+#include "TaskbarDefaultStyle.h"
 
 // CTrafficMonitorApp: 
 // 有关此类的实现，请参阅 TrafficMonitor.cpp
@@ -63,6 +64,8 @@ public:
 	CWinVersionHelper m_win_version;		//当前Windows的版本
 
 	HICON m_notify_icons[MAX_NOTIFY_ICON];
+
+	CTaskbarDefaultStyle m_taskbar_default_style;
 
 public:
 	CTrafficMonitorApp();

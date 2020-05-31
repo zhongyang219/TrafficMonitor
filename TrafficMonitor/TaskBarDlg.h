@@ -29,6 +29,7 @@ public:
 	void TryDrawGraph(CDrawCommon& drawer, const CRect &value_rect, CList<int,int> &list);		// 绘制CPU/内存动态图
 
 	bool AdjustWindowPos();	//设置窗口在任务栏中的位置
+	void ApplyWindowTransparentColor();
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME

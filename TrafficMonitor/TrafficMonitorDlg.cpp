@@ -1254,6 +1254,34 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			last_today_traffic = today_traffic;
 		}
 
+		theApp.m_win_version.CheckWindows10LightTheme();		//每隔1秒钟检查一下当前系统是否为白色主题
+
+		//根据当前Win10颜色模式自动切换任务栏颜色
+		bool light_mode = theApp.m_win_version.IsWindows10LightTheme();
+		static bool last_light_mode{ light_mode };
+		if (last_light_mode != light_mode)
+		{
+			last_light_mode = light_mode;
+			bool restart_taskbar_dlg{ false };
+			if (theApp.m_taskbar_data.auto_adapt_light_theme)
+			{
+				int style_index = theApp.m_win_version.IsWindows10LightTheme() ? theApp.m_taskbar_data.light_default_style : theApp.m_taskbar_data.dark_default_style;
+				theApp.m_taskbar_default_style.ApplyDefaultStyle(style_index, theApp.m_taskbar_data);
+				restart_taskbar_dlg = true;
+			}
+			if (!CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data))
+			{
+				CTaskbarDefaultStyle::SetTaskabrTransparent(false, theApp.m_taskbar_data);
+				restart_taskbar_dlg = true;
+			}
+			if(restart_taskbar_dlg && IsTaskbarWndValid())
+			{
+				//m_tBarDlg->ApplyWindowTransparentColor();
+				CloseTaskBarWnd();
+				OpenTaskBarWnd();
+			}
+		}
+
 		UpdateNotifyIconTip();
 
 		m_timer_cnt++;

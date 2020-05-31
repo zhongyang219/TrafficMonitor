@@ -348,6 +348,21 @@ bool CTaskBarDlg::AdjustWindowPos()
 	return true;
 }
 
+void CTaskBarDlg::ApplyWindowTransparentColor()
+{
+#ifndef COMPILE_FOR_WINXP
+	if (theApp.m_taskbar_data.transparent_color != 0 && theApp.m_taksbar_transparent_color_enable)
+	{
+		SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
+		SetLayeredWindowAttributes(theApp.m_taskbar_data.transparent_color, 0, LWA_COLORKEY);
+	}
+	else
+	{
+		SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) & ~WS_EX_LAYERED);
+	}
+#endif // !COMPILE_FOR_WINXP
+}
+
 
 bool CTaskBarDlg::IsTaskbarOnTopOrBottom()
 {
@@ -541,13 +556,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 	m_hMin = ::FindWindowEx(m_hBar, 0, L"MSTaskSwWClass", NULL);	//寻找最小化窗口的句柄
 
 	//设置窗口透明色
-#ifndef COMPILE_FOR_WINXP
-	if(theApp.m_taskbar_data.transparent_color != 0 && theApp.m_taksbar_transparent_color_enable)
-	{
-		SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
-		SetLayeredWindowAttributes(theApp.m_taskbar_data.transparent_color, 0, LWA_COLORKEY);
-	}
-#endif // !COMPILE_FOR_WINXP
+	ApplyWindowTransparentColor();
 
 	::GetWindowRect(m_hMin, m_rcMin);	//获得最小化窗口的区域
 	::GetWindowRect(m_hBar, m_rcBar);	//获得二级容器的区域

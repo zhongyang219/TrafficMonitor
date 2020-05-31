@@ -196,6 +196,7 @@
     <ClInclude Include="AdapterCommon.h" />
     <ClInclude Include="BaseDialog.h" />
     <ClInclude Include="CalendarHelper.h" />
+    <ClInclude Include="CAutoAdaptSettingsDlg.h" />
     <ClInclude Include="CMFCColorDialogEx.h" />
     <ClInclude Include="CPUUsage.h" />
     <ClInclude Include="crashtool.h" />
@@ -231,6 +232,7 @@
     <ClInclude Include="TabDlg.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TaskbarColorDlg.h" />
+    <ClInclude Include="TaskbarDefaultStyle.h" />
     <ClInclude Include="TaskBarDlg.h" />
     <ClInclude Include="TaskBarSettingsDlg.h" />
     <ClInclude Include="TrafficMonitor.h" />
@@ -243,6 +245,7 @@
     <ClCompile Include="AdapterCommon.cpp" />
     <ClCompile Include="BaseDialog.cpp" />
     <ClCompile Include="CalendarHelper.cpp" />
+    <ClCompile Include="CAutoAdaptSettingsDlg.cpp" />
     <ClCompile Include="CMFCColorDialogEx.cpp" />
     <ClCompile Include="CPUUsage.cpp" />
     <ClCompile Include="crashtool.cpp" />
@@ -280,6 +283,7 @@
     </ClCompile>
     <ClCompile Include="TabDlg.cpp" />
     <ClCompile Include="TaskbarColorDlg.cpp" />
+    <ClCompile Include="TaskbarDefaultStyle.cpp" />
     <ClCompile Include="TaskBarDlg.cpp" />
     <ClCompile Include="TaskBarSettingsDlg.cpp" />
     <ClCompile Include="TrafficMonitor.cpp" />
