@@ -131,9 +131,9 @@ public:
 	//设置颜色模式
 	static void SetColorMode(ColorMode mode);
 
-	//此函数的作用是判断一个颜色是否为灰色，如果是则转换成不是灰色的颜色，这里是将颜色的B值加1（如果B==255，则减1）
-	//经过测试发现，当透明色为灰色时，会出现右击任务栏窗口时无法弹出右键菜单，而是弹出系统任务栏右键菜单的问题
-	//为了解决这个问题，如果要设置的透明色为灰色时，则将颜色中B的值加1
+	//经过测试发现，似乎当透明色的R和B值相等时，会出现右击任务栏窗口时无法弹出右键菜单，而是弹出系统任务栏右键菜单的问题
+	//为了解决这个问题，需要将颜色值进行转换
+	//此函数的作用是判断一个颜色的R和B值是否相等，如果是则将颜色的B值加1（如果B==255，则减1）
 	static void TransparentColorConvert(COLORREF& transparent_color);
 
 	static void SetDialogFont(CWnd* pDlg, CFont* pFont);

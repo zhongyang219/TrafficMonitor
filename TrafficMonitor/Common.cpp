@@ -821,7 +821,7 @@ void CCommon::TransparentColorConvert(COLORREF& transparent_color)
 	BYTE r = GetRValue(transparent_color);
 	BYTE g = GetGValue(transparent_color);
 	BYTE b = GetBValue(transparent_color);
-	if (r == g && g == b)
+	if (r == b)
 	{
 		if (b >= 255)
 			b--;
