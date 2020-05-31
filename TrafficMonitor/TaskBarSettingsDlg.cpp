@@ -146,6 +146,7 @@ void CTaskBarSettingsDlg::SetTaskabrTransparent(bool transparent)
 	if (transparent)
 	{
 		//要设置任务栏窗口透明，只需将透明色设置成和背景色一样即可
+		CCommon::TransparentColorConvert(m_data.back_color);
 		m_data.transparent_color = m_data.back_color;
 	}
 	else
