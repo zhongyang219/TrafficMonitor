@@ -449,6 +449,9 @@ void CTaskBarSettingsDlg::OnOK()
 	//获取数据位数的设置
 	m_data.digits_number = m_digit_number_combo.GetCurSel() + 3;
 
+	bool is_taskbar_transparent_checked = (m_background_transparent_chk.GetCheck() != 0);
+	SetTaskabrTransparent(is_taskbar_transparent_checked);
+
 	CTabDlg::OnOK();
 }
 
