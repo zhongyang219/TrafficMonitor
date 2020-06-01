@@ -44,7 +44,7 @@ END_MESSAGE_MAP()
 
 void CTaskBarDlg::ShowInfo(CDC* pDC)
 {
-	if (this->m_hWnd == NULL || pDC == nullptr) return;
+	if (this->GetSafeHwnd() == NULL || pDC == nullptr || !IsWindow(this->GetSafeHwnd())) return;
 	CString str;
 	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data);
 	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data);
@@ -265,7 +265,7 @@ void CTaskBarDlg::TryDrawStatusBar(CDrawCommon& drawer, const CRect& rect_bar, i
 
 bool CTaskBarDlg::AdjustWindowPos()
 {
-	if (this->m_hWnd == NULL)
+	if (this->GetSafeHwnd() == NULL || !IsWindow(this->GetSafeHwnd()))
 		return false;
 	CRect rcMin, rcBar;
 	::GetWindowRect(m_hMin, rcMin);	//获得最小化窗口的区域
