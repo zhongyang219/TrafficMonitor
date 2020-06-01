@@ -92,23 +92,33 @@ void CTaskbarDefaultStyle::ModifyDefaultStyle(int index, TaskBarSettingData & da
 
 bool CTaskbarDefaultStyle::IsTaskbarTransparent(const TaskBarSettingData& data)
 {
-	return (data.transparent_color == data.back_color);
+	if (theApp.m_win_version.IsWindows10LightTheme())
+		return (data.transparent_color == data.back_color);
+	else
+		return data.transparent_color == 0;
 }
 
 void CTaskbarDefaultStyle::SetTaskabrTransparent(bool transparent, TaskBarSettingData& data)
 {
 	if (transparent)
 	{
-		//要设置任务栏窗口透明，只需将透明色设置成和背景色一样即可
-		CCommon::TransparentColorConvert(data.back_color);
-		data.transparent_color = data.back_color;
+		if (theApp.m_win_version.IsWindows10LightTheme())
+		{
+			//浅色模式下要设置任务栏窗口透明，只需将透明色设置成和背景色一样即可
+			CCommon::TransparentColorConvert(data.back_color);
+			data.transparent_color = data.back_color;
+		}
+		else
+		{
+			//深色模式下，背景色透明将透明色设置成黑色
+			data.transparent_color = 0;
+		}
 	}
 	else
 	{
 		//要设置任务栏窗口不透明，只需将透明色设置成和背景色不一样即可
-		COLORREF color1 = (theApp.m_win_version.IsWindows10LightTheme() ? TASKBAR_TRANSPARENT_COLOR1 : 0);
-		if (data.back_color != color1)
-			data.transparent_color = color1;
+		if (data.back_color != TASKBAR_TRANSPARENT_COLOR1)
+			data.transparent_color = TASKBAR_TRANSPARENT_COLOR1;
 		else
 			data.transparent_color = TASKBAR_TRANSPARENT_COLOR2;
 	}
