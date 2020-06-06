@@ -45,8 +45,9 @@ protected:
 	CRect m_rcBar;		//初始状态时任务栏窗口的矩形区域
 	CRect m_rcMin;		//初始状态时最小化窗口的矩形区域
 	CRect m_rect;		//当前窗口的矩形区域
-	int m_window_width;		//窗口宽度
-	int m_window_width_s;	//不显示CPU和内存利用率时的窗口宽度
+	int m_window_width_full;		//显示所有信息时窗口宽度
+	int m_window_width_net_speed;	//只显示网速时的窗口宽度
+	int m_window_width_cpu_memory;	//只显示CPU和内存利用率时的窗口宽度
 	int m_window_height;
 	int m_up_lable_width;	//上传标签的宽度
 	int m_down_lable_width;	//下载标签的宽度
@@ -77,6 +78,9 @@ protected:
 
 	void AddHisToList(CList<int,int> &list, int current_usage_percent);		//将当前利用率数值添加进链表
 
+	int GetWindowWidth();
+	int GetWindowHeight();
+
 public:
 	void SetTextFont();
 	void ApplySettings();
@@ -87,6 +91,13 @@ public:
 
 	bool GetCannotInsertToTaskBar() const { return m_connot_insert_to_task_bar; }
 	int GetErrorCode() const { return m_error_code; }
+
+	static bool IsShowCpuMemory();
+	static bool IsShowNetSpeed();
+	static bool IsShowUp();
+	static bool IsShowDown();
+	static bool IsShowCpu();
+	static bool IsShowMemory();
 
 	DECLARE_MESSAGE_MAP()
 

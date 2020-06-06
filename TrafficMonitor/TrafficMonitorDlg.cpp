@@ -91,6 +91,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialogEx)
 	ON_UPDATE_COMMAND_UI(ID_ALOW_OUT_OF_BORDER, &CTrafficMonitorDlg::OnUpdateAlowOutOfBorder)
 	ON_COMMAND(ID_CHECK_UPDATE, &CTrafficMonitorDlg::OnCheckUpdate)
 	ON_MESSAGE(WM_TASKBAR_MENU_POPED_UP, &CTrafficMonitorDlg::OnTaskbarMenuPopedUp)
+	ON_COMMAND(ID_SHOW_NET_SPEED, &CTrafficMonitorDlg::OnShowNetSpeed)
 END_MESSAGE_MAP()
 
 
@@ -1783,7 +1784,18 @@ void CTrafficMonitorDlg::OnShowCpuMemory2()
 	// TODO: 在此添加命令处理程序代码
 	if (m_tBarDlg != nullptr)
 	{
-		theApp.m_cfg_data.m_tbar_show_cpu_memory = !theApp.m_cfg_data.m_tbar_show_cpu_memory;
+		bool show_cpu_memory = ((theApp.m_cfg_data.m_tbar_display_item & TDI_CPU) || (theApp.m_cfg_data.m_tbar_display_item & TDI_MEMORY));
+		if (show_cpu_memory)
+		{
+			theApp.m_cfg_data.m_tbar_display_item &= ~TDI_CPU;
+			theApp.m_cfg_data.m_tbar_display_item &= ~TDI_MEMORY;
+		}
+		else
+		{
+			theApp.m_cfg_data.m_tbar_display_item |= TDI_CPU;
+			theApp.m_cfg_data.m_tbar_display_item |= TDI_MEMORY;
+		}
+		//theApp.m_cfg_data.m_tbar_show_cpu_memory = !theApp.m_cfg_data.m_tbar_show_cpu_memory;
 		//切换显示CPU和内存利用率时，删除任务栏窗口，再重新显示
 		CloseTaskBarWnd();
 		OpenTaskBarWnd();
@@ -2088,4 +2100,27 @@ afx_msg LRESULT CTrafficMonitorDlg::OnTaskbarMenuPopedUp(WPARAM wParam, LPARAM l
 	CMenu* select_connection_menu = m_tBarDlg->m_menu.GetSubMenu(0)->GetSubMenu(0);
 	SetConnectionMenuState(select_connection_menu);
 	return 0;
+}
+
+
+//任务栏窗口切换显示网速时的处理
+void CTrafficMonitorDlg::OnShowNetSpeed()
+{
+	// TODO: 在此添加命令处理程序代码
+	if (m_tBarDlg != nullptr)
+	{
+		bool show_net_speed = ((theApp.m_cfg_data.m_tbar_display_item & TDI_UP) || (theApp.m_cfg_data.m_tbar_display_item & TDI_DOWN));
+		if (show_net_speed)
+		{
+			theApp.m_cfg_data.m_tbar_display_item &= ~TDI_UP;
+			theApp.m_cfg_data.m_tbar_display_item &= ~TDI_DOWN;
+		}
+		else
+		{
+			theApp.m_cfg_data.m_tbar_display_item |= TDI_UP;
+			theApp.m_cfg_data.m_tbar_display_item |= TDI_DOWN;
+		}
+		CloseTaskBarWnd();
+		OpenTaskBarWnd();
+	}
 }

@@ -122,6 +122,15 @@ struct FontInfo
 //将字号转成LOGFONT结构中的lfHeight
 #define FONTSIZE_TO_LFHEIGHT(font_size) (-MulDiv(font_size, GetDeviceCaps(::GetDC(HWND_DESKTOP), LOGPIXELSY), 72))
 
+//任务栏窗口显示的项目
+enum TaskbarDisplayItem
+{
+	TDI_UP = 1 << 0,
+	TDI_DOWN = 1 << 1,
+	TDI_CPU = 1 << 2,
+	TDI_MEMORY = 1 << 3
+};
+
 //选项设置数据
 struct MainConfigData
 {
@@ -133,7 +142,8 @@ struct MainConfigData
 	bool m_show_task_bar_wnd{ false };	//显示任务栏窗口
 	bool m_hide_main_window;			//隐藏主窗口
 	bool m_show_notify_icon{ true };	//显示通知区域图标
-	bool m_tbar_show_cpu_memory;		//任务栏窗口显示CPU和内存利用率
+	//bool m_tbar_show_cpu_memory;		//任务栏窗口显示CPU和内存利用率
+	unsigned int m_tbar_display_item{ TDI_UP | TDI_DOWN };		//任务栏窗口显示的项目
 
 	int m_position_x;	//窗口位置的x坐标
 	int m_position_y;	//窗口位置的y坐标
