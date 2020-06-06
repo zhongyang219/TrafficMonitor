@@ -43,6 +43,7 @@ struct HistoryTraffic
 #define TRAFFIC_COLOR_GREEN RGB(128, 194, 105)
 #define TRAFFIC_COLOR_YELLOE RGB(255, 216, 58)
 #define TRAFFIC_COLOR_RED RGB(255, 95, 74)
+#define TRAFFIC_COLOR_DARK_RED RGB(166, 19, 0)
 
 //ÍøËÙµ¥Î»
 enum class SpeedUnit

@@ -132,18 +132,18 @@ void CHistoryTrafficDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 BOOL CHistoryTrafficDlg::PreTranslateMessage(MSG* pMsg)
 {
 	// TODO: 在此添加专用代码和/或调用基类
-	if (GetKeyState(VK_CONTROL) & 0x80)
-	{
-		if (pMsg->wParam == 'D')
-		{
-			HistoryTraffic h{};
-			h.year = 2018;
-			h.month = 4;
-			h.day = 29;
-			auto iter = std::lower_bound(m_history_traffics.begin(), m_history_traffics.end(), h, HistoryTraffic::DateGreater);
-			int index = iter - m_history_traffics.begin();
-		}
-	}
+	//if (GetKeyState(VK_CONTROL) & 0x80)
+	//{
+	//	if (pMsg->wParam == 'D')
+	//	{
+	//		HistoryTraffic h{};
+	//		h.year = 2018;
+	//		h.month = 4;
+	//		h.day = 29;
+	//		auto iter = std::lower_bound(m_history_traffics.begin(), m_history_traffics.end(), h, HistoryTraffic::DateGreater);
+	//		int index = iter - m_history_traffics.begin();
+	//	}
+	//}
 
 	return CDialog::PreTranslateMessage(pMsg);
 }
