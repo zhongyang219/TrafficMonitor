@@ -5,7 +5,6 @@
 
 CTaskbarDefaultStyle::CTaskbarDefaultStyle()
 {
-	LoadConfig();
 }
 
 CTaskbarDefaultStyle::~CTaskbarDefaultStyle()

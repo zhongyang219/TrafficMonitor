@@ -125,6 +125,12 @@ void CTrafficMonitorApp::LoadConfig()
 	m_cfg_data.m_tbar_show_cpu_memory = ini.GetBool(_T("task_bar"), _T("task_bar_show_cpu_memory"), false);
 	m_taskbar_data.swap_up_down = ini.GetBool(_T("task_bar"), _T("task_bar_swap_up_down"), false);
 
+	if (m_taskbar_data.back_color == 0 && m_taskbar_data.text_colors[0] == 0)		//万一读取到的背景色和文本颜色都为0（黑色），则将文本色和背景色设置成默认颜色
+	{
+		m_taskbar_data.back_color = m_taskbar_data.dft_back_color;
+		m_taskbar_data.text_colors[0] = m_taskbar_data.dft_text_colors;
+	}
+
 	//m_taskbar_data.font.name = ini.GetString(_T("task_bar"), _T("tack_bar_font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();
 	//m_taskbar_data.font.size = ini.GetInt(_T("task_bar"), _T("tack_bar_font_size"), 9);
 	default_font = FontInfo{};
@@ -586,6 +592,8 @@ BOOL CTrafficMonitorApp::InitInstance()
 		}
 	}
 #endif
+
+	m_taskbar_default_style.LoadConfig();
 
 	//SaveConfig();
 
