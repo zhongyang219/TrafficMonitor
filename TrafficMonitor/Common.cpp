@@ -175,8 +175,10 @@ CString CCommon::DataSizeToString(unsigned long long size)
 		str.Format(_T("%.1f KB"), size / 1024.0);
 	else if (size < 1024 * 1024 * 1024)		//1GB以下以MB为单位，保留2位小数
 		str.Format(_T("%.2f MB"), size / 1024.0 / 1024.0);
-	else
+	else if (size < 1024 * 1024 * 1024 * 1024)
 		str.Format(_T("%.2f GB"), size / 1024.0 / 1024.0 / 1024.0);
+	else
+		str.Format(_T("%.2f TB"), size / 1024.0 / 1024.0 / 1024.0 / 1024.0);
 	return str;
 }
 
@@ -187,8 +189,10 @@ CString CCommon::KBytesToString(unsigned int kb_size)
 		k_bytes_str.Format(_T("%d KB"), kb_size);
 	else if (kb_size < 1024 * 1024)
 		k_bytes_str.Format(_T("%.2f MB"), kb_size / 1024.0);
-	else
+	else if (kb_size < 1024 * 1024 * 1024)
 		k_bytes_str.Format(_T("%.2f GB"), kb_size / 1024.0 / 1024.0);
+	else
+		k_bytes_str.Format(_T("%.2f TB"), kb_size / 1024.0 / 1024.0 / 1024.0);
 	return k_bytes_str;
 }
 

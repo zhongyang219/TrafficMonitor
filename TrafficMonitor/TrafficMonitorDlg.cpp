@@ -549,9 +549,9 @@ void CTrafficMonitorDlg::SaveHistoryTraffic()
 	{
 		char buff[64];
 		if (history_traffic.mixed)
-			sprintf_s(buff, "%.4d/%.2d/%.2d %u", history_traffic.year, history_traffic.month, history_traffic.day, history_traffic.down_kBytes);
+			sprintf_s(buff, "%.4d/%.2d/%.2d %llu", history_traffic.year, history_traffic.month, history_traffic.day, history_traffic.down_kBytes);
 		else
-			sprintf_s(buff, "%.4d/%.2d/%.2d %u/%u", history_traffic.year, history_traffic.month, history_traffic.day, history_traffic.up_kBytes, history_traffic.down_kBytes);
+			sprintf_s(buff, "%.4d/%.2d/%.2d %llu/%llu", history_traffic.year, history_traffic.month, history_traffic.day, history_traffic.up_kBytes, history_traffic.down_kBytes);
 		file << buff << std::endl;
 	}
 	file.close();
@@ -581,15 +581,15 @@ void CTrafficMonitorDlg::LoadHistoryTraffic()
 			if (traffic.mixed)
 			{
 				temp = current_line.substr(11);
-				traffic.down_kBytes = atoi(temp.c_str());
+				traffic.down_kBytes = atoll(temp.c_str());
 				traffic.up_kBytes = 0;
 			}
 			else
 			{
 				temp = current_line.substr(11, index - 11);
-				traffic.up_kBytes = atoi(temp.c_str());
+				traffic.up_kBytes = atoll(temp.c_str());
 				temp = current_line.substr(index + 1);
-				traffic.down_kBytes = atoi(temp.c_str());
+				traffic.down_kBytes = atoll(temp.c_str());
 			}
 			if (traffic.year > 0 && traffic.month > 0 && traffic.day > 0 && traffic.kBytes() > 0)
 				m_history_traffics.push_back(traffic);
@@ -1102,7 +1102,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		//每隔30秒保存一次流量历史记录
 		if (m_timer_cnt % 30 == 10)
 		{
-			static unsigned int last_today_kbytes;
+			static unsigned __int64 last_today_kbytes;
 			if (m_history_traffics[0].kBytes() - last_today_kbytes >= 100u)	//只有当流量变化超过100KB时才保存历史流量记录，防止磁盘写入过于频繁
 			{
 				SaveHistoryTraffic();

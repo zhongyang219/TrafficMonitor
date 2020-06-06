@@ -9,11 +9,11 @@ struct HistoryTraffic
 	int month{};
 	int day{};
 	//unsigned int kBytes;	//当天使用的流量（以KB为单位）
-	unsigned int up_kBytes{};
-	unsigned int down_kBytes{};
+	unsigned __int64 up_kBytes{};
+	unsigned __int64 down_kBytes{};
 	bool mixed{ true };		//如果不区分上传和下载流量，则为true
 
-	unsigned int kBytes() const
+	unsigned __int64 kBytes() const
 	{
 		return up_kBytes + down_kBytes;
 	}
