@@ -281,6 +281,7 @@ void CTrafficMonitorApp::SaveConfig()
 
 	ini.WriteBool(_T("other"), _T("no_multistart_warning"), m_no_multistart_warning);
 	ini.WriteBool(_T("other"), _T("exit_when_start_by_restart_manager"), m_exit_when_start_by_restart_manager);
+	ini.WriteBool(_T("other"), _T("debug_log"), m_debug_log);
 	ini.WriteInt(_T("other"), _T("notify_interval"), m_notify_interval);
 	ini.WriteBool(_T("other"), _T("taksbar_transparent_color_enable"), m_taksbar_transparent_color_enable);
 

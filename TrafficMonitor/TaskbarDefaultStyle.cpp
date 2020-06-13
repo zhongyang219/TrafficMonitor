@@ -45,7 +45,7 @@ void CTaskbarDefaultStyle::SaveConfig() const
 	ini.Save();
 }
 
-void CTaskbarDefaultStyle::ApplyDefaultStyle(int index, TaskBarSettingData & data)
+void CTaskbarDefaultStyle::ApplyDefaultStyle(int index, TaskBarSettingData & data) const
 {
 	if (index == TASKBAR_DEFAULT_LIGHT_STYLE_INDEX)
 	{

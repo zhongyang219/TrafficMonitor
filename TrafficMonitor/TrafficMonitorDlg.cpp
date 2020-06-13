@@ -1270,7 +1270,8 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 				theApp.m_taskbar_default_style.ApplyDefaultStyle(style_index, theApp.m_taskbar_data);
 				restart_taskbar_dlg = true;
 			}
-			if (!CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data))
+			bool is_taskbar_transparent{ CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data) };
+			if (!is_taskbar_transparent)
 			{
 				CTaskbarDefaultStyle::SetTaskabrTransparent(false, theApp.m_taskbar_data);
 				restart_taskbar_dlg = true;
@@ -1280,7 +1281,45 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 				//m_tBarDlg->ApplyWindowTransparentColor();
 				CloseTaskBarWnd();
 				OpenTaskBarWnd();
+
+				//写入调试日志
+				if (theApp.m_debug_log)
+				{
+					CString log_str;
+					log_str += _T("检测到 Windows10 深浅色变化。\n");
+					log_str += _T("IsWindows10LightTheme: ");
+					log_str += std::to_wstring(light_mode).c_str();
+					log_str += _T("\n");
+					log_str += _T("auto_adapt_light_theme: ");
+					log_str += std::to_wstring(theApp.m_taskbar_data.auto_adapt_light_theme).c_str();
+					log_str += _T("\n");
+					log_str += _T("is_taskbar_transparent: ");
+					log_str += std::to_wstring(is_taskbar_transparent).c_str();
+					log_str += _T("\n");
+					log_str += _T("taskbar_back_color: ");
+					log_str += std::to_wstring(theApp.m_taskbar_data.back_color).c_str();
+					log_str += _T("\n");
+					log_str += _T("taskbar_transparent_color: ");
+					log_str += std::to_wstring(theApp.m_taskbar_data.transparent_color).c_str();
+					log_str += _T("\n");
+					log_str += _T("taskbar_text_colors: ");
+					for (int i{}; i < TASKBAR_COLOR_NUM; i++)
+					{
+						log_str += std::to_wstring(theApp.m_taskbar_data.text_colors[i]).c_str();
+						log_str += _T(", ");
+					}
+					log_str += _T("\n");
+					CCommon::WriteLog(log_str, (theApp.m_config_dir + L".\\taskbar_colors.log").c_str());
+				}
 			}
+		}
+
+		if (theApp.m_taskbar_data.back_color == 0 && theApp.m_taskbar_data.text_colors[0] == 0)		//当检测到背景色和文字颜色都为黑色写入错误日志
+		{
+			CString log_str;
+			log_str.Format(_T("检查到背景色和文字颜色都为黑色。IsWindows10LightTheme: %d, 系统启动时间：%d/%.2d/%.2d %.2d:%.2d:%.2d",
+				light_mode, m_start_time.wYear, m_start_time.wMonth, m_start_time.wDay, m_start_time.wHour, m_start_time.wMinute, m_start_time.wSecond));
+			CCommon::WriteLog(log_str, theApp.m_log_path.c_str());
 		}
 
 		UpdateNotifyIconTip();
