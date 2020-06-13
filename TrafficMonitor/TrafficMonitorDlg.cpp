@@ -1268,6 +1268,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			{
 				int style_index = theApp.m_win_version.IsWindows10LightTheme() ? theApp.m_taskbar_data.light_default_style : theApp.m_taskbar_data.dark_default_style;
 				theApp.m_taskbar_default_style.ApplyDefaultStyle(style_index, theApp.m_taskbar_data);
+				theApp.SaveConfig();
 				restart_taskbar_dlg = true;
 			}
 			bool is_taskbar_transparent{ CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data) };
