@@ -177,6 +177,7 @@ void CTrafficMonitorApp::LoadConfig()
 	m_debug_log = ini.GetBool(_T("other"), _T("debug_log"), false);
 	//由于Win7系统中设置任务栏窗口透明色会导致任务栏窗口不可见，因此默认在Win7中禁用透明色的设定
 	m_taksbar_transparent_color_enable = ini.GetBool(L"other", L"taksbar_transparent_color_enable", !m_win_version.IsWindows7());
+	m_last_light_mode = ini.GetBool(L"other", L"last_light_mode", m_win_version.IsWindows10LightTheme());
 }
 
 void CTrafficMonitorApp::SaveConfig()
@@ -284,6 +285,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteBool(_T("other"), _T("debug_log"), m_debug_log);
 	ini.WriteInt(_T("other"), _T("notify_interval"), m_notify_interval);
 	ini.WriteBool(_T("other"), _T("taksbar_transparent_color_enable"), m_taksbar_transparent_color_enable);
+	ini.WriteBool(_T("other"), _T("last_light_mode"), m_last_light_mode);
 
 	ini.WriteString(L"app", L"version", VERSION);
 

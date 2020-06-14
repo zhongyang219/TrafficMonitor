@@ -1259,10 +1259,9 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
 		//根据当前Win10颜色模式自动切换任务栏颜色
 		bool light_mode = theApp.m_win_version.IsWindows10LightTheme();
-		static bool last_light_mode{ light_mode };
-		if (last_light_mode != light_mode)
+		if (theApp.m_last_light_mode != light_mode)
 		{
-			last_light_mode = light_mode;
+			theApp.m_last_light_mode = light_mode;
 			bool restart_taskbar_dlg{ false };
 			if (theApp.m_taskbar_data.auto_adapt_light_theme)
 			{
@@ -1318,8 +1317,8 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		if (theApp.m_taskbar_data.back_color == 0 && theApp.m_taskbar_data.text_colors[0] == 0)		//当检测到背景色和文字颜色都为黑色写入错误日志
 		{
 			CString log_str;
-			log_str.Format(_T("检查到背景色和文字颜色都为黑色。IsWindows10LightTheme: %d, 系统启动时间：%d/%.2d/%.2d %.2d:%.2d:%.2d",
-				light_mode, m_start_time.wYear, m_start_time.wMonth, m_start_time.wDay, m_start_time.wHour, m_start_time.wMinute, m_start_time.wSecond));
+			log_str.Format(_T("检查到背景色和文字颜色都为黑色。IsWindows10LightTheme: %d, 系统启动时间：%d/%.2d/%.2d %.2d:%.2d:%.2d"),
+				light_mode, m_start_time.wYear, m_start_time.wMonth, m_start_time.wDay, m_start_time.wHour, m_start_time.wMinute, m_start_time.wSecond);
 			CCommon::WriteLog(log_str, theApp.m_log_path.c_str());
 		}
 
