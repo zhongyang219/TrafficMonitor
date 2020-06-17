@@ -60,6 +60,7 @@ public:
 	bool m_debug_log{};
 	bool m_taksbar_transparent_color_enable{};
 	bool m_last_light_mode{};
+	bool m_show_mouse_panetrate_tip{};	//是否显示开启“鼠标穿透”时的提示消息。
 
 	//bool m_is_windows10_fall_creator;
 	CWinVersionHelper m_win_version;		//当前Windows的版本

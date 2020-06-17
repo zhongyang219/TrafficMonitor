@@ -1866,6 +1866,16 @@ void CTrafficMonitorDlg::OnMousePenetrate()
 		AddNotifyIcon();
 		theApp.m_cfg_data.m_show_notify_icon = true;
 	}
+
+	//设置鼠标穿透后，弹出消息提示用户如何关闭鼠标穿透
+	if (theApp.m_cfg_data.m_mouse_penetrate && theApp.m_show_mouse_panetrate_tip)
+	{
+		if (MessageBox(CCommon::LoadText(IDS_MOUSE_PENETRATE_TIP_INFO), NULL, MB_ICONINFORMATION | MB_OKCANCEL) == IDCANCEL)		//点击“取消”后不再提示
+		{
+			theApp.m_show_mouse_panetrate_tip = false;
+		}
+	}
+
 	theApp.SaveConfig();
 }
 
