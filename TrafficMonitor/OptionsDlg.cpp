@@ -46,6 +46,8 @@ BOOL COptionsDlg::OnInitDialog()
 	CBaseDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
+	theApp.m_option_dlg = m_hWnd;
+
 	SetWindowText(CCommon::LoadText(IDS_TITLE_OPTION));
     SetIcon(AfxGetApp()->LoadIcon(IDR_MAINFRAME), FALSE);		// 设置小图标
 

@@ -68,6 +68,8 @@ public:
 
 	CTaskbarDefaultStyle m_taskbar_default_style;
 
+	HWND m_option_dlg{};		//选项设置对话框的句柄
+
 public:
 	CTrafficMonitorApp();
 

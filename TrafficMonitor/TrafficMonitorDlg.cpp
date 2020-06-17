@@ -466,6 +466,12 @@ void CTrafficMonitorDlg::CloseTaskBarWnd()
 {
 	if (m_tBarDlg != nullptr)
 	{
+		HWND hParent = ::GetParent(theApp.m_option_dlg);
+		if (hParent == m_tBarDlg->GetSafeHwnd())			//关闭任务栏窗口前，如果选项设置窗口已打开且父窗口是任务栏窗口，则将其关闭
+		{
+			::SendMessage(theApp.m_option_dlg, WM_COMMAND, IDCANCEL, 0);
+		}
+
         if(IsTaskbarWndValid())
             m_tBarDlg->OnCancel();
 		delete m_tBarDlg;
