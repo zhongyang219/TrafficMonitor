@@ -196,4 +196,5 @@ protected:
 	afx_msg LRESULT OnTaskbarMenuPopedUp(WPARAM wParam, LPARAM lParam);
 public:
 	afx_msg void OnShowNetSpeed();
+	afx_msg BOOL OnQueryEndSession();
 };

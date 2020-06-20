@@ -92,6 +92,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialogEx)
 	ON_COMMAND(ID_CHECK_UPDATE, &CTrafficMonitorDlg::OnCheckUpdate)
 	ON_MESSAGE(WM_TASKBAR_MENU_POPED_UP, &CTrafficMonitorDlg::OnTaskbarMenuPopedUp)
 	ON_COMMAND(ID_SHOW_NET_SPEED, &CTrafficMonitorDlg::OnShowNetSpeed)
+	ON_WM_QUERYENDSESSION()
 END_MESSAGE_MAP()
 
 
@@ -1315,7 +1316,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 						log_str += _T(", ");
 					}
 					log_str += _T("\n");
-					CCommon::WriteLog(log_str, (theApp.m_config_dir + L".\\taskbar_colors.log").c_str());
+					CCommon::WriteLog(log_str, (theApp.m_config_dir + L".\\debug.log").c_str());
 				}
 			}
 		}
@@ -2178,4 +2179,23 @@ void CTrafficMonitorDlg::OnShowNetSpeed()
 		CloseTaskBarWnd();
 		OpenTaskBarWnd();
 	}
+}
+
+
+BOOL CTrafficMonitorDlg::OnQueryEndSession()
+{
+	if (!CDialogEx::OnQueryEndSession())
+		return FALSE;
+
+	// TODO:  在此添加专用的查询结束会话代码
+	theApp.SaveConfig();
+	theApp.SaveGlobalConfig();
+	SaveHistoryTraffic();
+
+	if (theApp.m_debug_log)
+	{
+		CCommon::WriteLog(_T("TrafficMonitor进程已被终止，设置已保存。"), (theApp.m_config_dir + L".\\debug.log").c_str());
+	}
+
+	return TRUE;
 }
