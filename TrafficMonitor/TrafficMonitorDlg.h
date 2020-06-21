@@ -21,6 +21,7 @@
 #include "AdapterCommon.h"
 #include "AboutDlg.h"
 #include "CPUUsage.h"
+#include "HistoryTrafficFile.h"
 
 // CTrafficMonitorDlg 对话框
 class CTrafficMonitorDlg : public CDialogEx
@@ -81,7 +82,7 @@ protected:
 	int m_skin_selected{};		//选择的皮肤序号
 
 	SYSTEMTIME m_start_time;	//程序启动时的时间
-	deque<HistoryTraffic> m_history_traffics;	//储存历史流量
+	CHistoryTrafficFile m_history_traffic{ theApp.m_history_traffic_path };	//储存历史流量
 
 	CToolTipCtrl m_tool_tips;
 
@@ -116,6 +117,7 @@ protected:
 
 	void SaveHistoryTraffic();
 	void LoadHistoryTraffic();
+	void BackupHistoryTrafficFile();
 
 	void _OnOptions(int tab);	//打开“选项”对话框的处理，参数为打开时切换的标签
 

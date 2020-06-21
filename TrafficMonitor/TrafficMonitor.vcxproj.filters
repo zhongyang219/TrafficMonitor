@@ -130,6 +130,9 @@
     <Filter Include="源文件和头文件\对话框类\选项设置对话框\AutoAdaptSettingsDlg">
       <UniqueIdentifier>{2393c651-03a5-467c-a927-a3e99fdc48c4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\HistoryTrafficFile">
+      <UniqueIdentifier>{5bf9c8c3-2115-4e6d-897c-432303615271}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -279,6 +282,9 @@
     <ClInclude Include="CAutoAdaptSettingsDlg.h">
       <Filter>源文件和头文件\对话框类\选项设置对话框\AutoAdaptSettingsDlg</Filter>
     </ClInclude>
+    <ClInclude Include="HistoryTrafficFile.h">
+      <Filter>源文件和头文件\公共的类\HistoryTrafficFile</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -412,6 +418,9 @@
     </ClCompile>
     <ClCompile Include="CAutoAdaptSettingsDlg.cpp">
       <Filter>源文件和头文件\对话框类\选项设置对话框\AutoAdaptSettingsDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="HistoryTrafficFile.cpp">
+      <Filter>源文件和头文件\公共的类\HistoryTrafficFile</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

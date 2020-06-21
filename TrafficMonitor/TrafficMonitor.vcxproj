@@ -204,6 +204,7 @@
     <ClInclude Include="CVariant.h" />
     <ClInclude Include="DrawCommonEx.h" />
     <ClInclude Include="HistoryTrafficCalendarDlg.h" />
+    <ClInclude Include="HistoryTrafficFile.h" />
     <ClInclude Include="HistoryTrafficListDlg.h" />
     <ClInclude Include="LinkStatic.h" />
     <ClInclude Include="ColorStatic.h" />
@@ -253,6 +254,7 @@
     <ClCompile Include="CVariant.cpp" />
     <ClCompile Include="DrawCommonEx.cpp" />
     <ClCompile Include="HistoryTrafficCalendarDlg.cpp" />
+    <ClCompile Include="HistoryTrafficFile.cpp" />
     <ClCompile Include="HistoryTrafficListDlg.cpp" />
     <ClCompile Include="LinkStatic.cpp" />
     <ClCompile Include="ColorStatic.cpp" />
