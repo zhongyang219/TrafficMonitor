@@ -1,4 +1,4 @@
-**[简体中文](https://github.com/zhongyang219/TrafficMonitor/blob/master/Help.md) | English**<br>
+**[简体中文](./Help.md) | English**<br>
 # TrafficMonitor Help
 ### 1. How to show the CPU and memory usage?
 Right click the main window and check "Show More Info". If you also need to display the CPU and memory usage in the taskbar window, right click the taskbar window and check "Show CPU and Memory Usage".
@@ -10,8 +10,13 @@ The auto run function of the program is achieved by creating the "TrafficMonitor
 If you encounter the problem of auto run dose not work, please check that the registry exists, and then check the program path is correct. If you move the location of the program, the auto run will be invalid because of the program location being invalid. In this case, you only need to uncheck "Auto run when Windows start" in the option settings, and then check it on.<br>
 If you set the program to run as an administrator, the auto run function will also not work. Please try to remove running as an administrator.<br>
 ### 4. The program pops up the "Unable to Save Settings" message box.
-For V1.72 and previous versions, if this happens, the program does not have permission to write data to its directory, causing the settings data cannot be saved. In this case, move the program to another folder that has write permissions will save this problem. <br>
-In V1.73 and later versions, this problem should not theoretically occur because the configuration file has been moved to the C:\Users\\<username\>\AppData\Roaming\TrafficMonitor directory. If this problem still occurs, try to delete the file C:\Users\\<username\>\AppData\Roaming\TrafficMonitor\config.ini. This file will be regenerated after it is deleted. 
+If you encountered this problem, that means the program does not have permission to write data to its directory, causing the settings data cannot be saved. Try to move the program to another folder that has write permissions will save this problem. <br>
+You can also change the save path of the configuration and data file to the C:\Users\\<username\>\AppData\Roaming\TrafficMonitor directory by the following steps. <br>
+* Exit TrafficMonitor and restart TrafficMonitor as an administrator.
+* Select "Options" in the right-click menu, switch to the "General Settings" tab, and select "Save to Appdata Directory" in "Configuration and data files".
+
+After these steps, this problem should not theoretically occur. If this problem still occurs, try to delete the file C:\Users\\<username\>\AppData\Roaming\TrafficMonitor\config.ini. This file will be regenerated after it is deleted. 
+
 ### 5. The suspension window can only be displayed on the main monitor when multiple monitors are present.
 By default, the suspension window cannot be moved out of the screen boundaries. If you need to move the suspension window to other monitors, please right click the suspension window, select "Other Functions", check "Allow Out of Screen Boundaries". At this time the suspension window is no longer limited to the screen, it can be also move to any monitors. <br>
 If you remove the extra monitor, then the suspension window may appear outside the screen area to cause the invisible. At this time, you only need to right click the the icon in the notification area, select "Other function", uncheck "Allow Out of Screen Boundaries", the suspension window will appear in the screen area again.
