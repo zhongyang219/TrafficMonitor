@@ -97,6 +97,8 @@ BOOL CHistoryTrafficDlg::OnInitDialog()
 	}
 	m_tab.SetCurFocus(m_tab_selected);
 
+	m_tab1_dlg.SetScrollEnable(false);
+	m_tab2_dlg.SetScrollEnable(false);
 
 	//获取初始时窗口的大小
 	CRect rect;
