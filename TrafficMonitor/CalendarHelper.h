@@ -30,7 +30,8 @@ public:
 	static int DaysInMonth(int year, int month);
 
 	//获取指定月份的日历数据，并保存在数组calendar中
-	static void GetCalendar(int year, int month, DayTraffic calendar[CALENDAR_HEIGHT][CALENDAR_WIDTH]);
+	//如果sunday_first为true，则将周日作为每周的第一天，否则，将周一作为每周的第一天
+	static void GetCalendar(int year, int month, DayTraffic calendar[CALENDAR_HEIGHT][CALENDAR_WIDTH], bool sunday_first = true);
 
 };
 

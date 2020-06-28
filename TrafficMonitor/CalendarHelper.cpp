@@ -41,11 +41,17 @@ int CCalendarHelper::DaysInMonth(int year, int month)
 	}
 }
 
-void CCalendarHelper::GetCalendar(int year, int month, DayTraffic calendar[CALENDAR_HEIGHT][CALENDAR_WIDTH])
+void CCalendarHelper::GetCalendar(int year, int month, DayTraffic calendar[CALENDAR_HEIGHT][CALENDAR_WIDTH], bool sunday_first)
 {
 	memset(calendar, 0, sizeof(DayTraffic)*CALENDAR_HEIGHT*CALENDAR_WIDTH);
 	int days{ DaysInMonth(year, month) };
 	int first_weak_day{ CaculateWeekDay(year, month, 1) };
+	if(!sunday_first)
+	{
+		first_weak_day--;
+		if (first_weak_day < 0)
+			first_weak_day = 6;
+	}
 	int i{}, j{};
 	for (int n{}; n < 37; n++)
 	{

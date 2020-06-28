@@ -159,6 +159,7 @@ struct MainConfigData
 
 	bool m_show_internet_ip{ false };		//是否在“连接详情”对话框中显示外网IP地址
 	bool m_use_log_scale{ false };			//“历史流量统计”对话框中绘制表示历史流量数值的矩形时是否使用对数比例
+	bool m_sunday_first{ true };			//是否将周日作为一周的第一天
 };
 
 //选项设置中“主窗口设置”和“任务栏窗口设置”中公共的数据（不使用此结构体创建对象）
