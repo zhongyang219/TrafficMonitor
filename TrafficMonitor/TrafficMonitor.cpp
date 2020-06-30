@@ -45,8 +45,8 @@ void CTrafficMonitorApp::LoadConfig()
 	m_general_data.allow_skin_cover_text = ini.GetBool(_T("general"), _T("allow_skin_cover_text"), true);
 	m_general_data.language = static_cast<Language>(ini.GetInt(_T("general"), _T("language"), 0));
 	m_general_data.show_all_interface = ini.GetBool(L"general", L"show_all_interface", false);
-	//载入获取CPU利用率的方式，Win10以下使用GetSystemTimes获取，由于此种方式在win10上会导致和任务管理器不一致，因此win10上默认通过性能计数器获取
-	m_general_data.m_get_cpu_usage_by_cpu_times = ini.GetBool(L"general", L"get_cpu_usage_by_cpu_times", m_win_version.GetMajorVersion() < 10);
+	//载入获取CPU利用率的方式，默认使用GetSystemTimes获取
+	m_general_data.m_get_cpu_usage_by_cpu_times = ini.GetBool(L"general", L"get_cpu_usage_by_cpu_times", /*m_win_version.GetMajorVersion() < 10*/ true);
 
 	//Windows10颜色模式设置
 	bool is_windows10_light_theme = m_win_version.IsWindows10LightTheme();
