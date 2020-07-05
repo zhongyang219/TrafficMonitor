@@ -558,6 +558,14 @@ void CTrafficMonitorDlg::SaveHistoryTraffic()
 void CTrafficMonitorDlg::LoadHistoryTraffic()
 {
 	m_history_traffic.Load();
+	CHistoryTrafficFile backup_file(theApp.m_history_traffic_path + L".bak");
+	backup_file.LoadSize();		//读取备份文件中流量记录的数量
+	if (backup_file.Size() > m_history_traffic.Size())		//如果备份文件中流量记录的数量大于当前的数量，则从备份文件中恢复
+	{
+		backup_file.Load();
+		m_history_traffic.Merge(backup_file, true);
+	}
+
 	theApp.m_today_up_traffic = m_history_traffic.GetTodayUpTraffic();
 	theApp.m_today_down_traffic = m_history_traffic.GetTodayDownTraffic();
 }
