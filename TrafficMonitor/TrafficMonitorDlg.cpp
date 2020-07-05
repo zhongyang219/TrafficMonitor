@@ -563,7 +563,10 @@ void CTrafficMonitorDlg::LoadHistoryTraffic()
 	if (backup_file.Size() > m_history_traffic.Size())		//如果备份文件中流量记录的数量大于当前的数量，则从备份文件中恢复
 	{
 		backup_file.Load();
+		size_t size_before = m_history_traffic.Size();
 		m_history_traffic.Merge(backup_file, true);
+		CString log_info = CCommon::LoadTextFormat(IDS_HISTORY_TRAFFIC_LOST_ERROR_LOG, { size_before, backup_file.Size() });
+		CCommon::WriteLog(log_info, theApp.m_log_path.c_str());
 	}
 
 	theApp.m_today_up_traffic = m_history_traffic.GetTodayUpTraffic();
