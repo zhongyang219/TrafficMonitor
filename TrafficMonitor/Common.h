@@ -89,11 +89,15 @@ public:
 	//将一个字符串保存到剪贴板
 	static bool CopyStringToClipboard(const wstring& str);
 
+    static wstring GetJsonValueSimple(const wstring& json_str, const wstring& name);
+
 	//获取URL的内容
-	static bool GetURL(const wstring& url, wstring& result, bool utf8 = false);
+	static bool GetURL(const wstring& url, wstring& result, bool utf8 = false, const wstring& user_agent = wstring());
 
 	//获取外网IP地址和IP归属地
 	static void GetInternetIp(wstring& ip_address, wstring& ip_location, bool global);
+
+    static void GetInternetIp2(wstring& ip_address, wstring& ip_location, bool ipv6);
 
 	static void SetRect(CRect& rect, int x, int y, int width, int height);
 

@@ -126,7 +126,9 @@ UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
 	CCommon::SetThreadLanguage(theApp.m_general_data.language);		//设置线程语言
 	CNetworkInfoDlg* p_instance = (CNetworkInfoDlg*)lpParam;
 	wstring ip_address, ip_location;
-	CCommon::GetInternetIp(ip_address, ip_location, CCommon::LoadText(IDS_LANGUAGE_CODE) != _T("2"));			//获取外网IP地址，
+
+    //IPV4
+	CCommon::GetInternetIp2(ip_address, ip_location, false);			//获取外网IP地址，
 	if (!IsWindow(p_instance->GetSafeHwnd()))		//如果当前对话框已经销毁，则退出线程
 		return 0;
 	if (!ip_address.empty())
@@ -142,6 +144,27 @@ UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
 	{
 		p_instance->m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_GET_FAILED));
 	}
+
+    //IPV6
+    wstring ipv6_address, ipv6_location;
+    CCommon::GetInternetIp2(ip_address, ip_location, true);			//获取外网IP地址，
+    if (!IsWindow(p_instance->GetSafeHwnd()))		//如果当前对话框已经销毁，则退出线程
+        return 0;
+    if (!ip_address.empty())
+    {
+        CString info;
+        if (ip_location.empty())
+            info = ip_address.c_str();
+        else
+            info.Format(_T("%s (%s)"), ip_address.c_str(), ip_location.c_str());
+        p_instance->m_info_list.SetItemText(15, 1, info);
+    }
+    else
+    {
+        p_instance->m_info_list.SetItemText(15, 1, CCommon::LoadText(IDS_GET_FAILED));
+    }
+
+    p_instance->m_ip_acquired = true;
 	return 0;
 }
 
@@ -208,14 +231,17 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	m_info_list.InsertItem(11, CCommon::LoadText(IDS_BYTES_RECEIVED_SINCE_START));
 	m_info_list.InsertItem(12, CCommon::LoadText(IDS_BYTES_SENT_SINCE_START));
 	m_info_list.InsertItem(13, CCommon::LoadText(IDS_PROGRAM_ELAPSED_TIME));
-	m_info_list.InsertItem(14, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS));
+	m_info_list.InsertItem(14, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS, _T(" (ipv4)")));
+	m_info_list.InsertItem(15, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS, _T(" (ipv6)")));
 	if (theApp.m_cfg_data.m_show_internet_ip)
 	{
 		m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
+		m_info_list.SetItemText(15, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
 	}
 	else
 	{
 		m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_DOUBLE_CLICK_TO_ACQUIRE));
+		m_info_list.SetItemText(15, 1, CCommon::LoadText(IDS_DOUBLE_CLICK_TO_ACQUIRE));
 	}
 
 	//显示列表中的信息
@@ -228,7 +254,7 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 
 	//CCommon::GetInternetIp();
 	if (theApp.m_cfg_data.m_show_internet_ip)
-		m_pGetIPThread = AfxBeginThread(GetInternetIPThreadFunc, this);		//启动获取外网IP的线程
+        m_pGetIPThread = AfxBeginThread(GetInternetIPThreadFunc, this);		//启动获取外网IP的线程
 
 	//SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//取消置顶
 	m_info_list.GetToolTips()->SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
@@ -276,7 +302,7 @@ void CNetworkInfoDlg::OnClose()
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	//对话框关闭时强制结束获取IP地址的线程
 	if(theApp.m_cfg_data.m_show_internet_ip)
-		TerminateThread(m_pGetIPThread->m_hThread, 0);
+        TerminateThread(m_pGetIPThread->m_hThread, 0);
 	CBaseDialog::OnClose();
 }
 
@@ -357,9 +383,10 @@ void CNetworkInfoDlg::OnNMDblclkInfoList1(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 	// TODO: 在此添加控件通知处理程序代码
-	if (!theApp.m_cfg_data.m_show_internet_ip && pNMItemActivate->iItem == 14)		//双击了IP地址一行时
+	if (!theApp.m_cfg_data.m_show_internet_ip && !m_ip_acquired && (pNMItemActivate->iItem == 14 || pNMItemActivate->iItem == 15))		//双击了IP地址一行时
 	{
 		m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
+		m_info_list.SetItemText(15, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
 		m_pGetIPThread = AfxBeginThread(GetInternetIPThreadFunc, this);
 	}
 	*pResult = 0;

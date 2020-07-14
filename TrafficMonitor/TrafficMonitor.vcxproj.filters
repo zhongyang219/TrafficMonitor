@@ -133,6 +133,9 @@
     <Filter Include="源文件和头文件\公共的类\HistoryTrafficFile">
       <UniqueIdentifier>{5bf9c8c3-2115-4e6d-897c-432303615271}</UniqueIdentifier>
     </Filter>
+    <Filter Include="测试">
+      <UniqueIdentifier>{df6d5fed-e1e8-4538-b028-f046ac67ad3f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -285,6 +288,9 @@
     <ClInclude Include="HistoryTrafficFile.h">
       <Filter>源文件和头文件\公共的类\HistoryTrafficFile</Filter>
     </ClInclude>
+    <ClInclude Include="Test.h">
+      <Filter>测试</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -421,6 +427,9 @@
     </ClCompile>
     <ClCompile Include="HistoryTrafficFile.cpp">
       <Filter>源文件和头文件\公共的类\HistoryTrafficFile</Filter>
+    </ClCompile>
+    <ClCompile Include="Test.cpp">
+      <Filter>测试</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

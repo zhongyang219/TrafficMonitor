@@ -34,6 +34,7 @@ protected:
 	CFont m_font_bold;		//默认字体的粗体
 
 	CWinThread* m_pGetIPThread;			//获取外网IP的线程
+    bool m_ip_acquired{ false };        //如果已获取外网ip地址，则为true
 
 	//void GetIPAddress();	//获取IP地址
 	void ShowInfo();
