@@ -299,6 +299,9 @@
     <ResourceCompile Include="TrafficMonitor.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\LICENSE" />
+    <None Include="..\LICENSE_CN" />
+    <None Include="res\license.bin" />
     <None Include="res\TrafficMonitor.rc2" />
   </ItemGroup>
   <ItemGroup>

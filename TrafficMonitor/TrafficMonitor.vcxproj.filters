@@ -441,6 +441,11 @@
     <None Include="res\TrafficMonitor.rc2">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="..\LICENSE" />
+    <None Include="res\license.bin">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\LICENSE_CN" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\TrafficMonitor.ico">

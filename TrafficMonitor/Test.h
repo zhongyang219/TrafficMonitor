@@ -9,5 +9,6 @@ public:
 
 private:
     static void TestHttpQequest();
+    static void TestGetLicense();
 };
 

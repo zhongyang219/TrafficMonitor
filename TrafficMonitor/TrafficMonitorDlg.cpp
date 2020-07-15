@@ -2072,14 +2072,6 @@ void CTrafficMonitorDlg::OnUpdateAlowOutOfBorder(CCmdUI *pCmdUI)
 }
 
 
-void CAboutDlg::OnPaint()
-{
-	CPaintDC dc(this); // device context for painting
-					   // TODO: 在此处添加消息处理程序代码
-					   // 不为绘图消息调用 CDialog::OnPaint()
-}
-
-
 void CTrafficMonitorDlg::OnCheckUpdate()
 {
 	// TODO: 在此添加命令处理程序代码

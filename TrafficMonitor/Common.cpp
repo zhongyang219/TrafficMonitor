@@ -888,3 +888,25 @@ void CCommon::SetDialogFont(CWnd * pDlg, CFont * pFont)
 		}
 	}
 }
+
+CString CCommon::GetTextResource(UINT id, int code_type)
+{
+    CString res_str;
+    HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(id), _T("TEXT"));
+    if (hRes != NULL)
+    {
+        HGLOBAL hglobal = LoadResource(NULL, hRes);
+        if (hglobal != NULL)
+        {
+            if (code_type == 2)
+            {
+                res_str = (const wchar_t*)hglobal;
+            }
+            else
+            {
+                res_str = CCommon::StrToUnicode((const char*)hglobal, (code_type != 0)).c_str();
+            }
+        }
+    }
+    return res_str;
+}

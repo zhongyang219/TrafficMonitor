@@ -2,6 +2,7 @@
 #include "TrafficMonitor.h"
 #include "AboutDlg.h"
 #include "MessageDlg.h"
+#include "DrawCommon.h"
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 	//ON_STN_CLICKED(IDC_STATIC_DONATE, &CAboutDlg::OnStnClickedStaticDonate)
@@ -16,25 +17,17 @@ CAboutDlg::CAboutDlg() : CDialog(IDD_ABOUTBOX)
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_STATIC_ABOUT, m_about_img);
 	DDX_Control(pDX, IDC_STATIC_MAIL, m_mail);
 	DDX_Control(pDX, IDC_STATIC_ACKNOWLEDGEMENT, m_acknowledgement);
 	DDX_Control(pDX, IDC_STATIC_GITHUB, m_github);
 	DDX_Control(pDX, IDC_STATIC_DONATE, m_donate);
 	DDX_Control(pDX, IDC_TRANSLATOR_STATIC, m_translaotr_static);
+	DDX_Control(pDX, IDC_STATIC_LICENSE, m_license);
 }
 
 CString CAboutDlg::GetDonateList()
 {
-	CString donate_list;
-	HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(IDR_ACKNOWLEDGEMENT_TEXT), _T("TEXT"));
-	if (hRes != NULL)
-	{
-		HGLOBAL hglobal = LoadResource(NULL, hRes);
-		if (hglobal != NULL)
-			donate_list.Format(_T("%s"), (LPVOID)hglobal);
-	}
-	return donate_list;
+	return CCommon::GetTextResource(IDR_ACKNOWLEDGEMENT_TEXT, 2);
 }
 
 BOOL CAboutDlg::OnInitDialog()
@@ -43,30 +36,12 @@ BOOL CAboutDlg::OnInitDialog()
 
 	// TODO:  在此添加额外的初始化
 	SetWindowText(CCommon::LoadText(IDS_TITLE_ABOUT));
-	CRect window_rect{};
-	if (theApp.DPI(100) < 125)
-	{
-		window_rect.right = m_width;
-		window_rect.bottom = m_height;
-		AdjustWindowRectEx(window_rect, GetStyle(), FALSE, GetExStyle());		//将客户区大小转换成窗口大小
-		SetWindowPos(nullptr, 0, 0, window_rect.Width(), window_rect.Height(), SWP_NOZORDER | SWP_NOMOVE);
-		m_about_img.SetWindowPos(nullptr, 0, 0, m_width, m_pic_height, SWP_NOZORDER | SWP_NOMOVE);
-		m_about_img.SetPicture(IDB_ABOUT_BACKGROUND);
-	}
-	else
-	{
-		window_rect.right = m_width2;
-		window_rect.bottom = m_height2;
-		AdjustWindowRectEx(window_rect, GetStyle(), FALSE, GetExStyle());		//将客户区大小转换成窗口大小
-		SetWindowPos(nullptr, 0, 0, window_rect.Width(), window_rect.Height(), SWP_NOZORDER | SWP_NOMOVE);
-		m_about_img.SetWindowPos(nullptr, 0, 0, m_width2, m_pic_height2, SWP_NOZORDER | SWP_NOMOVE);
-		m_about_img.SetPicture(IDB_ABOUT_BACKGROUND_HD);
-	}
 	m_mail.SetURL(_T("mailto:zhongyang219@hotmail.com"));	//设置超链接
 															//m_check_update.SetURL(_T("http://pan.baidu.com/s/1c1LkPQ4"));
 	m_github.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor"));
 	m_donate.SetLinkIsURL(false);
 	m_acknowledgement.SetLinkIsURL(false);
+	m_license.SetLinkIsURL(false);
 
 	//设置版本信息
 	CString version_info;
@@ -112,6 +87,16 @@ BOOL CAboutDlg::OnInitDialog()
 		m_tool_tip.AddTool(&m_translaotr_static, CCommon::LoadText(IDS_CONTACT_TRANSLATOR, _T("\r\nhttp://mkvq.blogspot.com/")));
 	}
 
+    //设置图片的位置
+    CRect rect;
+    GetClientRect(rect);
+    m_rc_pic = rect;
+    ::GetWindowRect(GetDlgItem(IDC_STATIC_VERSION)->GetSafeHwnd(), rect);
+    ScreenToClient(rect);
+    m_rc_pic.bottom = rect.top - theApp.DPI(6);
+    if (m_rc_pic.Height() <= 0)
+        m_rc_pic.bottom = m_rc_pic.top + theApp.DPI(50);
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
 }
@@ -121,17 +106,6 @@ BOOL CAboutDlg::PreTranslateMessage(MSG* pMsg)
 	// TODO: 在此添加专用代码和/或调用基类
 	if (pMsg->message == WM_MOUSEMOVE)
 		m_tool_tip.RelayEvent(pMsg);
-
-	//if (pMsg->message == WM_KEYDOWN)
-	//{
-	//	if ((GetKeyState(VK_CONTROL) & 0x80) && (GetKeyState(VK_SHIFT) & 0x8000) && pMsg->wParam == 'Z')
-	//	{
-	//		//测试程序崩溃
-	//		CString* pStr = nullptr;
-	//		int a = pStr->GetLength();
-	//		printf("%d", a);
-	//	}
-	//}
 
 	return CDialog::PreTranslateMessage(pMsg);
 }
@@ -161,7 +135,25 @@ afx_msg LRESULT CAboutDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
 		dlg.SetMessageText(strContent);
 		dlg.DoModal();
 	}
+    else if (pCtrl == &m_license)
+    {
+        CMessageDlg dlg;
+        dlg.SetWindowTitle(CCommon::LoadText(IDS_LICENSE));
+        dlg.SetInfoText(CCommon::LoadText(IDS_LICENSE_EXPLAIN));
+        dlg.SetMessageText(CCommon::GetTextResource(IDR_LICENSE, 1));
+        dlg.DoModal();
+    }
 
 	return 0;
 }
 
+void CAboutDlg::OnPaint()
+{
+    CPaintDC dc(this); // device context for painting
+                       // TODO: 在此处添加消息处理程序代码
+                       // 不为绘图消息调用 CDialog::OnPaint()
+    CDrawCommon draw;
+    draw.Create(&dc, this);
+    draw.GetDC()->FillSolidRect(m_rc_pic, RGB(161, 200, 255));
+    draw.DrawBitmap(IDB_ABOUT_BACKGROUND_HD, m_rc_pic.TopLeft(), m_rc_pic.Size(), CDrawCommon::StretchMode::FIT);
+}
