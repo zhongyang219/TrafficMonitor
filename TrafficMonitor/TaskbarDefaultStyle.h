@@ -29,6 +29,8 @@ public:
 	static bool IsTaskbarTransparent(const TaskBarSettingData& data);
 	static void SetTaskabrTransparent(bool transparent, TaskBarSettingData& data);
 
+    static bool IsTaskBarStyleDataValid(const TaskBarStyleData& data);     //判断一个颜色模式是否有效
+
 private:
 	TaskBarStyleData m_default_style[TASKBAR_DEFAULT_STYLE_NUM];    //预设样式
 

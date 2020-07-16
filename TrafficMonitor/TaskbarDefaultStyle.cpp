@@ -30,40 +30,46 @@ void CTaskbarDefaultStyle::LoadConfig()
 
 void CTaskbarDefaultStyle::SaveConfig() const
 {
+
 	CIniHelper ini{ theApp.m_config_path };
 	for (int i = 0; i < TASKBAR_DEFAULT_STYLE_NUM; i++)
 	{
 		wchar_t buff[64];
 		swprintf_s(buff, L"default%d_", i + 1);
 		wstring key_name = buff;
-        if (m_default_style[i].text_colors == 0 && m_default_style[i].back_color == 0)
+        if (IsTaskBarStyleDataValid(m_default_style[i]))           //保存前检查当前颜色预设是否有效
         {
-            //如果检测到文本颜色的背景颜色都为黑色，则不保存
+            ini.WriteIntArray(L"taskbar_default_style", (key_name + L"text_color").c_str(), (int*)m_default_style[i].text_colors, TASKBAR_COLOR_NUM);
+            ini.WriteInt(L"taskbar_default_style", (key_name + L"back_color").c_str(), m_default_style[i].back_color);
+            ini.WriteInt(L"taskbar_default_style", (key_name + L"transparent_color").c_str(), m_default_style[i].transparent_color);
+            ini.WriteInt(L"taskbar_default_style", (key_name + L"status_bar_color").c_str(), m_default_style[i].status_bar_color);
+            ini.WriteBool(L"taskbar_default_style", (key_name + L"specify_each_item_color").c_str(), m_default_style[i].specify_each_item_color);
+        }
+        else
+        {
             //写入日志
             CString log_str;
-            log_str.Format(_T("在保存taskbar_default_style时检测到背景色和文字颜色都为黑色，保存已中止。index=%d。"), i);
+            log_str.Format(_T("在保存预设%d时检测到背景色和文字颜色都为黑色，该预设未被保存。"), i);
             CCommon::WriteLog(log_str, theApp.m_log_path.c_str());
             return;
         }
-		ini.WriteIntArray(L"taskbar_default_style", (key_name + L"text_color").c_str(), (int*)m_default_style[i].text_colors, TASKBAR_COLOR_NUM);
-		ini.WriteInt(L"taskbar_default_style", (key_name + L"back_color").c_str(), m_default_style[i].back_color);
-		ini.WriteInt(L"taskbar_default_style", (key_name + L"transparent_color").c_str(), m_default_style[i].transparent_color);
-		ini.WriteInt(L"taskbar_default_style", (key_name + L"status_bar_color").c_str(), m_default_style[i].status_bar_color);
-		ini.WriteBool(L"taskbar_default_style", (key_name + L"specify_each_item_color").c_str(), m_default_style[i].specify_each_item_color);
 	}
 	ini.Save();
 }
 
 void CTaskbarDefaultStyle::ApplyDefaultStyle(int index, TaskBarSettingData & data) const
 {
-	if (index == TASKBAR_DEFAULT_LIGHT_STYLE_INDEX)
+    if (!IsTaskBarStyleDataValid(m_default_style[index]))
+        return;
+
+    if (index == TASKBAR_DEFAULT_LIGHT_STYLE_INDEX)
 	{
 		ApplyDefaultLightStyle(data);
 	}
 	else if(index >= 0 && index < TASKBAR_DEFAULT_STYLE_NUM)
 	{
 		for (int i{}; i < TASKBAR_COLOR_NUM; i++)
-			data.text_colors[i] = m_default_style[index].text_colors[i];
+            data.text_colors[i] = m_default_style[index].text_colors[i];
 		data.back_color = m_default_style[index].back_color;
 		data.transparent_color = m_default_style[index].transparent_color;
 		data.status_bar_color = m_default_style[index].status_bar_color;
@@ -130,4 +136,14 @@ void CTaskbarDefaultStyle::SetTaskabrTransparent(bool transparent, TaskBarSettin
 		else
 			data.transparent_color = TASKBAR_TRANSPARENT_COLOR2;
 	}
+}
+
+bool CTaskbarDefaultStyle::IsTaskBarStyleDataValid(const TaskBarStyleData& data)
+{
+    for (int i{}; i < TASKBAR_COLOR_NUM; i++)
+    {
+        if (data.text_colors[i] != data.back_color)
+            return true;
+    }
+    return false;     //如果文本颜色全部等于背景颜色，则该颜色预设无效
 }
