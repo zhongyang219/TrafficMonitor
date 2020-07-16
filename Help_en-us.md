@@ -1,5 +1,5 @@
 **[简体中文](./Help.md) | English**<br>
-# TrafficMonitor Help
+# TrafficMonitor Frequently Asked Questions
 ### 1. How to show the CPU and memory usage?
 Right click the main window and check "Show More Info". If you also need to display the CPU and memory usage in the taskbar window, right click the taskbar window and check "Show CPU and Memory Usage".
 ### 2. How do I set the color of each item in the taskbar window individually?
@@ -14,6 +14,17 @@ If you encountered this problem, that means the program does not have permission
 You can also change the save path of the configuration and data file to the C:\Users\\<username\>\AppData\Roaming\TrafficMonitor directory by the following steps. <br>
 * Exit TrafficMonitor and restart TrafficMonitor as an administrator.
 * Select "Options" in the right-click menu, switch to the "General Settings" tab, and select "Save to Appdata Directory" in "Configuration and data files".
+
+If it still pops up the "Unable to Save Settings" message box, open the directory where the application is located, open the `global_cfg.ini` file. If it doesn't exist, create a new one, adding the following:
+
+`[config]
+portable_mode = true`
+
+If the file cannot be created, you can create the file in a different location, such as the desktop, and then move to the directory where the program is located.
+
+If the `global_cfg.ini` file already exists, change the value of `portable_mode` to `true` and save, then restart TrafficMonitor.
+
+If `global_cfg.ini` does not have write permission, you can try copying the file to the desktop, and then copying it back to the original path to overwrite the original file after modified.
 
 After these steps, this problem should not theoretically occur. If this problem still occurs, try to delete the file C:\Users\\<username\>\AppData\Roaming\TrafficMonitor\config.ini. This file will be regenerated after it is deleted. 
 

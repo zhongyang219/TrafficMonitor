@@ -1,5 +1,5 @@
 **简体中文 | [English](./Help_en-us.md)**<br>
-# TrafficMonitor 帮助
+# TrafficMonitor 常见问题
 ### 1. 如何显示CPU和内存利用率？
 在主窗口点击右弹出键菜单，勾选“显示更多信息”。如果需要在任务栏窗口中也显示CPU和内存利用率，则在任务栏窗口中点击右键弹出菜单，勾选“显示CPU和内存利用率”即可。
 ### 2. 如何单独设置任务栏窗口中每个项目的颜色？
@@ -15,8 +15,18 @@
 你也可以通过以下步骤将配置文件的保存路径改为C:\Users\\<用户名\>\AppData\Roaming\TrafficMonitor目录。<br>
 
 * 退出TrafficMonitor，以管理员身份重新启动TrafficMonitor。
-
 * 在右键菜单中选择“选项”，切换到“常规设置”选项卡，在“数据和配置文件”中选择“保存到Appdata目录”。<br>
+
+如果此时仍然提示“无法保存设置”，请打开应用程序所在目录，打开`global_cfg.ini`文件，如果不存在请新建一个，在里面添加如下内容：
+
+`[config]
+portable_mode = true`
+
+如果无法新建，可以在其他位置（比如桌面）新建该文件，然后移动到程序所在目录。
+
+如果`global_cfg.ini`文件已存在，就把`portable_mode `的值改成`true`，保存后重新启动TrafficMonitor。
+
+如果`global_cfg.ini`没有写入权限，可以尝试把该文件复制到桌面，改好后复制回原来的路径将原文件覆盖。
 
 执行以上步骤后理论上应该不会出现这种问题了。如果这个问题仍然出现，请尝试把C:\Users\\<用户名\>\AppData\Roaming\TrafficMonitor\config.ini删除，该文件会在删除后重新生成。
 
