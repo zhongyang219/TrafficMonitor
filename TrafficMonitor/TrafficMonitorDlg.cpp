@@ -1257,13 +1257,23 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			}
 		}
 
-		if (theApp.m_taskbar_data.back_color == 0 && theApp.m_taskbar_data.text_colors[0] == 0)		//当检测到背景色和文字颜色都为黑色写入错误日志
+        //当检测到背景色和文字颜色都为黑色写入错误日志
+        static bool erro_log_write{ false };
+		if (theApp.m_taskbar_data.back_color == 0 && theApp.m_taskbar_data.text_colors[0] == 0)
 		{
-			CString log_str;
-			log_str.Format(_T("检查到背景色和文字颜色都为黑色。IsWindows10LightTheme: %d, 系统启动时间：%d/%.2d/%.2d %.2d:%.2d:%.2d"),
-				light_mode, m_start_time.wYear, m_start_time.wMonth, m_start_time.wDay, m_start_time.wHour, m_start_time.wMinute, m_start_time.wSecond);
-			CCommon::WriteLog(log_str, theApp.m_log_path.c_str());
+            if(!erro_log_write)
+            {
+                CString log_str;
+                log_str.Format(_T("检查到背景色和文字颜色都为黑色。IsWindows10LightTheme: %d, 系统启动时间：%d/%.2d/%.2d %.2d:%.2d:%.2d"),
+                    light_mode, m_start_time.wYear, m_start_time.wMonth, m_start_time.wDay, m_start_time.wHour, m_start_time.wMinute, m_start_time.wSecond);
+                CCommon::WriteLog(log_str, theApp.m_log_path.c_str());
+                erro_log_write = true;
+            }
 		}
+        else
+        {
+            erro_log_write = false;
+        }
 
 		UpdateNotifyIconTip();
 

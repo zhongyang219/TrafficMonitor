@@ -36,6 +36,15 @@ void CTaskbarDefaultStyle::SaveConfig() const
 		wchar_t buff[64];
 		swprintf_s(buff, L"default%d_", i + 1);
 		wstring key_name = buff;
+        if (m_default_style[i].text_colors == 0 && m_default_style[i].back_color == 0)
+        {
+            //如果检测到文本颜色的背景颜色都为黑色，则不保存
+            //写入日志
+            CString log_str;
+            log_str.Format(_T("在保存taskbar_default_style时检测到背景色和文字颜色都为黑色，保存已中止。index=%d。"), i);
+            CCommon::WriteLog(log_str, theApp.m_log_path.c_str());
+            return;
+        }
 		ini.WriteIntArray(L"taskbar_default_style", (key_name + L"text_color").c_str(), (int*)m_default_style[i].text_colors, TASKBAR_COLOR_NUM);
 		ini.WriteInt(L"taskbar_default_style", (key_name + L"back_color").c_str(), m_default_style[i].back_color);
 		ini.WriteInt(L"taskbar_default_style", (key_name + L"transparent_color").c_str(), m_default_style[i].transparent_color);
