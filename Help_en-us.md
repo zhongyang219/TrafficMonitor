@@ -17,8 +17,10 @@ You can also change the save path of the configuration and data file to the C:\U
 
 If it still pops up the "Unable to Save Settings" message box, open the directory where the application is located, open the `global_cfg.ini` file. If it doesn't exist, create a new one, adding the following:
 
-`[config]
-portable_mode = true`
+```
+[config]
+portable_mode = true
+```
 
 If the file cannot be created, you can create the file in a different location, such as the desktop, and then move to the directory where the program is located.
 
