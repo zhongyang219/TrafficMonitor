@@ -39,6 +39,7 @@ CMenuIcon::~CMenuIcon()
 
 HRESULT CMenuIcon::AddIconToMenuItem(HMENU hmenu, int iMenuItem, BOOL fByPosition, HICON hicon)
 {
+#ifndef COMPILE_FOR_WINXP
     if (CWCIFactory::GetWCI() == nullptr)
         return 0;
     HBITMAP hbmp = NULL;
@@ -88,6 +89,10 @@ HRESULT CMenuIcon::AddIconToMenuItem(HMENU hmenu, int iMenuItem, BOOL fByPositio
     }
 
     return hr;
+
+#else
+    return 0;
+#endif
 }
 
 HRESULT CMenuIcon::AddBitmapToMenuItem(HMENU hmenu, int iItem, BOOL fByPosition, HBITMAP hbmp)
