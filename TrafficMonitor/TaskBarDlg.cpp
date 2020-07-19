@@ -201,6 +201,8 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 		CString format_str;
 		if (theApp.m_taskbar_data.hide_percent)
 			format_str = _T("%d");
+		else if (theApp.m_taskbar_data.separate_value_unit_with_space)
+			format_str = _T("%d %%");
 		else
 			format_str = _T("%d%%");
 		str.Format(format_str, theApp.m_cpu_usage);
@@ -530,6 +532,11 @@ void CTaskBarDlg::CalculateWindowWidth()
 	{
 		str1.Format(_T("%s100"), theApp.m_taskbar_data.disp_str.cpu.c_str());
 		str2.Format(_T("%s100"), theApp.m_taskbar_data.disp_str.memory.c_str());
+	}
+	else if (theApp.m_taskbar_data.separate_value_unit_with_space)
+	{
+		str1.Format(_T("%s100 %%"), theApp.m_taskbar_data.disp_str.cpu.c_str());
+		str2.Format(_T("%s100 %%"), theApp.m_taskbar_data.disp_str.memory.c_str());
 	}
 	else
 	{
