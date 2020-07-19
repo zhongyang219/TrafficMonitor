@@ -317,9 +317,12 @@
     <Image Include="res\menu_icon\exit.ico" />
     <Image Include="res\menu_icon\help.ico" />
     <Image Include="res\menu_icon\info.ico" />
+    <Image Include="res\menu_icon\item.ico" />
     <Image Include="res\menu_icon\lock.ico" />
     <Image Include="res\menu_icon\main_window.ico" />
+    <Image Include="res\menu_icon\more.ico" />
     <Image Include="res\menu_icon\mouse.ico" />
+    <Image Include="res\menu_icon\notify.ico" />
     <Image Include="res\menu_icon\pin.ico" />
     <Image Include="res\menu_icon\setting.ico" />
     <Image Include="res\menu_icon\skn.ico" />
