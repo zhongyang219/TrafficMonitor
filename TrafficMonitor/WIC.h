@@ -1,21 +1,21 @@
-//使用 Windows 映像组件（WCI）将图标（HICON）转换为具有透明度的PARGB32位图，并添加到菜单项中
+//使用 Windows 映像组件（WIC）将图标（HICON）转换为具有透明度的PARGB32位图，并添加到菜单项中
 //https://docs.microsoft.com/en-us/previous-versions/bb757020(v=msdn.10)
 
 #pragma once
-class CWCIFactory
+class CWICFactory
 {
 public:
-    ~CWCIFactory();
+    ~CWICFactory();
     static IWICImagingFactory* GetWCI() { return m_instance.m_pWICFactory; }
 
 private:
     HRESULT _hrOleInit{};
     IWICImagingFactory *m_pWICFactory{};
 
-    static CWCIFactory m_instance;      //CWCIFactory类唯一的对象
+    static CWICFactory m_instance;      //CWICFactory类唯一的对象
 
 private:
-    CWCIFactory();
+    CWICFactory();
 };
 
 class CMenuIcon

@@ -1,16 +1,16 @@
 #include "stdafx.h"
-#include "WCI.h"
+#include "WIC.h"
 
-CWCIFactory CWCIFactory::m_instance;
+CWICFactory CWICFactory::m_instance;
 
-CWCIFactory::CWCIFactory()
+CWICFactory::CWICFactory()
 {
     //³õÊ¼»¯m_pWICFactory
     _hrOleInit = ::OleInitialize(NULL);
     CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&m_pWICFactory));
 }
 
-CWCIFactory::~CWCIFactory()
+CWICFactory::~CWICFactory()
 {
     if (m_pWICFactory)
     {
@@ -40,16 +40,16 @@ CMenuIcon::~CMenuIcon()
 HRESULT CMenuIcon::AddIconToMenuItem(HMENU hmenu, int iMenuItem, BOOL fByPosition, HICON hicon)
 {
 #ifndef COMPILE_FOR_WINXP
-    if (CWCIFactory::GetWCI() == nullptr)
+    if (CWICFactory::GetWCI() == nullptr)
         return 0;
     HBITMAP hbmp = NULL;
 
     IWICBitmap *pBitmap;
-    HRESULT hr = CWCIFactory::GetWCI()->CreateBitmapFromHICON(hicon, &pBitmap);
+    HRESULT hr = CWICFactory::GetWCI()->CreateBitmapFromHICON(hicon, &pBitmap);
     if (SUCCEEDED(hr))
     {
         IWICFormatConverter *pConverter;
-        hr = CWCIFactory::GetWCI()->CreateFormatConverter(&pConverter);
+        hr = CWICFactory::GetWCI()->CreateFormatConverter(&pConverter);
         if (SUCCEEDED(hr))
         {
             hr = pConverter->Initialize(pBitmap, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);

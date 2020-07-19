@@ -136,7 +136,7 @@
     <Filter Include="测试">
       <UniqueIdentifier>{df6d5fed-e1e8-4538-b028-f046ac67ad3f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件和头文件\公共的类\WCI">
+    <Filter Include="源文件和头文件\公共的类\WIC">
       <UniqueIdentifier>{2f6c60c6-eed6-4cad-8a1f-8759efb79d1d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -294,8 +294,8 @@
     <ClInclude Include="Test.h">
       <Filter>测试</Filter>
     </ClInclude>
-    <ClInclude Include="WCI.h">
-      <Filter>源文件和头文件\公共的类\WCI</Filter>
+    <ClInclude Include="WIC.h">
+      <Filter>源文件和头文件\公共的类\WIC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -437,8 +437,8 @@
     <ClCompile Include="Test.cpp">
       <Filter>测试</Filter>
     </ClCompile>
-    <ClCompile Include="WCI.cpp">
-      <Filter>源文件和头文件\公共的类\WCI</Filter>
+    <ClCompile Include="WIC.cpp">
+      <Filter>源文件和头文件\公共的类\WIC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
