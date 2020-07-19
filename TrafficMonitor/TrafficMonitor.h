@@ -14,6 +14,7 @@
 #include "WinVersionHelper.h"
 #include "SimpleXML.h"
 #include "TaskbarDefaultStyle.h"
+#include <map>
 
 // CTrafficMonitorApp: 
 // 有关此类的实现，请参阅 TrafficMonitor.cpp
@@ -71,6 +72,10 @@ public:
 
 	HWND m_option_dlg{};		//选项设置对话框的句柄
 
+
+    CMenu m_main_menu;
+    CMenu m_taskbar_menu;
+
 public:
 	CTrafficMonitorApp();
 
@@ -94,12 +99,18 @@ public:
 	//获取系统信息文本
 	CString GetSystemInfoString();
 
+    void InitMenuResourse();
+
+    HICON GetMenuIcon(UINT id);
+
 private:
 	//int m_no_multistart_warning_time{};		//用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示
 	bool m_no_multistart_warning{};			//如果为false，则永远都不会弹出“已经有一个程序正在运行”的警告提示
 	bool m_exit_when_start_by_restart_manager{ true };		//如果程序被Windows重启管理器重新启动，则退出程序
 	int m_dpi{ 96 };
 	CWinThread* m_pUpdateThread;			//检查更新的线程
+
+    std::map<UINT, HICON> m_menu_icons;      //菜单图标资源
 
 // 重写
 public:

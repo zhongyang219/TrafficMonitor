@@ -694,8 +694,6 @@ BOOL CTaskBarDlg::OnInitDialog()
 		this->MoveWindow(rect);
 	}
 
-	m_menu.LoadMenu(IDR_TASK_BAR_MENU);
-
 	SetBackgroundColor(theApp.m_taskbar_data.back_color);
 
 	//初始化鼠标提示
@@ -733,7 +731,7 @@ void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
 
 	CPoint point1;	//定义一个用于确定光标位置的位置  
 	GetCursorPos(&point1);	//获取当前光标的位置，以便使得菜单可以跟随光标  
-	m_menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
+	theApp.m_taskbar_menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
 	CDialogEx::OnRButtonUp(nFlags, point1);
 }
 

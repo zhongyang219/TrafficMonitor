@@ -240,6 +240,7 @@
     <ClInclude Include="TrafficMonitor.h" />
     <ClInclude Include="TrafficMonitorDlg.h" />
     <ClInclude Include="UpdateHelper.h" />
+    <ClInclude Include="WCI.h" />
     <ClInclude Include="WinVersionHelper.h" />
   </ItemGroup>
   <ItemGroup>
@@ -293,6 +294,7 @@
     <ClCompile Include="TrafficMonitor.cpp" />
     <ClCompile Include="TrafficMonitorDlg.cpp" />
     <ClCompile Include="UpdateHelper.cpp" />
+    <ClCompile Include="WCI.cpp" />
     <ClCompile Include="WinVersionHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -310,6 +312,19 @@
     <Image Include="res\bitmap3.bmp" />
     <Image Include="res\donate.bmp" />
     <Image Include="res\donate_wechart.bmp" />
+    <Image Include="res\menu_icon\close.ico" />
+    <Image Include="res\menu_icon\connection.ico" />
+    <Image Include="res\menu_icon\exit.ico" />
+    <Image Include="res\menu_icon\help.ico" />
+    <Image Include="res\menu_icon\info.ico" />
+    <Image Include="res\menu_icon\lock.ico" />
+    <Image Include="res\menu_icon\main_window.ico" />
+    <Image Include="res\menu_icon\mouse.ico" />
+    <Image Include="res\menu_icon\pin.ico" />
+    <Image Include="res\menu_icon\setting.ico" />
+    <Image Include="res\menu_icon\skn.ico" />
+    <Image Include="res\menu_icon\statistics.ico" />
+    <Image Include="res\menu_icon\taskbar_window.ico" />
     <Image Include="res\notifyicon.ico" />
     <Image Include="res\notifyicon2.ico" />
     <Image Include="res\notifyicon3.ico" />

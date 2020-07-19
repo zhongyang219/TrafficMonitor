@@ -420,9 +420,7 @@ void CTrafficMonitorDlg::IniConnection()
 	theApp.m_cfg_data.m_connection_name = m_connections[m_connection_selected].description_2;
 
 	//根据已获取到的连接在菜单中添加相应项目
-	m_menu.DestroyMenu();
-	m_menu.LoadMenu(IDR_MENU1); //装载右键菜单
-	CMenu* select_connection_menu = m_menu.GetSubMenu(0)->GetSubMenu(0);		//设置“选择网络连接”子菜单项
+    CMenu* select_connection_menu = theApp.m_main_menu.GetSubMenu(0)->GetSubMenu(0);		//设置“选择网络连接”子菜单项
 	IniConnectionMenu(select_connection_menu);		//向“选择网卡”子菜单项添加项目
 
 	IniTaskBarConnectionMenu();		//初始化任务栏窗口中的“选择网络连接”子菜单项
@@ -433,24 +431,29 @@ void CTrafficMonitorDlg::IniConnection()
 
 void CTrafficMonitorDlg::IniConnectionMenu(CMenu * pMenu)
 {
-	CString connection_descr;
-	for (size_t i{}; i < m_connections.size(); i++)
-	{
-		connection_descr = CCommon::StrToUnicode(m_connections[i].description.c_str()).c_str();
-		pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SELECT_ALL_CONNECTION + i + 1, connection_descr);
-	}
+    ASSERT(pMenu != nullptr);
+    if (pMenu != nullptr)
+    {
+        //先将ID_SELECT_ALL_CONNECTION后面的所有菜单项删除
+        int start_pos = CCommon::GetMenuItemPosition(pMenu, ID_SELECT_ALL_CONNECTION) + 1;
+        while (pMenu->GetMenuItemCount() > start_pos)
+        {
+            pMenu->DeleteMenu(start_pos, MF_BYPOSITION);
+        }
+
+        CString connection_descr;
+        for (size_t i{}; i < m_connections.size(); i++)
+        {
+            connection_descr = CCommon::StrToUnicode(m_connections[i].description.c_str()).c_str();
+            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SELECT_ALL_CONNECTION + i + 1, connection_descr);
+        }
+    }
 }
 
 void CTrafficMonitorDlg::IniTaskBarConnectionMenu()
 {
-	//初始化任务栏窗口中的“选择网络连接”子菜单项
-	if (IsTaskbarWndValid())
-	{
-		m_tBarDlg->m_menu.DestroyMenu();
-		m_tBarDlg->m_menu.LoadMenu(IDR_TASK_BAR_MENU);
-		CMenu* select_connection_menu = m_tBarDlg->m_menu.GetSubMenu(0)->GetSubMenu(0);		//设置“选择网络连接”子菜单项
-		IniConnectionMenu(select_connection_menu);		//向“选择网卡”子菜单项添加项目
-	}
+	CMenu* select_connection_menu = theApp.m_taskbar_menu.GetSubMenu(0)->GetSubMenu(0);		//设置“选择网络连接”子菜单项
+	IniConnectionMenu(select_connection_menu);		//向“选择网卡”子菜单项添加项目
 }
 
 void CTrafficMonitorDlg::SetConnectionMenuState(CMenu * pMenu)
@@ -486,7 +489,7 @@ void CTrafficMonitorDlg::OpenTaskBarWnd()
 	m_tBarDlg->Create(IDD_TASK_BAR_DIALOG, this);
 	m_tBarDlg->ShowWindow(SW_SHOW);
 	//m_tBarDlg->ShowInfo();
-	IniTaskBarConnectionMenu();
+	//IniTaskBarConnectionMenu();
 }
 
 void CTrafficMonitorDlg::AddNotifyIcon()
@@ -777,6 +780,8 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	theApp.GetDPI(this);
 	//获取屏幕大小
 	GetScreenSize();
+
+    theApp.InitMenuResourse();
 
 	//设置窗口透明度
 	SetTransparency();
@@ -1303,7 +1308,7 @@ void CTrafficMonitorDlg::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	//设置点击鼠标右键弹出菜单
-	CMenu* pContextMenu = m_menu.GetSubMenu(0); //获取第一个弹出菜单，所以第一个菜单必须有子菜单 
+    CMenu* pContextMenu = theApp.m_main_menu.GetSubMenu(0); //获取第一个弹出菜单，所以第一个菜单必须有子菜单 
 	CPoint point1;	//定义一个用于确定光标位置的位置  
 	GetCursorPos(&point1);	//获取当前光标的位置，以便使得菜单可以跟随光标
 	//设置默认菜单项
@@ -1556,7 +1561,7 @@ void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
 	m_menu_popuped = true;
 
 	//设置“选择连接”子菜单项中各单选项的选择状态
-	CMenu* select_connection_menu = m_menu.GetSubMenu(0)->GetSubMenu(0);
+    CMenu* select_connection_menu = theApp.m_main_menu.GetSubMenu(0)->GetSubMenu(0);
 	SetConnectionMenuState(select_connection_menu);
 
 	//设置“窗口不透明度”子菜单下各单选项的选择状态
@@ -1684,8 +1689,8 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
 			SetForegroundWindow();
 		CPoint point1;	//定义一个用于确定光标位置的位置  
 		GetCursorPos(&point1);	//获取当前光标的位置，以便使得菜单可以跟随光标
-		m_menu.GetSubMenu(0)->SetDefaultItem(-1);		//设置没有默认菜单项
-		m_menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
+        theApp.m_main_menu.GetSubMenu(0)->SetDefaultItem(-1);		//设置没有默认菜单项
+        theApp.m_main_menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
 
 		CheckWindowPos();
 	}
@@ -2092,7 +2097,7 @@ void CTrafficMonitorDlg::OnCheckUpdate()
 afx_msg LRESULT CTrafficMonitorDlg::OnTaskbarMenuPopedUp(WPARAM wParam, LPARAM lParam)
 {
 	//设置“选择连接”子菜单项中各单选项的选择状态
-	CMenu* select_connection_menu = m_tBarDlg->m_menu.GetSubMenu(0)->GetSubMenu(0);
+	CMenu* select_connection_menu = theApp.m_taskbar_menu.GetSubMenu(0)->GetSubMenu(0);
 	SetConnectionMenuState(select_connection_menu);
 	return 0;
 }

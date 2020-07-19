@@ -910,3 +910,23 @@ CString CCommon::GetTextResource(UINT id, int code_type)
     }
     return res_str;
 }
+
+HICON CCommon::LoadIconResource(UINT id, int size)
+{
+    return (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(id), IMAGE_ICON, size, size, 0);
+}
+
+int CCommon::GetMenuItemPosition(CMenu* pMenu, UINT id)
+{
+    int pos = -1;
+    int item_count = pMenu->GetMenuItemCount();
+    for (int i = 0; i < item_count; i++)
+    {
+        if (pMenu->GetMenuItemID(i) == id)
+        {
+            pos = i;
+            break;
+        }
+    }
+    return pos;
+}

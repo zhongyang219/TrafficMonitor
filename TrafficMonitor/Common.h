@@ -144,5 +144,13 @@ public:
 
     //从资源加载自定义文本资源。id：资源的ID，code_type：文本的编码格式：0:ANSI, 1:UTF8, 2:UTF16
     static CString GetTextResource(UINT id, int code_type);
+
+    //从资源加载一个图标
+    static HICON LoadIconResource(UINT id, int size);
+
+    //获取一个菜单项的序号
+    static int GetMenuItemPosition(CMenu* pMenu, UINT id);
+
+
 };
 

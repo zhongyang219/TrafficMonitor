@@ -21,7 +21,6 @@ public:
 	virtual ~CTaskBarDlg();
 
 	CToolTipCtrl m_tool_tips;
-	CMenu m_menu;	//右键菜单
 
 	void ShowInfo(CDC* pDC); 	//将信息绘制到控件上
 	void TryDrawStatusBar(CDrawCommon& drawer, const CRect& rect_bar, int usage_percent); //绘制CPU/内存状态条

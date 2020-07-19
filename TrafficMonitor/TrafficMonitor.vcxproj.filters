@@ -136,6 +136,9 @@
     <Filter Include="测试">
       <UniqueIdentifier>{df6d5fed-e1e8-4538-b028-f046ac67ad3f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\WCI">
+      <UniqueIdentifier>{2f6c60c6-eed6-4cad-8a1f-8759efb79d1d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -291,6 +294,9 @@
     <ClInclude Include="Test.h">
       <Filter>测试</Filter>
     </ClInclude>
+    <ClInclude Include="WCI.h">
+      <Filter>源文件和头文件\公共的类\WCI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListCtrlEx.cpp">
@@ -431,6 +437,9 @@
     <ClCompile Include="Test.cpp">
       <Filter>测试</Filter>
     </ClCompile>
+    <ClCompile Include="WCI.cpp">
+      <Filter>源文件和头文件\公共的类\WCI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TrafficMonitor.rc">
@@ -482,6 +491,45 @@
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="res\bitmap3.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\exit.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\help.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\info.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\lock.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\setting.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\statistics.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\close.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\pin.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\skn.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\connection.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\mouse.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\main_window.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\taskbar_window.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

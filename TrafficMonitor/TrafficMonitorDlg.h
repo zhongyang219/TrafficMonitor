@@ -43,7 +43,6 @@ public:
 // 实现
 protected:
 	HICON m_hIcon;
-	CMenu m_menu;		//右键菜单对象
 	NOTIFYICONDATA m_ntIcon;	//通知区域图标
 	CTaskBarDlg* m_tBarDlg;		//任务栏窗口的指针
 
