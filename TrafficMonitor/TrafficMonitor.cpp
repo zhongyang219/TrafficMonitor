@@ -8,7 +8,7 @@
 #include "crashtool.h"
 #include "UpdateHelper.h"
 #include "Test.h"
-#include "WCI.h"
+#include "WIC.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

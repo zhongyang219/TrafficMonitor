@@ -6,7 +6,7 @@ class CWICFactory
 {
 public:
     ~CWICFactory();
-    static IWICImagingFactory* GetWCI() { return m_instance.m_pWICFactory; }
+    static IWICImagingFactory* GetWIC() { return m_instance.m_pWICFactory; }
 
 private:
     HRESULT _hrOleInit{};

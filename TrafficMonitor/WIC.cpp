@@ -40,16 +40,16 @@ CMenuIcon::~CMenuIcon()
 HRESULT CMenuIcon::AddIconToMenuItem(HMENU hmenu, int iMenuItem, BOOL fByPosition, HICON hicon)
 {
 #ifndef COMPILE_FOR_WINXP
-    if (CWICFactory::GetWCI() == nullptr)
+    if (CWICFactory::GetWIC() == nullptr)
         return 0;
     HBITMAP hbmp = NULL;
 
     IWICBitmap *pBitmap;
-    HRESULT hr = CWICFactory::GetWCI()->CreateBitmapFromHICON(hicon, &pBitmap);
+    HRESULT hr = CWICFactory::GetWIC()->CreateBitmapFromHICON(hicon, &pBitmap);
     if (SUCCEEDED(hr))
     {
         IWICFormatConverter *pConverter;
-        hr = CWICFactory::GetWCI()->CreateFormatConverter(&pConverter);
+        hr = CWICFactory::GetWIC()->CreateFormatConverter(&pConverter);
         if (SUCCEEDED(hr))
         {
             hr = pConverter->Initialize(pBitmap, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
