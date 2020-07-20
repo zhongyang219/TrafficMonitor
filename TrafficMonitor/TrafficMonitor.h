@@ -51,6 +51,8 @@ public:
 	bool m_cannot_save_config_warning{ true };	//指示是否会在无法保存设置时弹出提示框
 	bool m_cannot_save_global_config_warning{ true };	//指示是否会在无法保存设置时弹出提示框
 
+    bool m_module_dir_writable{ true };         //指示程序所在目录是否可写
+
 	//选项设置数据
 	MainWndSettingData m_main_wnd_data;
 	TaskBarSettingData m_taskbar_data;

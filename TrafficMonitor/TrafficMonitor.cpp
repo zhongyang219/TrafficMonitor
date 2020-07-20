@@ -325,6 +325,13 @@ void CTrafficMonitorApp::LoadGlobalConfig()
 
 	CIniHelper ini{ global_cfg_path };
 	m_general_data.portable_mode = ini.GetBool(L"config", L"portable_mode", portable_mode_default);
+
+    //执行一次保存操作，以检查当前目录是否有写入权限
+    m_module_dir_writable = ini.Save();
+    if (!m_module_dir_writable)              //如果当前目录没有写入权限，则设置配置保存到AppData目录
+    {
+        m_general_data.portable_mode = false;
+    }
 }
 
 void CTrafficMonitorApp::SaveGlobalConfig()
@@ -333,18 +340,18 @@ void CTrafficMonitorApp::SaveGlobalConfig()
 	ini.WriteBool(L"config", L"portable_mode", m_general_data.portable_mode);
 
 	//检查是否保存成功
-	if (!ini.Save())
-	{
-		if (m_cannot_save_global_config_warning)
-		{
-			CString info;
-			info.LoadString(IDS_CONNOT_SAVE_CONFIG_WARNING);
-			info.Replace(_T("<%file_path%>"), m_module_dir.c_str());
-			AfxMessageBox(info, MB_ICONWARNING);
-		}
-		m_cannot_save_global_config_warning = false;
-		return;
-	}
+    if (!ini.Save())
+    {
+        //if (m_cannot_save_global_config_warning)
+        //{
+        //    CString info;
+        //    info.LoadString(IDS_CONNOT_SAVE_CONFIG_WARNING);
+        //    info.Replace(_T("<%file_path%>"), m_module_dir.c_str());
+        //    AfxMessageBox(info, MB_ICONWARNING);
+        //}
+        //m_cannot_save_global_config_warning = false;
+        //return;
+    }
 }
 
 int CTrafficMonitorApp::DPI(int pixel)
