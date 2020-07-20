@@ -541,5 +541,8 @@
     <Image Include="res\menu_icon\item.ico">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="res\menu_icon\function.ico">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

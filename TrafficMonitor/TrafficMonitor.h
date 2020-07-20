@@ -101,6 +101,8 @@ public:
 
     void InitMenuResourse();
 
+    //获取一个图标资源，如果资源还未加载，会自动加载。
+    //由于本函数中使用了CTrafficMonitorApp::DPI函数，因此本函数必须确保在CTrafficMonitorApp::GetDPI之后调用
     HICON GetMenuIcon(UINT id);
 
 private:
@@ -110,7 +112,7 @@ private:
 	int m_dpi{ 96 };
 	CWinThread* m_pUpdateThread;			//检查更新的线程
 
-    std::map<UINT, HICON> m_menu_icons;      //菜单图标资源
+    std::map<UINT, HICON> m_menu_icons;      //菜单图标资源。key是图标资源的ID，vlaue是图标的句柄
 
 // 重写
 public:

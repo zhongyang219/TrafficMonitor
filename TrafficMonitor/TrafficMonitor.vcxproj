@@ -315,6 +315,7 @@
     <Image Include="res\menu_icon\close.ico" />
     <Image Include="res\menu_icon\connection.ico" />
     <Image Include="res\menu_icon\exit.ico" />
+    <Image Include="res\menu_icon\function.ico" />
     <Image Include="res\menu_icon\help.ico" />
     <Image Include="res\menu_icon\info.ico" />
     <Image Include="res\menu_icon\item.ico" />
