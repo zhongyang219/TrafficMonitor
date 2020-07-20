@@ -62,7 +62,7 @@ BOOL CIconSelectDlg::OnInitDialog()
 
 	//设置预览图大小
 	m_preview_pic.SetWindowPos(nullptr, 0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT, SWP_NOZORDER | SWP_NOMOVE);
-	if (m_icon_selected == 4)
+	if (m_icon_selected == 4 || m_icon_selected == 5)
 		m_preview_pic.SetPicture((HBITMAP)LoadImage(AfxGetInstanceHandle(),
 			MAKEINTRESOURCE(IDB_NOTIFY_ICON_PREVIEW_LIGHT), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR | LR_CREATEDIBSECTION));
 	else
@@ -75,6 +75,7 @@ BOOL CIconSelectDlg::OnInitDialog()
 	m_icon_select_combo.AddString(CCommon::LoadText(IDS_ICON, _T(" 2")));
 	m_icon_select_combo.AddString(CCommon::LoadText(IDS_ICON, _T(" 3")));
 	m_icon_select_combo.AddString(CCommon::LoadText(IDS_ICON, _T(" 4")));
+	m_icon_select_combo.AddString(CCommon::LoadText(IDS_ICON, _T(" 5")));
 	m_icon_select_combo.SetCurSel(m_icon_selected);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -86,14 +87,14 @@ void CIconSelectDlg::OnCbnSelchangeCombo1()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	m_icon_selected = m_icon_select_combo.GetCurSel();
-	if (m_icon_selected == 4)
+	if (m_icon_selected == 4 | m_icon_selected == 5)
 		m_preview_pic.SetPicture((HBITMAP)LoadImage(AfxGetInstanceHandle(),
 			MAKEINTRESOURCE(IDB_NOTIFY_ICON_PREVIEW_LIGHT), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR | LR_CREATEDIBSECTION));
 	else
 		m_preview_pic.SetPicture((HBITMAP)LoadImage(AfxGetInstanceHandle(),
 			MAKEINTRESOURCE(IDB_NOTIFY_ICON_PREVIEW), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR | LR_CREATEDIBSECTION));
 	DrawPreviewIcon(m_preview_pic.GetDC());
-	}
+}
 
 
 afx_msg LRESULT CIconSelectDlg::OnControlRepaint(WPARAM wParam, LPARAM lParam)
