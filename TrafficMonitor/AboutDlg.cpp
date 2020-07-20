@@ -97,6 +97,9 @@ BOOL CAboutDlg::OnInitDialog()
     if (m_rc_pic.Height() <= 0)
         m_rc_pic.bottom = m_rc_pic.top + theApp.DPI(50);
 
+    //加载图片
+    m_about_pic.LoadBitmap(IDB_ABOUT_BACKGROUND_HD);
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
 }
@@ -155,5 +158,5 @@ void CAboutDlg::OnPaint()
     CDrawCommon draw;
     draw.Create(&dc, this);
     draw.GetDC()->FillSolidRect(m_rc_pic, RGB(161, 200, 255));
-    draw.DrawBitmap(IDB_ABOUT_BACKGROUND_HD, m_rc_pic.TopLeft(), m_rc_pic.Size(), CDrawCommon::StretchMode::FIT);
+    draw.DrawBitmap(m_about_pic, m_rc_pic.TopLeft(), m_rc_pic.Size(), CDrawCommon::StretchMode::FIT);
 }

@@ -78,7 +78,10 @@ void CTrafficMonitorApp::LoadConfig()
 	if (m_cfg_data.m_skin_name.substr(0, 8) == L".\\skins\\")		//如果读取到的皮肤名称前面有".\\skins\\"，则把它删除。（用于和前一个版本保持兼容性）
 		m_cfg_data.m_skin_name = m_cfg_data.m_skin_name.substr(7);
 	m_cfg_data.m_notify_icon_selected = ini.GetInt(_T("config"), _T("notify_icon_selected"), (m_win_version.IsWindows7() || m_win_version.IsWindows8Or8point1() ? 2 : m_cfg_data.m_dft_notify_icon));		//Win7/8/8.1默认使用蓝色通知区图标，因为隐藏通知区图标后白色图标会看不清，其他系统默认使用白色图标
-	m_main_wnd_data.swap_up_down = ini.GetBool(_T("config"), _T("swap_up_down"), false);
+    m_cfg_data.m_notify_icon_auto_adapt = ini.GetBool(_T("config"), _T("notify_icon_auto_adapt"), true);
+    if(m_cfg_data.m_notify_icon_auto_adapt)
+        AutoSelectNotifyIcon();
+    m_main_wnd_data.swap_up_down = ini.GetBool(_T("config"), _T("swap_up_down"), false);
 	m_main_wnd_data.hide_main_wnd_when_fullscreen = ini.GetBool(_T("config"), _T("hide_main_wnd_when_fullscreen"), true);
 
 	FontInfo default_font{};
@@ -214,6 +217,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteString(L"connection", L"connection_name", CCommon::StrToUnicode(m_cfg_data.m_connection_name.c_str()).c_str());
 	ini.WriteString(_T("config"), _T("skin_selected"), m_cfg_data.m_skin_name.c_str());
 	ini.WriteInt(L"config", L"notify_icon_selected", m_cfg_data.m_notify_icon_selected);
+    ini.WriteBool(L"config", L"notify_icon_auto_adapt", m_cfg_data.m_notify_icon_auto_adapt);
 
 	ini.SaveFontData(L"config", m_main_wnd_data.font);
 
@@ -558,6 +562,28 @@ HICON CTrafficMonitorApp::GetMenuIcon(UINT id)
         HICON hIcon = CCommon::LoadIconResource(id, DPI(16));
         m_menu_icons[id] = hIcon;
         return hIcon;
+    }
+}
+
+void CTrafficMonitorApp::AutoSelectNotifyIcon()
+{
+    if (m_win_version.GetMajorVersion() >= 10)
+    {
+        bool light_mode = m_win_version.IsWindows10LightTheme();
+        if (light_mode)     //浅色模式下，如果图标是白色，则改成黑色
+        {
+            if (m_cfg_data.m_notify_icon_selected == 0)
+                m_cfg_data.m_notify_icon_selected = 4;
+            if (m_cfg_data.m_notify_icon_selected == 1)
+                m_cfg_data.m_notify_icon_selected = 5;
+        }
+        else     //深色模式下，如果图标是黑色，则改成白色
+        {
+            if (m_cfg_data.m_notify_icon_selected == 4)
+                m_cfg_data.m_notify_icon_selected = 0;
+            if (m_cfg_data.m_notify_icon_selected == 5)
+                m_cfg_data.m_notify_icon_selected = 1;
+        }
     }
 }
 

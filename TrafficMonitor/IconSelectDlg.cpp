@@ -28,11 +28,22 @@ int CIconSelectDlg::GetIconSelected() const
 	return m_icon_selected;
 }
 
+void CIconSelectDlg::SetAutoAdaptNotifyIcon(bool val)
+{
+    m_atuo_adapt_notify_icon = val;
+}
+
+bool CIconSelectDlg::AutoAdaptNotifyIcon() const
+{
+    return m_atuo_adapt_notify_icon;
+}
+
 void CIconSelectDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_ICON_PREVIEW, m_preview_pic);
-	DDX_Control(pDX, IDC_COMBO1, m_icon_select_combo);
+    CDialog::DoDataExchange(pDX);
+    DDX_Control(pDX, IDC_ICON_PREVIEW, m_preview_pic);
+    DDX_Control(pDX, IDC_COMBO1, m_icon_select_combo);
+    DDX_Control(pDX, IDC_AUTO_ADAPT_CHECK, m_auto_adapt_chk);
 }
 
 void CIconSelectDlg::DrawPreviewIcon(CDC* pDC)
@@ -47,6 +58,7 @@ BEGIN_MESSAGE_MAP(CIconSelectDlg, CDialog)
 	//ON_WM_TIMER()
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CIconSelectDlg::OnCbnSelchangeCombo1)
 	ON_MESSAGE(WM_CONTROL_REPAINT, &CIconSelectDlg::OnControlRepaint)
+    ON_BN_CLICKED(IDC_AUTO_ADAPT_CHECK, &CIconSelectDlg::OnBnClickedAutoAdaptCheck)
 END_MESSAGE_MAP()
 
 
@@ -78,6 +90,9 @@ BOOL CIconSelectDlg::OnInitDialog()
 	m_icon_select_combo.AddString(CCommon::LoadText(IDS_ICON, _T(" 5")));
 	m_icon_select_combo.SetCurSel(m_icon_selected);
 
+    m_auto_adapt_chk.SetCheck(m_atuo_adapt_notify_icon);
+    m_auto_adapt_chk.EnableWindow(theApp.m_win_version.GetMajorVersion() >= 10);
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
 }
@@ -107,4 +122,11 @@ afx_msg LRESULT CIconSelectDlg::OnControlRepaint(WPARAM wParam, LPARAM lParam)
 		DrawPreviewIcon(pDC);
 	}
 	return 0;
+}
+
+
+void CIconSelectDlg::OnBnClickedAutoAdaptCheck()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    m_atuo_adapt_notify_icon = (m_auto_adapt_chk.GetCheck() != 0);
 }

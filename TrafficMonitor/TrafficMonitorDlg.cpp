@@ -1261,6 +1261,19 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 					CCommon::WriteLog(log_str, (theApp.m_config_dir + L".\\debug.log").c_str());
 				}
 			}
+
+            //根据当前Win10颜色模式自动切换通知区图标
+            if (theApp.m_cfg_data.m_notify_icon_auto_adapt)
+            {
+                int notify_icon_selected = theApp.m_cfg_data.m_notify_icon_selected;
+                theApp.AutoSelectNotifyIcon();
+                if (notify_icon_selected != theApp.m_cfg_data.m_notify_icon_selected)
+                {
+                    m_ntIcon.hIcon = theApp.m_notify_icons[theApp.m_cfg_data.m_notify_icon_selected];
+                    DeleteNotifyIcon();
+                    AddNotifyIcon();
+                }
+            }
 		}
 
         //当检测到背景色和文字颜色都为黑色写入错误日志
@@ -2059,10 +2072,14 @@ void CTrafficMonitorDlg::OnChangeNotifyIcon()
 {
 	// TODO: 在此添加命令处理程序代码
 	CIconSelectDlg dlg(theApp.m_cfg_data.m_notify_icon_selected);
+    dlg.SetAutoAdaptNotifyIcon(theApp.m_cfg_data.m_notify_icon_auto_adapt);
 	if (dlg.DoModal() == IDOK)
 	{
 		theApp.m_cfg_data.m_notify_icon_selected = dlg.GetIconSelected();
+        theApp.m_cfg_data.m_notify_icon_auto_adapt = dlg.AutoAdaptNotifyIcon();
 		m_ntIcon.hIcon = theApp.m_notify_icons[theApp.m_cfg_data.m_notify_icon_selected];
+        if (theApp.m_cfg_data.m_notify_icon_auto_adapt)
+            theApp.AutoSelectNotifyIcon();
 		if (theApp.m_cfg_data.m_show_notify_icon)
 		{
 			DeleteNotifyIcon();

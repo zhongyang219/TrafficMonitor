@@ -155,6 +155,7 @@ struct MainConfigData
 	wstring m_skin_name;			//选择的皮肤的名称
 	int m_dft_notify_icon = 0;		//默认的通知图标(用于区分win10的深色和浅色模式)
 	int m_notify_icon_selected{};	//要显示的通知区图标
+    bool m_notify_icon_auto_adapt{ false }; //通知区图标是否自动适应Win10深浅色模式
 	bool m_alow_out_of_border{ false };		//是否允许悬浮窗超出屏幕边界
 
 	bool m_show_internet_ip{ false };		//是否在“连接详情”对话框中显示外网IP地址
