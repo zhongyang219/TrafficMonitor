@@ -21,13 +21,19 @@ CGeneralSettingsDlg::~CGeneralSettingsDlg()
 {
 }
 
+bool CGeneralSettingsDlg::IsMonitorTimeSpanModified() const
+{
+    return m_data.monitor_time_span != m_monitor_time_span_ori;
+}
+
 void CGeneralSettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CTabDlg::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_TODAY_TRAFFIC_TIP_EDIT, m_traffic_tip_edit);
-	DDX_Control(pDX, IDC_TODAY_TRAFFIC_TIP_COMBO, m_traffic_tip_combo);
-	DDX_Control(pDX, IDC_MEMORY_USAGE_TIP_EDIT, m_memory_tip_edit);
-	DDX_Control(pDX, IDC_LANGUAGE_COMBO, m_language_combo);
+    CTabDlg::DoDataExchange(pDX);
+    DDX_Control(pDX, IDC_TODAY_TRAFFIC_TIP_EDIT, m_traffic_tip_edit);
+    DDX_Control(pDX, IDC_TODAY_TRAFFIC_TIP_COMBO, m_traffic_tip_combo);
+    DDX_Control(pDX, IDC_MEMORY_USAGE_TIP_EDIT, m_memory_tip_edit);
+    DDX_Control(pDX, IDC_LANGUAGE_COMBO, m_language_combo);
+    DDX_Control(pDX, IDC_MONITOR_SPAN_EDIT, m_monitor_span_edit);
 }
 
 void CGeneralSettingsDlg::SetTrafficTipControlEnable(bool enable)
@@ -54,6 +60,7 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_SHOW_ALL_CONNECTION_CHECK, &CGeneralSettingsDlg::OnBnClickedShowAllConnectionCheck)
 	ON_BN_CLICKED(IDC_USE_CPU_TIME_RADIO, &CGeneralSettingsDlg::OnBnClickedUseCpuTimeRadio)
 	ON_BN_CLICKED(IDC_USE_PDH_RADIO, &CGeneralSettingsDlg::OnBnClickedUsePdhRadio)
+    ON_NOTIFY(UDN_DELTAPOS, SPIN_ID, &CGeneralSettingsDlg::OnDeltaposSpin)
 END_MESSAGE_MAP()
 
 
@@ -118,6 +125,11 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
 
 	((CButton*)GetDlgItem(IDC_USE_CPU_TIME_RADIO))->SetCheck(m_data.m_get_cpu_usage_by_cpu_times);
 	((CButton*)GetDlgItem(IDC_USE_PDH_RADIO))->SetCheck(!m_data.m_get_cpu_usage_by_cpu_times);
+
+    m_monitor_span_edit.SetRange(200, 2000);
+    m_monitor_span_edit.SetValue(m_data.monitor_time_span);
+
+    m_monitor_time_span_ori = m_data.monitor_time_span;
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -186,6 +198,8 @@ void CGeneralSettingsDlg::OnOK()
 		MessageBox(CCommon::LoadText(IDS_CFG_DIR_CHANGED_INFO), NULL, MB_ICONINFORMATION | MB_OK);
 	}
 
+    m_data.monitor_time_span = m_monitor_span_edit.GetValue();
+
 	CTabDlg::OnOK();
 }
 
@@ -242,3 +256,36 @@ void CGeneralSettingsDlg::OnBnClickedUsePdhRadio()
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.m_get_cpu_usage_by_cpu_times = false;
 }
+
+void CGeneralSettingsDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
+{
+    //这里响应微调按钮（spin button）点击上下按钮时的事件，
+    //CSpinButtonCtrl的对象是作为CSpinEdit的成员变量的，而此消息会向CSpinButtonCtrl的父窗口发送，但是CSpinEdit不是它的父窗口，
+    //因此此消息无法在CSpinEdit中响应，只能在这里响应。通过GetBuddy的返回值判断微调按钮是属于哪个EditBox的。
+
+    CSpinButtonCtrl* pSpin = (CSpinButtonCtrl*)CWnd::FromHandle(pNMHDR->hwndFrom);
+    if (pSpin == nullptr)
+        return;
+    CWnd* pEdit = pSpin->GetBuddy();
+    if(pEdit == &m_monitor_span_edit)       //当用户点击了“监控时间间隔”的微调按钮时
+    {
+        LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+        const int step = 100;
+        if (pNMUpDown->iDelta == -1)
+        {
+            // 用户按下了spin控件的向下箭头
+            int value = m_monitor_span_edit.GetValue();
+            value -= (step - 1);
+            m_monitor_span_edit.SetValue(value);
+        }
+        else if (pNMUpDown->iDelta == 1)
+        {
+            // 用户按下了spin控件的向上箭头
+            int value = m_monitor_span_edit.GetValue();
+            value += (step - 1);
+            m_monitor_span_edit.SetValue(value);
+        }
+    }
+    *pResult = 0;
+}
+

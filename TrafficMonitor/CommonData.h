@@ -234,6 +234,7 @@ struct GeneralSettingData
 	bool m_get_cpu_usage_by_cpu_times{ true };	//获取CPU利用率的方式，如果为true则是使用GetSystemTimes，否则使用Pdh（性能计数器）
 
 	bool portable_mode{ false };		//便携模式，如果为true，则程序所有数据都保存到exe所在目录下，否则保存到Appdata\Romaing目录下
+    int monitor_time_span{ 1000 };    //监控的时间间隔
 };
 
 enum class Alignment

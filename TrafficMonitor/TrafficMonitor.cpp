@@ -49,6 +49,9 @@ void CTrafficMonitorApp::LoadConfig()
 	m_general_data.show_all_interface = ini.GetBool(L"general", L"show_all_interface", false);
 	//载入获取CPU利用率的方式，默认使用GetSystemTimes获取
 	m_general_data.m_get_cpu_usage_by_cpu_times = ini.GetBool(L"general", L"get_cpu_usage_by_cpu_times", /*m_win_version.GetMajorVersion() < 10*/ true);
+    m_general_data.monitor_time_span = ini.GetInt(L"general", L"monitor_time_span", 1000);
+    if (m_general_data.monitor_time_span < 200 || m_general_data.monitor_time_span > 2000)
+        m_general_data.monitor_time_span = 1000;
 
 	//Windows10颜色模式设置
 	bool is_windows10_light_theme = m_win_version.IsWindows10LightTheme();
@@ -198,6 +201,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteInt(_T("general"), _T("language"), static_cast<int>(m_general_data.language));
 	ini.WriteBool(L"general", L"show_all_interface", m_general_data.show_all_interface);
 	ini.WriteBool(L"general", L"get_cpu_usage_by_cpu_times", m_general_data.m_get_cpu_usage_by_cpu_times);
+    ini.WriteInt(L"general", L"monitor_time_span", m_general_data.monitor_time_span);
 
 	//主窗口设置
 	ini.WriteInt(L"config", L"transparency", m_cfg_data.m_transparency);
