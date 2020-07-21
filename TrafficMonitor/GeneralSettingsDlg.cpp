@@ -275,14 +275,20 @@ void CGeneralSettingsDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
         {
             // 用户按下了spin控件的向下箭头
             int value = m_monitor_span_edit.GetValue();
-            value -= (step - 1);
+            value -= step;
+            value /= step;
+            value *= step;
+            value++;
             m_monitor_span_edit.SetValue(value);
         }
         else if (pNMUpDown->iDelta == 1)
         {
             // 用户按下了spin控件的向上箭头
             int value = m_monitor_span_edit.GetValue();
-            value += (step - 1);
+            value += step;
+            value /= step;
+            value *= step;
+            value--;
             m_monitor_span_edit.SetValue(value);
         }
     }
