@@ -123,6 +123,8 @@ void CTrafficMonitorDlg::ShowInfo()
 	}
 	if (theApp.m_main_wnd_data.hide_percent)
 		format_str = _T("%s%d");
+    else if(theApp.m_main_wnd_data.separate_value_unit_with_space)
+        format_str = _T("%s%d %%");
 	else
 		format_str = _T("%s%d%%");
 	str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.cpu.c_str()), theApp.m_cpu_usage);
