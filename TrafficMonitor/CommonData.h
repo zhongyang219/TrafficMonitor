@@ -247,6 +247,10 @@ struct GeneralSettingData
     int monitor_time_span{ 1000 };    //监控的时间间隔
 };
 
+//定义监控时间间隔有效的最大值和最小值
+#define MONITOR_TIME_SPAN_MIN 200
+#define MONITOR_TIME_SPAN_MAX 2000
+
 enum class Alignment
 {
 	LEFT,

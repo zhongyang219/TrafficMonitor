@@ -61,4 +61,5 @@ public:
 	afx_msg void OnBnClickedUseCpuTimeRadio();
 	afx_msg void OnBnClickedUsePdhRadio();
     afx_msg void OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void OnEnKillfocusMonitorSpanEdit();
 };

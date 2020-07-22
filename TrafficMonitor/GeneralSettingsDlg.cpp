@@ -9,6 +9,8 @@
 
 // CGeneralSettingsDlg dialog
 
+static const int MONITOR_SPAN_STEP = 100;
+
 IMPLEMENT_DYNAMIC(CGeneralSettingsDlg, CTabDlg)
 
 CGeneralSettingsDlg::CGeneralSettingsDlg(CWnd* pParent /*=NULL*/)
@@ -61,6 +63,7 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_USE_CPU_TIME_RADIO, &CGeneralSettingsDlg::OnBnClickedUseCpuTimeRadio)
 	ON_BN_CLICKED(IDC_USE_PDH_RADIO, &CGeneralSettingsDlg::OnBnClickedUsePdhRadio)
     ON_NOTIFY(UDN_DELTAPOS, SPIN_ID, &CGeneralSettingsDlg::OnDeltaposSpin)
+    ON_EN_KILLFOCUS(IDC_MONITOR_SPAN_EDIT, &CGeneralSettingsDlg::OnEnKillfocusMonitorSpanEdit)
 END_MESSAGE_MAP()
 
 
@@ -126,7 +129,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
 	((CButton*)GetDlgItem(IDC_USE_CPU_TIME_RADIO))->SetCheck(m_data.m_get_cpu_usage_by_cpu_times);
 	((CButton*)GetDlgItem(IDC_USE_PDH_RADIO))->SetCheck(!m_data.m_get_cpu_usage_by_cpu_times);
 
-    m_monitor_span_edit.SetRange(200, 2000);
+    m_monitor_span_edit.SetRange(MONITOR_TIME_SPAN_MIN, MONITOR_TIME_SPAN_MAX);
     m_monitor_span_edit.SetValue(m_data.monitor_time_span);
 
     m_monitor_time_span_ori = m_data.monitor_time_span;
@@ -270,14 +273,13 @@ void CGeneralSettingsDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
     if(pEdit == &m_monitor_span_edit)       //当用户点击了“监控时间间隔”的微调按钮时
     {
         LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
-        const int step = 100;
         if (pNMUpDown->iDelta == -1)
         {
             // 用户按下了spin控件的向下箭头
             int value = m_monitor_span_edit.GetValue();
-            value -= step;
-            value /= step;
-            value *= step;
+            value -= MONITOR_SPAN_STEP;
+            value /= MONITOR_SPAN_STEP;
+            value *= MONITOR_SPAN_STEP;
             value++;
             m_monitor_span_edit.SetValue(value);
         }
@@ -285,9 +287,9 @@ void CGeneralSettingsDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
         {
             // 用户按下了spin控件的向上箭头
             int value = m_monitor_span_edit.GetValue();
-            value += step;
-            value /= step;
-            value *= step;
+            value += MONITOR_SPAN_STEP;
+            value /= MONITOR_SPAN_STEP;
+            value *= MONITOR_SPAN_STEP;
             value--;
             m_monitor_span_edit.SetValue(value);
         }
@@ -295,3 +297,24 @@ void CGeneralSettingsDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
     *pResult = 0;
 }
 
+
+
+void CGeneralSettingsDlg::OnEnKillfocusMonitorSpanEdit()
+{
+    // TODO: 在此添加控件通知处理程序代码
+
+    //这里限制监控时间间隔只能输入100的倍数
+    CString str;
+    GetDlgItemText(IDC_MONITOR_SPAN_EDIT, str);
+    int value = _ttoi(str.GetString());
+    if (value < MONITOR_TIME_SPAN_MIN || value > MONITOR_TIME_SPAN_MAX)
+    {
+        value = 1000;
+    }
+    else
+    {
+        value /= MONITOR_SPAN_STEP;
+        value *= MONITOR_SPAN_STEP;
+    }
+    m_monitor_span_edit.SetValue(value);
+}

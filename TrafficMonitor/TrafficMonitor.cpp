@@ -50,7 +50,7 @@ void CTrafficMonitorApp::LoadConfig()
 	//载入获取CPU利用率的方式，默认使用GetSystemTimes获取
 	m_general_data.m_get_cpu_usage_by_cpu_times = ini.GetBool(L"general", L"get_cpu_usage_by_cpu_times", /*m_win_version.GetMajorVersion() < 10*/ true);
     m_general_data.monitor_time_span = ini.GetInt(L"general", L"monitor_time_span", 1000);
-    if (m_general_data.monitor_time_span < 200 || m_general_data.monitor_time_span > 2000)
+    if (m_general_data.monitor_time_span < MONITOR_TIME_SPAN_MIN || m_general_data.monitor_time_span > MONITOR_TIME_SPAN_MAX)
         m_general_data.monitor_time_span = 1000;
 
 	//Windows10颜色模式设置
