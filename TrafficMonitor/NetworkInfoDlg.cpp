@@ -104,7 +104,7 @@ void CNetworkInfoDlg::ShowInfo()
 	SetDlgItemText(IDC_INDEX_STATIC, str);
 	CFont* font = GetFont();
 	CWnd* index_static = GetDlgItem(IDC_INDEX_STATIC);
-	if (m_current_connection == m_connection_selected)
+	if (m_current_connection == m_connection_selected && !theApp.m_cfg_data.m_select_all)
 		index_static->SetFont(&m_font_bold);
 	else
 		index_static->SetFont(font);
