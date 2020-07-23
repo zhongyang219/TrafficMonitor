@@ -167,7 +167,7 @@ struct MainConfigData
     bool m_notify_icon_auto_adapt{ false }; //通知区图标是否自动适应Win10深浅色模式
 	bool m_alow_out_of_border{ false };		//是否允许悬浮窗超出屏幕边界
 
-	bool m_show_internet_ip{ false };		//是否在“连接详情”对话框中显示外网IP地址
+	//bool m_show_internet_ip{ false };		//是否在“连接详情”对话框中显示外网IP地址
 	bool m_use_log_scale{ false };			//“历史流量统计”对话框中绘制表示历史流量数值的矩形时是否使用对数比例
     HistoryTrafficViewType m_view_type{};
 	bool m_sunday_first{ true };			//是否将周日作为一周的第一天

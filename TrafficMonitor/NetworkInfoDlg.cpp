@@ -233,16 +233,16 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	m_info_list.InsertItem(13, CCommon::LoadText(IDS_PROGRAM_ELAPSED_TIME));
 	m_info_list.InsertItem(14, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS, _T(" (ipv4)")));
 	m_info_list.InsertItem(15, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS, _T(" (ipv6)")));
-	if (theApp.m_cfg_data.m_show_internet_ip)
-	{
-		m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
-		m_info_list.SetItemText(15, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
-	}
-	else
-	{
+	//if (theApp.m_cfg_data.m_show_internet_ip)
+	//{
+	//	m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
+	//	m_info_list.SetItemText(15, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
+	//}
+	//else
+	//{
 		m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_DOUBLE_CLICK_TO_ACQUIRE));
 		m_info_list.SetItemText(15, 1, CCommon::LoadText(IDS_DOUBLE_CLICK_TO_ACQUIRE));
-	}
+	//}
 
 	//显示列表中的信息
 	LOGFONT lf{};
@@ -253,8 +253,8 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	GetProgramElapsedTime();
 
 	//CCommon::GetInternetIp();
-	if (theApp.m_cfg_data.m_show_internet_ip)
-        m_pGetIPThread = AfxBeginThread(GetInternetIPThreadFunc, this);		//启动获取外网IP的线程
+	//if (theApp.m_cfg_data.m_show_internet_ip)
+ //       m_pGetIPThread = AfxBeginThread(GetInternetIPThreadFunc, this);		//启动获取外网IP的线程
 
 	//SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//取消置顶
 	m_info_list.GetToolTips()->SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
@@ -301,8 +301,8 @@ void CNetworkInfoDlg::OnClose()
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	//对话框关闭时强制结束获取IP地址的线程
-	if(theApp.m_cfg_data.m_show_internet_ip)
-        TerminateThread(m_pGetIPThread->m_hThread, 0);
+	//if(theApp.m_cfg_data.m_show_internet_ip)
+ //       TerminateThread(m_pGetIPThread->m_hThread, 0);
 	CBaseDialog::OnClose();
 }
 
@@ -383,7 +383,7 @@ void CNetworkInfoDlg::OnNMDblclkInfoList1(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 	// TODO: 在此添加控件通知处理程序代码
-	if (!theApp.m_cfg_data.m_show_internet_ip && !m_ip_acquired && (pNMItemActivate->iItem == 14 || pNMItemActivate->iItem == 15))		//双击了IP地址一行时
+	if (/*!theApp.m_cfg_data.m_show_internet_ip && */!m_ip_acquired && (pNMItemActivate->iItem == 14 || pNMItemActivate->iItem == 15))		//双击了IP地址一行时
 	{
 		m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
 		m_info_list.SetItemText(15, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));

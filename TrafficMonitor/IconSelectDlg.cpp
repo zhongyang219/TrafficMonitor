@@ -102,7 +102,7 @@ void CIconSelectDlg::OnCbnSelchangeCombo1()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	m_icon_selected = m_icon_select_combo.GetCurSel();
-	if (m_icon_selected == 4 | m_icon_selected == 5)
+	if (m_icon_selected == 4 || m_icon_selected == 5)
 		m_preview_pic.SetPicture((HBITMAP)LoadImage(AfxGetInstanceHandle(),
 			MAKEINTRESOURCE(IDB_NOTIFY_ICON_PREVIEW_LIGHT), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR | LR_CREATEDIBSECTION));
 	else
