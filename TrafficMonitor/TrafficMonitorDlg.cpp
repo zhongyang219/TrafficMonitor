@@ -1300,8 +1300,11 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                 if (notify_icon_selected != theApp.m_cfg_data.m_notify_icon_selected)
                 {
                     m_ntIcon.hIcon = theApp.m_notify_icons[theApp.m_cfg_data.m_notify_icon_selected];
-                    DeleteNotifyIcon();
-                    AddNotifyIcon();
+                    if (theApp.m_cfg_data.m_show_notify_icon)
+                    {
+                        DeleteNotifyIcon();
+                        AddNotifyIcon();
+                    }
                 }
             }
         }
