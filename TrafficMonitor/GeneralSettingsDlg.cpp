@@ -264,7 +264,9 @@ void CGeneralSettingsDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
 {
     //这里响应微调按钮（spin button）点击上下按钮时的事件，
     //CSpinButtonCtrl的对象是作为CSpinEdit的成员变量的，而此消息会向CSpinButtonCtrl的父窗口发送，但是CSpinEdit不是它的父窗口，
-    //因此此消息无法在CSpinEdit中响应，只能在这里响应。通过GetBuddy的返回值判断微调按钮是属于哪个EditBox的。
+    //因此此消息无法在CSpinEdit中响应，只能在这里响应。
+    //所有CSpinEdit类中的Spin按钮点击时的响应都在这里，因为这些Spin按钮的ID都是“SPIN_ID”。
+    //通过GetBuddy的返回值判断微调按钮是属于哪个EditBox的。
 
     CSpinButtonCtrl* pSpin = (CSpinButtonCtrl*)CWnd::FromHandle(pNMHDR->hwndFrom);
     if (pSpin == nullptr)
@@ -280,7 +282,6 @@ void CGeneralSettingsDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
             value -= MONITOR_SPAN_STEP;
             value /= MONITOR_SPAN_STEP;
             value *= MONITOR_SPAN_STEP;
-            value++;
             m_monitor_span_edit.SetValue(value);
         }
         else if (pNMUpDown->iDelta == 1)
@@ -290,9 +291,9 @@ void CGeneralSettingsDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
             value += MONITOR_SPAN_STEP;
             value /= MONITOR_SPAN_STEP;
             value *= MONITOR_SPAN_STEP;
-            value--;
             m_monitor_span_edit.SetValue(value);
         }
+        pNMUpDown->iDelta = 0;
     }
     *pResult = 0;
 }
@@ -306,6 +307,7 @@ void CGeneralSettingsDlg::OnEnKillfocusMonitorSpanEdit()
     //这里限制监控时间间隔只能输入100的倍数
     CString str;
     GetDlgItemText(IDC_MONITOR_SPAN_EDIT, str);
+    str.Replace(_T(","), _T(""));
     int value = _ttoi(str.GetString());
     if (value < MONITOR_TIME_SPAN_MIN || value > MONITOR_TIME_SPAN_MAX)
     {
