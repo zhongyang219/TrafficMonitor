@@ -334,6 +334,12 @@ void CTrafficMonitorApp::LoadGlobalConfig()
 
     //执行一次保存操作，以检查当前目录是否有写入权限
     m_module_dir_writable = ini.Save();
+
+    if (m_module_dir.find(CCommon::GetTemplateDir()) != wstring::npos)      //如果当前路径是在Temp目录下，则强制将数据保存到Appdata
+    {
+        m_module_dir_writable = false;
+    }
+
     if (!m_module_dir_writable)              //如果当前目录没有写入权限，则设置配置保存到AppData目录
     {
         m_general_data.portable_mode = false;
