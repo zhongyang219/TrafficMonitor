@@ -127,7 +127,7 @@ void CTabDlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		SCROLLINFO scrollinfo;
 		GetScrollInfo(SB_VERT, &scrollinfo, SIF_ALL);
 		int unit = 1;
-		int step = theApp.DPI(8);
+		int step = theApp.DPI(16);
 		switch (nSBCode)
 		{
 		case SB_LINEUP:          //Scroll one line up
@@ -162,7 +162,7 @@ BOOL CTabDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	if (m_scroll_enable)
 	{
-		int step = theApp.DPI(16);
+		int step = theApp.DPI(64);
 		if (zDelta > 0)
 		{
 			ScrollWindowSimple(step);
