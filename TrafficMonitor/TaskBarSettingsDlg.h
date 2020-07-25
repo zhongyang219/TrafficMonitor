@@ -38,6 +38,7 @@ protected:
     CMenu m_default_style_menu;
 	CButton m_background_transparent_chk;
 	CButton m_atuo_adapt_light_theme_chk;
+    CButton m_auto_set_back_color_chk;
 
 protected:
 	void DrawStaticColor();
@@ -98,4 +99,5 @@ public:
 	afx_msg void OnBnClickedBackgroundTransparentCheck();
 	afx_msg void OnBnClickedAutoAdaptSettingsButton();
 	afx_msg void OnBnClickedAutoAdaptLightThemeCheck();
+    afx_msg void OnBnClickedAutoSetBackColorCheck();
 };

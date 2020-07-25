@@ -106,18 +106,19 @@ bool CTaskBarSettingsDlg::IsTaskbarTransparent()
 
 void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
-	DDX_Control(pDX, IDC_TEXT_COLOR_STATIC1, m_text_color_static);
-	DDX_Control(pDX, IDC_TEXT_COLOR_STATIC2, m_back_color_static);
-	DDX_Control(pDX, IDC_TEXT_COLOR_STATIC3, m_status_bar_color_static);
-	CTabDlg::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_UNIT_COMBO, m_unit_combo);
-	DDX_Control(pDX, IDC_HIDE_UNIT_CHECK, m_hide_unit_chk);
-	DDX_Control(pDX, IDC_FONT_SIZE_EDIT1, m_font_size_edit);
-	DDX_Control(pDX, IDC_DOUBLE_CLICK_COMBO, m_double_click_combo);
-	DDX_Control(pDX, IDC_DIGIT_NUMBER_COMBO, m_digit_number_combo);
-	//DDX_Control(pDX, IDC_TRANSPARENT_COLOR_STATIC, m_trans_color_static);
-	DDX_Control(pDX, IDC_BACKGROUND_TRANSPARENT_CHECK, m_background_transparent_chk);
-	DDX_Control(pDX, IDC_AUTO_ADAPT_LIGHT_THEME_CHECK, m_atuo_adapt_light_theme_chk);
+    DDX_Control(pDX, IDC_TEXT_COLOR_STATIC1, m_text_color_static);
+    DDX_Control(pDX, IDC_TEXT_COLOR_STATIC2, m_back_color_static);
+    DDX_Control(pDX, IDC_TEXT_COLOR_STATIC3, m_status_bar_color_static);
+    CTabDlg::DoDataExchange(pDX);
+    DDX_Control(pDX, IDC_UNIT_COMBO, m_unit_combo);
+    DDX_Control(pDX, IDC_HIDE_UNIT_CHECK, m_hide_unit_chk);
+    DDX_Control(pDX, IDC_FONT_SIZE_EDIT1, m_font_size_edit);
+    DDX_Control(pDX, IDC_DOUBLE_CLICK_COMBO, m_double_click_combo);
+    DDX_Control(pDX, IDC_DIGIT_NUMBER_COMBO, m_digit_number_combo);
+    //DDX_Control(pDX, IDC_TRANSPARENT_COLOR_STATIC, m_trans_color_static);
+    DDX_Control(pDX, IDC_BACKGROUND_TRANSPARENT_CHECK, m_background_transparent_chk);
+    DDX_Control(pDX, IDC_AUTO_ADAPT_LIGHT_THEME_CHECK, m_atuo_adapt_light_theme_chk);
+    DDX_Control(pDX, IDC_AUTO_SET_BACK_COLOR_CHECK, m_auto_set_back_color_chk);
 }
 
 
@@ -160,6 +161,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_BACKGROUND_TRANSPARENT_CHECK, &CTaskBarSettingsDlg::OnBnClickedBackgroundTransparentCheck)
 	ON_BN_CLICKED(IDC_AUTO_ADAPT_SETTINGS_BUTTON, &CTaskBarSettingsDlg::OnBnClickedAutoAdaptSettingsButton)
 	ON_BN_CLICKED(IDC_AUTO_ADAPT_LIGHT_THEME_CHECK, &CTaskBarSettingsDlg::OnBnClickedAutoAdaptLightThemeCheck)
+    ON_BN_CLICKED(IDC_AUTO_SET_BACK_COLOR_CHECK, &CTaskBarSettingsDlg::OnBnClickedAutoSetBackColorCheck)
 END_MESSAGE_MAP()
 
 
@@ -232,6 +234,8 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->SetCheck(m_data.specify_each_item_color);
 	m_background_transparent_chk.SetCheck(IsTaskbarTransparent());
 	m_atuo_adapt_light_theme_chk.SetCheck(m_data.auto_adapt_light_theme);
+    m_auto_set_back_color_chk.SetCheck(m_data.auto_set_background_color);
+    m_auto_set_back_color_chk.EnableWindow(theApp.m_win_version.IsWindows8OrLater());
 
 	if (theApp.m_win_version.GetMajorVersion() < 10)
 	{
@@ -750,4 +754,11 @@ void CTaskBarSettingsDlg::OnBnClickedAutoAdaptLightThemeCheck()
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.auto_adapt_light_theme = (m_atuo_adapt_light_theme_chk.GetCheck() != 0);
 	EnableControl();
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedAutoSetBackColorCheck()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    m_data.auto_set_background_color = (m_auto_set_back_color_chk.GetCheck() != 0);
 }

@@ -1307,6 +1307,26 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                     }
                 }
             }
+
+        }
+
+        //根据任务栏颜色自动设置任务栏窗口背景色
+        if (theApp.m_taskbar_data.auto_set_background_color && theApp.m_win_version.IsWindows8OrLater() && IsTaskbarWndValid() && theApp.m_taskbar_data.transparent_color != 0)
+        {
+            HDC hDC = ::GetDC(NULL);
+            CRect rect;
+            ::GetWindowRect(m_tBarDlg->GetSafeHwnd(), rect);
+            static COLORREF last_color{ 0xffffffff };
+            COLORREF color = ::GetPixel(hDC, rect.left - 1, rect.bottom);        //取任务栏窗口左侧1像素处的颜色作为背景色
+            if (!CCommon::IsColorSimilar(color, last_color))
+            {
+                bool is_taskbar_transparent{ CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data) };
+                theApp.m_taskbar_data.back_color = color;
+                CTaskbarDefaultStyle::SetTaskabrTransparent(is_taskbar_transparent, theApp.m_taskbar_data);
+                m_tBarDlg->ApplyWindowTransparentColor();
+            }
+            last_color = color;
+            ::ReleaseDC(NULL, hDC);
         }
 
         //当检测到背景色和文字颜色都为黑色写入错误日志

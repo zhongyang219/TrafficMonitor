@@ -168,12 +168,17 @@ void CTrafficMonitorApp::LoadConfig()
 	m_taskbar_data.double_click_exe = ini.GetString(L"task_bar", L"double_click_exe", (theApp.m_system_dir + L"\\Taskmgr.exe").c_str());
 	m_taskbar_data.cm_graph_type = ini.GetBool(_T("task_bar"), _T("cm_graph_type"), false);
 
-	if (m_win_version.GetMajorVersion() >= 10)		//只有Win10才支持自动适应系统深色/浅色主题
+	if (m_win_version.IsWindows10OrLater())		//只有Win10才支持自动适应系统深色/浅色主题
 		m_taskbar_data.auto_adapt_light_theme = ini.GetBool(L"task_bar", L"auto_adapt_light_theme", false);
 	else
 		m_taskbar_data.auto_adapt_light_theme = false;
 	m_taskbar_data.dark_default_style = ini.GetInt(L"task_bar", L"dark_default_style", 0);
 	m_taskbar_data.light_default_style = ini.GetInt(L"task_bar", L"light_default_style", TASKBAR_DEFAULT_LIGHT_STYLE_INDEX);
+
+    if (m_win_version.IsWindows8OrLater())
+        m_taskbar_data.auto_set_background_color = ini.GetBool(L"task_bar", L"auto_set_background_color", false);
+    else
+        m_taskbar_data.auto_set_background_color = false;
 
 	//其他设置
 	//m_cfg_data.m_show_internet_ip = ini.GetBool(L"connection_details", L"show_internet_ip", false);
@@ -288,6 +293,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteBool(L"task_bar", L"auto_adapt_light_theme", m_taskbar_data.auto_adapt_light_theme);
 	ini.WriteInt(L"task_bar", L"dark_default_style", m_taskbar_data.dark_default_style);
 	ini.WriteInt(L"task_bar", L"light_default_style", m_taskbar_data.light_default_style);
+    ini.WriteBool(L"task_bar", L"auto_set_background_color", m_taskbar_data.auto_set_background_color);
 
 	//其他设置
 	//ini.WriteBool(L"connection_details", L"show_internet_ip", m_cfg_data.m_show_internet_ip);

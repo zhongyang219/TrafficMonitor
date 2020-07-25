@@ -151,6 +151,6 @@ public:
     //获取一个菜单项的序号
     static int GetMenuItemPosition(CMenu* pMenu, UINT id);
 
-
+    static bool IsColorSimilar(COLORREF color1, COLORREF color2);
 };
 

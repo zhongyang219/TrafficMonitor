@@ -930,3 +930,11 @@ int CCommon::GetMenuItemPosition(CMenu* pMenu, UINT id)
     }
     return pos;
 }
+
+bool CCommon::IsColorSimilar(COLORREF color1, COLORREF color2)
+{
+    const int DIFF{ 16 };
+    return (std::abs(GetRValue(color1) - GetRValue(color2)) < DIFF
+        && std::abs(GetGValue(color1) - GetGValue(color2)) < DIFF
+        && std::abs(GetBValue(color1) - GetBValue(color2)) < DIFF);
+}

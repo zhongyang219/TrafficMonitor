@@ -52,6 +52,20 @@ bool CWinVersionHelper::IsWindows8Or8point1() const
 	return (m_major_version == 6 && m_minor_version > 1);
 }
 
+bool CWinVersionHelper::IsWindows8OrLater() const
+{
+    if (m_major_version > 6)
+        return true;
+    else if (m_major_version == 6 && m_minor_version >= 2)
+        return true;
+    else return false;
+}
+
+bool CWinVersionHelper::IsWindows10OrLater() const
+{
+    return m_major_version >= 10;
+}
+
 bool CWinVersionHelper::IsWindows10LightTheme() const
 {
 	return m_light_theme;
