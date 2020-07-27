@@ -307,8 +307,8 @@ void CTrafficMonitorDlg::CheckWindowPos()
 
 void CTrafficMonitorDlg::GetScreenSize()
 {
-	//m_screen_width = GetSystemMetrics(SM_CXFULLSCREEN);
-	//m_screen_height = GetSystemMetrics(SM_CYFULLSCREEN) + compensition_value;
+    m_screen_size.cx = GetSystemMetrics(SM_CXSCREEN);
+    m_screen_size.cy = GetSystemMetrics(SM_CYSCREEN);
 
 	::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0);   // 获得工作区大小
 }
@@ -1319,7 +1319,15 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             CRect rect;
             ::GetWindowRect(m_tBarDlg->GetSafeHwnd(), rect);
             static COLORREF last_color{ 0xffffffff };
-            COLORREF color = ::GetPixel(hDC, rect.left - 1, rect.bottom);        //取任务栏窗口左侧1像素处的颜色作为背景色
+            int pointx{ rect.left - 1 };
+            if (theApp.m_taskbar_data.tbar_wnd_on_left && m_tBarDlg->IsTasksbarOnTopOrBottom())
+                pointx = rect.right + 1;
+            int pointy = rect.bottom;
+            if (pointx < 0) pointx = 0;
+            if (pointx >= m_screen_size.cx) pointx = m_screen_size.cx - 1;
+            if (pointy < 0) pointy = 0;
+            if (pointy >= m_screen_size.cy) pointy = m_screen_size.cy - 1;
+            COLORREF color = ::GetPixel(hDC, pointx, pointy);        //取任务栏窗口左侧1像素处的颜色作为背景色
             if (!CCommon::IsColorSimilar(color, last_color) && (theApp.m_win_version.IsWindows10LightTheme() || color != 0))
             {
                 bool is_taskbar_transparent{ CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data) };

@@ -72,7 +72,7 @@ protected:
 
 	CDC* m_pDC{};		//窗口的DC，用来计算窗口的宽度
 
-	bool IsTaskbarOnTopOrBottom();		//判断任务栏是否在屏幕的顶部或底部，如果是则返回false，如果任务栏在屏幕两侧，则返回false
+	void CheckTaskbarOnTopOrBottom();		//检查任务栏是否在屏幕的顶部或底部，并将结果保存在m_taskbar_on_top_or_bottom中
 	CString GetMouseTipsInfo();		//获取鼠标提示
 
 	void AddHisToList(CList<int,int> &list, int current_usage_percent);		//将当前利用率数值添加进链表
@@ -90,6 +90,7 @@ public:
 
 	bool GetCannotInsertToTaskBar() const { return m_connot_insert_to_task_bar; }
 	int GetErrorCode() const { return m_error_code; }
+    bool IsTasksbarOnTopOrBottom() { return m_taskbar_on_top_or_bottom; }
 
 	static bool IsShowCpuMemory();
 	static bool IsShowNetSpeed();

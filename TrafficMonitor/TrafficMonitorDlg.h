@@ -59,6 +59,7 @@ protected:
 
 	bool m_first_start{ true };		//初始时为true，在定时器第一次启动后置为flase
 	CRect m_screen_rect;		//屏幕的范围（不包含任务栏）
+    CSize m_screen_size;        //屏幕的大小（包含任务栏）
 	LayoutData m_layout_data;
 	CImage m_back_img;		//背景图片
 

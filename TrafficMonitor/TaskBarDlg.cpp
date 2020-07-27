@@ -288,7 +288,7 @@ bool CTaskBarDlg::AdjustWindowPos()
 	::GetWindowRect(m_hMin, rcMin);	//获得最小化窗口的区域
 	::GetWindowRect(m_hBar, rcBar);	//获得二级容器的区域
 	static bool last_taskbar_on_top_or_bottom;
-	m_taskbar_on_top_or_bottom = IsTaskbarOnTopOrBottom();
+	CheckTaskbarOnTopOrBottom();
 	if (m_taskbar_on_top_or_bottom != last_taskbar_on_top_or_bottom)
 	{
 		CalculateWindowWidth();
@@ -381,7 +381,7 @@ void CTaskBarDlg::ApplyWindowTransparentColor()
 }
 
 
-bool CTaskBarDlg::IsTaskbarOnTopOrBottom()
+void CTaskBarDlg::CheckTaskbarOnTopOrBottom()
 {
 	CRect rect;
 	CRect rcMin;
@@ -396,11 +396,11 @@ bool CTaskBarDlg::IsTaskbarOnTopOrBottom()
 			m_top_space = rcMin.top - rcBar.top;
 
 		::GetWindowRect(m_hTaskbar, rect);			//获取任务栏的矩形区域
-		return (rect.Width()>=rect.Height());		//如果任务栏的宽度大于高度，则任务在屏幕的顶部或底部
+		m_taskbar_on_top_or_bottom = (rect.Width()>=rect.Height());		//如果任务栏的宽度大于高度，则任务在屏幕的顶部或底部
 	}
 	else
 	{
-		return true;
+        m_taskbar_on_top_or_bottom = true;
 	}
 }
 
@@ -635,7 +635,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 	m_left_space = m_rcMin.left - m_rcBar.left;
 	m_top_space = m_rcMin.top - m_rcBar.top;
 
-	m_taskbar_on_top_or_bottom = IsTaskbarOnTopOrBottom();
+	CheckTaskbarOnTopOrBottom();
 	CalculateWindowWidth();
 	m_rect.right = m_rect.left + GetWindowWidth();
 
@@ -722,7 +722,8 @@ void CTaskBarDlg::OnCancel()
 	//SaveConfig();
 	DestroyWindow();
 	//程序关闭的时候，把最小化窗口的width恢复回去
-	if (IsTaskbarOnTopOrBottom())
+    CheckTaskbarOnTopOrBottom();
+    if (m_taskbar_on_top_or_bottom)
 		::MoveWindow(m_hMin, m_left_space, 0, m_rcMin.Width(), m_rcMin.Height(), TRUE);
 	else
 
