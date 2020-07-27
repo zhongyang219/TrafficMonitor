@@ -1328,7 +1328,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             if (pointy < 0) pointy = 0;
             if (pointy >= m_screen_size.cy) pointy = m_screen_size.cy - 1;
             COLORREF color = ::GetPixel(hDC, pointx, pointy);        //取任务栏窗口左侧1像素处的颜色作为背景色
-            if (!CCommon::IsColorSimilar(color, theApp.m_taskbar_data.back_color) && (theApp.m_win_version.IsWindows10LightTheme() || color != 0))
+            if (!CCommon::IsColorSimilar(color, theApp.m_taskbar_data.back_color) && (/*theApp.m_win_version.IsWindows10LightTheme() ||*/ color != 0))
             {
                 bool is_taskbar_transparent{ CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data) };
                 theApp.m_taskbar_data.back_color = color;
