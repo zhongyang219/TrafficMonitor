@@ -1318,7 +1318,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             HDC hDC = ::GetDC(NULL);
             CRect rect;
             ::GetWindowRect(m_tBarDlg->GetSafeHwnd(), rect);
-            static COLORREF last_color{ 0xffffffff };
+            //static COLORREF last_color{ 0xffffffff };
             int pointx{ rect.left - 1 };
             if (theApp.m_taskbar_data.tbar_wnd_on_left && m_tBarDlg->IsTasksbarOnTopOrBottom())
                 pointx = rect.right + 1;
@@ -1328,14 +1328,14 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             if (pointy < 0) pointy = 0;
             if (pointy >= m_screen_size.cy) pointy = m_screen_size.cy - 1;
             COLORREF color = ::GetPixel(hDC, pointx, pointy);        //取任务栏窗口左侧1像素处的颜色作为背景色
-            if (!CCommon::IsColorSimilar(color, last_color) && (theApp.m_win_version.IsWindows10LightTheme() || color != 0))
+            if (!CCommon::IsColorSimilar(color, theApp.m_taskbar_data.back_color) && (theApp.m_win_version.IsWindows10LightTheme() || color != 0))
             {
                 bool is_taskbar_transparent{ CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data) };
                 theApp.m_taskbar_data.back_color = color;
                 CTaskbarDefaultStyle::SetTaskabrTransparent(is_taskbar_transparent, theApp.m_taskbar_data);
                 m_tBarDlg->ApplyWindowTransparentColor();
             }
-            last_color = color;
+            //last_color = color;
             ::ReleaseDC(NULL, hDC);
         }
 
