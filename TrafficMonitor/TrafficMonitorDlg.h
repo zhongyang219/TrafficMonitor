@@ -91,6 +91,7 @@ protected:
 	bool m_is_foreground_fullscreen{ false };	//指示前台窗口是否正在全局显示
 	bool m_menu_popuped{ false };				//指示当前是否有菜单处于弹出状态
 
+    HDC m_desktop_dc;
 
 	void ShowInfo();		//将上传下载速度信息显示到窗口中
 	CString GetMouseTipsInfo();		//获取鼠标提示信息

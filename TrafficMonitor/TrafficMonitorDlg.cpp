@@ -22,6 +22,7 @@ CTrafficMonitorDlg::CTrafficMonitorDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_TRAFFICMONITOR_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+    m_desktop_dc = ::GetDC(NULL);
 }
 
 CTrafficMonitorDlg::~CTrafficMonitorDlg()
@@ -33,6 +34,8 @@ CTrafficMonitorDlg::~CTrafficMonitorDlg()
 		delete m_tBarDlg;
 		m_tBarDlg = nullptr;
 	}
+
+    ::ReleaseDC(NULL, m_desktop_dc);
 }
 
 void CTrafficMonitorDlg::DoDataExchange(CDataExchange* pDX)
@@ -1315,10 +1318,8 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             && IsTaskbarWndValid() && theApp.m_taskbar_data.transparent_color != 0
             && !m_is_foreground_fullscreen)
         {
-            HDC hDC = ::GetDC(NULL);
             CRect rect;
             ::GetWindowRect(m_tBarDlg->GetSafeHwnd(), rect);
-            //static COLORREF last_color{ 0xffffffff };
             int pointx{ rect.left - 1 };
             if (theApp.m_taskbar_data.tbar_wnd_on_left && m_tBarDlg->IsTasksbarOnTopOrBottom())
                 pointx = rect.right + 1;
@@ -1327,16 +1328,15 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             if (pointx >= m_screen_size.cx) pointx = m_screen_size.cx - 1;
             if (pointy < 0) pointy = 0;
             if (pointy >= m_screen_size.cy) pointy = m_screen_size.cy - 1;
-            COLORREF color = ::GetPixel(hDC, pointx, pointy);        //取任务栏窗口左侧1像素处的颜色作为背景色
+            COLORREF color = ::GetPixel(m_desktop_dc, pointx, pointy);        //取任务栏窗口左侧1像素处的颜色作为背景色
             if (!CCommon::IsColorSimilar(color, theApp.m_taskbar_data.back_color) && (/*theApp.m_win_version.IsWindows10LightTheme() ||*/ color != 0))
             {
                 bool is_taskbar_transparent{ CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data) };
                 theApp.m_taskbar_data.back_color = color;
                 CTaskbarDefaultStyle::SetTaskabrTransparent(is_taskbar_transparent, theApp.m_taskbar_data);
-                m_tBarDlg->ApplyWindowTransparentColor();
+                if(is_taskbar_transparent)
+                    m_tBarDlg->ApplyWindowTransparentColor();
             }
-            //last_color = color;
-            ::ReleaseDC(NULL, hDC);
         }
 
         //当检测到背景色和文字颜色都为黑色写入错误日志
