@@ -130,11 +130,11 @@ afx_msg LRESULT CAboutDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
 	else if (pCtrl == &m_acknowledgement)
 	{
 		CString strContent = GetDonateList();
-		strContent += _T("\r\n");
-		strContent += CCommon::LoadText(IDS_ACKNOWLEDGEMENT_EXPLAIN);
+		//strContent += _T("\r\n");
+		//strContent += CCommon::LoadText(IDS_ACKNOWLEDGEMENT_EXPLAIN);
 		CMessageDlg dlg;
 		dlg.SetWindowTitle(CCommon::LoadText(IDS_TITLE_ACKNOWLEDGEMENT));
-		dlg.SetInfoText(CCommon::LoadText(IDS_THANKS_DONORS));
+		//dlg.SetInfoText(CCommon::LoadText(IDS_THANKS_DONORS));
 		dlg.SetMessageText(strContent);
 		dlg.DoModal();
 	}
