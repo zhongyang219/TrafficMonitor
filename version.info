@@ -1,4 +1,4 @@
-<version>1.78</version>
-<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.78/TrafficMonitor_V1.78_x86.7z</link>
-<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.78/TrafficMonitor_V1.78_x64.7z</link_x64>
-<contents>新增双击主窗口或任务栏窗口打开指定应用程序的功能\n新增任务栏窗口中显示CPU和内存利用率状态条的功能\n修正Windows10中CPU利用率和任务管理器不一致的问题\n新增是否显示鼠标提示的选项\n新增程序首次启启动时根据Windows10浅色模式设置任务栏颜色的功能\n任务栏设置中增加预设方案的功能\n其他细节方面的改进</contents>
+<version>1.79</version>
+<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.79/TrafficMonitor_V1.79_x86.7z</link>
+<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.79/TrafficMonitor_V1.79_x64.7z</link_x64>
+<contents>新增任务栏窗口颜色自动适应Windows10深色/浅色主题的功能。\n新增通知区图标自动适应Windows10深色/浅色主题的功能。\n增加CPU获取方式的设置，解决部分用户出现的CPU利用率始终为0的问题。\n选项设置>任务栏设置中去掉“透明色”的设置，新增“背景色透明”的选项。\n新增允许任务栏只显示CPU和内存利用率而不显示网速。\n修正了关机后设置可能会没有保存的问题。\n历史流量统计-日历视图中增加了每周第一天的设置。\n历史流量统计-列表视图中增加了按年、月、日、季度统计的功能。\n可能解决了历史流量数据有小概率丢失的问题。\n修正Windows10浅色主题时，如果任务栏窗口背景设置为透明，会无法弹出右键菜单的问题。\n修正流量统计不支持统计超过2TB数据的问题。\n为菜单项添加了图标。\n当程序所在目录无法写入时，将数据保存到AppData目录。\n新增设置监控时间间隔的功能。</contents>

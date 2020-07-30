@@ -1,5 +1,22 @@
-**简体中文 | [繁體中文](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_zh-tw.md) | [English](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_en-us.md)**<br>
+**简体中文 | [繁體中文](./update_log_zh-tw.md) | [English](./update_log_en-us.md)**<br>
 # TrafficMonitor 更新日志
+## V1.79 (2020/07/30)
+
+* 新增任务栏窗口颜色自动适应Windows10深色/浅色主题的功能。
+* 新增通知区图标自动适应Windows10深色/浅色主题的功能。
+* 增加CPU获取方式的设置，解决部分用户出现的CPU利用率始终为0的问题。
+* 选项设置>任务栏设置中去掉“透明色”的设置，新增“背景色透明”的选项。
+* 新增允许任务栏只显示CPU和内存利用率而不显示网速。
+* 修正了关机后设置可能会没有保存的问题。
+* 历史流量统计-日历视图中增加了每周第一天的设置。
+* 历史流量统计-列表视图中增加了按年、月、日、季度统计的功能。
+* 可能解决了历史流量数据有小概率丢失的问题。
+* 修正Windows10浅色主题时，如果任务栏窗口背景设置为透明，会无法弹出右键菜单的问题。
+* 修正流量统计不支持统计超过2TB数据的问题。
+* 为菜单项添加了图标。
+* 当程序所在目录无法写入时，将数据保存到AppData目录。
+* 新增设置监控时间间隔的功能。
+
 ## V1.78 (2020/03/21)
 
 * 新增双击主窗口或任务栏窗口打开指定应用程序的功能

@@ -1,5 +1,23 @@
-**[简体中文](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log.md) | [繁體中文](https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_zh-tw.md) | English**<br>
+**[简体中文](./update_log.md) | [繁體中文](./update_log_zh-tw.md) | English**<br>
+
 # TrafficMonitor Update log
+## V1.79 (2020/07/30)
+
+* Add the function of automatically adapts to the Windows 10 dark/light theme of the taskbar window color.
+* Add the function of automatically adapts to the Windows 10 dark/light theme of the notification area icon.
+* Add the option of CPU usage acquisition method. Fix the problem that the CPU usage may always 0 of some users.
+* Remove the option of "Transparent color" in "Options"-"Taskbar Window Settings", and add the option of "Background Color Transparent".
+* Allows only CPU and memory usage displayed in the taskbar window without the net speed.
+* Fixes an problem that the settings may not be saved after the shutdown.
+* Add the setting of "the first day of the week" in the "Historical Traffic Statistics"-"Calendar View".
+* Add the function of displaying history traffic by day, month, quarter and year in the "Historical Traffic Statistics"-"List View".
+* May fixed the problem of the loss of historical traffic data in small probability.
+* Fixed the problem that the right-click menu cannot pop up if the taskbar window background is set to transparent in Windows 10 light theme.
+* Fixed the problem that traffic statistics does not support data exceeding 2TB.
+* Added icons for menu items.
+* Save the data to the AppData directory when the program's directory cannot be written.
+* Add the function of setting the monitoring interval.
+
 ## V1.78 (2020/03/21)
 
 * Add the function to open the specified application by double-clicking the main window or taskbar window.
