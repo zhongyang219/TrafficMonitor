@@ -7,7 +7,7 @@
 # TrafficMonitor 簡介
 Traffic Monitor是一款用於Windows平台的網速監控懸浮窗軟體，可以顯示目前網路速度、CPU及記憶體使用率，支援嵌入到工作列顯示，支援更換面板、歷史流量統計等功能。<br>
 # 相關連結：<br>
-請[點選此處](https://github.com/zhongyang219/TrafficMonitor/releases/lates)下載TrafficMonitor的最新版本。<br>
+請[點選此處](https://github.com/zhongyang219/TrafficMonitor/releases/latest)下載TrafficMonitor的最新版本。<br>
 備用連結：[百度網盤下載](https://pan.baidu.com/s/15PMt7s-ASpyDwtS__4cUhg) 提取码：`ou0m`<br>
 如果遇到問題，請[點選此處](https://github.com/zhongyang219/TrafficMonitor/blob/master/Help.md)。<br>
 
