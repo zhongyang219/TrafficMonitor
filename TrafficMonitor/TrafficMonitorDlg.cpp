@@ -1052,34 +1052,34 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			}
 		}
 
-		//只有主窗口和任务栏窗口至少有一个显示时才执行下面的处理
-		if (!theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_show_task_bar_wnd)
-		{
-			//获取CPU使用率
-			theApp.m_cpu_usage = m_cpu_usage.GetCPUUsage();
+		////只有主窗口和任务栏窗口至少有一个显示时才执行下面的处理
+		//if (!theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_show_task_bar_wnd)
+		//{
+		//获取CPU使用率
+		theApp.m_cpu_usage = m_cpu_usage.GetCPUUsage();
 
-			//获取内存利用率
-			MEMORYSTATUSEX statex;
-			statex.dwLength = sizeof(statex);
-			GlobalMemoryStatusEx(&statex);
-			theApp.m_memory_usage = statex.dwMemoryLoad;
-			theApp.m_used_memory = static_cast<int>((statex.ullTotalPhys - statex.ullAvailPhys) / 1024);
-			theApp.m_total_memory  = static_cast<int>(statex.ullTotalPhys / 1024);
+		//获取内存利用率
+		MEMORYSTATUSEX statex;
+		statex.dwLength = sizeof(statex);
+		GlobalMemoryStatusEx(&statex);
+		theApp.m_memory_usage = statex.dwMemoryLoad;
+		theApp.m_used_memory = static_cast<int>((statex.ullTotalPhys - statex.ullAvailPhys) / 1024);
+		theApp.m_total_memory  = static_cast<int>(statex.ullTotalPhys / 1024);
 
-			ShowInfo();		//刷新窗口信息
+		ShowInfo();		//刷新窗口信息
 	
-			//更新鼠标提示
-            if (theApp.m_main_wnd_data.show_tool_tip)
-            {
-                CString tip_info;
-                tip_info = GetMouseTipsInfo();
-                m_tool_tips.UpdateTipText(tip_info, this);
-            }
-			//更新任务栏窗口鼠标提示
-			if (IsTaskbarWndValid())
-				m_tBarDlg->UpdateToolTips();
+		//更新鼠标提示
+        if (theApp.m_main_wnd_data.show_tool_tip)
+        {
+            CString tip_info;
+            tip_info = GetMouseTipsInfo();
+            m_tool_tips.UpdateTipText(tip_info, this);
+        }
+		//更新任务栏窗口鼠标提示
+		if (IsTaskbarWndValid())
+			m_tBarDlg->UpdateToolTips();
 
-		}
+		//}
         m_monitor_time_cnt++;
 	}
 
