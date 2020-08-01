@@ -49,7 +49,7 @@ BOOL COptionsDlg::OnInitDialog()
 	theApp.m_option_dlg = m_hWnd;
 
 	SetWindowText(CCommon::LoadText(IDS_TITLE_OPTION));
-    SetIcon(AfxGetApp()->LoadIcon(IDR_MAINFRAME), FALSE);		// 设置小图标
+    SetIcon(theApp.GetMenuIcon(IDI_SETTINGS), FALSE);		// 设置小图标
 
 	//创建子对话框
 	m_tab1_dlg.Create(IDD_MAIN_WND_SETTINGS_DIALOG, &m_tab);

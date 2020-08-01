@@ -201,7 +201,7 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 
 	// TODO:  在此添加额外的初始化
 	SetWindowText(CCommon::LoadText(IDS_TITLE_CONNECTION_DETIAL));
-	SetIcon(AfxGetApp()->LoadIcon(IDI_NOFITY_ICON), FALSE);		// 设置小图标
+	SetIcon(theApp.GetMenuIcon(IDI_INFO), FALSE);		// 设置小图标
 
 	//重新获取IP地址
 	CAdapterCommon::RefreshIpAddress(m_connections);

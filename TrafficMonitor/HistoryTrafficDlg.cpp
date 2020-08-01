@@ -75,7 +75,7 @@ BOOL CHistoryTrafficDlg::OnInitDialog()
 
 	// TODO:  在此添加额外的初始化
 	SetWindowText(CCommon::LoadText(IDS_TITLE_HISTORY_TRAFFIC));
-	SetIcon(AfxGetApp()->LoadIcon(IDI_NOFITY_ICON), FALSE);		// 设置小图标
+	SetIcon(theApp.GetMenuIcon(IDI_STATISTICS), FALSE);		// 设置小图标
 
 	//插入标签
 	m_tab.InsertItem(0, CCommon::LoadText(IDS_LIST_VIEW));
