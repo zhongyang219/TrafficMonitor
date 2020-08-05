@@ -78,8 +78,8 @@ using std::ofstream;
 
 #define MAX_INSERT_TO_TASKBAR_CNT 5		//尝试嵌入任务栏的最大次数
 
-#define VERSION L"1.79"
-#define COMPILE_DATE L"2020/07/30"
+#define VERSION L"1.79.1"
+#define COMPILE_DATE L"2020/08/05"
 
 #define MAX_NOTIFY_ICON 6		//可选的通知区图标数量
 
