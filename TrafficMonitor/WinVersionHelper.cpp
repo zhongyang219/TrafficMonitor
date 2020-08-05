@@ -86,6 +86,7 @@ void CWinVersionHelper::CheckWindows10LightTheme()
 		{
 			m_light_theme = false;
 		}
+        RegCloseKey(hKey);
 	}
 	else
 	{
