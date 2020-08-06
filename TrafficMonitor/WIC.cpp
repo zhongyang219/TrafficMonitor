@@ -8,6 +8,8 @@ CWICFactory::CWICFactory()
     //≥ı ºªØm_pWICFactory
     _hrOleInit = ::OleInitialize(NULL);
     CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&m_pWICFactory));
+    if (m_pWICFactory == nullptr)
+        CoCreateInstance(CLSID_WICImagingFactory1, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&m_pWICFactory));
 }
 
 CWICFactory::~CWICFactory()
