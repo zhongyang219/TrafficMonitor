@@ -375,8 +375,7 @@ void CCommon::GetFiles(const wchar_t* path, vector<wstring>& files)
 
 bool CCommon::FileExist(LPCTSTR file_name)
 {
-	_wfinddata_t fileinfo;
-	return (_wfindfirst(file_name, &fileinfo) != -1);
+    return (PathFileExists(file_name) != 0);
 }
 
 bool CCommon::MoveAFile(LPCTSTR exist_file, LPCTSTR new_file)
