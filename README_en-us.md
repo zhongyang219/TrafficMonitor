@@ -32,7 +32,7 @@ Colorful Skins:<br>
 Change Skins:<br>
 ![](./Screenshots/en_us/selecte_skin.png)<br>
 Options:<br>
-![](./Screenshots/en_us/option.png)<br>
+<img src="./Screenshots/en_us/option.jpg" style="zoom:80%;" /><br>
 
 # Update log
 **[Click here to view the update log.](./UpdateLog/update_log_en-us.md)**

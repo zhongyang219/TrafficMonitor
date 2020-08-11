@@ -1,6 +1,11 @@
 **[简体中文](./update_log.md) | [繁體中文](./update_log_zh-tw.md) | English**<br>
 
 # TrafficMonitor Update log
+## V1.79.1 (2020/08/05)
+
+* Fix the problem of registry handle leak.
+* Fixed the problem that CPU and memory usage are not counted when the main window and taskbar window are not displayed.
+
 ## V1.79 (2020/07/30)
 
 * Add the function of automatically adapts to the Windows 10 dark/light theme of the taskbar window color.

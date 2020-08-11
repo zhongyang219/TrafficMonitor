@@ -1,14 +1,18 @@
 **[简体中文](./Help.md) | English**<br>
 # TrafficMonitor Frequently Asked Questions
 ### 1. How to show the CPU and memory usage?
-Right click the main window and check "Show More Info". If you also need to display the CPU and memory usage in the taskbar window, right click the taskbar window and check "Show CPU and Memory Usage".
+Right click the main window and check "Show More Info". If you also need to display the CPU and memory usage in the taskbar window, right click the taskbar window and check "CPU and Memory Usage" in the "Display Settings<img src="./Screenshots/images/item.png" style="zoom: 80%;" />" sub menu.
 ### 2. How do I set the color of each item in the taskbar window individually?
 Select "Options" In the right-click menu, switch to "Taskbar Window Settings" tab, check "Specify colors for each item", and then click the color block on the right side of "Text Color " to pop up the dialog box for taskbar window color settings. <br>
 If you do not check "Specify colors for each item", you can only set the uniform color for the text.
 ### 3. "Auto run when Windows start" dose not work
 The auto run function of the program is achieved by creating the "TrafficMonitor" key in the registry path of "Computer\HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run".
 If you encounter the problem of auto run dose not work, please check that the registry exists, and then check the program path is correct. If you move the location of the program, the auto run will be invalid because of the program location being invalid. In this case, you only need to uncheck "Auto run when Windows start" in the option settings, and then check it on.<br>
+
+Note that some third-party security software may prevent TrafficMonitor from booting up automatically. Please try to allow TrafficMonitor to boot up automatically in the security software.
+
 If you set the program to run as an administrator, the auto run function will also not work. Please try to remove running as an administrator.<br>
+
 ### 4. The program pops up the "Unable to Save Settings" message box.
 If you encountered this problem, that means the program does not have permission to write data to its directory, causing the settings data cannot be saved. Try to move the program to another folder that has write permissions will save this problem. <br>
 You can also change the save path of the configuration and data file to the C:\Users\\<username\>\AppData\Roaming\TrafficMonitor directory by the following steps. <br>
@@ -30,6 +34,8 @@ If `global_cfg.ini` does not have write permission, you can try copying the file
 
 After these steps, this problem should not theoretically occur. If this problem still occurs, try to delete the file C:\Users\\<username\>\AppData\Roaming\TrafficMonitor\config.ini. This file will be regenerated after it is deleted. 
 
+In version 1.79 and later, if the directory where the program located is not writable, the configuration and data files will be automatically saved to the "C:\Users\\<username\>\AppData\Roaming\TrafficMonitor" directory. At this time, "Options" -“General Settings”-“Save to the program directory” in “Configuration and data files” will not be available.
+
 ### 5. The suspension window can only be displayed on the main monitor when multiple monitors are present.
 By default, the suspension window cannot be moved out of the screen boundaries. If you need to move the suspension window to other monitors, please right click the suspension window, select "Other Functions", check "Allow Out of Screen Boundaries". At this time the suspension window is no longer limited to the screen, it can be also move to any monitors. <br>
 If you remove the extra monitor, then the suspension window may appear outside the screen area to cause the invisible. At this time, you only need to right click the the icon in the notification area, select "Other function", uncheck "Allow Out of Screen Boundaries", the suspension window will appear in the screen area again.
@@ -49,16 +55,11 @@ When using the white taskbar theme, you can click the "Preset" button in the "Ta
 
 <img src="./Screenshots/images/image2.jpg" style="zoom:80%;" />
 
-However, if you encounter the problem that clicking the blank area of the taskbar window (the area pointed by the arrow at "3" in the figure below) will pop up the taskbar right-click menu instead of the TrafficMonitor right-click menu, you can try the following steps:
+At the same time, you may also check "Auto adapt to Windows 10 dark/light theme", the program will automatically switch the color preset when Windows 10 dark/light theme is changed. You can click the "Auto Adapt settings" button to configure which color preset to use for dark and light themes.
 
-<img src="./Screenshots/images/image1.jpg" style="zoom:80%;" />
+### 9. The taskbar windows cannot be displayed when the HDR is turned on in Windows 10
 
-1. Click "Background color" to bring up the "Color" dialog box.
-2. Click the "Select" button to choose a color from the screen.
-3. Select the color of the blank area of the taskbar window (the area pointed by the arrow at "3" in the figure). (Yes, it doesn't matter whether the taskbar is transparent or what color your wallpaper is. Just select it directly, I don't know why ...)
-4. Set the transparent color to exactly the same as the background color just now.
-
-After doing this, click on the empty area of the taskbar window will pop up the TrafficMonitor right-click menu normally, even if you change the wallpaper or restart the computer.
+Some users have reported that turning on the HDR function in Windows 10 will cause the taskbar window to fail to display. Since I don't have a monitor that supports HDR, I can't investigate this problem, nor can I give a solution. If you encounter this problem, it is recommended to turn off the HDR function.
 
 <br><br>
 
