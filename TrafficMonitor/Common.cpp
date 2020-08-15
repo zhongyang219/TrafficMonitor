@@ -569,7 +569,10 @@ bool CCommon::GetURL(const wstring & url, wstring & result, bool utf8, const wst
 	}
 	catch (CInternetException* e)
 	{
-		if (pfile != nullptr)
+        //写入错误日志
+        CString info = CCommon::LoadTextFormat(IDS_GET_URL_ERROR_LOG_INFO, { url, static_cast<unsigned int>(e->m_dwError) });
+        CCommon::WriteLog(info, theApp.m_log_path.c_str());
+        if (pfile != nullptr)
 		{
 			pfile->Close();
 			delete pfile;
