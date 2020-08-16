@@ -20,7 +20,12 @@ Traffic Monitor是一款用於Windows平台的網速監控懸浮窗軟體，可�
 * 支援嵌入到工作列顯示<br>
 * 支援更換面板和自訂面板<br>
 * 歷史流量統計<br>
+# 使用說明
+
+**[點選這裡](https://github.com/zhongyang219/TrafficMonitor/wiki)轉到Wiki頁面檢視關於TrafficMonitorr的詳細說明文件。**
+
 # 畫面擷圖
+
 主懸浮窗：<br>
 ![](./Screenshots/main1.png)<br>
 右鍵選單：<br>

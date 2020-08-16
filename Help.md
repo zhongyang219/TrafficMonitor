@@ -1,7 +1,10 @@
 **简体中文 | [English](./Help_en-us.md)**<br>
 
 # TrafficMonitor 常见问题
+这里是关于TrafficMonitor常见问题的页面，如果你想查看关于TrafficMonitor的各项功能和使用方法的详细介绍，请[点击这里](https://github.com/zhongyang219/TrafficMonitor/wiki)转到TraffinMonitor Wiki页面。
+
 ### 1. 如何显示CPU和内存利用率？
+
 在主窗口点击右弹出键菜单，勾选“显示更多信息”。如果需要在任务栏窗口中也显示CPU和内存利用率，则在任务栏窗口中点击右键弹出菜单，在“显示设置<img src="./Screenshots/images/item.png" style="zoom: 80%;" />”子菜单下勾选“CPU和内存利用率”即可。
 ### 2. 如何单独设置任务栏窗口中每个项目的颜色？
 在右键菜单中选择“选项”，切换到“任务栏窗口设置”，勾选“指定每个项目的颜色”，此时再点击“文本颜色”右边的颜色块，就会弹出“任务栏窗口颜色设置”的对话框了。<br>
