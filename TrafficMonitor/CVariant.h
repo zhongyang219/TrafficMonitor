@@ -3,7 +3,6 @@ class CVariant
 {
 public:
 	CVariant(int value);
-	CVariant(unsigned int value);
 	CVariant(size_t value);
 	CVariant(double value);
 	CVariant(LPCTSTR value);

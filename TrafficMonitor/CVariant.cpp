@@ -38,12 +38,6 @@ CVariant::CVariant(const wstring & value)
 	m_type = eType::STRING;
 }
 
-CVariant::CVariant(unsigned int value)
-{
-    m_value_int = static_cast<int>(value);
-    m_type = eType::UINT;
-}
-
 CVariant::~CVariant()
 {
 }
