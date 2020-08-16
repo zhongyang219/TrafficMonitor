@@ -126,6 +126,7 @@ public:
 
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnHelp();
+    afx_msg void OnFrequentyAskedQuestions();
 };
 
 extern CTrafficMonitorApp theApp;
