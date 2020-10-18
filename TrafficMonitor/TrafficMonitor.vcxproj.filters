@@ -94,9 +94,6 @@
     <Filter Include="源文件和头文件\公共的类\WinVersionHelper">
       <UniqueIdentifier>{dd5aaacf-0f59-47ca-a738-250b15c6bbbb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件和头文件\对话框类\AcknowledgementDlg">
-      <UniqueIdentifier>{b5204c4a-c23b-4824-b31f-e41ca736b3ee}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件和头文件\对话框类\AboutDlg">
       <UniqueIdentifier>{1f240f1b-347d-4281-a4cf-18bfebfacb6b}</UniqueIdentifier>
     </Filter>
@@ -105,6 +102,42 @@
     </Filter>
     <Filter Include="源文件和头文件\对话框类\颜色设置对话框\MFCColorDialogEx">
       <UniqueIdentifier>{dd737159-8653-44d0-bf51-f0e3afad4e5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\派生的控件类\CTabCtrlEx">
+      <UniqueIdentifier>{e5835851-f8d8-47dd-9669-f70b6f424386}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\CrashTool">
+      <UniqueIdentifier>{12448ccc-0fa7-4f50-8261-dcb04f068e39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\对话框类\MessageDlg">
+      <UniqueIdentifier>{645d28e7-da22-44f8-8e33-894109dde4b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\CVariant">
+      <UniqueIdentifier>{1ca17ad5-07ba-4361-bbeb-fdc5047697fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\UpdateHelper">
+      <UniqueIdentifier>{2b0e9f5d-dbce-4ba7-a158-7d9b705fcc02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\CPUUsage">
+      <UniqueIdentifier>{926ebc77-cc7f-431a-896d-3a4019b41991}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\对话框类\BaseDialog">
+      <UniqueIdentifier>{6f91f987-8834-4e89-b14e-d3ae15040848}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\TaskbarDefaultStyle">
+      <UniqueIdentifier>{d2389f34-94a7-409a-97d0-47890e629c20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\对话框类\选项设置对话框\AutoAdaptSettingsDlg">
+      <UniqueIdentifier>{2393c651-03a5-467c-a927-a3e99fdc48c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\HistoryTrafficFile">
+      <UniqueIdentifier>{5bf9c8c3-2115-4e6d-897c-432303615271}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="测试">
+      <UniqueIdentifier>{df6d5fed-e1e8-4538-b028-f046ac67ad3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\WIC">
+      <UniqueIdentifier>{2f6c60c6-eed6-4cad-8a1f-8759efb79d1d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -216,9 +249,6 @@
     <ClInclude Include="WinVersionHelper.h">
       <Filter>源文件和头文件\公共的类\WinVersionHelper</Filter>
     </ClInclude>
-    <ClInclude Include="AcknowledgementDlg.h">
-      <Filter>源文件和头文件\对话框类\AcknowledgementDlg</Filter>
-    </ClInclude>
     <ClInclude Include="AboutDlg.h">
       <Filter>源文件和头文件\对话框类\AboutDlg</Filter>
     </ClInclude>
@@ -227,6 +257,45 @@
     </ClInclude>
     <ClInclude Include="CMFCColorDialogEx.h">
       <Filter>源文件和头文件\对话框类\颜色设置对话框\MFCColorDialogEx</Filter>
+    </ClInclude>
+    <ClInclude Include="CTabCtrlEx.h">
+      <Filter>源文件和头文件\派生的控件类\CTabCtrlEx</Filter>
+    </ClInclude>
+    <ClInclude Include="crashtool.h">
+      <Filter>源文件和头文件\公共的类\CrashTool</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageDlg.h">
+      <Filter>源文件和头文件\对话框类\MessageDlg</Filter>
+    </ClInclude>
+    <ClInclude Include="CVariant.h">
+      <Filter>源文件和头文件\公共的类\CVariant</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawCommonEx.h">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdateHelper.h">
+      <Filter>源文件和头文件\公共的类\UpdateHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="CPUUsage.h">
+      <Filter>源文件和头文件\公共的类\CPUUsage</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseDialog.h">
+      <Filter>源文件和头文件\对话框类\BaseDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskbarDefaultStyle.h">
+      <Filter>源文件和头文件\公共的类\TaskbarDefaultStyle</Filter>
+    </ClInclude>
+    <ClInclude Include="CAutoAdaptSettingsDlg.h">
+      <Filter>源文件和头文件\对话框类\选项设置对话框\AutoAdaptSettingsDlg</Filter>
+    </ClInclude>
+    <ClInclude Include="HistoryTrafficFile.h">
+      <Filter>源文件和头文件\公共的类\HistoryTrafficFile</Filter>
+    </ClInclude>
+    <ClInclude Include="Test.h">
+      <Filter>测试</Filter>
+    </ClInclude>
+    <ClInclude Include="WIC.h">
+      <Filter>源文件和头文件\公共的类\WIC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -323,9 +392,6 @@
     <ClCompile Include="WinVersionHelper.cpp">
       <Filter>源文件和头文件\公共的类\WinVersionHelper</Filter>
     </ClCompile>
-    <ClCompile Include="AcknowledgementDlg.cpp">
-      <Filter>源文件和头文件\对话框类\AcknowledgementDlg</Filter>
-    </ClCompile>
     <ClCompile Include="AboutDlg.cpp">
       <Filter>源文件和头文件\对话框类\AboutDlg</Filter>
     </ClCompile>
@@ -334,6 +400,45 @@
     </ClCompile>
     <ClCompile Include="CMFCColorDialogEx.cpp">
       <Filter>源文件和头文件\对话框类\颜色设置对话框\MFCColorDialogEx</Filter>
+    </ClCompile>
+    <ClCompile Include="CTabCtrlEx.cpp">
+      <Filter>源文件和头文件\派生的控件类\CTabCtrlEx</Filter>
+    </ClCompile>
+    <ClCompile Include="crashtool.cpp">
+      <Filter>源文件和头文件\公共的类\CrashTool</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageDlg.cpp">
+      <Filter>源文件和头文件\对话框类\MessageDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="CVariant.cpp">
+      <Filter>源文件和头文件\公共的类\CVariant</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawCommonEx.cpp">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="UpdateHelper.cpp">
+      <Filter>源文件和头文件\公共的类\UpdateHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="CPUUsage.cpp">
+      <Filter>源文件和头文件\公共的类\CPUUsage</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseDialog.cpp">
+      <Filter>源文件和头文件\对话框类\BaseDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskbarDefaultStyle.cpp">
+      <Filter>源文件和头文件\公共的类\TaskbarDefaultStyle</Filter>
+    </ClCompile>
+    <ClCompile Include="CAutoAdaptSettingsDlg.cpp">
+      <Filter>源文件和头文件\对话框类\选项设置对话框\AutoAdaptSettingsDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="HistoryTrafficFile.cpp">
+      <Filter>源文件和头文件\公共的类\HistoryTrafficFile</Filter>
+    </ClCompile>
+    <ClCompile Include="Test.cpp">
+      <Filter>测试</Filter>
+    </ClCompile>
+    <ClCompile Include="WIC.cpp">
+      <Filter>源文件和头文件\公共的类\WIC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -345,6 +450,11 @@
     <None Include="res\TrafficMonitor.rc2">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="..\LICENSE" />
+    <None Include="res\license.bin">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\LICENSE_CN" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\TrafficMonitor.ico">
@@ -369,6 +479,72 @@
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="res\notify_preview.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\notifyicon4.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\notify_preview_light.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\donate_wechart.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\bitmap3.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\exit.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\help.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\info.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\lock.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\setting.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\statistics.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\close.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\pin.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\skn.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\connection.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\mouse.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\main_window.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\taskbar_window.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\notify.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\more.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\item.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\function.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\notifyicon5.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

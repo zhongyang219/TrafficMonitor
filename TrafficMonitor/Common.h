@@ -1,5 +1,6 @@
 #pragma once
 #include "CommonData.h"
+#include "CVariant.h"
 
 class CCommon
 {
@@ -18,10 +19,10 @@ public:
 	返回值：转换后的字符串
 	*/
 	static CString DataSizeToString(unsigned int size, const PublicSettingData& cfg);
-	static CString DataSizeToString(unsigned int size);
+	static CString DataSizeToString(unsigned long long size);
 
-	static CString KBytesToString(unsigned int kb_size);
-	static CString KBytesToStringL(__int64 kb_size);
+	//static CString KBytesToString(unsigned int kb_size);
+	static CString KBytesToString(unsigned __int64 kb_size);
 
 	//返回两个FILETIME结构的时间差
 	static __int64 CompareFileTime2(FILETIME time1, FILETIME time2);
@@ -88,17 +89,27 @@ public:
 	//将一个字符串保存到剪贴板
 	static bool CopyStringToClipboard(const wstring& str);
 
+    static wstring GetJsonValueSimple(const wstring& json_str, const wstring& name);
+
 	//获取URL的内容
-	static bool GetURL(const wstring& url, wstring& result, bool utf8 = false);
+	static bool GetURL(const wstring& url, wstring& result, bool utf8 = false, const wstring& user_agent = wstring());
 
 	//获取外网IP地址和IP归属地
 	static void GetInternetIp(wstring& ip_address, wstring& ip_location, bool global);
+
+    static void GetInternetIp2(wstring& ip_address, wstring& ip_location, bool ipv6);
 
 	static void SetRect(CRect& rect, int x, int y, int width, int height);
 
 	//从资源文件载入字符串。其中，front_str、back_str为载入字符串时需要在前面或后面添加的字符串
 	static CString LoadText(UINT id, LPCTSTR back_str = nullptr);
 	static CString LoadText(LPCTSTR front_str, UINT id, LPCTSTR back_str = nullptr);
+
+	//安全的格式化字符串，将format_str中形如<%序号%>的字符串替换成初始化列表paras中的元素，元素支持int/double/LPCTSTR/CString格式，序号从1开始
+	static CString StringFormat(LPCTSTR format_str, const std::initializer_list<CVariant>& paras);
+
+	//从资源文件中载入字符串，并将资源字符串中形如<%序号%>的字符串替换成可变参数列表中的参数
+	static CString LoadTextFormat(UINT id, const std::initializer_list<CVariant>& paras);
 
 	//将int类型转换成字符串
 	//n：要转换的数值
@@ -121,6 +132,25 @@ public:
 	//设置线程语言
 	static void SetThreadLanguage(Language language);
 
+	//设置颜色模式
+	static void SetColorMode(ColorMode mode);
+
+	//经过测试发现，似乎当透明色的R和B值相等时，会出现右击任务栏窗口时无法弹出右键菜单，而是弹出系统任务栏右键菜单的问题
+	//为了解决这个问题，需要将颜色值进行转换
+	//此函数的作用是判断一个颜色的R和B值是否相等，如果是则将颜色的B值加1（如果B==255，则减1）
+	static void TransparentColorConvert(COLORREF& transparent_color);
+
 	static void SetDialogFont(CWnd* pDlg, CFont* pFont);
+
+    //从资源加载自定义文本资源。id：资源的ID，code_type：文本的编码格式：0:ANSI, 1:UTF8, 2:UTF16
+    static CString GetTextResource(UINT id, int code_type);
+
+    //从资源加载一个图标
+    static HICON LoadIconResource(UINT id, int size);
+
+    //获取一个菜单项的序号
+    static int GetMenuItemPosition(CMenu* pMenu, UINT id);
+
+    static bool IsColorSimilar(COLORREF color1, COLORREF color2);
 };
 

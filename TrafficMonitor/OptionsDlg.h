@@ -3,10 +3,12 @@
 #include "TaskBarSettingsDlg.h"
 #include "GeneralSettingsDlg.h"
 #include "afxcmn.h"
+#include "CTabCtrlEx.h"
+#include "BaseDialog.h"
 
 // COptionsDlg 对话框
 
-class COptionsDlg : public CDialog
+class COptionsDlg : public CBaseDialog
 {
 	DECLARE_DYNAMIC(COptionsDlg)
 
@@ -24,14 +26,17 @@ public:
 	CGeneralSettingsDlg m_tab3_dlg{ this };
 
 protected:
-	CTabCtrl m_tab;
+	CTabCtrlEx m_tab;
 	int m_tab_selected;
+    std::vector<CTabDlg*> m_tab_vect;
+    std::vector<int> m_tab_height;
 
+	virtual CString GetDialogName() const override;
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnInitDialog();
-	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
 	virtual void OnOK();
+    afx_msg void OnSize(UINT nType, int cx, int cy);
 };

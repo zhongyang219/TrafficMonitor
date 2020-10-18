@@ -19,6 +19,7 @@ CHistoryTrafficDlg::CHistoryTrafficDlg(deque<HistoryTraffic>& history_traffics, 
 
 CHistoryTrafficDlg::~CHistoryTrafficDlg()
 {
+    SaveConfig();
 }
 
 
@@ -42,6 +43,21 @@ void CHistoryTrafficDlg::SetTabWndSize()
 	m_tab2_dlg.MoveWindow(&rect);
 }
 
+void CHistoryTrafficDlg::LoadConfig()
+{
+    CIniHelper ini{ theApp.m_config_path };
+    m_window_size.cx = ini.GetInt(L"histroy_traffic", L"width", -1);
+    m_window_size.cy = ini.GetInt(L"histroy_traffic", L"height", -1);
+}
+
+void CHistoryTrafficDlg::SaveConfig() const
+{
+    CIniHelper ini{ theApp.m_config_path };
+    ini.WriteInt(L"histroy_traffic", L"width", m_window_size.cx);
+    ini.WriteInt(L"histroy_traffic", L"height", m_window_size.cy);
+    ini.Save();
+}
+
 
 BEGIN_MESSAGE_MAP(CHistoryTrafficDlg, CDialog)
 	ON_WM_GETMINMAXINFO()
@@ -59,7 +75,7 @@ BOOL CHistoryTrafficDlg::OnInitDialog()
 
 	// TODO:  在此添加额外的初始化
 	SetWindowText(CCommon::LoadText(IDS_TITLE_HISTORY_TRAFFIC));
-	SetIcon(AfxGetApp()->LoadIcon(IDI_NOFITY_ICON), FALSE);		// 设置小图标
+	SetIcon(theApp.GetMenuIcon(IDI_STATISTICS), FALSE);		// 设置小图标
 
 	//插入标签
 	m_tab.InsertItem(0, CCommon::LoadText(IDS_LIST_VIEW));
@@ -81,6 +97,8 @@ BOOL CHistoryTrafficDlg::OnInitDialog()
 	}
 	m_tab.SetCurFocus(m_tab_selected);
 
+	m_tab1_dlg.SetScrollEnable(false);
+	m_tab2_dlg.SetScrollEnable(false);
 
 	//获取初始时窗口的大小
 	CRect rect;
@@ -88,6 +106,12 @@ BOOL CHistoryTrafficDlg::OnInitDialog()
 	m_min_size.cx = rect.Width();
 	m_min_size.cy = rect.Height();
 
+    //载入窗口大小设置
+    LoadConfig();
+    if (m_window_size.cx > 0 && m_window_size.cy > 0)
+    {
+        SetWindowPos(nullptr, 0, 0, m_window_size.cx, m_window_size.cy, SWP_NOMOVE | SWP_NOZORDER);
+    }
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -110,18 +134,18 @@ void CHistoryTrafficDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 BOOL CHistoryTrafficDlg::PreTranslateMessage(MSG* pMsg)
 {
 	// TODO: 在此添加专用代码和/或调用基类
-	if (GetKeyState(VK_CONTROL) & 0x80)
-	{
-		if (pMsg->wParam == 'D')
-		{
-			HistoryTraffic h{};
-			h.year = 2018;
-			h.month = 4;
-			h.day = 29;
-			auto iter = std::lower_bound(m_history_traffics.begin(), m_history_traffics.end(), h, HistoryTraffic::DateGreater);
-			int index = iter - m_history_traffics.begin();
-		}
-	}
+	//if (GetKeyState(VK_CONTROL) & 0x80)
+	//{
+	//	if (pMsg->wParam == 'D')
+	//	{
+	//		HistoryTraffic h{};
+	//		h.year = 2018;
+	//		h.month = 4;
+	//		h.day = 29;
+	//		auto iter = std::lower_bound(m_history_traffics.begin(), m_history_traffics.end(), h, HistoryTraffic::DateGreater);
+	//		int index = iter - m_history_traffics.begin();
+	//	}
+	//}
 
 	return CDialog::PreTranslateMessage(pMsg);
 }
@@ -150,9 +174,17 @@ void CHistoryTrafficDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 void CHistoryTrafficDlg::OnSize(UINT nType, int cx, int cy)
 {
 	CDialog::OnSize(nType, cx, cy);
+
+	// TODO: 在此处添加消息处理程序代码
 	if (nType != SIZE_MINIMIZED && m_tab1_dlg.GetSafeHwnd() != NULL && m_tab2_dlg.GetSafeHwnd() != NULL)
 	{
 		SetTabWndSize();
 	}
-	// TODO: 在此处添加消息处理程序代码
+    if (nType != SIZE_MINIMIZED && nType != SIZE_MAXIMIZED)
+    {
+        CRect rect;
+        GetWindowRect(&rect);
+        m_window_size = rect.Size();
+    }
+
 }

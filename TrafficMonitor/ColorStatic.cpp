@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "TrafficMonitor.h"
 #include "ColorStatic.h"
-
+#include "DrawCommon.h"
 
 // CColorStatic
 
@@ -73,51 +73,66 @@ void CColorStatic::OnPaint()
 	GetClientRect(rect);
 	rect.MoveToXY(0, 0);
 	CRect rc_tmp{ rect };
-	switch (m_color_num)
+
+	CDrawCommon draw;
+	draw.Create(&dc, this);
+
+	if (IsWindowEnabled())
 	{
-	case 1:
-		dc.FillSolidRect(rect, m_colors[0]);
-		break;
-	case 4:
-		dc.FillSolidRect(rect, RGB(255,255,255));
-		rc_tmp.right /= 2;
-		rc_tmp.bottom /= 2;
-		dc.FillSolidRect(rc_tmp, m_colors[0]);
-		rc_tmp.MoveToX(rc_tmp.right);
-		dc.FillSolidRect(rc_tmp, m_colors[1]);
-		rc_tmp.MoveToXY(0, rc_tmp.bottom);
-		dc.FillSolidRect(rc_tmp, m_colors[2]);
-		rc_tmp.MoveToX(rc_tmp.right);
-		dc.FillSolidRect(rc_tmp, m_colors[3]);
-		break;
-	case 8:
-		dc.FillSolidRect(rect, RGB(255, 255, 255));
-		rc_tmp.right /= 4;
-		rc_tmp.bottom /= 2;
-		dc.FillSolidRect(rc_tmp, m_colors[0]);
-		rc_tmp.MoveToX(rc_tmp.right);
-		dc.FillSolidRect(rc_tmp, m_colors[1]);
-		rc_tmp.MoveToX(rc_tmp.right);
-		dc.FillSolidRect(rc_tmp, m_colors[4]);
-		rc_tmp.MoveToX(rc_tmp.right);
-		dc.FillSolidRect(rc_tmp, m_colors[5]);
-		rc_tmp.MoveToXY(0, rc_tmp.bottom);
-		dc.FillSolidRect(rc_tmp, m_colors[2]);
-		rc_tmp.MoveToX(rc_tmp.right);
-		dc.FillSolidRect(rc_tmp, m_colors[3]);
-		rc_tmp.MoveToX(rc_tmp.right);
-		dc.FillSolidRect(rc_tmp, m_colors[6]);
-		rc_tmp.MoveToX(rc_tmp.right);
-		dc.FillSolidRect(rc_tmp, m_colors[7]);
-		break;
-	default:
-		dc.FillSolidRect(rect, RGB(255, 255, 255));
-		rc_tmp.right = rect.Width() / m_color_num;
-		for (int i{}; i < m_color_num; i++)
+		switch (m_color_num)
 		{
-			rc_tmp.MoveToX(i*(rect.Width() / m_color_num));
-			dc.FillSolidRect(rc_tmp, m_colors[i]);
+		case 1:
+			dc.FillSolidRect(rect, m_colors[0]);
+			break;
+		case 4:
+			dc.FillSolidRect(rect, RGB(255,255,255));
+			rc_tmp.right /= 2;
+			rc_tmp.bottom /= 2;
+			dc.FillSolidRect(rc_tmp, m_colors[0]);
+			rc_tmp.MoveToX(rc_tmp.right);
+			dc.FillSolidRect(rc_tmp, m_colors[1]);
+			rc_tmp.MoveToXY(0, rc_tmp.bottom);
+			dc.FillSolidRect(rc_tmp, m_colors[2]);
+			rc_tmp.MoveToX(rc_tmp.right);
+			dc.FillSolidRect(rc_tmp, m_colors[3]);
+			break;
+		case 8:
+			dc.FillSolidRect(rect, RGB(255, 255, 255));
+			rc_tmp.right /= 4;
+			rc_tmp.bottom /= 2;
+			dc.FillSolidRect(rc_tmp, m_colors[0]);
+			rc_tmp.MoveToX(rc_tmp.right);
+			dc.FillSolidRect(rc_tmp, m_colors[1]);
+			rc_tmp.MoveToX(rc_tmp.right);
+			dc.FillSolidRect(rc_tmp, m_colors[4]);
+			rc_tmp.MoveToX(rc_tmp.right);
+			dc.FillSolidRect(rc_tmp, m_colors[5]);
+			rc_tmp.MoveToXY(0, rc_tmp.bottom);
+			dc.FillSolidRect(rc_tmp, m_colors[2]);
+			rc_tmp.MoveToX(rc_tmp.right);
+			dc.FillSolidRect(rc_tmp, m_colors[3]);
+			rc_tmp.MoveToX(rc_tmp.right);
+			dc.FillSolidRect(rc_tmp, m_colors[6]);
+			rc_tmp.MoveToX(rc_tmp.right);
+			dc.FillSolidRect(rc_tmp, m_colors[7]);
+			break;
+		default:
+			dc.FillSolidRect(rect, RGB(255, 255, 255));
+			rc_tmp.right = rect.Width() / m_color_num;
+			for (int i{}; i < m_color_num; i++)
+			{
+				rc_tmp.MoveToX(i*(rect.Width() / m_color_num));
+				dc.FillSolidRect(rc_tmp, m_colors[i]);
+			}
 		}
+
+		//画边框
+		draw.DrawRectOutLine(rect, RGB(160, 160, 160));
+	}
+	else
+	{
+		dc.FillSolidRect(rect, RGB(225, 225, 225));
+		draw.DrawRectOutLine(rect, RGB(192, 192, 192));
 	}
 }
 
@@ -158,6 +173,7 @@ void CColorStatic::PreSubclassWindow()
 	// TODO: 在此添加专用代码和/或调用基类
 	DWORD dwStyle = GetStyle();
 	::SetWindowLong(GetSafeHwnd(), GWL_STYLE, dwStyle | SS_NOTIFY);
+	ModifyStyleEx(WS_EX_STATICEDGE, NULL);
 
 	CStatic::PreSubclassWindow();
 }

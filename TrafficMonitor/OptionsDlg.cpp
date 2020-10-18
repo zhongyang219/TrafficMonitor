@@ -9,10 +9,10 @@
 
 // COptionsDlg 对话框
 
-IMPLEMENT_DYNAMIC(COptionsDlg, CDialog)
+IMPLEMENT_DYNAMIC(COptionsDlg, CBaseDialog)
 
 COptionsDlg::COptionsDlg(int tab, CWnd* pParent /*=NULL*/)
-	: CDialog(IDD_OPTIONS_DIALOG, pParent), m_tab_selected{ tab }
+	: CBaseDialog(IDD_OPTIONS_DIALOG, pParent), m_tab_selected{ tab }
 {
 
 }
@@ -21,15 +21,20 @@ COptionsDlg::~COptionsDlg()
 {
 }
 
+CString COptionsDlg::GetDialogName() const
+{
+	return _T("OptionsDlg");
+}
+
 void COptionsDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CBaseDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_TAB1, m_tab);
 }
 
 
-BEGIN_MESSAGE_MAP(COptionsDlg, CDialog)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &COptionsDlg::OnTcnSelchangeTab1)
+BEGIN_MESSAGE_MAP(COptionsDlg, CBaseDialog)
+    ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -38,73 +43,50 @@ END_MESSAGE_MAP()
 
 BOOL COptionsDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	CBaseDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
+	theApp.m_option_dlg = m_hWnd;
+
 	SetWindowText(CCommon::LoadText(IDS_TITLE_OPTION));
-	//插入标签
-	m_tab.InsertItem(0, CCommon::LoadText(IDS_MAIN_WINDOW_SETTINGS));
-	m_tab.InsertItem(1, CCommon::LoadText(IDS_TASKBAR_WINDOW_SETTINGS));
-	m_tab.InsertItem(2, CCommon::LoadText(IDS_GENERAL_SETTINGS));
+    SetIcon(theApp.GetMenuIcon(IDI_SETTINGS), FALSE);		// 设置小图标
+
 	//创建子对话框
 	m_tab1_dlg.Create(IDD_MAIN_WND_SETTINGS_DIALOG, &m_tab);
 	m_tab2_dlg.Create(IDD_TASKBAR_SETTINGS_DIALOG, &m_tab);
 	m_tab3_dlg.Create(IDD_GENERAL_SETTINGS_DIALOG, &m_tab);
-	//调整子对话框的大小和位置
-	CRect rect;
-	m_tab.GetClientRect(rect);
-	CRect rcTabItem;
-	m_tab.GetItemRect(0, rcTabItem);
-	rect.top += rcTabItem.Height() + 4;
-	rect.left += 4;
-	rect.bottom -= 4;
-	rect.right -= 4;
-	m_tab1_dlg.MoveWindow(&rect);
-	m_tab2_dlg.MoveWindow(&rect);
-	m_tab3_dlg.MoveWindow(&rect);
+
+    //保存子对话框
+    m_tab_vect.push_back(&m_tab1_dlg);
+    m_tab_vect.push_back(&m_tab2_dlg);
+    m_tab_vect.push_back(&m_tab3_dlg);
+
+    //获取子对话框的初始高度
+    for (const auto* pDlg : m_tab_vect)
+    {
+        CRect rect;
+        pDlg->GetWindowRect(rect);
+        m_tab_height.push_back(rect.Height());
+    }
+
+	//添加对话框
+	m_tab.AddWindow(&m_tab1_dlg, CCommon::LoadText(IDS_MAIN_WINDOW_SETTINGS));
+	m_tab.AddWindow(&m_tab2_dlg, CCommon::LoadText(IDS_TASKBAR_WINDOW_SETTINGS));
+	m_tab.AddWindow(&m_tab3_dlg, CCommon::LoadText(IDS_GENERAL_SETTINGS));
+
+    //为每个子窗口设置滚动信息
+    for (size_t i = 0; i < m_tab_vect.size(); i++)
+    {
+        m_tab_vect[i]->SetScrollbarInfo(m_tab.m_tab_rect.Height(), m_tab_height[i]);
+    }
+
 	//设置默认选中的标签
-	switch (m_tab_selected)
-	{
-	case 0:
-		m_tab1_dlg.ShowWindow(SW_SHOW);
-		break;
-	case 1:
-		m_tab2_dlg.ShowWindow(SW_SHOW);
-		break;
-	}
-	m_tab.SetCurFocus(m_tab_selected);
+    if (m_tab_selected < 0 || m_tab_selected >= m_tab.GetItemCount())
+        m_tab_selected = 0;
+    m_tab.SetCurTab(m_tab_selected);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
-}
-
-
-void COptionsDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	// TODO: 在此添加控件通知处理程序代码
-	m_tab_selected = m_tab.GetCurSel();
-	switch (m_tab_selected)
-	{
-	case 0:
-		m_tab1_dlg.ShowWindow(SW_SHOW);
-		m_tab2_dlg.ShowWindow(SW_HIDE);
-		m_tab3_dlg.ShowWindow(SW_HIDE);
-		m_tab1_dlg.SetFocus();
-		break;
-	case 1:
-		m_tab2_dlg.ShowWindow(SW_SHOW);
-		m_tab1_dlg.ShowWindow(SW_HIDE);
-		m_tab3_dlg.ShowWindow(SW_HIDE);
-		m_tab2_dlg.SetFocus();
-		break;
-	case 2:
-		m_tab3_dlg.ShowWindow(SW_SHOW);
-		m_tab1_dlg.ShowWindow(SW_HIDE);
-		m_tab2_dlg.ShowWindow(SW_HIDE);
-		m_tab3_dlg.SetFocus();
-		break;
-	}
-	*pResult = 0;
 }
 
 
@@ -115,5 +97,22 @@ void COptionsDlg::OnOK()
 	m_tab2_dlg.OnOK();
 	m_tab3_dlg.OnOK();
 
-	CDialog::OnOK();
+	CBaseDialog::OnOK();
+}
+
+
+void COptionsDlg::OnSize(UINT nType, int cx, int cy)
+{
+    CBaseDialog::OnSize(nType, cx, cy);
+
+    // TODO: 在此处添加消息处理程序代码
+    if (nType != SIZE_MINIMIZED)
+    {
+        //为每个子窗口设置滚动信息
+        for (size_t i = 0; i < m_tab_vect.size(); i++)
+        {
+            m_tab_vect[i]->ResetScroll();
+            m_tab_vect[i]->SetScrollbarInfo(m_tab.m_tab_rect.Height(), m_tab_height[i]);
+        }
+    }
 }

@@ -9,10 +9,10 @@
 
 // CSkinDlg 对话框
 
-IMPLEMENT_DYNAMIC(CSkinDlg, CDialog)
+IMPLEMENT_DYNAMIC(CSkinDlg, CBaseDialog)
 
 CSkinDlg::CSkinDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD_SKIN_DIALOG, pParent)
+	: CBaseDialog(IDD_SKIN_DIALOG, pParent)
 {
 
 }
@@ -21,9 +21,14 @@ CSkinDlg::~CSkinDlg()
 {
 }
 
+CString CSkinDlg::GetDialogName() const
+{
+	return _T("SkinDlg");
+}
+
 void CSkinDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CBaseDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_COMBO1, m_select_box);
 	DDX_Control(pDX, IDC_SKIN_COURSE_STATIC, m_skin_course);
 	DDX_Control(pDX, IDC_SKIN_DOWNLOAD_STATIC, m_skin_download);
@@ -165,10 +170,9 @@ CRect CSkinDlg::CalculateViewRect()
 }
 
 
-BEGIN_MESSAGE_MAP(CSkinDlg, CDialog)
+BEGIN_MESSAGE_MAP(CSkinDlg, CBaseDialog)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CSkinDlg::OnCbnSelchangeCombo1)
 	ON_WM_SIZE()
-	ON_WM_GETMINMAXINFO()
 END_MESSAGE_MAP()
 
 
@@ -176,11 +180,11 @@ END_MESSAGE_MAP()
 
 BOOL CSkinDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	CBaseDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
 	SetWindowText(CCommon::LoadText(IDS_TITLE_CHANGE_SKIN));
-	SetIcon(AfxGetApp()->LoadIcon(IDI_NOFITY_ICON3), FALSE);		// 设置小图标
+	SetIcon(theApp.GetMenuIcon(IDI_SKIN), FALSE);		// 设置小图标
 	//初始化选择框
 	for (const auto& skin_path : m_skins)
 	{
@@ -209,11 +213,6 @@ BOOL CSkinDlg::OnInitDialog()
 	//显示预览图片
 	ShowPreview();
 
-	//获取窗口初始时的大小
-	CRect rect;
-	GetWindowRect(rect);
-	m_min_size = rect.Size();
-
 	//设置超链接
 	m_skin_course.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor/blob/master/皮肤制作教程.md"));
 	m_skin_download.SetURL(_T("https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md"));
@@ -233,20 +232,9 @@ void CSkinDlg::OnCbnSelchangeCombo1()
 
 void CSkinDlg::OnSize(UINT nType, int cx, int cy)
 {
-	CDialog::OnSize(nType, cx, cy);
+	CBaseDialog::OnSize(nType, cx, cy);
 
 	// TODO: 在此处添加消息处理程序代码
-	if(m_preview_static.m_hWnd!=NULL && nType!= SIZE_MINIMIZED)
+	if (m_preview_static.m_hWnd != NULL && nType != SIZE_MINIMIZED && m_view != nullptr)
 		m_view->MoveWindow(CalculateViewRect());
-}
-
-
-void CSkinDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
-{
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	//限制窗口最小大小
-	lpMMI->ptMinTrackSize.x = m_min_size.cx;		//设置最小宽度
-	lpMMI->ptMinTrackSize.y = m_min_size.cy;		//设置最小高度
-
-	CDialog::OnGetMinMaxInfo(lpMMI);
 }

@@ -23,10 +23,12 @@ public:
 public:
 	bool IsAutoRunModified() const { return m_auto_run_modified; }
 	bool IsShowAllInterfaceModified() const { return m_show_all_interface_modified; }
+    bool IsMonitorTimeSpanModified() const;
 
 protected:
 	bool m_auto_run_modified{ false };		//如果更改了开机自动运行的设置，则会置为true
 	bool m_show_all_interface_modified{ false };
+    int m_monitor_time_span_ori{};
 
 	//控件变量
 	CSpinEdit m_traffic_tip_edit;
@@ -34,6 +36,7 @@ protected:
 	CSpinEdit m_memory_tip_edit;
 	CComboBox m_language_combo;
 	CToolTipCtrl m_toolTip;
+    CSpinEdit m_monitor_span_edit;
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
@@ -55,4 +58,8 @@ public:
 	afx_msg void OnBnClickedOpenConfigPathButton();
 	afx_msg void OnBnClickedShowAllConnectionCheck();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	afx_msg void OnBnClickedUseCpuTimeRadio();
+	afx_msg void OnBnClickedUsePdhRadio();
+    afx_msg void OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void OnEnKillfocusMonitorSpanEdit();
 };

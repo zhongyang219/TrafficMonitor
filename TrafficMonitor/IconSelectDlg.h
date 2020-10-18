@@ -14,6 +14,9 @@ public:
 
 	int GetIconSelected() const;
 
+    void SetAutoAdaptNotifyIcon(bool val);
+    bool AutoAdaptNotifyIcon() const;
+
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ICON_SELECT_DIALOG };
@@ -28,8 +31,11 @@ public:
 protected:
 	CPictureStatic m_preview_pic;
 	CComboBox m_icon_select_combo;
+    CButton m_auto_adapt_chk;
 
 	int m_icon_selected{};
+
+    bool m_atuo_adapt_notify_icon;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
@@ -43,4 +49,6 @@ public:
 	afx_msg void OnCbnSelchangeCombo1();
 protected:
 	afx_msg LRESULT OnControlRepaint(WPARAM wParam, LPARAM lParam);
+public:
+    afx_msg void OnBnClickedAutoAdaptCheck();
 };

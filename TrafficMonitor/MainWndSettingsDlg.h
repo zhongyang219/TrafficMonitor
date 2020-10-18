@@ -34,8 +34,10 @@ protected:
 	CSpinEdit m_font_size_edit;
 	CComboBox m_double_click_combo;
 
+protected:
 	void DrawStaticColor();
 	void IniUnitCombo();
+    void EnableControl();
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
 
@@ -64,4 +66,6 @@ public:
 	afx_msg void OnBnClickedSeparateValueUnitCheck();
 	afx_msg void OnBnClickedUnitByteRadio();
 	afx_msg void OnBnClickedUnitBitRadio();
+    afx_msg void OnBnClickedShowToolTipChk();
+    afx_msg void OnBnClickedBrowseButton();
 };

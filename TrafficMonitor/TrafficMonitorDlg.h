@@ -4,7 +4,8 @@
 
 #pragma once
 #pragma comment (lib, "iphlpapi.lib")
-#include"NetworkInfoDlg.h"
+
+#include "NetworkInfoDlg.h"
 #include "afxwin.h"
 #include "StaticEx.h"
 #include "Common.h"
@@ -19,6 +20,8 @@
 #include "LinkStatic.h"
 #include "AdapterCommon.h"
 #include "AboutDlg.h"
+#include "CPUUsage.h"
+#include "HistoryTrafficFile.h"
 
 // CTrafficMonitorDlg 对话框
 class CTrafficMonitorDlg : public CDialogEx
@@ -40,7 +43,6 @@ public:
 // 实现
 protected:
 	HICON m_hIcon;
-	CMenu m_menu;		//右键菜单对象
 	NOTIFYICONDATA m_ntIcon;	//通知区域图标
 	CTaskBarDlg* m_tBarDlg;		//任务栏窗口的指针
 
@@ -53,12 +55,11 @@ protected:
 	unsigned __int64 m_last_in_bytes{};	//上次已接收的字节数
 	unsigned __int64 m_last_out_bytes{};	//上次已发送的字节数
 
-	FILETIME m_preidleTime;
-	FILETIME m_prekernelTime;
-	FILETIME m_preuserTime;
+	CCPUUsage m_cpu_usage;
 
 	bool m_first_start{ true };		//初始时为true，在定时器第一次启动后置为flase
 	CRect m_screen_rect;		//屏幕的范围（不包含任务栏）
+    CSize m_screen_size;        //屏幕的大小（包含任务栏）
 	LayoutData m_layout_data;
 	CImage m_back_img;		//背景图片
 
@@ -71,6 +72,7 @@ protected:
 
 	int m_restart_cnt{ -1 };	//重新初始化次数
 	unsigned int m_timer_cnt{};		//定时器触发次数（自程序启动以来的秒数）
+    unsigned int m_monitor_time_cnt{};
 	int m_zero_speed_cnt{};	//如果检测不到网速，该变量就会自加
 	int m_insert_to_taskbar_cnt{};	//用来统计尝试嵌入任务栏的次数
 	int m_cannot_intsert_to_task_bar_warning{ true };	//指示是否会在无法嵌入任务栏时弹出提示框
@@ -81,7 +83,7 @@ protected:
 	int m_skin_selected{};		//选择的皮肤序号
 
 	SYSTEMTIME m_start_time;	//程序启动时的时间
-	deque<HistoryTraffic> m_history_traffics;	//储存历史流量
+	CHistoryTrafficFile m_history_traffic{ theApp.m_history_traffic_path };	//储存历史流量
 
 	CToolTipCtrl m_tool_tips;
 
@@ -89,6 +91,7 @@ protected:
 	bool m_is_foreground_fullscreen{ false };	//指示前台窗口是否正在全局显示
 	bool m_menu_popuped{ false };				//指示当前是否有菜单处于弹出状态
 
+    HDC m_desktop_dc;
 
 	void ShowInfo();		//将上传下载速度信息显示到窗口中
 	CString GetMouseTipsInfo();		//获取鼠标提示信息
@@ -112,9 +115,11 @@ protected:
 	void AddNotifyIcon();		//添加通知区图标
 	void DeleteNotifyIcon();	
 	void ShowNotifyTip(const wchar_t* title, const wchar_t* message);		//显示通知区提示
+	void UpdateNotifyIconTip();		//更新通知区图标的鼠标提示
 
 	void SaveHistoryTraffic();
 	void LoadHistoryTraffic();
+	void BackupHistoryTrafficFile();
 
 	void _OnOptions(int tab);	//打开“选项”对话框的处理，参数为打开时切换的标签
 
@@ -124,6 +129,8 @@ protected:
 	void LoadBackGroundImage();
 	void SetTextColor();
 	void SetTextFont();
+
+    bool IsTaskbarWndValid() const;
 
 public:
 	void ApplySettings();
@@ -191,4 +198,7 @@ public:
 	afx_msg void OnCheckUpdate();
 protected:
 	afx_msg LRESULT OnTaskbarMenuPopedUp(WPARAM wParam, LPARAM lParam);
+public:
+	afx_msg void OnShowNetSpeed();
+	afx_msg BOOL OnQueryEndSession();
 };

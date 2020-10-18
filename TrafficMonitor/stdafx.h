@@ -49,9 +49,6 @@ using std::ofstream;
 #include<algorithm>
 #include <cmath>
 #include <afxinet.h>	//用于支持使用网络相关的类
-#include <afxwin.h>
-#include <afxcontrolbars.h>
-#include <xstring>
 
 
 #ifdef _UNICODE
@@ -77,13 +74,14 @@ using std::ofstream;
 #define DELAY_TIMER 1235		//延时定时器ID
 #define TASKBAR_TIMER 1236
 #define CONNECTION_DETAIL_TIMER 1237
+#define MONITOR_TIMER 1238
 
 #define MAX_INSERT_TO_TASKBAR_CNT 5		//尝试嵌入任务栏的最大次数
 
-#define VERSION L"1.76"
-#define COMPILE_DATE L"2018/11/11"
+#define VERSION L"1.79.1"
+#define COMPILE_DATE L"2020/08/05"
 
-#define MAX_NOTIFY_ICON 4		//可选的通知区图标数量
+#define MAX_NOTIFY_ICON 6		//可选的通知区图标数量
 
 //背景图片的文件名
 #define BACKGROUND_IMAGE_S L"\\background.bmp"
@@ -94,4 +92,18 @@ using std::ofstream;
 #define MIN_FONT_SIZE 5
 #define MAX_FONT_SIZE 72
 
+#define SAFE_DELETE(p) do \
+{\
+    if(p != nullptr) \
+    { \
+        delete p; \
+        p = nullptr; \
+    } \
+} while (false)
+
+//定义两个用于作为任务栏透明色的颜色（当需要设置任务栏窗口不透明时使用）
+#define TASKBAR_TRANSPARENT_COLOR1 RGB(52, 28, 41)
+#define TASKBAR_TRANSPARENT_COLOR2 RGB(38, 67, 55)
+
+//如果需要为Windows XP系统编译，请去掉下面一行代码的注释
 //#define COMPILE_FOR_WINXP

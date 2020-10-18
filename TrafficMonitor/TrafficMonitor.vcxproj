@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{09483BED-B1E9-4827-8120-A18302C84AA8}</ProjectGuid>
     <RootNamespace>TrafficMonitor</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -53,7 +53,7 @@
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -75,15 +75,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <ExcludePath />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <ExcludePath />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <ExcludePath />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <ExcludePath />
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -139,6 +143,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalOptions>$(ExternalCompilerOptions) %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -188,11 +193,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AboutDlg.h" />
-    <ClInclude Include="AcknowledgementDlg.h" />
     <ClInclude Include="AdapterCommon.h" />
+    <ClInclude Include="BaseDialog.h" />
     <ClInclude Include="CalendarHelper.h" />
+    <ClInclude Include="CAutoAdaptSettingsDlg.h" />
     <ClInclude Include="CMFCColorDialogEx.h" />
+    <ClInclude Include="CPUUsage.h" />
+    <ClInclude Include="crashtool.h" />
+    <ClInclude Include="CTabCtrlEx.h" />
+    <ClInclude Include="CVariant.h" />
+    <ClInclude Include="DrawCommonEx.h" />
     <ClInclude Include="HistoryTrafficCalendarDlg.h" />
+    <ClInclude Include="HistoryTrafficFile.h" />
     <ClInclude Include="HistoryTrafficListDlg.h" />
     <ClInclude Include="LinkStatic.h" />
     <ClInclude Include="ColorStatic.h" />
@@ -208,6 +220,7 @@
     <ClInclude Include="ListCtrlEx.h" />
     <ClInclude Include="MainWndColorDlg.h" />
     <ClInclude Include="MainWndSettingsDlg.h" />
+    <ClInclude Include="MessageDlg.h" />
     <ClInclude Include="NetworkInfoDlg.h" />
     <ClInclude Include="OptionsDlg.h" />
     <ClInclude Include="PictureStatic.h" />
@@ -220,19 +233,30 @@
     <ClInclude Include="TabDlg.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TaskbarColorDlg.h" />
+    <ClInclude Include="TaskbarDefaultStyle.h" />
     <ClInclude Include="TaskBarDlg.h" />
     <ClInclude Include="TaskBarSettingsDlg.h" />
+    <ClInclude Include="Test.h" />
     <ClInclude Include="TrafficMonitor.h" />
     <ClInclude Include="TrafficMonitorDlg.h" />
+    <ClInclude Include="UpdateHelper.h" />
+    <ClInclude Include="WIC.h" />
     <ClInclude Include="WinVersionHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AboutDlg.cpp" />
-    <ClCompile Include="AcknowledgementDlg.cpp" />
     <ClCompile Include="AdapterCommon.cpp" />
+    <ClCompile Include="BaseDialog.cpp" />
     <ClCompile Include="CalendarHelper.cpp" />
+    <ClCompile Include="CAutoAdaptSettingsDlg.cpp" />
     <ClCompile Include="CMFCColorDialogEx.cpp" />
+    <ClCompile Include="CPUUsage.cpp" />
+    <ClCompile Include="crashtool.cpp" />
+    <ClCompile Include="CTabCtrlEx.cpp" />
+    <ClCompile Include="CVariant.cpp" />
+    <ClCompile Include="DrawCommonEx.cpp" />
     <ClCompile Include="HistoryTrafficCalendarDlg.cpp" />
+    <ClCompile Include="HistoryTrafficFile.cpp" />
     <ClCompile Include="HistoryTrafficListDlg.cpp" />
     <ClCompile Include="LinkStatic.cpp" />
     <ClCompile Include="ColorStatic.cpp" />
@@ -247,6 +271,7 @@
     <ClCompile Include="ListCtrlEx.cpp" />
     <ClCompile Include="MainWndColorDlg.cpp" />
     <ClCompile Include="MainWndSettingsDlg.cpp" />
+    <ClCompile Include="MessageDlg.cpp" />
     <ClCompile Include="NetworkInfoDlg.cpp" />
     <ClCompile Include="OptionsDlg.cpp" />
     <ClCompile Include="PictureStatic.cpp" />
@@ -262,26 +287,55 @@
     </ClCompile>
     <ClCompile Include="TabDlg.cpp" />
     <ClCompile Include="TaskbarColorDlg.cpp" />
+    <ClCompile Include="TaskbarDefaultStyle.cpp" />
     <ClCompile Include="TaskBarDlg.cpp" />
     <ClCompile Include="TaskBarSettingsDlg.cpp" />
+    <ClCompile Include="Test.cpp" />
     <ClCompile Include="TrafficMonitor.cpp" />
     <ClCompile Include="TrafficMonitorDlg.cpp" />
+    <ClCompile Include="UpdateHelper.cpp" />
+    <ClCompile Include="WIC.cpp" />
     <ClCompile Include="WinVersionHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TrafficMonitor.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\LICENSE" />
+    <None Include="..\LICENSE_CN" />
+    <None Include="res\license.bin" />
     <None Include="res\TrafficMonitor.rc2" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\about_background.bmp" />
     <Image Include="res\about_background_hd.bmp" />
+    <Image Include="res\bitmap3.bmp" />
     <Image Include="res\donate.bmp" />
+    <Image Include="res\donate_wechart.bmp" />
+    <Image Include="res\menu_icon\close.ico" />
+    <Image Include="res\menu_icon\connection.ico" />
+    <Image Include="res\menu_icon\exit.ico" />
+    <Image Include="res\menu_icon\function.ico" />
+    <Image Include="res\menu_icon\help.ico" />
+    <Image Include="res\menu_icon\info.ico" />
+    <Image Include="res\menu_icon\item.ico" />
+    <Image Include="res\menu_icon\lock.ico" />
+    <Image Include="res\menu_icon\main_window.ico" />
+    <Image Include="res\menu_icon\more.ico" />
+    <Image Include="res\menu_icon\mouse.ico" />
+    <Image Include="res\menu_icon\notify.ico" />
+    <Image Include="res\menu_icon\pin.ico" />
+    <Image Include="res\menu_icon\setting.ico" />
+    <Image Include="res\menu_icon\skn.ico" />
+    <Image Include="res\menu_icon\statistics.ico" />
+    <Image Include="res\menu_icon\taskbar_window.ico" />
     <Image Include="res\notifyicon.ico" />
     <Image Include="res\notifyicon2.ico" />
     <Image Include="res\notifyicon3.ico" />
+    <Image Include="res\notifyicon4.ico" />
+    <Image Include="res\notifyicon5.ico" />
     <Image Include="res\notify_preview.bmp" />
+    <Image Include="res\notify_preview_light.bmp" />
     <Image Include="res\TrafficMonitor.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

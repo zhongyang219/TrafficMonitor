@@ -9,10 +9,10 @@
 
 // CNetworkInfoDlg 对话框
 
-IMPLEMENT_DYNAMIC(CNetworkInfoDlg, CDialog)
+IMPLEMENT_DYNAMIC(CNetworkInfoDlg, CBaseDialog)
 
 CNetworkInfoDlg::CNetworkInfoDlg(vector<NetWorkConection>& adapters, MIB_IFROW* pIfRow, int connection_selected, CWnd* pParent /*=NULL*/)
-	: CDialog(IDD_NETWORK_INFO_DIALOG, pParent), m_connections(adapters), m_pIfRow(pIfRow), m_connection_selected(connection_selected)
+	: CBaseDialog(IDD_NETWORK_INFO_DIALOG, pParent), m_connections(adapters), m_pIfRow(pIfRow), m_connection_selected(connection_selected)
 {
 	m_current_connection = connection_selected;
 }
@@ -104,7 +104,7 @@ void CNetworkInfoDlg::ShowInfo()
 	SetDlgItemText(IDC_INDEX_STATIC, str);
 	CFont* font = GetFont();
 	CWnd* index_static = GetDlgItem(IDC_INDEX_STATIC);
-	if (m_current_connection == m_connection_selected)
+	if (m_current_connection == m_connection_selected && !theApp.m_cfg_data.m_select_all)
 		index_static->SetFont(&m_font_bold);
 	else
 		index_static->SetFont(font);
@@ -126,7 +126,9 @@ UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
 	CCommon::SetThreadLanguage(theApp.m_general_data.language);		//设置线程语言
 	CNetworkInfoDlg* p_instance = (CNetworkInfoDlg*)lpParam;
 	wstring ip_address, ip_location;
-	CCommon::GetInternetIp(ip_address, ip_location, CCommon::LoadText(IDS_LANGUAGE_CODE) != _T("2"));			//获取外网IP地址，
+
+    //IPV4
+	CCommon::GetInternetIp2(ip_address, ip_location, false);			//获取外网IP地址，
 	if (!IsWindow(p_instance->GetSafeHwnd()))		//如果当前对话框已经销毁，则退出线程
 		return 0;
 	if (!ip_address.empty())
@@ -142,23 +144,48 @@ UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
 	{
 		p_instance->m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_GET_FAILED));
 	}
+
+    //IPV6
+    wstring ipv6_address, ipv6_location;
+    CCommon::GetInternetIp2(ip_address, ip_location, true);			//获取外网IP地址，
+    if (!IsWindow(p_instance->GetSafeHwnd()))		//如果当前对话框已经销毁，则退出线程
+        return 0;
+    if (!ip_address.empty())
+    {
+        CString info;
+        if (ip_location.empty())
+            info = ip_address.c_str();
+        else
+            info.Format(_T("%s (%s)"), ip_address.c_str(), ip_location.c_str());
+        p_instance->m_info_list.SetItemText(15, 1, info);
+    }
+    else
+    {
+        p_instance->m_info_list.SetItemText(15, 1, CCommon::LoadText(IDS_GET_FAILED));
+    }
+
+    p_instance->m_ip_acquired = true;
 	return 0;
+}
+
+CString CNetworkInfoDlg::GetDialogName() const
+{
+	return _T("NetworkInfoDlg");
 }
 
 void CNetworkInfoDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CBaseDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_INFO_LIST1, m_info_list);
 }
 
 
-BEGIN_MESSAGE_MAP(CNetworkInfoDlg, CDialog)
+BEGIN_MESSAGE_MAP(CNetworkInfoDlg, CBaseDialog)
 	ON_COMMAND(ID_COPY_TEXT, &CNetworkInfoDlg::OnCopyText)
 	ON_NOTIFY(NM_RCLICK, IDC_INFO_LIST1, &CNetworkInfoDlg::OnNMRClickInfoList1)
 	ON_WM_CLOSE()
 	ON_BN_CLICKED(IDC_PREVIOUS_BUTTON, &CNetworkInfoDlg::OnBnClickedPreviousButton)
 	ON_BN_CLICKED(IDC_NEXT_BUTTON, &CNetworkInfoDlg::OnBnClickedNextButton)
-	ON_WM_GETMINMAXINFO()
 	ON_WM_TIMER()
 	ON_WM_MOUSEWHEEL()
 	ON_NOTIFY(NM_DBLCLK, IDC_INFO_LIST1, &CNetworkInfoDlg::OnNMDblclkInfoList1)
@@ -170,21 +197,17 @@ END_MESSAGE_MAP()
 
 BOOL CNetworkInfoDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	CBaseDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
 	SetWindowText(CCommon::LoadText(IDS_TITLE_CONNECTION_DETIAL));
-	SetIcon(AfxGetApp()->LoadIcon(IDI_NOFITY_ICON), FALSE);		// 设置小图标
-
-	//获取窗口初始大小
-	CRect rect;
-	GetWindowRect(rect);
-	m_min_size = rect.Size();
+	SetIcon(theApp.GetMenuIcon(IDI_INFO), FALSE);		// 设置小图标
 
 	//重新获取IP地址
 	CAdapterCommon::RefreshIpAddress(m_connections);
 
 	//初始化列表控件
+	CRect rect;
 	m_info_list.GetClientRect(rect);
 	m_info_list.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
 	int width0, width1;
@@ -208,15 +231,18 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	m_info_list.InsertItem(11, CCommon::LoadText(IDS_BYTES_RECEIVED_SINCE_START));
 	m_info_list.InsertItem(12, CCommon::LoadText(IDS_BYTES_SENT_SINCE_START));
 	m_info_list.InsertItem(13, CCommon::LoadText(IDS_PROGRAM_ELAPSED_TIME));
-	m_info_list.InsertItem(14, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS));
-	if (theApp.m_cfg_data.m_show_internet_ip)
-	{
-		m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
-	}
-	else
-	{
+	m_info_list.InsertItem(14, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS, _T(" (ipv4)")));
+	m_info_list.InsertItem(15, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS, _T(" (ipv6)")));
+	//if (theApp.m_cfg_data.m_show_internet_ip)
+	//{
+	//	m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
+	//	m_info_list.SetItemText(15, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
+	//}
+	//else
+	//{
 		m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_DOUBLE_CLICK_TO_ACQUIRE));
-	}
+		m_info_list.SetItemText(15, 1, CCommon::LoadText(IDS_DOUBLE_CLICK_TO_ACQUIRE));
+	//}
 
 	//显示列表中的信息
 	LOGFONT lf{};
@@ -227,8 +253,8 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	GetProgramElapsedTime();
 
 	//CCommon::GetInternetIp();
-	if (theApp.m_cfg_data.m_show_internet_ip)
-		m_pGetIPThread = AfxBeginThread(GetInternetIPThreadFunc, this);		//启动获取外网IP的线程
+	//if (theApp.m_cfg_data.m_show_internet_ip)
+ //       m_pGetIPThread = AfxBeginThread(GetInternetIPThreadFunc, this);		//启动获取外网IP的线程
 
 	//SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//取消置顶
 	m_info_list.GetToolTips()->SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
@@ -275,9 +301,9 @@ void CNetworkInfoDlg::OnClose()
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	//对话框关闭时强制结束获取IP地址的线程
-	if(theApp.m_cfg_data.m_show_internet_ip)
-		TerminateThread(m_pGetIPThread->m_hThread, 0);
-	CDialog::OnClose();
+	//if(theApp.m_cfg_data.m_show_internet_ip)
+ //       TerminateThread(m_pGetIPThread->m_hThread, 0);
+	CBaseDialog::OnClose();
 }
 
 
@@ -320,19 +346,9 @@ BOOL CNetworkInfoDlg::PreTranslateMessage(MSG* pMsg)
 		}
 	}
 
-	return CDialog::PreTranslateMessage(pMsg);
+	return CBaseDialog::PreTranslateMessage(pMsg);
 }
 
-
-void CNetworkInfoDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
-{
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	//限制窗口最小大小
-	lpMMI->ptMinTrackSize.x = m_min_size.cx;		//设置最小宽度
-	lpMMI->ptMinTrackSize.y = m_min_size.cy;		//设置最小高度
-
-	CDialog::OnGetMinMaxInfo(lpMMI);
-}
 
 
 void CNetworkInfoDlg::OnTimer(UINT_PTR nIDEvent)
@@ -343,7 +359,7 @@ void CNetworkInfoDlg::OnTimer(UINT_PTR nIDEvent)
 		GetProgramElapsedTime();
 	}
 
-	CDialog::OnTimer(nIDEvent);
+	CBaseDialog::OnTimer(nIDEvent);
 }
 
 BOOL CNetworkInfoDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
@@ -359,7 +375,7 @@ BOOL CNetworkInfoDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 		OnBnClickedNextButton();
 	}
 
-	return CDialog::OnMouseWheel(nFlags, zDelta, pt);
+	return CBaseDialog::OnMouseWheel(nFlags, zDelta, pt);
 }
 
 
@@ -367,9 +383,10 @@ void CNetworkInfoDlg::OnNMDblclkInfoList1(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 	// TODO: 在此添加控件通知处理程序代码
-	if (!theApp.m_cfg_data.m_show_internet_ip && pNMItemActivate->iItem == 14)		//双击了IP地址一行时
+	if (/*!theApp.m_cfg_data.m_show_internet_ip && */!m_ip_acquired && (pNMItemActivate->iItem == 14 || pNMItemActivate->iItem == 15))		//双击了IP地址一行时
 	{
 		m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
+		m_info_list.SetItemText(15, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
 		m_pGetIPThread = AfxBeginThread(GetInternetIPThreadFunc, this);
 	}
 	*pResult = 0;
