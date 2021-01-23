@@ -62,7 +62,7 @@ At the same time, you may also check "Auto adapt to Windows 10 dark/light theme"
 
 ### 9. The taskbar windows cannot be displayed when the HDR is turned on in Windows 10
 
-Some users have reported that turning on the HDR function in Windows 10 will cause the taskbar window to fail to display. Since I don't have a monitor that supports HDR, I can't investigate this problem, nor can I give a solution. If you encounter this problem, it is recommended to turn off the HDR function.
+Some users have reported that turning on the HDR function in Windows 10 will cause the taskbar window to fail to display. If you encounter this problem, you can try turning off the "Background Transparent" option in "Option Settings" - "Taskbar Window Settings".
 
 <br><br>
 
