@@ -13,11 +13,21 @@ namespace OpenHardwareMonitorApi {
     public class COpenHardwareMonitor : public IOpenHardwareMonitor
 	{
     public:
-        virtual float GetCpuTemperature() override;
-        virtual float GetGpuTemperature() override;
+        virtual void GetHardwareInfo() override;
+        virtual float CpuTemperature() override;
+        virtual float GpuTemperature() override;
+        virtual float HDDTemperature() override;
+        virtual float MainboardTemperature() override;
 
     private:
+        float GetHardwareTemperature(IHardware^ hardware);
 
+    private:
+        float m_cpu_temperature{};
+        float m_gpu_nvidia_temperature{};
+        float m_gpu_ati_temperature{};
+        float m_hdd_temperature{};
+        float m_main_board_temperature{};
     };
 
     //一个单实例类
