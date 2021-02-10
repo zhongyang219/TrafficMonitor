@@ -15,6 +15,7 @@
 #include "SimpleXML.h"
 #include "TaskbarDefaultStyle.h"
 #include <map>
+#include "OpenHardwareMonitor/OpenHardwareMonitorApi.h"
 
 // CTrafficMonitorApp: 
 // 有关此类的实现，请参阅 TrafficMonitor.cpp
@@ -44,6 +45,7 @@ public:
 	int m_memory_usage{};	//内存利用率
 	int m_used_memory{};	//可用物理内存（单位为KB）
 	int m_total_memory{};	//物理内存总量（单位为KB）
+    float m_cpu_temperature{};  //CPU温度
 
 	__int64 m_today_up_traffic{};	//今天已使用的上传流量
 	__int64 m_today_down_traffic{};	//今天已使用的下载流量
@@ -77,6 +79,9 @@ public:
 
     CMenu m_main_menu;
     CMenu m_taskbar_menu;
+
+    //OpenHardwareMonitor 接口的指针
+    std::shared_ptr<OpenHardwareMonitorApi::IOpenHardwareMonitor> m_pMonitor{ OpenHardwareMonitorApi::CreateInstance() };
 
 public:
 	CTrafficMonitorApp();

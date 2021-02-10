@@ -1084,6 +1084,9 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		theApp.m_used_memory = static_cast<int>((statex.ullTotalPhys - statex.ullAvailPhys) / 1024);
 		theApp.m_total_memory  = static_cast<int>(statex.ullTotalPhys / 1024);
 
+        //获取温度
+        theApp.m_cpu_temperature = theApp.m_pMonitor->GetCpuTemperature();
+
 		ShowInfo();		//刷新窗口信息
 	
 		//更新鼠标提示
