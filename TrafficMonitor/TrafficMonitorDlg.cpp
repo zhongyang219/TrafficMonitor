@@ -295,15 +295,31 @@ void CTrafficMonitorDlg::CheckWindowPos()
 			rect.MoveToY(m_screen_rect.top);
 			MoveWindow(rect);
 		}
-		if (rect.right > m_screen_rect.right)
+
+		CRect cuccent_screen_rect;
+		::SystemParametersInfo(SPI_GETWORKAREA, 0, &cuccent_screen_rect, 0);   // 获得当前工作区大小
+		if (m_screen_rect != cuccent_screen_rect)
 		{
-			rect.MoveToX(m_screen_rect.right - rect.Width());
+			float proportion_width = (float)rect.left / (m_screen_rect.right - rect.Width());
+			float proportion_height = (float)rect.top / (m_screen_rect.bottom - rect.Height());
+			int x = (cuccent_screen_rect.right - rect.Width()) * proportion_width;
+			int y = (cuccent_screen_rect.bottom - rect.Height()) * proportion_height;
+			m_screen_rect = cuccent_screen_rect;
+			rect.MoveToXY(x, y);
 			MoveWindow(rect);
 		}
-		if (rect.bottom > m_screen_rect.bottom)
+		else
 		{
-			rect.MoveToY(m_screen_rect.bottom - rect.Height());
-			MoveWindow(rect);
+			if (rect.right > m_screen_rect.right)
+			{
+				rect.MoveToX(m_screen_rect.right - rect.Width());
+				MoveWindow(rect);
+			}
+			if (rect.bottom > m_screen_rect.bottom)
+			{
+				rect.MoveToY(m_screen_rect.bottom - rect.Height());
+				MoveWindow(rect);
+			}
 		}
 	}
 }
@@ -313,7 +329,7 @@ void CTrafficMonitorDlg::GetScreenSize()
     m_screen_size.cx = GetSystemMetrics(SM_CXSCREEN);
     m_screen_size.cy = GetSystemMetrics(SM_CYSCREEN);
 
-	::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0);   // 获得工作区大小
+	//::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0);   // 获得工作区大小
 }
 
 
@@ -791,6 +807,7 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	theApp.GetDPI(this);
 	//获取屏幕大小
 	GetScreenSize();
+	::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0);   // 获得工作区大小
 
     theApp.InitMenuResourse();
 
