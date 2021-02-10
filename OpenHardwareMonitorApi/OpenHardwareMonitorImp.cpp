@@ -77,7 +77,7 @@ namespace OpenHardwareMonitorApi
             switch (computer->Hardware[i]->HardwareType)
             {
             case HardwareType::Mainboard:
-                m_hdd_temperature = GetHardwareTemperature(computer->Hardware[i]);
+                m_main_board_temperature = GetHardwareTemperature(computer->Hardware[i]);
                 break;
             case HardwareType::CPU:
                 m_cpu_temperature = GetHardwareTemperature(computer->Hardware[i]);
