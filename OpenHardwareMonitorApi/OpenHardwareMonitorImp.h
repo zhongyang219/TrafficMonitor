@@ -36,6 +36,7 @@ namespace OpenHardwareMonitorApi {
             return m_instance;
         }
 
+        Computer^ computer;
         UpdateVisitor^ updateVisitor{};
 
     private:

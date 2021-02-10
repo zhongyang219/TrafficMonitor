@@ -21,9 +21,7 @@ namespace OpenHardwareMonitorApi
 
     float COpenHardwareMonitor::GetCpuTemperature()
     {
-        Computer^ computer = gcnew Computer();
-        computer->CPUEnabled = true;
-        computer->Open();
+        auto computer = MonitorGlobal::Instance()->computer;
         computer->Accept(MonitorGlobal::Instance()->updateVisitor);
         float temperature{};
         //wchar_t buff[256];
@@ -59,6 +57,11 @@ namespace OpenHardwareMonitorApi
     MonitorGlobal::MonitorGlobal()
     {
         updateVisitor = gcnew UpdateVisitor();
+        computer = gcnew Computer();
+        computer->CPUEnabled = true;
+        computer->Open();
+        computer->Accept(updateVisitor);
+
     }
 
     MonitorGlobal::~MonitorGlobal()
