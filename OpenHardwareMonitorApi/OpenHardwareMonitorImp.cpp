@@ -55,7 +55,7 @@ namespace OpenHardwareMonitorApi
                 return temperature;
             }
         }
-
+        return 0;
     }
 
     void COpenHardwareMonitor::GetHardwareInfo()
