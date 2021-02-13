@@ -8,7 +8,7 @@
 // CTaskBarDlg 对话框
 #define TASKBAR_WND_HEIGHT theApp.DPI(32)				//任务栏窗口的高度
 #define WM_TASKBAR_MENU_POPED_UP (WM_USER + 1004)		//定义任务栏窗口右键菜单弹出时发出的消息
-#define TASKBAR_GRAPH_MAX_LEN 500						//历史数据存储最大长度
+#define TASKBAR_GRAPH_MAX_LEN 600						//历史数据存储最大长度
 #define TASKBAR_GRAPH_STEP 5							//几秒钟画一条线
 
 class CTaskBarDlg : public CDialogEx
