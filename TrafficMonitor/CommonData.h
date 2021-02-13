@@ -53,29 +53,58 @@ enum class SpeedUnit
 	MBPS		//MB/s
 };
 
+
+//任务栏窗口显示的项目
+enum TaskbarDisplayItem
+{
+	TDI_UP = 1 << 0,
+	TDI_DOWN = 1 << 1,
+	TDI_CPU = 1 << 2,
+	TDI_MEMORY = 1 << 3,
+    TDI_CPU_TEMP = 1 << 4,
+    TDI_GPU_TEMP = 1 << 5,
+    TDI_HDD_TEMP = 1 << 6,
+    TDI_MAIN_BOARD_TEMP = 1 << 7
+};
+
 #define DEF_CH L'\"'		//写入和读取ini文件字符串时，在字符串前后添加的字符
 #define NONE_STR L"@@@"		//用于指定一个无效字符串
 struct DispStrings		//显示的文本
 {
-	wstring up;
-	wstring down;
-	wstring cpu;
-	wstring memory;
+private:
+    std::map<TaskbarDisplayItem, wstring> map_str;
+
+public:
+    //获取一个显示的文本
+    wstring& Get(TaskbarDisplayItem item)
+    {
+        return map_str[item];
+    }
+
+    const std::map<TaskbarDisplayItem, wstring>& GetAllItems() const
+    {
+        return map_str;
+    }
+
 	void operator=(const DispStrings& disp_str)		//重载赋值运算符
 	{
+        map_str = disp_str.map_str;
 		//如果赋值的字符串是定义的无效字符串，则不赋值
-		if (disp_str.up != NONE_STR)
-			up = disp_str.up;
-		if (disp_str.down != NONE_STR)
-			down = disp_str.down;
-		if (disp_str.cpu != NONE_STR)
-			cpu = disp_str.cpu;
-		if (disp_str.memory != NONE_STR)
-			memory = disp_str.memory;
-	}
+        for (auto& iter = map_str.begin(); iter != map_str.end(); ++iter)
+        {
+            if (iter->second == NONE_STR)
+                iter->second.clear();
+        }
+    }
+
 	bool IsInvalid() const
 	{
-		return (up == NONE_STR && down == NONE_STR && cpu == NONE_STR && memory == NONE_STR);
+        for (auto& iter = map_str.begin(); iter != map_str.end(); ++iter)
+        {
+            if (iter->second == NONE_STR)
+                return false;
+        }
+        return true;
 	}
 };
 
@@ -121,15 +150,6 @@ struct FontInfo
 
 //将字号转成LOGFONT结构中的lfHeight
 #define FONTSIZE_TO_LFHEIGHT(font_size) (-MulDiv(font_size, GetDeviceCaps(::GetDC(HWND_DESKTOP), LOGPIXELSY), 72))
-
-//任务栏窗口显示的项目
-enum TaskbarDisplayItem
-{
-	TDI_UP = 1 << 0,
-	TDI_DOWN = 1 << 1,
-	TDI_CPU = 1 << 2,
-	TDI_MEMORY = 1 << 3
-};
 
 //历史流量统计列表视图中显示模式
 enum class HistoryTrafficViewType

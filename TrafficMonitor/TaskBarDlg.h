@@ -1,7 +1,6 @@
 #pragma once
 #include "Common.h"
 #include "afxwin.h"
-//#include "StaticEx.h"
 #include "DrawCommon.h"
 #include "IniHelper.h"
 #include "CommonData.h"
@@ -44,16 +43,22 @@ protected:
 	CRect m_rcBar;		//初始状态时任务栏窗口的矩形区域
 	CRect m_rcMin;		//初始状态时最小化窗口的矩形区域
 	CRect m_rect;		//当前窗口的矩形区域
-	int m_window_width_full;		//显示所有信息时窗口宽度
-	int m_window_width_net_speed;	//只显示网速时的窗口宽度
-	int m_window_width_cpu_memory;	//只显示CPU和内存利用率时的窗口宽度
-	int m_window_height;
-	int m_up_lable_width;	//上传标签的宽度
-	int m_down_lable_width;	//下载标签的宽度
-	int m_cpu_lable_width;		//CPU标签的宽度
-	int m_memory_lable_width;	//内存标签的宽度
-	int m_ud_value_width;		//上传、下载数值的宽度
-	int m_cm_value_width;		//CPU、内存数值的宽度
+    int m_window_width{};
+    int m_window_height{};
+
+    //任务栏各个部分的宽度
+    struct ItemWidth
+    {
+        int label_width{};      //标签部分宽度
+        int value_width{};      //数值部分宽度
+
+        int TotalWidth() const  //总宽度
+        {
+            return label_width + value_width;
+        }
+    };
+
+    std::map<TaskbarDisplayItem, ItemWidth> m_item_widths;   //任务栏窗口每个部分的宽度
 
 	int m_min_bar_width;	//最小化窗口缩小宽度后的宽度
 	int m_min_bar_height;	//最小化窗口缩小高度后的高度（用于任务栏在屏幕左侧或右侧时）
@@ -77,13 +82,17 @@ protected:
 
 	void AddHisToList(CList<int,int> &list, int current_usage_percent);		//将当前利用率数值添加进链表
 
-	int GetWindowWidth();
-	int GetWindowHeight();
+    //绘制任务栏窗口中的一个显示项目
+    //  drawer: 绘图类的对象
+    //  type: 项目的类型
+    //  rect: 绘制矩形区域
+    //  label_width: 标签区域的宽度
+    void DrawDisplayItem(CDrawCommon& drawer, TaskbarDisplayItem type, CRect rect, int label_width);
 
 public:
 	void SetTextFont();
 	void ApplySettings();
-	void CalculateWindowWidth();		//计算窗口需要的宽度
+    void CalculateWindowSize();		//计算窗口每部分的大小，及各个部分的宽度。窗口大小保存到m_window_width和m_window_height中，各部分宽度保存到m_item_widths中
 
 	void SetToolTipsTopMost();			//设置鼠标提示置顶
 	void UpdateToolTips();
@@ -98,6 +107,10 @@ public:
 	static bool IsShowDown();
 	static bool IsShowCpu();
 	static bool IsShowMemory();
+    static bool IsShowCpuTemperature();
+    static bool IsShowGpuTemperature();
+    static bool IsShowHddTemperature();
+    static bool IsShowMainboardTemperature();
 
 	DECLARE_MESSAGE_MAP()
 

@@ -132,6 +132,8 @@ protected:
 
     bool IsTaskbarWndValid() const;
 
+    void TaskbarShowHideItem(TaskbarDisplayItem type);
+
 public:
 	void ApplySettings();
 
@@ -201,4 +203,12 @@ protected:
 public:
 	afx_msg void OnShowNetSpeed();
 	afx_msg BOOL OnQueryEndSession();
+    afx_msg void OnShowUpSpeed();
+    afx_msg void OnShowDownSpeed();
+    afx_msg void OnShowCpuUsage();
+    afx_msg void OnShowMemoryUsage();
+    afx_msg void OnShowCpuTemperature();
+    afx_msg void OnShowGpuTemperature();
+    afx_msg void OnShowHddTemperature();
+    afx_msg void OnShowMainBoardTemperature();
 };

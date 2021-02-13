@@ -95,10 +95,14 @@ void CTrafficMonitorApp::LoadConfig()
 	//m_main_wnd_data.font.name = ini.GetString(_T("config"), _T("font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();
 	//m_main_wnd_data.font.size = ini.GetInt(_T("config"), _T("font_size"), 10);
 
-	m_main_wnd_data.disp_str.up = ini.GetString(_T("config"), L"up_string", CCommon::LoadText(IDS_UPLOAD_DISP, _T(": $")));
-	m_main_wnd_data.disp_str.down = ini.GetString(L"config", L"down_string", CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": $")));
-	m_main_wnd_data.disp_str.cpu = ini.GetString(L"config", L"cpu_string", L"CPU: $");
-	m_main_wnd_data.disp_str.memory = ini.GetString(L"config", L"memory_string", CCommon::LoadText(IDS_MEMORY_DISP, _T(": $")));
+	m_main_wnd_data.disp_str.Get(TDI_UP) = ini.GetString(_T("config"), L"up_string", CCommon::LoadText(IDS_UPLOAD_DISP, _T(": $")));
+	m_main_wnd_data.disp_str.Get(TDI_DOWN) = ini.GetString(L"config", L"down_string", CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": $")));
+	m_main_wnd_data.disp_str.Get(TDI_CPU) = ini.GetString(L"config", L"cpu_string", L"CPU: $");
+	m_main_wnd_data.disp_str.Get(TDI_MEMORY) = ini.GetString(L"config", L"memory_string", CCommon::LoadText(IDS_MEMORY_DISP, _T(": $")));
+    m_main_wnd_data.disp_str.Get(TDI_CPU_TEMP) = ini.GetString(L"config", L"cpu_temp_string", L"CPU: $");
+    m_main_wnd_data.disp_str.Get(TDI_GPU_TEMP) = ini.GetString(L"config", L"gpu_temp_string", L"GPU: $");
+    m_main_wnd_data.disp_str.Get(TDI_HDD_TEMP) = ini.GetString(L"config", L"hdd_temp_string", L"HDD: $");
+    m_main_wnd_data.disp_str.Get(TDI_MAIN_BOARD_TEMP) = ini.GetString(L"config", L"main_board_temp_string", L"MBD: $");
 
 	m_main_wnd_data.speed_short_mode = ini.GetBool(_T("config"), _T("speed_short_mode"), false);
 	m_main_wnd_data.separate_value_unit_with_space = ini.GetBool(_T("config"), _T("separate_value_unit_with_space"), true);
@@ -148,10 +152,14 @@ void CTrafficMonitorApp::LoadConfig()
 	default_font.size = 9;
 	ini.LoadFontData(_T("task_bar"), m_taskbar_data.font, default_font);
 
-	m_taskbar_data.disp_str.up = ini.GetString(L"task_bar", L"up_string", L"↑: $");
-	m_taskbar_data.disp_str.down = ini.GetString(L"task_bar", L"down_string", L"↓: $");
-	m_taskbar_data.disp_str.cpu = ini.GetString(L"task_bar", L"cpu_string", L"CPU: $");
-	m_taskbar_data.disp_str.memory = ini.GetString(L"task_bar", L"memory_string", CCommon::LoadText(IDS_MEMORY_DISP, _T(": $")));
+	m_taskbar_data.disp_str.Get(TDI_UP) = ini.GetString(L"task_bar", L"up_string", L"↑: $");
+	m_taskbar_data.disp_str.Get(TDI_DOWN) = ini.GetString(L"task_bar", L"down_string", L"↓: $");
+	m_taskbar_data.disp_str.Get(TDI_CPU) = ini.GetString(L"task_bar", L"cpu_string", L"CPU: $");
+	m_taskbar_data.disp_str.Get(TDI_MEMORY) = ini.GetString(L"task_bar", L"memory_string", CCommon::LoadText(IDS_MEMORY_DISP, _T(": $")));
+	m_taskbar_data.disp_str.Get(TDI_CPU_TEMP) = ini.GetString(L"task_bar", L"cpu_temp_string", L"CPU: $");
+	m_taskbar_data.disp_str.Get(TDI_GPU_TEMP) = ini.GetString(L"task_bar", L"gpu_temp_string", L"GPU: $");
+	m_taskbar_data.disp_str.Get(TDI_HDD_TEMP) = ini.GetString(L"task_bar", L"hdd_temp_string", L"HDD: $");
+	m_taskbar_data.disp_str.Get(TDI_MAIN_BOARD_TEMP) = ini.GetString(L"task_bar", L"main_board_temp_string", L"MBD: $");
 
 	m_taskbar_data.tbar_wnd_on_left = ini.GetBool(_T("task_bar"), _T("task_bar_wnd_on_left"), false);
 	m_taskbar_data.speed_short_mode = ini.GetBool(_T("task_bar"), _T("task_bar_speed_short_mode"), false);
@@ -235,10 +243,14 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.WriteBool(L"config", L"swap_up_down", m_main_wnd_data.swap_up_down);
 	ini.WriteBool(L"config", L"hide_main_wnd_when_fullscreen", m_main_wnd_data.hide_main_wnd_when_fullscreen);
 
-	ini.WriteString(_T("config"), _T("up_string"), m_main_wnd_data.disp_str.up);
-	ini.WriteString(_T("config"), _T("down_string"), m_main_wnd_data.disp_str.down);
-	ini.WriteString(_T("config"), _T("cpu_string"), m_main_wnd_data.disp_str.cpu);
-	ini.WriteString(_T("config"), _T("memory_string"), m_main_wnd_data.disp_str.memory);
+	ini.WriteString(_T("config"), _T("up_string"), m_main_wnd_data.disp_str.Get(TDI_UP));
+	ini.WriteString(_T("config"), _T("down_string"), m_main_wnd_data.disp_str.Get(TDI_DOWN));
+	ini.WriteString(_T("config"), _T("cpu_string"), m_main_wnd_data.disp_str.Get(TDI_CPU));
+	ini.WriteString(_T("config"), _T("memory_string"), m_main_wnd_data.disp_str.Get(TDI_MEMORY));
+	ini.WriteString(_T("config"), _T("cpu_temp_string"), m_main_wnd_data.disp_str.Get(TDI_CPU_TEMP));
+	ini.WriteString(_T("config"), _T("gpu_temp_string"), m_main_wnd_data.disp_str.Get(TDI_GPU_TEMP));
+	ini.WriteString(_T("config"), _T("hdd_temp_string"), m_main_wnd_data.disp_str.Get(TDI_HDD_TEMP));
+	ini.WriteString(_T("config"), _T("main_board_temp_string"), m_main_wnd_data.disp_str.Get(TDI_MAIN_BOARD_TEMP));
 
 	ini.WriteBool(L"config", L"speed_short_mode", m_main_wnd_data.speed_short_mode);
 	ini.WriteBool(L"config", L"separate_value_unit_with_space", m_main_wnd_data.separate_value_unit_with_space);
@@ -270,10 +282,14 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.SaveFontData(L"task_bar", m_taskbar_data.font);
 	ini.WriteBool(L"task_bar", L"task_bar_swap_up_down", m_taskbar_data.swap_up_down);
 
-	ini.WriteString(_T("task_bar"), _T("up_string"), m_taskbar_data.disp_str.up);
-	ini.WriteString(_T("task_bar"), _T("down_string"), m_taskbar_data.disp_str.down);
-	ini.WriteString(_T("task_bar"), _T("cpu_string"), m_taskbar_data.disp_str.cpu);
-	ini.WriteString(_T("task_bar"), _T("memory_string"), m_taskbar_data.disp_str.memory);
+	ini.WriteString(_T("task_bar"), _T("up_string"), m_taskbar_data.disp_str.Get(TDI_UP));
+	ini.WriteString(_T("task_bar"), _T("down_string"), m_taskbar_data.disp_str.Get(TDI_DOWN));
+	ini.WriteString(_T("task_bar"), _T("cpu_string"), m_taskbar_data.disp_str.Get(TDI_CPU));
+	ini.WriteString(_T("task_bar"), _T("memory_string"), m_taskbar_data.disp_str.Get(TDI_MEMORY));
+	ini.WriteString(_T("task_bar"), _T("cpu_temp_string"), m_taskbar_data.disp_str.Get(TDI_CPU_TEMP));
+	ini.WriteString(_T("task_bar"), _T("gpu_temp_string"), m_taskbar_data.disp_str.Get(TDI_GPU_TEMP));
+	ini.WriteString(_T("task_bar"), _T("hdd_temp_string"), m_taskbar_data.disp_str.Get(TDI_HDD_TEMP));
+	ini.WriteString(_T("task_bar"), _T("main_board_temp_string"), m_taskbar_data.disp_str.Get(TDI_MAIN_BOARD_TEMP));
 
 	ini.WriteBool(L"task_bar", L"task_bar_wnd_on_left", m_taskbar_data.tbar_wnd_on_left);
 	ini.WriteBool(L"task_bar", L"task_bar_speed_short_mode", m_taskbar_data.speed_short_mode);

@@ -96,6 +96,14 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialogEx)
 	ON_MESSAGE(WM_TASKBAR_MENU_POPED_UP, &CTrafficMonitorDlg::OnTaskbarMenuPopedUp)
 	ON_COMMAND(ID_SHOW_NET_SPEED, &CTrafficMonitorDlg::OnShowNetSpeed)
 	ON_WM_QUERYENDSESSION()
+    ON_COMMAND(ID_SHOW_UP_SPEED, &CTrafficMonitorDlg::OnShowUpSpeed)
+    ON_COMMAND(ID_SHOW_DOWN_SPEED, &CTrafficMonitorDlg::OnShowDownSpeed)
+    ON_COMMAND(ID_SHOW_CPU_USAGE, &CTrafficMonitorDlg::OnShowCpuUsage)
+    ON_COMMAND(ID_SHOW_MEMORY_USAGE, &CTrafficMonitorDlg::OnShowMemoryUsage)
+    ON_COMMAND(ID_SHOW_CPU_TEMPERATURE, &CTrafficMonitorDlg::OnShowCpuTemperature)
+    ON_COMMAND(ID_SHOW_GPU_TEMPERATURE, &CTrafficMonitorDlg::OnShowGpuTemperature)
+    ON_COMMAND(ID_SHOW_HDD_TEMPERATURE, &CTrafficMonitorDlg::OnShowHddTemperature)
+    ON_COMMAND(ID_SHOW_MAIN_BOARD_TEMPERATURE, &CTrafficMonitorDlg::OnShowMainBoardTemperature)
 END_MESSAGE_MAP()
 
 
@@ -112,16 +120,16 @@ void CTrafficMonitorDlg::ShowInfo()
 		format_str = _T("%s%s/s");
 	if (!theApp.m_main_wnd_data.swap_up_down)
 	{
-		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.up.c_str()), out_speed.GetString());
+		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_UP).c_str()), out_speed.GetString());
 		m_disp_up.SetWindowTextEx(str, (theApp.m_cfg_data.m_show_more_info ? m_layout_data.up_align_l : m_layout_data.up_align_s));
-		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.down.c_str()), in_speed.GetString());
+		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_DOWN).c_str()), in_speed.GetString());
 		m_disp_down.SetWindowTextEx(str, (theApp.m_cfg_data.m_show_more_info ? m_layout_data.down_align_l : m_layout_data.down_align_s));
 	}
 	else		//交换上传和下载位置
 	{
-		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.down.c_str()), in_speed.GetString());
+		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_DOWN).c_str()), in_speed.GetString());
 		m_disp_up.SetWindowTextEx(str, (theApp.m_cfg_data.m_show_more_info ? m_layout_data.up_align_l : m_layout_data.up_align_s));
-		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.up.c_str()), out_speed.GetString());
+		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_UP).c_str()), out_speed.GetString());
 		m_disp_down.SetWindowTextEx(str, (theApp.m_cfg_data.m_show_more_info ? m_layout_data.down_align_l : m_layout_data.down_align_s));
 	}
 	if (theApp.m_main_wnd_data.hide_percent)
@@ -130,9 +138,9 @@ void CTrafficMonitorDlg::ShowInfo()
         format_str = _T("%s%d %%");
 	else
 		format_str = _T("%s%d%%");
-	str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.cpu.c_str()), theApp.m_cpu_usage);
+	str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_CPU).c_str()), theApp.m_cpu_usage);
 	m_disp_cpu.SetWindowTextEx(str, (theApp.m_cfg_data.m_show_more_info ? m_layout_data.cpu_align_l : m_layout_data.cpu_align_s));
-	str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.memory.c_str()), theApp.m_memory_usage);
+	str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_MEMORY).c_str()), theApp.m_memory_usage);
 	m_disp_memory.SetWindowTextEx(str, (theApp.m_cfg_data.m_show_more_info ? m_layout_data.memory_align_l : m_layout_data.memory_align_s));
 	//设置要显示的项目
 	if (theApp.m_cfg_data.m_show_more_info)
@@ -778,6 +786,24 @@ void CTrafficMonitorDlg::SetTextFont()
 bool CTrafficMonitorDlg::IsTaskbarWndValid() const
 {
     return m_tBarDlg != nullptr && ::IsWindow(m_tBarDlg->GetSafeHwnd());
+}
+
+void CTrafficMonitorDlg::TaskbarShowHideItem(TaskbarDisplayItem type)
+{
+    if (IsTaskbarWndValid())
+    {
+        bool show = (theApp.m_cfg_data.m_tbar_display_item & type);
+        if (show)
+        {
+            theApp.m_cfg_data.m_tbar_display_item &= ~type;
+        }
+        else
+        {
+            theApp.m_cfg_data.m_tbar_display_item |= type;
+        }
+        CloseTaskBarWnd();
+        OpenTaskBarWnd();
+    }
 }
 
 void CTrafficMonitorDlg::ApplySettings()
@@ -2249,4 +2275,60 @@ BOOL CTrafficMonitorDlg::OnQueryEndSession()
 	}
 
 	return TRUE;
+}
+
+
+void CTrafficMonitorDlg::OnShowUpSpeed()
+{
+    // TODO: 在此添加命令处理程序代码
+    TaskbarShowHideItem(TDI_UP);
+}
+
+
+void CTrafficMonitorDlg::OnShowDownSpeed()
+{
+    // TODO: 在此添加命令处理程序代码
+    TaskbarShowHideItem(TDI_DOWN);
+}
+
+
+void CTrafficMonitorDlg::OnShowCpuUsage()
+{
+    // TODO: 在此添加命令处理程序代码
+    TaskbarShowHideItem(TDI_CPU);
+}
+
+
+void CTrafficMonitorDlg::OnShowMemoryUsage()
+{
+    // TODO: 在此添加命令处理程序代码
+    TaskbarShowHideItem(TDI_MEMORY);
+}
+
+
+void CTrafficMonitorDlg::OnShowCpuTemperature()
+{
+    // TODO: 在此添加命令处理程序代码
+    TaskbarShowHideItem(TDI_CPU_TEMP);
+}
+
+
+void CTrafficMonitorDlg::OnShowGpuTemperature()
+{
+    // TODO: 在此添加命令处理程序代码
+    TaskbarShowHideItem(TDI_GPU_TEMP);
+}
+
+
+void CTrafficMonitorDlg::OnShowHddTemperature()
+{
+    // TODO: 在此添加命令处理程序代码
+    TaskbarShowHideItem(TDI_HDD_TEMP);
+}
+
+
+void CTrafficMonitorDlg::OnShowMainBoardTemperature()
+{
+    // TODO: 在此添加命令处理程序代码
+    TaskbarShowHideItem(TDI_MAIN_BOARD_TEMP);
 }

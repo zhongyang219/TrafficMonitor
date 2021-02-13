@@ -45,6 +45,7 @@ using std::deque;
 #include<fstream>
 using std::ifstream;
 using std::ofstream;
+#include <map>
 #include<io.h>
 #include<algorithm>
 #include <cmath>

@@ -152,5 +152,8 @@ public:
     static int GetMenuItemPosition(CMenu* pMenu, UINT id);
 
     static bool IsColorSimilar(COLORREF color1, COLORREF color2);
+
+    //计算二进制中1的个数
+    static int CountOneBits(unsigned int value);
 };
 

@@ -122,10 +122,10 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 	m_font_size_edit.SetRange(5, 72);
 	m_font_size_edit.SetValue(m_data.font.size);
 
-	SetDlgItemText(IDC_UPLOAD_EDIT, m_data.disp_str.up.c_str());
-	SetDlgItemText(IDC_DOWNLOAD_EDIT, m_data.disp_str.down.c_str());
-	SetDlgItemText(IDC_CPU_EDIT, m_data.disp_str.cpu.c_str());
-	SetDlgItemText(IDC_MEMORY_EDIT, m_data.disp_str.memory.c_str());
+	SetDlgItemText(IDC_UPLOAD_EDIT, m_data.disp_str.Get(TDI_UP).c_str());
+	SetDlgItemText(IDC_DOWNLOAD_EDIT, m_data.disp_str.Get(TDI_DOWN).c_str());
+	SetDlgItemText(IDC_CPU_EDIT, m_data.disp_str.Get(TDI_CPU).c_str());
+	SetDlgItemText(IDC_MEMORY_EDIT, m_data.disp_str.Get(TDI_MEMORY).c_str());
 
 	((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK))->SetCheck(m_data.swap_up_down);
 	((CButton*)GetDlgItem(IDC_FULLSCREEN_HIDE_CHECK))->SetCheck(m_data.hide_main_wnd_when_fullscreen);
@@ -198,7 +198,7 @@ void CMainWndSettingsDlg::OnEnChangeUploadEdit()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_UPLOAD_EDIT, tmp);
-	m_data.disp_str.up = tmp;
+	m_data.disp_str.Get(TDI_UP) = tmp;
 }
 
 
@@ -212,7 +212,7 @@ void CMainWndSettingsDlg::OnEnChangeDownloadEdit()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_DOWNLOAD_EDIT, tmp);
-	m_data.disp_str.down = tmp;
+	m_data.disp_str.Get(TDI_DOWN) = tmp;
 }
 
 
@@ -226,7 +226,7 @@ void CMainWndSettingsDlg::OnEnChangeCpuEdit()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_CPU_EDIT, tmp);
-	m_data.disp_str.cpu = tmp;
+	m_data.disp_str.Get(TDI_CPU) = tmp;
 }
 
 
@@ -240,21 +240,21 @@ void CMainWndSettingsDlg::OnEnChangeMemoryEdit()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_MEMORY_EDIT, tmp);
-	m_data.disp_str.memory = tmp;
+	m_data.disp_str.Get(TDI_MEMORY) = tmp;
 }
 
 
 void CMainWndSettingsDlg::OnBnClickedSetDefaultButton()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	m_data.disp_str.up = CCommon::LoadText(IDS_UPLOAD_DISP, _T(": "));
-	m_data.disp_str.down = CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": "));
-	m_data.disp_str.cpu = L"CPU: ";
-	m_data.disp_str.memory = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
-	SetDlgItemText(IDC_UPLOAD_EDIT, m_data.disp_str.up.c_str());
-	SetDlgItemText(IDC_DOWNLOAD_EDIT, m_data.disp_str.down.c_str());
-	SetDlgItemText(IDC_CPU_EDIT, m_data.disp_str.cpu.c_str());
-	SetDlgItemText(IDC_MEMORY_EDIT, m_data.disp_str.memory.c_str());
+	m_data.disp_str.Get(TDI_UP) = CCommon::LoadText(IDS_UPLOAD_DISP, _T(": "));
+	m_data.disp_str.Get(TDI_DOWN) = CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": "));
+	m_data.disp_str.Get(TDI_CPU) = L"CPU: ";
+	m_data.disp_str.Get(TDI_MEMORY) = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
+	SetDlgItemText(IDC_UPLOAD_EDIT, m_data.disp_str.Get(TDI_UP).c_str());
+	SetDlgItemText(IDC_DOWNLOAD_EDIT, m_data.disp_str.Get(TDI_DOWN).c_str());
+	SetDlgItemText(IDC_CPU_EDIT, m_data.disp_str.Get(TDI_CPU).c_str());
+	SetDlgItemText(IDC_MEMORY_EDIT, m_data.disp_str.Get(TDI_MEMORY).c_str());
 }
 
 

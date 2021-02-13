@@ -118,10 +118,10 @@ void CSkinDlg::ShowPreview()
 	skin_author = ini.GetString(_T("skin"), _T("skin_author"), _T("unknow"));
 	SetDlgItemText(IDC_SKIN_INFO, CCommon::LoadText(IDS_SKIN_AUTHOUR, skin_author.c_str()));
 	//获取显示文本
-	m_skin_data.disp_str.up = ini.GetString(_T("skin"), _T("up_string"), NONE_STR);
-	m_skin_data.disp_str.down = ini.GetString(_T("skin"), _T("down_string"), NONE_STR);
-	m_skin_data.disp_str.cpu = ini.GetString(_T("skin"), _T("cpu_string"), NONE_STR);
-	m_skin_data.disp_str.memory = ini.GetString(_T("skin"), _T("memory_string"), NONE_STR);
+	m_skin_data.disp_str.Get(TDI_UP) = ini.GetString(_T("skin"), _T("up_string"), NONE_STR);
+	m_skin_data.disp_str.Get(TDI_DOWN) = ini.GetString(_T("skin"), _T("down_string"), NONE_STR);
+	m_skin_data.disp_str.Get(TDI_CPU) = ini.GetString(_T("skin"), _T("cpu_string"), NONE_STR);
+	m_skin_data.disp_str.Get(TDI_MEMORY) = ini.GetString(_T("skin"), _T("memory_string"), NONE_STR);
 	//获取预览区大小
 	m_skin_data.layout.preview_width = theApp.DPI(ini.GetInt(_T("layout"), _T("preview_width"), 238));
 	m_skin_data.layout.preview_height = theApp.DPI(ini.GetInt(_T("layout"), _T("preview_height"), 105));

@@ -184,10 +184,10 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	m_font_size_edit.SetRange(5, 72);
 	m_font_size_edit.SetValue(m_data.font.size);
 
-	SetDlgItemText(IDC_UPLOAD_EDIT1, m_data.disp_str.up.c_str());
-	SetDlgItemText(IDC_DOWNLOAD_EDIT1, m_data.disp_str.down.c_str());
-	SetDlgItemText(IDC_CPU_EDIT1, m_data.disp_str.cpu.c_str());
-	SetDlgItemText(IDC_MEMORY_EDIT1, m_data.disp_str.memory.c_str());
+	SetDlgItemText(IDC_UPLOAD_EDIT1, m_data.disp_str.Get(TDI_UP).c_str());
+	SetDlgItemText(IDC_DOWNLOAD_EDIT1, m_data.disp_str.Get(TDI_DOWN).c_str());
+	SetDlgItemText(IDC_CPU_EDIT1, m_data.disp_str.Get(TDI_CPU).c_str());
+	SetDlgItemText(IDC_MEMORY_EDIT1, m_data.disp_str.Get(TDI_MEMORY).c_str());
 
 	((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK1))->SetCheck(m_data.swap_up_down);
 	((CButton*)GetDlgItem(IDC_TASKBAR_WND_ON_LEFT_CHECK))->SetCheck(m_data.tbar_wnd_on_left);
@@ -317,7 +317,7 @@ void CTaskBarSettingsDlg::OnEnChangeUploadEdit1()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_UPLOAD_EDIT1, tmp);
-	m_data.disp_str.up = tmp;
+	m_data.disp_str.Get(TDI_UP) = tmp;
 }
 
 
@@ -331,7 +331,7 @@ void CTaskBarSettingsDlg::OnEnChangeDownloadEdit1()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_DOWNLOAD_EDIT1, tmp);
-	m_data.disp_str.down = tmp;
+	m_data.disp_str.Get(TDI_DOWN) = tmp;
 }
 
 
@@ -345,7 +345,7 @@ void CTaskBarSettingsDlg::OnEnChangeCpuEdit1()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_CPU_EDIT1, tmp);
-	m_data.disp_str.cpu = tmp;
+	m_data.disp_str.Get(TDI_CPU) = tmp;
 }
 
 
@@ -359,21 +359,21 @@ void CTaskBarSettingsDlg::OnEnChangeMemoryEdit1()
 	// TODO:  在此添加控件通知处理程序代码
 	CString tmp;
 	GetDlgItemText(IDC_MEMORY_EDIT1, tmp);
-	m_data.disp_str.memory = tmp;
+	m_data.disp_str.Get(TDI_MEMORY) = tmp;
 }
 
 
 void CTaskBarSettingsDlg::OnBnClickedSetDefaultButton1()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	m_data.disp_str.up = L"↑: ";
-	m_data.disp_str.down = L"↓: ";
-	m_data.disp_str.cpu = L"CPU: ";
-	m_data.disp_str.memory = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
-	SetDlgItemText(IDC_UPLOAD_EDIT1, m_data.disp_str.up.c_str());
-	SetDlgItemText(IDC_DOWNLOAD_EDIT1, m_data.disp_str.down.c_str());
-	SetDlgItemText(IDC_CPU_EDIT1, m_data.disp_str.cpu.c_str());
-	SetDlgItemText(IDC_MEMORY_EDIT1, m_data.disp_str.memory.c_str());
+	m_data.disp_str.Get(TDI_UP) = L"↑: ";
+	m_data.disp_str.Get(TDI_DOWN) = L"↓: ";
+	m_data.disp_str.Get(TDI_CPU) = L"CPU: ";
+	m_data.disp_str.Get(TDI_MEMORY) = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
+	SetDlgItemText(IDC_UPLOAD_EDIT1, m_data.disp_str.Get(TDI_UP).c_str());
+	SetDlgItemText(IDC_DOWNLOAD_EDIT1, m_data.disp_str.Get(TDI_DOWN).c_str());
+	SetDlgItemText(IDC_CPU_EDIT1, m_data.disp_str.Get(TDI_CPU).c_str());
+	SetDlgItemText(IDC_MEMORY_EDIT1, m_data.disp_str.Get(TDI_MEMORY).c_str());
 }
 
 

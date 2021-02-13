@@ -940,3 +940,17 @@ bool CCommon::IsColorSimilar(COLORREF color1, COLORREF color2)
         && std::abs(GetGValue(color1) - GetGValue(color2)) < DIFF
         && std::abs(GetBValue(color1) - GetBValue(color2)) < DIFF);
 }
+
+int CCommon::CountOneBits(unsigned int value)
+{
+    int count = 0;
+    while (value != 0)
+    {
+        if (value % 2 == 1)
+        {
+            count++;
+        }
+        value = value >> 1;
+    }
+    return count;
+}
