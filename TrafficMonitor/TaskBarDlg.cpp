@@ -223,16 +223,18 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, TaskbarDisplayItem type, 
             format_str = _T("%s");
         else
             format_str = _T("%s/s");
-        CString str_speed;
-        if (type == TDI_UP || (type == TDI_DOWN && theApp.m_taskbar_data.swap_up_down))
+        CString str_in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data);
+        CString str_out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data);
+        if (theApp.m_taskbar_data.swap_up_down)
+            std::swap(str_in_speed, str_out_speed);
+        if (type == TDI_UP)
         {
-            str_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data);
+            str_value.Format(format_str, str_out_speed.GetString());
         }
         else
         {
-            str_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data);
+            str_value.Format(format_str, str_in_speed.GetString());
         }
-        str_value.Format(format_str, str_speed.GetString());
     }
 
     //绘制CPU或内存利用率
