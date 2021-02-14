@@ -65,6 +65,10 @@ protected:
 
 	CList<int, int> m_cpu_his;		//保存cpu使用率历史数据的链表，链表保存按照时间顺序，越靠近头部数据越新
 	CList<int, int> m_memory_his;	//保存内存占用率历史数据的链表，链表保存按照时间顺序，越靠近头部数据越新
+    CList<int, int> m_cpu_temperature_his;
+    CList<int, int> m_gpu_temperature_his;
+    CList<int, int> m_hdd_temperature_his;
+    CList<int, int> m_main_board_temperature_his;
 
 	int m_left_space{};			//最小化窗口和二级窗口窗口左侧的边距
 	int m_top_space{};			//最小化窗口和二级窗口窗口顶部的边距（用于任务栏在屏幕左侧或右侧时）

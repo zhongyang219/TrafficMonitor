@@ -179,25 +179,67 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, TaskbarDisplayItem type, 
     rect_value.left = rect_label.right;
 
     // »æÖÆ×´Ì¬Ìõ
-    if (type == TDI_CPU || type == TDI_MEMORY)
+    if (type == TDI_CPU || type == TDI_MEMORY || type == TDI_CPU_TEMP || type == TDI_GPU_TEMP || type == TDI_HDD_TEMP || type == TDI_MAIN_BOARD_TEMP)
     {
         if (theApp.m_taskbar_data.cm_graph_type)
         {
-            if (type == TDI_CPU)
+            switch (type)
             {
+            case TDI_CPU:
                 AddHisToList(m_cpu_his, theApp.m_cpu_usage);
                 TryDrawGraph(drawer, rect, m_cpu_his);
-            }
-            else
-            {
+                break;
+            case TDI_MEMORY:
                 AddHisToList(m_memory_his, theApp.m_memory_usage);
                 TryDrawGraph(drawer, rect, m_memory_his);
+                break;
+            case TDI_CPU_TEMP:
+                AddHisToList(m_cpu_temperature_his, theApp.m_cpu_temperature);
+                TryDrawGraph(drawer, rect, m_cpu_temperature_his);
+                break;
+            case TDI_GPU_TEMP:
+                AddHisToList(m_gpu_temperature_his, theApp.m_gpu_temperature);
+                TryDrawGraph(drawer, rect, m_gpu_temperature_his);
+                break;
+            case TDI_HDD_TEMP:
+                AddHisToList(m_hdd_temperature_his, theApp.m_hdd_temperature);
+                TryDrawGraph(drawer, rect, m_hdd_temperature_his);
+                break;
+            case TDI_MAIN_BOARD_TEMP:
+                AddHisToList(m_main_board_temperature_his, theApp.m_main_board_temperature);
+                TryDrawGraph(drawer, rect, m_main_board_temperature_his);
+                break;
+            default:
+                break;
             }
         }
         else
         {
-            int usage = (type == TDI_CPU ? theApp.m_cpu_usage : theApp.m_memory_usage);
-            TryDrawStatusBar(drawer, rect, usage);
+            int value{};
+            switch (type)
+            {
+            case TDI_CPU:
+                value = theApp.m_cpu_usage;
+                break;
+            case TDI_MEMORY:
+                value = theApp.m_memory_usage;
+                break;
+            case TDI_CPU_TEMP:
+                value = theApp.m_cpu_temperature;
+                break;
+            case TDI_GPU_TEMP:
+                value = theApp.m_gpu_temperature;
+                break;
+            case TDI_HDD_TEMP:
+                value = theApp.m_hdd_temperature;
+                break;
+            case TDI_MAIN_BOARD_TEMP:
+                value = theApp.m_main_board_temperature;
+                break;
+            default:
+                break;
+            }
+            TryDrawStatusBar(drawer, rect, value);
         }
     }
 
