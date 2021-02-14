@@ -910,6 +910,14 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
     pMenu->CheckMenuItem(ID_SHOW_HDD_TEMPERATURE, MF_BYCOMMAND | ((IsShowHddTemperature()) ? MF_CHECKED : MF_UNCHECKED));
     pMenu->CheckMenuItem(ID_SHOW_MAIN_BOARD_TEMPERATURE, MF_BYCOMMAND | ((IsShowMainboardTemperature()) ? MF_CHECKED : MF_UNCHECKED));
 
+    //不含温度监控的版本，禁用温度监控相关菜单项
+#ifdef WITHOUT_TEMPERATURE
+    pMenu->EnableMenuItem(ID_SHOW_CPU_TEMPERATURE, MF_BYCOMMAND | MF_GRAYED);
+    pMenu->EnableMenuItem(ID_SHOW_GPU_TEMPERATURE, MF_BYCOMMAND | MF_GRAYED);
+    pMenu->EnableMenuItem(ID_SHOW_HDD_TEMPERATURE, MF_BYCOMMAND | MF_GRAYED);
+    pMenu->EnableMenuItem(ID_SHOW_MAIN_BOARD_TEMPERATURE, MF_BYCOMMAND | MF_GRAYED);
+#endif
+
 	pMenu->EnableMenuItem(ID_SELECT_ALL_CONNECTION, MF_BYCOMMAND | (theApp.m_general_data.show_all_interface ? MF_GRAYED : MF_ENABLED));
 
 	//pMenu->SetDefaultItem(ID_NETWORK_INFO);

@@ -60,6 +60,10 @@ BOOL CAboutDlg::OnInitDialog()
 	version_info += _T(" (Debug)");
 #endif
 
+#ifdef WITHOUT_TEMPERATURE
+    version_info += CCommon::LoadText(_T(" ("), IDS_WITHOUT_TEMPERATURE, _T(")"));
+#endif
+
 	SetDlgItemText(IDC_STATIC_VERSION, version_info);
 
 	//设置最后编译日期

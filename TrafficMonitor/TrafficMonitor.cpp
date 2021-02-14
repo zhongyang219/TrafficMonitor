@@ -137,6 +137,15 @@ void CTrafficMonitorApp::LoadConfig()
 	m_taskbar_data.specify_each_item_color = ini.GetBool(L"task_bar", L"specify_each_item_color", false);
 	//m_cfg_data.m_tbar_show_cpu_memory = ini.GetBool(_T("task_bar"), _T("task_bar_show_cpu_memory"), false);
 	m_cfg_data.m_tbar_display_item = ini.GetInt(L"task_bar", L"tbar_display_item", TDI_UP | TDI_DOWN);
+    
+    //不含温度监控的版本，不显示温度监控相关项目
+#ifdef WITHOUT_TEMPERATURE
+    m_cfg_data.m_tbar_display_item &= ~TDI_CPU_TEMP;
+    m_cfg_data.m_tbar_display_item &= ~TDI_GPU_TEMP;
+    m_cfg_data.m_tbar_display_item &= ~TDI_HDD_TEMP;
+    m_cfg_data.m_tbar_display_item &= ~TDI_MAIN_BOARD_TEMP;
+#endif
+
 	m_taskbar_data.swap_up_down = ini.GetBool(_T("task_bar"), _T("task_bar_swap_up_down"), false);
 
 	if (m_taskbar_data.back_color == 0 && m_taskbar_data.text_colors[0] == 0)		//万一读取到的背景色和文本颜色都为0（黑色），则将文本色和背景色设置成默认颜色

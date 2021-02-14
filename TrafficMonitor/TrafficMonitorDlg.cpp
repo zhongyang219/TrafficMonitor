@@ -1110,12 +1110,14 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		theApp.m_used_memory = static_cast<int>((statex.ullTotalPhys - statex.ullAvailPhys) / 1024);
 		theApp.m_total_memory  = static_cast<int>(statex.ullTotalPhys / 1024);
 
+#ifndef WITHOUT_TEMPERATURE
         //获取温度
         theApp.m_pMonitor->GetHardwareInfo();
         theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
         theApp.m_gpu_temperature = theApp.m_pMonitor->GpuTemperature();
         theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
         theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
+#endif
 
 		ShowInfo();		//刷新窗口信息
 	

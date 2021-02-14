@@ -83,8 +83,11 @@ public:
     CMenu m_main_menu;
     CMenu m_taskbar_menu;
 
+#ifndef WITHOUT_TEMPERATURE
     //OpenHardwareMonitor 接口的指针
     std::shared_ptr<OpenHardwareMonitorApi::IOpenHardwareMonitor> m_pMonitor{ OpenHardwareMonitorApi::CreateInstance() };
+#endif // !WITHOUT_TEMPERATURE
+
 
 public:
 	CTrafficMonitorApp();
