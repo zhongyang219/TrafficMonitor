@@ -76,20 +76,25 @@ namespace OpenHardwareMonitorApi
             //查找硬件类型
             switch (computer->Hardware[i]->HardwareType)
             {
-            case HardwareType::Mainboard:
-                m_main_board_temperature = GetHardwareTemperature(computer->Hardware[i]);
-                break;
             case HardwareType::CPU:
-                m_cpu_temperature = GetHardwareTemperature(computer->Hardware[i]);
+                if (m_cpu_temperature == 0)
+                    m_cpu_temperature = GetHardwareTemperature(computer->Hardware[i]);
                 break;
             case HardwareType::GpuNvidia:
-                m_gpu_nvidia_temperature = GetHardwareTemperature(computer->Hardware[i]);
+                if (m_gpu_nvidia_temperature == 0)
+                    m_gpu_nvidia_temperature = GetHardwareTemperature(computer->Hardware[i]);
                 break;
             case HardwareType::GpuAti:
-                m_gpu_ati_temperature = GetHardwareTemperature(computer->Hardware[i]);
+                if (m_gpu_ati_temperature == 0)
+                    m_gpu_ati_temperature = GetHardwareTemperature(computer->Hardware[i]);
                 break;
             case HardwareType::HDD:
-                m_hdd_temperature = GetHardwareTemperature(computer->Hardware[i]);
+                if (m_hdd_temperature == 0)
+                    m_hdd_temperature = GetHardwareTemperature(computer->Hardware[i]);
+                break;
+            case HardwareType::Mainboard:
+                if (m_main_board_temperature == 0)
+                    m_main_board_temperature = GetHardwareTemperature(computer->Hardware[i]);
                 break;
             default:
                 break;
