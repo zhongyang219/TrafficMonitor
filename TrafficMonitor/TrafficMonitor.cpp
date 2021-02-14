@@ -558,6 +558,19 @@ CString CTrafficMonitorApp::GetSystemInfoString()
 	info += strTmp;
 	info += _T("\r\n");
 
+    info += _T("Version: ");
+    info += VERSION;
+    info += _T(" ");
+#ifdef _M_X64
+    info += _T("x64");
+#else
+    info += _T("x86");
+#endif
+
+#ifdef WITHOUT_TEMPERATURE
+    info += CCommon::LoadText(_T(" ("), IDS_WITHOUT_TEMPERATURE, _T(")"));
+#endif
+
 	return info;
 }
 
