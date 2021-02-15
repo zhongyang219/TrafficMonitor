@@ -307,6 +307,11 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
         else
             format_str = _T("%d%%");
         str_value.Format(format_str, usage);
+
+        //如果CPU或内存利用率达到100%，会导致显示不全，此时将绘图区域向右扩展一些
+        int text_width = m_pDC->GetTextExtent(str_value).cx;
+        if (usage >= 100 && rect_value.Width() < text_width)
+            rect_value.right = rect_value.left + text_width;
     }
 
     //绘制温度
@@ -605,15 +610,15 @@ void CTaskBarDlg::CalculateWindowSize()
     CString str;
     if (theApp.m_taskbar_data.hide_percent)
 	{
-		str = _T("100");
+		str = _T("99");
 	}
 	else if (theApp.m_taskbar_data.separate_value_unit_with_space)
 	{
-        str = _T("100 %");
+        str = _T("99 %");
 	}
 	else
 	{
-        str = _T("100%");
+        str = _T("99%");
 	}
     value_width = m_pDC->GetTextExtent(str).cx;
     m_item_widths[TDI_CPU].value_width = value_width;
