@@ -118,26 +118,17 @@ void CIniHelper::GetIntArray(const wchar_t * AppName, const wchar_t * KeyName, i
 	default_str.Format(_T("%d"), default_value);
 	wstring str;
 	str = _GetString(AppName, KeyName, default_str);
-	size_t index{}, index0{};
-	for (int i{}; i < size; i++)
-	{
-		index0 = index;
-		if (index0 < 256 && str[index0] == L',')
-			index0++;
-		index = str.find(L',', index + 1);
-		if (index0 == index)
-		{
-			if(i!=0)
-				values[i] = values[i - 1];		//如果后面已经没有数据，则填充为前一个数据
-			else
-				values[i] = default_value;
-		}
-		else
-		{
-			wstring tmp = str.substr(index0, index - index0);
-			values[i] = _wtoi(tmp.c_str());
-		}
-	}
+    std::vector<wstring> split_result;
+    CCommon::StringSplit(str, L',', split_result);
+    for (int i = 0; i < size; i++)
+    {
+        if (i < split_result.size())
+            values[i] = _wtoi(split_result[i].c_str());
+        else if (i > 0)
+            values[i] = values[i - 1];
+        else
+            values[i] = default_value;
+    }
 }
 
 void CIniHelper::WriteBoolArray(const wchar_t * AppName, const wchar_t * KeyName, const bool * values, int size)
