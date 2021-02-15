@@ -19,8 +19,10 @@ CTaskBarDlg::CTaskBarDlg(CWnd* pParent /*=NULL*/)
 
 CTaskBarDlg::~CTaskBarDlg()
 {
-	m_cpu_his.RemoveAll();
-	m_memory_his.RemoveAll();
+    for (auto iter = m_map_history_data.begin(); iter != m_map_history_data.end(); ++iter)
+    {
+        iter->second.RemoveAll();
+    }
 }
 
 void CTaskBarDlg::DoDataExchange(CDataExchange* pDX)
@@ -137,6 +139,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 
 void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect rect, int label_width)
 {
+    m_item_display_width[type] = rect.Width();
     //设置要绘制的文本颜色
     COLORREF label_color{};
     COLORREF text_color{};
@@ -202,32 +205,27 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
             switch (type)
             {
             case TDI_CPU:
-                AddHisToList(m_cpu_his, theApp.m_cpu_usage);
-                TryDrawGraph(drawer, rect, m_cpu_his);
+                AddHisToList(type, theApp.m_cpu_usage);
                 break;
             case TDI_MEMORY:
-                AddHisToList(m_memory_his, theApp.m_memory_usage);
-                TryDrawGraph(drawer, rect, m_memory_his);
+                AddHisToList(type, theApp.m_memory_usage);
                 break;
             case TDI_CPU_TEMP:
-                AddHisToList(m_cpu_temperature_his, theApp.m_cpu_temperature);
-                TryDrawGraph(drawer, rect, m_cpu_temperature_his);
+                AddHisToList(type, theApp.m_cpu_temperature);
                 break;
             case TDI_GPU_TEMP:
-                AddHisToList(m_gpu_temperature_his, theApp.m_gpu_temperature);
-                TryDrawGraph(drawer, rect, m_gpu_temperature_his);
+                AddHisToList(type, theApp.m_gpu_temperature);
                 break;
             case TDI_HDD_TEMP:
-                AddHisToList(m_hdd_temperature_his, theApp.m_hdd_temperature);
-                TryDrawGraph(drawer, rect, m_hdd_temperature_his);
+                AddHisToList(type, theApp.m_hdd_temperature);
                 break;
             case TDI_MAIN_BOARD_TEMP:
-                AddHisToList(m_main_board_temperature_his, theApp.m_main_board_temperature);
-                TryDrawGraph(drawer, rect, m_main_board_temperature_his);
+                AddHisToList(type, theApp.m_main_board_temperature);
                 break;
             default:
                 break;
             }
+            TryDrawGraph(drawer, rect, type);
         }
         else
         {
@@ -1058,23 +1056,26 @@ void CTaskBarDlg::OnPaint()
 	ShowInfo(&dc);
 }
 
-void CTaskBarDlg::AddHisToList(CList<int,int> &list, int current_usage_percent)
+void CTaskBarDlg::AddHisToList(DisplayItem item_type, int current_usage_percent)
 {
+    CList<int, int>& list = m_map_history_data[item_type];
 	list.AddHead(current_usage_percent);
+    int graph_max_length = m_item_display_width[item_type] * TASKBAR_GRAPH_STEP;
 	//判断是否超过最大长度，如果超过，将链表尾部数据移除
-	if (list.GetCount() > TASKBAR_GRAPH_MAX_LEN)
+	if (list.GetCount() > graph_max_length)
 	{
 		list.RemoveTail();
 	}
 }
 
 
-void CTaskBarDlg::TryDrawGraph(CDrawCommon& drawer, const CRect &value_rect, CList<int,int> &list)
+void CTaskBarDlg::TryDrawGraph(CDrawCommon& drawer, const CRect &value_rect, DisplayItem item_type)
 {
 	if (!theApp.m_taskbar_data.show_status_bar)
 	{
 		return;
 	}
+    CList<int, int>& list = m_map_history_data[item_type];
 	drawer.DrawRectOutLine(value_rect, theApp.m_taskbar_data.status_bar_color, 1, true);
 	POSITION pos = list.GetHeadPosition();
 	if (NULL != pos)

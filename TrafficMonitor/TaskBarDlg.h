@@ -8,7 +8,7 @@
 // CTaskBarDlg 对话框
 #define TASKBAR_WND_HEIGHT theApp.DPI(32)				//任务栏窗口的高度
 #define WM_TASKBAR_MENU_POPED_UP (WM_USER + 1004)		//定义任务栏窗口右键菜单弹出时发出的消息
-#define TASKBAR_GRAPH_MAX_LEN 600						//历史数据存储最大长度
+//#define TASKBAR_GRAPH_MAX_LEN 600						//历史数据存储最大长度
 #define TASKBAR_GRAPH_STEP 5							//几秒钟画一条线
 
 class CTaskBarDlg : public CDialogEx
@@ -24,7 +24,7 @@ public:
 	void ShowInfo(CDC* pDC); 	//将信息绘制到控件上
 	void TryDrawStatusBar(CDrawCommon& drawer, const CRect& rect_bar, int usage_percent); //绘制CPU/内存状态条
 
-	void TryDrawGraph(CDrawCommon& drawer, const CRect &value_rect, CList<int,int> &list);		// 绘制CPU/内存动态图
+	void TryDrawGraph(CDrawCommon& drawer, const CRect &value_rect, DisplayItem item_type);		// 绘制CPU/内存动态图
 
 	bool AdjustWindowPos();	//设置窗口在任务栏中的位置
 	void ApplyWindowTransparentColor();
@@ -59,16 +59,12 @@ protected:
     };
 
     std::map<DisplayItem, ItemWidth> m_item_widths;   //任务栏窗口每个部分的宽度
+    std::map<DisplayItem, int> m_item_display_width;    //任务栏窗口每个部分实际显示的宽度
 
 	int m_min_bar_width;	//最小化窗口缩小宽度后的宽度
 	int m_min_bar_height;	//最小化窗口缩小高度后的高度（用于任务栏在屏幕左侧或右侧时）
 
-	CList<int, int> m_cpu_his;		//保存cpu使用率历史数据的链表，链表保存按照时间顺序，越靠近头部数据越新
-	CList<int, int> m_memory_his;	//保存内存占用率历史数据的链表，链表保存按照时间顺序，越靠近头部数据越新
-    CList<int, int> m_cpu_temperature_his;
-    CList<int, int> m_gpu_temperature_his;
-    CList<int, int> m_hdd_temperature_his;
-    CList<int, int> m_main_board_temperature_his;
+    std::map<DisplayItem, CList<int, int>> m_map_history_data;  //保存各项数据历史数据的链表，链表保存按照时间顺序，越靠近头部数据越新
 
 	int m_left_space{};			//最小化窗口和二级窗口窗口左侧的边距
 	int m_top_space{};			//最小化窗口和二级窗口窗口顶部的边距（用于任务栏在屏幕左侧或右侧时）
@@ -84,7 +80,7 @@ protected:
 	void CheckTaskbarOnTopOrBottom();		//检查任务栏是否在屏幕的顶部或底部，并将结果保存在m_taskbar_on_top_or_bottom中
 	CString GetMouseTipsInfo();		//获取鼠标提示
 
-	void AddHisToList(CList<int,int> &list, int current_usage_percent);		//将当前利用率数值添加进链表
+	void AddHisToList(DisplayItem item_type, int current_usage_percent);		//将当前利用率数值添加进链表
 
     //绘制任务栏窗口中的一个显示项目
     //  drawer: 绘图类的对象
