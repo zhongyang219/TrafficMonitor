@@ -788,7 +788,7 @@ bool CTrafficMonitorDlg::IsTaskbarWndValid() const
     return m_tBarDlg != nullptr && ::IsWindow(m_tBarDlg->GetSafeHwnd());
 }
 
-void CTrafficMonitorDlg::TaskbarShowHideItem(TaskbarDisplayItem type)
+void CTrafficMonitorDlg::TaskbarShowHideItem(DisplayItem type)
 {
     if (IsTaskbarWndValid())
     {

@@ -58,7 +58,7 @@ protected:
         }
     };
 
-    std::map<TaskbarDisplayItem, ItemWidth> m_item_widths;   //任务栏窗口每个部分的宽度
+    std::map<DisplayItem, ItemWidth> m_item_widths;   //任务栏窗口每个部分的宽度
 
 	int m_min_bar_width;	//最小化窗口缩小宽度后的宽度
 	int m_min_bar_height;	//最小化窗口缩小高度后的高度（用于任务栏在屏幕左侧或右侧时）
@@ -91,7 +91,7 @@ protected:
     //  type: 项目的类型
     //  rect: 绘制矩形区域
     //  label_width: 标签区域的宽度
-    void DrawDisplayItem(CDrawCommon& drawer, TaskbarDisplayItem type, CRect rect, int label_width);
+    void DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect rect, int label_width);
 
 public:
 	void SetTextFont();

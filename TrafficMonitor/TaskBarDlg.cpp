@@ -135,7 +135,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 	MemDC.DeleteDC();
 }
 
-void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, TaskbarDisplayItem type, CRect rect, int label_width)
+void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect rect, int label_width)
 {
     //设置要绘制的文本颜色
     COLORREF label_color{};
@@ -159,6 +159,22 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, TaskbarDisplayItem type, 
         case TDI_MEMORY:
             label_color = theApp.m_taskbar_data.text_colors[6];
             text_color = theApp.m_taskbar_data.text_colors[7];
+            break;
+        case TDI_CPU_TEMP:
+            label_color = theApp.m_taskbar_data.text_colors[8];
+            text_color = theApp.m_taskbar_data.text_colors[9];
+            break;
+        case TDI_GPU_TEMP:
+            label_color = theApp.m_taskbar_data.text_colors[10];
+            text_color = theApp.m_taskbar_data.text_colors[11];
+            break;
+        case TDI_HDD_TEMP:
+            label_color = theApp.m_taskbar_data.text_colors[12];
+            text_color = theApp.m_taskbar_data.text_colors[13];
+            break;
+        case TDI_MAIN_BOARD_TEMP:
+            label_color = theApp.m_taskbar_data.text_colors[14];
+            text_color = theApp.m_taskbar_data.text_colors[15];
             break;
         default:
             label_color = theApp.m_taskbar_data.text_colors[0];

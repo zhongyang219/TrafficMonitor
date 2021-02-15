@@ -132,7 +132,7 @@ protected:
 
     bool IsTaskbarWndValid() const;
 
-    void TaskbarShowHideItem(TaskbarDisplayItem type);
+    void TaskbarShowHideItem(DisplayItem type);
 
 public:
 	void ApplySettings();

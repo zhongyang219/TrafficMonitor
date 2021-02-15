@@ -54,8 +54,8 @@ enum class SpeedUnit
 };
 
 
-//任务栏窗口显示的项目
-enum TaskbarDisplayItem
+//显示的项目
+enum DisplayItem
 {
 	TDI_UP = 1 << 0,
 	TDI_DOWN = 1 << 1,
@@ -72,16 +72,16 @@ enum TaskbarDisplayItem
 struct DispStrings		//显示的文本
 {
 private:
-    std::map<TaskbarDisplayItem, wstring> map_str;
+    std::map<DisplayItem, wstring> map_str;
 
 public:
     //获取一个显示的文本
-    wstring& Get(TaskbarDisplayItem item)
+    wstring& Get(DisplayItem item)
     {
         return map_str[item];
     }
 
-    const std::map<TaskbarDisplayItem, wstring>& GetAllItems() const
+    const std::map<DisplayItem, wstring>& GetAllItems() const
     {
         return map_str;
     }
@@ -219,7 +219,7 @@ struct MainWndSettingData : public PublicSettingData
 	bool hide_main_wnd_when_fullscreen;		//有程序全屏运行时隐藏悬浮窗
 };
 
-#define TASKBAR_COLOR_NUM 8		//任务栏窗口颜色数量
+#define TASKBAR_COLOR_NUM 16		//任务栏窗口颜色数量
 //选项设置中“任务栏窗口设置”的数据
 struct TaskBarSettingData : public PublicSettingData
 {

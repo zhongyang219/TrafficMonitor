@@ -34,6 +34,15 @@ void CTaskbarColorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CPU_VALUE_STATIC, m_statics[5]);
 	DDX_Control(pDX, IDC_MEMORY_LABLE_STATIC, m_statics[6]);
 	DDX_Control(pDX, IDC_MEMORY_VALUE_STATIC, m_statics[7]);
+
+    DDX_Control(pDX, IDC_CPU_TEMP_LABLE_STATIC, m_statics[8]);
+    DDX_Control(pDX, IDC_CPU_TEMP_VALUE_STATIC, m_statics[9]);
+    DDX_Control(pDX, IDC_GPU_TEMP_LABLE_STATIC, m_statics[10]);
+    DDX_Control(pDX, IDC_GPU_TEMP_VALUE_STATIC, m_statics[11]);
+    DDX_Control(pDX, IDC_HDD_TEMP_LABLE_STATIC, m_statics[12]);
+    DDX_Control(pDX, IDC_HDD_TEMP_VALUE_STATIC, m_statics[13]);
+    DDX_Control(pDX, IDC_MAIN_BOARD_TEMP_LABLE_STATIC, m_statics[14]);
+    DDX_Control(pDX, IDC_MAIN_BOARD_TEMP_VALUE_STATIC, m_statics[15]);
 }
 
 
@@ -63,7 +72,7 @@ BOOL CTaskbarColorDlg::OnInitDialog()
 
 afx_msg LRESULT CTaskbarColorDlg::OnStaticClicked(WPARAM wParam, LPARAM lParam)
 {
-	int item_id = ::GetDlgCtrlID(((CWnd*)wParam)->m_hWnd);
+	int item_id = ::GetDlgCtrlID(((CWnd*)wParam)->GetSafeHwnd());
 	int index{};
 	switch (item_id)
 	{
@@ -90,6 +99,30 @@ afx_msg LRESULT CTaskbarColorDlg::OnStaticClicked(WPARAM wParam, LPARAM lParam)
 		break;
 	case IDC_MEMORY_VALUE_STATIC:
 		index = 7;
+		break;
+	case IDC_CPU_TEMP_LABLE_STATIC:
+		index = 8;
+		break;
+	case IDC_CPU_TEMP_VALUE_STATIC:
+		index = 9;
+		break;
+	case IDC_GPU_TEMP_LABLE_STATIC:
+		index = 10;
+		break;
+	case IDC_GPU_TEMP_VALUE_STATIC:
+		index = 11;
+		break;
+	case IDC_HDD_TEMP_LABLE_STATIC:
+		index = 12;
+		break;
+	case IDC_HDD_TEMP_VALUE_STATIC:
+		index = 13;
+		break;
+	case IDC_MAIN_BOARD_TEMP_LABLE_STATIC:
+		index = 14;
+		break;
+	case IDC_MAIN_BOARD_TEMP_VALUE_STATIC:
+		index = 15;
 		break;
 	default:
 		return 0;

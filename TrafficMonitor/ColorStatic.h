@@ -19,7 +19,6 @@ public:
 protected:
 	//COLORREF m_fill_color{ RGB(255, 255,255) };
 	vector<COLORREF> m_colors;
-	int m_color_num;
 	bool m_hover{ false };		//当鼠标指向控件时为true
 	bool m_link_cursor{ false };	//是否启用超链接形状的光标
 

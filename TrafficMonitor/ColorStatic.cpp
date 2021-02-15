@@ -23,22 +23,20 @@ void CColorStatic::SetFillColor(COLORREF fill_color)
 {
 	m_colors.resize(1);
 	m_colors[0] = fill_color;
-	m_color_num = 1;
 	//m_fill_color = fill_color;
 	Invalidate();
 }
 
 void CColorStatic::SetColorNum(int color_num)
 {
-	if (color_num <= 0 || color_num > 10)
+	if (color_num <= 0 || color_num > 32)
 		color_num = 1;
 	m_colors.resize(color_num);
-	m_color_num = color_num;
 }
 
 void CColorStatic::SetFillColor(int index, COLORREF fill_color)
 {
-	if (index >= 0 && index < m_color_num)
+	if (index >= 0 && index < static_cast<int>(m_colors.size()))
 		m_colors[index] = fill_color;
 }
 
@@ -77,9 +75,11 @@ void CColorStatic::OnPaint()
 	CDrawCommon draw;
 	draw.Create(&dc, this);
 
+    int color_num = static_cast<int>(m_colors.size());
+
 	if (IsWindowEnabled())
 	{
-		switch (m_color_num)
+		switch (color_num)
 		{
 		case 1:
 			dc.FillSolidRect(rect, m_colors[0]);
@@ -98,7 +98,7 @@ void CColorStatic::OnPaint()
 			break;
 		case 8:
 			dc.FillSolidRect(rect, RGB(255, 255, 255));
-			rc_tmp.right /= 4;
+			rc_tmp.right /= (color_num / 2);
 			rc_tmp.bottom /= 2;
 			dc.FillSolidRect(rc_tmp, m_colors[0]);
 			rc_tmp.MoveToX(rc_tmp.right);
@@ -116,12 +116,49 @@ void CColorStatic::OnPaint()
 			rc_tmp.MoveToX(rc_tmp.right);
 			dc.FillSolidRect(rc_tmp, m_colors[7]);
 			break;
-		default:
+        case 16:
+            dc.FillSolidRect(rect, RGB(255, 255, 255));
+            rc_tmp.right /= color_num / 2;
+            rc_tmp.bottom /= 2;
+            dc.FillSolidRect(rc_tmp, m_colors[0]);
+            rc_tmp.MoveToX(rc_tmp.right);
+            dc.FillSolidRect(rc_tmp, m_colors[1]);
+            rc_tmp.MoveToX(rc_tmp.right);
+            dc.FillSolidRect(rc_tmp, m_colors[4]);
+            rc_tmp.MoveToX(rc_tmp.right);
+            dc.FillSolidRect(rc_tmp, m_colors[5]);
+            rc_tmp.MoveToX(rc_tmp.right);
+            dc.FillSolidRect(rc_tmp, m_colors[8]);
+            rc_tmp.MoveToX(rc_tmp.right);
+            dc.FillSolidRect(rc_tmp, m_colors[9]);
+            rc_tmp.MoveToX(rc_tmp.right);
+            dc.FillSolidRect(rc_tmp, m_colors[12]);
+            rc_tmp.MoveToX(rc_tmp.right);
+            dc.FillSolidRect(rc_tmp, m_colors[13]);
+
+            rc_tmp.MoveToXY(0, rc_tmp.bottom);
+            dc.FillSolidRect(rc_tmp, m_colors[2]);
+            rc_tmp.MoveToX(rc_tmp.right);
+            dc.FillSolidRect(rc_tmp, m_colors[3]);
+            rc_tmp.MoveToX(rc_tmp.right);
+            dc.FillSolidRect(rc_tmp, m_colors[6]);
+            rc_tmp.MoveToX(rc_tmp.right);
+            dc.FillSolidRect(rc_tmp, m_colors[7]);
+            rc_tmp.MoveToX(rc_tmp.right);
+            dc.FillSolidRect(rc_tmp, m_colors[10]);
+            rc_tmp.MoveToX(rc_tmp.right);
+            dc.FillSolidRect(rc_tmp, m_colors[11]);
+            rc_tmp.MoveToX(rc_tmp.right);
+            dc.FillSolidRect(rc_tmp, m_colors[14]);
+            rc_tmp.MoveToX(rc_tmp.right);
+            dc.FillSolidRect(rc_tmp, m_colors[15]);
+            break;
+        default:
 			dc.FillSolidRect(rect, RGB(255, 255, 255));
-			rc_tmp.right = rect.Width() / m_color_num;
-			for (int i{}; i < m_color_num; i++)
+			rc_tmp.right = rect.Width() / color_num;
+			for (int i{}; i < color_num; i++)
 			{
-				rc_tmp.MoveToX(i*(rect.Width() / m_color_num));
+				rc_tmp.MoveToX(i*(rect.Width() / color_num));
 				dc.FillSolidRect(rc_tmp, m_colors[i]);
 			}
 		}
