@@ -410,6 +410,7 @@
     <ClInclude Include="crashtool.h" />
     <ClInclude Include="CTabCtrlEx.h" />
     <ClInclude Include="CVariant.h" />
+    <ClInclude Include="DisplayTextSettingDlg.h" />
     <ClInclude Include="DrawCommonEx.h" />
     <ClInclude Include="HistoryTrafficCalendarDlg.h" />
     <ClInclude Include="HistoryTrafficFile.h" />
@@ -425,6 +426,7 @@
     <ClInclude Include="HistoryTrafficDlg.h" />
     <ClInclude Include="IconSelectDlg.h" />
     <ClInclude Include="IniHelper.h" />
+    <ClInclude Include="HistoryTrafficListCtrl.h" />
     <ClInclude Include="ListCtrlEx.h" />
     <ClInclude Include="MainWndColorDlg.h" />
     <ClInclude Include="MainWndSettingsDlg.h" />
@@ -462,6 +464,7 @@
     <ClCompile Include="crashtool.cpp" />
     <ClCompile Include="CTabCtrlEx.cpp" />
     <ClCompile Include="CVariant.cpp" />
+    <ClCompile Include="DisplayTextSettingDlg.cpp" />
     <ClCompile Include="DrawCommonEx.cpp" />
     <ClCompile Include="HistoryTrafficCalendarDlg.cpp" />
     <ClCompile Include="HistoryTrafficFile.cpp" />
@@ -476,6 +479,7 @@
     <ClCompile Include="HistoryTrafficDlg.cpp" />
     <ClCompile Include="IconSelectDlg.cpp" />
     <ClCompile Include="IniHelper.cpp" />
+    <ClCompile Include="HistoryTrafficListCtrl.cpp" />
     <ClCompile Include="ListCtrlEx.cpp" />
     <ClCompile Include="MainWndColorDlg.cpp" />
     <ClCompile Include="MainWndSettingsDlg.cpp" />

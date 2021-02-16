@@ -212,7 +212,7 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 	m_info_list.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
 	int width0, width1;
 	width0 = rect.Width() / 4;
-	width1 = rect.Width() - width0 - theApp.DPI(21);
+	width1 = rect.Width() - width0 - theApp.DPI(20) - 1;
 	m_info_list.InsertColumn(0, CCommon::LoadText(IDS_ITEM), LVCFMT_LEFT, width0);		//插入第0列
 	m_info_list.InsertColumn(1, CCommon::LoadText(IDS_VALUE), LVCFMT_LEFT, width1);		//插入第1列
 

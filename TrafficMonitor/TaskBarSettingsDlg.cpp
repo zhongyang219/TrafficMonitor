@@ -7,6 +7,7 @@
 #include "afxdialogex.h"
 #include "CMFCColorDialogEx.h"
 #include "CAutoAdaptSettingsDlg.h"
+#include "DisplayTextSettingDlg.h"
 
 
 // CTaskBarSettingsDlg 对话框
@@ -130,11 +131,11 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_SET_FONT_BUTTON1, &CTaskBarSettingsDlg::OnBnClickedSetFontButton1)
-	ON_EN_CHANGE(IDC_UPLOAD_EDIT1, &CTaskBarSettingsDlg::OnEnChangeUploadEdit1)
-	ON_EN_CHANGE(IDC_DOWNLOAD_EDIT1, &CTaskBarSettingsDlg::OnEnChangeDownloadEdit1)
-	ON_EN_CHANGE(IDC_CPU_EDIT1, &CTaskBarSettingsDlg::OnEnChangeCpuEdit1)
-	ON_EN_CHANGE(IDC_MEMORY_EDIT1, &CTaskBarSettingsDlg::OnEnChangeMemoryEdit1)
-	ON_BN_CLICKED(IDC_SET_DEFAULT_BUTTON1, &CTaskBarSettingsDlg::OnBnClickedSetDefaultButton1)
+	//ON_EN_CHANGE(IDC_UPLOAD_EDIT1, &CTaskBarSettingsDlg::OnEnChangeUploadEdit1)
+	//ON_EN_CHANGE(IDC_DOWNLOAD_EDIT1, &CTaskBarSettingsDlg::OnEnChangeDownloadEdit1)
+	//ON_EN_CHANGE(IDC_CPU_EDIT1, &CTaskBarSettingsDlg::OnEnChangeCpuEdit1)
+	//ON_EN_CHANGE(IDC_MEMORY_EDIT1, &CTaskBarSettingsDlg::OnEnChangeMemoryEdit1)
+	//ON_BN_CLICKED(IDC_SET_DEFAULT_BUTTON1, &CTaskBarSettingsDlg::OnBnClickedSetDefaultButton1)
 	ON_BN_CLICKED(IDC_SWITCH_UP_DOWN_CHECK1, &CTaskBarSettingsDlg::OnBnClickedSwitchUpDownCheck1)
 	ON_BN_CLICKED(IDC_TASKBAR_WND_ON_LEFT_CHECK, &CTaskBarSettingsDlg::OnBnClickedTaskbarWndOnLeftCheck)
 	ON_BN_CLICKED(IDC_SPEED_SHORT_MODE_CHECK, &CTaskBarSettingsDlg::OnBnClickedSpeedShortModeCheck)
@@ -168,6 +169,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_AUTO_ADAPT_SETTINGS_BUTTON, &CTaskBarSettingsDlg::OnBnClickedAutoAdaptSettingsButton)
 	ON_BN_CLICKED(IDC_AUTO_ADAPT_LIGHT_THEME_CHECK, &CTaskBarSettingsDlg::OnBnClickedAutoAdaptLightThemeCheck)
     ON_BN_CLICKED(IDC_AUTO_SET_BACK_COLOR_CHECK, &CTaskBarSettingsDlg::OnBnClickedAutoSetBackColorCheck)
+    ON_BN_CLICKED(IDC_DISPLAY_TEXT_SETTING_BUTTON, &CTaskBarSettingsDlg::OnBnClickedDisplayTextSettingButton)
 END_MESSAGE_MAP()
 
 
@@ -190,10 +192,10 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 	m_font_size_edit.SetRange(5, 72);
 	m_font_size_edit.SetValue(m_data.font.size);
 
-	SetDlgItemText(IDC_UPLOAD_EDIT1, m_data.disp_str.Get(TDI_UP).c_str());
-	SetDlgItemText(IDC_DOWNLOAD_EDIT1, m_data.disp_str.Get(TDI_DOWN).c_str());
-	SetDlgItemText(IDC_CPU_EDIT1, m_data.disp_str.Get(TDI_CPU).c_str());
-	SetDlgItemText(IDC_MEMORY_EDIT1, m_data.disp_str.Get(TDI_MEMORY).c_str());
+	//SetDlgItemText(IDC_UPLOAD_EDIT1, m_data.disp_str.Get(TDI_UP).c_str());
+	//SetDlgItemText(IDC_DOWNLOAD_EDIT1, m_data.disp_str.Get(TDI_DOWN).c_str());
+	//SetDlgItemText(IDC_CPU_EDIT1, m_data.disp_str.Get(TDI_CPU).c_str());
+	//SetDlgItemText(IDC_MEMORY_EDIT1, m_data.disp_str.Get(TDI_MEMORY).c_str());
 
 	((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK1))->SetCheck(m_data.swap_up_down);
 	((CButton*)GetDlgItem(IDC_TASKBAR_WND_ON_LEFT_CHECK))->SetCheck(m_data.tbar_wnd_on_left);
@@ -313,74 +315,74 @@ void CTaskBarSettingsDlg::OnBnClickedSetFontButton1()
 }
 
 
-void CTaskBarSettingsDlg::OnEnChangeUploadEdit1()
-{
-	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
-	// 函数并调用 CRichEditCtrl().SetEventMask()，
-	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+//void CTaskBarSettingsDlg::OnEnChangeUploadEdit1()
+//{
+//	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+//	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
+//	// 函数并调用 CRichEditCtrl().SetEventMask()，
+//	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+//
+//	// TODO:  在此添加控件通知处理程序代码
+//	CString tmp;
+//	GetDlgItemText(IDC_UPLOAD_EDIT1, tmp);
+//	m_data.disp_str.Get(TDI_UP) = tmp;
+//}
+//
+//
+//void CTaskBarSettingsDlg::OnEnChangeDownloadEdit1()
+//{
+//	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+//	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
+//	// 函数并调用 CRichEditCtrl().SetEventMask()，
+//	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+//
+//	// TODO:  在此添加控件通知处理程序代码
+//	CString tmp;
+//	GetDlgItemText(IDC_DOWNLOAD_EDIT1, tmp);
+//	m_data.disp_str.Get(TDI_DOWN) = tmp;
+//}
+//
+//
+//void CTaskBarSettingsDlg::OnEnChangeCpuEdit1()
+//{
+//	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+//	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
+//	// 函数并调用 CRichEditCtrl().SetEventMask()，
+//	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+//
+//	// TODO:  在此添加控件通知处理程序代码
+//	CString tmp;
+//	GetDlgItemText(IDC_CPU_EDIT1, tmp);
+//	m_data.disp_str.Get(TDI_CPU) = tmp;
+//}
+//
+//
+//void CTaskBarSettingsDlg::OnEnChangeMemoryEdit1()
+//{
+//	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+//	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
+//	// 函数并调用 CRichEditCtrl().SetEventMask()，
+//	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+//
+//	// TODO:  在此添加控件通知处理程序代码
+//	CString tmp;
+//	GetDlgItemText(IDC_MEMORY_EDIT1, tmp);
+//	m_data.disp_str.Get(TDI_MEMORY) = tmp;
+//}
 
-	// TODO:  在此添加控件通知处理程序代码
-	CString tmp;
-	GetDlgItemText(IDC_UPLOAD_EDIT1, tmp);
-	m_data.disp_str.Get(TDI_UP) = tmp;
-}
 
-
-void CTaskBarSettingsDlg::OnEnChangeDownloadEdit1()
-{
-	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
-	// 函数并调用 CRichEditCtrl().SetEventMask()，
-	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
-
-	// TODO:  在此添加控件通知处理程序代码
-	CString tmp;
-	GetDlgItemText(IDC_DOWNLOAD_EDIT1, tmp);
-	m_data.disp_str.Get(TDI_DOWN) = tmp;
-}
-
-
-void CTaskBarSettingsDlg::OnEnChangeCpuEdit1()
-{
-	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
-	// 函数并调用 CRichEditCtrl().SetEventMask()，
-	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
-
-	// TODO:  在此添加控件通知处理程序代码
-	CString tmp;
-	GetDlgItemText(IDC_CPU_EDIT1, tmp);
-	m_data.disp_str.Get(TDI_CPU) = tmp;
-}
-
-
-void CTaskBarSettingsDlg::OnEnChangeMemoryEdit1()
-{
-	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
-	// 函数并调用 CRichEditCtrl().SetEventMask()，
-	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
-
-	// TODO:  在此添加控件通知处理程序代码
-	CString tmp;
-	GetDlgItemText(IDC_MEMORY_EDIT1, tmp);
-	m_data.disp_str.Get(TDI_MEMORY) = tmp;
-}
-
-
-void CTaskBarSettingsDlg::OnBnClickedSetDefaultButton1()
-{
-	// TODO: 在此添加控件通知处理程序代码
-	m_data.disp_str.Get(TDI_UP) = L"↑: ";
-	m_data.disp_str.Get(TDI_DOWN) = L"↓: ";
-	m_data.disp_str.Get(TDI_CPU) = L"CPU: ";
-	m_data.disp_str.Get(TDI_MEMORY) = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
-	SetDlgItemText(IDC_UPLOAD_EDIT1, m_data.disp_str.Get(TDI_UP).c_str());
-	SetDlgItemText(IDC_DOWNLOAD_EDIT1, m_data.disp_str.Get(TDI_DOWN).c_str());
-	SetDlgItemText(IDC_CPU_EDIT1, m_data.disp_str.Get(TDI_CPU).c_str());
-	SetDlgItemText(IDC_MEMORY_EDIT1, m_data.disp_str.Get(TDI_MEMORY).c_str());
-}
+//void CTaskBarSettingsDlg::OnBnClickedSetDefaultButton1()
+//{
+//	// TODO: 在此添加控件通知处理程序代码
+//	m_data.disp_str.Get(TDI_UP) = L"↑: ";
+//	m_data.disp_str.Get(TDI_DOWN) = L"↓: ";
+//	m_data.disp_str.Get(TDI_CPU) = L"CPU: ";
+//	m_data.disp_str.Get(TDI_MEMORY) = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
+//	SetDlgItemText(IDC_UPLOAD_EDIT1, m_data.disp_str.Get(TDI_UP).c_str());
+//	SetDlgItemText(IDC_DOWNLOAD_EDIT1, m_data.disp_str.Get(TDI_DOWN).c_str());
+//	SetDlgItemText(IDC_CPU_EDIT1, m_data.disp_str.Get(TDI_CPU).c_str());
+//	SetDlgItemText(IDC_MEMORY_EDIT1, m_data.disp_str.Get(TDI_MEMORY).c_str());
+//}
 
 
 void CTaskBarSettingsDlg::OnBnClickedSwitchUpDownCheck1()
@@ -767,4 +769,12 @@ void CTaskBarSettingsDlg::OnBnClickedAutoSetBackColorCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.auto_set_background_color = (m_auto_set_back_color_chk.GetCheck() != 0);
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedDisplayTextSettingButton()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    CDisplayTextSettingDlg dlg(m_data.disp_str);
+    dlg.DoModal();
 }

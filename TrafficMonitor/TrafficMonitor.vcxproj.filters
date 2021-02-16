@@ -15,9 +15,6 @@
     <Filter Include="源文件和头文件\派生的控件类">
       <UniqueIdentifier>{ccda107e-9fc9-493f-991e-b5a9f7dfe2f5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件和头文件\派生的控件类\ListCtrlEx">
-      <UniqueIdentifier>{74012c97-afb7-4e09-8b11-4e2945c37449}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件和头文件\派生的控件类\StaticEx">
       <UniqueIdentifier>{4745c17a-24c6-46a2-a075-b93654aae464}</UniqueIdentifier>
     </Filter>
@@ -139,6 +136,15 @@
     <Filter Include="源文件和头文件\公共的类\WIC">
       <UniqueIdentifier>{2f6c60c6-eed6-4cad-8a1f-8759efb79d1d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\对话框类\选项设置对话框\DisplayTextSettingDlg">
+      <UniqueIdentifier>{b6c785d6-4031-46d1-b224-4dd87a34404e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\派生的控件类\HistoryTrafficListCtrl">
+      <UniqueIdentifier>{74012c97-afb7-4e09-8b11-4e2945c37449}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\派生的控件类\ListCtrlEx">
+      <UniqueIdentifier>{44872bda-27ce-407a-b5a7-fa9524bfb83c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -152,9 +158,6 @@
     </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>源文件和头文件\头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ListCtrlEx.h">
-      <Filter>源文件和头文件\派生的控件类\ListCtrlEx</Filter>
     </ClInclude>
     <ClInclude Include="StaticEx.h">
       <Filter>源文件和头文件\派生的控件类\StaticEx</Filter>
@@ -297,11 +300,17 @@
     <ClInclude Include="WIC.h">
       <Filter>源文件和头文件\公共的类\WIC</Filter>
     </ClInclude>
+    <ClInclude Include="DisplayTextSettingDlg.h">
+      <Filter>源文件和头文件\对话框类\选项设置对话框\DisplayTextSettingDlg</Filter>
+    </ClInclude>
+    <ClInclude Include="HistoryTrafficListCtrl.h">
+      <Filter>源文件和头文件\派生的控件类\HistoryTrafficListCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="ListCtrlEx.h">
+      <Filter>源文件和头文件\派生的控件类\ListCtrlEx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ListCtrlEx.cpp">
-      <Filter>源文件和头文件\派生的控件类\ListCtrlEx</Filter>
-    </ClCompile>
     <ClCompile Include="StaticEx.cpp">
       <Filter>源文件和头文件\派生的控件类\StaticEx</Filter>
     </ClCompile>
@@ -439,6 +448,15 @@
     </ClCompile>
     <ClCompile Include="WIC.cpp">
       <Filter>源文件和头文件\公共的类\WIC</Filter>
+    </ClCompile>
+    <ClCompile Include="DisplayTextSettingDlg.cpp">
+      <Filter>源文件和头文件\对话框类\选项设置对话框\DisplayTextSettingDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="HistoryTrafficListCtrl.cpp">
+      <Filter>源文件和头文件\派生的控件类\HistoryTrafficListCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="ListCtrlEx.cpp">
+      <Filter>源文件和头文件\派生的控件类\ListCtrlEx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

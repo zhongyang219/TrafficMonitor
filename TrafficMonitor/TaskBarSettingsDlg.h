@@ -58,11 +58,11 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnBnClickedSetFontButton1();
-	afx_msg void OnEnChangeUploadEdit1();
-	afx_msg void OnEnChangeDownloadEdit1();
-	afx_msg void OnEnChangeCpuEdit1();
-	afx_msg void OnEnChangeMemoryEdit1();
-	afx_msg void OnBnClickedSetDefaultButton1();
+	//afx_msg void OnEnChangeUploadEdit1();
+	//afx_msg void OnEnChangeDownloadEdit1();
+	//afx_msg void OnEnChangeCpuEdit1();
+	//afx_msg void OnEnChangeMemoryEdit1();
+	//afx_msg void OnBnClickedSetDefaultButton1();
 	afx_msg void OnBnClickedSwitchUpDownCheck1();
 	afx_msg void OnBnClickedTaskbarWndOnLeftCheck();
 	afx_msg void OnBnClickedSpeedShortModeCheck();
@@ -100,4 +100,5 @@ public:
 	afx_msg void OnBnClickedAutoAdaptSettingsButton();
 	afx_msg void OnBnClickedAutoAdaptLightThemeCheck();
     afx_msg void OnBnClickedAutoSetBackColorCheck();
+    afx_msg void OnBnClickedDisplayTextSettingButton();
 };
