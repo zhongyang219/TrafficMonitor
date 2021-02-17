@@ -670,7 +670,7 @@ void CTaskBarDlg::CalculateWindowSize()
                     index++;
                 }
             }
-            m_window_width += theApp.DPI(4) * ((m_item_widths.size() - 1) / 2 + 1);   //加上每个标签间的空隙
+            m_window_width += theApp.DPI(4) * ((item_count + 1) / 2 + 1);   //加上每个标签间的空隙
         }
     }
     else        //任务栏在桌面两侧时
@@ -697,13 +697,8 @@ void CTaskBarDlg::CalculateWindowSize()
     }
     else
     {
-        m_window_height = 0;
-        for (auto iter = m_item_widths.begin(); iter != m_item_widths.end(); ++iter)
-        {
-            if (theApp.m_cfg_data.m_tbar_display_item & iter->first)
-                m_window_height += (TASKBAR_WND_HEIGHT / 2);
-        }
-        m_window_height += (theApp.DPI(2) * (m_item_widths.size() - 1));   //加上每个标签间的空隙
+        m_window_height = TASKBAR_WND_HEIGHT / 2 * item_count;
+        m_window_height += (theApp.DPI(2) * item_count);   //加上每个标签间的空隙
     }
     m_rect.right = m_rect.left + m_window_width;
 	m_rect.bottom = m_rect.top + m_window_height;
