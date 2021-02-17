@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include <memory>
-#include <string>
 #include "OpenHardwareMonitorGlobal.h"
 
 namespace OpenHardwareMonitorApi
