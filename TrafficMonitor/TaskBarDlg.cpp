@@ -101,10 +101,9 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                         int width = max(iter->second.TotalWidth(), last_iter->second.TotalWidth());
                         item_rect.right = item_rect.left + width;
                         item_rect_up.right = item_rect_up.left + width;
-                        int label_width = max(iter->second.label_width, last_iter->second.label_width);
                         //绘制信息
-                        DrawDisplayItem(draw, last_iter->first, item_rect_up, label_width);
-                        DrawDisplayItem(draw, iter->first, item_rect, label_width);
+                        DrawDisplayItem(draw, last_iter->first, item_rect_up, last_iter->second.label_width);
+                        DrawDisplayItem(draw, iter->first, item_rect, iter->second.label_width);
                     }
                     //要绘制的项目为奇数时绘制最后一个
                     else if (item_count % 2 == 1 && index == item_count - 1)
