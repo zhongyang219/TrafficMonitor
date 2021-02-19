@@ -20,7 +20,7 @@ namespace OpenHardwareMonitorApi {
         virtual float MainboardTemperature() override;
 
     private:
-        float GetHardwareTemperature(IHardware^ hardware);
+        bool GetHardwareTemperature(IHardware^ hardware, float& temperature);
 
     private:
         float m_cpu_temperature{};
