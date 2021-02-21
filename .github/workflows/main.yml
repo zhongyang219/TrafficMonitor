@@ -24,7 +24,9 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: x64_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
-        path: Bin/x64/Release/TrafficMonitor.exe
+        path: |
+          Bin/x64/Release/TrafficMonitor.exe
+          Bin/x64/Release/*.dll
 
   x86_build:
     runs-on: windows-latest
@@ -49,7 +51,9 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: x86_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
-        path: Bin/Release/TrafficMonitor.exe
+        path: |
+          Bin/Release/TrafficMonitor.exe
+          Bin/Release/*.dll
 
   # winXP_build:
     # runs-on: windows-latest
