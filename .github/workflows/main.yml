@@ -21,7 +21,7 @@ jobs:
         utcOffset: "+08:00"
       
     - name : Upload artifact
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2
       with:
         name: x64_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
         path: |
@@ -48,7 +48,7 @@ jobs:
         utcOffset: "+08:00"
       
     - name : Upload artifact
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2
       with:
         name: x86_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
         path: |
