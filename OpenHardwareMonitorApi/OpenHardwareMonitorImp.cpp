@@ -3,6 +3,7 @@
 #include "stdafx.h"
 
 #include "OpenHardwareMonitorImp.h"
+#include <vector>
 
 namespace OpenHardwareMonitorApi
 {
@@ -45,15 +46,25 @@ namespace OpenHardwareMonitorApi
     bool COpenHardwareMonitor::GetHardwareTemperature(IHardware^ hardware, float& temperature)
     {
         temperature = 0;
+        std::vector<float> all_temperature;
         for (int i = 0; i < hardware->Sensors->Length; i++)
         {
             //找到温度传感器
             if (hardware->Sensors[i]->SensorType == SensorType::Temperature)
             {
-                temperature = Convert::ToDouble(hardware->Sensors[i]->Value);
-                return true;
+                float cur_temperture = Convert::ToDouble(hardware->Sensors[i]->Value);
+                all_temperature.push_back(cur_temperture);
             }
         }
+        if (!all_temperature.empty())
+        {
+            //如果有多个温度传感器，则取平均值
+            float sum{};
+            for (auto i : all_temperature)
+                sum += i;
+            temperature = sum / all_temperature.size();
+            return true;
+       }
         //如果没有找到温度传感器，则在SubHardware中寻找
         for (int i = 0; i < hardware->SubHardware->Length; i++)
         {
