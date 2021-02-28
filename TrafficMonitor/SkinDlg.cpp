@@ -109,9 +109,7 @@ BOOL CSkinDlg::OnInitDialog()
 	m_view->Create(NULL, NULL, WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL, CalculateViewRect(), this, 3000);
 	m_view->InitialUpdate();
 	m_view->SetSkinData(&m_skin_data);
-	//m_view->SetBackImage(&m_background_s, &m_background_l);
 	m_view->SetFont(m_pFont);
-	//m_view->IniFont();
 	m_view->ShowWindow(SW_SHOW);
 
 	//设置提示信息
