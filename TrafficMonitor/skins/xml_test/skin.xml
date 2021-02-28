@@ -1,31 +1,41 @@
-<root>
+﻿<root>
 	<skin>
-		<text_color>16768959,10022341,16777215,16777215</text_color>
+		<text_color>16768959,10022341,16777215,16777215,16770992,16770992,16770992,16770992</text_color>
 		<specify_each_item_color>1</specify_each_item_color>
 		<skin_author>zy</skin_author>
-		<font name="Segoe UI Semibold" size="10" style="0"/>
+		<font name="Microsoft YaHei" size="9" style="0"/>
 		<display_text>
-			<up></up>
-			<down></down>
-			<cpu></cpu>
-			<memory></memory>
+			<up>上传: </up>
+			<down>下载: </down>
+			<cpu>CPU: </cpu>
+			<memory>内存: </memory>
+			<cpu_temperature>CPU温度: </cpu_temperature>
+			<gpu_temperature>显卡温度: </gpu_temperature>
+			<hdd_temperature>硬盘温度: </hdd_temperature>
+			<main_board_temperature>主板温度: </main_board_temperature>
 		</display_text>
 	</skin>
-	<layout text_height="20" no_label="1">
-		<layout_l width="174" height="41">
-			<up x="97" y="1" width="72" align="1" show="1"/>
-			<down x="97" y="20" width="72" align="1" show="1"/>
-			<cpu_temperature x="0" y="20" width="42" align="2" show="1"/>
-			<gpu_temperature x="42" y="20" width="42" align="2" show="1"/>
+	<layout text_height="20" no_label="0">
+		<layout_l width="232" height="107">
+			<cpu x="14" y="3" width="106" align="0" show="1"/>
+			<memory x="120" y="3" width="106" align="0" show="1"/>
+			<up x="14" y="27" width="106" align="0" show="1"/>
+			<down x="120" y="27" width="106" align="0" show="1"/>
+			<cpu_temperature x="32" y="57" width="94" align="0" show="1"/>
+			<gpu_temperature x="32" y="83" width="94" align="0" show="1"/>
+			<hdd_temperature x="145" y="57" width="94" align="0" show="1"/>
+			<main_board_temperature x="145" y="83" width="94" align="0" show="1"/>
 		</layout_l>
-		<layout_s width="85" height="41">
-			<cpu x="0" y="20" width="42" align="2" show="1"/>
-			<memory x="42" y="20" width="42" align="2" show="1"/>
+		<layout_s width="232" height="50">
+			<cpu x="14" y="3" width="106" align="0" show="1"/>
+			<memory x="120" y="3" width="106" align="0" show="1"/>
+			<up x="14" y="27" width="106" align="0" show="1"/>
+			<down x="120" y="27" width="106" align="0" show="1"/>
 		</layout_s>
 
 	</layout>
-	<preview width="186" height="108">
-		<l x="0" y="55"/>
-		<s x="0" y="0"/>
+	<preview width="250" height="170">
+		<l x="0" y="0"/>
+		<s x="0" y="112"/>
 	</preview>
 </root>

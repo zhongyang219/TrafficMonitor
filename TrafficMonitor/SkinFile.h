@@ -99,8 +99,8 @@ public:
     static string GetDisplayItemXmlNodeName(DisplayItem display_item);
     
 private:
-    void LoadFromXml(const wstring& file_path);
-    void LoadFromIni(const wstring& file_path);
+    void LoadFromXml(const wstring& file_path);     //从xml文件读取皮肤数据
+    void LoadFromIni(const wstring& file_path);     //从ini文件读取皮肤数据（用于兼容旧版皮肤）
 
     void DrawInfo(CDC* pDC, bool show_more_info, CFont& font);
 
