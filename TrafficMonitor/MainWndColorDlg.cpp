@@ -1,4 +1,4 @@
-// MainWndColorDlg.cpp : ÊµÏÖÎÄ¼ş
+ï»¿// MainWndColorDlg.cpp : å®ç°æ–‡ä»¶
 //
 
 #include "stdafx.h"
@@ -8,7 +8,7 @@
 #include "CMFCColorDialogEx.h"
 
 
-// CMainWndColorDlg ¶Ô»°¿ò
+// CMainWndColorDlg å¯¹è¯æ¡†
 
 IMPLEMENT_DYNAMIC(CMainWndColorDlg, CDialog)
 
@@ -38,22 +38,23 @@ BEGIN_MESSAGE_MAP(CMainWndColorDlg, CDialog)
 END_MESSAGE_MAP()
 
 
-// CMainWndColorDlg ÏûÏ¢´¦Àí³ÌĞò
+// CMainWndColorDlg æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 
 BOOL CMainWndColorDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	// TODO:  ÔÚ´ËÌí¼Ó¶îÍâµÄ³õÊ¼»¯
-	for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
+	// TODO:  åœ¨æ­¤æ·»åŠ é¢å¤–çš„åˆå§‹åŒ–
+	//for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
+	for (int i{}; i < 4; i++)
 	{
 		m_statics[i].SetFillColor(m_colors[i]);
 		m_statics[i].SetLinkCursor();
 	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-				  // Òì³£: OCX ÊôĞÔÒ³Ó¦·µ»Ø FALSE
+				  // å¼‚å¸¸: OCX å±æ€§é¡µåº”è¿”å› FALSE
 }
 
 

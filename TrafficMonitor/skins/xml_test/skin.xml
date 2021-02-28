@@ -15,8 +15,8 @@
 		<layout_l width="174" height="41">
 			<up x="97" y="1" width="72" align="1" show="1"/>
 			<down x="97" y="20" width="72" align="1" show="1"/>
-			<cpu x="0" y="20" width="42" align="2" show="1"/>
-			<memory x="42" y="20" width="42" align="2" show="1"/>
+			<cpu_temperature x="0" y="20" width="42" align="2" show="1"/>
+			<gpu_temperature x="42" y="20" width="42" align="2" show="1"/>
 		</layout_l>
 		<layout_s width="85" height="41">
 			<cpu x="0" y="20" width="42" align="2" show="1"/>

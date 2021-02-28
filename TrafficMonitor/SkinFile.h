@@ -95,6 +95,8 @@ public:
 
     //绘制主界面（不勾选“显示更多信息”）
     void DrawInfoS(CDC* pDC, CFont& font);
+
+    static string GetDisplayItemXmlNodeName(DisplayItem display_item);
     
 private:
     void LoadFromXml(const wstring& file_path);

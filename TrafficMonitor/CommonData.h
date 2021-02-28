@@ -240,7 +240,7 @@ struct PublicSettingData
 	wstring double_click_exe;	//鼠标双击动作为打开指定应用程序时，打开的程序路径
 };
 
-#define MAIN_WND_COLOR_NUM 4		//主窗口颜色数量
+#define MAIN_WND_COLOR_NUM 8		//主窗口颜色数量
 //选项设置中“主窗口设置”的数据
 struct MainWndSettingData : public PublicSettingData
 {

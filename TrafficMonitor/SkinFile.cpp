@@ -36,14 +36,14 @@ static CSkinFile::Layout LayoutFromXmlNode(tinyxml2::XMLElement* ele)
     CTinyXml2Helper::IterateChildNode(ele, [&layout](tinyxml2::XMLElement* ele_layout_item)
     {
         string str_layout_item = CTinyXml2Helper::ElementName(ele_layout_item);
-        if (str_layout_item == "up")
-            layout.layout_items[TDI_UP] = LayoutItemFromXmlNode(ele_layout_item);
-        else if (str_layout_item == "down")
-            layout.layout_items[TDI_DOWN] = LayoutItemFromXmlNode(ele_layout_item);
-        else if (str_layout_item == "cpu")
-            layout.layout_items[TDI_CPU] = LayoutItemFromXmlNode(ele_layout_item);
-        else if (str_layout_item == "memory")
-            layout.layout_items[TDI_MEMORY] = LayoutItemFromXmlNode(ele_layout_item);
+        for (auto display_item : AllDisplayItems)
+        {
+            if (str_layout_item == CSkinFile::GetDisplayItemXmlNodeName(display_item))
+            {
+                layout.layout_items[display_item] = LayoutItemFromXmlNode(ele_layout_item);
+                break;
+            }
+        }
     });
     return layout;
 }
@@ -129,14 +129,14 @@ void CSkinFile::LoadFromXml(const wstring & file_path)
                         {
                             string item_name = CTinyXml2Helper::ElementName(display_text_item);
                             wstring item_text = CCommon::StrToUnicode(CTinyXml2Helper::ElementText(display_text_item), true);
-                            if (item_name == "up")
-                                m_skin_info.display_text.Get(TDI_UP) = item_text;
-                            else if (item_name == "down")
-                                m_skin_info.display_text.Get(TDI_DOWN) = item_text;
-                            else if (item_name == "cpu")
-                                m_skin_info.display_text.Get(TDI_CPU) = item_text;
-                            else if (item_name == "memory")
-                                m_skin_info.display_text.Get(TDI_MEMORY) = item_text;
+                            for (auto display_item : AllDisplayItems)
+                            {
+                                if (item_name == CSkinFile::GetDisplayItemXmlNodeName(display_item))
+                                {
+                                    m_skin_info.display_text.Get(display_item) = item_text;
+                                    break;
+                                }
+                            }
                         });
                     }
                 });
@@ -421,10 +421,10 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
         format_str = _T("%s%d ℃");
     else
         format_str = _T("%s%d℃");
-    map_str[TDI_CPU_TEMP].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_CPU_TEMP).c_str()), theApp.m_cpu_temperature);
-    map_str[TDI_GPU_TEMP].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_GPU_TEMP).c_str()), theApp.m_gpu_temperature);
-    map_str[TDI_HDD_TEMP].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_HDD_TEMP).c_str()), theApp.m_hdd_temperature);
-    map_str[TDI_MAIN_BOARD_TEMP].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_MAIN_BOARD_TEMP).c_str()), theApp.m_main_board_temperature);
+    map_str[TDI_CPU_TEMP].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_CPU_TEMP).c_str()), static_cast<int>(theApp.m_cpu_temperature));
+    map_str[TDI_GPU_TEMP].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_GPU_TEMP).c_str()), static_cast<int>(theApp.m_gpu_temperature));
+    map_str[TDI_HDD_TEMP].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_HDD_TEMP).c_str()), static_cast<int>(theApp.m_hdd_temperature));
+    map_str[TDI_MAIN_BOARD_TEMP].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_MAIN_BOARD_TEMP).c_str()), static_cast<int>(theApp.m_main_board_temperature));
 
     //获取文本颜色
     int text_colors[MAIN_WND_COLOR_NUM]{};
@@ -463,5 +463,39 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
             draw.DrawWindowText(rect, map_str[iter->first].GetString(), text_color, layout_item.align);
         }
         index++;
+    }
+}
+
+string CSkinFile::GetDisplayItemXmlNodeName(DisplayItem display_item)
+{
+    switch (display_item)
+    {
+    case TDI_UP:
+        return "up";
+        break;
+    case TDI_DOWN:
+        return "down";
+        break;
+    case TDI_CPU:
+        return "cpu";
+        break;
+    case TDI_MEMORY:
+        return "memory";
+        break;
+    case TDI_CPU_TEMP:
+        return "cpu_temperature";
+        break;
+    case TDI_GPU_TEMP:
+        return "gpu_temperature";
+        break;
+    case TDI_HDD_TEMP:
+        return "hdd_temperature";
+        break;
+    case TDI_MAIN_BOARD_TEMP:
+        return "main_board_temperature";
+        break;
+    default:
+        return string();
+        break;
     }
 }
