@@ -145,6 +145,15 @@
     <Filter Include="源文件和头文件\派生的控件类\ListCtrlEx">
       <UniqueIdentifier>{44872bda-27ce-407a-b5a7-fa9524bfb83c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\SkinFile">
+      <UniqueIdentifier>{f2a40ca2-c391-46a6-8508-b2f8c30c68a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\TinyXml2Helper">
+      <UniqueIdentifier>{ece2a796-fdd6-49e1-987e-11968b3f56a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\FilePathHelper">
+      <UniqueIdentifier>{2ee3ad9e-4dc0-4ca4-91b1-2c6225bebd63}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -309,6 +318,15 @@
     <ClInclude Include="ListCtrlEx.h">
       <Filter>源文件和头文件\派生的控件类\ListCtrlEx</Filter>
     </ClInclude>
+    <ClInclude Include="SkinFile.h">
+      <Filter>源文件和头文件\公共的类\SkinFile</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyXml2Helper.h">
+      <Filter>源文件和头文件\公共的类\TinyXml2Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="FilePathHelper.h">
+      <Filter>源文件和头文件\公共的类\FilePathHelper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -457,6 +475,15 @@
     </ClCompile>
     <ClCompile Include="ListCtrlEx.cpp">
       <Filter>源文件和头文件\派生的控件类\ListCtrlEx</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinFile.cpp">
+      <Filter>源文件和头文件\公共的类\SkinFile</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXml2Helper.cpp">
+      <Filter>源文件和头文件\公共的类\TinyXml2Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="FilePathHelper.cpp">
+      <Filter>源文件和头文件\公共的类\FilePathHelper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

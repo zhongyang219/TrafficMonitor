@@ -12,14 +12,106 @@ public:
 
 	static string UnicodeToStr(const wchar_t* wstr, bool utf8 = false);
 
-	static void StringNormalize(wstring& str);
+    template<class T>
+    static void StringNormalize(T& str)
+    {
+        if (str.empty()) return;
 
-    //将一个字符串分割成若干个字符串
+        int size = str.size();	//字符串的长度
+        if (size < 0) return;
+        int index1 = 0;		//字符串中第1个不是空格或控制字符的位置
+        int index2 = size - 1;	//字符串中最后一个不是空格或控制字符的位置
+        while (index1 < size && str[index1] >= 0 && str[index1] <= 32)
+            index1++;
+        while (index2 >= 0 && str[index2] >= 0 && str[index2] <= 32)
+            index2--;
+        if (index1 > index2)	//如果index1 > index2，说明字符串全是空格或控制字符
+            str.clear();
+        else if (index1 == 0 && index2 == size - 1)	//如果index1和index2的值分别为0和size - 1，说明字符串前后没有空格或控制字符，直接返回
+            return;
+        else
+            str = str.substr(index1, index2 - index1 + 1);
+    }
+
+    //将一个字符串分割成若干个字符（模板类型只能为string或wstring）
     //str: 原始字符串
     //div_ch: 用于分割的字符
     //result: 接收分割后的结果
-    static void StringSplit(const wstring& str, wchar_t div_ch, vector<wstring>& results, bool skip_empty = true, bool trim = true);
-    static void StringSplit(const wstring& str, const wstring& div_str, vector<wstring>& results, bool skip_empty = true, bool trim = true);
+    template<class T>
+    static void StringSplit(const T& str, wchar_t div_ch, vector<T>& results, bool skip_empty = true, bool trim = true)
+    {
+        results.clear();
+        size_t split_index = -1;
+        size_t last_split_index = -1;
+        while (true)
+        {
+            split_index = str.find(div_ch, split_index + 1);
+            T split_str = str.substr(last_split_index + 1, split_index - last_split_index - 1);
+            if (trim)
+                StringNormalize(split_str);
+            if (!split_str.empty() || !skip_empty)
+                results.push_back(split_str);
+            if (split_index == wstring::npos)
+                break;
+            last_split_index = split_index;
+        }
+    }
+    
+    template<class T>
+    static void StringSplit(const T& str, const T& div_str, vector<T>& results, bool skip_empty = true, bool trim = true)
+    {
+        results.clear();
+        size_t split_index = 0 - div_str.size();
+        size_t last_split_index = 0 - div_str.size();
+        while (true)
+        {
+            split_index = str.find(div_str, split_index + div_str.size());
+            T split_str = str.substr(last_split_index + div_str.size(), split_index - last_split_index - div_str.size());
+            if (trim)
+                StringNormalize(split_str);
+            if (!split_str.empty() || !skip_empty)
+                results.push_back(split_str);
+            if (split_index == wstring::npos)
+                break;
+            last_split_index = split_index;
+        }
+    }
+
+
+    template<class T>
+    static bool StringTransform(T & str, bool upper)
+    {
+        if (str.empty()) return false;
+        if (upper)
+        {
+            for (auto& ch : str)
+            {
+                {
+                    if (ch >= 'a'&&ch <= 'z')
+                        ch -= 32;
+                }
+            }
+        }
+        else
+        {
+            for (auto& ch : str)
+            {
+                if (ch >= 'A'&&ch <= 'Z')
+                    ch += 32;
+            }
+        }
+        return true;
+    }
+
+    //读取文件内容
+    static bool GetFileContent(const wchar_t* file_path, string& contents_buff, bool binary = true);
+
+    //读取文件内容
+    //file_path: 文件的路径
+    //length: 文件的长度
+    //binary: 是否以进制方式读取
+    //返回值: 读取成功返回读取到的文件内容的const char类型的指针，在使用完毕后这个指针需要自行使用delete释放。读取失败返回nullptr
+    static const char* GetFileContent(const wchar_t* file_path, size_t& length, bool binary = true);
 
 	/*根据数据的大小转换成以KB、MB、GB为单位的字符串
 	size：数据的字节数
@@ -162,5 +254,12 @@ public:
 
     //计算二进制中1的个数
     static int CountOneBits(unsigned int value);
+
+    //设置一个数字的某个bit位
+    static void SetNumberBit(unsigned int& num, int bit, bool value);
+
+    //获取一个数字的某个bit位
+    static bool GetNumberBit(unsigned int num, int bit);
+
 };
 

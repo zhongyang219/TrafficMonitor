@@ -1,58 +1,91 @@
-//·â×°µÄ»æÍ¼Àà
+ï»¿//å°è£…çš„ç»˜å›¾ç±»
 #pragma once
 #include "CommonData.h"
 class CDrawCommon
 {
 public:
 
-	//À­ÉìÄ£Ê½
+	//æ‹‰ä¼¸æ¨¡å¼
 	enum class StretchMode
 	{
-		STRETCH,		//À­Éì£¬»á¸Ä±ä±ÈÀý
-		FILL,			//Ìî³ä£¬²»¸Ä±ä±ÈÀý£¬»á²Ã¼ô³¤±ß
-		FIT			//ÊÊÓ¦£¬²»»á¸Ä±ä±ÈÀý£¬²»²Ã¼ô
+		STRETCH,		//æ‹‰ä¼¸ï¼Œä¼šæ”¹å˜æ¯”ä¾‹
+		FILL,			//å¡«å……ï¼Œä¸æ”¹å˜æ¯”ä¾‹ï¼Œä¼šè£å‰ªé•¿è¾¹
+		FIT			//é€‚åº”ï¼Œä¸ä¼šæ”¹å˜æ¯”ä¾‹ï¼Œä¸è£å‰ª
 	};
 
 	CDrawCommon();
 	~CDrawCommon();
 
 	void Create(CDC* pDC, CWnd* pMainWnd);
-	void SetFont(CFont* pfont);		//ÉèÖÃ»æÖÆÎÄ±¾µÄ×ÖÌå
-	void SetDC(CDC* pDC);		//ÉèÖÃ»æÍ¼µÄDC
+	void SetFont(CFont* pfont);		//è®¾ç½®ç»˜åˆ¶æ–‡æœ¬çš„å­—ä½“
+	void SetDC(CDC* pDC);		//è®¾ç½®ç»˜å›¾çš„DC
 	CDC* GetDC() { return m_pDC; }
 	void SetBackColor(COLORREF back_color) { m_back_color = back_color; }
 
-	void DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align = Alignment::LEFT, bool draw_back_ground = false, bool multi_line = false);	//ÔÚÖ¸¶¨µÄ¾ØÐÎÇøÓòÄÚ»æÖÆÎÄ±¾
+	void DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align = Alignment::LEFT, bool draw_back_ground = false, bool multi_line = false);	//åœ¨æŒ‡å®šçš„çŸ©å½¢åŒºåŸŸå†…ç»˜åˆ¶æ–‡æœ¬
 
-	void SetDrawRect(CRect rect);		//ÉèÖÃ»æÍ¼¼ô¼­ÇøÓò
+	void SetDrawRect(CRect rect);		//è®¾ç½®ç»˜å›¾å‰ªè¾‘åŒºåŸŸ
 	static void SetDrawRect(CDC* pDC, CRect rect);
 
-	//»æÖÆÒ»¸öÎ»Í¼
-	//£¨×¢Òâ£ºµ±stretch_modeÉèÖÃÎªStretchMode::FILL£¨Ìî³ä£©Ê±£¬»áÉèÖÃ»æÍ¼¼ô¼­ÇøÓò£¬Èç¹ûÖ®ºóÐèÒª»æÖÆÆäËûÍ¼ÐÎ£¬
-	//ÐèÒªÖØÐÂÉèÖÃ»æÍ¼¼ô¼­ÇøÓò£¬·ñÔòÍ¼Æ¬ÍâµÄÇøÓò»áÎÞ·¨»æÖÆ£©
+	//ç»˜åˆ¶ä¸€ä¸ªä½å›¾
+	//ï¼ˆæ³¨æ„ï¼šå½“stretch_modeè®¾ç½®ä¸ºStretchMode::FILLï¼ˆå¡«å……ï¼‰æ—¶ï¼Œä¼šè®¾ç½®ç»˜å›¾å‰ªè¾‘åŒºåŸŸï¼Œå¦‚æžœä¹‹åŽéœ€è¦ç»˜åˆ¶å…¶ä»–å›¾å½¢ï¼Œ
+	//éœ€è¦é‡æ–°è®¾ç½®ç»˜å›¾å‰ªè¾‘åŒºåŸŸï¼Œå¦åˆ™å›¾ç‰‡å¤–çš„åŒºåŸŸä¼šæ— æ³•ç»˜åˆ¶ï¼‰
 	void DrawBitmap(CBitmap& bitmap, CPoint start_point, CSize size, StretchMode stretch_mode = StretchMode::STRETCH);
 	void DrawBitmap(UINT bitmap_id, CPoint start_point, CSize size, StretchMode stretch_mode = StretchMode::STRETCH);
 	void DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode = StretchMode::STRETCH);
 
-	//½«Í¼Æ¬À­Éìµ½Ö¸¶¨³ß´ç(https://blog.csdn.net/sichuanpb/article/details/22986877)
+	//å°†å›¾ç‰‡æ‹‰ä¼¸åˆ°æŒ‡å®šå°ºå¯¸(https://blog.csdn.net/sichuanpb/article/details/22986877)
 	static void BitmapStretch(CImage *pImage, CImage *ResultImage, CSize size);
 
-	void FillRect(CRect rect, COLORREF color);		//ÓÃ´¿É«Ìî³ä¾ØÐÎ
-	void FillRectWithBackColor(CRect rect);			//Ê¹ÓÃ±³¾°É«Ìî³ä¾ØÐÎ
-	void DrawRectOutLine(CRect rect, COLORREF color, int width = 1, bool dot_line = false);	//»æÖÆ¾ØÐÎ±ß¿ò¡£Èç¹ûdot_lineÎªtrue£¬ÔòÎªÐéÏß
+	void FillRect(CRect rect, COLORREF color);		//ç”¨çº¯è‰²å¡«å……çŸ©å½¢
+	void FillRectWithBackColor(CRect rect);			//ä½¿ç”¨èƒŒæ™¯è‰²å¡«å……çŸ©å½¢
+	void DrawRectOutLine(CRect rect, COLORREF color, int width = 1, bool dot_line = false);	//ç»˜åˆ¶çŸ©å½¢è¾¹æ¡†ã€‚å¦‚æžœdot_lineä¸ºtrueï¼Œåˆ™ä¸ºè™šçº¿
 
-	//´ÓÍ¼Ïñ´´½¨ÇøÓò£¬Èç¹ûÏñËØµãµÄÁÁ¶ÈÐ¡ÓÚthreshold£¨È¡ÖµÎª0~255£¬0ÎªºÚÉ«£¬255Îª°×É«£©£¬Ôò¸ÃÏñËØµãÔÚÇøÓòÍâ
+	//ä»Žå›¾åƒåˆ›å»ºåŒºåŸŸï¼Œå¦‚æžœåƒç´ ç‚¹çš„äº®åº¦å°äºŽthresholdï¼ˆå–å€¼ä¸º0~255ï¼Œ0ä¸ºé»‘è‰²ï¼Œ255ä¸ºç™½è‰²ï¼‰ï¼Œåˆ™è¯¥åƒç´ ç‚¹åœ¨åŒºåŸŸå¤–
 	//https://blog.csdn.net/tajon1226/article/details/6589180
 	static void GetRegionFromImage(CRgn& rgn, CBitmap &cBitmap, int threshold);
 
-	void DrawLine(CPoint start_point, int height, COLORREF color);  //Ê¹ÓÃµ±Ç°»­±Ê»­Ïß
+	void DrawLine(CPoint start_point, int height, COLORREF color);  //ä½¿ç”¨å½“å‰ç”»ç¬”ç”»çº¿
 
 private:
-	CDC* m_pDC{};		//ÓÃÓÚ»æÍ¼µÄCDCÀàµÄÖ¸Õë
-	CWnd* m_pMainWnd{};	//»æÍ¼´°¿ÚµÄ¾ä±ú
+	CDC* m_pDC{};		//ç”¨äºŽç»˜å›¾çš„CDCç±»çš„æŒ‡é’ˆ
+	CWnd* m_pMainWnd{};	//ç»˜å›¾çª—å£çš„å¥æŸ„
 	CFont* m_pfont{};
 	COLORREF m_back_color{};
 
 	static int GetColorBritness(COLORREF color);
 };
 
+
+//ç”¨äºŽåŒç¼“å†²ç»˜å›¾çš„ç±»
+class CDrawDoubleBuffer
+{
+public:
+    CDrawDoubleBuffer(CDC* pDC, CRect rect)
+        : m_pDC(pDC), m_rect(rect)
+    {
+        m_memDC.CreateCompatibleDC(NULL);
+        m_memBitmap.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
+        m_pOldBit = m_memDC.SelectObject(&m_memBitmap);
+    }
+
+    ~CDrawDoubleBuffer()
+    {
+        m_pDC->BitBlt(m_rect.left, m_rect.top, m_rect.Width(), m_rect.Height(), &m_memDC, 0, 0, SRCCOPY);
+        m_memDC.SelectObject(m_pOldBit);
+        m_memBitmap.DeleteObject();
+        m_memDC.DeleteDC();
+    }
+
+    CDC* GetMemDC()
+    {
+        return &m_memDC;
+    }
+
+private:
+    CDC* m_pDC;
+    CDC m_memDC;
+    CBitmap m_memBitmap;
+    CBitmap* m_pOldBit;
+    CRect m_rect;
+};

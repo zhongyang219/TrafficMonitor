@@ -534,21 +534,7 @@ void CTaskBarDlg::SetTextFont()
 		m_font.DeleteObject();
 	}
 	//创建新的字体
-	m_font.CreateFont(
-		FONTSIZE_TO_LFHEIGHT(theApp.m_taskbar_data.font.size), // nHeight
-		0, // nWidth
-		0, // nEscapement
-		0, // nOrientation
-		(theApp.m_taskbar_data.font.bold ? FW_BOLD : FW_NORMAL), // nWeight
-		theApp.m_taskbar_data.font.italic, // bItalic
-		theApp.m_taskbar_data.font.underline, // bUnderline
-		theApp.m_taskbar_data.font.strike_out, // cStrikeOut
-		DEFAULT_CHARSET, // nCharSet
-		OUT_DEFAULT_PRECIS, // nOutPrecision
-		CLIP_DEFAULT_PRECIS, // nClipPrecision
-		DEFAULT_QUALITY, // nQuality
-		DEFAULT_PITCH | FF_SWISS, // nPitchAndFamily
-		theApp.m_taskbar_data.font.name);
+    theApp.m_taskbar_data.font.Create(m_font);
 }
 
 void CTaskBarDlg::ApplySettings()

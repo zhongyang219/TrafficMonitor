@@ -10,5 +10,6 @@ public:
 private:
     static void TestHttpQequest();
     static void TestGetLicense();
+    static void TestSkin();
 };
 

@@ -1,4 +1,4 @@
-// MainWndSettingsDlg.cpp : ÊµÏÖÎÄ¼ş
+ï»¿// MainWndSettingsDlg.cpp : å®ç°æ–‡ä»¶
 //
 
 #include "stdafx.h"
@@ -7,7 +7,7 @@
 #include "afxdialogex.h"
 #include "CMFCColorDialogEx.h"
 
-// CMainWndSettingsDlg ¶Ô»°¿ò
+// CMainWndSettingsDlg å¯¹è¯æ¡†
 
 IMPLEMENT_DYNAMIC(CMainWndSettingsDlg, CTabDlg)
 
@@ -105,16 +105,16 @@ BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CTabDlg)
 END_MESSAGE_MAP()
 
 
-// CMainWndSettingsDlg ÏûÏ¢´¦Àí³ÌĞò
+// CMainWndSettingsDlg æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 
 BOOL CMainWndSettingsDlg::OnInitDialog()
 {
 	CTabDlg::OnInitDialog();
 
-	// TODO:  ÔÚ´ËÌí¼Ó¶îÍâµÄ³õÊ¼»¯
+	// TODO:  åœ¨æ­¤æ·»åŠ é¢å¤–çš„åˆå§‹åŒ–
 
-	//³õÊ¼»¯¸÷¿Ø¼ş×´Ì¬
+	//åˆå§‹åŒ–å„æ§ä»¶çŠ¶æ€
 	SetDlgItemText(IDC_FONT_NAME_EDIT, m_data.font.name);
 	//wchar_t buff[16];
 	//swprintf_s(buff, L"%d", m_data.font_size);
@@ -184,18 +184,18 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
     EnableControl();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-				  // Òì³£: OCX ÊôĞÔÒ³Ó¦·µ»Ø FALSE
+				  // å¼‚å¸¸: OCX å±æ€§é¡µåº”è¿”å› FALSE
 }
 
 
 void CMainWndSettingsDlg::OnEnChangeUploadEdit()
 {
-	// TODO:  Èç¹û¸Ã¿Ø¼şÊÇ RICHEDIT ¿Ø¼ş£¬Ëü½«²»
-	// ·¢ËÍ´ËÍ¨Öª£¬³ı·ÇÖØĞ´ CTabDlg::OnInitDialog()
-	// º¯Êı²¢µ÷ÓÃ CRichEditCtrl().SetEventMask()£¬
-	// Í¬Ê±½« ENM_CHANGE ±êÖ¾¡°»ò¡±ÔËËãµ½ÑÚÂëÖĞ¡£
+	// TODO:  å¦‚æœè¯¥æ§ä»¶æ˜¯ RICHEDIT æ§ä»¶ï¼Œå®ƒå°†ä¸
+	// å‘é€æ­¤é€šçŸ¥ï¼Œé™¤éé‡å†™ CTabDlg::OnInitDialog()
+	// å‡½æ•°å¹¶è°ƒç”¨ CRichEditCtrl().SetEventMask()ï¼Œ
+	// åŒæ—¶å°† ENM_CHANGE æ ‡å¿—â€œæˆ–â€è¿ç®—åˆ°æ©ç ä¸­ã€‚
 
-	// TODO:  ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO:  åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	CString tmp;
 	GetDlgItemText(IDC_UPLOAD_EDIT, tmp);
 	m_data.disp_str.Get(TDI_UP) = tmp;
@@ -204,12 +204,12 @@ void CMainWndSettingsDlg::OnEnChangeUploadEdit()
 
 void CMainWndSettingsDlg::OnEnChangeDownloadEdit()
 {
-	// TODO:  Èç¹û¸Ã¿Ø¼şÊÇ RICHEDIT ¿Ø¼ş£¬Ëü½«²»
-	// ·¢ËÍ´ËÍ¨Öª£¬³ı·ÇÖØĞ´ CTabDlg::OnInitDialog()
-	// º¯Êı²¢µ÷ÓÃ CRichEditCtrl().SetEventMask()£¬
-	// Í¬Ê±½« ENM_CHANGE ±êÖ¾¡°»ò¡±ÔËËãµ½ÑÚÂëÖĞ¡£
+	// TODO:  å¦‚æœè¯¥æ§ä»¶æ˜¯ RICHEDIT æ§ä»¶ï¼Œå®ƒå°†ä¸
+	// å‘é€æ­¤é€šçŸ¥ï¼Œé™¤éé‡å†™ CTabDlg::OnInitDialog()
+	// å‡½æ•°å¹¶è°ƒç”¨ CRichEditCtrl().SetEventMask()ï¼Œ
+	// åŒæ—¶å°† ENM_CHANGE æ ‡å¿—â€œæˆ–â€è¿ç®—åˆ°æ©ç ä¸­ã€‚
 
-	// TODO:  ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO:  åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	CString tmp;
 	GetDlgItemText(IDC_DOWNLOAD_EDIT, tmp);
 	m_data.disp_str.Get(TDI_DOWN) = tmp;
@@ -218,12 +218,12 @@ void CMainWndSettingsDlg::OnEnChangeDownloadEdit()
 
 void CMainWndSettingsDlg::OnEnChangeCpuEdit()
 {
-	// TODO:  Èç¹û¸Ã¿Ø¼şÊÇ RICHEDIT ¿Ø¼ş£¬Ëü½«²»
-	// ·¢ËÍ´ËÍ¨Öª£¬³ı·ÇÖØĞ´ CTabDlg::OnInitDialog()
-	// º¯Êı²¢µ÷ÓÃ CRichEditCtrl().SetEventMask()£¬
-	// Í¬Ê±½« ENM_CHANGE ±êÖ¾¡°»ò¡±ÔËËãµ½ÑÚÂëÖĞ¡£
+	// TODO:  å¦‚æœè¯¥æ§ä»¶æ˜¯ RICHEDIT æ§ä»¶ï¼Œå®ƒå°†ä¸
+	// å‘é€æ­¤é€šçŸ¥ï¼Œé™¤éé‡å†™ CTabDlg::OnInitDialog()
+	// å‡½æ•°å¹¶è°ƒç”¨ CRichEditCtrl().SetEventMask()ï¼Œ
+	// åŒæ—¶å°† ENM_CHANGE æ ‡å¿—â€œæˆ–â€è¿ç®—åˆ°æ©ç ä¸­ã€‚
 
-	// TODO:  ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO:  åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	CString tmp;
 	GetDlgItemText(IDC_CPU_EDIT, tmp);
 	m_data.disp_str.Get(TDI_CPU) = tmp;
@@ -232,12 +232,12 @@ void CMainWndSettingsDlg::OnEnChangeCpuEdit()
 
 void CMainWndSettingsDlg::OnEnChangeMemoryEdit()
 {
-	// TODO:  Èç¹û¸Ã¿Ø¼şÊÇ RICHEDIT ¿Ø¼ş£¬Ëü½«²»
-	// ·¢ËÍ´ËÍ¨Öª£¬³ı·ÇÖØĞ´ CTabDlg::OnInitDialog()
-	// º¯Êı²¢µ÷ÓÃ CRichEditCtrl().SetEventMask()£¬
-	// Í¬Ê±½« ENM_CHANGE ±êÖ¾¡°»ò¡±ÔËËãµ½ÑÚÂëÖĞ¡£
+	// TODO:  å¦‚æœè¯¥æ§ä»¶æ˜¯ RICHEDIT æ§ä»¶ï¼Œå®ƒå°†ä¸
+	// å‘é€æ­¤é€šçŸ¥ï¼Œé™¤éé‡å†™ CTabDlg::OnInitDialog()
+	// å‡½æ•°å¹¶è°ƒç”¨ CRichEditCtrl().SetEventMask()ï¼Œ
+	// åŒæ—¶å°† ENM_CHANGE æ ‡å¿—â€œæˆ–â€è¿ç®—åˆ°æ©ç ä¸­ã€‚
 
-	// TODO:  ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO:  åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	CString tmp;
 	GetDlgItemText(IDC_MEMORY_EDIT, tmp);
 	m_data.disp_str.Get(TDI_MEMORY) = tmp;
@@ -246,7 +246,7 @@ void CMainWndSettingsDlg::OnEnChangeMemoryEdit()
 
 void CMainWndSettingsDlg::OnBnClickedSetDefaultButton()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	m_data.disp_str.Get(TDI_UP) = CCommon::LoadText(IDS_UPLOAD_DISP, _T(": "));
 	m_data.disp_str.Get(TDI_DOWN) = CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": "));
 	m_data.disp_str.Get(TDI_CPU) = L"CPU: ";
@@ -260,9 +260,9 @@ void CMainWndSettingsDlg::OnBnClickedSetDefaultButton()
 
 void CMainWndSettingsDlg::OnBnClickedSetFontButton()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	LOGFONT lf{};
-	lf.lfHeight = FONTSIZE_TO_LFHEIGHT(m_data.font.size);
+	lf.lfHeight = FontSizeToLfHeight(m_data.font.size);
 	lf.lfWeight = (m_data.font.bold ? FW_BOLD : FW_NORMAL);
 	lf.lfItalic = m_data.font.italic;
 	lf.lfUnderline = m_data.font.underline;
@@ -271,17 +271,17 @@ void CMainWndSettingsDlg::OnBnClickedSetFontButton()
 	//wcsncpy_s(lf.lfFaceName, m_data.font.name.GetString(), 32);
 	CCommon::WStringCopy(lf.lfFaceName, 32, m_data.font.name.GetString());
 	CCommon::NormalizeFont(lf);
-	CFontDialog fontDlg(&lf);	//¹¹Ôì×ÖÌå¶Ô»°¿ò£¬³õÊ¼Ñ¡Ôñ×ÖÌåÎªÖ®Ç°×ÖÌå
-	if (IDOK == fontDlg.DoModal())     // ÏÔÊ¾×ÖÌå¶Ô»°¿ò
+	CFontDialog fontDlg(&lf);	//æ„é€ å­—ä½“å¯¹è¯æ¡†ï¼Œåˆå§‹é€‰æ‹©å­—ä½“ä¸ºä¹‹å‰å­—ä½“
+	if (IDOK == fontDlg.DoModal())     // æ˜¾ç¤ºå­—ä½“å¯¹è¯æ¡†
 	{
-		//»ñÈ¡×ÖÌåĞÅÏ¢
+		//è·å–å­—ä½“ä¿¡æ¯
 		m_data.font.name = fontDlg.GetFaceName();
 		m_data.font.size = fontDlg.GetSize() / 10;
 		m_data.font.bold = (fontDlg.IsBold() != FALSE);
 		m_data.font.italic = (fontDlg.IsItalic() != FALSE);
 		m_data.font.underline = (fontDlg.IsUnderline() != FALSE);
 		m_data.font.strike_out = (fontDlg.IsStrikeOut() != FALSE);
-		//½«×ÖÌåĞÅÏ¢ÏÔÊ¾³öÀ´
+		//å°†å­—ä½“ä¿¡æ¯æ˜¾ç¤ºå‡ºæ¥
 		SetDlgItemText(IDC_FONT_NAME_EDIT, m_data.font.name);
 		wchar_t buff[16];
 		swprintf_s(buff, L"%d", m_data.font.size);
@@ -292,28 +292,28 @@ void CMainWndSettingsDlg::OnBnClickedSetFontButton()
 
 void CMainWndSettingsDlg::OnBnClickedSwitchUpDownCheck()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	m_data.swap_up_down = (((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK))->GetCheck() != 0);
 }
 
 
 void CMainWndSettingsDlg::OnBnClickedFullscreenHideCheck()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	m_data.hide_main_wnd_when_fullscreen = (((CButton*)GetDlgItem(IDC_FULLSCREEN_HIDE_CHECK))->GetCheck() != 0);
 }
 
 
 void CMainWndSettingsDlg::OnBnClickedSpeedShortModeCheck2()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	m_data.speed_short_mode = (((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK2))->GetCheck() != 0);
 }
 
 
 void CMainWndSettingsDlg::OnCbnSelchangeUnitCombo()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	m_data.speed_unit = static_cast<SpeedUnit>(m_unit_combo.GetCurSel());
 	if (m_data.speed_unit == SpeedUnit::AUTO)
 	{
@@ -330,14 +330,14 @@ void CMainWndSettingsDlg::OnCbnSelchangeUnitCombo()
 
 void CMainWndSettingsDlg::OnBnClickedHideUnitCheck()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	m_data.hide_unit = (m_hide_unit_chk.GetCheck() != 0);
 }
 
 
 BOOL CMainWndSettingsDlg::PreTranslateMessage(MSG* pMsg)
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
 	if (pMsg->message == WM_MOUSEMOVE)
 		m_toolTip.RelayEvent(pMsg);
 
@@ -347,8 +347,8 @@ BOOL CMainWndSettingsDlg::PreTranslateMessage(MSG* pMsg)
 
 void CMainWndSettingsDlg::OnOK()
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
-	//»ñÈ¡×ÖÌåÉèÖÃ
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
+	//è·å–å­—ä½“è®¾ç½®
 	int font_size;
 	font_size = m_font_size_edit.GetValue();
 	if (font_size > MAX_FONT_SIZE || font_size < MIN_FONT_SIZE)
@@ -369,7 +369,7 @@ void CMainWndSettingsDlg::OnOK()
 
 void CMainWndSettingsDlg::OnBnClickedHidePercentageCheck()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	m_data.hide_percent = (((CButton*)GetDlgItem(IDC_HIDE_PERCENTAGE_CHECK))->GetCheck() != 0);
 }
 
@@ -380,7 +380,7 @@ afx_msg LRESULT CMainWndSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 	{
 	case IDC_TEXT_COLOR_STATIC:
 	{
-		//ÉèÖÃÎÄ±¾ÑÕÉ«
+		//è®¾ç½®æ–‡æœ¬é¢œè‰²
 		if (m_data.specify_each_item_color)
 		{
 			CMainWndColorDlg colorDlg(m_data.text_colors);
@@ -411,7 +411,7 @@ afx_msg LRESULT CMainWndSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 
 void CMainWndSettingsDlg::OnBnClickedSpecifyEachItemColorCheck()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	m_data.specify_each_item_color = (((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->GetCheck() != 0);
 	DrawStaticColor();
 }
@@ -419,7 +419,7 @@ void CMainWndSettingsDlg::OnBnClickedSpecifyEachItemColorCheck()
 
 void CMainWndSettingsDlg::OnCbnSelchangeDoubleClickCombo()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	m_data.double_click_action = static_cast<DoubleClickAction>(m_double_click_combo.GetCurSel());
     EnableControl();
 }
@@ -427,14 +427,14 @@ void CMainWndSettingsDlg::OnCbnSelchangeDoubleClickCombo()
 
 void CMainWndSettingsDlg::OnBnClickedSeparateValueUnitCheck()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	m_data.separate_value_unit_with_space = (((CButton*)GetDlgItem(IDC_SEPARATE_VALUE_UNIT_CHECK))->GetCheck() != 0);
 }
 
 
 void CMainWndSettingsDlg::OnBnClickedUnitByteRadio()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	m_data.unit_byte = true;
 	IniUnitCombo();
 }
@@ -442,7 +442,7 @@ void CMainWndSettingsDlg::OnBnClickedUnitByteRadio()
 
 void CMainWndSettingsDlg::OnBnClickedUnitBitRadio()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	m_data.unit_byte = false;
 	IniUnitCombo();
 }
@@ -450,14 +450,14 @@ void CMainWndSettingsDlg::OnBnClickedUnitBitRadio()
 
 void CMainWndSettingsDlg::OnBnClickedShowToolTipChk()
 {
-    // TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
     m_data.show_tool_tip = (((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->GetCheck() != 0);
 }
 
 
 void CMainWndSettingsDlg::OnBnClickedBrowseButton()
 {
-    // TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
     CString szFilter = CCommon::LoadText(IDS_EXE_FILTER);
     CFileDialog fileDlg(TRUE, NULL, NULL, 0, szFilter, this);
     if (IDOK == fileDlg.DoModal())

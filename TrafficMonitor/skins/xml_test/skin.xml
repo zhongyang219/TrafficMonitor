@@ -1,0 +1,31 @@
+<root>
+	<skin>
+		<text_color>16768959,10022341,16777215,16777215</text_color>
+		<specify_each_item_color>1</specify_each_item_color>
+		<skin_author>zy</skin_author>
+		<font name="Segoe UI Semibold" size="10" style="0"/>
+		<display_text>
+			<up></up>
+			<down></down>
+			<cpu></cpu>
+			<memory></memory>
+		</display_text>
+	</skin>
+	<layout text_height="20" no_label="1">
+		<layout_l width="174" height="41">
+			<up x="97" y="1" width="72" align="1" show="1"/>
+			<down x="97" y="20" width="72" align="1" show="1"/>
+			<cpu x="0" y="20" width="42" align="2" show="1"/>
+			<memory x="42" y="20" width="42" align="2" show="1"/>
+		</layout_l>
+		<layout_s width="85" height="41">
+			<cpu x="0" y="20" width="42" align="2" show="1"/>
+			<memory x="42" y="20" width="42" align="2" show="1"/>
+		</layout_s>
+
+	</layout>
+	<preview width="186" height="108">
+		<l x="0" y="55"/>
+		<s x="0" y="0"/>
+	</preview>
+</root>

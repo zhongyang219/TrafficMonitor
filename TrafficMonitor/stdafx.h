@@ -1,37 +1,37 @@
-
-// stdafx.h : ±ê×¼ÏµÍ³°üº¬ÎÄ¼şµÄ°üº¬ÎÄ¼ş£¬
-// »òÊÇ¾­³£Ê¹ÓÃµ«²»³£¸ü¸ÄµÄ
-// ÌØ¶¨ÓÚÏîÄ¿µÄ°üº¬ÎÄ¼ş
+ï»¿
+// stdafx.h : æ ‡å‡†ç³»ç»ŸåŒ…å«æ–‡ä»¶çš„åŒ…å«æ–‡ä»¶ï¼Œ
+// æˆ–æ˜¯ç»å¸¸ä½¿ç”¨ä½†ä¸å¸¸æ›´æ”¹çš„
+// ç‰¹å®šäºé¡¹ç›®çš„åŒ…å«æ–‡ä»¶
 
 #pragma once
 
 #ifndef VC_EXTRALEAN
-#define VC_EXTRALEAN            // ´Ó Windows Í·ÖĞÅÅ³ı¼«ÉÙÊ¹ÓÃµÄ×ÊÁÏ
+#define VC_EXTRALEAN            // ä» Windows å¤´ä¸­æ’é™¤æå°‘ä½¿ç”¨çš„èµ„æ–™
 #endif
 
 #include "targetver.h"
 
-#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS      // Ä³Ğ© CString ¹¹Ôìº¯Êı½«ÊÇÏÔÊ½µÄ
+#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS      // æŸäº› CString æ„é€ å‡½æ•°å°†æ˜¯æ˜¾å¼çš„
 
-// ¹Ø±Õ MFC ¶ÔÄ³Ğ©³£¼ûµ«¾­³£¿É·ÅĞÄºöÂÔµÄ¾¯¸æÏûÏ¢µÄÒş²Ø
+// å…³é—­ MFC å¯¹æŸäº›å¸¸è§ä½†ç»å¸¸å¯æ”¾å¿ƒå¿½ç•¥çš„è­¦å‘Šæ¶ˆæ¯çš„éšè—
 #define _AFX_ALL_WARNINGS
 
-#include <afxwin.h>         // MFC ºËĞÄ×é¼şºÍ±ê×¼×é¼ş
-#include <afxext.h>         // MFC À©Õ¹
+#include <afxwin.h>         // MFC æ ¸å¿ƒç»„ä»¶å’Œæ ‡å‡†ç»„ä»¶
+#include <afxext.h>         // MFC æ‰©å±•
 
 
-#include <afxdisp.h>        // MFC ×Ô¶¯»¯Àà
+#include <afxdisp.h>        // MFC è‡ªåŠ¨åŒ–ç±»
 
 
 
 #ifndef _AFX_NO_OLE_SUPPORT
-#include <afxdtctl.h>           // MFC ¶Ô Internet Explorer 4 ¹«¹²¿Ø¼şµÄÖ§³Ö
+#include <afxdtctl.h>           // MFC å¯¹ Internet Explorer 4 å…¬å…±æ§ä»¶çš„æ”¯æŒ
 #endif
 #ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>             // MFC ¶Ô Windows ¹«¹²¿Ø¼şµÄÖ§³Ö
+#include <afxcmn.h>             // MFC å¯¹ Windows å…¬å…±æ§ä»¶çš„æ”¯æŒ
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
-#include <afxcontrolbars.h>     // ¹¦ÄÜÇøºÍ¿Ø¼şÌõµÄ MFC Ö§³Ö
+#include <afxcontrolbars.h>     // åŠŸèƒ½åŒºå’Œæ§ä»¶æ¡çš„ MFC æ”¯æŒ
 
 #include "resource.h"
 #include <string>
@@ -46,10 +46,11 @@ using std::deque;
 using std::ifstream;
 using std::ofstream;
 #include <map>
+#include <set>
 #include<io.h>
 #include<algorithm>
 #include <cmath>
-#include <afxinet.h>	//ÓÃÓÚÖ§³ÖÊ¹ÓÃÍøÂçÏà¹ØµÄÀà
+#include <afxinet.h>	//ç”¨äºæ”¯æŒä½¿ç”¨ç½‘ç»œç›¸å…³çš„ç±»
 #include <afxwin.h>
 
 
@@ -70,22 +71,22 @@ using std::ofstream;
 //#define CONFIG_PATHA ".\\config.ini"
 //#define LOG_PATH _T(".\\error.log")
 //#define HISTORY_TRAFFIC_PATH _T(".\\history_traffic.dat")
-#define MAX_RESTART_CNT 10		//×î´óÖØĞÂ³õÊ¼»¯´ÎÊı
+#define MAX_RESTART_CNT 10		//æœ€å¤§é‡æ–°åˆå§‹åŒ–æ¬¡æ•°
 
-#define MAIN_TIMER 1234			//Ö÷¶¨Ê±Æ÷µÄID
-#define DELAY_TIMER 1235		//ÑÓÊ±¶¨Ê±Æ÷ID
+#define MAIN_TIMER 1234			//ä¸»å®šæ—¶å™¨çš„ID
+#define DELAY_TIMER 1235		//å»¶æ—¶å®šæ—¶å™¨ID
 #define TASKBAR_TIMER 1236
 #define CONNECTION_DETAIL_TIMER 1237
 #define MONITOR_TIMER 1238
 
-#define MAX_INSERT_TO_TASKBAR_CNT 5		//³¢ÊÔÇ¶ÈëÈÎÎñÀ¸µÄ×î´ó´ÎÊı
+#define MAX_INSERT_TO_TASKBAR_CNT 5		//å°è¯•åµŒå…¥ä»»åŠ¡æ çš„æœ€å¤§æ¬¡æ•°
 
 #define VERSION L"1.79.1"
 #define COMPILE_DATE L"2020/08/05"
 
-#define MAX_NOTIFY_ICON 6		//¿ÉÑ¡µÄÍ¨ÖªÇøÍ¼±êÊıÁ¿
+#define MAX_NOTIFY_ICON 6		//å¯é€‰çš„é€šçŸ¥åŒºå›¾æ ‡æ•°é‡
 
-//±³¾°Í¼Æ¬µÄÎÄ¼şÃû
+//èƒŒæ™¯å›¾ç‰‡çš„æ–‡ä»¶å
 #define BACKGROUND_IMAGE_S L"\\background.bmp"
 #define BACKGROUND_IMAGE_L L"\\background_l.bmp"
 #define BACKGROUND_MASK_S L"\\background_mask.bmp"
@@ -103,9 +104,9 @@ using std::ofstream;
     } \
 } while (false)
 
-//¶¨ÒåÁ½¸öÓÃÓÚ×÷ÎªÈÎÎñÀ¸Í¸Ã÷É«µÄÑÕÉ«£¨µ±ĞèÒªÉèÖÃÈÎÎñÀ¸´°¿Ú²»Í¸Ã÷Ê±Ê¹ÓÃ£©
+//å®šä¹‰ä¸¤ä¸ªç”¨äºä½œä¸ºä»»åŠ¡æ é€æ˜è‰²çš„é¢œè‰²ï¼ˆå½“éœ€è¦è®¾ç½®ä»»åŠ¡æ çª—å£ä¸é€æ˜æ—¶ä½¿ç”¨ï¼‰
 #define TASKBAR_TRANSPARENT_COLOR1 RGB(52, 28, 41)
 #define TASKBAR_TRANSPARENT_COLOR2 RGB(38, 67, 55)
 
-//Èç¹ûĞèÒªÎªWindows XPÏµÍ³±àÒë£¬ÇëÈ¥µôÏÂÃæÒ»ĞĞ´úÂëµÄ×¢ÊÍ
+//å¦‚æœéœ€è¦ä¸ºWindows XPç³»ç»Ÿç¼–è¯‘ï¼Œè¯·å»æ‰ä¸‹é¢ä¸€è¡Œä»£ç çš„æ³¨é‡Š
 //#define COMPILE_FOR_WINXP

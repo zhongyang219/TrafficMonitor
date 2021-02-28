@@ -1,6 +1,7 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Test.h"
 #include "Common.h"
+#include "SkinFile.h"
 
 CTest::CTest()
 {
@@ -14,6 +15,7 @@ void CTest::Test()
 {
     //TestHttpQequest();
     //TestGetLicense();
+    //TestSkin();
 }
 
 void CTest::TestHttpQequest()
@@ -36,4 +38,12 @@ void CTest::TestGetLicense()
             int a = 0;
         }
     }
+}
+
+void CTest::TestSkin()
+{
+    CSkinFile skin;
+    //skin.Load(L"C:\\Users\\zhong\\OneDrive\\文档\\TrafficMonitorSkin.xml");
+    skin.Load(L"D:\\Projects\\GitHub Project\\TrafficMonitor\\TrafficMonitor\\skins\\0默认皮肤\\skin.ini");
+    int a = 0;
 }

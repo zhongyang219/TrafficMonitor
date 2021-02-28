@@ -38,62 +38,42 @@ string CCommon::UnicodeToStr(const wchar_t * wstr, bool utf8)
 	return result;
 }
 
-void CCommon::StringNormalize(wstring & str)
+bool CCommon::GetFileContent(const wchar_t* file_path, string& contents_buff, bool binary /*= true*/)
 {
-	if (str.empty()) return;
+    std::ifstream file{ file_path, (binary ? std::ios::binary : std::ios::in) };
+    if (file.fail())
+        return false;
+    //获取文件长度
+    file.seekg(0, file.end);
+    size_t length = file.tellg();
+    file.seekg(0, file.beg);
 
-	int size = str.size();	//字符串的长度
-	if (size < 0) return;
-	int index1 = 0;		//字符串中第1个不是空格或控制字符的位置
-	int index2 = size - 1;	//字符串中最后一个不是空格或控制字符的位置
-	while (index1 < size && str[index1] >= 0 && str[index1] <= 32)
-		index1++;
-	while (index2 >= 0 && str[index2] >= 0 && str[index2] <= 32)
-		index2--;
-	if (index1 > index2)	//如果index1 > index2，说明字符串全是空格或控制字符
-		str.clear();
-	else if (index1 == 0 && index2 == size - 1)	//如果index1和index2的值分别为0和size - 1，说明字符串前后没有空格或控制字符，直接返回
-		return;
-	else
-		str = str.substr(index1, index2 - index1 + 1);
+    char* buff = new char[length];
+    file.read(buff, length);
+    file.close();
+
+    contents_buff.assign(buff, length);
+    delete[] buff;
+
+    return true;
 }
 
-void CCommon::StringSplit(const wstring & str, wchar_t div_ch, vector<wstring>& results, bool skip_empty, bool trim)
+const char* CCommon::GetFileContent(const wchar_t* file_path, size_t& length, bool binary /*= true*/)
 {
-    results.clear();
-    size_t split_index = -1;
-    size_t last_split_index = -1;
-    while (true)
-    {
-        split_index = str.find(div_ch, split_index + 1);
-        wstring split_str = str.substr(last_split_index + 1, split_index - last_split_index - 1);
-        if (trim)
-            StringNormalize(split_str);
-        if (!split_str.empty() || !skip_empty)
-            results.push_back(split_str);
-        if (split_index == wstring::npos)
-            break;
-        last_split_index = split_index;
-    }
-}
+    std::ifstream file{ file_path, (binary ? std::ios::binary : std::ios::in) };
+    length = 0;
+    if (file.fail())
+        return nullptr;
+    //获取文件长度
+    file.seekg(0, file.end);
+    length = file.tellg();
+    file.seekg(0, file.beg);
 
-void CCommon::StringSplit(const wstring& str, const wstring& div_str, vector<wstring>& results, bool skip_empty /*= true*/, bool trim)
-{
-    results.clear();
-    size_t split_index = 0 - div_str.size();
-    size_t last_split_index = 0 - div_str.size();
-    while (true)
-    {
-        split_index = str.find(div_str, split_index + div_str.size());
-        wstring split_str = str.substr(last_split_index + div_str.size(), split_index - last_split_index - div_str.size());
-        if (trim)
-            StringNormalize(split_str);
-        if (!split_str.empty() || !skip_empty)
-            results.push_back(split_str);
-        if (split_index == wstring::npos)
-            break;
-        last_split_index = split_index;
-    }
+    char* buff = new char[length];
+    file.read(buff, length);
+    file.close();
+
+    return buff;
 }
 
 CString CCommon::DataSizeToString(unsigned int size, const PublicSettingData& cfg)
@@ -991,4 +971,21 @@ int CCommon::CountOneBits(unsigned int value)
         value = value >> 1;
     }
     return count;
+}
+
+void CCommon::SetNumberBit(unsigned int & num, int bit, bool value)
+{
+    if (value)
+    {
+        num |= (1 << bit);
+    }
+    else
+    {
+        num &= ~(1 << bit);
+    }
+}
+
+bool CCommon::GetNumberBit(unsigned int num, int bit)
+{
+    return (num & (1 << bit)) != 0;
 }

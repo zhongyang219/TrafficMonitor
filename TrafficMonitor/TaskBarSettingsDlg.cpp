@@ -287,7 +287,7 @@ void CTaskBarSettingsDlg::OnBnClickedSetFontButton1()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	LOGFONT lf{};
-	lf.lfHeight = FONTSIZE_TO_LFHEIGHT(m_data.font.size);
+	lf.lfHeight = FontSizeToLfHeight(m_data.font.size);
 	lf.lfWeight = (m_data.font.bold ? FW_BOLD : FW_NORMAL);
 	lf.lfItalic = m_data.font.italic;
 	lf.lfUnderline = m_data.font.underline;

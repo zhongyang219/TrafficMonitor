@@ -1,5 +1,5 @@
-
-// TrafficMonitorDlg.h : Í·ÎÄ¼ş
+ï»¿
+// TrafficMonitorDlg.h : å¤´æ–‡ä»¶
 //
 
 #pragma once
@@ -23,111 +23,103 @@
 #include "CPUUsage.h"
 #include "HistoryTrafficFile.h"
 
-// CTrafficMonitorDlg ¶Ô»°¿ò
-class CTrafficMonitorDlg : public CDialogEx
+// CTrafficMonitorDlg å¯¹è¯æ¡†
+class CTrafficMonitorDlg : public CDialog
 {
-// ¹¹Ôì
+// æ„é€ 
 public:
-	CTrafficMonitorDlg(CWnd* pParent = NULL);	// ±ê×¼¹¹Ôìº¯Êı
+	CTrafficMonitorDlg(CWnd* pParent = NULL);	// æ ‡å‡†æ„é€ å‡½æ•°
 	~CTrafficMonitorDlg();
 
-// ¶Ô»°¿òÊı¾İ
+// å¯¹è¯æ¡†æ•°æ®
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_TRAFFICMONITOR_DIALOG };
 #endif
 
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV Ö§³Ö
+	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV æ”¯æŒ
 
 
-// ÊµÏÖ
+// å®ç°
 protected:
 	HICON m_hIcon;
-	NOTIFYICONDATA m_ntIcon;	//Í¨ÖªÇøÓòÍ¼±ê
-	CTaskBarDlg* m_tBarDlg;		//ÈÎÎñÀ¸´°¿ÚµÄÖ¸Õë
+	NOTIFYICONDATA m_ntIcon;	//é€šçŸ¥åŒºåŸŸå›¾æ ‡
+	CTaskBarDlg* m_tBarDlg;		//ä»»åŠ¡æ çª—å£çš„æŒ‡é’ˆ
 
-	vector<NetWorkConection> m_connections;	//±£´æ»ñÈ¡µ½µÄÒªÏÔÊ¾µ½¡°Ñ¡ÔñÍø¿¨¡±²Ëµ¥ÏîÖĞµÄËùÓĞÍøÂçÁ¬½Ó
+	vector<NetWorkConection> m_connections;	//ä¿å­˜è·å–åˆ°çš„è¦æ˜¾ç¤ºåˆ°â€œé€‰æ‹©ç½‘å¡â€èœå•é¡¹ä¸­çš„æ‰€æœ‰ç½‘ç»œè¿æ¥
 	MIB_IFTABLE* m_pIfTable;
-	DWORD m_dwSize{};	//m_pIfTableµÄ´óĞ¡
-	int m_connection_selected{ 0 };	//ÒªÏÔÊ¾Á÷Á¿µÄÁ¬½ÓµÄĞòºÅ
-	unsigned __int64 m_in_bytes;		//µ±Ç°ÒÑ½ÓÊÕµÄ×Ö½ÚÊı
-	unsigned __int64 m_out_bytes;	//µ±Ç°ÒÑ·¢ËÍµÄ×Ö½ÚÊı
-	unsigned __int64 m_last_in_bytes{};	//ÉÏ´ÎÒÑ½ÓÊÕµÄ×Ö½ÚÊı
-	unsigned __int64 m_last_out_bytes{};	//ÉÏ´ÎÒÑ·¢ËÍµÄ×Ö½ÚÊı
+	DWORD m_dwSize{};	//m_pIfTableçš„å¤§å°
+	int m_connection_selected{ 0 };	//è¦æ˜¾ç¤ºæµé‡çš„è¿æ¥çš„åºå·
+	unsigned __int64 m_in_bytes;		//å½“å‰å·²æ¥æ”¶çš„å­—èŠ‚æ•°
+	unsigned __int64 m_out_bytes;	//å½“å‰å·²å‘é€çš„å­—èŠ‚æ•°
+	unsigned __int64 m_last_in_bytes{};	//ä¸Šæ¬¡å·²æ¥æ”¶çš„å­—èŠ‚æ•°
+	unsigned __int64 m_last_out_bytes{};	//ä¸Šæ¬¡å·²å‘é€çš„å­—èŠ‚æ•°
 
 	CCPUUsage m_cpu_usage;
 
-	bool m_first_start{ true };		//³õÊ¼Ê±Îªtrue£¬ÔÚ¶¨Ê±Æ÷µÚÒ»´ÎÆô¶¯ºóÖÃÎªflase
-	CRect m_screen_rect;		//ÆÁÄ»µÄ·¶Î§£¨²»°üº¬ÈÎÎñÀ¸£©
-    CSize m_screen_size;        //ÆÁÄ»µÄ´óĞ¡£¨°üº¬ÈÎÎñÀ¸£©
-	LayoutData m_layout_data;
-	CImage m_back_img;		//±³¾°Í¼Æ¬
+	bool m_first_start{ true };		//åˆå§‹æ—¶ä¸ºtrueï¼Œåœ¨å®šæ—¶å™¨ç¬¬ä¸€æ¬¡å¯åŠ¨åç½®ä¸ºflase
+	CRect m_screen_rect;		//å±å¹•çš„èŒƒå›´ï¼ˆä¸åŒ…å«ä»»åŠ¡æ ï¼‰
+    CSize m_screen_size;        //å±å¹•çš„å¤§å°ï¼ˆåŒ…å«ä»»åŠ¡æ ï¼‰
+    CSkinFile m_skin;
 
-	CStaticEx m_disp_up;	//ÏÔÊ¾ÉÏ´«µÄÎÄ±¾¿Ø¼ş
-	CStaticEx m_disp_down;	//ÏÔÊ¾ÏÂÔØµÄÎÄ±¾¿Ø¼ş
-	CStaticEx m_disp_cpu;	//ÏÔÊ¾CPUÀûÓÃÂÊµÄÎÄ±¾¿Ø¼ş
-	CStaticEx m_disp_memory;	//ÏÔÊ¾ÄÚ´æÀûÓÃÂÊµÄÎÄ±¾¿Ø¼ş
+	CFont m_font;			//å­—ä½“
 
-	CFont m_font;			//×ÖÌå
-
-	int m_restart_cnt{ -1 };	//ÖØĞÂ³õÊ¼»¯´ÎÊı
-	unsigned int m_timer_cnt{};		//¶¨Ê±Æ÷´¥·¢´ÎÊı£¨×Ô³ÌĞòÆô¶¯ÒÔÀ´µÄÃëÊı£©
+	int m_restart_cnt{ -1 };	//é‡æ–°åˆå§‹åŒ–æ¬¡æ•°
+	unsigned int m_timer_cnt{};		//å®šæ—¶å™¨è§¦å‘æ¬¡æ•°ï¼ˆè‡ªç¨‹åºå¯åŠ¨ä»¥æ¥çš„ç§’æ•°ï¼‰
     unsigned int m_monitor_time_cnt{};
-	int m_zero_speed_cnt{};	//Èç¹û¼ì²â²»µ½ÍøËÙ£¬¸Ã±äÁ¿¾Í»á×Ô¼Ó
-	int m_insert_to_taskbar_cnt{};	//ÓÃÀ´Í³¼Æ³¢ÊÔÇ¶ÈëÈÎÎñÀ¸µÄ´ÎÊı
-	int m_cannot_intsert_to_task_bar_warning{ true };	//Ö¸Ê¾ÊÇ·ñ»áÔÚÎŞ·¨Ç¶ÈëÈÎÎñÀ¸Ê±µ¯³öÌáÊ¾¿ò
+	int m_zero_speed_cnt{};	//å¦‚æœæ£€æµ‹ä¸åˆ°ç½‘é€Ÿï¼Œè¯¥å˜é‡å°±ä¼šè‡ªåŠ 
+	int m_insert_to_taskbar_cnt{};	//ç”¨æ¥ç»Ÿè®¡å°è¯•åµŒå…¥ä»»åŠ¡æ çš„æ¬¡æ•°
+	int m_cannot_intsert_to_task_bar_warning{ true };	//æŒ‡ç¤ºæ˜¯å¦ä¼šåœ¨æ— æ³•åµŒå…¥ä»»åŠ¡æ æ—¶å¼¹å‡ºæç¤ºæ¡†
 
-	static unsigned int m_WM_TASKBARCREATED;	//ÈÎÎñÀ¸ÖØÆôÏûÏ¢
+	static unsigned int m_WM_TASKBARCREATED;	//ä»»åŠ¡æ é‡å¯æ¶ˆæ¯
 
-	vector<wstring> m_skins;	//´¢´æÆ¤·ôÎÄ¼şµÄÂ·¾¶
-	int m_skin_selected{};		//Ñ¡ÔñµÄÆ¤·ôĞòºÅ
+	vector<wstring> m_skins;	//å‚¨å­˜çš®è‚¤æ–‡ä»¶çš„è·¯å¾„
+	int m_skin_selected{};		//é€‰æ‹©çš„çš®è‚¤åºå·
 
-	SYSTEMTIME m_start_time;	//³ÌĞòÆô¶¯Ê±µÄÊ±¼ä
-	CHistoryTrafficFile m_history_traffic{ theApp.m_history_traffic_path };	//´¢´æÀúÊ·Á÷Á¿
+	SYSTEMTIME m_start_time;	//ç¨‹åºå¯åŠ¨æ—¶çš„æ—¶é—´
+	CHistoryTrafficFile m_history_traffic{ theApp.m_history_traffic_path };	//å‚¨å­˜å†å²æµé‡
 
 	CToolTipCtrl m_tool_tips;
 
-	bool m_connection_change_flag{ false };		//Èç¹ûÖ´ĞĞ¹ıIniConnection()º¯Êı£¬¸Ãflag»áÖÃÎªtrue
-	bool m_is_foreground_fullscreen{ false };	//Ö¸Ê¾Ç°Ì¨´°¿ÚÊÇ·ñÕıÔÚÈ«¾ÖÏÔÊ¾
-	bool m_menu_popuped{ false };				//Ö¸Ê¾µ±Ç°ÊÇ·ñÓĞ²Ëµ¥´¦ÓÚµ¯³ö×´Ì¬
+	bool m_connection_change_flag{ false };		//å¦‚æœæ‰§è¡Œè¿‡IniConnection()å‡½æ•°ï¼Œè¯¥flagä¼šç½®ä¸ºtrue
+	bool m_is_foreground_fullscreen{ false };	//æŒ‡ç¤ºå‰å°çª—å£æ˜¯å¦æ­£åœ¨å…¨å±€æ˜¾ç¤º
+	bool m_menu_popuped{ false };				//æŒ‡ç¤ºå½“å‰æ˜¯å¦æœ‰èœå•å¤„äºå¼¹å‡ºçŠ¶æ€
 
     HDC m_desktop_dc;
 
-	void ShowInfo();		//½«ÉÏ´«ÏÂÔØËÙ¶ÈĞÅÏ¢ÏÔÊ¾µ½´°¿ÚÖĞ
-	CString GetMouseTipsInfo();		//»ñÈ¡Êó±êÌáÊ¾ĞÅÏ¢
-	void SetTransparency();			//¸ù¾İm_transparencyµÄÖµÉèÖÃ´°¿ÚÍ¸Ã÷¶È
+	CString GetMouseTipsInfo();		//è·å–é¼ æ ‡æç¤ºä¿¡æ¯
+	void SetTransparency();			//æ ¹æ®m_transparencyçš„å€¼è®¾ç½®çª—å£é€æ˜åº¦
 	void SetTransparency(int transparency);
-	void SetAlwaysOnTop();			//¸ù¾İm_always_on_topµÄÖµÉèÖÃ´°¿ÚÖÃ¶¥
-	void SetMousePenetrate();		//¸ù¾İm_mouse_penetrateµÄÖµÉèÖÃÊÇ·ñÊó±ê´©Í¸
-	void CheckWindowPos();			//²âÊÔ´°¿ÚµÄÎ»ÖÃ£¬Èç´°¿ÚµÄÎ»ÖÃÔÚÆÁÄ»Íâ£¬ÔòÒÆ¶¯´°¿ÚÊ¹ÆäÈ«²¿¶¼ÔÚÆÁÄ»ÄÚ£¬²¢·µ»ØĞÂÎ»ÖÃ
-	void GetScreenSize();			//»ñÈ¡ÆÁÄ»µÄ´óĞ¡
+	void SetAlwaysOnTop();			//æ ¹æ®m_always_on_topçš„å€¼è®¾ç½®çª—å£ç½®é¡¶
+	void SetMousePenetrate();		//æ ¹æ®m_mouse_penetrateçš„å€¼è®¾ç½®æ˜¯å¦é¼ æ ‡ç©¿é€
+	void CheckWindowPos();			//æµ‹è¯•çª—å£çš„ä½ç½®ï¼Œå¦‚çª—å£çš„ä½ç½®åœ¨å±å¹•å¤–ï¼Œåˆ™ç§»åŠ¨çª—å£ä½¿å…¶å…¨éƒ¨éƒ½åœ¨å±å¹•å†…ï¼Œå¹¶è¿”å›æ–°ä½ç½®
+	void GetScreenSize();			//è·å–å±å¹•çš„å¤§å°
 
-	void AutoSelect();		//×Ô¶¯Ñ¡ÔñÁ¬½Ó
-	void IniConnection();	//³õÊ¼»¯Á¬½Ó
+	void AutoSelect();		//è‡ªåŠ¨é€‰æ‹©è¿æ¥
+	void IniConnection();	//åˆå§‹åŒ–è¿æ¥
 
-	void IniConnectionMenu(CMenu* pMenu);	//³õÊ¼»¯¡°Ñ¡ÔñÍøÂçÁ¬½Ó¡±²Ëµ¥
-	void IniTaskBarConnectionMenu();		//³õÊ¼»¯ÈÎÎñÀ¸´°¿ÚµÄ¡°Ñ¡ÔñÍøÂçÁ¬½Ó¡±²Ëµ¥
-	void SetConnectionMenuState(CMenu* pMenu);		//ÉèÖÃ¡°Ñ¡ÔñÍøÂçÁ¬½Ó¡±²Ëµ¥ÖĞÑ¡ÖĞµÄÏîÄ¿
+	void IniConnectionMenu(CMenu* pMenu);	//åˆå§‹åŒ–â€œé€‰æ‹©ç½‘ç»œè¿æ¥â€èœå•
+	void IniTaskBarConnectionMenu();		//åˆå§‹åŒ–ä»»åŠ¡æ çª—å£çš„â€œé€‰æ‹©ç½‘ç»œè¿æ¥â€èœå•
+	void SetConnectionMenuState(CMenu* pMenu);		//è®¾ç½®â€œé€‰æ‹©ç½‘ç»œè¿æ¥â€èœå•ä¸­é€‰ä¸­çš„é¡¹ç›®
 
-	void CloseTaskBarWnd();	//¹Ø±ÕÈÎÎñÀ¸´°¿Ú
-	void OpenTaskBarWnd();	//´ò¿ªÈÎÎñÀ¸´°¿Ú
+	void CloseTaskBarWnd();	//å…³é—­ä»»åŠ¡æ çª—å£
+	void OpenTaskBarWnd();	//æ‰“å¼€ä»»åŠ¡æ çª—å£
 
-	void AddNotifyIcon();		//Ìí¼ÓÍ¨ÖªÇøÍ¼±ê
+	void AddNotifyIcon();		//æ·»åŠ é€šçŸ¥åŒºå›¾æ ‡
 	void DeleteNotifyIcon();	
-	void ShowNotifyTip(const wchar_t* title, const wchar_t* message);		//ÏÔÊ¾Í¨ÖªÇøÌáÊ¾
-	void UpdateNotifyIconTip();		//¸üĞÂÍ¨ÖªÇøÍ¼±êµÄÊó±êÌáÊ¾
+	void ShowNotifyTip(const wchar_t* title, const wchar_t* message);		//æ˜¾ç¤ºé€šçŸ¥åŒºæç¤º
+	void UpdateNotifyIconTip();		//æ›´æ–°é€šçŸ¥åŒºå›¾æ ‡çš„é¼ æ ‡æç¤º
 
 	void SaveHistoryTraffic();
 	void LoadHistoryTraffic();
 	void BackupHistoryTrafficFile();
 
-	void _OnOptions(int tab);	//´ò¿ª¡°Ñ¡Ïî¡±¶Ô»°¿òµÄ´¦Àí£¬²ÎÊıÎª´ò¿ªÊ±ÇĞ»»µÄ±êÇ©
+	void _OnOptions(int tab);	//æ‰“å¼€â€œé€‰é¡¹â€å¯¹è¯æ¡†çš„å¤„ç†ï¼Œå‚æ•°ä¸ºæ‰“å¼€æ—¶åˆ‡æ¢çš„æ ‡ç­¾
 
-	void SetItemPosition();		//ÉèÖÃÏÔÊ¾µÄ4¸öÏîÄ¿µÄÎ»ÖÃ
-	void GetSkinLayout();		//´Óµ±Ç°Æ¤·ô»ñÈ¡²¼¾ÖÊı¾İ
+	void SetItemPosition();		//è®¾ç½®æ˜¾ç¤ºçš„4ä¸ªé¡¹ç›®çš„ä½ç½®
+	void LoadSkinLayout();		//ä»å½“å‰çš®è‚¤è·å–å¸ƒå±€æ•°æ®
 
 	void LoadBackGroundImage();
-	void SetTextColor();
 	void SetTextFont();
 
     bool IsTaskbarWndValid() const;
@@ -135,10 +127,10 @@ protected:
     void TaskbarShowHideItem(DisplayItem type);
 
 public:
-	void ApplySettings();
+	//void ApplySettings();
 
 protected:
-	// Éú³ÉµÄÏûÏ¢Ó³Éäº¯Êı
+	// ç”Ÿæˆçš„æ¶ˆæ¯æ˜ å°„å‡½æ•°
 	virtual BOOL OnInitDialog();
 //	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
@@ -211,4 +203,5 @@ public:
     afx_msg void OnShowGpuTemperature();
     afx_msg void OnShowHddTemperature();
     afx_msg void OnShowMainBoardTemperature();
+    afx_msg void OnPaint();
 };

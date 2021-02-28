@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "afxwin.h"
 #include"StaticEx.h"
 #include "PictureStatic.h"
@@ -6,50 +6,44 @@
 #include "LinkStatic.h"
 #include "BaseDialog.h"
 
-// CSkinDlg ¶Ô»°¿ò
+// CSkinDlg å¯¹è¯æ¡†
 
 class CSkinDlg : public CBaseDialog
 {
 	DECLARE_DYNAMIC(CSkinDlg)
 
 public:
-	CSkinDlg(CWnd* pParent = NULL);   // ±ê×¼¹¹Ôìº¯Êı
+	CSkinDlg(CWnd* pParent = NULL);   // æ ‡å‡†æ„é€ å‡½æ•°
 	virtual ~CSkinDlg();
 
-	vector<wstring> m_skins;		//Æ¤·ôÎÄ¼şµÄÂ·¾¶
-	int m_skin_selected;			//Ñ¡ÔñµÄÆ¤·ô
-	CFont* m_pFont;		//Ô¤ÀÀÍ¼µÄ×ÖÌå
+	vector<wstring> m_skins;		//çš®è‚¤æ–‡ä»¶çš„è·¯å¾„
+	int m_skin_selected;			//é€‰æ‹©çš„çš®è‚¤
+	CFont* m_pFont;		//é¢„è§ˆå›¾çš„å­—ä½“
 
-// ¶Ô»°¿òÊı¾İ
+// å¯¹è¯æ¡†æ•°æ®
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_SKIN_DIALOG };
 #endif
 
-	//COLORREF GetTextColor() const { return m_skin_data.text_color; }
-	//DispStrings GetDispStrings() const { return m_skin_data.disp_str; }
-	const SkinData& GetSkinData() const { return m_skin_data; }
-	static void LoadSkinLayout(const wstring& cfg_path, LayoutData& layout_data);
+	const CSkinFile& GetSkinData() const { return m_skin_data; }
 
 protected:
 	virtual CString GetDialogName() const override;
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV æ”¯æŒ
 
 protected:
-	//¿Ø¼ş±äÁ¿
-	CComboBox m_select_box;			//Ñ¡Ôñ¿ò
-	CLinkStatic m_skin_course;	//¡°Æ¤·ôÖÆ×÷½Ì³Ì¡±³¬Á´½Ó
-	CLinkStatic m_skin_download;	//¡°¸ü¶àÆ¤·ôÏÂÔØ¡±³¬Á´½Ó
-	CSkinPreviewView* m_view;	//Ô¤ÀÀÇøÊÓÍ¼Àà
+	//æ§ä»¶å˜é‡
+	CComboBox m_select_box;			//é€‰æ‹©æ¡†
+	CLinkStatic m_skin_course;	//â€œçš®è‚¤åˆ¶ä½œæ•™ç¨‹â€è¶…é“¾æ¥
+	CLinkStatic m_skin_download;	//â€œæ›´å¤šçš®è‚¤ä¸‹è½½â€è¶…é“¾æ¥
+	CSkinPreviewView* m_view;	//é¢„è§ˆåŒºè§†å›¾ç±»
 	CStatic m_preview_static;
-	CStaticEx m_notify_static;	//ÏÔÊ¾ÌáÊ¾ĞÅÏ¢µÄstatic¿Ø¼ş
+	CStaticEx m_notify_static;	//æ˜¾ç¤ºæç¤ºä¿¡æ¯çš„staticæ§ä»¶
 
-	SkinData m_skin_data;		//Æ¤·ôÊı¾İ
-	CImage m_background_s;		//Ğ¡Ô¤ÀÀÍ¼±³¾°Í¼
-	CImage m_background_l;		//´óÔ¤ÀÀÍ¼±³¾°Í¼
+	CSkinFile m_skin_data;		//çš®è‚¤æ•°æ®
 
-	void ShowPreview();		//ÏÔÊ¾Æ¤·ôÔ¤ÀÀ
-	void LoadBackImage(const wstring& path, bool small_image);		//ÔØÈë±³¾°Í¼£¬pathÎªÆ¤·ôËùÔÚÂ·¾¶£»small_imageÖ¸¶¨ÔØÈëĞ¡±³¾°Í¼»¹ÊÇ´ó±³¾°Í¼
-	CRect CalculateViewRect();		//¸ù¾İ´°¿Ú´óĞ¡¼ÆËãÔ¤ÀÀÊÓÍ¼µÄ´óĞ¡
+	void ShowPreview();		//æ˜¾ç¤ºçš®è‚¤é¢„è§ˆ
+	CRect CalculateViewRect();		//æ ¹æ®çª—å£å¤§å°è®¡ç®—é¢„è§ˆè§†å›¾çš„å¤§å°
 
 	DECLARE_MESSAGE_MAP()
 public:

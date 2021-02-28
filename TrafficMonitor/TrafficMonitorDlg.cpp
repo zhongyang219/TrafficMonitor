@@ -1,5 +1,5 @@
-
-// TrafficMonitorDlg.cpp : ÊµÏÖÎÄ¼ş
+ï»¿
+// TrafficMonitorDlg.cpp : å®ç°æ–‡ä»¶
 //
 
 #include "stdafx.h"
@@ -13,13 +13,13 @@
 
 
 
-// CTrafficMonitorDlg ¶Ô»°¿ò
+// CTrafficMonitorDlg å¯¹è¯æ¡†
 
-//¾²Ì¬³ÉÔ±³õÊ¼»¯
-unsigned int CTrafficMonitorDlg::m_WM_TASKBARCREATED{ ::RegisterWindowMessage(_T("TaskbarCreated")) };	//×¢²áÈÎÎñÀ¸½¨Á¢µÄÏûÏ¢
+//é™æ€æˆå‘˜åˆå§‹åŒ–
+unsigned int CTrafficMonitorDlg::m_WM_TASKBARCREATED{ ::RegisterWindowMessage(_T("TaskbarCreated")) };	//æ³¨å†Œä»»åŠ¡æ å»ºç«‹çš„æ¶ˆæ¯
 
 CTrafficMonitorDlg::CTrafficMonitorDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_TRAFFICMONITOR_DIALOG, pParent)
+	: CDialog(IDD_TRAFFICMONITOR_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
     m_desktop_dc = ::GetDC(NULL);
@@ -40,14 +40,10 @@ CTrafficMonitorDlg::~CTrafficMonitorDlg()
 
 void CTrafficMonitorDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_STATIC_UP, m_disp_up);
-	DDX_Control(pDX, IDC_STATIC_DOWN, m_disp_down);
-	DDX_Control(pDX, IDC_STATIC_CPU, m_disp_cpu);
-	DDX_Control(pDX, IDC_STATIC_MEMORY, m_disp_memory);
+	CDialog::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
 	ON_WM_QUERYDRAGICON()
 	ON_WM_TIMER()
 	ON_WM_RBUTTONUP()
@@ -104,60 +100,9 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialogEx)
     ON_COMMAND(ID_SHOW_GPU_TEMPERATURE, &CTrafficMonitorDlg::OnShowGpuTemperature)
     ON_COMMAND(ID_SHOW_HDD_TEMPERATURE, &CTrafficMonitorDlg::OnShowHddTemperature)
     ON_COMMAND(ID_SHOW_MAIN_BOARD_TEMPERATURE, &CTrafficMonitorDlg::OnShowMainBoardTemperature)
+    ON_WM_PAINT()
 END_MESSAGE_MAP()
 
-
-void CTrafficMonitorDlg::ShowInfo()
-{
-	CString str;
-	CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data);
-	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data);
-
-	CString format_str;
-	if (theApp.m_main_wnd_data.hide_unit && theApp.m_main_wnd_data.speed_unit != SpeedUnit::AUTO)
-		format_str = _T("%s%s");
-	else
-		format_str = _T("%s%s/s");
-	if (!theApp.m_main_wnd_data.swap_up_down)
-	{
-		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_UP).c_str()), out_speed.GetString());
-		m_disp_up.SetWindowTextEx(str, (theApp.m_cfg_data.m_show_more_info ? m_layout_data.up_align_l : m_layout_data.up_align_s));
-		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_DOWN).c_str()), in_speed.GetString());
-		m_disp_down.SetWindowTextEx(str, (theApp.m_cfg_data.m_show_more_info ? m_layout_data.down_align_l : m_layout_data.down_align_s));
-	}
-	else		//½»»»ÉÏ´«ºÍÏÂÔØÎ»ÖÃ
-	{
-		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_DOWN).c_str()), in_speed.GetString());
-		m_disp_up.SetWindowTextEx(str, (theApp.m_cfg_data.m_show_more_info ? m_layout_data.up_align_l : m_layout_data.up_align_s));
-		str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_UP).c_str()), out_speed.GetString());
-		m_disp_down.SetWindowTextEx(str, (theApp.m_cfg_data.m_show_more_info ? m_layout_data.down_align_l : m_layout_data.down_align_s));
-	}
-	if (theApp.m_main_wnd_data.hide_percent)
-		format_str = _T("%s%d");
-    else if(theApp.m_main_wnd_data.separate_value_unit_with_space)
-        format_str = _T("%s%d %%");
-	else
-		format_str = _T("%s%d%%");
-	str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_CPU).c_str()), theApp.m_cpu_usage);
-	m_disp_cpu.SetWindowTextEx(str, (theApp.m_cfg_data.m_show_more_info ? m_layout_data.cpu_align_l : m_layout_data.cpu_align_s));
-	str.Format(format_str, (m_layout_data.no_text ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_MEMORY).c_str()), theApp.m_memory_usage);
-	m_disp_memory.SetWindowTextEx(str, (theApp.m_cfg_data.m_show_more_info ? m_layout_data.memory_align_l : m_layout_data.memory_align_s));
-	//ÉèÖÃÒªÏÔÊ¾µÄÏîÄ¿
-	if (theApp.m_cfg_data.m_show_more_info)
-	{
-		m_disp_up.ShowWindow(m_layout_data.show_up_l ? SW_SHOW : SW_HIDE);
-		m_disp_down.ShowWindow(m_layout_data.show_down_l ? SW_SHOW : SW_HIDE);
-		m_disp_cpu.ShowWindow(m_layout_data.show_cpu_l ? SW_SHOW : SW_HIDE);
-		m_disp_memory.ShowWindow(m_layout_data.show_memory_l ? SW_SHOW : SW_HIDE);
-	}
-	else
-	{
-		m_disp_up.ShowWindow(m_layout_data.show_up_s ? SW_SHOW : SW_HIDE);
-		m_disp_down.ShowWindow(m_layout_data.show_down_s ? SW_SHOW : SW_HIDE);
-		m_disp_cpu.ShowWindow(m_layout_data.show_cpu_s ? SW_SHOW : SW_HIDE);
-		m_disp_memory.ShowWindow(m_layout_data.show_memory_s ? SW_SHOW : SW_HIDE);
-	}
-}
 
 CString CTrafficMonitorDlg::GetMouseTipsInfo()
 {
@@ -171,24 +116,24 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 	tip_info += temp;
 	if (theApp.m_cfg_data.m_show_more_info)
 	{
-		if (!m_layout_data.show_up_l)		//Èç¹ûÖ÷´°¿ÚÖĞÃ»ÓĞÏÔÊ¾ÉÏ´«ËÙ¶È£¬ÔòÔÚÌáÊ¾ĞÅÏ¢ÖĞÏÔÊ¾ÉÏ´«ËÙ¶È
+		if (!m_skin.GetLayoutInfo().layout_l.GetItem(TDI_UP).show)		//å¦‚æœä¸»çª—å£ä¸­æ²¡æœ‰æ˜¾ç¤ºä¸Šä¼ é€Ÿåº¦ï¼Œåˆ™åœ¨æç¤ºä¿¡æ¯ä¸­æ˜¾ç¤ºä¸Šä¼ é€Ÿåº¦
 		{
 			temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_UPLOAD),
 				CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data));
 			tip_info += temp;
 		}
-		if (!m_layout_data.show_down_l)
+		if (!m_skin.GetLayoutInfo().layout_l.GetItem(TDI_DOWN).show)
 		{
 			temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_DOWNLOAD),
 				CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data));
 			tip_info += temp;
 		}
-		if (!m_layout_data.show_cpu_l)
+		if (!m_skin.GetLayoutInfo().layout_l.GetItem(TDI_CPU).show)
 		{
 			temp.Format(_T("\r\n%s: %d%%"), CCommon::LoadText(IDS_CPU_USAGE), theApp.m_cpu_usage);
 			tip_info += temp;
 		}
-		if (!m_layout_data.show_memory_l)
+		if (!m_skin.GetLayoutInfo().layout_l.GetItem(TDI_MEMORY).show)
 		{
 			temp.Format(_T("\r\n%s: %s/%s (%d%%)"), CCommon::LoadText(IDS_MEMORY_USAGE),
 				CCommon::KBytesToString(theApp.m_used_memory),
@@ -205,24 +150,24 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 	}
 	else
 	{
-		if (!m_layout_data.show_up_s)		//Èç¹ûÖ÷´°¿ÚÖĞÃ»ÓĞÏÔÊ¾ÉÏ´«ËÙ¶È£¬ÔòÔÚÌáÊ¾ĞÅÏ¢ÖĞÏÔÊ¾ÉÏ´«ËÙ¶È
+		if (!m_skin.GetLayoutInfo().layout_s.GetItem(TDI_UP).show)		//å¦‚æœä¸»çª—å£ä¸­æ²¡æœ‰æ˜¾ç¤ºä¸Šä¼ é€Ÿåº¦ï¼Œåˆ™åœ¨æç¤ºä¿¡æ¯ä¸­æ˜¾ç¤ºä¸Šä¼ é€Ÿåº¦
 		{
 			temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_UPLOAD),
 				CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data));
 			tip_info += temp;
 		}
-		if (!m_layout_data.show_down_s)
+		if (!m_skin.GetLayoutInfo().layout_s.GetItem(TDI_DOWN).show)
 		{
 			temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_DOWNLOAD),
 				CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data));
 			tip_info += temp;
 		}
-		if (!m_layout_data.show_cpu_s)
+		if (!m_skin.GetLayoutInfo().layout_s.GetItem(TDI_CPU).show)
 		{
 			temp.Format(_T("\r\n%s: %d%%"), CCommon::LoadText(IDS_CPU_USAGE), theApp.m_cpu_usage);
 			tip_info += temp;
 		}
-		if (!m_layout_data.show_memory_s)
+		if (!m_skin.GetLayoutInfo().layout_s.GetItem(TDI_MEMORY).show)
 		{
 			temp.Format(_T("\r\n%s: %s/%s (%d%%)"), CCommon::LoadText(IDS_MEMORY_USAGE),
 				CCommon::KBytesToString(theApp.m_used_memory),
@@ -243,13 +188,13 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 void CTrafficMonitorDlg::SetTransparency()
 {
 	SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
-	SetLayeredWindowAttributes(0, theApp.m_cfg_data.m_transparency * 255 / 100, LWA_ALPHA);  //Í¸Ã÷¶ÈÈ¡Öµ·¶Î§Îª0~255
+	SetLayeredWindowAttributes(0, theApp.m_cfg_data.m_transparency * 255 / 100, LWA_ALPHA);  //é€æ˜åº¦å–å€¼èŒƒå›´ä¸º0~255
 }
 
 void CTrafficMonitorDlg::SetTransparency(int transparency)
 {
 	SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
-	SetLayeredWindowAttributes(0, transparency * 255 / 100, LWA_ALPHA);  //Í¸Ã÷¶ÈÈ¡Öµ·¶Î§Îª0~255
+	SetLayeredWindowAttributes(0, transparency * 255 / 100, LWA_ALPHA);  //é€æ˜åº¦å–å€¼èŒƒå›´ä¸º0~255
 }
 
 void CTrafficMonitorDlg::SetAlwaysOnTop()
@@ -257,19 +202,19 @@ void CTrafficMonitorDlg::SetAlwaysOnTop()
 	//if (!m_is_foreground_fullscreen || (m_is_foreground_fullscreen && !theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen))
 	//{
 	//	if (m_always_on_top)
-	//		SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);			//ÉèÖÃÖÃ¶¥
+	//		SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);			//è®¾ç½®ç½®é¡¶
 	//	else
-	//		SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//È¡ÏûÖÃ¶¥
+	//		SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//å–æ¶ˆç½®é¡¶
 	//}
 	if (theApp.m_cfg_data.m_hide_main_window)
 		return;
-	else if (theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen && m_is_foreground_fullscreen)		//µ±ÉèÖÃÓĞ³ÌĞòÈ«ÆÁÊ±Òş²ØĞü¸¡´°ÇÒÓĞ³ÌĞòÔÚÈ«ÆÁÔËĞĞÊ±£¬²»Ö´ĞĞÖÃ¶¥²Ù×÷
+	else if (theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen && m_is_foreground_fullscreen)		//å½“è®¾ç½®æœ‰ç¨‹åºå…¨å±æ—¶éšè—æ‚¬æµ®çª—ä¸”æœ‰ç¨‹åºåœ¨å…¨å±è¿è¡Œæ—¶ï¼Œä¸æ‰§è¡Œç½®é¡¶æ“ä½œ
 		return;
 
 	if (theApp.m_cfg_data.m_always_on_top)
-		SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);			//ÉèÖÃÖÃ¶¥
+		SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);			//è®¾ç½®ç½®é¡¶
 	else
-		SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//È¡ÏûÖÃ¶¥
+		SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//å–æ¶ˆç½®é¡¶
 
 }
 
@@ -277,11 +222,11 @@ void CTrafficMonitorDlg::SetMousePenetrate()
 {
 	if (theApp.m_cfg_data.m_mouse_penetrate)
 	{
-		SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_TRANSPARENT);		//ÉèÖÃÊó±ê´©Í¸
+		SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_TRANSPARENT);		//è®¾ç½®é¼ æ ‡ç©¿é€
 	}
 	else
 	{
-		SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) & (~WS_EX_TRANSPARENT));		//È¡ÏûÊó±ê´©Í¸
+		SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) & (~WS_EX_TRANSPARENT));		//å–æ¶ˆé¼ æ ‡ç©¿é€
 	}
 }
 
@@ -305,7 +250,7 @@ void CTrafficMonitorDlg::CheckWindowPos()
 		}
 
 		CRect cuccent_screen_rect;
-		::SystemParametersInfo(SPI_GETWORKAREA, 0, &cuccent_screen_rect, 0);   // »ñµÃµ±Ç°¹¤×÷Çø´óĞ¡
+		::SystemParametersInfo(SPI_GETWORKAREA, 0, &cuccent_screen_rect, 0);   // è·å¾—å½“å‰å·¥ä½œåŒºå¤§å°
 		if (m_screen_rect != cuccent_screen_rect)
 		{
 			float proportion_width = (float)rect.left / (m_screen_rect.right - rect.Width());
@@ -337,7 +282,7 @@ void CTrafficMonitorDlg::GetScreenSize()
     m_screen_size.cx = GetSystemMetrics(SM_CXSCREEN);
     m_screen_size.cy = GetSystemMetrics(SM_CYSCREEN);
 
-	//::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0);   // »ñµÃ¹¤×÷Çø´óĞ¡
+	//::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0);   // è·å¾—å·¥ä½œåŒºå¤§å°
 }
 
 
@@ -347,10 +292,10 @@ void CTrafficMonitorDlg::AutoSelect()
 	unsigned int in_out_bytes;
 	//m_connection_selected = m_connections[0].index;
 	m_connection_selected = 0;
-	//×Ô¶¯Ñ¡ÔñÁ¬½ÓÊ±£¬²éÕÒÒÑ·¢ËÍºÍÒÑ½ÓÊÕ×Ö½ÚÊıÖ®ºÍ×î¶àµÄÄÇ¸öÁ¬½Ó£¬²¢½«ÆäÉèÖÃÎªµ±Ç°²é¿´µÄÁ¬½Ó
+	//è‡ªåŠ¨é€‰æ‹©è¿æ¥æ—¶ï¼ŒæŸ¥æ‰¾å·²å‘é€å’Œå·²æ¥æ”¶å­—èŠ‚æ•°ä¹‹å’Œæœ€å¤šçš„é‚£ä¸ªè¿æ¥ï¼Œå¹¶å°†å…¶è®¾ç½®ä¸ºå½“å‰æŸ¥çœ‹çš„è¿æ¥
 	for (size_t i{}; i<m_connections.size(); i++)
 	{
-		if (m_pIfTable->table[m_connections[i].index].dwOperStatus == IF_OPER_STATUS_OPERATIONAL)		//Ö»Ñ¡ÔñÍøÂç×´Ì¬ÎªÕı³£µÄÁ¬½Ó
+		if (m_pIfTable->table[m_connections[i].index].dwOperStatus == IF_OPER_STATUS_OPERATIONAL)		//åªé€‰æ‹©ç½‘ç»œçŠ¶æ€ä¸ºæ­£å¸¸çš„è¿æ¥
 		{
 			in_out_bytes = m_pIfTable->table[m_connections[i].index].dwInOctets + m_pIfTable->table[m_connections[i].index].dwOutOctets;
 			if (in_out_bytes > max_in_out_bytes)
@@ -366,18 +311,18 @@ void CTrafficMonitorDlg::AutoSelect()
 
 void CTrafficMonitorDlg::IniConnection()
 {
-	//Îªm_pIfTable¿ª±ÙËùĞè´óĞ¡µÄÄÚ´æ
+	//ä¸ºm_pIfTableå¼€è¾Ÿæ‰€éœ€å¤§å°çš„å†…å­˜
 	free(m_pIfTable);
 	m_dwSize = sizeof(MIB_IFTABLE);
 	m_pIfTable = (MIB_IFTABLE *)malloc(m_dwSize);
 	int rtn;
 	rtn = GetIfTable(m_pIfTable, &m_dwSize, FALSE);
-	if (rtn == ERROR_INSUFFICIENT_BUFFER)	//Èç¹ûº¯Êı·µ»ØÖµÎªERROR_INSUFFICIENT_BUFFER£¬ËµÃ÷m_pIfTableµÄ´óĞ¡²»¹»
+	if (rtn == ERROR_INSUFFICIENT_BUFFER)	//å¦‚æœå‡½æ•°è¿”å›å€¼ä¸ºERROR_INSUFFICIENT_BUFFERï¼Œè¯´æ˜m_pIfTableçš„å¤§å°ä¸å¤Ÿ
 	{
 		free(m_pIfTable);
-		m_pIfTable = (MIB_IFTABLE *)malloc(m_dwSize);	//ÓÃĞÂµÄ´óĞ¡ÖØĞÂ¿ª±ÙÒ»¿éÄÚ´æ
+		m_pIfTable = (MIB_IFTABLE *)malloc(m_dwSize);	//ç”¨æ–°çš„å¤§å°é‡æ–°å¼€è¾Ÿä¸€å—å†…å­˜
 	}
-	//»ñÈ¡µ±Ç°ËùÓĞµÄÁ¬½Ó£¬²¢±£´æµ½m_connectionsÈİÆ÷ÖĞ
+	//è·å–å½“å‰æ‰€æœ‰çš„è¿æ¥ï¼Œå¹¶ä¿å­˜åˆ°m_connectionså®¹å™¨ä¸­
 	GetIfTable(m_pIfTable, &m_dwSize, FALSE);
 	if (!theApp.m_general_data.show_all_interface)
 	{
@@ -389,19 +334,19 @@ void CTrafficMonitorDlg::IniConnection()
 		CAdapterCommon::GetAllIfTableInfo(m_connections, m_pIfTable);
 	}
 
-	//Èç¹ûÔÚÉèÖÃÁË¡°ÏÔÊ¾ËùÓĞÍøÂçÁ¬½Ó¡±Ê±ÉèÖÃÁË¡°Ñ¡ÔñÈ«²¿¡±£¬Ôò¸ÄÎª¡°×Ô¶¯Ñ¡Ôñ¡±
+	//å¦‚æœåœ¨è®¾ç½®äº†â€œæ˜¾ç¤ºæ‰€æœ‰ç½‘ç»œè¿æ¥â€æ—¶è®¾ç½®äº†â€œé€‰æ‹©å…¨éƒ¨â€ï¼Œåˆ™æ”¹ä¸ºâ€œè‡ªåŠ¨é€‰æ‹©â€
 	if (theApp.m_general_data.show_all_interface && theApp.m_cfg_data.m_select_all)
 	{
 		theApp.m_cfg_data.m_select_all = false;
 		theApp.m_cfg_data.m_auto_select = true;
 	}
 
-	//Ğ´Èëµ÷ÊÔÈÕÖ¾
+	//å†™å…¥è°ƒè¯•æ—¥å¿—
 	if (theApp.m_debug_log)
 	{
 		CString log_str;
-		log_str += _T("ÕıÔÚ³õÊ¼»¯ÍøÂçÁ¬½Ó...\n");
-		log_str += _T("Á¬½ÓÁĞ±í£º\n");
+		log_str += _T("æ­£åœ¨åˆå§‹åŒ–ç½‘ç»œè¿æ¥...\n");
+		log_str += _T("è¿æ¥åˆ—è¡¨ï¼š\n");
 		for (size_t i{}; i < m_connections.size(); i++)
 		{
 			log_str += m_connections[i].description.c_str();
@@ -422,10 +367,10 @@ void CTrafficMonitorDlg::IniConnection()
 
 	//if (m_connection_selected < 0 || m_connection_selected >= m_connections.size() || m_auto_select)
 	//	AutoSelect();
-	//Ñ¡ÔñÍøÂçÁ¬½Ó
-	if (theApp.m_cfg_data.m_auto_select)	//×Ô¶¯Ñ¡Ôñ
+	//é€‰æ‹©ç½‘ç»œè¿æ¥
+	if (theApp.m_cfg_data.m_auto_select)	//è‡ªåŠ¨é€‰æ‹©
 	{
-		if (m_restart_cnt != -1)	//µ±m_restart_cnt²»µÈÓÚ-1Ê±£¬¼´²»ÊÇµÚÒ»´Î³õÊ¼»¯Ê±£¬ĞèÒªÑÓÊ±5ÃëÔÙÖØĞÂ³õÊ¼»¯Á¬½Ó
+		if (m_restart_cnt != -1)	//å½“m_restart_cntä¸ç­‰äº-1æ—¶ï¼Œå³ä¸æ˜¯ç¬¬ä¸€æ¬¡åˆå§‹åŒ–æ—¶ï¼Œéœ€è¦å»¶æ—¶5ç§’å†é‡æ–°åˆå§‹åŒ–è¿æ¥
 		{
 			KillTimer(DELAY_TIMER);
 			SetTimer(DELAY_TIMER, 5000, NULL);
@@ -435,7 +380,7 @@ void CTrafficMonitorDlg::IniConnection()
 			AutoSelect();
 		}
 	}
-	else		//²éÕÒÍøÂçÃûÎªÉÏ´ÎÑ¡ÔñµÄÁ¬½Ó
+	else		//æŸ¥æ‰¾ç½‘ç»œåä¸ºä¸Šæ¬¡é€‰æ‹©çš„è¿æ¥
 	{
 		m_connection_selected = 0;
 		for (size_t i{}; i < m_connections.size(); i++)
@@ -448,13 +393,13 @@ void CTrafficMonitorDlg::IniConnection()
 		m_connection_selected = 0;
 	theApp.m_cfg_data.m_connection_name = m_connections[m_connection_selected].description_2;
 
-	//¸ù¾İÒÑ»ñÈ¡µ½µÄÁ¬½ÓÔÚ²Ëµ¥ÖĞÌí¼ÓÏàÓ¦ÏîÄ¿
-    CMenu* select_connection_menu = theApp.m_main_menu.GetSubMenu(0)->GetSubMenu(0);		//ÉèÖÃ¡°Ñ¡ÔñÍøÂçÁ¬½Ó¡±×Ó²Ëµ¥Ïî
-	IniConnectionMenu(select_connection_menu);		//Ïò¡°Ñ¡ÔñÍø¿¨¡±×Ó²Ëµ¥ÏîÌí¼ÓÏîÄ¿
+	//æ ¹æ®å·²è·å–åˆ°çš„è¿æ¥åœ¨èœå•ä¸­æ·»åŠ ç›¸åº”é¡¹ç›®
+    CMenu* select_connection_menu = theApp.m_main_menu.GetSubMenu(0)->GetSubMenu(0);		//è®¾ç½®â€œé€‰æ‹©ç½‘ç»œè¿æ¥â€å­èœå•é¡¹
+	IniConnectionMenu(select_connection_menu);		//å‘â€œé€‰æ‹©ç½‘å¡â€å­èœå•é¡¹æ·»åŠ é¡¹ç›®
 
-	IniTaskBarConnectionMenu();		//³õÊ¼»¯ÈÎÎñÀ¸´°¿ÚÖĞµÄ¡°Ñ¡ÔñÍøÂçÁ¬½Ó¡±×Ó²Ëµ¥Ïî
+	IniTaskBarConnectionMenu();		//åˆå§‹åŒ–ä»»åŠ¡æ çª—å£ä¸­çš„â€œé€‰æ‹©ç½‘ç»œè¿æ¥â€å­èœå•é¡¹
 
-	m_restart_cnt++;	//¼ÇÂ¼³õÊ¼»¯´ÎÊı
+	m_restart_cnt++;	//è®°å½•åˆå§‹åŒ–æ¬¡æ•°
 	m_connection_change_flag = true;
 }
 
@@ -463,7 +408,7 @@ void CTrafficMonitorDlg::IniConnectionMenu(CMenu * pMenu)
     ASSERT(pMenu != nullptr);
     if (pMenu != nullptr)
     {
-        //ÏÈ½«ID_SELECT_ALL_CONNECTIONºóÃæµÄËùÓĞ²Ëµ¥ÏîÉ¾³ı
+        //å…ˆå°†ID_SELECT_ALL_CONNECTIONåé¢çš„æ‰€æœ‰èœå•é¡¹åˆ é™¤
         int start_pos = CCommon::GetMenuItemPosition(pMenu, ID_SELECT_ALL_CONNECTION) + 1;
         while (pMenu->GetMenuItemCount() > start_pos)
         {
@@ -481,17 +426,17 @@ void CTrafficMonitorDlg::IniConnectionMenu(CMenu * pMenu)
 
 void CTrafficMonitorDlg::IniTaskBarConnectionMenu()
 {
-	CMenu* select_connection_menu = theApp.m_taskbar_menu.GetSubMenu(0)->GetSubMenu(0);		//ÉèÖÃ¡°Ñ¡ÔñÍøÂçÁ¬½Ó¡±×Ó²Ëµ¥Ïî
-	IniConnectionMenu(select_connection_menu);		//Ïò¡°Ñ¡ÔñÍø¿¨¡±×Ó²Ëµ¥ÏîÌí¼ÓÏîÄ¿
+	CMenu* select_connection_menu = theApp.m_taskbar_menu.GetSubMenu(0)->GetSubMenu(0);		//è®¾ç½®â€œé€‰æ‹©ç½‘ç»œè¿æ¥â€å­èœå•é¡¹
+	IniConnectionMenu(select_connection_menu);		//å‘â€œé€‰æ‹©ç½‘å¡â€å­èœå•é¡¹æ·»åŠ é¡¹ç›®
 }
 
 void CTrafficMonitorDlg::SetConnectionMenuState(CMenu * pMenu)
 {
 	if (theApp.m_cfg_data.m_select_all)
 		pMenu->CheckMenuRadioItem(0, m_connections.size() + 1, 1, MF_BYPOSITION | MF_CHECKED);
-	else if (theApp.m_cfg_data.m_auto_select)		//m_auto_selectÎªtrueÊ±Îª×Ô¶¯Ñ¡Ôñ£¬Ñ¡ÖĞ²Ëµ¥µÄµÚ1Ïî
+	else if (theApp.m_cfg_data.m_auto_select)		//m_auto_selectä¸ºtrueæ—¶ä¸ºè‡ªåŠ¨é€‰æ‹©ï¼Œé€‰ä¸­èœå•çš„ç¬¬1é¡¹
 		pMenu->CheckMenuRadioItem(0, m_connections.size() + 1, 0, MF_BYPOSITION | MF_CHECKED);
-	else		//m_auto_selectÎªfalseÊ±·Ç×Ô¶¯Ñ¡Ôñ£¬¸ù¾İm_connection_selectedµÄÖµÑ¡Ôñ¶ÔÓ¦µÄÏî
+	else		//m_auto_selectä¸ºfalseæ—¶éè‡ªåŠ¨é€‰æ‹©ï¼Œæ ¹æ®m_connection_selectedçš„å€¼é€‰æ‹©å¯¹åº”çš„é¡¹
 		pMenu->CheckMenuRadioItem(0, m_connections.size() + 1, m_connection_selected + 2, MF_BYPOSITION | MF_CHECKED);
 }
 
@@ -500,7 +445,7 @@ void CTrafficMonitorDlg::CloseTaskBarWnd()
 	if (m_tBarDlg != nullptr)
 	{
 		HWND hParent = ::GetParent(theApp.m_option_dlg);
-		if (hParent == m_tBarDlg->GetSafeHwnd())			//¹Ø±ÕÈÎÎñÀ¸´°¿ÚÇ°£¬Èç¹ûÑ¡ÏîÉèÖÃ´°¿ÚÒÑ´ò¿ªÇÒ¸¸´°¿ÚÊÇÈÎÎñÀ¸´°¿Ú£¬Ôò½«Æä¹Ø±Õ
+		if (hParent == m_tBarDlg->GetSafeHwnd())			//å…³é—­ä»»åŠ¡æ çª—å£å‰ï¼Œå¦‚æœé€‰é¡¹è®¾ç½®çª—å£å·²æ‰“å¼€ä¸”çˆ¶çª—å£æ˜¯ä»»åŠ¡æ çª—å£ï¼Œåˆ™å°†å…¶å…³é—­
 		{
 			::SendMessage(theApp.m_option_dlg, WM_COMMAND, IDCANCEL, 0);
 		}
@@ -525,7 +470,7 @@ void CTrafficMonitorDlg::AddNotifyIcon()
 {
 	if (theApp.m_cfg_data.m_show_task_bar_wnd)
 		CloseTaskBarWnd();
-	//Ìí¼ÓÍ¨ÖªÀ¸Í¼±ê
+	//æ·»åŠ é€šçŸ¥æ å›¾æ ‡
 	::Shell_NotifyIcon(NIM_ADD, &m_ntIcon);
 	if (theApp.m_cfg_data.m_show_task_bar_wnd)
 		OpenTaskBarWnd();
@@ -535,7 +480,7 @@ void CTrafficMonitorDlg::DeleteNotifyIcon()
 {
 	if (theApp.m_cfg_data.m_show_task_bar_wnd)
 		CloseTaskBarWnd();
-	//É¾³ıÍ¨ÖªÀ¸Í¼±ê
+	//åˆ é™¤é€šçŸ¥æ å›¾æ ‡
 	::Shell_NotifyIcon(NIM_DELETE, &m_ntIcon);
 	if (theApp.m_cfg_data.m_show_task_bar_wnd)
 		OpenTaskBarWnd();
@@ -543,14 +488,14 @@ void CTrafficMonitorDlg::DeleteNotifyIcon()
 
 void CTrafficMonitorDlg::ShowNotifyTip(const wchar_t * title, const wchar_t * message)
 {
-	//ÒªÏÔÊ¾Í¨ÖªÇøÌáÊ¾£¬±ØĞëÏÈ½«Í¨ÖªÇøÍ¼±êÏÔÊ¾³öÀ´
+	//è¦æ˜¾ç¤ºé€šçŸ¥åŒºæç¤ºï¼Œå¿…é¡»å…ˆå°†é€šçŸ¥åŒºå›¾æ ‡æ˜¾ç¤ºå‡ºæ¥
 	if (!theApp.m_cfg_data.m_show_notify_icon)
 	{
-		//Ìí¼ÓÍ¨ÖªÀ¸Í¼±ê
+		//æ·»åŠ é€šçŸ¥æ å›¾æ ‡
 		AddNotifyIcon();
 		theApp.m_cfg_data.m_show_notify_icon = true;
 	}
-	//ÏÔÊ¾Í¨ÖªÌáÊ¾
+	//æ˜¾ç¤ºé€šçŸ¥æç¤º
 	m_ntIcon.uFlags |= NIF_INFO;
 	//wcscpy_s(m_ntIcon.szInfo, message ? message : _T(""));
 	//wcscpy_s(m_ntIcon.szInfoTitle, title ? title : _T(""));
@@ -562,7 +507,7 @@ void CTrafficMonitorDlg::ShowNotifyTip(const wchar_t * title, const wchar_t * me
 
 void CTrafficMonitorDlg::UpdateNotifyIconTip()
 {
-	CString strTip;			//Êó±êÖ¸ÏòÍ¼±êÊ±ÏÔÊ¾µÄÌáÊ¾
+	CString strTip;			//é¼ æ ‡æŒ‡å‘å›¾æ ‡æ—¶æ˜¾ç¤ºçš„æç¤º
 #ifdef _DEBUG
 	strTip = CCommon::LoadText(IDS_TRAFFICMONITOR, _T(" (Debug)"));
 #else
@@ -591,8 +536,8 @@ void CTrafficMonitorDlg::LoadHistoryTraffic()
 {
 	m_history_traffic.Load();
 	CHistoryTrafficFile backup_file(theApp.m_history_traffic_path + L".bak");
-	backup_file.LoadSize();		//¶ÁÈ¡±¸·İÎÄ¼şÖĞÁ÷Á¿¼ÇÂ¼µÄÊıÁ¿
-	if (backup_file.Size() > m_history_traffic.Size())		//Èç¹û±¸·İÎÄ¼şÖĞÁ÷Á¿¼ÇÂ¼µÄÊıÁ¿´óÓÚµ±Ç°µÄÊıÁ¿£¬Ôò´Ó±¸·İÎÄ¼şÖĞ»Ö¸´
+	backup_file.LoadSize();		//è¯»å–å¤‡ä»½æ–‡ä»¶ä¸­æµé‡è®°å½•çš„æ•°é‡
+	if (backup_file.Size() > m_history_traffic.Size())		//å¦‚æœå¤‡ä»½æ–‡ä»¶ä¸­æµé‡è®°å½•çš„æ•°é‡å¤§äºå½“å‰çš„æ•°é‡ï¼Œåˆ™ä»å¤‡ä»½æ–‡ä»¶ä¸­æ¢å¤
 	{
 		backup_file.Load();
 		size_t size_before = m_history_traffic.Size();
@@ -620,11 +565,11 @@ void CTrafficMonitorDlg::BackupHistoryTrafficFile()
 void CTrafficMonitorDlg::_OnOptions(int tab)
 {
 	COptionsDlg optionsDlg(tab);
-	//½«Ñ¡ÏîÉèÖÃÊı¾İ´«µİ¸øÑ¡ÏîÉèÖÃ¶Ô»°¿ò
+	//å°†é€‰é¡¹è®¾ç½®æ•°æ®ä¼ é€’ç»™é€‰é¡¹è®¾ç½®å¯¹è¯æ¡†
 	optionsDlg.m_tab1_dlg.m_data = theApp.m_main_wnd_data;
 	optionsDlg.m_tab2_dlg.m_data = theApp.m_taskbar_data;
 	optionsDlg.m_tab3_dlg.m_data = theApp.m_general_data;
-	optionsDlg.m_tab1_dlg.m_text_disable = m_layout_data.no_text;
+	optionsDlg.m_tab1_dlg.m_text_disable = m_skin.GetLayoutInfo().no_label;
 
 	if (optionsDlg.DoModal() == IDOK)
 	{
@@ -632,13 +577,13 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 		theApp.m_taskbar_data = optionsDlg.m_tab2_dlg.m_data;
 		theApp.m_general_data = optionsDlg.m_tab3_dlg.m_data;
 
-		ApplySettings();
+        SetTextFont();
 
 		//CTaskBarDlg::SaveConfig();
 		if (IsTaskbarWndValid())
 		{
 			m_tBarDlg->ApplySettings();
-			//Èç¹û¸ü¸ÄÁËÈÎÎñÀ¸´°¿Ú×ÖÌå»òÏÔÊ¾µÄÎÄ±¾£¬ÔòÈÎÎñÀ¸´°¿Ú¿ÉÄÜÒª±ä»¯£¬ÓÚÊÇ¹Ø±ÕÔÙ´ò¿ªÈÎÎñÀ¸´°¿Ú
+			//å¦‚æœæ›´æ”¹äº†ä»»åŠ¡æ çª—å£å­—ä½“æˆ–æ˜¾ç¤ºçš„æ–‡æœ¬ï¼Œåˆ™ä»»åŠ¡æ çª—å£å¯èƒ½è¦å˜åŒ–ï¼Œäºæ˜¯å…³é—­å†æ‰“å¼€ä»»åŠ¡æ çª—å£
 			CloseTaskBarWnd();
 			OpenTaskBarWnd();
 		}
@@ -649,13 +594,13 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 		if (optionsDlg.m_tab3_dlg.IsShowAllInterfaceModified())
 			IniConnection();
 
-        if (optionsDlg.m_tab3_dlg.IsMonitorTimeSpanModified())      //Èç¹û¼à¿ØÊ±¼ä¼ä¸ô¸Ä±äÁË£¬ÔòÖØÉè¶¨Ê±Æ÷
+        if (optionsDlg.m_tab3_dlg.IsMonitorTimeSpanModified())      //å¦‚æœç›‘æ§æ—¶é—´é—´éš”æ”¹å˜äº†ï¼Œåˆ™é‡è®¾å®šæ—¶å™¨
         {
             KillTimer(MONITOR_TIMER);
             SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, NULL);
         }
 
-		//ÉèÖÃ»ñÈ¡CPUÀûÓÃÂÊµÄ·½Ê½
+		//è®¾ç½®è·å–CPUåˆ©ç”¨ç‡çš„æ–¹å¼
 		m_cpu_usage.SetUseCPUTimes(theApp.m_general_data.m_get_cpu_usage_by_cpu_times);
 
 		theApp.SaveConfig();
@@ -665,54 +610,42 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 
 void CTrafficMonitorDlg::SetItemPosition()
 {
-	if (theApp.m_cfg_data.m_show_more_info)
-	{
-		SetWindowPos(nullptr, 0, 0, m_layout_data.width_l, m_layout_data.height_l, SWP_NOMOVE | SWP_NOZORDER);
-		m_disp_up.MoveWindow(m_layout_data.up_x_l, m_layout_data.up_y_l, m_layout_data.up_width_l, m_layout_data.text_height);
-		m_disp_down.MoveWindow(m_layout_data.down_x_l, m_layout_data.down_y_l, m_layout_data.down_width_l, m_layout_data.text_height);
-		m_disp_cpu.MoveWindow(m_layout_data.cpu_x_l, m_layout_data.cpu_y_l, m_layout_data.cpu_width_l, m_layout_data.text_height);
-		m_disp_memory.MoveWindow(m_layout_data.memory_x_l, m_layout_data.memory_y_l, m_layout_data.memory_width_l, m_layout_data.text_height);
-	}
-	else
-	{
-		SetWindowPos(nullptr, 0, 0, m_layout_data.width_s, m_layout_data.height_s, SWP_NOMOVE | SWP_NOZORDER);
-		m_disp_up.MoveWindow(m_layout_data.up_x_s, m_layout_data.up_y_s, m_layout_data.up_width_s, m_layout_data.text_height);
-		m_disp_down.MoveWindow(m_layout_data.down_x_s, m_layout_data.down_y_s, m_layout_data.down_width_s, m_layout_data.text_height);
-		m_disp_cpu.MoveWindow(m_layout_data.cpu_x_s, m_layout_data.cpu_y_s, m_layout_data.cpu_width_s, m_layout_data.text_height);
-		m_disp_memory.MoveWindow(m_layout_data.memory_x_s, m_layout_data.memory_y_s, m_layout_data.memory_width_s, m_layout_data.text_height);
-	}
+    if (theApp.m_cfg_data.m_show_more_info)
+    {
+        SetWindowPos(nullptr, 0, 0, m_skin.GetLayoutInfo().layout_l.width, m_skin.GetLayoutInfo().layout_l.height, SWP_NOMOVE | SWP_NOZORDER);
+    }
+    else
+    {
+        SetWindowPos(nullptr, 0, 0, m_skin.GetLayoutInfo().layout_s.width, m_skin.GetLayoutInfo().layout_s.height, SWP_NOMOVE | SWP_NOZORDER);
+    }
 }
 
-void CTrafficMonitorDlg::GetSkinLayout()
+void CTrafficMonitorDlg::LoadSkinLayout()
 {
-	wstring skin_cfg_path{ theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini" };
-	CSkinDlg::LoadSkinLayout(skin_cfg_path, m_layout_data);
-	if (m_layout_data.no_text)		//Èç¹ûÆ¤·ô²¼¾Ö²»ÏÔÊ¾ÎÄ±¾£¬Ôò²»ÔÊĞí½»»»ÉÏ´«ºÍÏÂÔØµÄÎ»ÖÃ£¬ÒòÎªÉÏ´«ºÍÏÂÔØµÄÎ»ÖÃÒÑ¾­¹Ì¶¨ÔÚÆ¤·ôÖĞÁË
+	wstring skin_cfg_path{ theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.xml" };
+    if (!CCommon::FileExist(skin_cfg_path.c_str()))
+        skin_cfg_path = theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini";
+    m_skin.Load(skin_cfg_path);
+	if (m_skin.GetLayoutInfo().no_label)		//å¦‚æœçš®è‚¤å¸ƒå±€ä¸æ˜¾ç¤ºæ–‡æœ¬ï¼Œåˆ™ä¸å…è®¸äº¤æ¢ä¸Šä¼ å’Œä¸‹è½½çš„ä½ç½®ï¼Œå› ä¸ºä¸Šä¼ å’Œä¸‹è½½çš„ä½ç½®å·²ç»å›ºå®šåœ¨çš®è‚¤ä¸­äº†
 		theApp.m_main_wnd_data.swap_up_down = false;
 }
 
 void CTrafficMonitorDlg::LoadBackGroundImage()
 {
-	m_back_img.Destroy();
 	CImage img_tmp;
 	CSize image_size;
 	if (theApp.m_cfg_data.m_show_more_info)
 	{
-		img_tmp.Load((theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_IMAGE_L).c_str());
-		image_size.SetSize(m_layout_data.width_l, m_layout_data.height_l);
+		image_size.SetSize(m_skin.GetLayoutInfo().layout_l.width, m_skin.GetLayoutInfo().layout_l.height);
 	}
 	else
 	{
-		img_tmp.Load((theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_IMAGE_S).c_str());
-		image_size.SetSize(m_layout_data.width_s, m_layout_data.height_s);
+		image_size.SetSize(m_skin.GetLayoutInfo().layout_s.width, m_skin.GetLayoutInfo().layout_s.height);
 	}
-	CDrawCommon::BitmapStretch(&img_tmp, &m_back_img, image_size);		//À­ÉìÍ¼Æ¬
-	SetBackgroundImage(m_back_img);
-	img_tmp.Destroy();
 
-	//´´½¨´°¿ÚÇøÓò
+	//åˆ›å»ºçª—å£åŒºåŸŸ
 	CImage img_mask;
-	//ÔØÈëÑÚÂëÍ¼Æ¬
+	//è½½å…¥æ©ç å›¾ç‰‡
 	if (theApp.m_cfg_data.m_show_more_info)
 		img_tmp.Load((theApp.m_skin_path + m_skins[m_skin_selected] + BACKGROUND_MASK_L).c_str());
 	else
@@ -720,67 +653,29 @@ void CTrafficMonitorDlg::LoadBackGroundImage()
 	CRgn wnd_rgn;
 	if (!img_tmp.IsNull())
 	{
-		CDrawCommon::BitmapStretch(&img_tmp, &img_mask, image_size);		//À­ÉìÑÚÂëÍ¼Æ¬
+		CDrawCommon::BitmapStretch(&img_tmp, &img_mask, image_size);		//æ‹‰ä¼¸æ©ç å›¾ç‰‡
 		CBitmap bitmap;
 		bitmap.Attach(img_mask);
-		CDrawCommon::GetRegionFromImage(wnd_rgn, bitmap, 128);		//´ÓÑÚÂëÍ¼Æ¬»ñµÃ´°¿ÚµÄÇøÓò
+		CDrawCommon::GetRegionFromImage(wnd_rgn, bitmap, 128);		//ä»æ©ç å›¾ç‰‡è·å¾—çª—å£çš„åŒºåŸŸ
 		bitmap.Detach();
 	}
 	else
 	{
-		wnd_rgn.CreateRectRgnIndirect(CRect(CPoint(0, 0), image_size));		//ÔØÈëÑÚÂëÍ¼Æ¬Ê§°Ü£¬ÔòÊ¹ÓÃ´°¿Ú´óĞ¡×÷Îª´°¿ÚÇøÓò
+		wnd_rgn.CreateRectRgnIndirect(CRect(CPoint(0, 0), image_size));		//è½½å…¥æ©ç å›¾ç‰‡å¤±è´¥ï¼Œåˆ™ä½¿ç”¨çª—å£å¤§å°ä½œä¸ºçª—å£åŒºåŸŸ
 	}
-	//±ÜÃâ»ñÈ¡µ½µÄ´°¿ÚÇøÓòÎª¿Õ
+	//é¿å…è·å–åˆ°çš„çª—å£åŒºåŸŸä¸ºç©º
 	CRgn empty_rgn;
-	empty_rgn.CreateRectRgnIndirect(CRect{});	//´´½¨Ò»¸ö¿ÕµÄCRgn¶ÔÏó
+	empty_rgn.CreateRectRgnIndirect(CRect{});	//åˆ›å»ºä¸€ä¸ªç©ºçš„CRgnå¯¹è±¡
 	if(wnd_rgn.EqualRgn(&empty_rgn))
-		wnd_rgn.SetRectRgn(CRect(CPoint(0, 0), image_size));	//Èç¹û»ñÈ¡µ½µÄ´°¿ÚÇøÓòÎª¿Õ£¬ÔòÊ¹ÓÃ´°¿Ú´óĞ¡×÷Îª´°¿ÚÇøÓò
-	SetWindowRgn(wnd_rgn, TRUE);		//ÉèÖÃ´°¿ÚÇøÓò
-}
-
-void CTrafficMonitorDlg::SetTextColor()
-{
-	int text_colors[MAIN_WND_COLOR_NUM];
-	if (theApp.m_main_wnd_data.specify_each_item_color)
-	{
-		for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
-			text_colors[i] = theApp.m_main_wnd_data.text_colors[i];
-	}
-	else
-	{
-		for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
-			text_colors[i] = theApp.m_main_wnd_data.text_colors[0];
-	}
-
-	m_disp_up.SetTextColor(text_colors[0]);
-	m_disp_down.SetTextColor(text_colors[1]);
-	m_disp_cpu.SetTextColor(text_colors[2]);
-	m_disp_memory.SetTextColor(text_colors[3]);
+		wnd_rgn.SetRectRgn(CRect(CPoint(0, 0), image_size));	//å¦‚æœè·å–åˆ°çš„çª—å£åŒºåŸŸä¸ºç©ºï¼Œåˆ™ä½¿ç”¨çª—å£å¤§å°ä½œä¸ºçª—å£åŒºåŸŸ
+	SetWindowRgn(wnd_rgn, TRUE);		//è®¾ç½®çª—å£åŒºåŸŸ
 }
 
 void CTrafficMonitorDlg::SetTextFont()
 {
-	if (m_font.m_hObject)	//Èç¹ûm_fontÒÑ¾­¹ØÁªÁËÒ»¸ö×ÖÌå×ÊÔ´¶ÔÏó£¬ÔòÊÍ·ÅËü
+	if (m_font.m_hObject)	//å¦‚æœm_fontå·²ç»å…³è”äº†ä¸€ä¸ªå­—ä½“èµ„æºå¯¹è±¡ï¼Œåˆ™é‡Šæ”¾å®ƒ
 		m_font.DeleteObject();
-	m_font.CreateFont(
-		FONTSIZE_TO_LFHEIGHT(theApp.m_main_wnd_data.font.size), // nHeight
-		0, // nWidth
-		0, // nEscapement
-		0, // nOrientation
-		(theApp.m_main_wnd_data.font.bold ? FW_BOLD : FW_NORMAL), // nWeight
-		theApp.m_main_wnd_data.font.italic, // bItalic
-		theApp.m_main_wnd_data.font.underline, // bUnderline
-		theApp.m_main_wnd_data.font.strike_out, // cStrikeOut
-		DEFAULT_CHARSET, // nCharSet
-		OUT_DEFAULT_PRECIS, // nOutPrecision
-		CLIP_DEFAULT_PRECIS, // nClipPrecision
-		DEFAULT_QUALITY, // nQuality
-		DEFAULT_PITCH | FF_SWISS, // nPitchAndFamily
-		theApp.m_main_wnd_data.font.name);
-	m_disp_cpu.SetFont(&m_font);
-	m_disp_memory.SetFont(&m_font);
-	m_disp_up.SetFont(&m_font);
-	m_disp_down.SetFont(&m_font);
+    theApp.m_main_wnd_data.font.Create(m_font);
 }
 
 bool CTrafficMonitorDlg::IsTaskbarWndValid() const
@@ -806,47 +701,39 @@ void CTrafficMonitorDlg::TaskbarShowHideItem(DisplayItem type)
     }
 }
 
-void CTrafficMonitorDlg::ApplySettings()
-{
-	//Ó¦ÓÃÎÄ×ÖÑÕÉ«ÉèÖÃ
-	SetTextColor();
-	//Ó¦ÓÃ×ÖÌåÉèÖÃ
-	SetTextFont();
-}
-
-// CTrafficMonitorDlg ÏûÏ¢´¦Àí³ÌĞò
+// CTrafficMonitorDlg æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 BOOL CTrafficMonitorDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	CDialog::OnInitDialog();
 
-	// ÉèÖÃ´Ë¶Ô»°¿òµÄÍ¼±ê¡£  µ±Ó¦ÓÃ³ÌĞòÖ÷´°¿Ú²»ÊÇ¶Ô»°¿òÊ±£¬¿ò¼Ü½«×Ô¶¯
-	//  Ö´ĞĞ´Ë²Ù×÷
-	SetIcon(m_hIcon, TRUE);			// ÉèÖÃ´óÍ¼±ê
-	SetIcon(m_hIcon, FALSE);		// ÉèÖÃĞ¡Í¼±ê
+	// è®¾ç½®æ­¤å¯¹è¯æ¡†çš„å›¾æ ‡ã€‚  å½“åº”ç”¨ç¨‹åºä¸»çª—å£ä¸æ˜¯å¯¹è¯æ¡†æ—¶ï¼Œæ¡†æ¶å°†è‡ªåŠ¨
+	//  æ‰§è¡Œæ­¤æ“ä½œ
+	SetIcon(m_hIcon, TRUE);			// è®¾ç½®å¤§å›¾æ ‡
+	SetIcon(m_hIcon, FALSE);		// è®¾ç½®å°å›¾æ ‡
 
-	// TODO: ÔÚ´ËÌí¼Ó¶îÍâµÄ³õÊ¼»¯´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ é¢å¤–çš„åˆå§‹åŒ–ä»£ç 
 	SetWindowText(_T("TrafficMonitor"));
-	//ÉèÖÃÒş²ØÈÎÎñÀ¸Í¼±ê
+	//è®¾ç½®éšè—ä»»åŠ¡æ å›¾æ ‡
 	ModifyStyleEx(WS_EX_APPWINDOW, WS_EX_TOOLWINDOW);
 
 	theApp.GetDPI(this);
-	//»ñÈ¡ÆÁÄ»´óĞ¡
+	//è·å–å±å¹•å¤§å°
 	GetScreenSize();
-	::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0);   // »ñµÃ¹¤×÷Çø´óĞ¡
+	::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0);   // è·å¾—å·¥ä½œåŒºå¤§å°
 
     theApp.InitMenuResourse();
 
-	//ÉèÖÃ´°¿ÚÍ¸Ã÷¶È
+	//è®¾ç½®çª—å£é€æ˜åº¦
 	SetTransparency();
 
-	IniConnection();	//³õÊ¼»¯Á¬½Ó
+	IniConnection();	//åˆå§‹åŒ–è¿æ¥
 
-	//Èç¹ûÆô¶¯Ê±ÉèÖÃÁËÊó±ê´©Í¸»òÒş²ØÖ÷´°¿Ú£¬²¢ÇÒÃ»ÓĞÏÔÊ¾ÈÎÎñÀ¸´°¿Ú£¬ÔòÏÔÊ¾Í¨ÖªÇøÍ¼±ê
+	//å¦‚æœå¯åŠ¨æ—¶è®¾ç½®äº†é¼ æ ‡ç©¿é€æˆ–éšè—ä¸»çª—å£ï¼Œå¹¶ä¸”æ²¡æœ‰æ˜¾ç¤ºä»»åŠ¡æ çª—å£ï¼Œåˆ™æ˜¾ç¤ºé€šçŸ¥åŒºå›¾æ ‡
 	if ((theApp.m_cfg_data.m_mouse_penetrate || theApp.m_cfg_data.m_hide_main_window) && !theApp.m_cfg_data.m_show_task_bar_wnd)
 		theApp.m_cfg_data.m_show_notify_icon = true;
 
-	//ÔØÈëÍ¨ÖªÇøÍ¼±ê
+	//è½½å…¥é€šçŸ¥åŒºå›¾æ ‡
 	theApp.m_notify_icons[0] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_NOFITY_ICON), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
 	theApp.m_notify_icons[1] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_NOFITY_ICON2), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
 	theApp.m_notify_icons[2] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_NOFITY_ICON3), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
@@ -854,13 +741,13 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	theApp.m_notify_icons[4] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_NOFITY_ICON4), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
 	theApp.m_notify_icons[5] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_NOTIFY_ICON5), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
 
-	//ÉèÖÃÍ¨ÖªÇøÓòÍ¼±ê
-	m_ntIcon.cbSize = sizeof(NOTIFYICONDATA);	//¸Ã½á¹¹Ìå±äÁ¿µÄ´óĞ¡
+	//è®¾ç½®é€šçŸ¥åŒºåŸŸå›¾æ ‡
+	m_ntIcon.cbSize = sizeof(NOTIFYICONDATA);	//è¯¥ç»“æ„ä½“å˜é‡çš„å¤§å°
 	if (theApp.m_cfg_data.m_notify_icon_selected < 0 || theApp.m_cfg_data.m_notify_icon_selected >= MAX_NOTIFY_ICON)
 		theApp.m_cfg_data.m_notify_icon_selected = 0;
-	m_ntIcon.hIcon = theApp.m_notify_icons[theApp.m_cfg_data.m_notify_icon_selected];		//ÉèÖÃÍ¼±ê
-	m_ntIcon.hWnd = this->m_hWnd;				//½ÓÊÕÍĞÅÌÍ¼±êÍ¨ÖªÏûÏ¢µÄ´°¿Ú¾ä±ú
-	CString atip;			//Êó±êÖ¸ÏòÍ¼±êÊ±ÏÔÊ¾µÄÌáÊ¾
+	m_ntIcon.hIcon = theApp.m_notify_icons[theApp.m_cfg_data.m_notify_icon_selected];		//è®¾ç½®å›¾æ ‡
+	m_ntIcon.hWnd = this->m_hWnd;				//æ¥æ”¶æ‰˜ç›˜å›¾æ ‡é€šçŸ¥æ¶ˆæ¯çš„çª—å£å¥æŸ„
+	CString atip;			//é¼ æ ‡æŒ‡å‘å›¾æ ‡æ—¶æ˜¾ç¤ºçš„æç¤º
 #ifdef _DEBUG
 	atip = CCommon::LoadText(IDS_TRAFFICMONITOR, _T(" (Debug)"));
 #else
@@ -868,20 +755,20 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 #endif
 	//wcscpy_s(m_ntIcon.szTip, 128, strTip);
 	CCommon::WStringCopy(m_ntIcon.szTip, 128, atip.GetString());
-	m_ntIcon.uCallbackMessage = MY_WM_NOTIFYICON;	//Ó¦ÓÃ³ÌĞò¶¨ÒåµÄÏûÏ¢IDºÅ
-	m_ntIcon.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;	//Í¼±êµÄÊôĞÔ£ºÉèÖÃ³ÉÔ±uCallbackMessage¡¢hIcon¡¢szTipÓĞĞ§
+	m_ntIcon.uCallbackMessage = MY_WM_NOTIFYICON;	//åº”ç”¨ç¨‹åºå®šä¹‰çš„æ¶ˆæ¯IDå·
+	m_ntIcon.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;	//å›¾æ ‡çš„å±æ€§ï¼šè®¾ç½®æˆå‘˜uCallbackMessageã€hIconã€szTipæœ‰æ•ˆ
 	if (theApp.m_cfg_data.m_show_notify_icon)
-		::Shell_NotifyIcon(NIM_ADD, &m_ntIcon);	//ÔÚÏµÍ³Í¨ÖªÇøÓòÔö¼ÓÕâ¸öÍ¼±ê
+		::Shell_NotifyIcon(NIM_ADD, &m_ntIcon);	//åœ¨ç³»ç»Ÿé€šçŸ¥åŒºåŸŸå¢åŠ è¿™ä¸ªå›¾æ ‡
 
-	//ÔØÈëÁ÷Á¿ÀúÊ·¼ÇÂ¼
+	//è½½å…¥æµé‡å†å²è®°å½•
 	LoadHistoryTraffic();
 
-	//ÉèÖÃ1000ºÁÃë´¥·¢µÄ¶¨Ê±Æ÷
+	//è®¾ç½®1000æ¯«ç§’è§¦å‘çš„å®šæ—¶å™¨
 	SetTimer(MAIN_TIMER, 1000, NULL);
 
     SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, NULL);
 
-	//³õÊ¼»¯Æ¤·ô
+	//åˆå§‹åŒ–çš®è‚¤
 	CCommon::GetFiles(theApp.m_skin_path.c_str(), m_skins);
 	if (m_skins.empty())
 		m_skins.push_back(L"");
@@ -892,53 +779,50 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 			m_skin_selected = i;
 	}
 
-	//¸ù¾İµ±Ç°Ñ¡ÔñµÄÆ¤·ô»ñÈ¡²¼¾ÖÊı¾İ
-	GetSkinLayout();
+	//æ ¹æ®å½“å‰é€‰æ‹©çš„çš®è‚¤è·å–å¸ƒå±€æ•°æ®
+	LoadSkinLayout();
 
-	//³õÊ¼»¯´°¿ÚÎ»ÖÃ
+	//åˆå§‹åŒ–çª—å£ä½ç½®
 	SetItemPosition();
 	if (theApp.m_cfg_data.m_position_x != -1 && theApp.m_cfg_data.m_position_y != -1)
 		SetWindowPos(nullptr, theApp.m_cfg_data.m_position_x, theApp.m_cfg_data.m_position_y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 	CheckWindowPos();
 
-	//ÔØÈë±³¾°Í¼Æ¬
+	//è½½å…¥èƒŒæ™¯å›¾ç‰‡
 	LoadBackGroundImage();
 
-	//ÉèÖÃ×ÖÌå
+	//è®¾ç½®å­—ä½“
 	SetTextFont();
 
-	//ÉèÖÃÎÄ×ÖÑÕÉ«
-	SetTextColor();
-
-	//»ñÈ¡Æô¶¯Ê±µÄÊ±¼ä
+	//è·å–å¯åŠ¨æ—¶çš„æ—¶é—´
 	GetLocalTime(&m_start_time);
 
-	//³õÊ¼»¯Êó±êÌáÊ¾
+	//åˆå§‹åŒ–é¼ æ ‡æç¤º
 	m_tool_tips.Create(this, TTS_ALWAYSTIP);
 	m_tool_tips.SetMaxTipWidth(600);
 	m_tool_tips.AddTool(this, _T(""));
 
-	//ÉèÖÃ»ñÈ¡CPUÀûÓÃÂÊµÄ·½Ê½
+	//è®¾ç½®è·å–CPUåˆ©ç”¨ç‡çš„æ–¹å¼
 	m_cpu_usage.SetUseCPUTimes(theApp.m_general_data.m_get_cpu_usage_by_cpu_times);
 
-	//Èç¹û³ÌĞòÆô¶¯Ê±ÉèÖÃÁËÒş²ØÖ÷´°¿Ú£¬»ò´°¿ÚµÄÎ»ÖÃÔÚ×óÉÏ½Ç£¬ÔòÏÈ½«Æä²»Í¸Ã÷¶ÈÉèÎª0
+	//å¦‚æœç¨‹åºå¯åŠ¨æ—¶è®¾ç½®äº†éšè—ä¸»çª—å£ï¼Œæˆ–çª—å£çš„ä½ç½®åœ¨å·¦ä¸Šè§’ï¼Œåˆ™å…ˆå°†å…¶ä¸é€æ˜åº¦è®¾ä¸º0
 	if (theApp.m_cfg_data.m_hide_main_window || (theApp.m_cfg_data.m_position_x == 0 && theApp.m_cfg_data.m_position_y == 0))
 		SetTransparency(0);
 
 	SetTimer(TASKBAR_TIMER, 100, NULL);
 
-	return TRUE;  // ³ı·Ç½«½¹µãÉèÖÃµ½¿Ø¼ş£¬·ñÔò·µ»Ø TRUE
+	return TRUE;  // é™¤éå°†ç„¦ç‚¹è®¾ç½®åˆ°æ§ä»¶ï¼Œå¦åˆ™è¿”å› TRUE
 }
 
 
-//µ±ÓÃ»§ÍÏ¶¯×îĞ¡»¯´°¿ÚÊ±ÏµÍ³µ÷ÓÃ´Ëº¯ÊıÈ¡µÃ¹â±ê
-//ÏÔÊ¾¡£
+//å½“ç”¨æˆ·æ‹–åŠ¨æœ€å°åŒ–çª—å£æ—¶ç³»ç»Ÿè°ƒç”¨æ­¤å‡½æ•°å–å¾—å…‰æ ‡
+//æ˜¾ç¤ºã€‚
 HCURSOR CTrafficMonitorDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-//¼ÆËãÖ¸¶¨ÃëÊıµÄÊ±¼äÄÚMonitor¶¨Ê±Æ÷»á´¥·¢µÄ´ÎÊı
+//è®¡ç®—æŒ‡å®šç§’æ•°çš„æ—¶é—´å†…Monitorå®šæ—¶å™¨ä¼šè§¦å‘çš„æ¬¡æ•°
 static int GetMonitorTimerCount(int second)
 {
     return second * 1000 / theApp.m_general_data.monitor_time_span;
@@ -946,17 +830,17 @@ static int GetMonitorTimerCount(int second)
 
 void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 	if (nIDEvent == MONITOR_TIMER)
 	{
-		//»ñÈ¡ÍøÂçÁ¬½ÓËÙ¶È
+		//è·å–ç½‘ç»œè¿æ¥é€Ÿåº¦
 		int rtn = GetIfTable(m_pIfTable, &m_dwSize, FALSE);
-		if (!theApp.m_cfg_data.m_select_all)		//»ñÈ¡µ±Ç°Ñ¡ÖĞÁ¬½ÓµÄÍøËÙ
+		if (!theApp.m_cfg_data.m_select_all)		//è·å–å½“å‰é€‰ä¸­è¿æ¥çš„ç½‘é€Ÿ
 		{
 			m_in_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwInOctets;
 			m_out_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwOutOctets;
 		}
-		else		//»ñÈ¡È«²¿Á¬½ÓµÄÍøËÙ
+		else		//è·å–å…¨éƒ¨è¿æ¥çš„ç½‘é€Ÿ
 		{
 			m_in_bytes = 0;
 			m_out_bytes = 0;
@@ -964,15 +848,15 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			{
 				//if (i > 0 && m_pIfTable->table[m_connections[i].index].dwInOctets == m_pIfTable->table[m_connections[i - 1].index].dwInOctets
 				//	&& m_pIfTable->table[m_connections[i].index].dwOutOctets == m_pIfTable->table[m_connections[i - 1].index].dwOutOctets)
-				//	continue;		//Á¬½ÓÁĞ±íÖĞ¿ÉÄÜ»áÓĞÏàÍ¬µÄÁ¬½Ó£¬Í³¼ÆËùÓĞÁ¬½ÓµÄÍøËÙÊ±£¬ºöÂÔµôÒÑ·¢ËÍºÍÒÑ½ÓÊÕ×Ö½ÚÊıÍêÈ«ÏàÍ¬µÄÁ¬½Ó
+				//	continue;		//è¿æ¥åˆ—è¡¨ä¸­å¯èƒ½ä¼šæœ‰ç›¸åŒçš„è¿æ¥ï¼Œç»Ÿè®¡æ‰€æœ‰è¿æ¥çš„ç½‘é€Ÿæ—¶ï¼Œå¿½ç•¥æ‰å·²å‘é€å’Œå·²æ¥æ”¶å­—èŠ‚æ•°å®Œå…¨ç›¸åŒçš„è¿æ¥
 				m_in_bytes += m_pIfTable->table[m_connections[i].index].dwInOctets;
 				m_out_bytes += m_pIfTable->table[m_connections[i].index].dwOutOctets;
 			}
 		}
 
-        unsigned __int64 cur_in_speed{}, cur_out_speed{};       //±¾´Î¼à¿ØÊ±¼ä¼ä¸ôÄÚµÄÉÏ´«ºÍÏÂÔØËÙ¶È
+        unsigned __int64 cur_in_speed{}, cur_out_speed{};       //æœ¬æ¬¡ç›‘æ§æ—¶é—´é—´éš”å†…çš„ä¸Šä¼ å’Œä¸‹è½½é€Ÿåº¦
 
-		//Èç¹û·¢ËÍºÍ½ÓÊÕµÄ×Ö½ÚÊıÎª0»òÉÏ´Î·¢ËÍºÍ½ÓÊÕµÄ×Ö½ÚÊıÎª0»òµ±Ç°Á¬½ÓÒÑ¸Ä±äÊ±£¬ÍøËÙÎŞĞ§
+		//å¦‚æœå‘é€å’Œæ¥æ”¶çš„å­—èŠ‚æ•°ä¸º0æˆ–ä¸Šæ¬¡å‘é€å’Œæ¥æ”¶çš„å­—èŠ‚æ•°ä¸º0æˆ–å½“å‰è¿æ¥å·²æ”¹å˜æ—¶ï¼Œç½‘é€Ÿæ— æ•ˆ
 		if ((m_in_bytes == 0 && m_out_bytes == 0) || (m_last_in_bytes == 0 && m_last_out_bytes == 0) || m_connection_change_flag
             || m_last_in_bytes > m_in_bytes || m_last_out_bytes > m_out_bytes)
 		{
@@ -984,22 +868,22 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			cur_in_speed = m_in_bytes - m_last_in_bytes;
 			cur_out_speed = m_out_bytes - m_last_out_bytes;
 		}
-		////Èç¹û´óÓÚ1GB/s£¬ËµÃ÷¿ÉÄÜ²úÉúÁËÒì³££¬ÍøËÙÎŞĞ§
+		////å¦‚æœå¤§äº1GB/sï¼Œè¯´æ˜å¯èƒ½äº§ç”Ÿäº†å¼‚å¸¸ï¼Œç½‘é€Ÿæ— æ•ˆ
 		//if (cur_in_speed > 1073741824)
 		//	cur_in_speed = 0;
 		//if (cur_out_speed > 1073741824)
 		//	cur_out_speed = 0;
 
-        //½«µ±Ç°¼à¿ØÊ±¼ä¼ä¸ôµÄÁ÷Á¿×ª»»³ÉÃ¿ÃëÊ±¼ä¼ä¸ôÄÚµÄÁ÷Á¿
+        //å°†å½“å‰ç›‘æ§æ—¶é—´é—´éš”çš„æµé‡è½¬æ¢æˆæ¯ç§’æ—¶é—´é—´éš”å†…çš„æµé‡
         theApp.m_in_speed = static_cast<unsigned int>(cur_in_speed * 1000 / theApp.m_general_data.monitor_time_span);
         theApp.m_out_speed = static_cast<unsigned int>(cur_out_speed * 1000 / theApp.m_general_data.monitor_time_span);
 
-		m_connection_change_flag = false;	//Çå³ıÁ¬½Ó·¢Éú±ä»¯µÄ±êÖ¾
+		m_connection_change_flag = false;	//æ¸…é™¤è¿æ¥å‘ç”Ÿå˜åŒ–çš„æ ‡å¿—
 
 		m_last_in_bytes = m_in_bytes;
 		m_last_out_bytes = m_out_bytes;
 
-		//´¦ÓÚ×Ô¶¯Ñ¡Ôñ×´Ì¬Ê±£¬Èç¹ûÁ¬Ğø30ÃëÃ»ÓĞÍøËÙ£¬Ôò¿ÉÄÜ×Ô¶¯Ñ¡ÔñµÄÍøÂç²»¶Ô£¬´ËÊ±Ö´ĞĞÒ»´Î×Ô¶¯Ñ¡Ôñ
+		//å¤„äºè‡ªåŠ¨é€‰æ‹©çŠ¶æ€æ—¶ï¼Œå¦‚æœè¿ç»­30ç§’æ²¡æœ‰ç½‘é€Ÿï¼Œåˆ™å¯èƒ½è‡ªåŠ¨é€‰æ‹©çš„ç½‘ç»œä¸å¯¹ï¼Œæ­¤æ—¶æ‰§è¡Œä¸€æ¬¡è‡ªåŠ¨é€‰æ‹©
 		if (theApp.m_cfg_data.m_auto_select)
 		{
 			if (cur_in_speed == 0 && cur_out_speed == 0)
@@ -1013,7 +897,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			}
 		}
 
-		//¼ì²âµ±Ç°ÈÕÆÚÊÇ·ñ¸Ä±ä£¬Èç¹ûÒÑ¸Ä±ä£¬¾ÍÏòÀúÊ·Á÷Á¿ÁĞ±í²åÈëÒ»¸öĞÂµÄÈÕÆÚ
+		//æ£€æµ‹å½“å‰æ—¥æœŸæ˜¯å¦æ”¹å˜ï¼Œå¦‚æœå·²æ”¹å˜ï¼Œå°±å‘å†å²æµé‡åˆ—è¡¨æ’å…¥ä¸€ä¸ªæ–°çš„æ—¥æœŸ
 		SYSTEMTIME current_time;
 		GetLocalTime(&current_time);
 		if (m_history_traffic.GetTraffics()[0].day != current_time.wDay)
@@ -1028,16 +912,16 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			theApp.m_today_down_traffic = 0;
 		}
 
-		//Í³¼Æ½ñÌìÒÑÊ¹ÓÃµÄÁ÷Á¿
+		//ç»Ÿè®¡ä»Šå¤©å·²ä½¿ç”¨çš„æµé‡
 		theApp.m_today_up_traffic += cur_out_speed;
 		theApp.m_today_down_traffic += cur_in_speed;
 		m_history_traffic.GetTraffics()[0].up_kBytes = static_cast<unsigned int>(theApp.m_today_up_traffic / 1024);
 		m_history_traffic.GetTraffics()[0].down_kBytes = static_cast<unsigned int>(theApp.m_today_down_traffic / 1024);
-		//Ã¿¸ô30Ãë±£´æÒ»´ÎÁ÷Á¿ÀúÊ·¼ÇÂ¼
+		//æ¯éš”30ç§’ä¿å­˜ä¸€æ¬¡æµé‡å†å²è®°å½•
 		if (m_monitor_time_cnt % GetMonitorTimerCount(30) == GetMonitorTimerCount(30) - 1)
 		{
 			static unsigned __int64 last_today_kbytes;
-			if (m_history_traffic.GetTraffics()[0].kBytes() - last_today_kbytes >= 100u)	//Ö»ÓĞµ±Á÷Á¿±ä»¯³¬¹ı100KBÊ±²Å±£´æÀúÊ·Á÷Á¿¼ÇÂ¼£¬·ÀÖ¹´ÅÅÌĞ´Èë¹ıÓÚÆµ·±
+			if (m_history_traffic.GetTraffics()[0].kBytes() - last_today_kbytes >= 100u)	//åªæœ‰å½“æµé‡å˜åŒ–è¶…è¿‡100KBæ—¶æ‰ä¿å­˜å†å²æµé‡è®°å½•ï¼Œé˜²æ­¢ç£ç›˜å†™å…¥è¿‡äºé¢‘ç¹
 			{
 				SaveHistoryTraffic();
 				last_today_kbytes = m_history_traffic.GetTraffics()[0].kBytes();
@@ -1056,11 +940,11 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		
         if (m_monitor_time_cnt % GetMonitorTimerCount(3) == GetMonitorTimerCount(3) - 1)
 		{
-			//ÖØĞÂ»ñÈ¡µ±Ç°Á¬½ÓÊıÁ¿
+			//é‡æ–°è·å–å½“å‰è¿æ¥æ•°é‡
 			static DWORD last_interface_num = -1;
 			DWORD interface_num;
 			GetNumberOfInterfaces(&interface_num);
-			if (last_interface_num != -1 && interface_num != last_interface_num)	//Èç¹ûÁ¬½ÓÊı·¢Éú±ä»¯£¬ÔòÖØĞÂ³õÊ¼»¯Á¬½Ó
+			if (last_interface_num != -1 && interface_num != last_interface_num)	//å¦‚æœè¿æ¥æ•°å‘ç”Ÿå˜åŒ–ï¼Œåˆ™é‡æ–°åˆå§‹åŒ–è¿æ¥
 			{
 				CString info;
 				info.LoadString(IDS_CONNECTION_NUM_CHANGED);
@@ -1076,11 +960,11 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			descr = (const char*)m_pIfTable->table[m_connections[m_connection_selected].index].bDescr;
 			if (descr != theApp.m_cfg_data.m_connection_name)
 			{
-				//Ğ´Èë¶îÍâµÄµ÷ÊÔĞÅÏ¢
+				//å†™å…¥é¢å¤–çš„è°ƒè¯•ä¿¡æ¯
 				if (theApp.m_debug_log)
 				{
 					CString log_str;
-					log_str = _T("Á¬½ÓÃû³Æ²»Æ¥Åä£º\r\n");
+					log_str = _T("è¿æ¥åç§°ä¸åŒ¹é…ï¼š\r\n");
 					log_str += _T("IfTable description: ");
 					log_str += descr.c_str();
 					log_str += _T("\r\nm_connection_name: ");
@@ -1096,13 +980,13 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			}
 		}
 
-		////Ö»ÓĞÖ÷´°¿ÚºÍÈÎÎñÀ¸´°¿ÚÖÁÉÙÓĞÒ»¸öÏÔÊ¾Ê±²ÅÖ´ĞĞÏÂÃæµÄ´¦Àí
+		////åªæœ‰ä¸»çª—å£å’Œä»»åŠ¡æ çª—å£è‡³å°‘æœ‰ä¸€ä¸ªæ˜¾ç¤ºæ—¶æ‰æ‰§è¡Œä¸‹é¢çš„å¤„ç†
 		//if (!theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_show_task_bar_wnd)
 		//{
-		//»ñÈ¡CPUÊ¹ÓÃÂÊ
+		//è·å–CPUä½¿ç”¨ç‡
 		theApp.m_cpu_usage = m_cpu_usage.GetCPUUsage();
 
-		//»ñÈ¡ÄÚ´æÀûÓÃÂÊ
+		//è·å–å†…å­˜åˆ©ç”¨ç‡
 		MEMORYSTATUSEX statex;
 		statex.dwLength = sizeof(statex);
 		GlobalMemoryStatusEx(&statex);
@@ -1111,7 +995,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		theApp.m_total_memory  = static_cast<int>(statex.ullTotalPhys / 1024);
 
 #ifndef WITHOUT_TEMPERATURE
-        //»ñÈ¡ÎÂ¶È
+        //è·å–æ¸©åº¦
         theApp.m_pMonitor->GetHardwareInfo();
         theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
         theApp.m_gpu_temperature = theApp.m_pMonitor->GpuTemperature();
@@ -1119,16 +1003,16 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
         theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
 #endif
 
-		ShowInfo();		//Ë¢ĞÂ´°¿ÚĞÅÏ¢
+		Invalidate(FALSE);		//åˆ·æ–°çª—å£ä¿¡æ¯
 	
-		//¸üĞÂÊó±êÌáÊ¾
+		//æ›´æ–°é¼ æ ‡æç¤º
         if (theApp.m_main_wnd_data.show_tool_tip)
         {
             CString tip_info;
             tip_info = GetMouseTipsInfo();
             m_tool_tips.UpdateTipText(tip_info, this);
         }
-		//¸üĞÂÈÎÎñÀ¸´°¿ÚÊó±êÌáÊ¾
+		//æ›´æ–°ä»»åŠ¡æ çª—å£é¼ æ ‡æç¤º
 		if (IsTaskbarWndValid())
 			m_tBarDlg->UpdateToolTips();
 
@@ -1138,41 +1022,41 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
     if (nIDEvent == MAIN_TIMER)
     {
-        if (m_first_start)		//Õâ¸öifÓï¾äÔÚ³ÌĞòÆô¶¯ºó1ÃëÖ´ĞĞ
+        if (m_first_start)		//è¿™ä¸ªifè¯­å¥åœ¨ç¨‹åºå¯åŠ¨å1ç§’æ‰§è¡Œ
         {
-            //½«ÉèÖÃ´°¿ÚÖÃ¶¥µÄ´¦Àí·ÅÔÚÕâÀïÊÇÓÃÓÚ½â¾ö
-            //·ÅÔÚ³õÊ¼»¯º¯ÊıÖĞ¿ÉÄÜ»á³öÏÖÉèÖÃÖÃ¶¥ÎŞĞ§µÄÎÊÌâ
-            SetAlwaysOnTop();		//ÉèÖÃ´°¿ÚÖÃ¶¥
-            SetMousePenetrate();	//ÉèÖÃÊó±ê´©Í¸
-            if (theApp.m_cfg_data.m_hide_main_window)	//ÉèÖÃÒş²ØÖ÷´°¿Ú
+            //å°†è®¾ç½®çª—å£ç½®é¡¶çš„å¤„ç†æ”¾åœ¨è¿™é‡Œæ˜¯ç”¨äºè§£å†³
+            //æ”¾åœ¨åˆå§‹åŒ–å‡½æ•°ä¸­å¯èƒ½ä¼šå‡ºç°è®¾ç½®ç½®é¡¶æ— æ•ˆçš„é—®é¢˜
+            SetAlwaysOnTop();		//è®¾ç½®çª—å£ç½®é¡¶
+            SetMousePenetrate();	//è®¾ç½®é¼ æ ‡ç©¿é€
+            if (theApp.m_cfg_data.m_hide_main_window)	//è®¾ç½®éšè—ä¸»çª—å£
                 ShowWindow(SW_HIDE);
 
-            //´ò¿ªÈÎÎñÀ¸´°¿Ú
+            //æ‰“å¼€ä»»åŠ¡æ çª—å£
             if (theApp.m_cfg_data.m_show_task_bar_wnd && m_tBarDlg == nullptr)
                 OpenTaskBarWnd();
 
-            //Èç¹û´°¿ÚµÄÎ»ÖÃÎª(0, 0)£¬ÔòÔÚ³õÊ¼»¯Ê±MoveWindowº¯ÊıÎŞĞ§£¬´ËÊ±ÔÙÒÆ¶¯Ò»´Î´°¿Ú
+            //å¦‚æœçª—å£çš„ä½ç½®ä¸º(0, 0)ï¼Œåˆ™åœ¨åˆå§‹åŒ–æ—¶MoveWindowå‡½æ•°æ— æ•ˆï¼Œæ­¤æ—¶å†ç§»åŠ¨ä¸€æ¬¡çª—å£
             if (theApp.m_cfg_data.m_position_x == 0 && theApp.m_cfg_data.m_position_y == 0)
             {
                 SetWindowPos(nullptr, theApp.m_cfg_data.m_position_x, theApp.m_cfg_data.m_position_y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
             }
-            SetTransparency();				//ÖØĞÂÉèÖÃ´°¿Ú²»Í¸Ã÷¶È
+            SetTransparency();				//é‡æ–°è®¾ç½®çª—å£ä¸é€æ˜åº¦
 
             m_first_start = false;
         }
 
         if (theApp.m_cfg_data.m_always_on_top && !theApp.m_cfg_data.m_hide_main_window)
         {
-            //Ã¿¸ô1ÃëÖÓ¾ÍÅĞ¶ÏÒ»ÏÂÇ°Ì¨´°¿ÚÊÇ·ñÈ«ÆÁ
+            //æ¯éš”1ç§’é’Ÿå°±åˆ¤æ–­ä¸€ä¸‹å‰å°çª—å£æ˜¯å¦å…¨å±
             m_is_foreground_fullscreen = CCommon::IsForegroundFullscreen();
-            if (theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen)		//µ±ÉèÖÃÁËÈ«ÆÁÊ±Òş²ØĞü¸¡´°Ê±
+            if (theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen)		//å½“è®¾ç½®äº†å…¨å±æ—¶éšè—æ‚¬æµ®çª—æ—¶
             {
                 if (m_is_foreground_fullscreen || theApp.m_cfg_data.m_hide_main_window)
                     ShowWindow(SW_HIDE);
                 else
                     ShowWindow(SW_RESTORE);
             }
-            else			//Èç¹ûÃ»ÓĞÉèÖÃÈ«ÆÁÊ±Òş²ØĞü¸¡´°£¬ÔòÈç¹ûÓĞ³ÌĞò½øÈëÈ«ÆÁ×´Ì¬£¬ÔòÉèÖÃÒ»´Î´°¿ÚÖÃ¶¥
+            else			//å¦‚æœæ²¡æœ‰è®¾ç½®å…¨å±æ—¶éšè—æ‚¬æµ®çª—ï¼Œåˆ™å¦‚æœæœ‰ç¨‹åºè¿›å…¥å…¨å±çŠ¶æ€ï¼Œåˆ™è®¾ç½®ä¸€æ¬¡çª—å£ç½®é¡¶
             {
                 static bool last_foreground_fullscreen;
                 if (!last_foreground_fullscreen && m_is_foreground_fullscreen)
@@ -1185,7 +1069,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
         if (!m_menu_popuped)
         {
-            //³ÌĞòÆô¶¯ºóÈô¸ÉÃëµÄÊ±ºò¸ù¾İÉèÖÃÖØĞÂÖ´ĞĞ¡°×ÜÊÇÖÃ¶¥¡±¡¢¡°Êó±ê´©Í¸¡±ºÍ¡°Òş²ØÖ÷´°¿Ú¡±µÄ²Ù×÷£¬·ÀÖ¹ÉèÖÃÃ»ÓĞÉúĞ§
+            //ç¨‹åºå¯åŠ¨åè‹¥å¹²ç§’çš„æ—¶å€™æ ¹æ®è®¾ç½®é‡æ–°æ‰§è¡Œâ€œæ€»æ˜¯ç½®é¡¶â€ã€â€œé¼ æ ‡ç©¿é€â€å’Œâ€œéšè—ä¸»çª—å£â€çš„æ“ä½œï¼Œé˜²æ­¢è®¾ç½®æ²¡æœ‰ç”Ÿæ•ˆ
             if (m_timer_cnt == 5 || m_timer_cnt == 9)
             {
                 if (!theApp.m_cfg_data.m_hide_main_window)
@@ -1201,11 +1085,11 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
             if (m_timer_cnt % 300 == 299 && !theApp.m_cfg_data.m_hide_main_window && theApp.m_cfg_data.m_always_on_top)
             {
-                SetAlwaysOnTop();		//Ã¿5·ÖÖÓÖ´ĞĞÒ»´ÎÉèÖÃ´°¿ÚÖÃ¶¥
+                SetAlwaysOnTop();		//æ¯5åˆ†é’Ÿæ‰§è¡Œä¸€æ¬¡è®¾ç½®çª—å£ç½®é¡¶
             }
         }
 
-        if (m_timer_cnt % 30 == 26)		//Ã¿¸ô30ÃëÖÓ¼ì²âÒ»´Î´°¿ÚÎ»ÖÃ£¬µ±´°¿ÚÎ»ÖÃ·¢Éú±ä»¯Ê±±£´æÉèÖÃ
+        if (m_timer_cnt % 30 == 26)		//æ¯éš”30ç§’é’Ÿæ£€æµ‹ä¸€æ¬¡çª—å£ä½ç½®ï¼Œå½“çª—å£ä½ç½®å‘ç”Ÿå˜åŒ–æ—¶ä¿å­˜è®¾ç½®
         {
             static int last_pos_x{ -1 }, last_pos_y{ -1 };
             if (last_pos_x != theApp.m_cfg_data.m_position_x || last_pos_y != theApp.m_cfg_data.m_position_y)
@@ -1216,16 +1100,16 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             }
         }
 
-        if (m_timer_cnt % 2 == 1)		//Ã¿¸ô2ÃëÖÓ»ñÈ¡Ò»´ÎÆÁÄ»ÇøÓò
+        if (m_timer_cnt % 2 == 1)		//æ¯éš”2ç§’é’Ÿè·å–ä¸€æ¬¡å±å¹•åŒºåŸŸ
         {
             GetScreenSize();
             CheckWindowPos();
         }
 
-        //Ö»ÓĞÖ÷´°¿ÚºÍÈÎÎñÀ¸´°¿ÚÖÁÉÙÓĞÒ»¸öÏÔÊ¾Ê±²ÅÖ´ĞĞÏÂÃæµÄ´¦Àí
+        //åªæœ‰ä¸»çª—å£å’Œä»»åŠ¡æ çª—å£è‡³å°‘æœ‰ä¸€ä¸ªæ˜¾ç¤ºæ—¶æ‰æ‰§è¡Œä¸‹é¢çš„å¤„ç†
         if (!theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_show_task_bar_wnd)
         {
-            //Ã¿¸ô10ÃëÖÓ¼ì²âÒ»´ÎÊÇ·ñ¿ÉÒÔÇ¶ÈëÈÎÎñÀ¸
+            //æ¯éš”10ç§’é’Ÿæ£€æµ‹ä¸€æ¬¡æ˜¯å¦å¯ä»¥åµŒå…¥ä»»åŠ¡æ 
             if (IsTaskbarWndValid() && m_timer_cnt % 10 == 1)
             {
                 if (m_tBarDlg->GetCannotInsertToTaskBar() && m_insert_to_taskbar_cnt < MAX_INSERT_TO_TASKBAR_CNT)
@@ -1235,15 +1119,15 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                     m_insert_to_taskbar_cnt++;
                     if (m_insert_to_taskbar_cnt == MAX_INSERT_TO_TASKBAR_CNT)
                     {
-                        if (m_tBarDlg->GetCannotInsertToTaskBar() && m_cannot_intsert_to_task_bar_warning)		//È·±£ÌáÊ¾ĞÅÏ¢Ö»µ¯³öÒ»´Î
+                        if (m_tBarDlg->GetCannotInsertToTaskBar() && m_cannot_intsert_to_task_bar_warning)		//ç¡®ä¿æç¤ºä¿¡æ¯åªå¼¹å‡ºä¸€æ¬¡
                         {
-                            //Ğ´Èë´íÎóÈÕÖ¾
+                            //å†™å…¥é”™è¯¯æ—¥å¿—
                             CString info;
                             info.LoadString(IDS_CONNOT_INSERT_TO_TASKBAR_ERROR_LOG);
                             info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_insert_to_taskbar_cnt));
                             info.Replace(_T("<%error_code%>"), CCommon::IntToString(m_tBarDlg->GetErrorCode()));
                             CCommon::WriteLog(info, theApp.m_log_path.c_str());
-                            //µ¯³ö´íÎóĞÅÏ¢
+                            //å¼¹å‡ºé”™è¯¯ä¿¡æ¯
                             MessageBox(CCommon::LoadText(IDS_CONNOT_INSERT_TO_TASKBAR, CCommon::IntToString(m_tBarDlg->GetErrorCode())), NULL, MB_ICONWARNING);
                             m_cannot_intsert_to_task_bar_warning = false;
                         }
@@ -1256,11 +1140,11 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             }
         }
 
-        //¼ì²éÊÇ·ñÒªµ¯³öÄÚ´æÊ¹ÓÃÂÊ³¬³öÌáÊ¾
+        //æ£€æŸ¥æ˜¯å¦è¦å¼¹å‡ºå†…å­˜ä½¿ç”¨ç‡è¶…å‡ºæç¤º
         if (theApp.m_general_data.memory_usage_tip_enable)
         {
             static int last_memory_usage;
-            static int notify_time{ -theApp.m_notify_interval };		//¼ÇÂ¼ÉÏ´Îµ¯³öÌáÊ¾Ê±µÄÊ±¼ä
+            static int notify_time{ -theApp.m_notify_interval };		//è®°å½•ä¸Šæ¬¡å¼¹å‡ºæç¤ºæ—¶çš„æ—¶é—´
             if (last_memory_usage < theApp.m_general_data.memory_tip_value && theApp.m_memory_usage >= theApp.m_general_data.memory_tip_value && (m_timer_cnt - notify_time > static_cast<unsigned int>(theApp.m_notify_interval)))
             {
                 CString info;
@@ -1271,7 +1155,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             last_memory_usage = theApp.m_memory_usage;
         }
 
-        //¼ì²éÊÇ·ñÒªµ¯³öÁ÷Á¿Ê¹ÓÃ³¬³öÌáÊ¾
+        //æ£€æŸ¥æ˜¯å¦è¦å¼¹å‡ºæµé‡ä½¿ç”¨è¶…å‡ºæç¤º
         if (theApp.m_general_data.traffic_tip_enable)
         {
             static __int64 last_today_traffic;
@@ -1290,9 +1174,9 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             last_today_traffic = today_traffic;
         }
 
-        theApp.m_win_version.CheckWindows10LightTheme();		//Ã¿¸ô1ÃëÖÓ¼ì²éÒ»ÏÂµ±Ç°ÏµÍ³ÊÇ·ñÎª°×É«Ö÷Ìâ
+        theApp.m_win_version.CheckWindows10LightTheme();		//æ¯éš”1ç§’é’Ÿæ£€æŸ¥ä¸€ä¸‹å½“å‰ç³»ç»Ÿæ˜¯å¦ä¸ºç™½è‰²ä¸»é¢˜
 
-        //¸ù¾İµ±Ç°Win10ÑÕÉ«Ä£Ê½×Ô¶¯ÇĞ»»ÈÎÎñÀ¸ÑÕÉ«
+        //æ ¹æ®å½“å‰Win10é¢œè‰²æ¨¡å¼è‡ªåŠ¨åˆ‡æ¢ä»»åŠ¡æ é¢œè‰²
         bool light_mode = theApp.m_win_version.IsWindows10LightTheme();
         if (theApp.m_last_light_mode != light_mode)
         {
@@ -1317,11 +1201,11 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                 CloseTaskBarWnd();
                 OpenTaskBarWnd();
 
-                //Ğ´Èëµ÷ÊÔÈÕÖ¾
+                //å†™å…¥è°ƒè¯•æ—¥å¿—
                 if (theApp.m_debug_log)
                 {
                     CString log_str;
-                    log_str += _T("¼ì²âµ½ Windows10 ÉîÇ³É«±ä»¯¡£\n");
+                    log_str += _T("æ£€æµ‹åˆ° Windows10 æ·±æµ…è‰²å˜åŒ–ã€‚\n");
                     log_str += _T("IsWindows10LightTheme: ");
                     log_str += std::to_wstring(light_mode).c_str();
                     log_str += _T("\n");
@@ -1348,7 +1232,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                 }
             }
 
-            //¸ù¾İµ±Ç°Win10ÑÕÉ«Ä£Ê½×Ô¶¯ÇĞ»»Í¨ÖªÇøÍ¼±ê
+            //æ ¹æ®å½“å‰Win10é¢œè‰²æ¨¡å¼è‡ªåŠ¨åˆ‡æ¢é€šçŸ¥åŒºå›¾æ ‡
             if (theApp.m_cfg_data.m_notify_icon_auto_adapt)
             {
                 int notify_icon_selected = theApp.m_cfg_data.m_notify_icon_selected;
@@ -1366,7 +1250,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
         }
 
-        //¸ù¾İÈÎÎñÀ¸ÑÕÉ«×Ô¶¯ÉèÖÃÈÎÎñÀ¸´°¿Ú±³¾°É«
+        //æ ¹æ®ä»»åŠ¡æ é¢œè‰²è‡ªåŠ¨è®¾ç½®ä»»åŠ¡æ çª—å£èƒŒæ™¯è‰²
         if (theApp.m_taskbar_data.auto_set_background_color && theApp.m_win_version.IsWindows8OrLater()
             && IsTaskbarWndValid() && theApp.m_taskbar_data.transparent_color != 0
             && !m_is_foreground_fullscreen)
@@ -1381,7 +1265,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             if (pointx >= m_screen_size.cx) pointx = m_screen_size.cx - 1;
             if (pointy < 0) pointy = 0;
             if (pointy >= m_screen_size.cy) pointy = m_screen_size.cy - 1;
-            COLORREF color = ::GetPixel(m_desktop_dc, pointx, pointy);        //È¡ÈÎÎñÀ¸´°¿Ú×ó²à1ÏñËØ´¦µÄÑÕÉ«×÷Îª±³¾°É«
+            COLORREF color = ::GetPixel(m_desktop_dc, pointx, pointy);        //å–ä»»åŠ¡æ çª—å£å·¦ä¾§1åƒç´ å¤„çš„é¢œè‰²ä½œä¸ºèƒŒæ™¯è‰²
             if (!CCommon::IsColorSimilar(color, theApp.m_taskbar_data.back_color) && (/*theApp.m_win_version.IsWindows10LightTheme() ||*/ color != 0))
             {
                 bool is_taskbar_transparent{ CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data) };
@@ -1392,14 +1276,14 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             }
         }
 
-        //µ±¼ì²âµ½±³¾°É«ºÍÎÄ×ÖÑÕÉ«¶¼ÎªºÚÉ«Ğ´Èë´íÎóÈÕÖ¾
+        //å½“æ£€æµ‹åˆ°èƒŒæ™¯è‰²å’Œæ–‡å­—é¢œè‰²éƒ½ä¸ºé»‘è‰²å†™å…¥é”™è¯¯æ—¥å¿—
         static bool erro_log_write{ false };
         if (theApp.m_taskbar_data.back_color == 0 && theApp.m_taskbar_data.text_colors[0] == 0)
         {
             if (!erro_log_write)
             {
                 CString log_str;
-                log_str.Format(_T("¼ì²éµ½±³¾°É«ºÍÎÄ×ÖÑÕÉ«¶¼ÎªºÚÉ«¡£IsWindows10LightTheme: %d, ÏµÍ³Æô¶¯Ê±¼ä£º%d/%.2d/%.2d %.2d:%.2d:%.2d"),
+                log_str.Format(_T("æ£€æŸ¥åˆ°èƒŒæ™¯è‰²å’Œæ–‡å­—é¢œè‰²éƒ½ä¸ºé»‘è‰²ã€‚IsWindows10LightTheme: %d, ç³»ç»Ÿå¯åŠ¨æ—¶é—´ï¼š%d/%.2d/%.2d %.2d:%.2d:%.2d"),
                     light_mode, m_start_time.wYear, m_start_time.wMonth, m_start_time.wDay, m_start_time.wHour, m_start_time.wMinute, m_start_time.wSecond);
                 CCommon::WriteLog(log_str, theApp.m_log_path.c_str());
                 erro_log_write = true;
@@ -1430,18 +1314,18 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		}
 	}
 
-	CDialogEx::OnTimer(nIDEvent);
+	CDialog::OnTimer(nIDEvent);
 }
 
 
 void CTrafficMonitorDlg::OnRButtonUp(UINT nFlags, CPoint point)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
-	//ÉèÖÃµã»÷Êó±êÓÒ¼üµ¯³ö²Ëµ¥
-    CMenu* pContextMenu = theApp.m_main_menu.GetSubMenu(0); //»ñÈ¡µÚÒ»¸öµ¯³ö²Ëµ¥£¬ËùÒÔµÚÒ»¸ö²Ëµ¥±ØĞëÓĞ×Ó²Ëµ¥ 
-	CPoint point1;	//¶¨ÒåÒ»¸öÓÃÓÚÈ·¶¨¹â±êÎ»ÖÃµÄÎ»ÖÃ  
-	GetCursorPos(&point1);	//»ñÈ¡µ±Ç°¹â±êµÄÎ»ÖÃ£¬ÒÔ±ãÊ¹µÃ²Ëµ¥¿ÉÒÔ¸úËæ¹â±ê
-	//ÉèÖÃÄ¬ÈÏ²Ëµ¥Ïî
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
+	//è®¾ç½®ç‚¹å‡»é¼ æ ‡å³é”®å¼¹å‡ºèœå•
+    CMenu* pContextMenu = theApp.m_main_menu.GetSubMenu(0); //è·å–ç¬¬ä¸€ä¸ªå¼¹å‡ºèœå•ï¼Œæ‰€ä»¥ç¬¬ä¸€ä¸ªèœå•å¿…é¡»æœ‰å­èœå• 
+	CPoint point1;	//å®šä¹‰ä¸€ä¸ªç”¨äºç¡®å®šå…‰æ ‡ä½ç½®çš„ä½ç½®  
+	GetCursorPos(&point1);	//è·å–å½“å‰å…‰æ ‡çš„ä½ç½®ï¼Œä»¥ä¾¿ä½¿å¾—èœå•å¯ä»¥è·Ÿéšå…‰æ ‡
+	//è®¾ç½®é»˜è®¤èœå•é¡¹
 	switch (theApp.m_main_wnd_data.double_click_action)
 	{
 	case DoubleClickAction::CONNECTION_INFO:
@@ -1463,41 +1347,41 @@ void CTrafficMonitorDlg::OnRButtonUp(UINT nFlags, CPoint point)
 		pContextMenu->SetDefaultItem(-1);
 		break;
 	}
-	pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //ÔÚÖ¸¶¨Î»ÖÃÏÔÊ¾µ¯³ö²Ëµ¥
+	pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //åœ¨æŒ‡å®šä½ç½®æ˜¾ç¤ºå¼¹å‡ºèœå•
 
-	CDialogEx::OnRButtonUp(nFlags, point1);
+	CDialog::OnRButtonUp(nFlags, point1);
 }
 
 
 void CTrafficMonitorDlg::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
-	//ÔÚÎ´Ëø¶¨´°¿ÚÎ»ÖÃÊ±ÔÊĞíÍ¨¹ıµã»÷´°¿ÚÄÚ²¿À´ÍÏ¶¯´°¿Ú
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
+	//åœ¨æœªé”å®šçª—å£ä½ç½®æ—¶å…è®¸é€šè¿‡ç‚¹å‡»çª—å£å†…éƒ¨æ¥æ‹–åŠ¨çª—å£
 	if (!theApp.m_cfg_data.m_lock_window_pos)
 		PostMessage(WM_NCLBUTTONDOWN, HTCAPTION, MAKELPARAM(point.x, point.y));
-	CDialogEx::OnLButtonDown(nFlags, point);
+	CDialog::OnLButtonDown(nFlags, point);
 }
 
 
 void CTrafficMonitorDlg::OnNetworkInfo()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
-	//µ¯³ö¡°Á¬½ÓÏêÇé¡±¶Ô»°¿ò
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
+	//å¼¹å‡ºâ€œè¿æ¥è¯¦æƒ…â€å¯¹è¯æ¡†
 	CNetworkInfoDlg aDlg(m_connections, m_pIfTable->table, m_connection_selected);
-	////ÏòCNetworkInfoDlgÀà´«µİ×ÔÆô¶¯ÒÔÀ´ÒÑ·¢ËÍºÍ½ÓÊÕµÄ×Ö½ÚÊı
+	////å‘CNetworkInfoDlgç±»ä¼ é€’è‡ªå¯åŠ¨ä»¥æ¥å·²å‘é€å’Œæ¥æ”¶çš„å­—èŠ‚æ•°
 	//aDlg.m_in_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwInOctets - m_connections[m_connection_selected].in_bytes;
 	//aDlg.m_out_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwOutOctets - m_connections[m_connection_selected].out_bytes;
 	aDlg.m_start_time = m_start_time;
 	aDlg.DoModal();
-	//SetAlwaysOnTop();	//ÓÉÓÚÔÚ¡°Á¬½ÓÏêÇé¡±¶Ô»°¿òÄÚÉèÖÃÁËÈ¡Ïû´°¿ÚÖÃ¶¥£¬ËùÓĞÔÚ¶Ô»°¿ò¹Ø±Õºó£¬ÖØĞÂÉèÖÃ´°¿ÚÖÃ¶¥
+	//SetAlwaysOnTop();	//ç”±äºåœ¨â€œè¿æ¥è¯¦æƒ…â€å¯¹è¯æ¡†å†…è®¾ç½®äº†å–æ¶ˆçª—å£ç½®é¡¶ï¼Œæ‰€æœ‰åœ¨å¯¹è¯æ¡†å…³é—­åï¼Œé‡æ–°è®¾ç½®çª—å£ç½®é¡¶
 	if(m_tBarDlg!=nullptr)
-		m_tBarDlg->m_tool_tips.SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);	//ÖØĞÂÉèÖÃÈÎÎñÀ¸´°¿ÚµÄÌáÊ¾ĞÅÏ¢ÖÃ¶¥
+		m_tBarDlg->m_tool_tips.SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);	//é‡æ–°è®¾ç½®ä»»åŠ¡æ çª—å£çš„æç¤ºä¿¡æ¯ç½®é¡¶
 }
 
 
 void CTrafficMonitorDlg::OnAlwaysOnTop()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	theApp.m_cfg_data.m_always_on_top = !theApp.m_cfg_data.m_always_on_top;
 	SetAlwaysOnTop();
 	theApp.SaveConfig();
@@ -1506,17 +1390,17 @@ void CTrafficMonitorDlg::OnAlwaysOnTop()
 
 void CTrafficMonitorDlg::OnUpdateAlwaysOnTop(CCmdUI *pCmdUI)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî¸üĞÂÓÃ»§½çÃæ´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤æ›´æ–°ç”¨æˆ·ç•Œé¢å¤„ç†ç¨‹åºä»£ç 
 	pCmdUI->SetCheck(theApp.m_cfg_data.m_always_on_top);
 }
 
 
-//´Ëº¯ÊıÓÃÓÚÊ¹µÃ OnUpdatexxxxx(CCmdUI *pCmdUI) º¯ÊıÔÚ»ùÓÚ¶Ô»°¿ò³ÌĞòÖĞÓĞĞ§
+//æ­¤å‡½æ•°ç”¨äºä½¿å¾— OnUpdatexxxxx(CCmdUI *pCmdUI) å‡½æ•°åœ¨åŸºäºå¯¹è¯æ¡†ç¨‹åºä¸­æœ‰æ•ˆ
 void CTrafficMonitorDlg::OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu)
 {
-	CDialogEx::OnInitMenuPopup(pPopupMenu, nIndex, bSysMenu);
+	CDialog::OnInitMenuPopup(pPopupMenu, nIndex, bSysMenu);
 
-	// TODO: ÔÚ´Ë´¦Ìí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
 	ASSERT(pPopupMenu != NULL);
 	// Check the enabled state of various menu items.
 
@@ -1599,7 +1483,7 @@ void CTrafficMonitorDlg::OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bS
 
 void CTrafficMonitorDlg::OnTransparency100()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	theApp.m_cfg_data.m_transparency = 100;
 	SetTransparency();
 	theApp.SaveConfig();
@@ -1608,7 +1492,7 @@ void CTrafficMonitorDlg::OnTransparency100()
 
 void CTrafficMonitorDlg::OnTransparency80()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	theApp.m_cfg_data.m_transparency = 80;
 	SetTransparency();
 	theApp.SaveConfig();
@@ -1617,7 +1501,7 @@ void CTrafficMonitorDlg::OnTransparency80()
 
 void CTrafficMonitorDlg::OnTransparency60()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	theApp.m_cfg_data.m_transparency = 60;
 	SetTransparency();
 	theApp.SaveConfig();
@@ -1626,7 +1510,7 @@ void CTrafficMonitorDlg::OnTransparency60()
 
 void CTrafficMonitorDlg::OnTransparency40()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	theApp.m_cfg_data.m_transparency = 40;
 	SetTransparency();
 	theApp.SaveConfig();
@@ -1635,10 +1519,10 @@ void CTrafficMonitorDlg::OnTransparency40()
 
 void CTrafficMonitorDlg::OnClose()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 	theApp.m_cannot_save_config_warning = true;
 	theApp.m_cannot_save_global_config_warning = true;
-	theApp.SaveConfig();	//ÍË³öÇ°±£´æÉèÖÃµ½iniÎÄ¼ş
+	theApp.SaveConfig();	//é€€å‡ºå‰ä¿å­˜è®¾ç½®åˆ°iniæ–‡ä»¶
 	theApp.SaveGlobalConfig();
 	SaveHistoryTraffic();
 	BackupHistoryTrafficFile();
@@ -1646,13 +1530,13 @@ void CTrafficMonitorDlg::OnClose()
 	if (IsTaskbarWndValid())
 		m_tBarDlg->OnCancel();
 
-	CDialogEx::OnClose();
+	CDialog::OnClose();
 }
 
 
 BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
 	UINT uMsg = LOWORD(wParam);
 	if (uMsg == ID_SELECT_ALL_CONNECTION)
 	{
@@ -1660,8 +1544,8 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 		theApp.m_cfg_data.m_auto_select = false;
 		m_connection_change_flag = true;
 	}
-	//Ñ¡ÔñÁË¡°Ñ¡ÔñÍøÂçÁ¬½Ó¡±×Ó²Ëµ¥ÖĞÏîÄ¿Ê±µÄ´¦Àí
-	if (uMsg == ID_SELETE_CONNECTION)	//Ñ¡ÔñÁË¡°×Ô¶¯Ñ¡Ôñ¡±²Ëµ¥Ïî
+	//é€‰æ‹©äº†â€œé€‰æ‹©ç½‘ç»œè¿æ¥â€å­èœå•ä¸­é¡¹ç›®æ—¶çš„å¤„ç†
+	if (uMsg == ID_SELETE_CONNECTION)	//é€‰æ‹©äº†â€œè‡ªåŠ¨é€‰æ‹©â€èœå•é¡¹
 	{
 		AutoSelect();
 		theApp.m_cfg_data.m_auto_select = true;
@@ -1669,7 +1553,7 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 		theApp.SaveConfig();
 		m_connection_change_flag = true;
 	}
-	if (uMsg > ID_SELECT_ALL_CONNECTION && uMsg <= ID_SELECT_ALL_CONNECTION + m_connections.size())	//Ñ¡ÔñÁËÒ»¸öÍøÂçÁ¬½Ó
+	if (uMsg > ID_SELECT_ALL_CONNECTION && uMsg <= ID_SELECT_ALL_CONNECTION + m_connections.size())	//é€‰æ‹©äº†ä¸€ä¸ªç½‘ç»œè¿æ¥
 	{
 		m_connection_selected = uMsg - ID_SELECT_ALL_CONNECTION - 1;
 		theApp.m_cfg_data.m_connection_name = m_connections[m_connection_selected].description_2;
@@ -1679,22 +1563,22 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 		m_connection_change_flag = true;
 	}
 
-	return CDialogEx::OnCommand(wParam, lParam);
+	return CDialog::OnCommand(wParam, lParam);
 }
 
 
 void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
 {
-	CDialogEx::OnInitMenu(pMenu);
+	CDialog::OnInitMenu(pMenu);
 
-	// TODO: ÔÚ´Ë´¦Ìí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
 	m_menu_popuped = true;
 
-	//ÉèÖÃ¡°Ñ¡ÔñÁ¬½Ó¡±×Ó²Ëµ¥ÏîÖĞ¸÷µ¥Ñ¡ÏîµÄÑ¡Ôñ×´Ì¬
+	//è®¾ç½®â€œé€‰æ‹©è¿æ¥â€å­èœå•é¡¹ä¸­å„å•é€‰é¡¹çš„é€‰æ‹©çŠ¶æ€
     CMenu* select_connection_menu = theApp.m_main_menu.GetSubMenu(0)->GetSubMenu(0);
 	SetConnectionMenuState(select_connection_menu);
 
-	//ÉèÖÃ¡°´°¿Ú²»Í¸Ã÷¶È¡±×Ó²Ëµ¥ÏÂ¸÷µ¥Ñ¡ÏîµÄÑ¡Ôñ×´Ì¬
+	//è®¾ç½®â€œçª—å£ä¸é€æ˜åº¦â€å­èœå•ä¸‹å„å•é€‰é¡¹çš„é€‰æ‹©çŠ¶æ€
 	switch (theApp.m_cfg_data.m_transparency)
 	{
 	case 100: pMenu->CheckMenuRadioItem(ID_TRANSPARENCY_100, ID_TRANSPARENCY_40, ID_TRANSPARENCY_100, MF_BYCOMMAND | MF_CHECKED); break;
@@ -1704,7 +1588,7 @@ void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
 	default: break;
 	}
 
-	if(!theApp.m_cfg_data.m_show_task_bar_wnd && (theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_mouse_penetrate))	//Èç¹ûÃ»ÓĞÏÔÊ¾ÈÎÎñÀ¸´°¿Ú£¬ÇÒÒş²ØÁËÖ÷´°¿Ú»òÉèÖÃÁËÊó±ê´©Í¸£¬Ôò½ûÓÃ¡°ÏÔÊ¾Í¨ÖªÇøÍ¼±ê¡±²Ëµ¥Ïî
+	if(!theApp.m_cfg_data.m_show_task_bar_wnd && (theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_mouse_penetrate))	//å¦‚æœæ²¡æœ‰æ˜¾ç¤ºä»»åŠ¡æ çª—å£ï¼Œä¸”éšè—äº†ä¸»çª—å£æˆ–è®¾ç½®äº†é¼ æ ‡ç©¿é€ï¼Œåˆ™ç¦ç”¨â€œæ˜¾ç¤ºé€šçŸ¥åŒºå›¾æ ‡â€èœå•é¡¹
 		pMenu->EnableMenuItem(ID_SHOW_NOTIFY_ICON, MF_BYCOMMAND | MF_GRAYED);
 	else
 		pMenu->EnableMenuItem(ID_SHOW_NOTIFY_ICON, MF_BYCOMMAND | MF_ENABLED);
@@ -1717,8 +1601,8 @@ void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
 
 BOOL CTrafficMonitorDlg::PreTranslateMessage(MSG* pMsg)
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
-	//ÆÁ±Î°´»Ø³µ¼üºÍESC¼üÍË³ö
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
+	//å±è”½æŒ‰å›è½¦é”®å’ŒESCé”®é€€å‡º
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE) return TRUE;
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN) return TRUE;
 
@@ -1727,13 +1611,13 @@ BOOL CTrafficMonitorDlg::PreTranslateMessage(MSG* pMsg)
 		m_tool_tips.RelayEvent(pMsg);
 	}
 
-	return CDialogEx::PreTranslateMessage(pMsg);
+	return CDialog::PreTranslateMessage(pMsg);
 }
 
 
 void CTrafficMonitorDlg::OnLockWindowPos()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	theApp.m_cfg_data.m_lock_window_pos = !theApp.m_cfg_data.m_lock_window_pos;
 	theApp.SaveConfig();
 }
@@ -1741,16 +1625,16 @@ void CTrafficMonitorDlg::OnLockWindowPos()
 
 void CTrafficMonitorDlg::OnUpdateLockWindowPos(CCmdUI *pCmdUI)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî¸üĞÂÓÃ»§½çÃæ´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤æ›´æ–°ç”¨æˆ·ç•Œé¢å¤„ç†ç¨‹åºä»£ç 
 	pCmdUI->SetCheck(theApp.m_cfg_data.m_lock_window_pos);
 }
 
 
 void CTrafficMonitorDlg::OnMove(int x, int y)
 {
-	CDialogEx::OnMove(x, y);
+	CDialog::OnMove(x, y);
 
-	// TODO: ÔÚ´Ë´¦Ìí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
 
 	if (!m_first_start)
 	{
@@ -1758,7 +1642,7 @@ void CTrafficMonitorDlg::OnMove(int x, int y)
 		theApp.m_cfg_data.m_position_y = y;
 	}
 
-	//È·±£´°¿Ú²»»á³¬³öÆÁÄ»·¶Î§
+	//ç¡®ä¿çª—å£ä¸ä¼šè¶…å‡ºå±å¹•èŒƒå›´
 	CheckWindowPos();
 }
 
@@ -1771,17 +1655,17 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
 	if (lParam == WM_LBUTTONDOWN || lParam == WM_RBUTTONUP || lParam == WM_LBUTTONDBLCLK)
 	{
 		const int WIND_NUM{ 7 };
-		//const CString diloge_title[WIND_NUM]{ _T("¹ØÓÚ TrafficMonitor"),_T("¾èÖú"), _T("ÀúÊ·Á÷Á¿Í³¼Æ"), _T("Á¬½ÓÏêÇé"), _T("¸ü»»Æ¤·ô"), _T("Ñ¡ÏîÉèÖÃ"), _T("¸ü»»Í¨ÖªÇøÍ¼±ê") };
+		//const CString diloge_title[WIND_NUM]{ _T("å…³äº TrafficMonitor"),_T("æåŠ©"), _T("å†å²æµé‡ç»Ÿè®¡"), _T("è¿æ¥è¯¦æƒ…"), _T("æ›´æ¢çš®è‚¤"), _T("é€‰é¡¹è®¾ç½®"), _T("æ›´æ¢é€šçŸ¥åŒºå›¾æ ‡") };
 		const CString diloge_title[WIND_NUM]{ CCommon::LoadText(IDS_TITLE_ABOUT), CCommon::LoadText(IDS_TITLE_DONATE), CCommon::LoadText(IDS_TITLE_HISTORY_TRAFFIC),
 			CCommon::LoadText(IDS_TITLE_CONNECTION_DETIAL), CCommon::LoadText(IDS_TITLE_CHANGE_SKIN), CCommon::LoadText(IDS_TITLE_OPTION), CCommon::LoadText(IDS_TITLE_CHANGE_ICON) };
-		//ÒÀ´Î²éÕÒ³ÌĞòÖĞµÄÃ¿Ò»¸ö¶Ô»°¿ò£¬Èç¹ûÕÒµ½Ò»¸öÃ»ÓĞ¹Ø±ÕµÄ¶Ô»°¿òÊ±£¬Ôò²»ÔÊĞíµ¯³öÓÒ¼ü²Ëµ¥£¬·ÀÖ¹ÓÃ»§ÔÚ´ËÊ±ÍË³ö³ÌĞò
+		//ä¾æ¬¡æŸ¥æ‰¾ç¨‹åºä¸­çš„æ¯ä¸€ä¸ªå¯¹è¯æ¡†ï¼Œå¦‚æœæ‰¾åˆ°ä¸€ä¸ªæ²¡æœ‰å…³é—­çš„å¯¹è¯æ¡†æ—¶ï¼Œåˆ™ä¸å…è®¸å¼¹å‡ºå³é”®èœå•ï¼Œé˜²æ­¢ç”¨æˆ·åœ¨æ­¤æ—¶é€€å‡ºç¨‹åº
 		for (int i{}; i < WIND_NUM; i++)
 		{
 			handle = ::FindWindow(NULL, diloge_title[i]);
 			if (handle != NULL)
 			{
-				HWND hParent = ::GetParent(handle);		//²éÕÒÕÒµ½µÄ´°¿ÚµÄ¸¸´°¿ÚµÄ¾ä±ú
-				if (hParent == m_hWnd || (m_tBarDlg!=nullptr && hParent==m_tBarDlg->m_hWnd))			//Ö»ÓĞµ±ÕÒµ½µÄ´°¿ÚµÄ¸¸´°¿ÚÊÇ³ÌĞòÖ÷´°¿Ú»òÈÎÎñÀ¸´°¿ÚÊ±£¬²ÅËµÃ÷ÕÒµ½ÁË
+				HWND hParent = ::GetParent(handle);		//æŸ¥æ‰¾æ‰¾åˆ°çš„çª—å£çš„çˆ¶çª—å£çš„å¥æŸ„
+				if (hParent == m_hWnd || (m_tBarDlg!=nullptr && hParent==m_tBarDlg->m_hWnd))			//åªæœ‰å½“æ‰¾åˆ°çš„çª—å£çš„çˆ¶çª—å£æ˜¯ç¨‹åºä¸»çª—å£æˆ–ä»»åŠ¡æ çª—å£æ—¶ï¼Œæ‰è¯´æ˜æ‰¾åˆ°äº†
 				{
 					dialog_exist = true;
 					break;
@@ -1795,11 +1679,11 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
 	{
 		if (!theApp.m_cfg_data.m_hide_main_window)
 		{
-			if (dialog_exist)		//ÓĞ´ò¿ªµÄ¶Ô»°¿òÊ±£¬µã»÷Í¨ÖªÇøÍ¼±êºó½«½¹µãÉèÖÃµ½¶Ô»°¿ò
+			if (dialog_exist)		//æœ‰æ‰“å¼€çš„å¯¹è¯æ¡†æ—¶ï¼Œç‚¹å‡»é€šçŸ¥åŒºå›¾æ ‡åå°†ç„¦ç‚¹è®¾ç½®åˆ°å¯¹è¯æ¡†
 			{
 				::SetForegroundWindow(handle);
 			}
-			else		//Ã»ÓĞ´ò¿ªµÄ¶Ô»°¿òÊ±£¬ÔòÏÔÊ¾Ö÷´°¿Ú
+			else		//æ²¡æœ‰æ‰“å¼€çš„å¯¹è¯æ¡†æ—¶ï¼Œåˆ™æ˜¾ç¤ºä¸»çª—å£
 			{
 				ShowWindow(SW_RESTORE);
 				theApp.m_cfg_data.m_hide_main_window = false;
@@ -1812,25 +1696,25 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
 	}
 	if (lParam == WM_RBUTTONUP && !dialog_exist)
 	{
-		//ÔÚÍ¨ÖªÇøµã»÷ÓÒ¼üµ¯³öÓÒ¼ü²Ëµ¥
-        if (IsTaskbarWndValid())		//Èç¹ûÏÔÊ¾ÁËÈÎÎñÀ¸´°¿Ú£¬ÔòÔÚÓÒ»÷ÁËÍ¨ÖªÇøÍ¼±êºó½«½¹µãÉèÖÃµ½ÈÎÎñÀ¸´°¿Ú
+		//åœ¨é€šçŸ¥åŒºç‚¹å‡»å³é”®å¼¹å‡ºå³é”®èœå•
+        if (IsTaskbarWndValid())		//å¦‚æœæ˜¾ç¤ºäº†ä»»åŠ¡æ çª—å£ï¼Œåˆ™åœ¨å³å‡»äº†é€šçŸ¥åŒºå›¾æ ‡åå°†ç„¦ç‚¹è®¾ç½®åˆ°ä»»åŠ¡æ çª—å£
 			m_tBarDlg->SetForegroundWindow();
-		else				//·ñÔò½«½¹µãÉèÖÃµ½Ö÷´°¿Ú
+		else				//å¦åˆ™å°†ç„¦ç‚¹è®¾ç½®åˆ°ä¸»çª—å£
 			SetForegroundWindow();
-		CPoint point1;	//¶¨ÒåÒ»¸öÓÃÓÚÈ·¶¨¹â±êÎ»ÖÃµÄÎ»ÖÃ  
-		GetCursorPos(&point1);	//»ñÈ¡µ±Ç°¹â±êµÄÎ»ÖÃ£¬ÒÔ±ãÊ¹µÃ²Ëµ¥¿ÉÒÔ¸úËæ¹â±ê
-        theApp.m_main_menu.GetSubMenu(0)->SetDefaultItem(-1);		//ÉèÖÃÃ»ÓĞÄ¬ÈÏ²Ëµ¥Ïî
-        theApp.m_main_menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //ÔÚÖ¸¶¨Î»ÖÃÏÔÊ¾µ¯³ö²Ëµ¥
+		CPoint point1;	//å®šä¹‰ä¸€ä¸ªç”¨äºç¡®å®šå…‰æ ‡ä½ç½®çš„ä½ç½®  
+		GetCursorPos(&point1);	//è·å–å½“å‰å…‰æ ‡çš„ä½ç½®ï¼Œä»¥ä¾¿ä½¿å¾—èœå•å¯ä»¥è·Ÿéšå…‰æ ‡
+        theApp.m_main_menu.GetSubMenu(0)->SetDefaultItem(-1);		//è®¾ç½®æ²¡æœ‰é»˜è®¤èœå•é¡¹
+        theApp.m_main_menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //åœ¨æŒ‡å®šä½ç½®æ˜¾ç¤ºå¼¹å‡ºèœå•
 
 		CheckWindowPos();
 	}
 	if (lParam == WM_LBUTTONDBLCLK)
 	{
-		if (dialog_exist)		//ÓĞ´ò¿ªµÄ¶Ô»°¿òÊ±£¬µã»÷Í¨ÖªÇøÍ¼±êºó½«½¹µãÉèÖÃµ½¶Ô»°¿ò
+		if (dialog_exist)		//æœ‰æ‰“å¼€çš„å¯¹è¯æ¡†æ—¶ï¼Œç‚¹å‡»é€šçŸ¥åŒºå›¾æ ‡åå°†ç„¦ç‚¹è®¾ç½®åˆ°å¯¹è¯æ¡†
 		{
 			::SetForegroundWindow(handle);
 		}
-		else		//Ã»ÓĞ´ò¿ªµÄ¶Ô»°¿òÊ±£¬ÔòÏÔÊ¾Ö÷´°¿Ú
+		else		//æ²¡æœ‰æ‰“å¼€çš„å¯¹è¯æ¡†æ—¶ï¼Œåˆ™æ˜¾ç¤ºä¸»çª—å£
 		{
 			ShowWindow(SW_RESTORE);
 			theApp.m_cfg_data.m_hide_main_window = false;
@@ -1846,7 +1730,7 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
 
 void CTrafficMonitorDlg::OnShowNotifyIcon()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	if (theApp.m_cfg_data.m_show_notify_icon)
 	{
 		DeleteNotifyIcon();
@@ -1863,53 +1747,52 @@ void CTrafficMonitorDlg::OnShowNotifyIcon()
 
 void CTrafficMonitorDlg::OnUpdateShowNotifyIcon(CCmdUI *pCmdUI)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî¸üĞÂÓÃ»§½çÃæ´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤æ›´æ–°ç”¨æˆ·ç•Œé¢å¤„ç†ç¨‹åºä»£ç 
 	pCmdUI->SetCheck(theApp.m_cfg_data.m_show_notify_icon);
 }
 
 
 void CTrafficMonitorDlg::OnDestroy()
 {
-	CDialogEx::OnDestroy();
+	CDialog::OnDestroy();
 
-	//³ÌĞòÍË³öÊ±É¾³ıÍ¨ÖªÀ¸Í¼±ê
+	//ç¨‹åºé€€å‡ºæ—¶åˆ é™¤é€šçŸ¥æ å›¾æ ‡
 	::Shell_NotifyIcon(NIM_DELETE, &m_ntIcon);
-	// TODO: ÔÚ´Ë´¦Ìí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
 }
 
 
 void CTrafficMonitorDlg::OnShowCpuMemory()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	CRect rect;
 	GetWindowRect(rect);
+    theApp.m_cfg_data.m_show_more_info = !theApp.m_cfg_data.m_show_more_info;
 	if (theApp.m_cfg_data.m_show_more_info)
 	{
-		rect.right = rect.left + m_layout_data.width_s;
-		rect.bottom = rect.top + m_layout_data.height_s;
+		rect.right = rect.left + m_skin.GetLayoutInfo().layout_l.width;
+		rect.bottom = rect.top + m_skin.GetLayoutInfo().layout_l.width;
 		MoveWindow(rect);
 		CheckWindowPos();
-		theApp.m_cfg_data.m_show_more_info = false;
 	}
 	else
 	{
-		rect.right = rect.left + m_layout_data.width_l;
-		rect.bottom = rect.top + m_layout_data.height_l;
+		rect.right = rect.left + m_skin.GetLayoutInfo().layout_s.width;
+		rect.bottom = rect.top + m_skin.GetLayoutInfo().layout_s.height;
 		MoveWindow(rect);
 		CheckWindowPos();
-		theApp.m_cfg_data.m_show_more_info = true;
 	}
 	LoadBackGroundImage();
 	SetItemPosition();
-	ShowInfo();
+	Invalidate(FALSE);
 	theApp.SaveConfig();
 }
 
 
-//ÈÎÎñÀ¸´°¿ÚÇĞ»»ÏÔÊ¾CPUºÍÄÚ´æÀûÓÃÂÊÊ±µÄ´¦Àí
+//ä»»åŠ¡æ çª—å£åˆ‡æ¢æ˜¾ç¤ºCPUå’Œå†…å­˜åˆ©ç”¨ç‡æ—¶çš„å¤„ç†
 void CTrafficMonitorDlg::OnShowCpuMemory2()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	if (m_tBarDlg != nullptr)
 	{
 		bool show_cpu_memory = ((theApp.m_cfg_data.m_tbar_display_item & TDI_CPU) || (theApp.m_cfg_data.m_tbar_display_item & TDI_MEMORY));
@@ -1924,7 +1807,7 @@ void CTrafficMonitorDlg::OnShowCpuMemory2()
 			theApp.m_cfg_data.m_tbar_display_item |= TDI_MEMORY;
 		}
 		//theApp.m_cfg_data.m_tbar_show_cpu_memory = !theApp.m_cfg_data.m_tbar_show_cpu_memory;
-		//ÇĞ»»ÏÔÊ¾CPUºÍÄÚ´æÀûÓÃÂÊÊ±£¬É¾³ıÈÎÎñÀ¸´°¿Ú£¬ÔÙÖØĞÂÏÔÊ¾
+		//åˆ‡æ¢æ˜¾ç¤ºCPUå’Œå†…å­˜åˆ©ç”¨ç‡æ—¶ï¼Œåˆ é™¤ä»»åŠ¡æ çª—å£ï¼Œå†é‡æ–°æ˜¾ç¤º
 		CloseTaskBarWnd();
 		OpenTaskBarWnd();
 	}
@@ -1933,27 +1816,27 @@ void CTrafficMonitorDlg::OnShowCpuMemory2()
 
 void CTrafficMonitorDlg::OnUpdateShowCpuMemory(CCmdUI *pCmdUI)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî¸üĞÂÓÃ»§½çÃæ´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤æ›´æ–°ç”¨æˆ·ç•Œé¢å¤„ç†ç¨‹åºä»£ç 
 	pCmdUI->SetCheck(theApp.m_cfg_data.m_show_more_info);
 }
 
 
 void CTrafficMonitorDlg::OnMousePenetrate()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	theApp.m_cfg_data.m_mouse_penetrate = !theApp.m_cfg_data.m_mouse_penetrate;
 	SetMousePenetrate();
-	if (theApp.m_cfg_data.m_mouse_penetrate && !theApp.m_cfg_data.m_show_notify_icon)	//Êó±ê´©Í¸Ê±£¬Èç¹ûÍ¨ÖªÍ¼±êÃ»ÓĞÏÔÊ¾£¬Ôò½«ËüÏÔÊ¾³öÀ´£¬·ñÔòÎŞ·¨ºô³öÓÒ¼ü²Ëµ¥
+	if (theApp.m_cfg_data.m_mouse_penetrate && !theApp.m_cfg_data.m_show_notify_icon)	//é¼ æ ‡ç©¿é€æ—¶ï¼Œå¦‚æœé€šçŸ¥å›¾æ ‡æ²¡æœ‰æ˜¾ç¤ºï¼Œåˆ™å°†å®ƒæ˜¾ç¤ºå‡ºæ¥ï¼Œå¦åˆ™æ— æ³•å‘¼å‡ºå³é”®èœå•
 	{
-		//Ìí¼ÓÍ¨ÖªÀ¸Í¼±ê
+		//æ·»åŠ é€šçŸ¥æ å›¾æ ‡
 		AddNotifyIcon();
 		theApp.m_cfg_data.m_show_notify_icon = true;
 	}
 
-	//ÉèÖÃÊó±ê´©Í¸ºó£¬µ¯³öÏûÏ¢ÌáÊ¾ÓÃ»§ÈçºÎ¹Ø±ÕÊó±ê´©Í¸
+	//è®¾ç½®é¼ æ ‡ç©¿é€åï¼Œå¼¹å‡ºæ¶ˆæ¯æç¤ºç”¨æˆ·å¦‚ä½•å…³é—­é¼ æ ‡ç©¿é€
 	if (theApp.m_cfg_data.m_mouse_penetrate && theApp.m_show_mouse_panetrate_tip)
 	{
-		if (MessageBox(CCommon::LoadText(IDS_MOUSE_PENETRATE_TIP_INFO), NULL, MB_ICONINFORMATION | MB_OKCANCEL) == IDCANCEL)		//µã»÷¡°È¡Ïû¡±ºó²»ÔÙÌáÊ¾
+		if (MessageBox(CCommon::LoadText(IDS_MOUSE_PENETRATE_TIP_INFO), NULL, MB_ICONINFORMATION | MB_OKCANCEL) == IDCANCEL)		//ç‚¹å‡»â€œå–æ¶ˆâ€åä¸å†æç¤º
 		{
 			theApp.m_show_mouse_panetrate_tip = false;
 		}
@@ -1965,14 +1848,14 @@ void CTrafficMonitorDlg::OnMousePenetrate()
 
 void CTrafficMonitorDlg::OnUpdateMousePenetrate(CCmdUI *pCmdUI)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî¸üĞÂÓÃ»§½çÃæ´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤æ›´æ–°ç”¨æˆ·ç•Œé¢å¤„ç†ç¨‹åºä»£ç 
 	pCmdUI->SetCheck(theApp.m_cfg_data.m_mouse_penetrate);
 }
 
 
 void CTrafficMonitorDlg::OnShowTaskBarWnd()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	if (m_tBarDlg != nullptr)
 	{
 		CloseTaskBarWnd();
@@ -1985,7 +1868,7 @@ void CTrafficMonitorDlg::OnShowTaskBarWnd()
 	else
 	{
 		theApp.m_cfg_data.m_show_task_bar_wnd = false;
-		//¹Ø±ÕÈÎÎñÀ¸´°¿Úºó£¬Èç¹ûÃ»ÓĞÏÔÊ¾Í¨ÖªÇøÍ¼±ê£¬ÇÒÃ»ÓĞÏÔÊ¾Ö÷´°¿Ú»òÉèÖÃÁËÊó±ê´©Í¸£¬Ôò½«Í¨ÖªÇøÍ¼±êÏÔÊ¾³öÀ´
+		//å…³é—­ä»»åŠ¡æ çª—å£åï¼Œå¦‚æœæ²¡æœ‰æ˜¾ç¤ºé€šçŸ¥åŒºå›¾æ ‡ï¼Œä¸”æ²¡æœ‰æ˜¾ç¤ºä¸»çª—å£æˆ–è®¾ç½®äº†é¼ æ ‡ç©¿é€ï¼Œåˆ™å°†é€šçŸ¥åŒºå›¾æ ‡æ˜¾ç¤ºå‡ºæ¥
 		if (!theApp.m_cfg_data.m_show_notify_icon && (theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_mouse_penetrate))
 		{
 			AddNotifyIcon();
@@ -1998,21 +1881,21 @@ void CTrafficMonitorDlg::OnShowTaskBarWnd()
 
 void CTrafficMonitorDlg::OnUpdateShowTaskBarWnd(CCmdUI *pCmdUI)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî¸üĞÂÓÃ»§½çÃæ´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤æ›´æ–°ç”¨æˆ·ç•Œé¢å¤„ç†ç¨‹åºä»£ç 
 	pCmdUI->SetCheck(theApp.m_cfg_data.m_show_task_bar_wnd);
 }
 
 
 void CTrafficMonitorDlg::OnAppAbout()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
-	//µ¯³ö¡°¹ØÓÚ¡±¶Ô»°¿ò
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
+	//å¼¹å‡ºâ€œå…³äºâ€å¯¹è¯æ¡†
 	CAboutDlg aDlg;
 	aDlg.DoModal();
 }
 
 
-//µ±×ÊÔ´¹ÜÀíÆ÷ÖØÆôÊ±»á´¥·¢´ËÏûÏ¢
+//å½“èµ„æºç®¡ç†å™¨é‡å¯æ—¶ä¼šè§¦å‘æ­¤æ¶ˆæ¯
 LRESULT CTrafficMonitorDlg::OnTaskBarCreated(WPARAM wParam, LPARAM lParam)
 {
 	if (m_tBarDlg != nullptr)
@@ -2020,7 +1903,7 @@ LRESULT CTrafficMonitorDlg::OnTaskBarCreated(WPARAM wParam, LPARAM lParam)
 		CloseTaskBarWnd();
 		if (theApp.m_cfg_data.m_show_notify_icon)
 		{
-			//ÖØĞÂÌí¼ÓÍ¨ÖªÀ¸Í¼±ê
+			//é‡æ–°æ·»åŠ é€šçŸ¥æ å›¾æ ‡
 			::Shell_NotifyIcon(NIM_ADD, &m_ntIcon);
 		}
 		OpenTaskBarWnd();
@@ -2036,12 +1919,12 @@ LRESULT CTrafficMonitorDlg::OnTaskBarCreated(WPARAM wParam, LPARAM lParam)
 
 void CTrafficMonitorDlg::OnShowMainWnd()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	if (!theApp.m_cfg_data.m_hide_main_window)
 	{
 		ShowWindow(SW_HIDE);
 		theApp.m_cfg_data.m_hide_main_window = true;
-		//Òş²ØÖ÷´°¿Úºó£¬Èç¹ûÃ»ÓĞÏÔÊ¾Í¨ÖªÀ¸Í¼±ê£¬Ôò½«ÆäÏÔÊ¾³öÀ´
+		//éšè—ä¸»çª—å£åï¼Œå¦‚æœæ²¡æœ‰æ˜¾ç¤ºé€šçŸ¥æ å›¾æ ‡ï¼Œåˆ™å°†å…¶æ˜¾ç¤ºå‡ºæ¥
 		if (!theApp.m_cfg_data.m_show_notify_icon && !theApp.m_cfg_data.m_show_task_bar_wnd)
 		{
 			AddNotifyIcon();
@@ -2059,16 +1942,16 @@ void CTrafficMonitorDlg::OnShowMainWnd()
 
 void CTrafficMonitorDlg::OnUpdateShowMainWnd(CCmdUI *pCmdUI)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî¸üĞÂÓÃ»§½çÃæ´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤æ›´æ–°ç”¨æˆ·ç•Œé¢å¤„ç†ç¨‹åºä»£ç 
 	pCmdUI->SetCheck(!theApp.m_cfg_data.m_hide_main_window);
 }
 
 
 void CTrafficMonitorDlg::OnChangeSkin()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	CSkinDlg skinDlg;
-	//³õÊ¼»¯CSkinDlg¶ÔÏóµÄÊı¾İ
+	//åˆå§‹åŒ–CSkinDlgå¯¹è±¡çš„æ•°æ®
 	skinDlg.m_skins = m_skins;
 	skinDlg.m_skin_selected = m_skin_selected;
 	skinDlg.m_pFont = &m_font;
@@ -2076,37 +1959,37 @@ void CTrafficMonitorDlg::OnChangeSkin()
 	{
 		m_skin_selected = skinDlg.m_skin_selected;
 		theApp.m_cfg_data.m_skin_name = m_skins[m_skin_selected];
-		//»ñÈ¡Æ¤·ô²¼¾Ö
-		GetSkinLayout();
-		//ÔØÈë±³¾°Í¼Æ¬
+		//è·å–çš®è‚¤å¸ƒå±€
+		LoadSkinLayout();
+		//è½½å…¥èƒŒæ™¯å›¾ç‰‡
 		LoadBackGroundImage();
-		//»ñÈ¡Æ¤·ôµÄÎÄ×ÖÑÕÉ«
-		theApp.m_main_wnd_data.specify_each_item_color = skinDlg.GetSkinData().specify_each_item_color;
+		//è·å–çš®è‚¤çš„æ–‡å­—é¢œè‰²
+		theApp.m_main_wnd_data.specify_each_item_color = skinDlg.GetSkinData().GetSkinInfo().specify_each_item_color;
 		for(int i{}; i<MAIN_WND_COLOR_NUM; i++)
-			theApp.m_main_wnd_data.text_colors[i] = skinDlg.GetSkinData().text_colors[i];
-		SetTextColor();
-		//»ñÈ¡Æ¤·ôµÄ×ÖÌå
+			theApp.m_main_wnd_data.text_colors[i] = skinDlg.GetSkinData().GetSkinInfo().TextColor(i);
+		//SetTextColor();
+		//è·å–çš®è‚¤çš„å­—ä½“
 		if (theApp.m_general_data.allow_skin_cover_font)
 		{
-			if (!skinDlg.GetSkinData().font.name.IsEmpty())
+			if (!skinDlg.GetSkinData().GetSkinInfo().font_info.name.IsEmpty())
 			{
-				theApp.m_main_wnd_data.font.name = skinDlg.GetSkinData().font.name;
-				theApp.m_main_wnd_data.font.bold = skinDlg.GetSkinData().font.bold;
-				theApp.m_main_wnd_data.font.italic = skinDlg.GetSkinData().font.italic;
-				theApp.m_main_wnd_data.font.underline = skinDlg.GetSkinData().font.underline;
-				theApp.m_main_wnd_data.font.strike_out = skinDlg.GetSkinData().font.strike_out;
+				theApp.m_main_wnd_data.font.name = skinDlg.GetSkinData().GetSkinInfo().font_info.name;
+				theApp.m_main_wnd_data.font.bold = skinDlg.GetSkinData().GetSkinInfo().font_info.bold;
+				theApp.m_main_wnd_data.font.italic = skinDlg.GetSkinData().GetSkinInfo().font_info.italic;
+				theApp.m_main_wnd_data.font.underline = skinDlg.GetSkinData().GetSkinInfo().font_info.underline;
+				theApp.m_main_wnd_data.font.strike_out = skinDlg.GetSkinData().GetSkinInfo().font_info.strike_out;
 			}
-			if (skinDlg.GetSkinData().font.size >= MIN_FONT_SIZE && skinDlg.GetSkinData().font.size <= MAX_FONT_SIZE)
-				theApp.m_main_wnd_data.font.size = skinDlg.GetSkinData().font.size;
+			if (skinDlg.GetSkinData().GetSkinInfo().font_info.size >= MIN_FONT_SIZE && skinDlg.GetSkinData().GetSkinInfo().font_info.size <= MAX_FONT_SIZE)
+				theApp.m_main_wnd_data.font.size = skinDlg.GetSkinData().GetSkinInfo().font_info.size;
 			SetTextFont();
 		}
-		//»ñÈ¡ÏîÄ¿µÄÏÔÊ¾ÎÄ±¾
-		if (theApp.m_general_data.allow_skin_cover_text)
+		//è·å–é¡¹ç›®çš„æ˜¾ç¤ºæ–‡æœ¬
+		if (theApp.m_general_data.allow_skin_cover_text && !skinDlg.GetSkinData().GetLayoutInfo().no_label)
 		{
-			theApp.m_main_wnd_data.disp_str = skinDlg.GetSkinData().disp_str;
+			theApp.m_main_wnd_data.disp_str = skinDlg.GetSkinData().GetSkinInfo().display_text;
 		}
 		SetItemPosition();
-		ShowInfo();		//¸ü»»Æ¤·ôºóÁ¢¼´Ë¢ĞÂ´°¿ÚĞÅÏ¢
+		Invalidate(FALSE);		//æ›´æ¢çš®è‚¤åç«‹å³åˆ·æ–°çª—å£ä¿¡æ¯
 		theApp.SaveConfig();
 	}
 }
@@ -2115,7 +1998,7 @@ void CTrafficMonitorDlg::OnChangeSkin()
 
 void CTrafficMonitorDlg::OnTrafficHistory()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	CHistoryTrafficDlg historyDlg(m_history_traffic.GetTraffics());
 	historyDlg.DoModal();
 }
@@ -2123,56 +2006,56 @@ void CTrafficMonitorDlg::OnTrafficHistory()
 
 void CTrafficMonitorDlg::OnMouseMove(UINT nFlags, CPoint point)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 
-	CDialogEx::OnMouseMove(nFlags, point);
+	CDialog::OnMouseMove(nFlags, point);
 }
 
 
 void CTrafficMonitorDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 	switch (theApp.m_main_wnd_data.double_click_action)
 	{
 	case DoubleClickAction::CONNECTION_INFO:
-		OnNetworkInfo();			//Ë«»÷ºóµ¯³ö¡°Á¬½ÓÏêÇé¡±¶Ô»°¿ò
+		OnNetworkInfo();			//åŒå‡»åå¼¹å‡ºâ€œè¿æ¥è¯¦æƒ…â€å¯¹è¯æ¡†
 		break;
 	case DoubleClickAction::HISTORY_TRAFFIC:
-		OnTrafficHistory();			//Ë«»÷ºóµ¯³ö¡°ÀúÊ·Á÷Á¿Í³¼Æ¡±¶Ô»°¿ò
+		OnTrafficHistory();			//åŒå‡»åå¼¹å‡ºâ€œå†å²æµé‡ç»Ÿè®¡â€å¯¹è¯æ¡†
 		break;
 	case DoubleClickAction::SHOW_MORE_INFO:
-		OnShowCpuMemory();			//ÇĞ»»ÏÔÊ¾CPUºÍÄÚ´æÀûÓÃÂÊ
+		OnShowCpuMemory();			//åˆ‡æ¢æ˜¾ç¤ºCPUå’Œå†…å­˜åˆ©ç”¨ç‡
 		break;
 	case DoubleClickAction::OPTIONS:
-		OnOptions();				//Ë«»÷ºóµ¯³ö¡°Ñ¡ÏîÉèÖÃ¡±¶Ô»°¿ò
+		OnOptions();				//åŒå‡»åå¼¹å‡ºâ€œé€‰é¡¹è®¾ç½®â€å¯¹è¯æ¡†
 		break;
     case DoubleClickAction::TASK_MANAGER:
-        ShellExecuteW(NULL, _T("open"), (theApp.m_system_dir + L"\\Taskmgr.exe").c_str(), NULL, NULL, SW_NORMAL);		//´ò¿ªÈÎÎñ¹ÜÀíÆ÷
+        ShellExecuteW(NULL, _T("open"), (theApp.m_system_dir + L"\\Taskmgr.exe").c_str(), NULL, NULL, SW_NORMAL);		//æ‰“å¼€ä»»åŠ¡ç®¡ç†å™¨
         break;
     case DoubleClickAction::SEPCIFIC_APP:
-        ShellExecuteW(NULL, _T("open"), (theApp.m_main_wnd_data.double_click_exe).c_str(), NULL, NULL, SW_NORMAL);	//´ò¿ªÖ¸¶¨³ÌĞò£¬Ä¬ÈÏÈÎÎñ¹ÜÀíÆ÷
+        ShellExecuteW(NULL, _T("open"), (theApp.m_main_wnd_data.double_click_exe).c_str(), NULL, NULL, SW_NORMAL);	//æ‰“å¼€æŒ‡å®šç¨‹åºï¼Œé»˜è®¤ä»»åŠ¡ç®¡ç†å™¨
         break;
     case DoubleClickAction::CHANGE_SKIN:
-		OnChangeSkin();				//Ë«»÷ºóµ¯³ö¡°¸ü»»Æ¤·ô¡±¶Ô»°¿ò
+		OnChangeSkin();				//åŒå‡»åå¼¹å‡ºâ€œæ›´æ¢çš®è‚¤â€å¯¹è¯æ¡†
 		break;
 	default:
 		break;
 	}
-	CDialogEx::OnLButtonDblClk(nFlags, point);
+	CDialog::OnLButtonDblClk(nFlags, point);
 }
 
 
 void CTrafficMonitorDlg::OnOptions()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	_OnOptions(0);
 }
 
 
-//Í¨¹ıÈÎÎñÀ¸´°¿ÚµÄÓÒ¼ü²Ëµ¥´ò¿ª¡°Ñ¡Ïî¡±¶Ô»°¿ò
+//é€šè¿‡ä»»åŠ¡æ çª—å£çš„å³é”®èœå•æ‰“å¼€â€œé€‰é¡¹â€å¯¹è¯æ¡†
 void CTrafficMonitorDlg::OnOptions2()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	_OnOptions(1);
 }
 
@@ -2186,7 +2069,7 @@ afx_msg LRESULT CTrafficMonitorDlg::OnExitmenuloop(WPARAM wParam, LPARAM lParam)
 
 void CTrafficMonitorDlg::OnChangeNotifyIcon()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	CIconSelectDlg dlg(theApp.m_cfg_data.m_notify_icon_selected);
     dlg.SetAutoAdaptNotifyIcon(theApp.m_cfg_data.m_notify_icon_auto_adapt);
 	if (dlg.DoModal() == IDOK)
@@ -2208,7 +2091,7 @@ void CTrafficMonitorDlg::OnChangeNotifyIcon()
 
 void CTrafficMonitorDlg::OnAlowOutOfBorder()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	theApp.m_cfg_data.m_alow_out_of_border = !theApp.m_cfg_data.m_alow_out_of_border;
 	CheckWindowPos();
 }
@@ -2216,31 +2099,31 @@ void CTrafficMonitorDlg::OnAlowOutOfBorder()
 
 void CTrafficMonitorDlg::OnUpdateAlowOutOfBorder(CCmdUI *pCmdUI)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî¸üĞÂÓÃ»§½çÃæ´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤æ›´æ–°ç”¨æˆ·ç•Œé¢å¤„ç†ç¨‹åºä»£ç 
 	pCmdUI->SetCheck(theApp.m_cfg_data.m_alow_out_of_border);
 }
 
 
 void CTrafficMonitorDlg::OnCheckUpdate()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	theApp.CheckUpdate(true);
 }
 
 
 afx_msg LRESULT CTrafficMonitorDlg::OnTaskbarMenuPopedUp(WPARAM wParam, LPARAM lParam)
 {
-	//ÉèÖÃ¡°Ñ¡ÔñÁ¬½Ó¡±×Ó²Ëµ¥ÏîÖĞ¸÷µ¥Ñ¡ÏîµÄÑ¡Ôñ×´Ì¬
+	//è®¾ç½®â€œé€‰æ‹©è¿æ¥â€å­èœå•é¡¹ä¸­å„å•é€‰é¡¹çš„é€‰æ‹©çŠ¶æ€
 	CMenu* select_connection_menu = theApp.m_taskbar_menu.GetSubMenu(0)->GetSubMenu(0);
 	SetConnectionMenuState(select_connection_menu);
 	return 0;
 }
 
 
-//ÈÎÎñÀ¸´°¿ÚÇĞ»»ÏÔÊ¾ÍøËÙÊ±µÄ´¦Àí
+//ä»»åŠ¡æ çª—å£åˆ‡æ¢æ˜¾ç¤ºç½‘é€Ÿæ—¶çš„å¤„ç†
 void CTrafficMonitorDlg::OnShowNetSpeed()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	if (m_tBarDlg != nullptr)
 	{
 		bool show_net_speed = ((theApp.m_cfg_data.m_tbar_display_item & TDI_UP) || (theApp.m_cfg_data.m_tbar_display_item & TDI_DOWN));
@@ -2262,10 +2145,10 @@ void CTrafficMonitorDlg::OnShowNetSpeed()
 
 BOOL CTrafficMonitorDlg::OnQueryEndSession()
 {
-	if (!CDialogEx::OnQueryEndSession())
+	if (!CDialog::OnQueryEndSession())
 		return FALSE;
 
-	// TODO:  ÔÚ´ËÌí¼Ó×¨ÓÃµÄ²éÑ¯½áÊø»á»°´úÂë
+	// TODO:  åœ¨æ­¤æ·»åŠ ä¸“ç”¨çš„æŸ¥è¯¢ç»“æŸä¼šè¯ä»£ç 
 	theApp.SaveConfig();
 	theApp.SaveGlobalConfig();
 	SaveHistoryTraffic();
@@ -2273,7 +2156,7 @@ BOOL CTrafficMonitorDlg::OnQueryEndSession()
 
 	if (theApp.m_debug_log)
 	{
-		CCommon::WriteLog(_T("TrafficMonitor½ø³ÌÒÑ±»ÖÕÖ¹£¬ÉèÖÃÒÑ±£´æ¡£"), (theApp.m_config_dir + L".\\debug.log").c_str());
+		CCommon::WriteLog(_T("TrafficMonitorè¿›ç¨‹å·²è¢«ç»ˆæ­¢ï¼Œè®¾ç½®å·²ä¿å­˜ã€‚"), (theApp.m_config_dir + L".\\debug.log").c_str());
 	}
 
 	return TRUE;
@@ -2282,55 +2165,67 @@ BOOL CTrafficMonitorDlg::OnQueryEndSession()
 
 void CTrafficMonitorDlg::OnShowUpSpeed()
 {
-    // TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
     TaskbarShowHideItem(TDI_UP);
 }
 
 
 void CTrafficMonitorDlg::OnShowDownSpeed()
 {
-    // TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
     TaskbarShowHideItem(TDI_DOWN);
 }
 
 
 void CTrafficMonitorDlg::OnShowCpuUsage()
 {
-    // TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
     TaskbarShowHideItem(TDI_CPU);
 }
 
 
 void CTrafficMonitorDlg::OnShowMemoryUsage()
 {
-    // TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
     TaskbarShowHideItem(TDI_MEMORY);
 }
 
 
 void CTrafficMonitorDlg::OnShowCpuTemperature()
 {
-    // TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
     TaskbarShowHideItem(TDI_CPU_TEMP);
 }
 
 
 void CTrafficMonitorDlg::OnShowGpuTemperature()
 {
-    // TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
     TaskbarShowHideItem(TDI_GPU_TEMP);
 }
 
 
 void CTrafficMonitorDlg::OnShowHddTemperature()
 {
-    // TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
     TaskbarShowHideItem(TDI_HDD_TEMP);
 }
 
 
 void CTrafficMonitorDlg::OnShowMainBoardTemperature()
 {
-    // TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
     TaskbarShowHideItem(TDI_MAIN_BOARD_TEMP);
+}
+
+
+void CTrafficMonitorDlg::OnPaint()
+{
+    CPaintDC dc(this); // device context for painting
+                       // TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
+                       // ä¸ä¸ºç»˜å›¾æ¶ˆæ¯è°ƒç”¨ CDialog::OnPaint()
+    if (theApp.m_cfg_data.m_show_more_info)
+        m_skin.DrawInfoL(&dc, m_font);
+    else
+        m_skin.DrawInfoS(&dc, m_font);
 }

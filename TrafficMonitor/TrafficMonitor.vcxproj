@@ -136,56 +136,56 @@
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir);$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (without temperature)|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir);$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir);$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (without temperature)|x64'">
     <LinkIncremental>true</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir);$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir);$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release (without temperature)|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir);$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir);$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release (without temperature)|x64'">
     <LinkIncremental>false</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir);$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -198,7 +198,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenHardwareMonitorApi.lib;tinyxml2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
@@ -223,7 +223,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>tinyxml2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -246,7 +246,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenHardwareMonitorApi.lib;tinyxml2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
@@ -270,7 +270,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>tinyxml2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -298,7 +298,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenHardwareMonitorApi.lib;tinyxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
@@ -327,7 +327,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>tinyxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -354,7 +354,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenHardwareMonitorApi.lib;tinyxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
@@ -382,7 +382,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>tinyxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -412,6 +412,7 @@
     <ClInclude Include="CVariant.h" />
     <ClInclude Include="DisplayTextSettingDlg.h" />
     <ClInclude Include="DrawCommonEx.h" />
+    <ClInclude Include="FilePathHelper.h" />
     <ClInclude Include="HistoryTrafficCalendarDlg.h" />
     <ClInclude Include="HistoryTrafficFile.h" />
     <ClInclude Include="HistoryTrafficListDlg.h" />
@@ -437,6 +438,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SimpleXML.h" />
     <ClInclude Include="SkinDlg.h" />
+    <ClInclude Include="SkinFile.h" />
     <ClInclude Include="SpinEdit.h" />
     <ClInclude Include="StaticEx.h" />
     <ClInclude Include="stdafx.h" />
@@ -447,6 +449,7 @@
     <ClInclude Include="TaskBarDlg.h" />
     <ClInclude Include="TaskBarSettingsDlg.h" />
     <ClInclude Include="Test.h" />
+    <ClInclude Include="TinyXml2Helper.h" />
     <ClInclude Include="TrafficMonitor.h" />
     <ClInclude Include="TrafficMonitorDlg.h" />
     <ClInclude Include="UpdateHelper.h" />
@@ -466,6 +469,7 @@
     <ClCompile Include="CVariant.cpp" />
     <ClCompile Include="DisplayTextSettingDlg.cpp" />
     <ClCompile Include="DrawCommonEx.cpp" />
+    <ClCompile Include="FilePathHelper.cpp" />
     <ClCompile Include="HistoryTrafficCalendarDlg.cpp" />
     <ClCompile Include="HistoryTrafficFile.cpp" />
     <ClCompile Include="HistoryTrafficListDlg.cpp" />
@@ -489,6 +493,7 @@
     <ClCompile Include="PictureStatic.cpp" />
     <ClCompile Include="SimpleXML.cpp" />
     <ClCompile Include="SkinDlg.cpp" />
+    <ClCompile Include="SkinFile.cpp" />
     <ClCompile Include="SpinEdit.cpp" />
     <ClCompile Include="StaticEx.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -507,6 +512,7 @@
     <ClCompile Include="TaskBarDlg.cpp" />
     <ClCompile Include="TaskBarSettingsDlg.cpp" />
     <ClCompile Include="Test.cpp" />
+    <ClCompile Include="TinyXml2Helper.cpp" />
     <ClCompile Include="TrafficMonitor.cpp" />
     <ClCompile Include="TrafficMonitorDlg.cpp" />
     <ClCompile Include="UpdateHelper.cpp" />
