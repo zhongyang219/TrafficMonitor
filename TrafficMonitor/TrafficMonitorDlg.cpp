@@ -946,13 +946,16 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			GetNumberOfInterfaces(&interface_num);
 			if (last_interface_num != -1 && interface_num != last_interface_num)	//如果连接数发生变化，则重新初始化连接
 			{
-				CString info;
-				info.LoadString(IDS_CONNECTION_NUM_CHANGED);
-				info.Replace(_T("<%before%>"), CCommon::IntToString(last_interface_num));
-				info.Replace(_T("<%after%>"), CCommon::IntToString(interface_num));
-				info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt + 1));
+                if (theApp.m_debug_log)
+                {
+				    CString info;
+				    info.LoadString(IDS_CONNECTION_NUM_CHANGED);
+				    info.Replace(_T("<%before%>"), CCommon::IntToString(last_interface_num));
+				    info.Replace(_T("<%after%>"), CCommon::IntToString(interface_num));
+				    info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt + 1));
+                    CCommon::WriteLog(info, theApp.m_log_path.c_str());
+                }
 				IniConnection();
-				CCommon::WriteLog(info, theApp.m_log_path.c_str());
 			}
 			last_interface_num = interface_num;
 
