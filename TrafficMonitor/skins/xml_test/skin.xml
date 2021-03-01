@@ -18,19 +18,19 @@
 	<layout text_height="20" no_label="0">
 		<layout_l width="232" height="107">
 			<cpu x="14" y="3" width="106" align="0" show="1"/>
-			<memory x="120" y="3" width="106" align="0" show="1"/>
+			<memory x="122" y="3" width="106" align="0" show="1"/>
 			<up x="14" y="27" width="106" align="0" show="1"/>
-			<down x="120" y="27" width="106" align="0" show="1"/>
+			<down x="122" y="27" width="106" align="0" show="1"/>
 			<cpu_temperature x="32" y="57" width="94" align="0" show="1"/>
 			<gpu_temperature x="32" y="83" width="94" align="0" show="1"/>
-			<hdd_temperature x="145" y="57" width="94" align="0" show="1"/>
-			<main_board_temperature x="145" y="83" width="94" align="0" show="1"/>
+			<hdd_temperature x="142" y="57" width="94" align="0" show="1"/>
+			<main_board_temperature x="142" y="83" width="94" align="0" show="1"/>
 		</layout_l>
 		<layout_s width="232" height="50">
 			<cpu x="14" y="3" width="106" align="0" show="1"/>
-			<memory x="120" y="3" width="106" align="0" show="1"/>
+			<memory x="122" y="3" width="106" align="0" show="1"/>
 			<up x="14" y="27" width="106" align="0" show="1"/>
-			<down x="120" y="27" width="106" align="0" show="1"/>
+			<down x="122" y="27" width="106" align="0" show="1"/>
 		</layout_s>
 
 	</layout>
