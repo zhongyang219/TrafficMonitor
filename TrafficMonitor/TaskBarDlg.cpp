@@ -332,12 +332,7 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
         default:
             break;
         }
-        CString format_str;
-        if (theApp.m_taskbar_data.separate_value_unit_with_space)
-            format_str = _T("%d ℃");
-        else
-            format_str = _T("%d℃");
-        str_value.Format(format_str, temperature);
+        str_value = CCommon::TemperatureToString(temperature, theApp.m_taskbar_data);
     }
 
     drawer.DrawWindowText(rect_value, str_value, text_color, value_alignment);

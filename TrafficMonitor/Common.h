@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "CommonData.h"
 #include "CVariant.h"
 
@@ -7,7 +7,7 @@ class CCommon
 public:
 	CCommon();
 	~CCommon();
-	//½«const char*×Ö·û´®×ª»»³É¿í×Ö·û×Ö·û´®
+	//å°†const char*å­—ç¬¦ä¸²è½¬æ¢æˆå®½å­—ç¬¦å­—ç¬¦ä¸²
 	static wstring StrToUnicode(const char* str, bool utf8 = false);
 
 	static string UnicodeToStr(const wchar_t* wstr, bool utf8 = false);
@@ -17,26 +17,26 @@ public:
     {
         if (str.empty()) return;
 
-        int size = str.size();	//×Ö·û´®µÄ³¤¶È
+        int size = str.size();	//å­—ç¬¦ä¸²çš„é•¿åº¦
         if (size < 0) return;
-        int index1 = 0;		//×Ö·û´®ÖĞµÚ1¸ö²»ÊÇ¿Õ¸ñ»ò¿ØÖÆ×Ö·ûµÄÎ»ÖÃ
-        int index2 = size - 1;	//×Ö·û´®ÖĞ×îºóÒ»¸ö²»ÊÇ¿Õ¸ñ»ò¿ØÖÆ×Ö·ûµÄÎ»ÖÃ
+        int index1 = 0;		//å­—ç¬¦ä¸²ä¸­ç¬¬1ä¸ªä¸æ˜¯ç©ºæ ¼æˆ–æ§åˆ¶å­—ç¬¦çš„ä½ç½®
+        int index2 = size - 1;	//å­—ç¬¦ä¸²ä¸­æœ€åä¸€ä¸ªä¸æ˜¯ç©ºæ ¼æˆ–æ§åˆ¶å­—ç¬¦çš„ä½ç½®
         while (index1 < size && str[index1] >= 0 && str[index1] <= 32)
             index1++;
         while (index2 >= 0 && str[index2] >= 0 && str[index2] <= 32)
             index2--;
-        if (index1 > index2)	//Èç¹ûindex1 > index2£¬ËµÃ÷×Ö·û´®È«ÊÇ¿Õ¸ñ»ò¿ØÖÆ×Ö·û
+        if (index1 > index2)	//å¦‚æœindex1 > index2ï¼Œè¯´æ˜å­—ç¬¦ä¸²å…¨æ˜¯ç©ºæ ¼æˆ–æ§åˆ¶å­—ç¬¦
             str.clear();
-        else if (index1 == 0 && index2 == size - 1)	//Èç¹ûindex1ºÍindex2µÄÖµ·Ö±ğÎª0ºÍsize - 1£¬ËµÃ÷×Ö·û´®Ç°ºóÃ»ÓĞ¿Õ¸ñ»ò¿ØÖÆ×Ö·û£¬Ö±½Ó·µ»Ø
+        else if (index1 == 0 && index2 == size - 1)	//å¦‚æœindex1å’Œindex2çš„å€¼åˆ†åˆ«ä¸º0å’Œsize - 1ï¼Œè¯´æ˜å­—ç¬¦ä¸²å‰åæ²¡æœ‰ç©ºæ ¼æˆ–æ§åˆ¶å­—ç¬¦ï¼Œç›´æ¥è¿”å›
             return;
         else
             str = str.substr(index1, index2 - index1 + 1);
     }
 
-    //½«Ò»¸ö×Ö·û´®·Ö¸î³ÉÈô¸É¸ö×Ö·û£¨Ä£°åÀàĞÍÖ»ÄÜÎªstring»òwstring£©
-    //str: Ô­Ê¼×Ö·û´®
-    //div_ch: ÓÃÓÚ·Ö¸îµÄ×Ö·û
-    //result: ½ÓÊÕ·Ö¸îºóµÄ½á¹û
+    //å°†ä¸€ä¸ªå­—ç¬¦ä¸²åˆ†å‰²æˆè‹¥å¹²ä¸ªå­—ç¬¦ï¼ˆæ¨¡æ¿ç±»å‹åªèƒ½ä¸ºstringæˆ–wstringï¼‰
+    //str: åŸå§‹å­—ç¬¦ä¸²
+    //div_ch: ç”¨äºåˆ†å‰²çš„å­—ç¬¦
+    //result: æ¥æ”¶åˆ†å‰²åçš„ç»“æœ
     template<class T>
     static void StringSplit(const T& str, wchar_t div_ch, vector<T>& results, bool skip_empty = true, bool trim = true)
     {
@@ -103,162 +103,165 @@ public:
         return true;
     }
 
-    //¶ÁÈ¡ÎÄ¼şÄÚÈİ
+    //è¯»å–æ–‡ä»¶å†…å®¹
     static bool GetFileContent(const wchar_t* file_path, string& contents_buff, bool binary = true);
 
-    //¶ÁÈ¡ÎÄ¼şÄÚÈİ
-    //file_path: ÎÄ¼şµÄÂ·¾¶
-    //length: ÎÄ¼şµÄ³¤¶È
-    //binary: ÊÇ·ñÒÔ½øÖÆ·½Ê½¶ÁÈ¡
-    //·µ»ØÖµ: ¶ÁÈ¡³É¹¦·µ»Ø¶ÁÈ¡µ½µÄÎÄ¼şÄÚÈİµÄconst charÀàĞÍµÄÖ¸Õë£¬ÔÚÊ¹ÓÃÍê±ÏºóÕâ¸öÖ¸ÕëĞèÒª×ÔĞĞÊ¹ÓÃdeleteÊÍ·Å¡£¶ÁÈ¡Ê§°Ü·µ»Ønullptr
+    //è¯»å–æ–‡ä»¶å†…å®¹
+    //file_path: æ–‡ä»¶çš„è·¯å¾„
+    //length: æ–‡ä»¶çš„é•¿åº¦
+    //binary: æ˜¯å¦ä»¥è¿›åˆ¶æ–¹å¼è¯»å–
+    //è¿”å›å€¼: è¯»å–æˆåŠŸè¿”å›è¯»å–åˆ°çš„æ–‡ä»¶å†…å®¹çš„const charç±»å‹çš„æŒ‡é’ˆï¼Œåœ¨ä½¿ç”¨å®Œæ¯•åè¿™ä¸ªæŒ‡é’ˆéœ€è¦è‡ªè¡Œä½¿ç”¨deleteé‡Šæ”¾ã€‚è¯»å–å¤±è´¥è¿”å›nullptr
     static const char* GetFileContent(const wchar_t* file_path, size_t& length, bool binary = true);
 
-	/*¸ù¾İÊı¾İµÄ´óĞ¡×ª»»³ÉÒÔKB¡¢MB¡¢GBÎªµ¥Î»µÄ×Ö·û´®
-	size£ºÊı¾İµÄ×Ö½ÚÊı
-	·µ»ØÖµ£º×ª»»ºóµÄ×Ö·û´®
+	/*æ ¹æ®æ•°æ®çš„å¤§å°è½¬æ¢æˆä»¥KBã€MBã€GBä¸ºå•ä½çš„å­—ç¬¦ä¸²
+	sizeï¼šæ•°æ®çš„å­—èŠ‚æ•°
+	è¿”å›å€¼ï¼šè½¬æ¢åçš„å­—ç¬¦ä¸²
 	*/
 	static CString DataSizeToString(unsigned int size, const PublicSettingData& cfg);
 	static CString DataSizeToString(unsigned long long size);
 
+    //å°†æ¸©åº¦ä¿¡æ¯è½¬æ¢æˆå­—ç¬¦ä¸²
+    static CString TemperatureToString(float temperature, const PublicSettingData& cfg);
+
 	//static CString KBytesToString(unsigned int kb_size);
 	static CString KBytesToString(unsigned __int64 kb_size);
 
-	//·µ»ØÁ½¸öFILETIME½á¹¹µÄÊ±¼ä²î
+	//è¿”å›ä¸¤ä¸ªFILETIMEç»“æ„çš„æ—¶é—´å·®
 	static __int64 CompareFileTime2(FILETIME time1, FILETIME time2);
 
-	//½«Ò»¸öÈÕÖ¾ĞÅÏ¢str_textĞ´Èëµ½file_pathÎÄ¼şÖĞ
+	//å°†ä¸€ä¸ªæ—¥å¿—ä¿¡æ¯str_textå†™å…¥åˆ°file_pathæ–‡ä»¶ä¸­
 	static void WriteLog(const char* str_text, LPCTSTR file_path);
 	static void WriteLog(const wchar_t* str_text, LPCTSTR file_path);
 
 	/*
-	º¯Êı¹¦ÄÜ£º¶ÔÖ¸¶¨ÎÄ¼şÔÚÖ¸¶¨µÄÄ¿Â¼ÏÂ´´½¨Æä¿ì½İ·½Ê½
-	º¯Êı²ÎÊı£º
-	lpszLnkFileDir  Ö¸¶¨Ä¿Â¼£¬²»ÄÜÎªNULL¡£
-	lpszFileName    Ö¸¶¨ÎÄ¼ş£¬ÎªNULL±íÊ¾µ±Ç°½ø³ÌµÄEXEÎÄ¼ş¡£
-	lpszLnkFileName ¿ì½İ·½Ê½Ãû³Æ£¬ÎªNULL±íÊ¾EXEÎÄ¼şÃû¡£
-	wHotkey         Îª0±íÊ¾²»ÉèÖÃ¿ì½İ¼ü
-	pszDescription  ±¸×¢
-	iShowCmd        ÔËĞĞ·½Ê½£¬Ä¬ÈÏÎª³£¹æ´°¿Ú
+	å‡½æ•°åŠŸèƒ½ï¼šå¯¹æŒ‡å®šæ–‡ä»¶åœ¨æŒ‡å®šçš„ç›®å½•ä¸‹åˆ›å»ºå…¶å¿«æ·æ–¹å¼
+	å‡½æ•°å‚æ•°ï¼š
+	lpszLnkFileDir  æŒ‡å®šç›®å½•ï¼Œä¸èƒ½ä¸ºNULLã€‚
+	lpszFileName    æŒ‡å®šæ–‡ä»¶ï¼Œä¸ºNULLè¡¨ç¤ºå½“å‰è¿›ç¨‹çš„EXEæ–‡ä»¶ã€‚
+	lpszLnkFileName å¿«æ·æ–¹å¼åç§°ï¼Œä¸ºNULLè¡¨ç¤ºEXEæ–‡ä»¶åã€‚
+	wHotkey         ä¸º0è¡¨ç¤ºä¸è®¾ç½®å¿«æ·é”®
+	pszDescription  å¤‡æ³¨
+	iShowCmd        è¿è¡Œæ–¹å¼ï¼Œé»˜è®¤ä¸ºå¸¸è§„çª—å£
 	*/
 	static BOOL CreateFileShortcut(LPCTSTR lpszLnkFileDir, LPCTSTR lpszFileName = NULL, LPCTSTR lpszLnkFileName = NULL, LPCTSTR lpszWorkDir = NULL, WORD wHotkey = 0, LPCTSTR lpszDescription = NULL, int iShowCmd = SW_SHOWNORMAL);
 
-	//»ñÈ¡¿ªÊ¼²Ëµ¥¡°ËùÓĞ³ÌĞò¡±ÖĞµÄ¡°Æô¶¯¡±Ä¿Â¼µÄÂ·¾¶
+	//è·å–å¼€å§‹èœå•â€œæ‰€æœ‰ç¨‹åºâ€ä¸­çš„â€œå¯åŠ¨â€ç›®å½•çš„è·¯å¾„
 	static wstring GetStartUpPath();
 
-	//»ñÈ¡pathÂ·¾¶ÏÂµÄÎÄ¼ş»òÎÄ¼ş¼Ğ£¬²¢½«ÎÄ¼ş»òÎÄ¼ş¼ĞÃû³Æ±£´æÔÚfilesÈİÆ÷ÖĞ¡£
+	//è·å–pathè·¯å¾„ä¸‹çš„æ–‡ä»¶æˆ–æ–‡ä»¶å¤¹ï¼Œå¹¶å°†æ–‡ä»¶æˆ–æ–‡ä»¶å¤¹åç§°ä¿å­˜åœ¨fileså®¹å™¨ä¸­ã€‚
 	static void GetFiles(const wchar_t* path, vector<wstring>& files);
 
-	//ÅĞ¶ÏÒ»¸öÎÄ¼şÊÇ·ñ´æÔÚ
+	//åˆ¤æ–­ä¸€ä¸ªæ–‡ä»¶æ˜¯å¦å­˜åœ¨
 	static bool FileExist(LPCTSTR file_name);
 
 	static bool MoveAFile(LPCTSTR exist_file, LPCTSTR new_file);
 
-	//¼ÆËãÁ½¸öSYSTEMTIME½á¹¹Ê±¼äµÄ²î£¨a-b£¬Ö»±£ÁôÊ±¡¢·Ö¡¢Ãë£©
+	//è®¡ç®—ä¸¤ä¸ªSYSTEMTIMEç»“æ„æ—¶é—´çš„å·®ï¼ˆa-bï¼Œåªä¿ç•™æ—¶ã€åˆ†ã€ç§’ï¼‰
 	static SYSTEMTIME CompareSystemTime(SYSTEMTIME a, SYSTEMTIME b);
 
-	//»ñÈ¡µ±Ç°³ÌĞòµÄÄ¿Â¼
+	//è·å–å½“å‰ç¨‹åºçš„ç›®å½•
 	static wstring GetModuleDir();
 
-	//»ñÈ¡system32ÎÄ¼ş¼ĞµÄÂ·¾¶
+	//è·å–system32æ–‡ä»¶å¤¹çš„è·¯å¾„
 	static wstring GetSystemDir();
 
-	//»ñÈ¡ÁÙÊ±ÎÄ¼ş¼ĞµÄÂ·¾¶
+	//è·å–ä¸´æ—¶æ–‡ä»¶å¤¹çš„è·¯å¾„
 	static wstring GetTemplateDir();
 
-	//»ñÈ¡Appdata/Local/TrafficMonitorµÄÄ¿Â¼£¬Èç¹û²»´æÔÚ£¬Ôò»á×Ô¶¯´´½¨
+	//è·å–Appdata/Local/TrafficMonitorçš„ç›®å½•ï¼Œå¦‚æœä¸å­˜åœ¨ï¼Œåˆ™ä¼šè‡ªåŠ¨åˆ›å»º
 	static wstring GetAppDataConfigDir();
 
-	//ÔÚÖ¸¶¨Î»ÖÃ»æÖÆÎÄ±¾
+	//åœ¨æŒ‡å®šä½ç½®ç»˜åˆ¶æ–‡æœ¬
 	static void DrawWindowText(CDC* pDC, CRect rect, LPCTSTR lpszString, COLORREF color, COLORREF back_color);
 
-	////ÉèÖÃ»æÍ¼µÄ¼ô¼­ÇøÓò
+	////è®¾ç½®ç»˜å›¾çš„å‰ªè¾‘åŒºåŸŸ
 	//static void SetDrawArea(CDC* pDC, CRect rect);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-	* º¯ÊıÃû³Æ£ºIsForegroundFullscreen
-	* ¹¦ÄÜËµÃ÷£ºÅĞ¶Ïµ±Ç°ÕıÔÚÓëÓÃ»§½»»¥µÄÇ°Ì¨´°¿ÚÊÇ·ñÊÇÈ«ÆÁµÄ¡£
-	* ²ÎÊıËµÃ÷£ºÎŞ
-	* ·µ»ØËµÃ÷£ºtrue£ºÊÇ¡£
-	false£º·ñ¡£
-	* Ïß³Ì°²È«£ºÊÇ
-	* µ÷ÓÃÑùÀı£ºIsForegroundFullscreen ()£¬±íÊ¾ÅĞ¶Ïµ±Ç°ÕıÔÚÓëÓÃ»§½»»¥µÄÇ°Ì¨´°¿ÚÊÇ·ñÊÇÈ«ÆÁµÄ¡£
+	* å‡½æ•°åç§°ï¼šIsForegroundFullscreen
+	* åŠŸèƒ½è¯´æ˜ï¼šåˆ¤æ–­å½“å‰æ­£åœ¨ä¸ç”¨æˆ·äº¤äº’çš„å‰å°çª—å£æ˜¯å¦æ˜¯å…¨å±çš„ã€‚
+	* å‚æ•°è¯´æ˜ï¼šæ— 
+	* è¿”å›è¯´æ˜ï¼štrueï¼šæ˜¯ã€‚
+	falseï¼šå¦ã€‚
+	* çº¿ç¨‹å®‰å…¨ï¼šæ˜¯
+	* è°ƒç”¨æ ·ä¾‹ï¼šIsForegroundFullscreen ()ï¼Œè¡¨ç¤ºåˆ¤æ–­å½“å‰æ­£åœ¨ä¸ç”¨æˆ·äº¤äº’çš„å‰å°çª—å£æ˜¯å¦æ˜¯å…¨å±çš„ã€‚
 	* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	static bool IsForegroundFullscreen();
 
-	//½«Ò»¸ö×Ö·û´®±£´æµ½¼ôÌù°å
+	//å°†ä¸€ä¸ªå­—ç¬¦ä¸²ä¿å­˜åˆ°å‰ªè´´æ¿
 	static bool CopyStringToClipboard(const wstring& str);
 
     static wstring GetJsonValueSimple(const wstring& json_str, const wstring& name);
 
-	//»ñÈ¡URLµÄÄÚÈİ
+	//è·å–URLçš„å†…å®¹
 	static bool GetURL(const wstring& url, wstring& result, bool utf8 = false, const wstring& user_agent = wstring());
 
-	//»ñÈ¡ÍâÍøIPµØÖ·ºÍIP¹éÊôµØ
+	//è·å–å¤–ç½‘IPåœ°å€å’ŒIPå½’å±åœ°
 	static void GetInternetIp(wstring& ip_address, wstring& ip_location, bool global);
 
     static void GetInternetIp2(wstring& ip_address, wstring& ip_location, bool ipv6);
 
 	static void SetRect(CRect& rect, int x, int y, int width, int height);
 
-	//´Ó×ÊÔ´ÎÄ¼şÔØÈë×Ö·û´®¡£ÆäÖĞ£¬front_str¡¢back_strÎªÔØÈë×Ö·û´®Ê±ĞèÒªÔÚÇ°Ãæ»òºóÃæÌí¼ÓµÄ×Ö·û´®
+	//ä»èµ„æºæ–‡ä»¶è½½å…¥å­—ç¬¦ä¸²ã€‚å…¶ä¸­ï¼Œfront_strã€back_strä¸ºè½½å…¥å­—ç¬¦ä¸²æ—¶éœ€è¦åœ¨å‰é¢æˆ–åé¢æ·»åŠ çš„å­—ç¬¦ä¸²
 	static CString LoadText(UINT id, LPCTSTR back_str = nullptr);
 	static CString LoadText(LPCTSTR front_str, UINT id, LPCTSTR back_str = nullptr);
 
-	//°²È«µÄ¸ñÊ½»¯×Ö·û´®£¬½«format_strÖĞĞÎÈç<%ĞòºÅ%>µÄ×Ö·û´®Ìæ»»³É³õÊ¼»¯ÁĞ±íparasÖĞµÄÔªËØ£¬ÔªËØÖ§³Öint/double/LPCTSTR/CString¸ñÊ½£¬ĞòºÅ´Ó1¿ªÊ¼
+	//å®‰å…¨çš„æ ¼å¼åŒ–å­—ç¬¦ä¸²ï¼Œå°†format_strä¸­å½¢å¦‚<%åºå·%>çš„å­—ç¬¦ä¸²æ›¿æ¢æˆåˆå§‹åŒ–åˆ—è¡¨parasä¸­çš„å…ƒç´ ï¼Œå…ƒç´ æ”¯æŒint/double/LPCTSTR/CStringæ ¼å¼ï¼Œåºå·ä»1å¼€å§‹
 	static CString StringFormat(LPCTSTR format_str, const std::initializer_list<CVariant>& paras);
 
-	//´Ó×ÊÔ´ÎÄ¼şÖĞÔØÈë×Ö·û´®£¬²¢½«×ÊÔ´×Ö·û´®ÖĞĞÎÈç<%ĞòºÅ%>µÄ×Ö·û´®Ìæ»»³É¿É±ä²ÎÊıÁĞ±íÖĞµÄ²ÎÊı
+	//ä»èµ„æºæ–‡ä»¶ä¸­è½½å…¥å­—ç¬¦ä¸²ï¼Œå¹¶å°†èµ„æºå­—ç¬¦ä¸²ä¸­å½¢å¦‚<%åºå·%>çš„å­—ç¬¦ä¸²æ›¿æ¢æˆå¯å˜å‚æ•°åˆ—è¡¨ä¸­çš„å‚æ•°
 	static CString LoadTextFormat(UINT id, const std::initializer_list<CVariant>& paras);
 
-	//½«intÀàĞÍ×ª»»³É×Ö·û´®
-	//n£ºÒª×ª»»µÄÊıÖµ
-	//thousand_separation£ºÊÇ·ñÒªÃ¿¸ô3Î»ÊıÊ¹ÓÃ¶ººÅ·Ö¸ô
-	//is_unsigned£ºÊıÖµÊÇ·ñÊÇÎŞ·ûºÅµÄ
+	//å°†intç±»å‹è½¬æ¢æˆå­—ç¬¦ä¸²
+	//nï¼šè¦è½¬æ¢çš„æ•°å€¼
+	//thousand_separationï¼šæ˜¯å¦è¦æ¯éš”3ä½æ•°ä½¿ç”¨é€—å·åˆ†éš”
+	//is_unsignedï¼šæ•°å€¼æ˜¯å¦æ˜¯æ— ç¬¦å·çš„
 	static CString IntToString(int n, bool thousand_separation = false, bool is_unsigned = false);
 
-	//É¾³ı×ÖÌåÃû³ÆºóÃæµÄBold¡¢LightµÈ×Ö·û´®£¬²¢¸ù¾İÕâĞ©×Ö·û´®ÉèÖÃ×ÖÌå´ÖÏ¸
+	//åˆ é™¤å­—ä½“åç§°åé¢çš„Boldã€Lightç­‰å­—ç¬¦ä¸²ï¼Œå¹¶æ ¹æ®è¿™äº›å­—ç¬¦ä¸²è®¾ç½®å­—ä½“ç²—ç»†
 	static void NormalizeFont(LOGFONT& font);
 
-	//°²È«µÄ×Ö·û´®¸´ÖÆº¯Êı
+	//å®‰å…¨çš„å­—ç¬¦ä¸²å¤åˆ¶å‡½æ•°
 	static void WStringCopy(wchar_t* str_dest, int dest_size, const wchar_t* str_source, int source_size = INT_MAX);
 
 	/// <summary>
-	/// ×Ö·û´®ÏàËÆ¶ÈËã·¨-±à¼­¾àÀë·¨
+	/// å­—ç¬¦ä¸²ç›¸ä¼¼åº¦ç®—æ³•-ç¼–è¾‘è·ç¦»æ³•
 	/// </summary>
-	/// <returns>·µ»ØµÄÖµÎª0~1£¬Ô½´óÏàËÆ¶ÈÔ½¸ß</returns>
+	/// <returns>è¿”å›çš„å€¼ä¸º0~1ï¼Œè¶Šå¤§ç›¸ä¼¼åº¦è¶Šé«˜</returns>
 	static double StringSimilarDegree_LD(const string& srcString, const string& matchString);
 
-	//ÉèÖÃÏß³ÌÓïÑÔ
+	//è®¾ç½®çº¿ç¨‹è¯­è¨€
 	static void SetThreadLanguage(Language language);
 
-	//ÉèÖÃÑÕÉ«Ä£Ê½
+	//è®¾ç½®é¢œè‰²æ¨¡å¼
 	static void SetColorMode(ColorMode mode);
 
-	//¾­¹ı²âÊÔ·¢ÏÖ£¬ËÆºõµ±Í¸Ã÷É«µÄRºÍBÖµÏàµÈÊ±£¬»á³öÏÖÓÒ»÷ÈÎÎñÀ¸´°¿ÚÊ±ÎŞ·¨µ¯³öÓÒ¼ü²Ëµ¥£¬¶øÊÇµ¯³öÏµÍ³ÈÎÎñÀ¸ÓÒ¼ü²Ëµ¥µÄÎÊÌâ
-	//ÎªÁË½â¾öÕâ¸öÎÊÌâ£¬ĞèÒª½«ÑÕÉ«Öµ½øĞĞ×ª»»
-	//´Ëº¯ÊıµÄ×÷ÓÃÊÇÅĞ¶ÏÒ»¸öÑÕÉ«µÄRºÍBÖµÊÇ·ñÏàµÈ£¬Èç¹ûÊÇÔò½«ÑÕÉ«µÄBÖµ¼Ó1£¨Èç¹ûB==255£¬Ôò¼õ1£©
+	//ç»è¿‡æµ‹è¯•å‘ç°ï¼Œä¼¼ä¹å½“é€æ˜è‰²çš„Rå’ŒBå€¼ç›¸ç­‰æ—¶ï¼Œä¼šå‡ºç°å³å‡»ä»»åŠ¡æ çª—å£æ—¶æ— æ³•å¼¹å‡ºå³é”®èœå•ï¼Œè€Œæ˜¯å¼¹å‡ºç³»ç»Ÿä»»åŠ¡æ å³é”®èœå•çš„é—®é¢˜
+	//ä¸ºäº†è§£å†³è¿™ä¸ªé—®é¢˜ï¼Œéœ€è¦å°†é¢œè‰²å€¼è¿›è¡Œè½¬æ¢
+	//æ­¤å‡½æ•°çš„ä½œç”¨æ˜¯åˆ¤æ–­ä¸€ä¸ªé¢œè‰²çš„Rå’ŒBå€¼æ˜¯å¦ç›¸ç­‰ï¼Œå¦‚æœæ˜¯åˆ™å°†é¢œè‰²çš„Bå€¼åŠ 1ï¼ˆå¦‚æœB==255ï¼Œåˆ™å‡1ï¼‰
 	static void TransparentColorConvert(COLORREF& transparent_color);
 
 	static void SetDialogFont(CWnd* pDlg, CFont* pFont);
 
-    //´Ó×ÊÔ´¼ÓÔØ×Ô¶¨ÒåÎÄ±¾×ÊÔ´¡£id£º×ÊÔ´µÄID£¬code_type£ºÎÄ±¾µÄ±àÂë¸ñÊ½£º0:ANSI, 1:UTF8, 2:UTF16
+    //ä»èµ„æºåŠ è½½è‡ªå®šä¹‰æ–‡æœ¬èµ„æºã€‚idï¼šèµ„æºçš„IDï¼Œcode_typeï¼šæ–‡æœ¬çš„ç¼–ç æ ¼å¼ï¼š0:ANSI, 1:UTF8, 2:UTF16
     static CString GetTextResource(UINT id, int code_type);
 
-    //´Ó×ÊÔ´¼ÓÔØÒ»¸öÍ¼±ê
+    //ä»èµ„æºåŠ è½½ä¸€ä¸ªå›¾æ ‡
     static HICON LoadIconResource(UINT id, int size);
 
-    //»ñÈ¡Ò»¸ö²Ëµ¥ÏîµÄĞòºÅ
+    //è·å–ä¸€ä¸ªèœå•é¡¹çš„åºå·
     static int GetMenuItemPosition(CMenu* pMenu, UINT id);
 
     static bool IsColorSimilar(COLORREF color1, COLORREF color2);
 
-    //¼ÆËã¶ş½øÖÆÖĞ1µÄ¸öÊı
+    //è®¡ç®—äºŒè¿›åˆ¶ä¸­1çš„ä¸ªæ•°
     static int CountOneBits(unsigned int value);
 
-    //ÉèÖÃÒ»¸öÊı×ÖµÄÄ³¸öbitÎ»
+    //è®¾ç½®ä¸€ä¸ªæ•°å­—çš„æŸä¸ªbitä½
     static void SetNumberBit(unsigned int& num, int bit, bool value);
 
-    //»ñÈ¡Ò»¸öÊı×ÖµÄÄ³¸öbitÎ»
+    //è·å–ä¸€ä¸ªæ•°å­—çš„æŸä¸ªbitä½
     static bool GetNumberBit(unsigned int num, int bit);
 
 };

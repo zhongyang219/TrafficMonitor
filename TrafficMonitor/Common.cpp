@@ -200,6 +200,19 @@ CString CCommon::DataSizeToString(unsigned long long size)
 	return str;
 }
 
+CString CCommon::TemperatureToString(float temperature, const PublicSettingData& cfg)
+{
+    CString str_val;
+    if (temperature <= 0)
+        str_val = _T("--");
+    else
+        str_val.Format(_T("%d"), static_cast<int>(temperature));
+    if (cfg.separate_value_unit_with_space)
+        str_val += _T(' ');
+    str_val += _T("℃");
+    return str_val;
+}
+
 //CString CCommon::KBytesToString(unsigned int kb_size)
 //{
 //	CString k_bytes_str;

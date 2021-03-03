@@ -417,14 +417,18 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
     map_str[TDI_MEMORY].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_MEMORY).c_str()), theApp.m_memory_usage);
 
     //温度
-    if (theApp.m_main_wnd_data.separate_value_unit_with_space)
-        format_str = _T("%s%d ℃");
-    else
-        format_str = _T("%s%d℃");
-    map_str[TDI_CPU_TEMP].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_CPU_TEMP).c_str()), static_cast<int>(theApp.m_cpu_temperature));
-    map_str[TDI_GPU_TEMP].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_GPU_TEMP).c_str()), static_cast<int>(theApp.m_gpu_temperature));
-    map_str[TDI_HDD_TEMP].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_HDD_TEMP).c_str()), static_cast<int>(theApp.m_hdd_temperature));
-    map_str[TDI_MAIN_BOARD_TEMP].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_MAIN_BOARD_TEMP).c_str()), static_cast<int>(theApp.m_main_board_temperature));
+    auto getTemperatureStr = [&](DisplayItem display_item, float temperature)
+    {
+        CString str_val;
+        if (!m_layout_info.no_label)
+            str_val += theApp.m_main_wnd_data.disp_str.Get(display_item).c_str();
+        str_val += CCommon::TemperatureToString(temperature, theApp.m_main_wnd_data);
+        map_str[display_item] = str_val;
+    };
+    getTemperatureStr(TDI_CPU_TEMP, theApp.m_cpu_temperature);
+    getTemperatureStr(TDI_GPU_TEMP, theApp.m_gpu_temperature);
+    getTemperatureStr(TDI_HDD_TEMP, theApp.m_hdd_temperature);
+    getTemperatureStr(TDI_MAIN_BOARD_TEMP, theApp.m_main_board_temperature);
 
     //获取文本颜色
     int text_colors[MAIN_WND_COLOR_NUM]{};
