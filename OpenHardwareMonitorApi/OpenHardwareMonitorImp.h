@@ -46,6 +46,8 @@ namespace OpenHardwareMonitorApi {
             return m_instance;
         }
 
+        void Init();
+
         Computer^ computer;
         UpdateVisitor^ updateVisitor{};
 

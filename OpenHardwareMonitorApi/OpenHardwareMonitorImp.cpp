@@ -17,6 +17,7 @@ namespace OpenHardwareMonitorApi
 
     std::shared_ptr<IOpenHardwareMonitor> CreateInstance()
     {
+        MonitorGlobal::Instance()->Init();
         return std::make_shared<COpenHardwareMonitor>();
     }
 
@@ -121,6 +122,16 @@ namespace OpenHardwareMonitorApi
     ////////////////////////////////////////////////////////////////////////////////////
     MonitorGlobal::MonitorGlobal()
     {
+
+    }
+
+    MonitorGlobal::~MonitorGlobal()
+    {
+
+    }
+
+    void MonitorGlobal::Init()
+    {
         updateVisitor = gcnew UpdateVisitor();
         computer = gcnew Computer();
         computer->CPUEnabled = true;
@@ -129,12 +140,6 @@ namespace OpenHardwareMonitorApi
         computer->MainboardEnabled = true;
         computer->Open();
         computer->Accept(updateVisitor);
-
-    }
-
-    MonitorGlobal::~MonitorGlobal()
-    {
-
     }
 
 }

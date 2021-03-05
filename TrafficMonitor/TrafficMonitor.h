@@ -1,14 +1,14 @@
-
-// TrafficMonitor.h : PROJECT_NAME Ó¦ÓÃ³ÌĞòµÄÖ÷Í·ÎÄ¼ş
+ï»¿
+// TrafficMonitor.h : PROJECT_NAME åº”ç”¨ç¨‹åºçš„ä¸»å¤´æ–‡ä»¶
 //
 
 #pragma once
 
 #ifndef __AFXWIN_H__
-	#error "ÔÚ°üº¬´ËÎÄ¼şÖ®Ç°°üº¬¡°stdafx.h¡±ÒÔÉú³É PCH ÎÄ¼ş"
+	#error "åœ¨åŒ…å«æ­¤æ–‡ä»¶ä¹‹å‰åŒ…å«â€œstdafx.hâ€ä»¥ç”Ÿæˆ PCH æ–‡ä»¶"
 #endif
 
-#include "resource.h"		// Ö÷·ûºÅ
+#include "resource.h"		// ä¸»ç¬¦å·
 #include "Common.h"
 #include "IniHelper.h"
 #include "WinVersionHelper.h"
@@ -18,19 +18,19 @@
 #include "OpenHardwareMonitor/OpenHardwareMonitorApi.h"
 
 // CTrafficMonitorApp: 
-// ÓĞ¹Ø´ËÀàµÄÊµÏÖ£¬Çë²ÎÔÄ TrafficMonitor.cpp
+// æœ‰å…³æ­¤ç±»çš„å®ç°ï¼Œè¯·å‚é˜… TrafficMonitor.cpp
 //
 
 
 class CTrafficMonitorApp : public CWinApp
 {
 public:
-	//¸÷ÖÖÂ·¾¶
+	//å„ç§è·¯å¾„
 	static CTrafficMonitorApp* self;
-	wstring m_module_dir;		//³ÌĞòexeÎÄ¼şµÄÄ¿Â¼
+	wstring m_module_dir;		//ç¨‹åºexeæ–‡ä»¶çš„ç›®å½•
 	wstring m_appdata_dir;
-	wstring m_module_path;		//³ÌĞòexeÎÄ¼şµÄÂ·¾¶
-	wstring m_module_path_reg;	//ÓÃÓÚ×÷ÎªĞ´Èë×¢²á±í¿ª»ú×ÔÏîµÄexeÎÄ¼şµÄÂ·¾¶£¨Èç¹ûÂ·¾¶ÖĞÓĞ¿Õ¸ñ£¬¼ÓÉÏÒıºÅ£©
+	wstring m_module_path;		//ç¨‹åºexeæ–‡ä»¶çš„è·¯å¾„
+	wstring m_module_path_reg;	//ç”¨äºä½œä¸ºå†™å…¥æ³¨å†Œè¡¨å¼€æœºè‡ªé¡¹çš„exeæ–‡ä»¶çš„è·¯å¾„ï¼ˆå¦‚æœè·¯å¾„ä¸­æœ‰ç©ºæ ¼ï¼ŒåŠ ä¸Šå¼•å·ï¼‰
 	wstring m_config_path;
 	wstring m_history_traffic_path;
 	wstring m_log_path;
@@ -38,54 +38,54 @@ public:
 	wstring m_system_dir;
 	wstring m_config_dir;
 
-	//ÒÔÏÂÊı¾İ¶¨ÒåÎªAppÀàÖĞµÄ¹«¹²³ÉÔ±£¬ÒÔ±ãÓÚÔÚÖ÷¶Ô»°¿òºÍÈÎÎñÀ¸´°¿ÚÖĞ¶¼ÄÜ·ÃÎÊ
-	unsigned int m_in_speed{};		//ÏÂÔØËÙ¶È
-	unsigned int m_out_speed{};		//ÉÏ´«ËÙ¶È
-	int m_cpu_usage{};		//CPUÀûÓÃÂÊ
-	int m_memory_usage{};	//ÄÚ´æÀûÓÃÂÊ
-	int m_used_memory{};	//¿ÉÓÃÎïÀíÄÚ´æ£¨µ¥Î»ÎªKB£©
-	int m_total_memory{};	//ÎïÀíÄÚ´æ×ÜÁ¿£¨µ¥Î»ÎªKB£©
-    float m_cpu_temperature{};  //CPUÎÂ¶È
-    float m_gpu_temperature{};  //ÏÔ¿¨ÎÂ¶È
-    float m_hdd_temperature{};  //Ó²ÅÌÎÂ¶È
-    float m_main_board_temperature{};    //Ö÷°åÎÂ¶È
+	//ä»¥ä¸‹æ•°æ®å®šä¹‰ä¸ºAppç±»ä¸­çš„å…¬å…±æˆå‘˜ï¼Œä»¥ä¾¿äºåœ¨ä¸»å¯¹è¯æ¡†å’Œä»»åŠ¡æ çª—å£ä¸­éƒ½èƒ½è®¿é—®
+	unsigned int m_in_speed{};		//ä¸‹è½½é€Ÿåº¦
+	unsigned int m_out_speed{};		//ä¸Šä¼ é€Ÿåº¦
+	int m_cpu_usage{};		//CPUåˆ©ç”¨ç‡
+	int m_memory_usage{};	//å†…å­˜åˆ©ç”¨ç‡
+	int m_used_memory{};	//å¯ç”¨ç‰©ç†å†…å­˜ï¼ˆå•ä½ä¸ºKBï¼‰
+	int m_total_memory{};	//ç‰©ç†å†…å­˜æ€»é‡ï¼ˆå•ä½ä¸ºKBï¼‰
+    float m_cpu_temperature{};  //CPUæ¸©åº¦
+    float m_gpu_temperature{};  //æ˜¾å¡æ¸©åº¦
+    float m_hdd_temperature{};  //ç¡¬ç›˜æ¸©åº¦
+    float m_main_board_temperature{};    //ä¸»æ¿æ¸©åº¦
 
-	__int64 m_today_up_traffic{};	//½ñÌìÒÑÊ¹ÓÃµÄÉÏ´«Á÷Á¿
-	__int64 m_today_down_traffic{};	//½ñÌìÒÑÊ¹ÓÃµÄÏÂÔØÁ÷Á¿
+	__int64 m_today_up_traffic{};	//ä»Šå¤©å·²ä½¿ç”¨çš„ä¸Šä¼ æµé‡
+	__int64 m_today_down_traffic{};	//ä»Šå¤©å·²ä½¿ç”¨çš„ä¸‹è½½æµé‡
 
-	bool m_cannot_save_config_warning{ true };	//Ö¸Ê¾ÊÇ·ñ»áÔÚÎŞ·¨±£´æÉèÖÃÊ±µ¯³öÌáÊ¾¿ò
-	bool m_cannot_save_global_config_warning{ true };	//Ö¸Ê¾ÊÇ·ñ»áÔÚÎŞ·¨±£´æÉèÖÃÊ±µ¯³öÌáÊ¾¿ò
+	bool m_cannot_save_config_warning{ true };	//æŒ‡ç¤ºæ˜¯å¦ä¼šåœ¨æ— æ³•ä¿å­˜è®¾ç½®æ—¶å¼¹å‡ºæç¤ºæ¡†
+	bool m_cannot_save_global_config_warning{ true };	//æŒ‡ç¤ºæ˜¯å¦ä¼šåœ¨æ— æ³•ä¿å­˜è®¾ç½®æ—¶å¼¹å‡ºæç¤ºæ¡†
 
-    bool m_module_dir_writable{ true };         //Ö¸Ê¾³ÌĞòËùÔÚÄ¿Â¼ÊÇ·ñ¿ÉĞ´
+    bool m_module_dir_writable{ true };         //æŒ‡ç¤ºç¨‹åºæ‰€åœ¨ç›®å½•æ˜¯å¦å¯å†™
 
-	//Ñ¡ÏîÉèÖÃÊı¾İ
+	//é€‰é¡¹è®¾ç½®æ•°æ®
 	MainWndSettingData m_main_wnd_data;
 	TaskBarSettingData m_taskbar_data;
 	GeneralSettingData m_general_data;
-	//ÆäËûÉèÖÃÊı¾İ
+	//å…¶ä»–è®¾ç½®æ•°æ®
 	MainConfigData m_cfg_data;
-	int m_notify_interval;		//µ¯³öÍ¨ÖªÏûÏ¢µÄÊ±¼ä¼ä¸ô
+	int m_notify_interval;		//å¼¹å‡ºé€šçŸ¥æ¶ˆæ¯çš„æ—¶é—´é—´éš”
 	bool m_debug_log{};
 	bool m_taksbar_transparent_color_enable{};
 	bool m_last_light_mode{};
-	bool m_show_mouse_panetrate_tip{};	//ÊÇ·ñÏÔÊ¾¿ªÆô¡°Êó±ê´©Í¸¡±Ê±µÄÌáÊ¾ÏûÏ¢¡£
+	bool m_show_mouse_panetrate_tip{};	//æ˜¯å¦æ˜¾ç¤ºå¼€å¯â€œé¼ æ ‡ç©¿é€â€æ—¶çš„æç¤ºæ¶ˆæ¯ã€‚
 
 	//bool m_is_windows10_fall_creator;
-	CWinVersionHelper m_win_version;		//µ±Ç°WindowsµÄ°æ±¾
+	CWinVersionHelper m_win_version;		//å½“å‰Windowsçš„ç‰ˆæœ¬
 
 	HICON m_notify_icons[MAX_NOTIFY_ICON];
 
 	CTaskbarDefaultStyle m_taskbar_default_style;
 
-	HWND m_option_dlg{};		//Ñ¡ÏîÉèÖÃ¶Ô»°¿òµÄ¾ä±ú
+	HWND m_option_dlg{};		//é€‰é¡¹è®¾ç½®å¯¹è¯æ¡†çš„å¥æŸ„
 
 
     CMenu m_main_menu;
     CMenu m_taskbar_menu;
 
 #ifndef WITHOUT_TEMPERATURE
-    //OpenHardwareMonitor ½Ó¿ÚµÄÖ¸Õë
-    std::shared_ptr<OpenHardwareMonitorApi::IOpenHardwareMonitor> m_pMonitor{ OpenHardwareMonitorApi::CreateInstance() };
+    //OpenHardwareMonitor æ¥å£çš„æŒ‡é’ˆ
+    std::shared_ptr<OpenHardwareMonitorApi::IOpenHardwareMonitor> m_pMonitor{};
 #endif // !WITHOUT_TEMPERATURE
 
 
@@ -102,38 +102,40 @@ public:
 	void DPI(CRect& rect);
 	void GetDPI(CWnd* pWnd);
 
-	static void CheckUpdate(bool message);		//¼ì²é¸üĞÂ£¬Èç¹ûmessageÎªtrue£¬ÔòÔÚ¼ì²éÊ±µ¯³öÌáÊ¾ĞÅÏ¢
-	//Æô¶¯Ê±¼ì²é¸üĞÂÏß³Ìº¯Êı
+	static void CheckUpdate(bool message);		//æ£€æŸ¥æ›´æ–°ï¼Œå¦‚æœmessageä¸ºtrueï¼Œåˆ™åœ¨æ£€æŸ¥æ—¶å¼¹å‡ºæç¤ºä¿¡æ¯
+	//å¯åŠ¨æ—¶æ£€æŸ¥æ›´æ–°çº¿ç¨‹å‡½æ•°
 	static UINT CheckUpdateThreadFunc(LPVOID lpParam);
+	static UINT InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam);
 
 	void SetAutoRun(bool auto_run);
 	bool GetAutoRun();
 
-	//»ñÈ¡ÏµÍ³ĞÅÏ¢ÎÄ±¾
+	//è·å–ç³»ç»Ÿä¿¡æ¯æ–‡æœ¬
 	CString GetSystemInfoString();
 
     void InitMenuResourse();
 
-    //»ñÈ¡Ò»¸öÍ¼±ê×ÊÔ´£¬Èç¹û×ÊÔ´»¹Î´¼ÓÔØ£¬»á×Ô¶¯¼ÓÔØ¡£
-    //ÓÉÓÚ±¾º¯ÊıÖĞÊ¹ÓÃÁËCTrafficMonitorApp::DPIº¯Êı£¬Òò´Ë±¾º¯Êı±ØĞëÈ·±£ÔÚCTrafficMonitorApp::GetDPIÖ®ºóµ÷ÓÃ
+    //è·å–ä¸€ä¸ªå›¾æ ‡èµ„æºï¼Œå¦‚æœèµ„æºè¿˜æœªåŠ è½½ï¼Œä¼šè‡ªåŠ¨åŠ è½½ã€‚
+    //ç”±äºæœ¬å‡½æ•°ä¸­ä½¿ç”¨äº†CTrafficMonitorApp::DPIå‡½æ•°ï¼Œå› æ­¤æœ¬å‡½æ•°å¿…é¡»ç¡®ä¿åœ¨CTrafficMonitorApp::GetDPIä¹‹åè°ƒç”¨
     HICON GetMenuIcon(UINT id);
 
     void AutoSelectNotifyIcon();
 
 private:
-	//int m_no_multistart_warning_time{};		//ÓÃÓÚÉèÖÃÔÚ¿ª»úºó¶à³¤Ê±¼äÄÚ²»µ¯³ö¡°ÒÑ¾­ÓĞÒ»¸ö³ÌĞòÕıÔÚÔËĞĞ¡±µÄ¾¯¸æÌáÊ¾
-	bool m_no_multistart_warning{};			//Èç¹ûÎªfalse£¬ÔòÓÀÔ¶¶¼²»»áµ¯³ö¡°ÒÑ¾­ÓĞÒ»¸ö³ÌĞòÕıÔÚÔËĞĞ¡±µÄ¾¯¸æÌáÊ¾
-	bool m_exit_when_start_by_restart_manager{ true };		//Èç¹û³ÌĞò±»WindowsÖØÆô¹ÜÀíÆ÷ÖØĞÂÆô¶¯£¬ÔòÍË³ö³ÌĞò
+	//int m_no_multistart_warning_time{};		//ç”¨äºè®¾ç½®åœ¨å¼€æœºåå¤šé•¿æ—¶é—´å†…ä¸å¼¹å‡ºâ€œå·²ç»æœ‰ä¸€ä¸ªç¨‹åºæ­£åœ¨è¿è¡Œâ€çš„è­¦å‘Šæç¤º
+	bool m_no_multistart_warning{};			//å¦‚æœä¸ºfalseï¼Œåˆ™æ°¸è¿œéƒ½ä¸ä¼šå¼¹å‡ºâ€œå·²ç»æœ‰ä¸€ä¸ªç¨‹åºæ­£åœ¨è¿è¡Œâ€çš„è­¦å‘Šæç¤º
+	bool m_exit_when_start_by_restart_manager{ true };		//å¦‚æœç¨‹åºè¢«Windowsé‡å¯ç®¡ç†å™¨é‡æ–°å¯åŠ¨ï¼Œåˆ™é€€å‡ºç¨‹åº
 	int m_dpi{ 96 };
-	CWinThread* m_pUpdateThread;			//¼ì²é¸üĞÂµÄÏß³Ì
+	CWinThread* m_pUpdateThread;			//æ£€æŸ¥æ›´æ–°çš„çº¿ç¨‹
+    CWinThread* m_pMonitorInitThread;       //åˆå§‹åŒ–OpenHardwareMonitoråº“çš„çº¿ç¨‹
 
-    std::map<UINT, HICON> m_menu_icons;      //²Ëµ¥Í¼±ê×ÊÔ´¡£keyÊÇÍ¼±ê×ÊÔ´µÄID£¬vlaueÊÇÍ¼±êµÄ¾ä±ú
+    std::map<UINT, HICON> m_menu_icons;      //èœå•å›¾æ ‡èµ„æºã€‚keyæ˜¯å›¾æ ‡èµ„æºçš„IDï¼Œvlaueæ˜¯å›¾æ ‡çš„å¥æŸ„
 
-// ÖØĞ´
+// é‡å†™
 public:
 	virtual BOOL InitInstance();
 
-// ÊµÏÖ
+// å®ç°
 
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnHelp();

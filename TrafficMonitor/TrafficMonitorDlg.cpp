@@ -999,11 +999,14 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
 #ifndef WITHOUT_TEMPERATURE
         //获取温度
-        theApp.m_pMonitor->GetHardwareInfo();
-        theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
-        theApp.m_gpu_temperature = theApp.m_pMonitor->GpuTemperature();
-        theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
-        theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
+        if (theApp.m_pMonitor != nullptr)
+        {
+            theApp.m_pMonitor->GetHardwareInfo();
+            theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
+            theApp.m_gpu_temperature = theApp.m_pMonitor->GpuTemperature();
+            theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
+            theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
+        }
 #endif
 
 		Invalidate(FALSE);		//刷新窗口信息

@@ -492,6 +492,14 @@ UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
 	return 0;
 }
 
+UINT CTrafficMonitorApp::InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam)
+{
+#ifndef WITHOUT_TEMPERATURE
+    theApp.m_pMonitor = OpenHardwareMonitorApi::CreateInstance();
+#endif
+    return 0;
+}
+
 void CTrafficMonitorApp::SetAutoRun(bool auto_run)
 {
 	CRegKey key;
@@ -790,6 +798,11 @@ BOOL CTrafficMonitorApp::InitInstance()
 		m_pUpdateThread = AfxBeginThread(CheckUpdateThreadFunc, NULL);
 	}
 #endif // !_DEBUG
+
+#ifndef WITHOUT_TEMPERATURE
+    //启动初始化OpenHardwareMonitor的线程。由于OpenHardwareMonitor初始化需要一定的时间，为了防止启动时程序卡顿，将其放到后台线程中处理
+    m_pMonitorInitThread = AfxBeginThread(InitOpenHardwareMonitorLibThreadFunc, NULL);
+#endif
 
     //执行测试代码
 #ifdef _DEBUG
