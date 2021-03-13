@@ -1,40 +1,41 @@
-#pragma once
+ï»¿#pragma once
 #include "ColorStatic.h"
 #include "afxwin.h"
 #include "SpinEdit.h"
 #include "TabDlg.h"
 #include "TaskbarColorDlg.h"
+#include "ComboBox2.h"
 
-// CTaskBarSettingsDlg ¶Ô»°¿ò
+// CTaskBarSettingsDlg å¯¹è¯æ¡†
 
 class CTaskBarSettingsDlg : public CTabDlg
 {
 	DECLARE_DYNAMIC(CTaskBarSettingsDlg)
 
 public:
-	CTaskBarSettingsDlg(CWnd* pParent = NULL);   // ±ê×¼¹¹Ôìº¯Êı
+	CTaskBarSettingsDlg(CWnd* pParent = NULL);   // æ ‡å‡†æ„é€ å‡½æ•°
 	virtual ~CTaskBarSettingsDlg();
 
-	//Ñ¡ÏîÉèÖÃÊı¾İ
+	//é€‰é¡¹è®¾ç½®æ•°æ®
 	TaskBarSettingData m_data;
 
-// ¶Ô»°¿òÊı¾İ
+// å¯¹è¯æ¡†æ•°æ®
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_TASKBAR_SETTINGS_DIALOG };
 #endif
 
 protected:
-	//¿Ø¼ş±äÁ¿
+	//æ§ä»¶å˜é‡
 	CColorStatic m_text_color_static;
 	CColorStatic m_back_color_static;
 	CColorStatic m_trans_color_static;
 	CColorStatic m_status_bar_color_static;
 	CToolTipCtrl m_toolTip;
-	CComboBox m_unit_combo;
+	CComboBox2 m_unit_combo;
 	CButton m_hide_unit_chk;
 	CSpinEdit m_font_size_edit;
-	CComboBox m_double_click_combo;
-	CComboBox m_digit_number_combo;
+	CComboBox2 m_double_click_combo;
+	CComboBox2 m_digit_number_combo;
     CMenu m_default_style_menu;
 	CButton m_background_transparent_chk;
 	CButton m_atuo_adapt_light_theme_chk;
@@ -44,15 +45,16 @@ protected:
 	void DrawStaticColor();
 	void IniUnitCombo();
 
-    void ApplyDefaultStyle(int index);      //Ó¦ÓÃÒ»¸öÔ¤Éè·½°¸
-    void ModifyDefaultStyle(int index);     //½«µ±Ç°ÑÕÉ«ÉèÖÃ±£´æµ½Ò»¸öÔ¤Éè·½°¸
+    void ApplyDefaultStyle(int index);      //åº”ç”¨ä¸€ä¸ªé¢„è®¾æ–¹æ¡ˆ
+    void ModifyDefaultStyle(int index);     //å°†å½“å‰é¢œè‰²è®¾ç½®ä¿å­˜åˆ°ä¸€ä¸ªé¢„è®¾æ–¹æ¡ˆ
 
     void EnableControl();
 
 	void SetTaskabrTransparent(bool transparent);
 	bool IsTaskbarTransparent();
+    virtual void SetControlMouseWheelEnable(bool enable) override;
 
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV æ”¯æŒ
 
 	DECLARE_MESSAGE_MAP()
 public:

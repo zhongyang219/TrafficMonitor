@@ -127,6 +127,7 @@ void CTabDlg::ShowDlgCtrl(UINT id, bool show)
 BEGIN_MESSAGE_MAP(CTabDlg, CDialogEx)
 	ON_WM_VSCROLL()
 	ON_WM_MOUSEWHEEL()
+    ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -202,4 +203,21 @@ void CTabDlg::OnOK()
     // TODO: 在此添加专用代码和/或调用基类
 
     CDialogEx::OnOK();
+}
+
+
+bool CTabDlg::IsScrollBarVisible()
+{
+    SCROLLINFO scrollinfo;
+    GetScrollInfo(SB_VERT, &scrollinfo, SIF_ALL);
+    bool visible = scrollinfo.nPage < scrollinfo.nMax;
+    return visible;
+}
+
+void CTabDlg::OnSize(UINT nType, int cx, int cy)
+{
+    CDialogEx::OnSize(nType, cx, cy);
+
+    // TODO: 在此处添加消息处理程序代码
+    SetControlMouseWheelEnable(!IsScrollBarVisible());      //如果显示了滚动条，则禁止控件响应鼠标滚轮，此时鼠标滚轮用于滚动窗口
 }

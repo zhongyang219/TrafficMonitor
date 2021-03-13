@@ -406,6 +406,7 @@
     <ClInclude Include="CalendarHelper.h" />
     <ClInclude Include="CAutoAdaptSettingsDlg.h" />
     <ClInclude Include="CMFCColorDialogEx.h" />
+    <ClInclude Include="ComboBox2.h" />
     <ClInclude Include="CPUUsage.h" />
     <ClInclude Include="crashtool.h" />
     <ClInclude Include="CTabCtrlEx.h" />
@@ -463,6 +464,7 @@
     <ClCompile Include="CalendarHelper.cpp" />
     <ClCompile Include="CAutoAdaptSettingsDlg.cpp" />
     <ClCompile Include="CMFCColorDialogEx.cpp" />
+    <ClCompile Include="ComboBox2.cpp" />
     <ClCompile Include="CPUUsage.cpp" />
     <ClCompile Include="crashtool.cpp" />
     <ClCompile Include="CTabCtrlEx.cpp" />

@@ -21,6 +21,13 @@ CMainWndSettingsDlg::~CMainWndSettingsDlg()
 {
 }
 
+void CMainWndSettingsDlg::SetControlMouseWheelEnable(bool enable)
+{
+    m_unit_combo.SetMouseWheelEnable(enable);
+    m_double_click_combo.SetMouseWheelEnable(enable);
+    m_font_size_edit.SetMouseWheelEnable(enable);
+}
+
 void CMainWndSettingsDlg::DrawStaticColor()
 {
 	//CCommon::FillStaticColor(m_color_static, m_data.text_color);
@@ -182,6 +189,10 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 
     SetDlgItemText(IDC_EXE_PATH_EDIT, m_data.double_click_exe.c_str());
     EnableControl();
+
+    ////设置控件不响应鼠标滚轮消息
+    //m_unit_combo.SetMouseWheelEnable(false);
+    //m_double_click_combo.SetMouseWheelEnable(false);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE

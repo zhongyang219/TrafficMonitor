@@ -1,45 +1,49 @@
-#pragma once
+ï»¿#pragma once
 #include "ColorStatic.h"
 #include "afxwin.h"
 #include "SpinEdit.h"
 #include "TabDlg.h"
 #include "MainWndColorDlg.h"
+#include "ComboBox2.h"
 
-// CMainWndSettingsDlg ¶Ô»°¿ò
+// CMainWndSettingsDlg å¯¹è¯æ¡†
 
 class CMainWndSettingsDlg : public CTabDlg
 {
 	DECLARE_DYNAMIC(CMainWndSettingsDlg)
 
 public:
-	CMainWndSettingsDlg(CWnd* pParent = NULL);   // ±ê×¼¹¹Ôìº¯Êı
+	CMainWndSettingsDlg(CWnd* pParent = NULL);   // æ ‡å‡†æ„é€ å‡½æ•°
 	virtual ~CMainWndSettingsDlg();
 
-	//Ñ¡ÏîÉèÖÃÊı¾İ
+	//é€‰é¡¹è®¾ç½®æ•°æ®
 	MainWndSettingData m_data;
 
-	bool m_text_disable{ false };	//Èç¹ûÎªtrue£¬Ôò²»ÔÊĞíÉèÖÃ¡°ÏÔÊ¾ÎÄ±¾¡±£¬²¢²»ÔÊĞí½»»»ÉÏ´«ºÍÏÂÔØµÄÎ»ÖÃ
+	bool m_text_disable{ false };	//å¦‚æœä¸ºtrueï¼Œåˆ™ä¸å…è®¸è®¾ç½®â€œæ˜¾ç¤ºæ–‡æœ¬â€ï¼Œå¹¶ä¸å…è®¸äº¤æ¢ä¸Šä¼ å’Œä¸‹è½½çš„ä½ç½®
 
-// ¶Ô»°¿òÊı¾İ
+// å¯¹è¯æ¡†æ•°æ®
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_MAIN_WND_SETTINGS_DIALOG };
 #endif
 
+
 protected:
-	//¿Ø¼ş±äÁ¿
+	//æ§ä»¶å˜é‡
 	CColorStatic m_color_static;
 	CToolTipCtrl m_toolTip;
-	CComboBox m_unit_combo;
+	CComboBox2 m_unit_combo;
 	CButton m_hide_unit_chk;
 	CSpinEdit m_font_size_edit;
-	CComboBox m_double_click_combo;
+	CComboBox2 m_double_click_combo;
 
 protected:
 	void DrawStaticColor();
 	void IniUnitCombo();
     void EnableControl();
 
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
+    virtual void SetControlMouseWheelEnable(bool enable) override;
+
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV æ”¯æŒ
 
 	DECLARE_MESSAGE_MAP()
 public:

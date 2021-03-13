@@ -111,6 +111,14 @@ bool CTaskBarSettingsDlg::IsTaskbarTransparent()
 	return CTaskbarDefaultStyle::IsTaskbarTransparent(m_data);
 }
 
+void CTaskBarSettingsDlg::SetControlMouseWheelEnable(bool enable)
+{
+    m_unit_combo.SetMouseWheelEnable(enable);
+    m_double_click_combo.SetMouseWheelEnable(enable);
+    m_digit_number_combo.SetMouseWheelEnable(enable);
+    m_font_size_edit.SetMouseWheelEnable(enable);
+}
+
 void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
     DDX_Control(pDX, IDC_TEXT_COLOR_STATIC1, m_text_color_static);

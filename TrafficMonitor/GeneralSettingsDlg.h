@@ -1,6 +1,7 @@
-#pragma once
+ï»¿#pragma once
 #include "TabDlg.h"
 #include "SpinEdit.h"
+#include "ComboBox2.h"
 
 // CGeneralSettingsDlg dialog
 
@@ -12,10 +13,10 @@ public:
 	CGeneralSettingsDlg(CWnd* pParent = NULL);   // standard constructor
 	virtual ~CGeneralSettingsDlg();
 
-	//Ñ¡ÏîÉèÖÃÊı¾İ
+	//é€‰é¡¹è®¾ç½®æ•°æ®
 	GeneralSettingData m_data;
 
-	// ¶Ô»°¿òÊı¾İ
+	// å¯¹è¯æ¡†æ•°æ®
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_GENERAL_SETTINGS_DIALOG };
 #endif
@@ -26,23 +27,25 @@ public:
     bool IsMonitorTimeSpanModified() const;
 
 protected:
-	bool m_auto_run_modified{ false };		//Èç¹û¸ü¸ÄÁË¿ª»ú×Ô¶¯ÔËĞĞµÄÉèÖÃ£¬Ôò»áÖÃÎªtrue
+	bool m_auto_run_modified{ false };		//å¦‚æœæ›´æ”¹äº†å¼€æœºè‡ªåŠ¨è¿è¡Œçš„è®¾ç½®ï¼Œåˆ™ä¼šç½®ä¸ºtrue
 	bool m_show_all_interface_modified{ false };
     int m_monitor_time_span_ori{};
 
-	//¿Ø¼ş±äÁ¿
+	//æ§ä»¶å˜é‡
 	CSpinEdit m_traffic_tip_edit;
-	CComboBox m_traffic_tip_combo;
+	CComboBox2 m_traffic_tip_combo;
 	CSpinEdit m_memory_tip_edit;
-	CComboBox m_language_combo;
+	CComboBox2 m_language_combo;
 	CToolTipCtrl m_toolTip;
     CSpinEdit m_monitor_span_edit;
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-	//ÉèÖÃ¿Ø¼şµÄÆôÓÃºÍ½ûÓÃ
+	//è®¾ç½®æ§ä»¶çš„å¯ç”¨å’Œç¦ç”¨
 	void SetTrafficTipControlEnable(bool enable);
 	void SetMemoryTipControlEnable(bool enable);
+
+    virtual void SetControlMouseWheelEnable(bool enable) override;
 
 	DECLARE_MESSAGE_MAP()
 public:

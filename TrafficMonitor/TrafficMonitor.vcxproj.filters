@@ -154,6 +154,9 @@
     <Filter Include="源文件和头文件\公共的类\FilePathHelper">
       <UniqueIdentifier>{2ee3ad9e-4dc0-4ca4-91b1-2c6225bebd63}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\派生的控件类\CComboBoxEx">
+      <UniqueIdentifier>{abe84b35-de18-4853-9545-65354fb3d22f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -327,6 +330,9 @@
     <ClInclude Include="FilePathHelper.h">
       <Filter>源文件和头文件\公共的类\FilePathHelper</Filter>
     </ClInclude>
+    <ClInclude Include="ComboBox2.h">
+      <Filter>源文件和头文件\头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -484,6 +490,9 @@
     </ClCompile>
     <ClCompile Include="FilePathHelper.cpp">
       <Filter>源文件和头文件\公共的类\FilePathHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="ComboBox2.cpp">
+      <Filter>源文件和头文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
