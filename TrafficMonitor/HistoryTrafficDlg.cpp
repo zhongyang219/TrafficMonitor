@@ -1,4 +1,4 @@
-// HistoryTrafficDlg.cpp : ÊµÏÖÎÄ¼ş
+ï»¿// HistoryTrafficDlg.cpp : å®ç°æ–‡ä»¶
 //
 
 #include "stdafx.h"
@@ -7,7 +7,7 @@
 #include "afxdialogex.h"
 
 
-// CHistoryTrafficDlg ¶Ô»°¿ò
+// CHistoryTrafficDlg å¯¹è¯æ¡†
 
 IMPLEMENT_DYNAMIC(CHistoryTrafficDlg, CDialog)
 
@@ -66,26 +66,26 @@ BEGIN_MESSAGE_MAP(CHistoryTrafficDlg, CDialog)
 END_MESSAGE_MAP()
 
 
-// CHistoryTrafficDlg ÏûÏ¢´¦Àí³ÌĞò
+// CHistoryTrafficDlg æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 
 BOOL CHistoryTrafficDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	// TODO:  ÔÚ´ËÌí¼Ó¶îÍâµÄ³õÊ¼»¯
+	// TODO:  åœ¨æ­¤æ·»åŠ é¢å¤–çš„åˆå§‹åŒ–
 	SetWindowText(CCommon::LoadText(IDS_TITLE_HISTORY_TRAFFIC));
-	SetIcon(theApp.GetMenuIcon(IDI_STATISTICS), FALSE);		// ÉèÖÃĞ¡Í¼±ê
+	SetIcon(theApp.GetMenuIcon(IDI_STATISTICS), FALSE);		// è®¾ç½®å°å›¾æ ‡
 
-	//²åÈë±êÇ©
+	//æ’å…¥æ ‡ç­¾
 	m_tab.InsertItem(0, CCommon::LoadText(IDS_LIST_VIEW));
 	m_tab.InsertItem(1, CCommon::LoadText(IDS_CALENDAR_VIEW));
-	//´´½¨×Ó¶Ô»°¿ò
+	//åˆ›å»ºå­å¯¹è¯æ¡†
 	m_tab1_dlg.Create(IDD_HISTORY_TRAFFIC_LIST_DIALOG, &m_tab);
 	m_tab2_dlg.Create(IDD_HISTORY_TRAFFIC_CALENDAR_DIALOG, &m_tab);
-	//µ÷Õû×Ó¶Ô»°¿òµÄ´óĞ¡ºÍÎ»ÖÃ
+	//è°ƒæ•´å­å¯¹è¯æ¡†çš„å¤§å°å’Œä½ç½®
 	SetTabWndSize();
-	//ÉèÖÃÄ¬ÈÏÑ¡ÖĞµÄ±êÇ©
+	//è®¾ç½®é»˜è®¤é€‰ä¸­çš„æ ‡ç­¾
 	switch (m_tab_selected)
 	{
 	case 0:
@@ -97,16 +97,13 @@ BOOL CHistoryTrafficDlg::OnInitDialog()
 	}
 	m_tab.SetCurFocus(m_tab_selected);
 
-	m_tab1_dlg.SetScrollEnable(false);
-	m_tab2_dlg.SetScrollEnable(false);
-
-	//»ñÈ¡³õÊ¼Ê±´°¿ÚµÄ´óĞ¡
+	//è·å–åˆå§‹æ—¶çª—å£çš„å¤§å°
 	CRect rect;
 	GetWindowRect(rect);
 	m_min_size.cx = rect.Width();
 	m_min_size.cy = rect.Height();
 
-    //ÔØÈë´°¿Ú´óĞ¡ÉèÖÃ
+    //è½½å…¥çª—å£å¤§å°è®¾ç½®
     LoadConfig();
     if (m_window_size.cx > 0 && m_window_size.cy > 0)
     {
@@ -114,16 +111,16 @@ BOOL CHistoryTrafficDlg::OnInitDialog()
     }
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-				  // Òì³£: OCX ÊôĞÔÒ³Ó¦·µ»Ø FALSE
+				  // å¼‚å¸¸: OCX å±æ€§é¡µåº”è¿”å› FALSE
 }
 
 
 void CHistoryTrafficDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
-	//ÏŞÖÆ´°¿Ú×îĞ¡´óĞ¡
-	lpMMI->ptMinTrackSize.x = m_min_size.cx;		//ÉèÖÃ×îĞ¡¿í¶È
-	lpMMI->ptMinTrackSize.y = m_min_size.cy;		//ÉèÖÃ×îĞ¡¸ß¶È
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
+	//é™åˆ¶çª—å£æœ€å°å¤§å°
+	lpMMI->ptMinTrackSize.x = m_min_size.cx;		//è®¾ç½®æœ€å°å®½åº¦
+	lpMMI->ptMinTrackSize.y = m_min_size.cy;		//è®¾ç½®æœ€å°é«˜åº¦
 
 	CDialog::OnGetMinMaxInfo(lpMMI);
 }
@@ -133,7 +130,7 @@ void CHistoryTrafficDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 
 BOOL CHistoryTrafficDlg::PreTranslateMessage(MSG* pMsg)
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
 	//if (GetKeyState(VK_CONTROL) & 0x80)
 	//{
 	//	if (pMsg->wParam == 'D')
@@ -152,7 +149,7 @@ BOOL CHistoryTrafficDlg::PreTranslateMessage(MSG* pMsg)
 
 void CHistoryTrafficDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	m_tab_selected = m_tab.GetCurSel();
 	switch (m_tab_selected)
 	{
@@ -175,7 +172,7 @@ void CHistoryTrafficDlg::OnSize(UINT nType, int cx, int cy)
 {
 	CDialog::OnSize(nType, cx, cy);
 
-	// TODO: ÔÚ´Ë´¦Ìí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
 	if (nType != SIZE_MINIMIZED && m_tab1_dlg.GetSafeHwnd() != NULL && m_tab2_dlg.GetSafeHwnd() != NULL)
 	{
 		SetTabWndSize();
