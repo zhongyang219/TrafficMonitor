@@ -1,32 +1,39 @@
-#pragma once
+ï»¿#pragma once
 #include "DonateDlg.h"
 #include "LinkStatic.h"
 
-// ÓÃÓÚÓ¦ÓÃ³ÌĞò¡°¹ØÓÚ¡±²Ëµ¥ÏîµÄ CAboutDlg ¶Ô»°¿ò
+// ç”¨äºåº”ç”¨ç¨‹åºâ€œå…³äºâ€èœå•é¡¹çš„ CAboutDlg å¯¹è¯æ¡†
 
 class CAboutDlg : public CDialog
 {
 public:
 	CAboutDlg();
 
-	// ¶Ô»°¿òÊı¾İ
+	// å¯¹è¯æ¡†æ•°æ®
+#ifdef AFX_DESIGN_TIME
+    enum { IDD = IDD_ABOUTBOX };
+#endif
 
 protected:
-	CLinkStatic m_mail;				//¡°ÁªÏµ×÷Õß¡±³¬Á´½Ó
-	CLinkStatic m_acknowledgement;	//¡°ÃùĞ»¡±³¬Á´½Ó
-	CLinkStatic m_github;			//¡°GitHub¡±³¬Á´½Ó
-	CLinkStatic m_donate;			//¡°¾èÖú¡±³¬Á´½Ó
-	CLinkStatic m_license;			//¡°¿ªÔ´Ğ­Òé¡±³¬Á´½Ó
-	CToolTipCtrl m_tool_tip;			//Êó±êÖ¸ÏòÊ±µÄ¹¤¾ßÌáÊ¾
+	CLinkStatic m_mail;				//â€œè”ç³»ä½œè€…â€è¶…é“¾æ¥
+	CLinkStatic m_acknowledgement;	//â€œé¸£è°¢â€è¶…é“¾æ¥
+	CLinkStatic m_github;			//â€œGitHubâ€è¶…é“¾æ¥
+	CLinkStatic m_donate;			//â€œæåŠ©â€è¶…é“¾æ¥
+	CLinkStatic m_license;			//â€œå¼€æºåè®®â€è¶…é“¾æ¥
+	CToolTipCtrl m_tool_tip;			//é¼ æ ‡æŒ‡å‘æ—¶çš„å·¥å…·æç¤º
 	CLinkStatic m_translaotr_static;
+    CLinkStatic m_openhardwaremonitor_link;
+    CLinkStatic m_tinyxml2_link;
+    CLinkStatic m_musicplayer2_link;
+    CLinkStatic m_simplenotepad_link;
 
-    CRect m_rc_pic;     //Í¼Æ¬µÄÎ»ÖÃ
+    CRect m_rc_pic;     //å›¾ç‰‡çš„ä½ç½®
     CBitmap m_about_pic;
 
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
-	CString GetDonateList();		//´Ó×ÊÔ´ÎÄ¼ş¼ÓÔØ¾èÔùÈËÔ±Ãûµ¥
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV æ”¯æŒ
+	CString GetDonateList();		//ä»èµ„æºæ–‡ä»¶åŠ è½½æèµ äººå‘˜åå•
 
-	// ÊµÏÖ
+	// å®ç°
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
@@ -37,4 +44,6 @@ protected:
 	afx_msg LRESULT OnLinkClicked(WPARAM wParam, LPARAM lParam);
 public:
 	afx_msg void OnPaint();
+    afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+    afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 };

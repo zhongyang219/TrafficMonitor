@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "TrafficMonitor.h"
 #include "AboutDlg.h"
 #include "MessageDlg.h"
@@ -8,6 +8,8 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 	//ON_STN_CLICKED(IDC_STATIC_DONATE, &CAboutDlg::OnStnClickedStaticDonate)
 	ON_MESSAGE(WM_LINK_CLICKED, &CAboutDlg::OnLinkClicked)
 	ON_WM_PAINT()
+    ON_WM_ERASEBKGND()
+    ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 CAboutDlg::CAboutDlg() : CDialog(IDD_ABOUTBOX)
@@ -16,13 +18,17 @@ CAboutDlg::CAboutDlg() : CDialog(IDD_ABOUTBOX)
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_STATIC_MAIL, m_mail);
-	DDX_Control(pDX, IDC_STATIC_ACKNOWLEDGEMENT, m_acknowledgement);
-	DDX_Control(pDX, IDC_STATIC_GITHUB, m_github);
-	DDX_Control(pDX, IDC_STATIC_DONATE, m_donate);
-	DDX_Control(pDX, IDC_TRANSLATOR_STATIC, m_translaotr_static);
-	DDX_Control(pDX, IDC_STATIC_LICENSE, m_license);
+    CDialog::DoDataExchange(pDX);
+    DDX_Control(pDX, IDC_STATIC_MAIL, m_mail);
+    DDX_Control(pDX, IDC_STATIC_ACKNOWLEDGEMENT, m_acknowledgement);
+    DDX_Control(pDX, IDC_STATIC_GITHUB, m_github);
+    DDX_Control(pDX, IDC_STATIC_DONATE, m_donate);
+    DDX_Control(pDX, IDC_TRANSLATOR_STATIC, m_translaotr_static);
+    DDX_Control(pDX, IDC_STATIC_LICENSE, m_license);
+    DDX_Control(pDX, IDC_OPENHARDWAREMONITOR_LINK, m_openhardwaremonitor_link);
+    DDX_Control(pDX, IDC_TINYXML2_LINK, m_tinyxml2_link);
+    DDX_Control(pDX, IDC_MUSICPLAYER2_LINK, m_musicplayer2_link);
+    DDX_Control(pDX, IDC_SIMPLENOTEPAD_LINK, m_simplenotepad_link);
 }
 
 CString CAboutDlg::GetDonateList()
@@ -34,16 +40,25 @@ BOOL CAboutDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	// TODO:  ÔÚ´ËÌí¼Ó¶îÍâµÄ³õÊ¼»¯
+	// TODO:  åœ¨æ­¤æ·»åŠ é¢å¤–çš„åˆå§‹åŒ–
 	SetWindowText(CCommon::LoadText(IDS_TITLE_ABOUT));
-	m_mail.SetURL(_T("mailto:zhongyang219@hotmail.com"));	//ÉèÖÃ³¬Á´½Ó
+	m_mail.SetURL(_T("mailto:zhongyang219@hotmail.com"));	//è®¾ç½®è¶…é“¾æ¥
 															//m_check_update.SetURL(_T("http://pan.baidu.com/s/1c1LkPQ4"));
 	m_github.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor"));
 	m_donate.SetLinkIsURL(false);
 	m_acknowledgement.SetLinkIsURL(false);
 	m_license.SetLinkIsURL(false);
 
-	//ÉèÖÃ°æ±¾ĞÅÏ¢
+    m_openhardwaremonitor_link.SetURL(_T("https://github.com/openhardwaremonitor/openhardwaremonitor"));
+    m_tinyxml2_link.SetURL(_T("https://github.com/leethomason/tinyxml2"));
+    m_musicplayer2_link.SetURL(_T("https://github.com/zhongyang219/MusicPlayer2"));
+    m_simplenotepad_link.SetURL(_T("https://github.com/zhongyang219/SimpleNotePad"));
+    m_openhardwaremonitor_link.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
+    m_tinyxml2_link.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
+    m_musicplayer2_link.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
+    m_simplenotepad_link.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
+
+	//è®¾ç½®ç‰ˆæœ¬ä¿¡æ¯
 	CString version_info;
 	GetDlgItemText(IDC_STATIC_VERSION, version_info);
 	version_info.Replace(_T("<version>"), VERSION);
@@ -66,7 +81,7 @@ BOOL CAboutDlg::OnInitDialog()
 
 	SetDlgItemText(IDC_STATIC_VERSION, version_info);
 
-	//ÉèÖÃ×îºó±àÒëÈÕÆÚ
+	//è®¾ç½®æœ€åç¼–è¯‘æ—¥æœŸ
 	CString temp_str;
 	GetDlgItemText(IDC_STATIC_COPYRIGHT, temp_str);
 	temp_str.Replace(_T("<compile_date>"), COMPILE_DATE);
@@ -74,24 +89,30 @@ BOOL CAboutDlg::OnInitDialog()
 
 	m_tool_tip.Create(this, TTS_ALWAYSTIP | TTS_NOPREFIX);
 	m_tool_tip.AddTool(&m_mail, CCommon::LoadText(IDS_SEND_EMAIL_TO_ATHOUR, _T("\r\nmailto:zhongyang219@hotmail.com")));
-	//m_tool_tip.AddTool(&m_check_update, _T("µ½°Ù¶ÈÍøÅÌÁ´½Ó²é¿´ÊÇ·ñÓĞ¸üĞÂ\r\nhttp://pan.baidu.com/s/1c1LkPQ4"));
+	//m_tool_tip.AddTool(&m_check_update, _T("åˆ°ç™¾åº¦ç½‘ç›˜é“¾æ¥æŸ¥çœ‹æ˜¯å¦æœ‰æ›´æ–°\r\nhttp://pan.baidu.com/s/1c1LkPQ4"));
 	m_tool_tip.AddTool(&m_github, CCommon::LoadText(IDS_GOTO_GITHUB, _T("\r\nhttps://github.com/zhongyang219/TrafficMonitor")));
 	m_tool_tip.AddTool(&m_donate, CCommon::LoadText(IDS_DONATE_ATHOUR));
-	m_tool_tip.SetDelayTime(300);	//ÉèÖÃÑÓ³Ù
+    m_tool_tip.AddTool(&m_openhardwaremonitor_link, m_openhardwaremonitor_link.GetURL());
+    m_tool_tip.AddTool(&m_tinyxml2_link, m_tinyxml2_link.GetURL());
+    m_tool_tip.AddTool(&m_musicplayer2_link, CCommon::LoadText(IDS_MUSICPLAYER2_DESCRIPTION) + _T("\r\n") + m_musicplayer2_link.GetURL());
+    m_tool_tip.AddTool(&m_simplenotepad_link, CCommon::LoadText(IDS_SIMPLENOTEPAD_DESCRIPTION) + _T("\r\n") + m_simplenotepad_link.GetURL());
+
+	m_tool_tip.SetDelayTime(300);	//è®¾ç½®å»¶è¿Ÿ
 	m_tool_tip.SetMaxTipWidth(800);
 
-	//ÉèÖÃ·­ÒëÕßĞÅÏ¢
+	//è®¾ç½®ç¿»è¯‘è€…ä¿¡æ¯
 	int language_code;
 	language_code = _ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE));
-	if (language_code == 1 || language_code == 2)		//ÓïÑÔÊÇ¼òÌåÖĞÎÄºÍÓ¢ÎÄÊ±²»ÏÔÊ¾·­ÒëÕßĞÅÏ¢
+	if (language_code == 1 || language_code == 2)		//è¯­è¨€æ˜¯ç®€ä½“ä¸­æ–‡å’Œè‹±æ–‡æ—¶ä¸æ˜¾ç¤ºç¿»è¯‘è€…ä¿¡æ¯
 		m_translaotr_static.ShowWindow(SW_HIDE);
-	if (language_code == 3)		//ÏÔÊ¾·±ÌåÖĞÎÄ·­ÒëÕßµÄĞÅÏ¢
+	if (language_code == 3)		//æ˜¾ç¤ºç¹ä½“ä¸­æ–‡ç¿»è¯‘è€…çš„ä¿¡æ¯
 	{
 		m_translaotr_static.SetURL(_T("http://mkvq.blogspot.com/"));
 		m_tool_tip.AddTool(&m_translaotr_static, CCommon::LoadText(IDS_CONTACT_TRANSLATOR, _T("\r\nhttp://mkvq.blogspot.com/")));
 	}
+    m_translaotr_static.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
 
-    //ÉèÖÃÍ¼Æ¬µÄÎ»ÖÃ
+    //è®¾ç½®å›¾ç‰‡çš„ä½ç½®
     CRect rect;
     GetClientRect(rect);
     m_rc_pic = rect;
@@ -101,16 +122,16 @@ BOOL CAboutDlg::OnInitDialog()
     if (m_rc_pic.Height() <= 0)
         m_rc_pic.bottom = m_rc_pic.top + theApp.DPI(50);
 
-    //¼ÓÔØÍ¼Æ¬
+    //åŠ è½½å›¾ç‰‡
     m_about_pic.LoadBitmap(IDB_ABOUT_BACKGROUND_HD);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-				  // Òì³£: OCX ÊôĞÔÒ³Ó¦·µ»Ø FALSE
+				  // å¼‚å¸¸: OCX å±æ€§é¡µåº”è¿”å› FALSE
 }
 
 BOOL CAboutDlg::PreTranslateMessage(MSG* pMsg)
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
 	if (pMsg->message == WM_MOUSEMOVE)
 		m_tool_tip.RelayEvent(pMsg);
 
@@ -157,10 +178,62 @@ afx_msg LRESULT CAboutDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
 void CAboutDlg::OnPaint()
 {
     CPaintDC dc(this); // device context for painting
-                       // TODO: ÔÚ´Ë´¦Ìí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂë
-                       // ²»Îª»æÍ¼ÏûÏ¢µ÷ÓÃ CDialog::OnPaint()
+                       // TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
+                       // ä¸ä¸ºç»˜å›¾æ¶ˆæ¯è°ƒç”¨ CDialog::OnPaint()
     CDrawCommon draw;
     draw.Create(&dc, this);
     draw.GetDC()->FillSolidRect(m_rc_pic, RGB(161, 200, 255));
     draw.DrawBitmap(m_about_pic, m_rc_pic.TopLeft(), m_rc_pic.Size(), CDrawCommon::StretchMode::FIT);
+}
+
+
+BOOL CAboutDlg::OnEraseBkgnd(CDC* pDC)
+{
+    // TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
+    CRect draw_rect;
+    GetClientRect(draw_rect);
+    pDC->FillSolidRect(draw_rect, GetSysColor(COLOR_WINDOW));
+
+    //ç»˜åˆ¶ç™½è‰²èƒŒæ™¯
+    int white_height;       //ç™½è‰²åŒºåŸŸçš„é«˜åº¦
+    CRect rc_copyright{};
+    ::GetWindowRect(GetDlgItem(IDOK)->GetSafeHwnd(), rc_copyright);
+    ScreenToClient(rc_copyright);
+    white_height = rc_copyright.top - theApp.DPI(6);
+
+    //ç»˜åˆ¶â€œç¡®å®šâ€æŒ‰é’®ä¸Šæ–¹çš„åˆ†å‰²çº¿
+    CRect rc_line{ draw_rect };
+    rc_line.top = white_height;
+    rc_line.bottom = white_height + theApp.DPI(1);
+    pDC->FillSolidRect(rc_line, RGB(210, 210, 210));
+
+    //ç»˜åˆ¶ç°è‰²èƒŒæ™¯
+    CRect rc_gray{ rc_line };
+    rc_gray.top = rc_line.bottom;
+    rc_gray.bottom = draw_rect.bottom;
+    pDC->FillSolidRect(rc_gray, GetSysColor(COLOR_BTNFACE));
+
+    return TRUE;
+    //return CDialog::OnEraseBkgnd(pDC);
+}
+
+
+HBRUSH CAboutDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+    HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+
+    // TODO:  åœ¨æ­¤æ›´æ”¹ DC çš„ä»»ä½•ç‰¹æ€§
+    //å»æ‰staticæ§ä»¶çš„ç°è‰²ç°è‰²èƒŒæ™¯
+    UINT ctrl_id = pWnd->GetDlgCtrlID();
+    if (ctrl_id == IDC_STATIC_VERSION || ctrl_id == IDC_STATIC_COPYRIGHT || ctrl_id == IDC_STATIC)
+    {
+        static HBRUSH hBackBrush{};
+        if (hBackBrush == NULL)
+            hBackBrush = CreateSolidBrush(GetSysColor(COLOR_WINDOW));
+        pDC->SetBkColor(GetSysColor(COLOR_WINDOW));
+        return hBackBrush;
+    }
+
+    // TODO:  å¦‚æœé»˜è®¤çš„ä¸æ˜¯æ‰€éœ€ç”»ç¬”ï¼Œåˆ™è¿”å›å¦ä¸€ä¸ªç”»ç¬”
+    return hbr;
 }
