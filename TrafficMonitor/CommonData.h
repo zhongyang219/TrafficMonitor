@@ -286,8 +286,19 @@ struct GeneralSettingData
 	bool traffic_tip_enable{ false };		//是否启用流量超出时提示
 	int traffic_tip_value;					//要提示的流量临界值
 	int traffic_tip_unit{};					//要提示的流量值的单位（0: MB, 1: GB）
-	bool memory_usage_tip_enable{ false };	//是否启用内存使用率超出提示
-	int memory_tip_value;			//要提示的内存使用率的临界值
+
+    struct NotifyTipSettings        //超过某个值时弹出提示的设置
+    {
+        bool enable;                //是否启用提示
+        int tip_value;              //要弹出提示的临界值
+    };
+    NotifyTipSettings memory_usage_tip;     //用内存使用率超出提示
+    NotifyTipSettings cpu_temp_tip;         //CPU温度超出提示
+    NotifyTipSettings gpu_temp_tip;         //显卡温度超出提示
+    NotifyTipSettings hdd_temp_tip;         //硬盘温度超出提示
+    NotifyTipSettings mainboard_temp_tip;   //主板温度超出提示
+
+
 	//语言
 	Language language;
 

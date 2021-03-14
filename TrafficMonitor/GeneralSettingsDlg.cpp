@@ -30,6 +30,10 @@ void CGeneralSettingsDlg::SetControlMouseWheelEnable(bool enable)
     m_traffic_tip_edit.SetMouseWheelEnable(enable);
     m_memory_tip_edit.SetMouseWheelEnable(enable);
     m_monitor_span_edit.SetMouseWheelEnable(enable);
+    m_cpu_temp_tip_edit.SetMouseWheelEnable(enable);
+    m_gpu_temp_tip_edit.SetMouseWheelEnable(enable);
+    m_hdd_temp_tip_edit.SetMouseWheelEnable(enable);
+    m_mbd_temp_tip_edit.SetMouseWheelEnable(enable);
 }
 
 bool CGeneralSettingsDlg::IsMonitorTimeSpanModified() const
@@ -45,17 +49,21 @@ void CGeneralSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_MEMORY_USAGE_TIP_EDIT, m_memory_tip_edit);
     DDX_Control(pDX, IDC_LANGUAGE_COMBO, m_language_combo);
     DDX_Control(pDX, IDC_MONITOR_SPAN_EDIT, m_monitor_span_edit);
+    DDX_Control(pDX, IDC_CPU_TEMP_TIP_EDIT, m_cpu_temp_tip_edit);
+    DDX_Control(pDX, IDC_GPU_TEMP_TIP_EDIT, m_gpu_temp_tip_edit);
+    DDX_Control(pDX, IDC_HDD_TIP_EDIT, m_hdd_temp_tip_edit);
+    DDX_Control(pDX, IDC_MBD_TEMP_TIP_EDIT, m_mbd_temp_tip_edit);
 }
 
-void CGeneralSettingsDlg::SetTrafficTipControlEnable(bool enable)
+void CGeneralSettingsDlg::SetControlEnable()
 {
-	m_traffic_tip_edit.EnableWindow(enable);
-	m_traffic_tip_combo.EnableWindow(enable);
-}
-
-void CGeneralSettingsDlg::SetMemoryTipControlEnable(bool enable)
-{
-	m_memory_tip_edit.EnableWindow(enable);
+	m_traffic_tip_edit.EnableWindow(m_data.traffic_tip_enable);
+	m_traffic_tip_combo.EnableWindow(m_data.traffic_tip_enable);
+    m_memory_tip_edit.EnableWindow(m_data.memory_usage_tip.enable);
+    m_cpu_temp_tip_edit.EnableWindow(m_data.cpu_temp_tip.enable);
+    m_gpu_temp_tip_edit.EnableWindow(m_data.gpu_temp_tip.enable);
+    m_hdd_temp_tip_edit.EnableWindow(m_data.hdd_temp_tip.enable);
+    m_mbd_temp_tip_edit.EnableWindow(m_data.mainboard_temp_tip.enable);
 }
 
 
@@ -73,6 +81,10 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_USE_PDH_RADIO, &CGeneralSettingsDlg::OnBnClickedUsePdhRadio)
     ON_NOTIFY(UDN_DELTAPOS, SPIN_ID, &CGeneralSettingsDlg::OnDeltaposSpin)
     ON_EN_KILLFOCUS(IDC_MONITOR_SPAN_EDIT, &CGeneralSettingsDlg::OnEnKillfocusMonitorSpanEdit)
+    ON_BN_CLICKED(IDC_CPU_TEMP_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedCpuTempTipCheck)
+    ON_BN_CLICKED(IDC_GPU_TEMP_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedGpuTempTipCheck)
+    ON_BN_CLICKED(IDC_HDD_TEMP_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedHddTempTipCheck)
+    ON_BN_CLICKED(IDC_MBD_TEMP_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedMbdTempTipCheck)
 END_MESSAGE_MAP()
 
 
@@ -115,11 +127,27 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
 	m_traffic_tip_combo.AddString(_T("MB"));
 	m_traffic_tip_combo.AddString(_T("GB"));
 	m_traffic_tip_combo.SetCurSel(m_data.traffic_tip_unit);
-	((CButton*)GetDlgItem(IDC_MEMORY_USAGE_TIP_CHECK))->SetCheck(m_data.memory_usage_tip_enable);
+    CheckDlgButton(IDC_MEMORY_USAGE_TIP_CHECK, m_data.memory_usage_tip.enable);
 	m_memory_tip_edit.SetRange(1, 100);
-	m_memory_tip_edit.SetValue(m_data.memory_tip_value);
-	SetTrafficTipControlEnable(m_data.traffic_tip_enable);
-	SetMemoryTipControlEnable(m_data.memory_usage_tip_enable);
+	m_memory_tip_edit.SetValue(m_data.memory_usage_tip.tip_value);
+
+    CheckDlgButton(IDC_CPU_TEMP_TIP_CHECK, m_data.cpu_temp_tip.enable);
+    m_cpu_temp_tip_edit.SetRange(1, 100);
+    m_cpu_temp_tip_edit.SetValue(m_data.cpu_temp_tip.tip_value);
+
+    CheckDlgButton(IDC_GPU_TEMP_TIP_CHECK, m_data.gpu_temp_tip.enable);
+    m_gpu_temp_tip_edit.SetRange(1, 100);
+    m_gpu_temp_tip_edit.SetValue(m_data.gpu_temp_tip.tip_value);
+
+    CheckDlgButton(IDC_HDD_TEMP_TIP_CHECK, m_data.hdd_temp_tip.enable);
+    m_hdd_temp_tip_edit.SetRange(1, 100);
+    m_hdd_temp_tip_edit.SetValue(m_data.hdd_temp_tip.tip_value);
+
+    CheckDlgButton(IDC_MBD_TEMP_TIP_CHECK, m_data.mainboard_temp_tip.enable);
+    m_mbd_temp_tip_edit.SetRange(1, 100);
+    m_mbd_temp_tip_edit.SetValue(m_data.mainboard_temp_tip.tip_value);
+
+    SetControlEnable();
 
 	m_language_combo.AddString(CCommon::LoadText(IDS_FOLLOWING_SYSTEM));
 	m_language_combo.AddString(_T("English"));
@@ -192,9 +220,27 @@ void CGeneralSettingsDlg::OnOK()
 	if (m_data.traffic_tip_value < 1) m_data.traffic_tip_value = 1;
 	if (m_data.traffic_tip_value > 32767) m_data.traffic_tip_value = 32767;
 	m_data.traffic_tip_unit = m_traffic_tip_combo.GetCurSel();
-	m_data.memory_tip_value = m_memory_tip_edit.GetValue();
-	if (m_data.memory_tip_value < 1) m_data.memory_tip_value = 1;
-	if (m_data.memory_tip_value > 100) m_data.memory_tip_value = 100;
+
+    auto checkTipValue = [](int &value)
+    {
+        if (value < 1) value = 1;
+        if (value > 100) value = 100;
+    };
+	m_data.memory_usage_tip.tip_value = m_memory_tip_edit.GetValue();
+    checkTipValue(m_data.memory_usage_tip.tip_value);
+
+    m_data.cpu_temp_tip.tip_value = m_cpu_temp_tip_edit.GetValue();
+    checkTipValue(m_data.cpu_temp_tip.tip_value);
+
+    m_data.gpu_temp_tip.tip_value = m_gpu_temp_tip_edit.GetValue();
+    checkTipValue(m_data.gpu_temp_tip.tip_value);
+
+    m_data.hdd_temp_tip.tip_value = m_hdd_temp_tip_edit.GetValue();
+    checkTipValue(m_data.hdd_temp_tip.tip_value);
+
+    m_data.mainboard_temp_tip.tip_value = m_mbd_temp_tip_edit.GetValue();
+    checkTipValue(m_data.mainboard_temp_tip.tip_value);
+
 	//获取语言的设置
 	m_data.language = static_cast<Language>(m_language_combo.GetCurSel());
 	if (m_data.language != theApp.m_general_data.language)
@@ -220,15 +266,15 @@ void CGeneralSettingsDlg::OnBnClickedTodayTrafficTipCheck()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	m_data.traffic_tip_enable = (((CButton*)GetDlgItem(IDC_TODAY_TRAFFIC_TIP_CHECK))->GetCheck() != 0);
-	SetTrafficTipControlEnable(m_data.traffic_tip_enable);
+    SetControlEnable();
 }
 
 
 void CGeneralSettingsDlg::OnBnClickedMemoryUsageTipCheck()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	m_data.memory_usage_tip_enable = (((CButton*)GetDlgItem(IDC_MEMORY_USAGE_TIP_CHECK))->GetCheck() != 0);
-	SetMemoryTipControlEnable(m_data.memory_usage_tip_enable);
+	m_data.memory_usage_tip.enable = (((CButton*)GetDlgItem(IDC_MEMORY_USAGE_TIP_CHECK))->GetCheck() != 0);
+    SetControlEnable();
 }
 
 
@@ -328,4 +374,36 @@ void CGeneralSettingsDlg::OnEnKillfocusMonitorSpanEdit()
         value *= MONITOR_SPAN_STEP;
     }
     m_monitor_span_edit.SetValue(value);
+}
+
+
+void CGeneralSettingsDlg::OnBnClickedCpuTempTipCheck()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    m_data.cpu_temp_tip.enable = (IsDlgButtonChecked(IDC_CPU_TEMP_TIP_CHECK) != 0);
+    SetControlEnable();
+}
+
+
+void CGeneralSettingsDlg::OnBnClickedGpuTempTipCheck()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    m_data.gpu_temp_tip.enable = (IsDlgButtonChecked(IDC_GPU_TEMP_TIP_CHECK) != 0);
+    SetControlEnable();
+}
+
+
+void CGeneralSettingsDlg::OnBnClickedHddTempTipCheck()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    m_data.hdd_temp_tip.enable = (IsDlgButtonChecked(IDC_HDD_TEMP_TIP_CHECK) != 0);
+    SetControlEnable();
+}
+
+
+void CGeneralSettingsDlg::OnBnClickedMbdTempTipCheck()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    m_data.mainboard_temp_tip.enable = (IsDlgButtonChecked(IDC_MBD_TEMP_TIP_CHECK) != 0);
+    SetControlEnable();
 }

@@ -38,12 +38,16 @@ protected:
 	CComboBox2 m_language_combo;
 	CToolTipCtrl m_toolTip;
     CSpinEdit m_monitor_span_edit;
+    CSpinEdit m_cpu_temp_tip_edit;
+    CSpinEdit m_gpu_temp_tip_edit;
+    CSpinEdit m_hdd_temp_tip_edit;
+    CSpinEdit m_mbd_temp_tip_edit;
+
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	//设置控件的启用和禁用
-	void SetTrafficTipControlEnable(bool enable);
-	void SetMemoryTipControlEnable(bool enable);
+    void SetControlEnable();
 
     virtual void SetControlMouseWheelEnable(bool enable) override;
 
@@ -65,4 +69,8 @@ public:
 	afx_msg void OnBnClickedUsePdhRadio();
     afx_msg void OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult);
     afx_msg void OnEnKillfocusMonitorSpanEdit();
+    afx_msg void OnBnClickedCpuTempTipCheck();
+    afx_msg void OnBnClickedGpuTempTipCheck();
+    afx_msg void OnBnClickedHddTempTipCheck();
+    afx_msg void OnBnClickedMbdTempTipCheck();
 };

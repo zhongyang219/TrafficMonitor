@@ -1146,20 +1146,56 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             }
         }
 
-        //检查是否要弹出内存使用率超出提示
-        if (theApp.m_general_data.memory_usage_tip_enable)
+        //检查是否需要弹出鼠标提示
+        //setting_data: 消息提示的设置数据
+        //value: 当前的值
+        //last_value: 传递一个static或可以在此lambda表达式调用结束后继续存在的变量，用于保存上一次的值
+        //notify_time: 传递一个static或可以在此lambda表达式调用结束后继续存在的变量，用于记录上次弹出提示的时间（定时器触发次数）
+        //tip_str: 要提示的消息
+        auto checkNotifyTip = [&](GeneralSettingData::NotifyTipSettings setting_data, int value, int& last_value, int& notify_time, LPCTSTR tip_str)
         {
-            static int last_memory_usage;
-            static int notify_time{ -theApp.m_notify_interval };		//记录上次弹出提示时的时间
-            if (last_memory_usage < theApp.m_general_data.memory_tip_value && theApp.m_memory_usage >= theApp.m_general_data.memory_tip_value && (m_timer_cnt - notify_time > static_cast<unsigned int>(theApp.m_notify_interval)))
+            if (setting_data.enable)
             {
-                CString info;
-                info.Format(CCommon::LoadText(IDS_MEMORY_UDAGE_EXCEED, _T(" %d%%!")), theApp.m_memory_usage);
-                ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY), info.GetString());
-                notify_time = m_timer_cnt;
+                if (last_value < setting_data.tip_value && value >= setting_data.tip_value && (m_timer_cnt - notify_time > static_cast<unsigned int>(theApp.m_notify_interval)))
+                {
+                    ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY), tip_str);
+                    notify_time = m_timer_cnt;
+                }
+                last_value = value;
             }
-            last_memory_usage = theApp.m_memory_usage;
-        }
+        };
+
+        //检查是否要弹出内存使用率超出提示
+        CString info;
+        info.Format(CCommon::LoadText(IDS_MEMORY_UDAGE_EXCEED, _T(" %d%%!")), theApp.m_memory_usage);
+        static int last_memory_usage;
+        static int memory_usage_notify_time{ -theApp.m_notify_interval };		//记录上次弹出提示时的时间
+        checkNotifyTip(theApp.m_general_data.memory_usage_tip, theApp.m_memory_usage, last_memory_usage, memory_usage_notify_time, info.GetString());
+
+        //检查是否要弹出CPU温度使用率超出提示
+        info.Format(CCommon::LoadText(IDS_CPU_TEMPERATURE_EXCEED, _T(" %d℃!")), static_cast<int>(theApp.m_cpu_temperature));
+        static int last_cpu_temp;
+        static int cpu_temp_notify_time{ -theApp.m_notify_interval };		//记录上次弹出提示时的时间
+        checkNotifyTip(theApp.m_general_data.cpu_temp_tip, theApp.m_cpu_temperature, last_cpu_temp, cpu_temp_notify_time, info.GetString());
+
+        //检查是否要弹出显卡温度使用率超出提示
+        info.Format(CCommon::LoadText(IDS_GPU_TEMPERATURE_EXCEED, _T(" %d℃!")), static_cast<int>(theApp.m_gpu_temperature));
+        static int last_gpu_temp;
+        static int gpu_temp_notify_time{ -theApp.m_notify_interval };		//记录上次弹出提示时的时间
+        checkNotifyTip(theApp.m_general_data.gpu_temp_tip, theApp.m_gpu_temperature, last_gpu_temp, gpu_temp_notify_time, info.GetString());
+
+        //检查是否要弹出硬盘温度使用率超出提示
+        info.Format(CCommon::LoadText(IDS_HDD_TEMPERATURE_EXCEED, _T(" %d℃!")), static_cast<int>(theApp.m_hdd_temperature));
+        static int last_hdd_temp;
+        static int hdd_temp_notify_time{ -theApp.m_notify_interval };		//记录上次弹出提示时的时间
+        checkNotifyTip(theApp.m_general_data.hdd_temp_tip, theApp.m_hdd_temperature, last_hdd_temp, hdd_temp_notify_time, info.GetString());
+
+        //检查是否要弹出主板温度使用率超出提示
+        info.Format(CCommon::LoadText(IDS_MBD_TEMPERATURE_EXCEED, _T(" %d℃!")), static_cast<int>(theApp.m_main_board_temperature));
+        static int last_main_board_temp;
+        static int main_board_temp_notify_time{ -theApp.m_notify_interval };		//记录上次弹出提示时的时间
+        checkNotifyTip(theApp.m_general_data.mainboard_temp_tip, theApp.m_main_board_temperature, last_main_board_temp, main_board_temp_notify_time, info.GetString());
+
 
         //检查是否要弹出流量使用超出提示
         if (theApp.m_general_data.traffic_tip_enable)
