@@ -9,6 +9,7 @@
 #include "UpdateHelper.h"
 #include "Test.h"
 #include "WIC.h"
+#include "auto_start_helper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -516,7 +517,9 @@ UINT CTrafficMonitorApp::InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam)
 
 void CTrafficMonitorApp::SetAutoRun(bool auto_run)
 {
-	CRegKey key;
+    //不含温度监控的版本使用添加注册表项的方式实现开机自启动
+#ifdef WITHOUT_TEMPERATURE
+    CRegKey key;
 	//打开注册表项
 	if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
 	{
@@ -544,10 +547,19 @@ void CTrafficMonitorApp::SetAutoRun(bool auto_run)
 			return;
 		}
 	}
+#else
+    //包含温度监控的版本使用任务计划的方式实现开机自启动
+    if (auto_run)
+        create_auto_start_task_for_this_user(true);
+    else
+        delete_auto_start_task_for_this_user();
+#endif
 }
 
 bool CTrafficMonitorApp::GetAutoRun()
 {
+    //不含温度监控的版本使用添加注册表项的方式实现开机自启动
+#ifdef WITHOUT_TEMPERATURE
 	CRegKey key;
 	if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
 	{
@@ -564,6 +576,10 @@ bool CTrafficMonitorApp::GetAutoRun()
 	{
 		return false;		//没有找到“TrafficMonitor”键，返回false
 	}
+#else
+    //包含温度监控的版本使用任务计划的方式实现开机自启动
+    return is_auto_start_task_active_for_this_user();
+#endif
 }
 
 CString CTrafficMonitorApp::GetSystemInfoString()
