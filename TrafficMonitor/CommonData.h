@@ -142,11 +142,15 @@ enum class ColorMode
 };
 
 //将字号转成LOGFONT结构中的lfHeight
-inline int FontSizeToLfHeight(int font_size)
+inline int FontSizeToLfHeight(int font_size, int dpi = 0)
 {
-    HDC hDC = ::GetDC(HWND_DESKTOP);
-    int lfHeight = -MulDiv(font_size, GetDeviceCaps(hDC, LOGPIXELSY), 72);
-    ::ReleaseDC(HWND_DESKTOP, hDC);
+    if (dpi == 0)
+    {
+        HDC hDC = ::GetDC(HWND_DESKTOP);
+        dpi = GetDeviceCaps(hDC, LOGPIXELSY);
+        ::ReleaseDC(HWND_DESKTOP, hDC);
+    }
+    int lfHeight = -MulDiv(font_size, dpi, 72);
     return lfHeight;
 }
 
@@ -161,10 +165,10 @@ struct FontInfo
 	bool strike_out;	//删除线
 
     //创建一个CFont对象
-    void Create(CFont& font)
+    void Create(CFont& font, int dpi = 0)
     {
         font.CreateFont(
-            FontSizeToLfHeight(size), // nHeight
+            FontSizeToLfHeight(size, dpi), // nHeight
             0, // nWidth
             0, // nEscapement
             0, // nOrientation

@@ -101,6 +101,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_COMMAND(ID_SHOW_HDD_TEMPERATURE, &CTrafficMonitorDlg::OnShowHddTemperature)
     ON_COMMAND(ID_SHOW_MAIN_BOARD_TEMPERATURE, &CTrafficMonitorDlg::OnShowMainBoardTemperature)
     ON_WM_PAINT()
+    ON_MESSAGE(WM_DPICHANGED, &CTrafficMonitorDlg::OnDpichanged)
 END_MESSAGE_MAP()
 
 
@@ -717,7 +718,7 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 	//设置隐藏任务栏图标
 	ModifyStyleEx(WS_EX_APPWINDOW, WS_EX_TOOLWINDOW);
 
-	theApp.GetDPI(this);
+	theApp.DPIFromWindow(this);
 	//获取屏幕大小
 	GetScreenSize();
 	::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0);   // 获得工作区大小
@@ -2270,4 +2271,17 @@ void CTrafficMonitorDlg::OnPaint()
         m_skin.DrawInfoL(&dc, m_font);
     else
         m_skin.DrawInfoS(&dc, m_font);
+}
+
+
+afx_msg LRESULT CTrafficMonitorDlg::OnDpichanged(WPARAM wParam, LPARAM lParam)
+{
+    int dpi = LOWORD(wParam);
+    theApp.SetDPI(dpi);
+    if (IsTaskbarWndValid())
+    {
+        //根据新的DPI重新设置任务栏窗口字体
+        m_tBarDlg->SetTextFont();
+    }
+    return 0;
 }

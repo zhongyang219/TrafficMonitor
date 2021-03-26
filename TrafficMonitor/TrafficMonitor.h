@@ -100,7 +100,9 @@ public:
 
 	int DPI(int pixel);
 	void DPI(CRect& rect);
-	void GetDPI(CWnd* pWnd);
+	void DPIFromWindow(CWnd* pWnd);
+    int GetDpi() const { return m_dpi; }
+    void SetDPI(int dpi) { m_dpi = dpi; }
 
 	static void CheckUpdate(bool message);		//检查更新，如果message为true，则在检查时弹出提示信息
 	//启动时检查更新线程函数
@@ -116,7 +118,7 @@ public:
     void InitMenuResourse();
 
     //获取一个图标资源，如果资源还未加载，会自动加载。
-    //由于本函数中使用了CTrafficMonitorApp::DPI函数，因此本函数必须确保在CTrafficMonitorApp::GetDPI之后调用
+    //由于本函数中使用了CTrafficMonitorApp::DPI函数，因此本函数必须确保在CTrafficMonitorApp::DPIFromWindow之后调用
     HICON GetMenuIcon(UINT id);
 
     void AutoSelectNotifyIcon();

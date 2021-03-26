@@ -529,7 +529,7 @@ void CTaskBarDlg::SetTextFont()
 		m_font.DeleteObject();
 	}
 	//创建新的字体
-    theApp.m_taskbar_data.font.Create(m_font);
+    theApp.m_taskbar_data.font.Create(m_font, theApp.GetDpi());
 }
 
 void CTaskBarDlg::ApplySettings()

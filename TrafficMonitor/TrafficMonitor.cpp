@@ -426,7 +426,7 @@ void CTrafficMonitorApp::DPI(CRect & rect)
 	rect.bottom = DPI(rect.bottom);
 }
 
-void CTrafficMonitorApp::GetDPI(CWnd* pWnd)
+void CTrafficMonitorApp::DPIFromWindow(CWnd* pWnd)
 {
 	CWindowDC dc(pWnd);
 	HDC hDC = dc.GetSafeHdc();
