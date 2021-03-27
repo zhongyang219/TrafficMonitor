@@ -1,100 +1,100 @@
-#pragma once
+ï»¿#pragma once
 #include "Common.h"
 #include "afxwin.h"
 #include "DrawCommon.h"
 #include "IniHelper.h"
 #include "CommonData.h"
 
-// CTaskBarDlg ¶Ô»°¿ò
-#define TASKBAR_WND_HEIGHT theApp.DPI(32)				//ÈÎÎñÀ¸´°¿ÚµÄ¸ß¶È
-#define WM_TASKBAR_MENU_POPED_UP (WM_USER + 1004)		//¶¨ÒåÈÎÎñÀ¸´°¿ÚÓÒ¼ü²Ëµ¥µ¯³öÊ±·¢³öµÄÏûÏ¢
-//#define TASKBAR_GRAPH_MAX_LEN 600						//ÀúÊ·Êı¾İ´æ´¢×î´ó³¤¶È
-#define TASKBAR_GRAPH_STEP 5							//¼¸ÃëÖÓ»­Ò»ÌõÏß
+// CTaskBarDlg å¯¹è¯æ¡†
+#define TASKBAR_WND_HEIGHT theApp.DPI(32)				//ä»»åŠ¡æ çª—å£çš„é«˜åº¦
+#define WM_TASKBAR_MENU_POPED_UP (WM_USER + 1004)		//å®šä¹‰ä»»åŠ¡æ çª—å£å³é”®èœå•å¼¹å‡ºæ—¶å‘å‡ºçš„æ¶ˆæ¯
+//#define TASKBAR_GRAPH_MAX_LEN 600						//å†å²æ•°æ®å­˜å‚¨æœ€å¤§é•¿åº¦
+#define TASKBAR_GRAPH_STEP 5							//å‡ ç§’é’Ÿç”»ä¸€æ¡çº¿
 
 class CTaskBarDlg : public CDialogEx
 {
 	DECLARE_DYNAMIC(CTaskBarDlg)
 
 public:
-	CTaskBarDlg(CWnd* pParent = NULL);   // ±ê×¼¹¹Ôìº¯Êı
+	CTaskBarDlg(CWnd* pParent = NULL);   // æ ‡å‡†æ„é€ å‡½æ•°
 	virtual ~CTaskBarDlg();
 
 	CToolTipCtrl m_tool_tips;
 
-	void ShowInfo(CDC* pDC); 	//½«ĞÅÏ¢»æÖÆµ½¿Ø¼şÉÏ
-	void TryDrawStatusBar(CDrawCommon& drawer, const CRect& rect_bar, int usage_percent); //»æÖÆCPU/ÄÚ´æ×´Ì¬Ìõ
+	void ShowInfo(CDC* pDC); 	//å°†ä¿¡æ¯ç»˜åˆ¶åˆ°æ§ä»¶ä¸Š
+	void TryDrawStatusBar(CDrawCommon& drawer, const CRect& rect_bar, int usage_percent); //ç»˜åˆ¶CPU/å†…å­˜çŠ¶æ€æ¡
 
-	void TryDrawGraph(CDrawCommon& drawer, const CRect &value_rect, DisplayItem item_type);		// »æÖÆCPU/ÄÚ´æ¶¯Ì¬Í¼
+	void TryDrawGraph(CDrawCommon& drawer, const CRect &value_rect, DisplayItem item_type);		// ç»˜åˆ¶CPU/å†…å­˜åŠ¨æ€å›¾
 
-	bool AdjustWindowPos();	//ÉèÖÃ´°¿ÚÔÚÈÎÎñÀ¸ÖĞµÄÎ»ÖÃ
+	bool AdjustWindowPos();	//è®¾ç½®çª—å£åœ¨ä»»åŠ¡æ ä¸­çš„ä½ç½®
 	void ApplyWindowTransparentColor();
 
-// ¶Ô»°¿òÊı¾İ
+// å¯¹è¯æ¡†æ•°æ®
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_TASK_BAR_DIALOG };
 #endif
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV æ”¯æŒ
 
-	HWND m_hTaskbar;	//ÈÎÎñÀ¸´°¿Ú¾ä±ú
-	HWND m_hBar;		//ÈÎÎñÀ¸´°¿Ú¶ş¼¶ÈİÆ÷µÄ¾ä±ú
-	HWND m_hMin;		//×îĞ¡»¯´°¿ÚµÄ¾ä±ú
-	CRect m_rcBar;		//³õÊ¼×´Ì¬Ê±ÈÎÎñÀ¸´°¿ÚµÄ¾ØĞÎÇøÓò
-	CRect m_rcMin;		//³õÊ¼×´Ì¬Ê±×îĞ¡»¯´°¿ÚµÄ¾ØĞÎÇøÓò
-	CRect m_rect;		//µ±Ç°´°¿ÚµÄ¾ØĞÎÇøÓò
+	HWND m_hTaskbar;	//ä»»åŠ¡æ çª—å£å¥æŸ„
+	HWND m_hBar;		//ä»»åŠ¡æ çª—å£äºŒçº§å®¹å™¨çš„å¥æŸ„
+	HWND m_hMin;		//æœ€å°åŒ–çª—å£çš„å¥æŸ„
+	CRect m_rcBar;		//åˆå§‹çŠ¶æ€æ—¶ä»»åŠ¡æ çª—å£çš„çŸ©å½¢åŒºåŸŸ
+	CRect m_rcMin;		//åˆå§‹çŠ¶æ€æ—¶æœ€å°åŒ–çª—å£çš„çŸ©å½¢åŒºåŸŸ
+	CRect m_rect;		//å½“å‰çª—å£çš„çŸ©å½¢åŒºåŸŸ
     int m_window_width{};
     int m_window_height{};
 
-    //ÈÎÎñÀ¸¸÷¸ö²¿·ÖµÄ¿í¶È
+    //ä»»åŠ¡æ å„ä¸ªéƒ¨åˆ†çš„å®½åº¦
     struct ItemWidth
     {
-        int label_width{};      //±êÇ©²¿·Ö¿í¶È
-        int value_width{};      //ÊıÖµ²¿·Ö¿í¶È
+        int label_width{};      //æ ‡ç­¾éƒ¨åˆ†å®½åº¦
+        int value_width{};      //æ•°å€¼éƒ¨åˆ†å®½åº¦
 
-        int TotalWidth() const  //×Ü¿í¶È
+        int TotalWidth() const  //æ€»å®½åº¦
         {
             return label_width + value_width;
         }
     };
 
-    std::map<DisplayItem, ItemWidth> m_item_widths;   //ÈÎÎñÀ¸´°¿ÚÃ¿¸ö²¿·ÖµÄ¿í¶È
-    std::map<DisplayItem, int> m_item_display_width;    //ÈÎÎñÀ¸´°¿ÚÃ¿¸ö²¿·ÖÊµ¼ÊÏÔÊ¾µÄ¿í¶È
+    std::map<DisplayItem, ItemWidth> m_item_widths;   //ä»»åŠ¡æ çª—å£æ¯ä¸ªéƒ¨åˆ†çš„å®½åº¦
+    std::map<DisplayItem, int> m_item_display_width;    //ä»»åŠ¡æ çª—å£æ¯ä¸ªéƒ¨åˆ†å®é™…æ˜¾ç¤ºçš„å®½åº¦
 
-	int m_min_bar_width;	//×îĞ¡»¯´°¿ÚËõĞ¡¿í¶ÈºóµÄ¿í¶È
-	int m_min_bar_height;	//×îĞ¡»¯´°¿ÚËõĞ¡¸ß¶ÈºóµÄ¸ß¶È£¨ÓÃÓÚÈÎÎñÀ¸ÔÚÆÁÄ»×ó²à»òÓÒ²àÊ±£©
+	int m_min_bar_width;	//æœ€å°åŒ–çª—å£ç¼©å°å®½åº¦åçš„å®½åº¦
+	int m_min_bar_height;	//æœ€å°åŒ–çª—å£ç¼©å°é«˜åº¦åçš„é«˜åº¦ï¼ˆç”¨äºä»»åŠ¡æ åœ¨å±å¹•å·¦ä¾§æˆ–å³ä¾§æ—¶ï¼‰
 
-    std::map<DisplayItem, CList<int, int>> m_map_history_data;  //±£´æ¸÷ÏîÊı¾İÀúÊ·Êı¾İµÄÁ´±í£¬Á´±í±£´æ°´ÕÕÊ±¼äË³Ğò£¬Ô½¿¿½üÍ·²¿Êı¾İÔ½ĞÂ
+    std::map<DisplayItem, CList<int, int>> m_map_history_data;  //ä¿å­˜å„é¡¹æ•°æ®å†å²æ•°æ®çš„é“¾è¡¨ï¼Œé“¾è¡¨ä¿å­˜æŒ‰ç…§æ—¶é—´é¡ºåºï¼Œè¶Šé è¿‘å¤´éƒ¨æ•°æ®è¶Šæ–°
 
-	int m_left_space{};			//×îĞ¡»¯´°¿ÚºÍ¶ş¼¶´°¿Ú´°¿Ú×ó²àµÄ±ß¾à
-	int m_top_space{};			//×îĞ¡»¯´°¿ÚºÍ¶ş¼¶´°¿Ú´°¿Ú¶¥²¿µÄ±ß¾à£¨ÓÃÓÚÈÎÎñÀ¸ÔÚÆÁÄ»×ó²à»òÓÒ²àÊ±£©
+	int m_left_space{};			//æœ€å°åŒ–çª—å£å’ŒäºŒçº§çª—å£çª—å£å·¦ä¾§çš„è¾¹è·
+	int m_top_space{};			//æœ€å°åŒ–çª—å£å’ŒäºŒçº§çª—å£çª—å£é¡¶éƒ¨çš„è¾¹è·ï¼ˆç”¨äºä»»åŠ¡æ åœ¨å±å¹•å·¦ä¾§æˆ–å³ä¾§æ—¶ï¼‰
 
-	bool m_connot_insert_to_task_bar{ false };	//Èç¹û´°¿ÚÎŞ·¨Ç¶ÈëÈÎÎñÀ¸£¬ÔòÎªtrue
-	bool m_taskbar_on_top_or_bottom{ true };		//Èç¹ûÈÎÎñÀ¸ÔÚÆÁÄ»¶¥²¿»òµ×²¿£¬ÔòÎªture
+	bool m_connot_insert_to_task_bar{ false };	//å¦‚æœçª—å£æ— æ³•åµŒå…¥ä»»åŠ¡æ ï¼Œåˆ™ä¸ºtrue
+	bool m_taskbar_on_top_or_bottom{ true };		//å¦‚æœä»»åŠ¡æ åœ¨å±å¹•é¡¶éƒ¨æˆ–åº•éƒ¨ï¼Œåˆ™ä¸ºture
 	int m_error_code{};
 
-	CFont m_font;			//×ÖÌå
+	CFont m_font;			//å­—ä½“
 
-	CDC* m_pDC{};		//´°¿ÚµÄDC£¬ÓÃÀ´¼ÆËã´°¿ÚµÄ¿í¶È
+	CDC* m_pDC{};		//çª—å£çš„DCï¼Œç”¨æ¥è®¡ç®—çª—å£çš„å®½åº¦
 
-	void CheckTaskbarOnTopOrBottom();		//¼ì²éÈÎÎñÀ¸ÊÇ·ñÔÚÆÁÄ»µÄ¶¥²¿»òµ×²¿£¬²¢½«½á¹û±£´æÔÚm_taskbar_on_top_or_bottomÖĞ
-	CString GetMouseTipsInfo();		//»ñÈ¡Êó±êÌáÊ¾
+	void CheckTaskbarOnTopOrBottom();		//æ£€æŸ¥ä»»åŠ¡æ æ˜¯å¦åœ¨å±å¹•çš„é¡¶éƒ¨æˆ–åº•éƒ¨ï¼Œå¹¶å°†ç»“æœä¿å­˜åœ¨m_taskbar_on_top_or_bottomä¸­
+	CString GetMouseTipsInfo();		//è·å–é¼ æ ‡æç¤º
 
-	void AddHisToList(DisplayItem item_type, int current_usage_percent);		//½«µ±Ç°ÀûÓÃÂÊÊıÖµÌí¼Ó½øÁ´±í
+	void AddHisToList(DisplayItem item_type, int current_usage_percent);		//å°†å½“å‰åˆ©ç”¨ç‡æ•°å€¼æ·»åŠ è¿›é“¾è¡¨
 
-    //»æÖÆÈÎÎñÀ¸´°¿ÚÖĞµÄÒ»¸öÏÔÊ¾ÏîÄ¿
-    //  drawer: »æÍ¼ÀàµÄ¶ÔÏó
-    //  type: ÏîÄ¿µÄÀàĞÍ
-    //  rect: »æÖÆ¾ØĞÎÇøÓò
-    //  label_width: ±êÇ©ÇøÓòµÄ¿í¶È
+    //ç»˜åˆ¶ä»»åŠ¡æ çª—å£ä¸­çš„ä¸€ä¸ªæ˜¾ç¤ºé¡¹ç›®
+    //  drawer: ç»˜å›¾ç±»çš„å¯¹è±¡
+    //  type: é¡¹ç›®çš„ç±»å‹
+    //  rect: ç»˜åˆ¶çŸ©å½¢åŒºåŸŸ
+    //  label_width: æ ‡ç­¾åŒºåŸŸçš„å®½åº¦
     void DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect rect, int label_width);
 
 public:
 	void SetTextFont();
 	void ApplySettings();
-    void CalculateWindowSize();		//¼ÆËã´°¿ÚÃ¿²¿·ÖµÄ´óĞ¡£¬¼°¸÷¸ö²¿·ÖµÄ¿í¶È¡£´°¿Ú´óĞ¡±£´æµ½m_window_widthºÍm_window_heightÖĞ£¬¸÷²¿·Ö¿í¶È±£´æµ½m_item_widthsÖĞ
+    void CalculateWindowSize();		//è®¡ç®—çª—å£æ¯éƒ¨åˆ†çš„å¤§å°ï¼ŒåŠå„ä¸ªéƒ¨åˆ†çš„å®½åº¦ã€‚çª—å£å¤§å°ä¿å­˜åˆ°m_window_widthå’Œm_window_heightä¸­ï¼Œå„éƒ¨åˆ†å®½åº¦ä¿å­˜åˆ°m_item_widthsä¸­
 
-	void SetToolTipsTopMost();			//ÉèÖÃÊó±êÌáÊ¾ÖÃ¶¥
+	void SetToolTipsTopMost();			//è®¾ç½®é¼ æ ‡æç¤ºç½®é¡¶
 	void UpdateToolTips();
 
 	bool GetCannotInsertToTaskBar() const { return m_connot_insert_to_task_bar; }
@@ -128,4 +128,5 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnPaint();
+    afx_msg void OnClose();
 };

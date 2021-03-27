@@ -38,6 +38,7 @@ BEGIN_MESSAGE_MAP(CTaskBarDlg, CDialogEx)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_TIMER()
 	ON_WM_PAINT()
+    ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 
@@ -1097,4 +1098,13 @@ void CTaskBarDlg::TryDrawGraph(CDrawCommon& drawer, const CRect &value_rect, Dis
 			drawer.DrawLine(start_point, height, theApp.m_taskbar_data.status_bar_color);
 		}
 	}
+}
+
+
+void CTaskBarDlg::OnClose()
+{
+    // TODO: 在此添加消息处理程序代码和/或调用默认值
+    ::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_TASKBAR_WND_CLOSED, 0, 0);
+
+    CDialogEx::OnClose();
 }

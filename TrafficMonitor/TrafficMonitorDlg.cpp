@@ -102,6 +102,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_COMMAND(ID_SHOW_MAIN_BOARD_TEMPERATURE, &CTrafficMonitorDlg::OnShowMainBoardTemperature)
     ON_WM_PAINT()
     ON_MESSAGE(WM_DPICHANGED, &CTrafficMonitorDlg::OnDpichanged)
+    ON_MESSAGE(WM_TASKBAR_WND_CLOSED, &CTrafficMonitorDlg::OnTaskbarWndClosed)
 END_MESSAGE_MAP()
 
 
@@ -2268,6 +2269,19 @@ afx_msg LRESULT CTrafficMonitorDlg::OnDpichanged(WPARAM wParam, LPARAM lParam)
     {
         //根据新的DPI重新设置任务栏窗口字体
         m_tBarDlg->SetTextFont();
+    }
+    return 0;
+}
+
+
+afx_msg LRESULT CTrafficMonitorDlg::OnTaskbarWndClosed(WPARAM wParam, LPARAM lParam)
+{
+    theApp.m_cfg_data.m_show_task_bar_wnd = false;
+    //关闭任务栏窗口后，如果没有显示通知区图标，且没有显示主窗口或设置了鼠标穿透，则将通知区图标显示出来
+    if (!theApp.m_cfg_data.m_show_notify_icon && (theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_mouse_penetrate))
+    {
+        AddNotifyIcon();
+        theApp.m_cfg_data.m_show_notify_icon = true;
     }
     return 0;
 }
