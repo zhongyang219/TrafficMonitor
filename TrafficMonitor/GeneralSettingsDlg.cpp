@@ -179,7 +179,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
 void CGeneralSettingsDlg::OnBnClickedCheckNowButton()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	CTrafficMonitorApp::CheckUpdate(true);
+	theApp.CheckUpdateInThread(true);
 }
 
 

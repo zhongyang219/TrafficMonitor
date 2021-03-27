@@ -25,9 +25,22 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorApp, CWinApp)
 END_MESSAGE_MAP()
 
 
-// CTrafficMonitorApp 构造
 CTrafficMonitorApp* CTrafficMonitorApp::self = NULL;
 
+struct CTrafficMonitorApp::CheckForUpdateLocker
+{
+    CheckForUpdateLocker()
+    {
+        theApp.m_checking_update = true;
+    }
+    ~CheckForUpdateLocker()
+    {
+        theApp.m_checking_update = false;
+    }
+};
+
+
+// CTrafficMonitorApp 构造
 CTrafficMonitorApp::CTrafficMonitorApp()
 {
 	self = this;
@@ -435,7 +448,10 @@ void CTrafficMonitorApp::DPIFromWindow(CWnd* pWnd)
 
 void CTrafficMonitorApp::CheckUpdate(bool message)
 {
-	CWaitCursor wait_cursor;
+    if (m_checking_update)      //如果还在检查更新，则直接返回
+        return;
+    CheckForUpdateLocker update_locker;
+    CWaitCursor wait_cursor;
 
 	wstring version;		//程序版本
 	wstring link;			//下载链接
@@ -500,11 +516,16 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
 	}
 }
 
+void CTrafficMonitorApp::CheckUpdateInThread(bool message)
+{
+    AfxBeginThread(CheckUpdateThreadFunc, (LPVOID)message);
+}
+
 UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
 {
 	CCommon::SetThreadLanguage(theApp.m_general_data.language);		//设置线程语言
-	CheckUpdate(false);		//检查更新
-	return 0;
+	theApp.CheckUpdate(lpParam);		//检查更新
+    return 0;
 }
 
 UINT CTrafficMonitorApp::InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam)
@@ -825,13 +846,13 @@ BOOL CTrafficMonitorApp::InitInstance()
 #ifndef _DEBUG		//DEBUG下不在启动时检查更新
 	if (m_general_data.check_update_when_start)
 	{
-		m_pUpdateThread = AfxBeginThread(CheckUpdateThreadFunc, NULL);
+        CheckUpdateInThread(false);
 	}
 #endif // !_DEBUG
 
 #ifndef WITHOUT_TEMPERATURE
     //启动初始化OpenHardwareMonitor的线程。由于OpenHardwareMonitor初始化需要一定的时间，为了防止启动时程序卡顿，将其放到后台线程中处理
-    m_pMonitorInitThread = AfxBeginThread(InitOpenHardwareMonitorLibThreadFunc, NULL);
+    AfxBeginThread(InitOpenHardwareMonitorLibThreadFunc, NULL);
 #endif
 
     //执行测试代码

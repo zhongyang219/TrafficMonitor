@@ -1622,6 +1622,8 @@ void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
 
 	pMenu->EnableMenuItem(ID_SELECT_ALL_CONNECTION, MF_BYCOMMAND | (theApp.m_general_data.show_all_interface? MF_GRAYED : MF_ENABLED));
 
+    pMenu->EnableMenuItem(ID_CHECK_UPDATE, MF_BYCOMMAND | (theApp.IsCheckingForUpdate() ? MF_GRAYED : MF_ENABLED));
+
 	//pMenu->SetDefaultItem(ID_NETWORK_INFO);
 }
 
@@ -2134,7 +2136,7 @@ void CTrafficMonitorDlg::OnUpdateAlowOutOfBorder(CCmdUI *pCmdUI)
 void CTrafficMonitorDlg::OnCheckUpdate()
 {
 	// TODO: 在此添加命令处理程序代码
-	theApp.CheckUpdate(true);
+	theApp.CheckUpdateInThread(true);
 }
 
 
