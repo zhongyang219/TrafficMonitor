@@ -175,10 +175,10 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 		m_data.swap_up_down = false;
 		((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK))->SetCheck(FALSE);
 		GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK)->EnableWindow(FALSE);
-		GetDlgItem(IDC_SET_DEFAULT_BUTTON)->EnableWindow(FALSE);
+		//GetDlgItem(IDC_SET_DEFAULT_BUTTON)->EnableWindow(FALSE);
 	}
 
-	((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->SetCheck(m_data.specify_each_item_color);
+    CheckDlgButton(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK, m_data.specify_each_item_color);
 
 	m_double_click_combo.AddString(CCommon::LoadText(IDS_OPEN_CONNECTION_DETIAL));
 	m_double_click_combo.AddString(CCommon::LoadText(IDS_OPEN_HISTORICAL_TRAFFIC));
