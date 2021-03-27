@@ -432,15 +432,15 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
 
     //获取文本颜色
     int text_colors[MAIN_WND_COLOR_NUM]{};
-    if (m_skin_info.specify_each_item_color)
-    {
-        for (int i{}; i < MAIN_WND_COLOR_NUM && i < static_cast<int>(m_skin_info.text_color.size()); i++)
-            text_colors[i] = m_skin_info.text_color[i];
-    }
-    else if (!m_skin_info.text_color.empty())
+    if (theApp.m_main_wnd_data.specify_each_item_color)
     {
         for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
-            text_colors[i] = m_skin_info.text_color[0];
+            text_colors[i] = theApp.m_main_wnd_data.text_colors[i];
+    }
+    else
+    {
+        for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
+            text_colors[i] = theApp.m_main_wnd_data.text_colors[0];
     }
 
     //绘制文本
@@ -458,10 +458,10 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
 
             //文本颜色
             COLORREF text_color{};
-            if (m_skin_info.specify_each_item_color)
-                text_color = m_skin_info.TextColor(index);
+            if (index < MAIN_WND_COLOR_NUM)
+                text_color = text_colors[index];
             else
-                text_color = m_skin_info.TextColor(0);
+                text_color = text_colors[0];
 
             //绘制文本
             draw.DrawWindowText(rect, map_str[iter->first].GetString(), text_color, layout_item.align);

@@ -30,6 +30,10 @@ void CMainWndColorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_DOWN_STATIC, m_statics[1]);
 	DDX_Control(pDX, IDC_CPU_STATIC, m_statics[2]);
 	DDX_Control(pDX, IDC_MEMORY_STATIC, m_statics[3]);
+    DDX_Control(pDX, IDC_CPU_TEMP_STATIC, m_statics[4]);
+    DDX_Control(pDX, IDC_GPU_TEMP_STATIC, m_statics[5]);
+    DDX_Control(pDX, IDC_HDD_TEMP_STATIC, m_statics[6]);
+    DDX_Control(pDX, IDC_MBD_TEMP_STATIC, m_statics[7]);
 }
 
 
@@ -46,8 +50,7 @@ BOOL CMainWndColorDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
-	//for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
-	for (int i{}; i < 4; i++)
+	for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
 	{
 		m_statics[i].SetFillColor(m_colors[i]);
 		m_statics[i].SetLinkCursor();
@@ -76,6 +79,18 @@ afx_msg LRESULT CMainWndColorDlg::OnStaticClicked(WPARAM wParam, LPARAM lParam)
 	case IDC_MEMORY_STATIC:
 		index = 3;
 		break;
+    case IDC_CPU_TEMP_STATIC:
+        index = 4;
+        break;
+    case IDC_GPU_TEMP_STATIC:
+        index = 5;
+        break;
+    case IDC_HDD_TEMP_STATIC:
+        index = 6;
+        break;
+    case IDC_MBD_TEMP_STATIC:
+        index = 7;
+        break;
 	default:
 		return 0;
 	}
