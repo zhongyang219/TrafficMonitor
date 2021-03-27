@@ -6,6 +6,7 @@
 #include "MainWndSettingsDlg.h"
 #include "afxdialogex.h"
 #include "CMFCColorDialogEx.h"
+#include "DisplayTextSettingDlg.h"
 
 // CMainWndSettingsDlg 对话框
 
@@ -88,12 +89,12 @@ void CMainWndSettingsDlg::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CTabDlg)
-	ON_EN_CHANGE(IDC_UPLOAD_EDIT, &CMainWndSettingsDlg::OnEnChangeUploadEdit)
-	ON_EN_CHANGE(IDC_DOWNLOAD_EDIT, &CMainWndSettingsDlg::OnEnChangeDownloadEdit)
-	ON_EN_CHANGE(IDC_CPU_EDIT, &CMainWndSettingsDlg::OnEnChangeCpuEdit)
-	ON_EN_CHANGE(IDC_MEMORY_EDIT, &CMainWndSettingsDlg::OnEnChangeMemoryEdit)
+	//ON_EN_CHANGE(IDC_UPLOAD_EDIT, &CMainWndSettingsDlg::OnEnChangeUploadEdit)
+	//ON_EN_CHANGE(IDC_DOWNLOAD_EDIT, &CMainWndSettingsDlg::OnEnChangeDownloadEdit)
+	//ON_EN_CHANGE(IDC_CPU_EDIT, &CMainWndSettingsDlg::OnEnChangeCpuEdit)
+	//ON_EN_CHANGE(IDC_MEMORY_EDIT, &CMainWndSettingsDlg::OnEnChangeMemoryEdit)
 	//ON_BN_CLICKED(IDC_SET_COLOR_BUTTON1, &CMainWndSettingsDlg::OnBnClickedSetColorButton1)
-	ON_BN_CLICKED(IDC_SET_DEFAULT_BUTTON, &CMainWndSettingsDlg::OnBnClickedSetDefaultButton)
+	//ON_BN_CLICKED(IDC_SET_DEFAULT_BUTTON, &CMainWndSettingsDlg::OnBnClickedSetDefaultButton)
 	ON_BN_CLICKED(IDC_SET_FONT_BUTTON, &CMainWndSettingsDlg::OnBnClickedSetFontButton)
 	ON_BN_CLICKED(IDC_SWITCH_UP_DOWN_CHECK, &CMainWndSettingsDlg::OnBnClickedSwitchUpDownCheck)
 	ON_BN_CLICKED(IDC_FULLSCREEN_HIDE_CHECK, &CMainWndSettingsDlg::OnBnClickedFullscreenHideCheck)
@@ -109,6 +110,7 @@ BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CTabDlg)
 	ON_BN_CLICKED(IDC_UNIT_BIT_RADIO, &CMainWndSettingsDlg::OnBnClickedUnitBitRadio)
     ON_BN_CLICKED(IDC_SHOW_TOOL_TIP_CHK, &CMainWndSettingsDlg::OnBnClickedShowToolTipChk)
     ON_BN_CLICKED(IDC_BROWSE_BUTTON, &CMainWndSettingsDlg::OnBnClickedBrowseButton)
+    ON_BN_CLICKED(IDC_DISPLAY_TEXT_SETTING_BUTTON, &CMainWndSettingsDlg::OnBnClickedDisplayTextSettingButton)
 END_MESSAGE_MAP()
 
 
@@ -129,10 +131,10 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 	m_font_size_edit.SetRange(5, 72);
 	m_font_size_edit.SetValue(m_data.font.size);
 
-	SetDlgItemText(IDC_UPLOAD_EDIT, m_data.disp_str.Get(TDI_UP).c_str());
-	SetDlgItemText(IDC_DOWNLOAD_EDIT, m_data.disp_str.Get(TDI_DOWN).c_str());
-	SetDlgItemText(IDC_CPU_EDIT, m_data.disp_str.Get(TDI_CPU).c_str());
-	SetDlgItemText(IDC_MEMORY_EDIT, m_data.disp_str.Get(TDI_MEMORY).c_str());
+	//SetDlgItemText(IDC_UPLOAD_EDIT, m_data.disp_str.Get(TDI_UP).c_str());
+	//SetDlgItemText(IDC_DOWNLOAD_EDIT, m_data.disp_str.Get(TDI_DOWN).c_str());
+	//SetDlgItemText(IDC_CPU_EDIT, m_data.disp_str.Get(TDI_CPU).c_str());
+	//SetDlgItemText(IDC_MEMORY_EDIT, m_data.disp_str.Get(TDI_MEMORY).c_str());
 
 	((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK))->SetCheck(m_data.swap_up_down);
 	((CButton*)GetDlgItem(IDC_FULLSCREEN_HIDE_CHECK))->SetCheck(m_data.hide_main_wnd_when_fullscreen);
@@ -165,10 +167,11 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 
 	if (m_text_disable)
 	{
-		GetDlgItem(IDC_UPLOAD_EDIT)->EnableWindow(FALSE);
-		GetDlgItem(IDC_DOWNLOAD_EDIT)->EnableWindow(FALSE);
-		GetDlgItem(IDC_CPU_EDIT)->EnableWindow(FALSE);
-		GetDlgItem(IDC_MEMORY_EDIT)->EnableWindow(FALSE);
+		//GetDlgItem(IDC_UPLOAD_EDIT)->EnableWindow(FALSE);
+		//GetDlgItem(IDC_DOWNLOAD_EDIT)->EnableWindow(FALSE);
+		//GetDlgItem(IDC_CPU_EDIT)->EnableWindow(FALSE);
+		//GetDlgItem(IDC_MEMORY_EDIT)->EnableWindow(FALSE);
+        EnableDlgCtrl(IDC_DISPLAY_TEXT_SETTING_BUTTON, false);
 		m_data.swap_up_down = false;
 		((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK))->SetCheck(FALSE);
 		GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK)->EnableWindow(FALSE);
@@ -199,74 +202,74 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 }
 
 
-void CMainWndSettingsDlg::OnEnChangeUploadEdit()
-{
-	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
-	// 函数并调用 CRichEditCtrl().SetEventMask()，
-	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+//void CMainWndSettingsDlg::OnEnChangeUploadEdit()
+//{
+//	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+//	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
+//	// 函数并调用 CRichEditCtrl().SetEventMask()，
+//	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+//
+//	// TODO:  在此添加控件通知处理程序代码
+//	CString tmp;
+//	GetDlgItemText(IDC_UPLOAD_EDIT, tmp);
+//	m_data.disp_str.Get(TDI_UP) = tmp;
+//}
+//
+//
+//void CMainWndSettingsDlg::OnEnChangeDownloadEdit()
+//{
+//	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+//	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
+//	// 函数并调用 CRichEditCtrl().SetEventMask()，
+//	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+//
+//	// TODO:  在此添加控件通知处理程序代码
+//	CString tmp;
+//	GetDlgItemText(IDC_DOWNLOAD_EDIT, tmp);
+//	m_data.disp_str.Get(TDI_DOWN) = tmp;
+//}
+//
+//
+//void CMainWndSettingsDlg::OnEnChangeCpuEdit()
+//{
+//	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+//	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
+//	// 函数并调用 CRichEditCtrl().SetEventMask()，
+//	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+//
+//	// TODO:  在此添加控件通知处理程序代码
+//	CString tmp;
+//	GetDlgItemText(IDC_CPU_EDIT, tmp);
+//	m_data.disp_str.Get(TDI_CPU) = tmp;
+//}
+//
+//
+//void CMainWndSettingsDlg::OnEnChangeMemoryEdit()
+//{
+//	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+//	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
+//	// 函数并调用 CRichEditCtrl().SetEventMask()，
+//	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+//
+//	// TODO:  在此添加控件通知处理程序代码
+//	CString tmp;
+//	GetDlgItemText(IDC_MEMORY_EDIT, tmp);
+//	m_data.disp_str.Get(TDI_MEMORY) = tmp;
+//}
 
-	// TODO:  在此添加控件通知处理程序代码
-	CString tmp;
-	GetDlgItemText(IDC_UPLOAD_EDIT, tmp);
-	m_data.disp_str.Get(TDI_UP) = tmp;
-}
 
-
-void CMainWndSettingsDlg::OnEnChangeDownloadEdit()
-{
-	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
-	// 函数并调用 CRichEditCtrl().SetEventMask()，
-	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
-
-	// TODO:  在此添加控件通知处理程序代码
-	CString tmp;
-	GetDlgItemText(IDC_DOWNLOAD_EDIT, tmp);
-	m_data.disp_str.Get(TDI_DOWN) = tmp;
-}
-
-
-void CMainWndSettingsDlg::OnEnChangeCpuEdit()
-{
-	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
-	// 函数并调用 CRichEditCtrl().SetEventMask()，
-	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
-
-	// TODO:  在此添加控件通知处理程序代码
-	CString tmp;
-	GetDlgItemText(IDC_CPU_EDIT, tmp);
-	m_data.disp_str.Get(TDI_CPU) = tmp;
-}
-
-
-void CMainWndSettingsDlg::OnEnChangeMemoryEdit()
-{
-	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CTabDlg::OnInitDialog()
-	// 函数并调用 CRichEditCtrl().SetEventMask()，
-	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
-
-	// TODO:  在此添加控件通知处理程序代码
-	CString tmp;
-	GetDlgItemText(IDC_MEMORY_EDIT, tmp);
-	m_data.disp_str.Get(TDI_MEMORY) = tmp;
-}
-
-
-void CMainWndSettingsDlg::OnBnClickedSetDefaultButton()
-{
-	// TODO: 在此添加控件通知处理程序代码
-	m_data.disp_str.Get(TDI_UP) = CCommon::LoadText(IDS_UPLOAD_DISP, _T(": "));
-	m_data.disp_str.Get(TDI_DOWN) = CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": "));
-	m_data.disp_str.Get(TDI_CPU) = L"CPU: ";
-	m_data.disp_str.Get(TDI_MEMORY) = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
-	SetDlgItemText(IDC_UPLOAD_EDIT, m_data.disp_str.Get(TDI_UP).c_str());
-	SetDlgItemText(IDC_DOWNLOAD_EDIT, m_data.disp_str.Get(TDI_DOWN).c_str());
-	SetDlgItemText(IDC_CPU_EDIT, m_data.disp_str.Get(TDI_CPU).c_str());
-	SetDlgItemText(IDC_MEMORY_EDIT, m_data.disp_str.Get(TDI_MEMORY).c_str());
-}
+//void CMainWndSettingsDlg::OnBnClickedSetDefaultButton()
+//{
+//	// TODO: 在此添加控件通知处理程序代码
+//	m_data.disp_str.Get(TDI_UP) = CCommon::LoadText(IDS_UPLOAD_DISP, _T(": "));
+//	m_data.disp_str.Get(TDI_DOWN) = CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": "));
+//	m_data.disp_str.Get(TDI_CPU) = L"CPU: ";
+//	m_data.disp_str.Get(TDI_MEMORY) = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
+//	SetDlgItemText(IDC_UPLOAD_EDIT, m_data.disp_str.Get(TDI_UP).c_str());
+//	SetDlgItemText(IDC_DOWNLOAD_EDIT, m_data.disp_str.Get(TDI_DOWN).c_str());
+//	SetDlgItemText(IDC_CPU_EDIT, m_data.disp_str.Get(TDI_CPU).c_str());
+//	SetDlgItemText(IDC_MEMORY_EDIT, m_data.disp_str.Get(TDI_MEMORY).c_str());
+//}
 
 
 void CMainWndSettingsDlg::OnBnClickedSetFontButton()
@@ -476,4 +479,12 @@ void CMainWndSettingsDlg::OnBnClickedBrowseButton()
         m_data.double_click_exe = fileDlg.GetPathName();
         SetDlgItemText(IDC_EXE_PATH_EDIT, m_data.double_click_exe.c_str());
     }
+}
+
+
+void CMainWndSettingsDlg::OnBnClickedDisplayTextSettingButton()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    CDisplayTextSettingDlg dlg(m_data.disp_str, true);
+    dlg.DoModal();
 }

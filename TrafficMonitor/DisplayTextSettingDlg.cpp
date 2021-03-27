@@ -10,8 +10,8 @@
 
 IMPLEMENT_DYNAMIC(CDisplayTextSettingDlg, CBaseDialog)
 
-CDisplayTextSettingDlg::CDisplayTextSettingDlg(DispStrings& display_texts, CWnd* pParent /*=nullptr*/)
-	: CBaseDialog(IDD_DISPLAY_TEXT_SETTINGS_DIALOG, pParent), m_display_texts(display_texts)
+CDisplayTextSettingDlg::CDisplayTextSettingDlg(DispStrings& display_texts, bool main_window_text, CWnd* pParent /*=nullptr*/)
+	: CBaseDialog(IDD_DISPLAY_TEXT_SETTINGS_DIALOG, pParent), m_display_texts(display_texts), m_main_window_text(main_window_text)
 {
 
 }
@@ -125,8 +125,16 @@ void CDisplayTextSettingDlg::OnOK()
 void CDisplayTextSettingDlg::OnBnClickedRestoreDefaultButton()
 {
     // TODO: 在此添加控件通知处理程序代码
-    m_list_ctrl.SetItemText(0, 1, _T("↑: "));
-    m_list_ctrl.SetItemText(1, 1, _T("↓: "));
+    if (m_main_window_text)
+    {
+        m_list_ctrl.SetItemText(0, 1, CCommon::LoadText(IDS_UPLOAD_DISP, _T(": ")));
+        m_list_ctrl.SetItemText(1, 1, CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": ")));
+    }
+    else
+    {
+        m_list_ctrl.SetItemText(0, 1, _T("↑: "));
+        m_list_ctrl.SetItemText(1, 1, _T("↓: "));
+    }
     m_list_ctrl.SetItemText(2, 1, _T("CPU: "));
     m_list_ctrl.SetItemText(3, 1, CCommon::LoadText(IDS_MEMORY_DISP, _T(": ")));
     m_list_ctrl.SetItemText(4, 1, _T("CPU: "));
