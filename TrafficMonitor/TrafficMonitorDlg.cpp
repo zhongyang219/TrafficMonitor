@@ -2277,6 +2277,7 @@ afx_msg LRESULT CTrafficMonitorDlg::OnDpichanged(WPARAM wParam, LPARAM lParam)
 
     LoadSkinLayout();   //根据当前选择的皮肤获取布局数据
     SetItemPosition();  //初始化窗口位置
+    LoadBackGroundImage();
     SetTextFont();      //重新加载字体
     Invalidate(FALSE);  //重绘界面
 
