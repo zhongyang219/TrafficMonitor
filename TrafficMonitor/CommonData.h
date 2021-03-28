@@ -61,10 +61,11 @@ enum DisplayItem
 	TDI_DOWN = 1 << 1,
 	TDI_CPU = 1 << 2,
 	TDI_MEMORY = 1 << 3,
-    TDI_CPU_TEMP = 1 << 4,
-    TDI_GPU_TEMP = 1 << 5,
-    TDI_HDD_TEMP = 1 << 6,
-    TDI_MAIN_BOARD_TEMP = 1 << 7
+    TDI_GPU_USAGE = 1 << 4,
+    TDI_CPU_TEMP = 1 << 5,
+    TDI_GPU_TEMP = 1 << 6,
+    TDI_HDD_TEMP = 1 << 7,
+    TDI_MAIN_BOARD_TEMP = 1 << 8
 };
 
 //所有显示项目的集合

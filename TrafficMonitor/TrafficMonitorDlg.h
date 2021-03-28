@@ -207,4 +207,6 @@ public:
 protected:
     afx_msg LRESULT OnDpichanged(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnTaskbarWndClosed(WPARAM wParam, LPARAM lParam);
+public:
+    afx_msg void OnShowGpuUsage();
 };

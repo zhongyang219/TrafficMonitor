@@ -103,6 +103,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_WM_PAINT()
     ON_MESSAGE(WM_DPICHANGED, &CTrafficMonitorDlg::OnDpichanged)
     ON_MESSAGE(WM_TASKBAR_WND_CLOSED, &CTrafficMonitorDlg::OnTaskbarWndClosed)
+    ON_COMMAND(ID_SHOW_GPU, &CTrafficMonitorDlg::OnShowGpuUsage)
 END_MESSAGE_MAP()
 
 
@@ -994,6 +995,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             theApp.m_gpu_temperature = theApp.m_pMonitor->GpuTemperature();
             theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
             theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
+            theApp.m_gpu_usage = theApp.m_pMonitor->GpuUsage();
         }
 #endif
 
@@ -2286,4 +2288,11 @@ afx_msg LRESULT CTrafficMonitorDlg::OnTaskbarWndClosed(WPARAM wParam, LPARAM lPa
         theApp.m_cfg_data.m_show_notify_icon = true;
     }
     return 0;
+}
+
+
+void CTrafficMonitorDlg::OnShowGpuUsage()
+{
+    // TODO: 在此添加命令处理程序代码
+    TaskbarShowHideItem(TDI_GPU_USAGE);
 }

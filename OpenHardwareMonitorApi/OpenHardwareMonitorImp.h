@@ -18,9 +18,11 @@ namespace OpenHardwareMonitorApi {
         virtual float GpuTemperature() override;
         virtual float HDDTemperature() override;
         virtual float MainboardTemperature() override;
+        virtual float GpuUsage() override;
 
     private:
         bool GetHardwareTemperature(IHardware^ hardware, float& temperature);
+        bool GetGpuUsage(IHardware^ hardware, float& gpu_usage);
 
     private:
         float m_cpu_temperature{};
@@ -28,6 +30,8 @@ namespace OpenHardwareMonitorApi {
         float m_gpu_ati_temperature{};
         float m_hdd_temperature{};
         float m_main_board_temperature{};
+        float m_gpu_nvidia_usage{};
+        float m_gpu_ati_usage{};
     };
 
     //一个单实例类

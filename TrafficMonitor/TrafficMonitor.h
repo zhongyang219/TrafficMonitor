@@ -49,6 +49,7 @@ public:
     float m_gpu_temperature{};  //显卡温度
     float m_hdd_temperature{};  //硬盘温度
     float m_main_board_temperature{};    //主板温度
+    int m_gpu_usage{};      //显卡利用率
 
 	__int64 m_today_up_traffic{};	//今天已使用的上传流量
 	__int64 m_today_down_traffic{};	//今天已使用的下载流量

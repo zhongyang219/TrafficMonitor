@@ -76,6 +76,9 @@ BOOL CDisplayTextSettingDlg::OnInitDialog()
         case TDI_MEMORY:
             item_name = CCommon::LoadText(IDS_MEMORY);
             break;
+        case TDI_GPU_USAGE:
+            item_name = CCommon::LoadText(IDS_GPU_DISP);
+            break;
 #ifndef WITHOUT_TEMPERATURE
         case TDI_CPU_TEMP:
             item_name = CCommon::LoadText(IDS_CPU_TEMPERATURE);
@@ -117,11 +120,12 @@ void CDisplayTextSettingDlg::OnOK()
     m_display_texts.Get(TDI_DOWN) = m_list_ctrl.GetItemText(1, 1).GetString();
     m_display_texts.Get(TDI_CPU) = m_list_ctrl.GetItemText(2, 1).GetString();
     m_display_texts.Get(TDI_MEMORY) = m_list_ctrl.GetItemText(3, 1).GetString();
+    m_display_texts.Get(TDI_GPU_USAGE) = m_list_ctrl.GetItemText(4, 1).GetString();
 #ifndef WITHOUT_TEMPERATURE
-    m_display_texts.Get(TDI_CPU_TEMP) = m_list_ctrl.GetItemText(4, 1).GetString();
-    m_display_texts.Get(TDI_GPU_TEMP) = m_list_ctrl.GetItemText(5, 1).GetString();
-    m_display_texts.Get(TDI_HDD_TEMP) = m_list_ctrl.GetItemText(6, 1).GetString();
-    m_display_texts.Get(TDI_MAIN_BOARD_TEMP) = m_list_ctrl.GetItemText(7, 1).GetString();
+    m_display_texts.Get(TDI_CPU_TEMP) = m_list_ctrl.GetItemText(5, 1).GetString();
+    m_display_texts.Get(TDI_GPU_TEMP) = m_list_ctrl.GetItemText(6, 1).GetString();
+    m_display_texts.Get(TDI_HDD_TEMP) = m_list_ctrl.GetItemText(7, 1).GetString();
+    m_display_texts.Get(TDI_MAIN_BOARD_TEMP) = m_list_ctrl.GetItemText(8, 1).GetString();
 #endif
 
     CBaseDialog::OnOK();

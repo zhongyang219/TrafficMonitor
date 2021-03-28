@@ -107,6 +107,7 @@ public:
 	static bool IsShowDown();
 	static bool IsShowCpu();
 	static bool IsShowMemory();
+	static bool IsShowGpu();
     static bool IsShowCpuTemperature();
     static bool IsShowGpuTemperature();
     static bool IsShowHddTemperature();
