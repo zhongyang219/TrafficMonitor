@@ -171,6 +171,18 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
 
     m_monitor_time_span_ori = m_data.monitor_time_span;
 
+    //不含温度监控的版本，禁用温度相关的控件
+#ifdef WITHOUT_TEMPERATURE
+    EnableDlgCtrl(IDC_CPU_TEMP_TIP_CHECK, false);
+    EnableDlgCtrl(IDC_CPU_TEMP_TIP_EDIT, false);
+    EnableDlgCtrl(IDC_GPU_TEMP_TIP_CHECK, false);
+    EnableDlgCtrl(IDC_GPU_TEMP_TIP_EDIT, false);
+    EnableDlgCtrl(IDC_HDD_TEMP_TIP_CHECK, false);
+    EnableDlgCtrl(IDC_HDD_TIP_EDIT, false);
+    EnableDlgCtrl(IDC_MBD_TEMP_TIP_CHECK, false);
+    EnableDlgCtrl(IDC_MBD_TEMP_TIP_EDIT, false);
+#endif
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
 }

@@ -292,3 +292,6 @@ __pycache__/
 *.dat
 *.bak
 /TrafficMonitor/skins/test*
+[Dd]ebug (without temperature)/
+[Rr]elease (without temperature)/
+

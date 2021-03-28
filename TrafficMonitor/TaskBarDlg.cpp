@@ -519,26 +519,28 @@ CString CTaskBarDlg::GetMouseTipsInfo()
 			CCommon::KBytesToString(theApp.m_total_memory));
 		tip_info += temp;
 	}
+#ifndef WITHOUT_TEMPERATURE
     if (!IsShowCpuTemperature())
     {
-        temp.Format(_T("\r\n%s: %.1f ℃"), CCommon::LoadText(IDS_CPU_TEMPERATURE), theApp.m_cpu_temperature);
+        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_taskbar_data));
         tip_info += temp;
     }
     if (!IsShowGpuTemperature())
     {
-        temp.Format(_T("\r\n%s: %d ℃"), CCommon::LoadText(IDS_GPU_TEMPERATURE), static_cast<int>(theApp.m_gpu_temperature));
+        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_GPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_gpu_temperature, theApp.m_taskbar_data));
         tip_info += temp;
     }
     if (!IsShowHddTemperature())
     {
-        temp.Format(_T("\r\n%s: %d ℃"), CCommon::LoadText(IDS_HDD_TEMPERATURE), static_cast<int>(theApp.m_hdd_temperature));
+        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_HDD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_hdd_temperature, theApp.m_taskbar_data));
         tip_info += temp;
     }
     if (!IsShowMainboardTemperature())
     {
-        temp.Format(_T("\r\n%s: %d ℃"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), static_cast<int>(theApp.m_main_board_temperature));
+        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_main_board_temperature, theApp.m_taskbar_data));
         tip_info += temp;
     }
+#endif
     return tip_info;
 }
 
