@@ -71,8 +71,8 @@ BOOL CBaseDialog::OnInitDialog()
 	{
 		CRect rect;
 		GetWindowRect(rect);
-		m_min_size.cx = rect.Width();
-		m_min_size.cy = rect.Height();
+		m_min_size.cx = rect.Width() * 96 / theApp.GetDpi();
+		m_min_size.cy = rect.Height() * 96 / theApp.GetDpi();
 	}
 
 	//载入设置
@@ -102,8 +102,8 @@ void CBaseDialog::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	//限制窗口最小大小
-	lpMMI->ptMinTrackSize.x = m_min_size.cx;		//设置最小宽度
-	lpMMI->ptMinTrackSize.y = m_min_size.cy;		//设置最小高度
+	lpMMI->ptMinTrackSize.x = theApp.DPI(m_min_size.cx);		//设置最小宽度
+	lpMMI->ptMinTrackSize.y = theApp.DPI(m_min_size.cy);		//设置最小高度
 
 	CDialog::OnGetMinMaxInfo(lpMMI);
 }

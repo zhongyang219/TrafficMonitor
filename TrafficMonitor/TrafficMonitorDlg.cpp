@@ -664,7 +664,7 @@ void CTrafficMonitorDlg::SetTextFont()
 {
 	if (m_font.m_hObject)	//如果m_font已经关联了一个字体资源对象，则释放它
 		m_font.DeleteObject();
-    theApp.m_main_wnd_data.font.Create(m_font);
+    theApp.m_main_wnd_data.font.Create(m_font, theApp.GetDpi());
 }
 
 bool CTrafficMonitorDlg::IsTaskbarWndValid() const
@@ -2274,6 +2274,12 @@ afx_msg LRESULT CTrafficMonitorDlg::OnDpichanged(WPARAM wParam, LPARAM lParam)
         //根据新的DPI重新设置任务栏窗口字体
         m_tBarDlg->SetTextFont();
     }
+
+    LoadSkinLayout();   //根据当前选择的皮肤获取布局数据
+    SetItemPosition();  //初始化窗口位置
+    SetTextFont();      //重新加载字体
+    Invalidate(FALSE);  //重绘界面
+
     return 0;
 }
 

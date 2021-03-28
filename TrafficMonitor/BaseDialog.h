@@ -25,7 +25,7 @@ private:
 	void SaveConfig() const;
 
 private:
-	CSize m_min_size{};
+	CSize m_min_size{};     //窗口的最小大小（以 96dpi 的大小保存）
 	CSize m_window_size{ -1, -1 };
 
 protected:
