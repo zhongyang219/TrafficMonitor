@@ -154,11 +154,14 @@
     <Filter Include="源文件和头文件\公共的类\FilePathHelper">
       <UniqueIdentifier>{2ee3ad9e-4dc0-4ca4-91b1-2c6225bebd63}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件和头文件\派生的控件类\CComboBoxEx">
-      <UniqueIdentifier>{abe84b35-de18-4853-9545-65354fb3d22f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件和头文件\公共的类\auto_start_helper">
       <UniqueIdentifier>{20b159a6-36ec-4d11-97c3-86e7c1501088}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\派生的控件类\ColorSettingListCtrl">
+      <UniqueIdentifier>{68b8c93d-e1b6-4d3d-a8af-5a19d413a96e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\派生的控件类\CComboBox2">
+      <UniqueIdentifier>{abe84b35-de18-4853-9545-65354fb3d22f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -334,11 +337,14 @@
     <ClInclude Include="FilePathHelper.h">
       <Filter>源文件和头文件\公共的类\FilePathHelper</Filter>
     </ClInclude>
-    <ClInclude Include="ComboBox2.h">
-      <Filter>源文件和头文件\头文件</Filter>
-    </ClInclude>
     <ClInclude Include="auto_start_helper.h">
       <Filter>源文件和头文件\公共的类\auto_start_helper</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorSettingListCtrl.h">
+      <Filter>源文件和头文件\派生的控件类\ColorSettingListCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="ComboBox2.h">
+      <Filter>源文件和头文件\派生的控件类\CComboBox2</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -498,11 +504,14 @@
     <ClCompile Include="FilePathHelper.cpp">
       <Filter>源文件和头文件\公共的类\FilePathHelper</Filter>
     </ClCompile>
-    <ClCompile Include="ComboBox2.cpp">
-      <Filter>源文件和头文件</Filter>
-    </ClCompile>
     <ClCompile Include="auto_start_helper.cpp">
       <Filter>源文件和头文件\公共的类\auto_start_helper</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorSettingListCtrl.cpp">
+      <Filter>源文件和头文件\派生的控件类\ColorSettingListCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="ComboBox2.cpp">
+      <Filter>源文件和头文件\派生的控件类\CComboBox2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

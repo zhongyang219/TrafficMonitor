@@ -246,7 +246,7 @@ struct PublicSettingData
 	wstring double_click_exe;	//鼠标双击动作为打开指定应用程序时，打开的程序路径
 };
 
-#define MAIN_WND_COLOR_NUM 8		//主窗口颜色数量
+#define MAIN_WND_COLOR_NUM 9		//主窗口颜色数量
 //选项设置中“主窗口设置”的数据
 struct MainWndSettingData : public PublicSettingData
 {
@@ -254,7 +254,7 @@ struct MainWndSettingData : public PublicSettingData
 	bool hide_main_wnd_when_fullscreen;		//有程序全屏运行时隐藏悬浮窗
 };
 
-#define TASKBAR_COLOR_NUM 16		//任务栏窗口颜色数量
+#define TASKBAR_COLOR_NUM 18		//任务栏窗口颜色数量
 //选项设置中“任务栏窗口设置”的数据
 struct TaskBarSettingData : public PublicSettingData
 {

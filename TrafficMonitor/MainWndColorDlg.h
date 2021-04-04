@@ -1,6 +1,7 @@
 #pragma once
 #include "ColorStatic.h"
 #include "afxwin.h"
+#include "ColorSettingListCtrl.h"
 
 // CMainWndColorDlg 对话框
 
@@ -20,9 +21,7 @@ public:
 #endif
 protected:
 	COLORREF m_colors[MAIN_WND_COLOR_NUM];
-
-	//控件变量
-	CColorStatic m_statics[MAIN_WND_COLOR_NUM];		//颜色控件
+    CColorSettingListCtrl m_list_ctrl;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
@@ -30,6 +29,5 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnInitDialog();
-protected:
-	afx_msg LRESULT OnStaticClicked(WPARAM wParam, LPARAM lParam);
+    afx_msg void OnNMDblclkList1(NMHDR *pNMHDR, LRESULT *pResult);
 };

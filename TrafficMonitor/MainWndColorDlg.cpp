@@ -25,20 +25,13 @@ CMainWndColorDlg::~CMainWndColorDlg()
 
 void CMainWndColorDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_UP_STATIC, m_statics[0]);
-	DDX_Control(pDX, IDC_DOWN_STATIC, m_statics[1]);
-	DDX_Control(pDX, IDC_CPU_STATIC, m_statics[2]);
-	DDX_Control(pDX, IDC_MEMORY_STATIC, m_statics[3]);
-    DDX_Control(pDX, IDC_CPU_TEMP_STATIC, m_statics[4]);
-    DDX_Control(pDX, IDC_GPU_TEMP_STATIC, m_statics[5]);
-    DDX_Control(pDX, IDC_HDD_TEMP_STATIC, m_statics[6]);
-    DDX_Control(pDX, IDC_MBD_TEMP_STATIC, m_statics[7]);
+    CDialog::DoDataExchange(pDX);
+    DDX_Control(pDX, IDC_LIST1, m_list_ctrl);
 }
 
 
 BEGIN_MESSAGE_MAP(CMainWndColorDlg, CDialog)
-	ON_MESSAGE(WM_STATIC_CLICKED, &CMainWndColorDlg::OnStaticClicked)
+    ON_NOTIFY(NM_DBLCLK, IDC_LIST1, &CMainWndColorDlg::OnNMDblclkList1)
 END_MESSAGE_MAP()
 
 
@@ -50,56 +43,85 @@ BOOL CMainWndColorDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
-	for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
-	{
-		m_statics[i].SetFillColor(m_colors[i]);
-		m_statics[i].SetLinkCursor();
-	}
+        //初始化列表控件
+    CRect rect;
+    m_list_ctrl.GetClientRect(rect);
+    m_list_ctrl.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
+    int width0, width1;
+    width0 = rect.Width() * 2 / 3;
+    width1 = rect.Width() - width0 - theApp.DPI(20) - 1;
+    m_list_ctrl.InsertColumn(0, CCommon::LoadText(IDS_ITEM), LVCFMT_LEFT, width0);		//插入第0列
+    m_list_ctrl.InsertColumn(1, CCommon::LoadText(IDS_COLOR), LVCFMT_LEFT, width1);		//插入第1列
+    m_list_ctrl.SetDrawItemRangMargin(theApp.DPI(2));
+
+    //向列表中插入行
+    for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
+    {
+        CString item_name;
+        switch (i)
+        {
+        case 0:
+            item_name = CCommon::LoadText(IDS_UPLOAD);
+            break;
+        case 1:
+            item_name = CCommon::LoadText(IDS_DOWNLOAD);
+            break;
+        case 2:
+            item_name = _T("CPU");
+            break;
+        case 3:
+            item_name = CCommon::LoadText(IDS_MEMORY);
+            break;
+        case 4:
+            item_name = CCommon::LoadText(IDS_GPU_DISP);
+            break;
+#ifndef WITHOUT_TEMPERATURE
+        case 5:
+            item_name = CCommon::LoadText(IDS_CPU_TEMPERATURE);
+            break;
+        case 6:
+            item_name = CCommon::LoadText(IDS_GPU_TEMPERATURE);
+            break;
+        case 7:
+            item_name = CCommon::LoadText(IDS_HDD_TEMPERATURE);
+            break;
+        case 8:
+            item_name = CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
+            break;
+#endif
+        default:
+            break;
+        }
+        if (!item_name.IsEmpty())
+        {
+            int index = m_list_ctrl.GetItemCount();
+            m_list_ctrl.InsertItem(index, item_name);
+            //m_list_ctrl.SetItemText(index, 1, iter->second.c_str());
+            m_list_ctrl.SetItemColor(index, 1, m_colors[i]);
+        }
+    }
+
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
 }
 
 
-afx_msg LRESULT CMainWndColorDlg::OnStaticClicked(WPARAM wParam, LPARAM lParam)
-{
-	int item_id = ::GetDlgCtrlID(((CWnd*)wParam)->m_hWnd);
-	int index{};
-	switch (item_id)
-	{
-	case IDC_UP_STATIC:
-		index = 0;
-		break;
-	case IDC_DOWN_STATIC:
-		index = 1;
-		break;
-	case IDC_CPU_STATIC:
-		index = 2;
-		break;
-	case IDC_MEMORY_STATIC:
-		index = 3;
-		break;
-    case IDC_CPU_TEMP_STATIC:
-        index = 4;
-        break;
-    case IDC_GPU_TEMP_STATIC:
-        index = 5;
-        break;
-    case IDC_HDD_TEMP_STATIC:
-        index = 6;
-        break;
-    case IDC_MBD_TEMP_STATIC:
-        index = 7;
-        break;
-	default:
-		return 0;
-	}
 
-	CMFCColorDialogEx colorDlg(m_colors[index], 0, this);
-	if (colorDlg.DoModal() == IDOK)
-	{
-		m_colors[index] = colorDlg.GetColor();
-		m_statics[index].SetFillColor(m_colors[index]);
-	}
-	return 0;
+void CMainWndColorDlg::OnNMDblclkList1(NMHDR *pNMHDR, LRESULT *pResult)
+{
+    LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+    // TODO: 在此添加控件通知处理程序代码
+    int index = pNMItemActivate->iItem;
+    if (index >= 0 && index < MAIN_WND_COLOR_NUM)
+    {
+        CMFCColorDialogEx colorDlg(m_colors[index], 0, this);
+        if (colorDlg.DoModal() == IDOK)
+        {
+            m_colors[index] = colorDlg.GetColor();
+            m_list_ctrl.SetItemColor(index, 1, m_colors[index]);
+        }
+    }
+
+    *pResult = 0;
 }
