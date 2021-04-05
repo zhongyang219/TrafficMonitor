@@ -19,7 +19,7 @@
 	<layout text_height="20" no_label="0">
 		<layout_l width="232" height="107">
 			<cpu x="14" y="3" width="106" align="0" show="1"/>
-			<memory x="90" y="3" width="106" align="0" show="1"/>
+			<memory x="88" y="3" width="106" align="0" show="1"/>
 			<gpu x="162" y="3" width="106" align="0" show="1"/>
 			<up x="14" y="27" width="106" align="0" show="1"/>
 			<down x="122" y="27" width="106" align="0" show="1"/>
@@ -30,7 +30,8 @@
 		</layout_l>
 		<layout_s width="232" height="50">
 			<cpu x="14" y="3" width="106" align="0" show="1"/>
-			<memory x="122" y="3" width="106" align="0" show="1"/>
+			<memory x="88" y="3" width="106" align="0" show="1"/>
+			<gpu x="162" y="3" width="106" align="0" show="1"/>
 			<up x="14" y="27" width="106" align="0" show="1"/>
 			<down x="122" y="27" width="106" align="0" show="1"/>
 		</layout_s>

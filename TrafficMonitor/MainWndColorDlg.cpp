@@ -103,6 +103,7 @@ BOOL CMainWndColorDlg::OnInitDialog()
             int index = m_list_ctrl.GetItemCount();
             m_list_ctrl.InsertItem(index, item_name);
             m_list_ctrl.SetItemColor(index, 1, m_colors[iter->first]);
+            m_list_ctrl.SetItemData(index, iter->first);
         }
     }
 
@@ -124,6 +125,7 @@ void CMainWndColorDlg::OnNMDblclkList1(NMHDR *pNMHDR, LRESULT *pResult)
     {
         color = colorDlg.GetColor();
         m_list_ctrl.SetItemColor(index, 1, color);
+        m_colors[static_cast<DisplayItem>(m_list_ctrl.GetItemData(index))] = color;
     }
 
     *pResult = 0;

@@ -1,4 +1,4 @@
-// TaskbarColorDlg.cpp : ÊµÏÖÎÄ¼þ
+ï»¿// TaskbarColorDlg.cpp : å®žçŽ°æ–‡ä»¶
 //
 
 #include "stdafx.h"
@@ -8,7 +8,7 @@
 #include "CMFCColorDialogEx.h"
 
 
-// CTaskbarColorDlg ¶Ô»°¿ò
+// CTaskbarColorDlg å¯¹è¯æ¡†
 
 IMPLEMENT_DYNAMIC(CTaskbarColorDlg, CBaseDialog)
 
@@ -38,18 +38,18 @@ BEGIN_MESSAGE_MAP(CTaskbarColorDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// CTaskbarColorDlg ÏûÏ¢´¦Àí³ÌÐò
+// CTaskbarColorDlg æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 
 BOOL CTaskbarColorDlg::OnInitDialog()
 {
 	CBaseDialog::OnInitDialog();
 
-	// TODO:  ÔÚ´ËÌí¼Ó¶îÍâµÄ³õÊ¼»¯
+	// TODO:  åœ¨æ­¤æ·»åŠ é¢å¤–çš„åˆå§‹åŒ–
 
-    SetIcon(theApp.GetMenuIcon(IDI_TASKBAR_WINDOW), FALSE);		// ÉèÖÃÐ¡Í¼±ê
+    SetIcon(theApp.GetMenuIcon(IDI_TASKBAR_WINDOW), FALSE);		// è®¾ç½®å°å›¾æ ‡
 
-    //³õÊ¼»¯ÁÐ±í¿Ø¼þ
+    //åˆå§‹åŒ–åˆ—è¡¨æŽ§ä»¶
     CRect rect;
     m_list_ctrl.GetClientRect(rect);
     m_list_ctrl.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
@@ -61,7 +61,7 @@ BOOL CTaskbarColorDlg::OnInitDialog()
     m_list_ctrl.InsertColumn(1, CCommon::LoadText(IDS_COLOR_VALUE), LVCFMT_LEFT, width2);
     m_list_ctrl.SetDrawItemRangMargin(theApp.DPI(2));
 
-    //ÏòÁÐ±íÖÐ²åÈëÐÐ
+    //å‘åˆ—è¡¨ä¸­æ’å…¥è¡Œ
     for (auto iter = m_colors.begin(); iter != m_colors.end(); ++iter)
     {
         CString item_name;
@@ -105,11 +105,12 @@ BOOL CTaskbarColorDlg::OnInitDialog()
             m_list_ctrl.InsertItem(index, item_name);
             m_list_ctrl.SetItemColor(index, 1, m_colors[iter->first].label);
             m_list_ctrl.SetItemColor(index, 2, m_colors[iter->first].value);
+            m_list_ctrl.SetItemData(index, iter->first);
         }
     }
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-				  // Òì³£: OCX ÊôÐÔÒ³Ó¦·µ»Ø FALSE
+				  // å¼‚å¸¸: OCX å±žæ€§é¡µåº”è¿”å›ž FALSE
 }
 
 
@@ -117,7 +118,7 @@ BOOL CTaskbarColorDlg::OnInitDialog()
 void CTaskbarColorDlg::OnNMDblclkList1(NMHDR *pNMHDR, LRESULT *pResult)
 {
     LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-    // TODO: ÔÚ´ËÌí¼Ó¿Ø¼þÍ¨Öª´¦Àí³ÌÐò´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ æŽ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
     int index = pNMItemActivate->iItem;
     int col = pNMItemActivate->iSubItem;
     if (col == 1 || col == 2)
@@ -128,6 +129,10 @@ void CTaskbarColorDlg::OnNMDblclkList1(NMHDR *pNMHDR, LRESULT *pResult)
         {
             color = colorDlg.GetColor();
             m_list_ctrl.SetItemColor(index, col, color);
+            if (col == 1)
+                m_colors[static_cast<DisplayItem>(m_list_ctrl.GetItemData(index))].label = color;
+            else
+                m_colors[static_cast<DisplayItem>(m_list_ctrl.GetItemData(index))].value = color;
         }
     }
 
