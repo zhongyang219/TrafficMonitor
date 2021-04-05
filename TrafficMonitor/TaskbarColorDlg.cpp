@@ -12,11 +12,9 @@
 
 IMPLEMENT_DYNAMIC(CTaskbarColorDlg, CDialog)
 
-CTaskbarColorDlg::CTaskbarColorDlg(COLORREF colors[TASKBAR_COLOR_NUM], CWnd* pParent /*=NULL*/)
-	: CDialog(IDD_TASKBAR_COLOR_DIALOG, pParent)
+CTaskbarColorDlg::CTaskbarColorDlg(const std::map<DisplayItem, TaskbarItemColor>& colors, CWnd* pParent /*=NULL*/)
+	: CDialog(IDD_TASKBAR_COLOR_DIALOG, pParent), m_colors(colors)
 {
-	for (int i{}; i < TASKBAR_COLOR_NUM; i++)
-		m_colors[i] = colors[i];
 }
 
 CTaskbarColorDlg::~CTaskbarColorDlg()
@@ -25,29 +23,13 @@ CTaskbarColorDlg::~CTaskbarColorDlg()
 
 void CTaskbarColorDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_UP_LABLE_STATIC, m_statics[0]);
-	DDX_Control(pDX, IDC_UP_VALUE_STATIC, m_statics[1]);
-	DDX_Control(pDX, IDC_DWON_LABLE_STATIC, m_statics[2]);
-	DDX_Control(pDX, IDC_DWON_VALUE_STATIC, m_statics[3]);
-	DDX_Control(pDX, IDC_CPU_LABLE_STATIC, m_statics[4]);
-	DDX_Control(pDX, IDC_CPU_VALUE_STATIC, m_statics[5]);
-	DDX_Control(pDX, IDC_MEMORY_LABLE_STATIC, m_statics[6]);
-	DDX_Control(pDX, IDC_MEMORY_VALUE_STATIC, m_statics[7]);
-
-    DDX_Control(pDX, IDC_CPU_TEMP_LABLE_STATIC, m_statics[8]);
-    DDX_Control(pDX, IDC_CPU_TEMP_VALUE_STATIC, m_statics[9]);
-    DDX_Control(pDX, IDC_GPU_TEMP_LABLE_STATIC, m_statics[10]);
-    DDX_Control(pDX, IDC_GPU_TEMP_VALUE_STATIC, m_statics[11]);
-    DDX_Control(pDX, IDC_HDD_TEMP_LABLE_STATIC, m_statics[12]);
-    DDX_Control(pDX, IDC_HDD_TEMP_VALUE_STATIC, m_statics[13]);
-    DDX_Control(pDX, IDC_MAIN_BOARD_TEMP_LABLE_STATIC, m_statics[14]);
-    DDX_Control(pDX, IDC_MAIN_BOARD_TEMP_VALUE_STATIC, m_statics[15]);
+    CDialog::DoDataExchange(pDX);
+    DDX_Control(pDX, IDC_LIST1, m_list_ctrl);
 }
 
 
 BEGIN_MESSAGE_MAP(CTaskbarColorDlg, CDialog)
-	ON_MESSAGE(WM_STATIC_CLICKED, &CTaskbarColorDlg::OnStaticClicked)
+    ON_NOTIFY(NM_DBLCLK, IDC_LIST1, &CTaskbarColorDlg::OnNMDblclkList1)
 END_MESSAGE_MAP()
 
 
@@ -59,80 +41,87 @@ BOOL CTaskbarColorDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
-	for (int i{}; i < TASKBAR_COLOR_NUM; i++)
-	{
-		m_statics[i].SetFillColor(m_colors[i]);
-		m_statics[i].SetLinkCursor();
-	}
+        //初始化列表控件
+    CRect rect;
+    m_list_ctrl.GetClientRect(rect);
+    m_list_ctrl.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
+    int width0 = rect.Width() /2;
+    int width1 = (rect.Width() - width0 - theApp.DPI(20) - 1) / 2;
+    int width2 = rect.Width() - width0 - width1 - theApp.DPI(20) - 1;
+    m_list_ctrl.InsertColumn(0, CCommon::LoadText(IDS_ITEM), LVCFMT_LEFT, width0);
+    m_list_ctrl.InsertColumn(1, CCommon::LoadText(IDS_COLOR_LABEL), LVCFMT_LEFT, width1);
+    m_list_ctrl.InsertColumn(1, CCommon::LoadText(IDS_COLOR_VALUE), LVCFMT_LEFT, width2);
+    m_list_ctrl.SetDrawItemRangMargin(theApp.DPI(2));
+
+    //向列表中插入行
+    for (auto iter = m_colors.begin(); iter != m_colors.end(); ++iter)
+    {
+        CString item_name;
+        switch (iter->first)
+        {
+        case TDI_UP:
+            item_name = CCommon::LoadText(IDS_UPLOAD);
+            break;
+        case TDI_DOWN:
+            item_name = CCommon::LoadText(IDS_DOWNLOAD);
+            break;
+        case TDI_CPU:
+            item_name = _T("CPU");
+            break;
+        case TDI_MEMORY:
+            item_name = CCommon::LoadText(IDS_MEMORY);
+            break;
+        case TDI_GPU_USAGE:
+            item_name = CCommon::LoadText(IDS_GPU_DISP);
+            break;
+#ifndef WITHOUT_TEMPERATURE
+        case TDI_CPU_TEMP:
+            item_name = CCommon::LoadText(IDS_CPU_TEMPERATURE);
+            break;
+        case TDI_GPU_TEMP:
+            item_name = CCommon::LoadText(IDS_GPU_TEMPERATURE);
+            break;
+        case TDI_HDD_TEMP:
+            item_name = CCommon::LoadText(IDS_HDD_TEMPERATURE);
+            break;
+        case TDI_MAIN_BOARD_TEMP:
+            item_name = CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
+            break;
+#endif
+        default:
+            break;
+        }
+        if (!item_name.IsEmpty())
+        {
+            int index = m_list_ctrl.GetItemCount();
+            m_list_ctrl.InsertItem(index, item_name);
+            m_list_ctrl.SetItemColor(index, 1, m_colors[iter->first].label);
+            m_list_ctrl.SetItemColor(index, 2, m_colors[iter->first].value);
+        }
+    }
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
 }
 
 
-afx_msg LRESULT CTaskbarColorDlg::OnStaticClicked(WPARAM wParam, LPARAM lParam)
-{
-	int item_id = ::GetDlgCtrlID(((CWnd*)wParam)->GetSafeHwnd());
-	int index{};
-	switch (item_id)
-	{
-	case IDC_UP_LABLE_STATIC:
-		index = 0;
-		break;
-	case IDC_UP_VALUE_STATIC:
-		index = 1;
-		break;
-	case IDC_DWON_LABLE_STATIC:
-		index = 2;
-		break;
-	case IDC_DWON_VALUE_STATIC:
-		index = 3;
-		break;
-	case IDC_CPU_LABLE_STATIC:
-		index = 4;
-		break;
-	case IDC_CPU_VALUE_STATIC:
-		index = 5;
-		break;
-	case IDC_MEMORY_LABLE_STATIC:
-		index = 6;
-		break;
-	case IDC_MEMORY_VALUE_STATIC:
-		index = 7;
-		break;
-	case IDC_CPU_TEMP_LABLE_STATIC:
-		index = 8;
-		break;
-	case IDC_CPU_TEMP_VALUE_STATIC:
-		index = 9;
-		break;
-	case IDC_GPU_TEMP_LABLE_STATIC:
-		index = 10;
-		break;
-	case IDC_GPU_TEMP_VALUE_STATIC:
-		index = 11;
-		break;
-	case IDC_HDD_TEMP_LABLE_STATIC:
-		index = 12;
-		break;
-	case IDC_HDD_TEMP_VALUE_STATIC:
-		index = 13;
-		break;
-	case IDC_MAIN_BOARD_TEMP_LABLE_STATIC:
-		index = 14;
-		break;
-	case IDC_MAIN_BOARD_TEMP_VALUE_STATIC:
-		index = 15;
-		break;
-	default:
-		return 0;
-	}
 
-	CMFCColorDialogEx colorDlg(m_colors[index], 0, this);
-	if (colorDlg.DoModal() == IDOK)
-	{
-		m_colors[index] = colorDlg.GetColor();
-		m_statics[index].SetFillColor(m_colors[index]);
-	}
-	return 0;
+void CTaskbarColorDlg::OnNMDblclkList1(NMHDR *pNMHDR, LRESULT *pResult)
+{
+    LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+    // TODO: 在此添加控件通知处理程序代码
+    int index = pNMItemActivate->iItem;
+    int col = pNMItemActivate->iSubItem;
+    if (col == 1 || col == 2)
+    {
+        COLORREF color = m_list_ctrl.GetItemColor(index, col);
+        CMFCColorDialogEx colorDlg(color, 0, this);
+        if (colorDlg.DoModal() == IDOK)
+        {
+            color = colorDlg.GetColor();
+            m_list_ctrl.SetItemColor(index, col, color);
+        }
+    }
+
+    *pResult = 0;
 }

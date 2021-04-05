@@ -12,11 +12,16 @@ CColorSettingListCtrl::~CColorSettingListCtrl()
 {
 }
 
-void CColorSettingListCtrl::SetItemColor(int row, int col, int color)
+void CColorSettingListCtrl::SetItemColor(int row, int col, COLORREF color)
 {
     m_colors[row][col] = color;
 }
 
+
+COLORREF CColorSettingListCtrl::GetItemColor(int row, int col)
+{
+    return m_colors[row][col];
+}
 
 BEGIN_MESSAGE_MAP(CColorSettingListCtrl, CListCtrl)
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, &CColorSettingListCtrl::OnNMCustomdraw)

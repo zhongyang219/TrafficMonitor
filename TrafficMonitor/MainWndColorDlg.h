@@ -10,17 +10,17 @@ class CMainWndColorDlg : public CDialog
 	DECLARE_DYNAMIC(CMainWndColorDlg)
 
 public:
-	CMainWndColorDlg(COLORREF colors[MAIN_WND_COLOR_NUM], CWnd* pParent = NULL);   // 标准构造函数
+	CMainWndColorDlg(const std::map<DisplayItem, COLORREF>& colors, CWnd* pParent = NULL);   // 标准构造函数
 	virtual ~CMainWndColorDlg();
 
-	const COLORREF* GetColors() const { return m_colors; }
+    const std::map<DisplayItem, COLORREF>& GetColors() const { return m_colors; }
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_MAIN_COLOR_DIALOG };
 #endif
 protected:
-	COLORREF m_colors[MAIN_WND_COLOR_NUM];
+    std::map<DisplayItem, COLORREF> m_colors;
     CColorSettingListCtrl m_list_ctrl;
 
 protected:

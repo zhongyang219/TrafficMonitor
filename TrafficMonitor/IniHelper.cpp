@@ -194,6 +194,71 @@ void CIniHelper::LoadFontData(const wchar_t * AppName, FontInfo & font, const Fo
 	font.strike_out = style[3];
 }
 
+void CIniHelper::LoadMainWndColors(const wchar_t * AppName, const wchar_t * KeyName, std::map<DisplayItem, COLORREF>& text_colors, COLORREF default_color)
+{
+    CString default_str;
+    default_str.Format(_T("%d"), default_color);
+    wstring str;
+    str = _GetString(AppName, KeyName, default_str);
+    std::vector<wstring> split_result;
+    CCommon::StringSplit(str, L',', split_result);
+    int index = 0;
+    for (auto iter = AllDisplayItems.begin(); iter != AllDisplayItems.end(); ++iter)
+    {
+        if (index < static_cast<int>(split_result.size()))
+        {
+            text_colors[*iter] = _wtoi(split_result[index].c_str());
+        }
+        index++;
+    }
+}
+
+void CIniHelper::SaveMainWndColors(const wchar_t * AppName, const wchar_t * KeyName, const std::map<DisplayItem, COLORREF>& text_colors)
+{
+    CString str;
+    for (auto iter = text_colors.begin(); iter != text_colors.end(); ++iter)
+    {
+        CString tmp;
+        tmp.Format(_T("%d,"), iter->second);
+        str += tmp;
+    }
+    _WriteString(AppName, KeyName, wstring(str));
+
+}
+
+void CIniHelper::LoadTaskbarWndColors(const wchar_t * AppName, const wchar_t * KeyName, std::map<DisplayItem, TaskbarItemColor>& text_colors, COLORREF default_color)
+{
+    CString default_str;
+    default_str.Format(_T("%d"), default_color);
+    wstring str;
+    str = _GetString(AppName, KeyName, default_str);
+    std::vector<wstring> split_result;
+    CCommon::StringSplit(str, L',', split_result);
+    int index = 0;
+    for (auto iter = AllDisplayItems.begin(); iter != AllDisplayItems.end(); ++iter)
+    {
+        if (index + 1 < static_cast<int>(split_result.size()))
+        {
+            text_colors[*iter].label = _wtoi(split_result[index].c_str());
+            text_colors[*iter].value = _wtoi(split_result[index + 1].c_str());
+        }
+        index += 2;
+    }
+
+}
+
+void CIniHelper::SaveTaskbarWndColors(const wchar_t * AppName, const wchar_t * KeyName, const std::map<DisplayItem, TaskbarItemColor>& text_colors)
+{
+    CString str;
+    for (auto iter = text_colors.begin(); iter != text_colors.end(); ++iter)
+    {
+        CString tmp;
+        tmp.Format(_T("%d,%d,"), iter->second.label, iter->second.value);
+        str += tmp;
+    }
+    _WriteString(AppName, KeyName, wstring(str));
+}
+
 void CIniHelper::_WriteString(const wchar_t * AppName, const wchar_t * KeyName, const wstring & str)
 {
 	wstring app_str{ L"[" };

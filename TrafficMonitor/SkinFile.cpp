@@ -100,8 +100,8 @@ void CSkinFile::LoadFromXml(const wstring & file_path)
                             m_skin_info.text_color.push_back(atoi(str.c_str()));
                         }
                     }
-                    if (m_skin_info.text_color.size() < MAIN_WND_COLOR_NUM)
-                        m_skin_info.text_color.resize(MAIN_WND_COLOR_NUM);
+                    if (m_skin_info.text_color.size() < AllDisplayItems.size())
+                        m_skin_info.text_color.resize(AllDisplayItems.size());
                     //指定每个项目的颜色
                     else if (skin_item_name == "specify_each_item_color")
                     {
@@ -189,11 +189,11 @@ void CSkinFile::LoadFromIni(const wstring & file_path)
     //获取皮肤信息
     CIniHelper ini(file_path);
     //获取当前皮肤的文字颜色
-    COLORREF text_colors[MAIN_WND_COLOR_NUM]{};
-    ini.GetIntArray(_T("skin"), _T("text_color"), (int*)text_colors, MAIN_WND_COLOR_NUM, 0);
-    for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
+    std::map<DisplayItem, COLORREF> text_colors{};
+    ini.LoadMainWndColors(_T("skin"), _T("text_color"), text_colors, 0);
+    for (const auto& item : text_colors)
     {
-        m_skin_info.text_color.push_back(text_colors[i]);
+        m_skin_info.text_color.push_back(item.second);
     }
 
     m_skin_info.specify_each_item_color = ini.GetBool(_T("skin"), _T("specify_each_item_color"), false);
@@ -325,22 +325,29 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
     }
 
     //获取文本颜色
-    int text_colors[MAIN_WND_COLOR_NUM]{};
+    std::map<DisplayItem, COLORREF> text_colors{};
     if (m_skin_info.specify_each_item_color)
     {
-        for (int i{}; i < MAIN_WND_COLOR_NUM && i < static_cast<int>(m_skin_info.text_color.size()); i++)
-            text_colors[i] = m_skin_info.text_color[i];
+        int i{};
+        for (const auto& item : AllDisplayItems)
+        {
+            if (i < static_cast<int>(m_skin_info.text_color.size()))
+                text_colors[item] = m_skin_info.text_color[i];
+            i++;
+        }
     }
     else if (!m_skin_info.text_color.empty())
     {
-        for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
-            text_colors[i] = m_skin_info.text_color[0];
+        for (const auto& item : AllDisplayItems)
+        {
+            if (!m_skin_info.text_color.empty())
+                text_colors[item] = m_skin_info.text_color[0];
+        }
     }
 
     //绘制预览图文本
     auto drawPreviewText = [&](Layout& layout, const PreviewInfo::Pos& pos)
     {
-        int index = 0;
         for (auto iter = map_str.begin(); iter != map_str.end(); ++iter)
         {
             if (layout.layout_items[iter->first].show)
@@ -350,11 +357,9 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
                 point.Offset(pos.x, pos.y);
                 CRect rect(point, CSize(layout.layout_items[iter->first].width, m_layout_info.text_height));
                 COLORREF text_color{};
-                if (index < MAIN_WND_COLOR_NUM)
-                    text_color = text_colors[index];
+                text_color = text_colors[iter->first];
                 draw.DrawWindowText(rect, iter->second, text_color, layout.layout_items[iter->first].align);
             }
-            index++;
         }
     };
 
@@ -431,16 +436,17 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
     getTemperatureStr(TDI_MAIN_BOARD_TEMP, theApp.m_main_board_temperature);
 
     //获取文本颜色
-    int text_colors[MAIN_WND_COLOR_NUM]{};
+    std::map<DisplayItem, COLORREF> text_colors{};
     if (theApp.m_main_wnd_data.specify_each_item_color)
     {
-        for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
-            text_colors[i] = theApp.m_main_wnd_data.text_colors[i];
+        text_colors = theApp.m_main_wnd_data.text_colors;
     }
-    else
+    else if (!theApp.m_main_wnd_data.text_colors.empty())
     {
-        for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
-            text_colors[i] = theApp.m_main_wnd_data.text_colors[0];
+        for (const auto& item : AllDisplayItems)
+        {
+            text_colors[item] = m_skin_info.text_color[0];
+        }
     }
 
     //绘制文本
@@ -457,11 +463,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
             CRect rect(CPoint(layout_item.x, layout_item.y), CSize(layout_item.width, m_layout_info.text_height));
 
             //文本颜色
-            COLORREF text_color{};
-            if (index < MAIN_WND_COLOR_NUM)
-                text_color = text_colors[index];
-            else
-                text_color = text_colors[0];
+            COLORREF text_color = text_colors[iter->first];
 
             //绘制文本
             draw.DrawWindowText(rect, map_str[iter->first].GetString(), text_color, layout_item.align);

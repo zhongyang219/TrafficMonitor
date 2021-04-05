@@ -1254,9 +1254,11 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                     log_str += std::to_wstring(theApp.m_taskbar_data.transparent_color).c_str();
                     log_str += _T("\n");
                     log_str += _T("taskbar_text_colors: ");
-                    for (int i{}; i < TASKBAR_COLOR_NUM; i++)
+                    for (const auto& item : theApp.m_taskbar_data.text_colors)
                     {
-                        log_str += std::to_wstring(theApp.m_taskbar_data.text_colors[i]).c_str();
+                        log_str += std::to_wstring(item.second.label).c_str();
+                        log_str += _T('|');
+                        log_str += std::to_wstring(item.second.value).c_str();
                         log_str += _T(", ");
                     }
                     log_str += _T("\n");
@@ -1310,7 +1312,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
         //当检测到背景色和文字颜色都为黑色写入错误日志
         static bool erro_log_write{ false };
-        if (theApp.m_taskbar_data.back_color == 0 && theApp.m_taskbar_data.text_colors[0] == 0)
+        if (theApp.m_taskbar_data.back_color == 0 && !theApp.m_taskbar_data.text_colors.empty() && theApp.m_taskbar_data.text_colors.begin()->second.label == 0)
         {
             if (!erro_log_write)
             {
@@ -1999,8 +2001,12 @@ void CTrafficMonitorDlg::OnChangeSkin()
 		LoadBackGroundImage();
 		//获取皮肤的文字颜色
 		theApp.m_main_wnd_data.specify_each_item_color = skinDlg.GetSkinData().GetSkinInfo().specify_each_item_color;
-		for(int i{}; i<MAIN_WND_COLOR_NUM; i++)
-			theApp.m_main_wnd_data.text_colors[i] = skinDlg.GetSkinData().GetSkinInfo().TextColor(i);
+        int i{};
+        for (const auto& item : AllDisplayItems)
+        {
+            theApp.m_main_wnd_data.text_colors[item] = skinDlg.GetSkinData().GetSkinInfo().TextColor(i);
+            i++;
+        }
 		//SetTextColor();
 		//获取皮肤的字体
 		if (theApp.m_general_data.allow_skin_cover_font)

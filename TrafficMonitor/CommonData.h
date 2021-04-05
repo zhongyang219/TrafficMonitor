@@ -69,7 +69,7 @@ enum DisplayItem
 };
 
 //所有显示项目的集合
-const std::set<DisplayItem> AllDisplayItems{ TDI_UP, TDI_DOWN, TDI_CPU, TDI_MEMORY, TDI_CPU_TEMP, TDI_GPU_TEMP, TDI_HDD_TEMP, TDI_MAIN_BOARD_TEMP };
+const std::set<DisplayItem> AllDisplayItems{ TDI_UP, TDI_DOWN, TDI_CPU, TDI_MEMORY, TDI_GPU_USAGE, TDI_CPU_TEMP, TDI_GPU_TEMP, TDI_HDD_TEMP, TDI_MAIN_BOARD_TEMP };
 
 #define DEF_CH L'\"'		//写入和读取ini文件字符串时，在字符串前后添加的字符
 #define NONE_STR L"@@@"		//用于指定一个无效字符串
@@ -246,23 +246,30 @@ struct PublicSettingData
 	wstring double_click_exe;	//鼠标双击动作为打开指定应用程序时，打开的程序路径
 };
 
-#define MAIN_WND_COLOR_NUM 9		//主窗口颜色数量
+//#define MAIN_WND_COLOR_NUM 9		//主窗口颜色数量
 //选项设置中“主窗口设置”的数据
 struct MainWndSettingData : public PublicSettingData
 {
-	COLORREF text_colors[MAIN_WND_COLOR_NUM]{};		//文字颜色（分别为“上传”、“下载”、“CPU”、“内存”的颜色）
-	bool hide_main_wnd_when_fullscreen;		//有程序全屏运行时隐藏悬浮窗
+    std::map<DisplayItem, COLORREF> text_colors{};    //方字的颜色
+    bool hide_main_wnd_when_fullscreen;		//有程序全屏运行时隐藏悬浮窗
 };
 
-#define TASKBAR_COLOR_NUM 18		//任务栏窗口颜色数量
+//#define TASKBAR_COLOR_NUM 18		//任务栏窗口颜色数量
+
+struct TaskbarItemColor //任务栏窗口每一项的颜色
+{
+    COLORREF label{};   //标签颜色
+    COLORREF value{};   //数值颜色
+};
+
 //选项设置中“任务栏窗口设置”的数据
 struct TaskBarSettingData : public PublicSettingData
 {
 	COLORREF  back_color{ RGB(0, 0, 0) };	//背景颜色
 	COLORREF transparent_color{ RGB(0, 0, 0) };		//透明色
 	COLORREF status_bar_color{ RGB(0, 0, 0) };		// CPU/内存 状态条颜色
-	COLORREF text_colors[TASKBAR_COLOR_NUM]{};		//文字颜色（依次为“上传”、“下载”、“CPU”、“内存”的标签和数据颜色）
-	int dft_back_color = 0;							//默认背景颜色
+    std::map<DisplayItem, TaskbarItemColor> text_colors{};    //文字的颜色
+    int dft_back_color = 0;							//默认背景颜色
 	int dft_transparent_color = 0;					//默认透明色
 	int dft_status_bar_color = 0x005A5A5A;			//默认CPU/内存 状态条颜色
 	int dft_text_colors = 0x00ffffffU;				//默认文字颜色

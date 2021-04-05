@@ -12,11 +12,9 @@
 
 IMPLEMENT_DYNAMIC(CMainWndColorDlg, CDialog)
 
-CMainWndColorDlg::CMainWndColorDlg(COLORREF colors[MAIN_WND_COLOR_NUM], CWnd* pParent /*=NULL*/)
-	: CDialog(IDD_MAIN_COLOR_DIALOG, pParent)
+CMainWndColorDlg::CMainWndColorDlg(const std::map<DisplayItem, COLORREF>& colors, CWnd* pParent /*=NULL*/)
+	: CDialog(IDD_MAIN_COLOR_DIALOG, pParent), m_colors(colors)
 {
-	for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
-		m_colors[i] = colors[i];
 }
 
 CMainWndColorDlg::~CMainWndColorDlg()
@@ -43,7 +41,7 @@ BOOL CMainWndColorDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
-        //初始化列表控件
+    //初始化列表控件
     CRect rect;
     m_list_ctrl.GetClientRect(rect);
     m_list_ctrl.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
@@ -55,37 +53,37 @@ BOOL CMainWndColorDlg::OnInitDialog()
     m_list_ctrl.SetDrawItemRangMargin(theApp.DPI(2));
 
     //向列表中插入行
-    for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
+    for (auto iter = m_colors.begin(); iter != m_colors.end(); ++iter)
     {
         CString item_name;
-        switch (i)
+        switch (iter->first)
         {
-        case 0:
+        case TDI_UP:
             item_name = CCommon::LoadText(IDS_UPLOAD);
             break;
-        case 1:
+        case TDI_DOWN:
             item_name = CCommon::LoadText(IDS_DOWNLOAD);
             break;
-        case 2:
+        case TDI_CPU:
             item_name = _T("CPU");
             break;
-        case 3:
+        case TDI_MEMORY:
             item_name = CCommon::LoadText(IDS_MEMORY);
             break;
-        case 4:
+        case TDI_GPU_USAGE:
             item_name = CCommon::LoadText(IDS_GPU_DISP);
             break;
 #ifndef WITHOUT_TEMPERATURE
-        case 5:
+        case TDI_CPU_TEMP:
             item_name = CCommon::LoadText(IDS_CPU_TEMPERATURE);
             break;
-        case 6:
+        case TDI_GPU_TEMP:
             item_name = CCommon::LoadText(IDS_GPU_TEMPERATURE);
             break;
-        case 7:
+        case TDI_HDD_TEMP:
             item_name = CCommon::LoadText(IDS_HDD_TEMPERATURE);
             break;
-        case 8:
+        case TDI_MAIN_BOARD_TEMP:
             item_name = CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
             break;
 #endif
@@ -96,8 +94,7 @@ BOOL CMainWndColorDlg::OnInitDialog()
         {
             int index = m_list_ctrl.GetItemCount();
             m_list_ctrl.InsertItem(index, item_name);
-            //m_list_ctrl.SetItemText(index, 1, iter->second.c_str());
-            m_list_ctrl.SetItemColor(index, 1, m_colors[i]);
+            m_list_ctrl.SetItemColor(index, 1, m_colors[iter->first]);
         }
     }
 
@@ -113,14 +110,12 @@ void CMainWndColorDlg::OnNMDblclkList1(NMHDR *pNMHDR, LRESULT *pResult)
     LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
     // TODO: 在此添加控件通知处理程序代码
     int index = pNMItemActivate->iItem;
-    if (index >= 0 && index < MAIN_WND_COLOR_NUM)
+    COLORREF color = m_list_ctrl.GetItemColor(index, 1);
+    CMFCColorDialogEx colorDlg(color, 0, this);
+    if (colorDlg.DoModal() == IDOK)
     {
-        CMFCColorDialogEx colorDlg(m_colors[index], 0, this);
-        if (colorDlg.DoModal() == IDOK)
-        {
-            m_colors[index] = colorDlg.GetColor();
-            m_list_ctrl.SetItemColor(index, 1, m_colors[index]);
-        }
+        color = colorDlg.GetColor();
+        m_list_ctrl.SetItemColor(index, 1, color);
     }
 
     *pResult = 0;

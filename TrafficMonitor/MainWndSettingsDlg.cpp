@@ -32,16 +32,22 @@ void CMainWndSettingsDlg::SetControlMouseWheelEnable(bool enable)
 void CMainWndSettingsDlg::DrawStaticColor()
 {
 	//CCommon::FillStaticColor(m_color_static, m_data.text_color);
+    if (m_data.text_colors.empty())
+        return;
 	if (m_data.specify_each_item_color)
 	{
-		m_color_static.SetColorNum(MAIN_WND_COLOR_NUM);
-		for(int i{}; i<MAIN_WND_COLOR_NUM; i++)
-			m_color_static.SetFillColor(i, m_data.text_colors[i]);
+		m_color_static.SetColorNum(m_data.text_colors.size());
+        int index{};
+		for(const auto& item : m_data.text_colors)
+        {
+            m_color_static.SetFillColor(index, item.second);
+            index++;
+        }
 		m_color_static.Invalidate();
 	}
 	else
 	{
-		m_color_static.SetFillColor(m_data.text_colors[0]);
+		m_color_static.SetFillColor(m_data.text_colors.begin()->second);
 	}
 }
 
@@ -400,17 +406,16 @@ afx_msg LRESULT CMainWndSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 			CMainWndColorDlg colorDlg(m_data.text_colors);
 			if (colorDlg.DoModal() == IDOK)
 			{
-				for (int i{}; i < MAIN_WND_COLOR_NUM; i++)
-					m_data.text_colors[i] = colorDlg.GetColors()[i];
+				m_data.text_colors = colorDlg.GetColors();
 				DrawStaticColor();
 			}
 		}
-		else
+		else if (!m_data.text_colors.empty())
 		{
-			CMFCColorDialogEx colorDlg(m_data.text_colors[0], 0, this);
+			CMFCColorDialogEx colorDlg(m_data.text_colors.begin()->second, 0, this);
 			if (colorDlg.DoModal() == IDOK)
 			{
-				m_data.text_colors[0] = colorDlg.GetColor();
+				m_data.text_colors.begin()->second = colorDlg.GetColor();
 				DrawStaticColor();
 			}
 		}

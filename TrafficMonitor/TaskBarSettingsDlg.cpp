@@ -30,20 +30,25 @@ void CTaskBarSettingsDlg::DrawStaticColor()
 	//CCommon::FillStaticColor(m_back_color_static, m_data.back_color);
 	if (m_data.specify_each_item_color)
 	{
-        int color_num{};
-#ifdef WITHOUT_TEMPERATURE
-        color_num = 8;
-#else
-        color_num = TASKBAR_COLOR_NUM;
-#endif
-		m_text_color_static.SetColorNum(color_num);
-		for (int i{}; i< color_num; i++)
-			m_text_color_static.SetFillColor(i, m_data.text_colors[i]);
+//        int color_num{};
+//#ifdef WITHOUT_TEMPERATURE
+//        color_num = 8;
+//#else
+//        color_num = TASKBAR_COLOR_NUM;
+//#endif
+        int i{};
+		m_text_color_static.SetColorNum(m_data.text_colors.size() * 2);
+		for (const auto& item : m_data.text_colors)
+        {
+            m_text_color_static.SetFillColor(i, item.second.label);
+            m_text_color_static.SetFillColor(i + 1, item.second.value);
+            i += 2;
+        }
 		m_text_color_static.Invalidate();
 	}
-	else
+	else if (!m_data.text_colors.empty())
 	{
-		m_text_color_static.SetFillColor(m_data.text_colors[0]);
+		m_text_color_static.SetFillColor(m_data.text_colors.begin()->second.label);
 	}
 	m_back_color_static.SetFillColor(m_data.back_color);
 	//m_trans_color_static.SetFillColor(m_data.transparent_color);
@@ -502,18 +507,17 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 			CTaskbarColorDlg colorDlg(m_data.text_colors);
 			if (colorDlg.DoModal() == IDOK)
 			{
-				for (int i{}; i < TASKBAR_COLOR_NUM; i++)
-					m_data.text_colors[i] = colorDlg.GetColors()[i];
+			    m_data.text_colors = colorDlg.GetColors();
 				DrawStaticColor();
 			}
 		}
-		else
+		else if (!m_data.text_colors.empty())
 		{
-			CMFCColorDialogEx colorDlg(m_data.text_colors[0], 0, this);
+			CMFCColorDialogEx colorDlg(m_data.text_colors.begin()->second.label, 0, this);
 			if (colorDlg.DoModal() == IDOK)
 			{
-				m_data.text_colors[0] = colorDlg.GetColor();
-				if (m_data.back_color == m_data.text_colors[0])
+				m_data.text_colors.begin()->second.label = colorDlg.GetColor();
+				if (m_data.back_color == m_data.text_colors.begin()->second.label)
 					MessageBox(CCommon::LoadText(IDS_SAME_TEXT_BACK_COLOR_WARNING), NULL, MB_ICONWARNING);
 				DrawStaticColor();
 			}
@@ -528,7 +532,7 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 		{
 			bool background_transparent = IsTaskbarTransparent();
 			m_data.back_color = colorDlg.GetColor();
-			if (m_data.back_color == m_data.text_colors[0])
+			if (m_data.back_color == m_data.text_colors.begin()->second.label)
 				MessageBox(CCommon::LoadText(IDS_SAME_BACK_TEXT_COLOR_WARNING), NULL, MB_ICONWARNING);
 			if (background_transparent)
 			{

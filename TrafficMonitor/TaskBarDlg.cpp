@@ -145,50 +145,13 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
     COLORREF text_color{};
     if (theApp.m_taskbar_data.specify_each_item_color)
     {
-        switch (type)
-        {
-        case TDI_UP:
-            label_color = theApp.m_taskbar_data.text_colors[0];
-            text_color = theApp.m_taskbar_data.text_colors[1];
-            break;
-        case TDI_DOWN:
-            label_color = theApp.m_taskbar_data.text_colors[2];
-            text_color = theApp.m_taskbar_data.text_colors[3];
-            break;
-        case TDI_CPU:
-            label_color = theApp.m_taskbar_data.text_colors[4];
-            text_color = theApp.m_taskbar_data.text_colors[5];
-            break;
-        case TDI_MEMORY:
-            label_color = theApp.m_taskbar_data.text_colors[6];
-            text_color = theApp.m_taskbar_data.text_colors[7];
-            break;
-        case TDI_CPU_TEMP:
-            label_color = theApp.m_taskbar_data.text_colors[8];
-            text_color = theApp.m_taskbar_data.text_colors[9];
-            break;
-        case TDI_GPU_TEMP:
-            label_color = theApp.m_taskbar_data.text_colors[10];
-            text_color = theApp.m_taskbar_data.text_colors[11];
-            break;
-        case TDI_HDD_TEMP:
-            label_color = theApp.m_taskbar_data.text_colors[12];
-            text_color = theApp.m_taskbar_data.text_colors[13];
-            break;
-        case TDI_MAIN_BOARD_TEMP:
-            label_color = theApp.m_taskbar_data.text_colors[14];
-            text_color = theApp.m_taskbar_data.text_colors[15];
-            break;
-        default:
-            label_color = theApp.m_taskbar_data.text_colors[0];
-            text_color = theApp.m_taskbar_data.text_colors[1];
-            break;
-        }
+        label_color = theApp.m_taskbar_data.text_colors[type].label;
+        text_color = theApp.m_taskbar_data.text_colors[type].value;
     }
-    else
+    else if (!theApp.m_taskbar_data.text_colors.empty())
     {
-        label_color = theApp.m_taskbar_data.text_colors[0];
-        text_color = theApp.m_taskbar_data.text_colors[0];
+        label_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
+        text_color = theApp.m_taskbar_data.text_colors.begin()->second.value;
     }
     
     //设置标签和数值的矩形区域
