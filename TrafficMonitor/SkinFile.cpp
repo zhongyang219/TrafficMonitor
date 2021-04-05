@@ -420,6 +420,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
 		format_str = _T("%s%d%%");
     map_str[TDI_CPU].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_CPU).c_str()), theApp.m_cpu_usage);
     map_str[TDI_MEMORY].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_MEMORY).c_str()), theApp.m_memory_usage);
+    map_str[TDI_GPU_USAGE].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_GPU_USAGE).c_str()), theApp.m_gpu_usage);
 
     //温度
     auto getTemperatureStr = [&](DisplayItem display_item, float temperature)
@@ -487,6 +488,9 @@ string CSkinFile::GetDisplayItemXmlNodeName(DisplayItem display_item)
         break;
     case TDI_MEMORY:
         return "memory";
+        break;
+    case TDI_GPU_USAGE:
+        return "gpu";
         break;
     case TDI_CPU_TEMP:
         return "cpu_temperature";

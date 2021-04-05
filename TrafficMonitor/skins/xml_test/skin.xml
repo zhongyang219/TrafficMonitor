@@ -1,6 +1,6 @@
 ﻿<root>
 	<skin>
-		<text_color>16768959,10022341,16777215,16777215,16770992,16770992,16770992,16770992</text_color>
+		<text_color>16768959,10022341,16777215,16777215,16777215,16770992,16770992,16770992,16770992</text_color>
 		<specify_each_item_color>1</specify_each_item_color>
 		<skin_author>zy</skin_author>
 		<font name="Microsoft YaHei" size="9" style="0"/>
@@ -9,6 +9,7 @@
 			<down>下载: </down>
 			<cpu>CPU: </cpu>
 			<memory>内存: </memory>
+      <gpu>显卡: </gpu>
 			<cpu_temperature>CPU温度: </cpu_temperature>
 			<gpu_temperature>显卡温度: </gpu_temperature>
 			<hdd_temperature>硬盘温度: </hdd_temperature>
@@ -18,7 +19,8 @@
 	<layout text_height="20" no_label="0">
 		<layout_l width="232" height="107">
 			<cpu x="14" y="3" width="106" align="0" show="1"/>
-			<memory x="122" y="3" width="106" align="0" show="1"/>
+			<memory x="90" y="3" width="106" align="0" show="1"/>
+			<gpu x="162" y="3" width="106" align="0" show="1"/>
 			<up x="14" y="27" width="106" align="0" show="1"/>
 			<down x="122" y="27" width="106" align="0" show="1"/>
 			<cpu_temperature x="32" y="57" width="94" align="0" show="1"/>
