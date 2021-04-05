@@ -10,10 +10,10 @@
 
 // CTaskbarColorDlg 对话框
 
-IMPLEMENT_DYNAMIC(CTaskbarColorDlg, CDialog)
+IMPLEMENT_DYNAMIC(CTaskbarColorDlg, CBaseDialog)
 
 CTaskbarColorDlg::CTaskbarColorDlg(const std::map<DisplayItem, TaskbarItemColor>& colors, CWnd* pParent /*=NULL*/)
-	: CDialog(IDD_TASKBAR_COLOR_DIALOG, pParent), m_colors(colors)
+	: CBaseDialog(IDD_TASKBAR_COLOR_DIALOG, pParent), m_colors(colors)
 {
 }
 
@@ -21,14 +21,19 @@ CTaskbarColorDlg::~CTaskbarColorDlg()
 {
 }
 
+CString CTaskbarColorDlg::GetDialogName() const
+{
+    return _T("TaskbarColorDlg");
+}
+
 void CTaskbarColorDlg::DoDataExchange(CDataExchange* pDX)
 {
-    CDialog::DoDataExchange(pDX);
+    CBaseDialog::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_LIST1, m_list_ctrl);
 }
 
 
-BEGIN_MESSAGE_MAP(CTaskbarColorDlg, CDialog)
+BEGIN_MESSAGE_MAP(CTaskbarColorDlg, CBaseDialog)
     ON_NOTIFY(NM_DBLCLK, IDC_LIST1, &CTaskbarColorDlg::OnNMDblclkList1)
 END_MESSAGE_MAP()
 
@@ -38,10 +43,13 @@ END_MESSAGE_MAP()
 
 BOOL CTaskbarColorDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	CBaseDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
-        //初始化列表控件
+
+    SetIcon(theApp.GetMenuIcon(IDI_TASKBAR_WINDOW), FALSE);		// 设置小图标
+
+    //初始化列表控件
     CRect rect;
     m_list_ctrl.GetClientRect(rect);
     m_list_ctrl.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);

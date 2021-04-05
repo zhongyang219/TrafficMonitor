@@ -10,10 +10,10 @@
 
 // CMainWndColorDlg 对话框
 
-IMPLEMENT_DYNAMIC(CMainWndColorDlg, CDialog)
+IMPLEMENT_DYNAMIC(CMainWndColorDlg, CBaseDialog)
 
 CMainWndColorDlg::CMainWndColorDlg(const std::map<DisplayItem, COLORREF>& colors, CWnd* pParent /*=NULL*/)
-	: CDialog(IDD_MAIN_COLOR_DIALOG, pParent), m_colors(colors)
+	: CBaseDialog(IDD_MAIN_COLOR_DIALOG, pParent), m_colors(colors)
 {
 }
 
@@ -21,14 +21,19 @@ CMainWndColorDlg::~CMainWndColorDlg()
 {
 }
 
+CString CMainWndColorDlg::GetDialogName() const
+{
+    return _T("MainWndColorDlg");
+}
+
 void CMainWndColorDlg::DoDataExchange(CDataExchange* pDX)
 {
-    CDialog::DoDataExchange(pDX);
+    CBaseDialog::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_LIST1, m_list_ctrl);
 }
 
 
-BEGIN_MESSAGE_MAP(CMainWndColorDlg, CDialog)
+BEGIN_MESSAGE_MAP(CMainWndColorDlg, CBaseDialog)
     ON_NOTIFY(NM_DBLCLK, IDC_LIST1, &CMainWndColorDlg::OnNMDblclkList1)
 END_MESSAGE_MAP()
 
@@ -38,9 +43,12 @@ END_MESSAGE_MAP()
 
 BOOL CMainWndColorDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	CBaseDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
+
+    SetIcon(theApp.GetMenuIcon(IDI_MAIN_WINDOW), FALSE);		// 设置小图标
+
     //初始化列表控件
     CRect rect;
     m_list_ctrl.GetClientRect(rect);

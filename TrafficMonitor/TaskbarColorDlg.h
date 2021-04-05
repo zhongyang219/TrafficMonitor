@@ -2,10 +2,11 @@
 #include "ColorStatic.h"
 #include "afxwin.h"
 #include "ColorSettingListCtrl.h"
+#include "BaseDialog.h"
 
 // CTaskbarColorDlg 对话框
 
-class CTaskbarColorDlg : public CDialog
+class CTaskbarColorDlg : public CBaseDialog
 {
 	DECLARE_DYNAMIC(CTaskbarColorDlg)
 
@@ -23,6 +24,8 @@ public:
 protected:
     std::map<DisplayItem, TaskbarItemColor> m_colors;
     CColorSettingListCtrl m_list_ctrl;
+
+    virtual CString GetDialogName() const override;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
