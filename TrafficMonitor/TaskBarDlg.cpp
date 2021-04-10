@@ -280,14 +280,7 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
         default:
             break;
         }
-        CString format_str;
-        if (theApp.m_taskbar_data.hide_percent)
-            format_str = _T("%d");
-        else if (theApp.m_taskbar_data.separate_value_unit_with_space)
-            format_str = _T("%d %%");
-        else
-            format_str = _T("%d%%");
-        str_value.Format(format_str, usage);
+        str_value = CCommon::UsageToString(usage, theApp.m_taskbar_data);
 
         //如果CPU或内存利用率达到100%，会导致显示不全，此时将绘图区域向右扩展一些
         int text_width = m_pDC->GetTextExtent(str_value).cx;
@@ -503,27 +496,27 @@ CString CTaskBarDlg::GetMouseTipsInfo()
 		tip_info += temp;
 	}
 #ifndef WITHOUT_TEMPERATURE
-    if (!IsShowGpu())
+    if (!IsShowGpu() && theApp.m_gpu_usage >= 0)
     {
         temp.Format(_T("\r\n%s: %d%%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
         tip_info += temp;
     }
-    if (!IsShowCpuTemperature())
+    if (!IsShowCpuTemperature() && theApp.m_cpu_temperature > 0)
     {
         temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_taskbar_data));
         tip_info += temp;
     }
-    if (!IsShowGpuTemperature())
+    if (!IsShowGpuTemperature() && theApp.m_gpu_temperature > 0)
     {
         temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_GPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_gpu_temperature, theApp.m_taskbar_data));
         tip_info += temp;
     }
-    if (!IsShowHddTemperature())
+    if (!IsShowHddTemperature() && theApp.m_hdd_temperature > 0)
     {
         temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_HDD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_hdd_temperature, theApp.m_taskbar_data));
         tip_info += temp;
     }
-    if (!IsShowMainboardTemperature())
+    if (!IsShowMainboardTemperature() && theApp.m_main_board_temperature > 0)
     {
         temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_main_board_temperature, theApp.m_taskbar_data));
         tip_info += temp;

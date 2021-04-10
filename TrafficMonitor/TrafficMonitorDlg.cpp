@@ -150,27 +150,27 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 		tip_info += temp;
 	}
 #ifndef WITHOUT_TEMPERATURE
-    if (!skin_layout.GetItem(TDI_GPU_USAGE).show)
+    if (!skin_layout.GetItem(TDI_GPU_USAGE).show && theApp.m_gpu_usage >= 0)
     {
         temp.Format(_T("\r\n%s: %d%%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
         tip_info += temp;
     }
-    if (!skin_layout.GetItem(TDI_CPU_TEMP).show)
+    if (!skin_layout.GetItem(TDI_CPU_TEMP).show && theApp.m_cpu_temperature > 0)
     {
         temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_main_wnd_data));
         tip_info += temp;
     }
-    if (!skin_layout.GetItem(TDI_GPU_TEMP).show)
+    if (!skin_layout.GetItem(TDI_GPU_TEMP).show && theApp.m_gpu_temperature > 0)
     {
         temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_GPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_gpu_temperature, theApp.m_main_wnd_data));
         tip_info += temp;
     }
-    if (!skin_layout.GetItem(TDI_HDD_TEMP).show)
+    if (!skin_layout.GetItem(TDI_HDD_TEMP).show && theApp.m_hdd_temperature > 0)
     {
         temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_HDD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_hdd_temperature, theApp.m_main_wnd_data));
         tip_info += temp;
     }
-    if (!skin_layout.GetItem(TDI_MAIN_BOARD_TEMP).show)
+    if (!skin_layout.GetItem(TDI_MAIN_BOARD_TEMP).show && theApp.m_main_board_temperature > 0)
     {
         temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_main_board_temperature, theApp.m_main_wnd_data));
         tip_info += temp;
@@ -515,6 +515,16 @@ void CTrafficMonitorDlg::UpdateNotifyIconTip()
 	strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>/s"), { CCommon::LoadText(IDS_DOWNLOAD), in_speed });
 	strTip += CCommon::StringFormat(_T("\r\nCPU: <%1%>%"), { theApp.m_cpu_usage });
 	strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>%"), { CCommon::LoadText(IDS_MEMORY), theApp.m_memory_usage });
+    if (theApp.m_gpu_usage >= 0)
+        strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>"), { CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage });
+    if (theApp.m_cpu_temperature > 0)
+        strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>"), { CCommon::LoadText(IDS_CPU_TEMPERATURE), static_cast<int>(theApp.m_cpu_temperature) });
+    if (theApp.m_gpu_temperature > 0)
+        strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>"), { CCommon::LoadText(IDS_GPU_TEMPERATURE), static_cast<int>(theApp.m_gpu_temperature) });
+    if (theApp.m_hdd_temperature > 0)
+        strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>"), { CCommon::LoadText(IDS_HDD_TEMPERATURE), static_cast<int>(theApp.m_hdd_temperature) });
+    if (theApp.m_main_board_temperature > 0)
+        strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>"), { CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), static_cast<int>(theApp.m_main_board_temperature) });
 
 	CCommon::WStringCopy(m_ntIcon.szTip, 128, strTip);
 	::Shell_NotifyIcon(NIM_MODIFY, &m_ntIcon);

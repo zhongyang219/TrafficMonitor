@@ -213,6 +213,22 @@ CString CCommon::TemperatureToString(float temperature, const PublicSettingData&
     return str_val;
 }
 
+CString CCommon::UsageToString(int usage, const PublicSettingData& cfg)
+{
+    CString str_val;
+    if (usage < 0)
+        str_val = _T("--");
+    else
+        str_val.Format(_T("%d"), usage);
+    if (!cfg.hide_percent)
+    {
+        if (cfg.separate_value_unit_with_space)
+            str_val += _T(' ');
+        str_val += _T('%');
+    }
+    return str_val;
+}
+
 //CString CCommon::KBytesToString(unsigned int kb_size)
 //{
 //	CString k_bytes_str;

@@ -411,16 +411,10 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
         std::swap(map_str[TDI_UP], map_str[TDI_DOWN]);
 	}
 
-    //CPU/内存利用率
-	if (theApp.m_main_wnd_data.hide_percent)
-		format_str = _T("%s%d");
-    else if(theApp.m_main_wnd_data.separate_value_unit_with_space)
-        format_str = _T("%s%d %%");
-	else
-		format_str = _T("%s%d%%");
-    map_str[TDI_CPU].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_CPU).c_str()), theApp.m_cpu_usage);
-    map_str[TDI_MEMORY].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_MEMORY).c_str()), theApp.m_memory_usage);
-    map_str[TDI_GPU_USAGE].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_GPU_USAGE).c_str()), theApp.m_gpu_usage);
+    //CPU/内存/显卡利用率
+    map_str[TDI_CPU] = (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_CPU).c_str()) + CCommon::UsageToString(theApp.m_cpu_usage, theApp.m_main_wnd_data);
+    map_str[TDI_MEMORY] = (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_MEMORY).c_str()) + CCommon::UsageToString(theApp.m_memory_usage, theApp.m_main_wnd_data);
+    map_str[TDI_GPU_USAGE] = (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_GPU_USAGE).c_str()) + CCommon::UsageToString(theApp.m_gpu_usage, theApp.m_main_wnd_data);
 
     //温度
     auto getTemperatureStr = [&](DisplayItem display_item, float temperature)

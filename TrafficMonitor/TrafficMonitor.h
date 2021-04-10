@@ -41,15 +41,15 @@ public:
 	//以下数据定义为App类中的公共成员，以便于在主对话框和任务栏窗口中都能访问
 	unsigned int m_in_speed{};		//下载速度
 	unsigned int m_out_speed{};		//上传速度
-	int m_cpu_usage{};		//CPU利用率
-	int m_memory_usage{};	//内存利用率
+	int m_cpu_usage{ -1 };		//CPU利用率
+	int m_memory_usage{ -1 };	//内存利用率
 	int m_used_memory{};	//可用物理内存（单位为KB）
 	int m_total_memory{};	//物理内存总量（单位为KB）
-    float m_cpu_temperature{};  //CPU温度
-    float m_gpu_temperature{};  //显卡温度
-    float m_hdd_temperature{};  //硬盘温度
-    float m_main_board_temperature{};    //主板温度
-    int m_gpu_usage{};      //显卡利用率
+    float m_cpu_temperature{ -1 };  //CPU温度
+    float m_gpu_temperature{ -1 };  //显卡温度
+    float m_hdd_temperature{ -1 };  //硬盘温度
+    float m_main_board_temperature{ -1 };    //主板温度
+    int m_gpu_usage{ -1 };      //显卡利用率
 
 	__int64 m_today_up_traffic{};	//今天已使用的上传流量
 	__int64 m_today_down_traffic{};	//今天已使用的下载流量

@@ -46,7 +46,7 @@ namespace OpenHardwareMonitorApi
 
     float COpenHardwareMonitor::GpuUsage()
     {
-        if (m_gpu_nvidia_usage != 0)
+        if (m_gpu_nvidia_usage >= 0)
             return m_gpu_nvidia_usage;
         else
             return m_gpu_ati_usage;
@@ -54,7 +54,7 @@ namespace OpenHardwareMonitorApi
 
     bool COpenHardwareMonitor::GetHardwareTemperature(IHardware^ hardware, float& temperature)
     {
-        temperature = 0;
+        temperature = -1;
         std::vector<float> all_temperature;
         for (int i = 0; i < hardware->Sensors->Length; i++)
         {
@@ -101,16 +101,25 @@ namespace OpenHardwareMonitorApi
         return false;
     }
 
+    COpenHardwareMonitor::COpenHardwareMonitor()
+    {
+        ResetAllValues();
+    }
+
+    void COpenHardwareMonitor::ResetAllValues()
+    {
+        m_cpu_temperature = -1;
+        m_gpu_nvidia_temperature = -1;
+        m_gpu_ati_temperature = -1;
+        m_hdd_temperature = -1;
+        m_main_board_temperature = -1;
+        m_gpu_nvidia_usage = -1;
+        m_gpu_ati_usage = -1;
+    }
+
     void COpenHardwareMonitor::GetHardwareInfo()
     {
-        m_cpu_temperature = 0;
-        m_gpu_nvidia_temperature = 0;
-        m_gpu_ati_temperature = 0;
-        m_hdd_temperature = 0;
-        m_main_board_temperature = 0;
-        m_gpu_nvidia_usage = 0;
-        m_gpu_ati_usage = 0;
-
+        ResetAllValues();
         auto computer = MonitorGlobal::Instance()->computer;
         computer->Accept(MonitorGlobal::Instance()->updateVisitor);
         //wchar_t buff[256];
@@ -122,27 +131,27 @@ namespace OpenHardwareMonitorApi
             switch (computer->Hardware[i]->HardwareType)
             {
             case HardwareType::CPU:
-                if (m_cpu_temperature == 0)
+                if (m_cpu_temperature < 0)
                     GetHardwareTemperature(computer->Hardware[i], m_cpu_temperature);
                 break;
             case HardwareType::GpuNvidia:
-                if (m_gpu_nvidia_temperature == 0)
+                if (m_gpu_nvidia_temperature < 0)
                     GetHardwareTemperature(computer->Hardware[i], m_gpu_nvidia_temperature);
-                if (m_gpu_nvidia_usage == 0)
+                if (m_gpu_nvidia_usage < 0)
                     GetGpuUsage(computer->Hardware[i], m_gpu_nvidia_usage);
                 break;
             case HardwareType::GpuAti:
-                if (m_gpu_ati_temperature == 0)
+                if (m_gpu_ati_temperature < 0)
                     GetHardwareTemperature(computer->Hardware[i], m_gpu_ati_temperature);
-                if (m_gpu_ati_usage == 0)
+                if (m_gpu_ati_usage < 0)
                     GetGpuUsage(computer->Hardware[i], m_gpu_ati_usage);
                 break;
             case HardwareType::HDD:
-                if (m_hdd_temperature == 0)
+                if (m_hdd_temperature < 0)
                     GetHardwareTemperature(computer->Hardware[i], m_hdd_temperature);
                 break;
             case HardwareType::Mainboard:
-                if (m_main_board_temperature == 0)
+                if (m_main_board_temperature < 0)
                     GetHardwareTemperature(computer->Hardware[i], m_main_board_temperature);
                 break;
             default:

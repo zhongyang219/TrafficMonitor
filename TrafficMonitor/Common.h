@@ -123,6 +123,9 @@ public:
     //将温度信息转换成字符串
     static CString TemperatureToString(float temperature, const PublicSettingData& cfg);
 
+    //将使用率转换成字符串
+    static CString UsageToString(int usage, const PublicSettingData& cfg);
+
 	//static CString KBytesToString(unsigned int kb_size);
 	static CString KBytesToString(unsigned __int64 kb_size);
 
