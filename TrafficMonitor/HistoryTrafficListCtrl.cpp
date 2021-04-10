@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "HistoryTrafficListCtrl.h"
 
 IMPLEMENT_DYNAMIC(CHistoryTrafficListCtrl, CListCtrl)
@@ -38,39 +38,46 @@ void CHistoryTrafficListCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 		*pResult = CDRF_DODEFAULT;
 		LPNMLVCUSTOMDRAW lplvdr = reinterpret_cast<LPNMLVCUSTOMDRAW>(pNMHDR);
 		NMCUSTOMDRAW& nmcd = lplvdr->nmcd;
-		switch (lplvdr->nmcd.dwDrawStage)	//ÅĞ¶Ï×´Ì¬   
+		switch (lplvdr->nmcd.dwDrawStage)	//åˆ¤æ–­çŠ¶æ€   
 		{
 		case CDDS_PREPAINT:
 			*pResult = CDRF_NOTIFYITEMDRAW;
 			break;
-		case CDDS_ITEMPREPAINT:			//Èç¹ûÎª»­ITEMÖ®Ç°¾ÍÒª½øĞĞÑÕÉ«µÄ¸Ä±ä
+		case CDDS_ITEMPREPAINT:			//å¦‚æœä¸ºç”»ITEMä¹‹å‰å°±è¦è¿›è¡Œé¢œè‰²çš„æ”¹å˜
 			if (nmcd.dwItemSpec >= 0 && nmcd.dwItemSpec < m_item_rage_data.size())
 			{
 				double range = m_item_rage_data[nmcd.dwItemSpec].data_value;
-				CDC* pDC = CDC::FromHandle(nmcd.hdc);		//»ñÈ¡»æÍ¼DC
+				CDC* pDC = CDC::FromHandle(nmcd.hdc);		//è·å–ç»˜å›¾DC
 				CRect item_rect, draw_rect;
-				GetSubItemRect(nmcd.dwItemSpec,m_draw_item_range_row, LVIR_BOUNDS, item_rect);	//»ñÈ¡»æÍ¼µ¥Ôª¸ñµÄ¾ØĞÎÇøÓò
-				CDrawCommon::SetDrawRect(pDC, item_rect);		//ÉèÖÃ»æÍ¼ÇøÓòÎªµ±Ç°ÁĞ
-				draw_rect = item_rect;
-				if (draw_rect.Height() > 2 * m_margin)
-				{
-					draw_rect.top += m_margin;
-					draw_rect.bottom -= m_margin;
-				}
-				int width;
-				if (m_use_log_scale)	//Ê¹ÓÃ¶ÔÊı±ÈÀı£¨y=ln(x+1)£©
-				{
-					range = std::log(range + 1);
-					width = static_cast<int>(range*draw_rect.Width() / std::log(1000 + 1));
-				}
-				else		//Ê¹ÓÃÏßĞÔ±ÈÀı£¨y=x£©
-				{
-					width = static_cast<int>(range*draw_rect.Width() / 1000);
-				}
-				draw_rect.right = draw_rect.left + width;
-				pDC->FillSolidRect(draw_rect, m_item_rage_data[nmcd.dwItemSpec].color);
+				GetSubItemRect(nmcd.dwItemSpec,m_draw_item_range_row, LVIR_BOUNDS, item_rect);	//è·å–ç»˜å›¾å•å…ƒæ ¼çš„çŸ©å½¢åŒºåŸŸ
+				CDrawCommon::SetDrawRect(pDC, item_rect);		//è®¾ç½®ç»˜å›¾åŒºåŸŸä¸ºå½“å‰åˆ—
+                //ä½¿ç”¨åŒç¼“å†²ç»˜å›¾
+                {
+                    CDrawDoubleBuffer draw_double_buffer(pDC, item_rect);
+                    //å¡«å……èƒŒæ™¯
+                    draw_rect = item_rect;
+                    draw_rect.MoveToXY(0, 0);
+                    draw_double_buffer.GetMemDC()->FillSolidRect(draw_rect, GetSysColor(COLOR_WINDOW));
+                    if (draw_rect.Height() > 2 * m_margin)
+                    {
+                        draw_rect.top += m_margin;
+                        draw_rect.bottom -= m_margin;
+                    }
+                    int width;
+                    if (m_use_log_scale)	//ä½¿ç”¨å¯¹æ•°æ¯”ä¾‹ï¼ˆy=ln(x+1)ï¼‰
+                    {
+                        range = std::log(range + 1);
+                        width = static_cast<int>(range*draw_rect.Width() / std::log(1000 + 1));
+                    }
+                    else		//ä½¿ç”¨çº¿æ€§æ¯”ä¾‹ï¼ˆy=xï¼‰
+                    {
+                        width = static_cast<int>(range*draw_rect.Width() / 1000);
+                    }
+                    draw_rect.right = draw_rect.left + width;
+                    draw_double_buffer.GetMemDC()->FillSolidRect(draw_rect, m_item_rage_data[nmcd.dwItemSpec].color);
+                }
 
-				//µ±Ç°ÁĞ»æÖÆÍê³Éºó½«»æÍ¼ÇøÓòÉèÖÃÎª×ó±ßµÄÇøÓò£¬·ÀÖ¹µ±Ç°ÁĞµÄÇøÓò±»¸²¸Ç
+				//å½“å‰åˆ—ç»˜åˆ¶å®Œæˆåå°†ç»˜å›¾åŒºåŸŸè®¾ç½®ä¸ºå·¦è¾¹çš„åŒºåŸŸï¼Œé˜²æ­¢å½“å‰åˆ—çš„åŒºåŸŸè¢«è¦†ç›–
 				CRect rect1{ item_rect };
 				rect1.left = 0;
 				rect1.right = item_rect.left;

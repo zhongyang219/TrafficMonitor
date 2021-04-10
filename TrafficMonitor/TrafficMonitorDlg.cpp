@@ -150,6 +150,11 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 		tip_info += temp;
 	}
 #ifndef WITHOUT_TEMPERATURE
+    if (!skin_layout.GetItem(TDI_GPU_USAGE).show)
+    {
+        temp.Format(_T("\r\n%s: %d%%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
+        tip_info += temp;
+    }
     if (!skin_layout.GetItem(TDI_CPU_TEMP).show)
     {
         temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_main_wnd_data));

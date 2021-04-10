@@ -62,10 +62,10 @@ BOOL CTaskbarColorDlg::OnInitDialog()
     m_list_ctrl.SetDrawItemRangMargin(theApp.DPI(2));
 
     //向列表中插入行
-    for (auto iter = m_colors.begin(); iter != m_colors.end(); ++iter)
+    for (auto iter = AllDisplayItems.begin(); iter != AllDisplayItems.end(); ++iter)
     {
         CString item_name;
-        switch (iter->first)
+        switch (*iter)
         {
         case TDI_UP:
             item_name = CCommon::LoadText(IDS_UPLOAD);
@@ -74,15 +74,15 @@ BOOL CTaskbarColorDlg::OnInitDialog()
             item_name = CCommon::LoadText(IDS_DOWNLOAD);
             break;
         case TDI_CPU:
-            item_name = _T("CPU");
+            item_name = CCommon::LoadText(IDS_CPU_USAGE);
             break;
         case TDI_MEMORY:
-            item_name = CCommon::LoadText(IDS_MEMORY);
-            break;
-        case TDI_GPU_USAGE:
-            item_name = CCommon::LoadText(IDS_GPU_DISP);
+            item_name = CCommon::LoadText(IDS_MEMORY_USAGE);
             break;
 #ifndef WITHOUT_TEMPERATURE
+        case TDI_GPU_USAGE:
+            item_name = CCommon::LoadText(IDS_GPU_USAGE);
+            break;
         case TDI_CPU_TEMP:
             item_name = CCommon::LoadText(IDS_CPU_TEMPERATURE);
             break;
@@ -103,9 +103,9 @@ BOOL CTaskbarColorDlg::OnInitDialog()
         {
             int index = m_list_ctrl.GetItemCount();
             m_list_ctrl.InsertItem(index, item_name);
-            m_list_ctrl.SetItemColor(index, 1, m_colors[iter->first].label);
-            m_list_ctrl.SetItemColor(index, 2, m_colors[iter->first].value);
-            m_list_ctrl.SetItemData(index, iter->first);
+            m_list_ctrl.SetItemColor(index, 1, m_colors[*iter].label);
+            m_list_ctrl.SetItemColor(index, 2, m_colors[*iter].value);
+            m_list_ctrl.SetItemData(index, *iter);
         }
     }
 

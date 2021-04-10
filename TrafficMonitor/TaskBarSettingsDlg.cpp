@@ -30,14 +30,14 @@ void CTaskBarSettingsDlg::DrawStaticColor()
 	//CCommon::FillStaticColor(m_back_color_static, m_data.back_color);
 	if (m_data.specify_each_item_color)
 	{
-//        int color_num{};
-//#ifdef WITHOUT_TEMPERATURE
-//        color_num = 8;
-//#else
-//        color_num = TASKBAR_COLOR_NUM;
-//#endif
+        int color_num{};
+#ifdef WITHOUT_TEMPERATURE
+        color_num = 8;
+#else
+        color_num = 16;
+#endif
         int i{};
-		m_text_color_static.SetColorNum(m_data.text_colors.size() * 2);
+		m_text_color_static.SetColorNum(color_num);
 		for (const auto& item : m_data.text_colors)
         {
             m_text_color_static.SetFillColor(i, item.second.label);

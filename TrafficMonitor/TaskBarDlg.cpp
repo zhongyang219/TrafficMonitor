@@ -503,6 +503,11 @@ CString CTaskBarDlg::GetMouseTipsInfo()
 		tip_info += temp;
 	}
 #ifndef WITHOUT_TEMPERATURE
+    if (!IsShowGpu())
+    {
+        temp.Format(_T("\r\n%s: %d%%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
+        tip_info += temp;
+    }
     if (!IsShowCpuTemperature())
     {
         temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_taskbar_data));
@@ -920,6 +925,7 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
 
     //不含温度监控的版本，禁用温度监控相关菜单项
 #ifdef WITHOUT_TEMPERATURE
+    pMenu->EnableMenuItem(ID_SHOW_GPU, MF_BYCOMMAND | MF_GRAYED);
     pMenu->EnableMenuItem(ID_SHOW_CPU_TEMPERATURE, MF_BYCOMMAND | MF_GRAYED);
     pMenu->EnableMenuItem(ID_SHOW_GPU_TEMPERATURE, MF_BYCOMMAND | MF_GRAYED);
     pMenu->EnableMenuItem(ID_SHOW_HDD_TEMPERATURE, MF_BYCOMMAND | MF_GRAYED);

@@ -36,7 +36,13 @@ void CMainWndSettingsDlg::DrawStaticColor()
         return;
 	if (m_data.specify_each_item_color)
 	{
-		m_color_static.SetColorNum(m_data.text_colors.size());
+        int color_num{};
+#ifdef WITHOUT_TEMPERATURE
+        color_num = 4;
+#else
+        color_num = 8;
+#endif
+        m_color_static.SetColorNum(color_num);
         int index{};
 		for(const auto& item : m_data.text_colors)
         {

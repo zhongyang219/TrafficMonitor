@@ -71,15 +71,15 @@ BOOL CDisplayTextSettingDlg::OnInitDialog()
             item_name = CCommon::LoadText(IDS_DOWNLOAD);
             break;
         case TDI_CPU:
-            item_name = _T("CPU");
+            item_name = CCommon::LoadText(IDS_CPU_USAGE);
             break;
         case TDI_MEMORY:
-            item_name = CCommon::LoadText(IDS_MEMORY);
-            break;
-        case TDI_GPU_USAGE:
-            item_name = CCommon::LoadText(IDS_GPU_DISP);
+            item_name = CCommon::LoadText(IDS_MEMORY_USAGE);
             break;
 #ifndef WITHOUT_TEMPERATURE
+        case TDI_GPU_USAGE:
+            item_name = CCommon::LoadText(IDS_GPU_USAGE);
+            break;
         case TDI_CPU_TEMP:
             item_name = CCommon::LoadText(IDS_CPU_TEMPERATURE);
             break;
@@ -101,6 +101,7 @@ BOOL CDisplayTextSettingDlg::OnInitDialog()
             int index = m_list_ctrl.GetItemCount();
             m_list_ctrl.InsertItem(index, item_name);
             m_list_ctrl.SetItemText(index, 1, iter->second.c_str());
+            m_list_ctrl.SetItemData(index, iter->first);
         }
     }
 
@@ -116,17 +117,12 @@ void CDisplayTextSettingDlg::OnOK()
 {
     // TODO: 在此添加专用代码和/或调用基类
     
-    m_display_texts.Get(TDI_UP) = m_list_ctrl.GetItemText(0, 1).GetString();
-    m_display_texts.Get(TDI_DOWN) = m_list_ctrl.GetItemText(1, 1).GetString();
-    m_display_texts.Get(TDI_CPU) = m_list_ctrl.GetItemText(2, 1).GetString();
-    m_display_texts.Get(TDI_MEMORY) = m_list_ctrl.GetItemText(3, 1).GetString();
-    m_display_texts.Get(TDI_GPU_USAGE) = m_list_ctrl.GetItemText(4, 1).GetString();
-#ifndef WITHOUT_TEMPERATURE
-    m_display_texts.Get(TDI_CPU_TEMP) = m_list_ctrl.GetItemText(5, 1).GetString();
-    m_display_texts.Get(TDI_GPU_TEMP) = m_list_ctrl.GetItemText(6, 1).GetString();
-    m_display_texts.Get(TDI_HDD_TEMP) = m_list_ctrl.GetItemText(7, 1).GetString();
-    m_display_texts.Get(TDI_MAIN_BOARD_TEMP) = m_list_ctrl.GetItemText(8, 1).GetString();
-#endif
+    int item_count = m_list_ctrl.GetItemCount();
+    for (int i{}; i < item_count; i++)
+    {
+        DisplayItem display_item = static_cast<DisplayItem>(m_list_ctrl.GetItemData(i));
+        m_display_texts.Get(display_item) = m_list_ctrl.GetItemText(i, 1).GetString();
+    }
 
     CBaseDialog::OnOK();
 }
@@ -136,22 +132,50 @@ void CDisplayTextSettingDlg::OnOK()
 void CDisplayTextSettingDlg::OnBnClickedRestoreDefaultButton()
 {
     // TODO: 在此添加控件通知处理程序代码
-    if (m_main_window_text)
+    int item_count = m_list_ctrl.GetItemCount();
+    for (int i{}; i < item_count; i++)
     {
-        m_list_ctrl.SetItemText(0, 1, CCommon::LoadText(IDS_UPLOAD_DISP, _T(": ")));
-        m_list_ctrl.SetItemText(1, 1, CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": ")));
+        DisplayItem display_item = static_cast<DisplayItem>(m_list_ctrl.GetItemData(i));
+        CString default_text;
+        switch (display_item)
+        {
+        case TDI_UP:
+            if (m_main_window_text)
+                default_text = CCommon::LoadText(IDS_UPLOAD_DISP, _T(": "));
+            else
+                default_text = _T("↑: ");
+            break;
+        case TDI_DOWN:
+            if (m_main_window_text)
+                default_text = CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": "));
+            else
+                default_text = _T("↓: ");
+            break;
+            break;
+        case TDI_CPU:
+            default_text = _T("CPU: ");
+            break;
+        case TDI_MEMORY:
+            default_text = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
+            break;
+        case TDI_GPU_USAGE:
+            default_text = CCommon::LoadText(IDS_GPU_DISP, _T(": "));
+            break;
+        case TDI_CPU_TEMP:
+            default_text = _T("CPU: ");
+            break;
+        case TDI_GPU_TEMP:
+            default_text = CCommon::LoadText(IDS_GPU_DISP, _T(": "));
+            break;
+        case TDI_HDD_TEMP:
+            default_text = CCommon::LoadText(IDS_HDD_DISP, _T(": "));
+            break;
+        case TDI_MAIN_BOARD_TEMP:
+            default_text = CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": "));
+            break;
+        default:
+            break;
+        }
+        m_list_ctrl.SetItemText(i, 1, default_text);
     }
-    else
-    {
-        m_list_ctrl.SetItemText(0, 1, _T("↑: "));
-        m_list_ctrl.SetItemText(1, 1, _T("↓: "));
-    }
-    m_list_ctrl.SetItemText(2, 1, _T("CPU: "));
-    m_list_ctrl.SetItemText(3, 1, CCommon::LoadText(IDS_MEMORY_DISP, _T(": ")));
-#ifndef WITHOUT_TEMPERATURE
-    m_list_ctrl.SetItemText(4, 1, _T("CPU: "));
-    m_list_ctrl.SetItemText(5, 1, CCommon::LoadText(IDS_GPU_DISP, _T(": ")));
-    m_list_ctrl.SetItemText(6, 1, CCommon::LoadText(IDS_HDD_DISP, _T(": ")));
-    m_list_ctrl.SetItemText(7, 1, CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": ")));
-#endif
 }

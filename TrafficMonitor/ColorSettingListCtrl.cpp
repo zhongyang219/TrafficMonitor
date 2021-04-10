@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "ColorSettingListCtrl.h"
 
 IMPLEMENT_DYNAMIC(CColorSettingListCtrl, CListCtrl)
@@ -33,19 +33,19 @@ void CColorSettingListCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = CDRF_DODEFAULT;
 	LPNMLVCUSTOMDRAW lplvdr = reinterpret_cast<LPNMLVCUSTOMDRAW>(pNMHDR);
 	NMCUSTOMDRAW& nmcd = lplvdr->nmcd;
-	switch (lplvdr->nmcd.dwDrawStage)	//ÅĞ¶Ï×´Ì¬   
+	switch (lplvdr->nmcd.dwDrawStage)	//åˆ¤æ–­çŠ¶æ€   
 	{
 	case CDDS_PREPAINT:
 		*pResult = CDRF_NOTIFYITEMDRAW;
 		break;
-	case CDDS_ITEMPREPAINT:			//Èç¹ûÎª»­ITEMÖ®Ç°¾ÍÒª½øĞĞÑÕÉ«µÄ¸Ä±ä
+	case CDDS_ITEMPREPAINT:			//å¦‚æœä¸ºç”»ITEMä¹‹å‰å°±è¦è¿›è¡Œé¢œè‰²çš„æ”¹å˜
 		if (nmcd.dwItemSpec >= 0 && nmcd.dwItemSpec < GetItemCount())
 		{
 			//double range = m_item_rage_data[nmcd.dwItemSpec].data_value;
-			//CDC* pDC = CDC::FromHandle(nmcd.hdc);		//»ñÈ¡»æÍ¼DC
+			//CDC* pDC = CDC::FromHandle(nmcd.hdc);		//è·å–ç»˜å›¾DC
 			//CRect item_rect, draw_rect;
-			//GetSubItemRect(nmcd.dwItemSpec,m_draw_item_range_row, LVIR_BOUNDS, item_rect);	//»ñÈ¡»æÍ¼µ¥Ôª¸ñµÄ¾ØĞÎÇøÓò
-			//CDrawCommon::SetDrawRect(pDC, item_rect);		//ÉèÖÃ»æÍ¼ÇøÓòÎªµ±Ç°ÁĞ
+			//GetSubItemRect(nmcd.dwItemSpec,m_draw_item_range_row, LVIR_BOUNDS, item_rect);	//è·å–ç»˜å›¾å•å…ƒæ ¼çš„çŸ©å½¢åŒºåŸŸ
+			//CDrawCommon::SetDrawRect(pDC, item_rect);		//è®¾ç½®ç»˜å›¾åŒºåŸŸä¸ºå½“å‰åˆ—
 			//draw_rect = item_rect;
 			//if (draw_rect.Height() > 2 * m_margin)
 			//{
@@ -53,37 +53,48 @@ void CColorSettingListCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 			//	draw_rect.bottom -= m_margin;
 			//}
 			//int width;
-			//if (m_use_log_scale)	//Ê¹ÓÃ¶ÔÊı±ÈÀı£¨y=ln(x+1)£©
+			//if (m_use_log_scale)	//ä½¿ç”¨å¯¹æ•°æ¯”ä¾‹ï¼ˆy=ln(x+1)ï¼‰
 			//{
 			//	range = std::log(range + 1);
 			//	width = static_cast<int>(range*draw_rect.Width() / std::log(1000 + 1));
 			//}
-			//else		//Ê¹ÓÃÏßĞÔ±ÈÀı£¨y=x£©
+			//else		//ä½¿ç”¨çº¿æ€§æ¯”ä¾‹ï¼ˆy=xï¼‰
 			//{
 			//	width = static_cast<int>(range*draw_rect.Width() / 1000);
 			//}
 			//draw_rect.right = draw_rect.left + width;
 			//pDC->FillSolidRect(draw_rect, m_item_rage_data[nmcd.dwItemSpec].color);
 
-			////µ±Ç°ÁĞ»æÖÆÍê³Éºó½«»æÍ¼ÇøÓòÉèÖÃÎª×ó±ßµÄÇøÓò£¬·ÀÖ¹µ±Ç°ÁĞµÄÇøÓò±»¸²¸Ç
+			////å½“å‰åˆ—ç»˜åˆ¶å®Œæˆåå°†ç»˜å›¾åŒºåŸŸè®¾ç½®ä¸ºå·¦è¾¹çš„åŒºåŸŸï¼Œé˜²æ­¢å½“å‰åˆ—çš„åŒºåŸŸè¢«è¦†ç›–
 			//CRect rect1{ item_rect };
 			//rect1.left = 0;
 			//rect1.right = item_rect.left;
 			//CDrawCommon::SetDrawRect(pDC, rect1);
 
-            CDC* pDC = CDC::FromHandle(nmcd.hdc);		//»ñÈ¡»æÍ¼DC
+            CDC* pDC = CDC::FromHandle(nmcd.hdc);		//è·å–ç»˜å›¾DC
             CRect item_rect;
             auto& col_color_map = m_colors[nmcd.dwItemSpec];
             for (auto iter = col_color_map.begin(); iter != col_color_map.end(); ++iter)
             {
-                GetSubItemRect(nmcd.dwItemSpec, iter->first, LVIR_BOUNDS, item_rect);	//»ñÈ¡»æÍ¼µ¥Ôª¸ñµÄ¾ØĞÎÇøÓò
+                GetSubItemRect(nmcd.dwItemSpec, iter->first, LVIR_BOUNDS, item_rect);	//è·å–ç»˜å›¾å•å…ƒæ ¼çš„çŸ©å½¢åŒºåŸŸ
+                //è®¾ç½®ç»˜å›¾å‰ªè¾‘åŒºåŸŸ
                 CDrawCommon::SetDrawRect(pDC, item_rect);
+                //ä½¿ç”¨åŒç¼“å†²ç»˜å›¾
+                CDrawDoubleBuffer draw_double_buffer(pDC, item_rect);
+                //å¡«å……èƒŒæ™¯
+                item_rect.MoveToXY(0, 0);
+                draw_double_buffer.GetMemDC()->FillSolidRect(item_rect, GetSysColor(COLOR_WINDOW));
+                //ç»˜åˆ¶é¢œè‰²çŸ©å½¢
                 item_rect.DeflateRect(m_margin, m_margin);
-                pDC->FillSolidRect(item_rect, iter->second);
+                draw_double_buffer.GetMemDC()->FillSolidRect(item_rect, iter->second);
+                //ç»˜åˆ¶çŸ©å½¢è¾¹æ¡†
+                CDrawCommon drawer;
+                drawer.Create(draw_double_buffer.GetMemDC(), this);
+                drawer.DrawRectOutLine(item_rect, RGB(192, 192, 192));
             }
-            //µ±Ç°ÁĞ»æÖÆÍê³Éºó½«»æÍ¼ÇøÓòÉèÖÃÎªµÚÒ»ÁĞµÄÇøÓò£¬·ÀÖ¹ÑÕÉ«ÁĞµÄÇøÓò±»¸²¸Ç
+            //å½“å‰åˆ—ç»˜åˆ¶å®Œæˆåå°†ç»˜å›¾åŒºåŸŸè®¾ç½®ä¸ºç¬¬ä¸€åˆ—çš„åŒºåŸŸï¼Œé˜²æ­¢é¢œè‰²åˆ—çš„åŒºåŸŸè¢«è¦†ç›–
             CRect rect1{};
-            GetSubItemRect(nmcd.dwItemSpec, 1, LVIR_BOUNDS, rect1);	//»ñÈ¡µÚ1ÁĞµ¥Ôª¸ñµÄ¾ØĞÎÇøÓò
+            GetSubItemRect(nmcd.dwItemSpec, 1, LVIR_BOUNDS, rect1);	//è·å–ç¬¬1åˆ—å•å…ƒæ ¼çš„çŸ©å½¢åŒºåŸŸ
             rect1.right = rect1.left;
             rect1.left = 0;
             CDrawCommon::SetDrawRect(pDC, rect1);
