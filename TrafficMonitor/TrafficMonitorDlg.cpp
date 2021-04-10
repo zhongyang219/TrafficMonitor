@@ -27,7 +27,7 @@ CTrafficMonitorDlg::CTrafficMonitorDlg(CWnd* pParent /*=NULL*/)
 
 CTrafficMonitorDlg::~CTrafficMonitorDlg()
 {
-	free(m_pIfTable);
+    FreeMibTable(m_pIfTable);
 
 	if (m_tBarDlg != nullptr)
 	{
@@ -282,16 +282,16 @@ void CTrafficMonitorDlg::GetScreenSize()
 
 void CTrafficMonitorDlg::AutoSelect()
 {
-	unsigned int max_in_out_bytes{};
-	unsigned int in_out_bytes;
+	unsigned __int64 max_in_out_bytes{};
+	unsigned __int64 in_out_bytes;
 	//m_connection_selected = m_connections[0].index;
 	m_connection_selected = 0;
 	//自动选择连接时，查找已发送和已接收字节数之和最多的那个连接，并将其设置为当前查看的连接
 	for (size_t i{}; i<m_connections.size(); i++)
 	{
-		if (m_pIfTable->table[m_connections[i].index].dwOperStatus == IF_OPER_STATUS_OPERATIONAL)		//只选择网络状态为正常的连接
+		if (m_pIfTable->Table[m_connections[i].index].OperStatus == IfOperStatusUp)		//只选择网络状态为正常的连接
 		{
-			in_out_bytes = m_pIfTable->table[m_connections[i].index].dwInOctets + m_pIfTable->table[m_connections[i].index].dwOutOctets;
+			in_out_bytes = m_pIfTable->Table[m_connections[i].index].InOctets + m_pIfTable->Table[m_connections[i].index].OutOctets;
 			if (in_out_bytes > max_in_out_bytes)
 			{ 
 				max_in_out_bytes = in_out_bytes;
@@ -305,19 +305,9 @@ void CTrafficMonitorDlg::AutoSelect()
 
 void CTrafficMonitorDlg::IniConnection()
 {
-	//为m_pIfTable开辟所需大小的内存
-	free(m_pIfTable);
-	m_dwSize = sizeof(MIB_IFTABLE);
-	m_pIfTable = (MIB_IFTABLE *)malloc(m_dwSize);
-	int rtn;
-	rtn = GetIfTable(m_pIfTable, &m_dwSize, FALSE);
-	if (rtn == ERROR_INSUFFICIENT_BUFFER)	//如果函数返回值为ERROR_INSUFFICIENT_BUFFER，说明m_pIfTable的大小不够
-	{
-		free(m_pIfTable);
-		m_pIfTable = (MIB_IFTABLE *)malloc(m_dwSize);	//用新的大小重新开辟一块内存
-	}
+    FreeMibTable(m_pIfTable);
+    GetIfTable2(&m_pIfTable);
 	//获取当前所有的连接，并保存到m_connections容器中
-	GetIfTable(m_pIfTable, &m_dwSize, FALSE);
 	if (!theApp.m_general_data.show_all_interface)
 	{
 		CAdapterCommon::GetAdapterInfo(m_connections);
@@ -349,11 +339,11 @@ void CTrafficMonitorDlg::IniConnection()
 			log_str += _T("\n");
 		}
 		log_str += _T("IfTable:\n");
-		for (size_t i{}; i < m_pIfTable->dwNumEntries; i++)
+		for (size_t i{}; i < m_pIfTable->NumEntries; i++)
 		{
 			log_str += CCommon::IntToString(i);
 			log_str += _T(" ");
-			log_str += (const char*)m_pIfTable->table[i].bDescr;
+			log_str += m_pIfTable->Table[i].Description;
 			log_str += _T("\n");
 		}
 		CCommon::WriteLog(log_str, (theApp.m_config_dir + L".\\connections.log").c_str());
@@ -412,7 +402,7 @@ void CTrafficMonitorDlg::IniConnectionMenu(CMenu * pMenu)
         CString connection_descr;
         for (size_t i{}; i < m_connections.size(); i++)
         {
-            connection_descr = CCommon::StrToUnicode(m_connections[i].description.c_str()).c_str();
+            connection_descr = m_connections[i].description.c_str();
             pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SELECT_ALL_CONNECTION + i + 1, connection_descr);
         }
     }
@@ -838,11 +828,12 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 	if (nIDEvent == MONITOR_TIMER)
 	{
 		//获取网络连接速度
-		int rtn = GetIfTable(m_pIfTable, &m_dwSize, FALSE);
+        FreeMibTable(m_pIfTable);
+        int rtn = GetIfTable2(&m_pIfTable);
 		if (!theApp.m_cfg_data.m_select_all)		//获取当前选中连接的网速
 		{
-			m_in_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwInOctets;
-			m_out_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwOutOctets;
+			m_in_bytes = m_pIfTable->Table[m_connections[m_connection_selected].index].InOctets;
+			m_out_bytes = m_pIfTable->Table[m_connections[m_connection_selected].index].OutOctets;
 		}
 		else		//获取全部连接的网速
 		{
@@ -853,8 +844,8 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 				//if (i > 0 && m_pIfTable->table[m_connections[i].index].dwInOctets == m_pIfTable->table[m_connections[i - 1].index].dwInOctets
 				//	&& m_pIfTable->table[m_connections[i].index].dwOutOctets == m_pIfTable->table[m_connections[i - 1].index].dwOutOctets)
 				//	continue;		//连接列表中可能会有相同的连接，统计所有连接的网速时，忽略掉已发送和已接收字节数完全相同的连接
-				m_in_bytes += m_pIfTable->table[m_connections[i].index].dwInOctets;
-				m_out_bytes += m_pIfTable->table[m_connections[i].index].dwOutOctets;
+				m_in_bytes += m_pIfTable->Table[m_connections[i].index].InOctets;
+				m_out_bytes += m_pIfTable->Table[m_connections[i].index].OutOctets;
 			}
 		}
 
@@ -879,8 +870,8 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		//	cur_out_speed = 0;
 
         //将当前监控时间间隔的流量转换成每秒时间间隔内的流量
-        theApp.m_in_speed = static_cast<unsigned int>(cur_in_speed * 1000 / theApp.m_general_data.monitor_time_span);
-        theApp.m_out_speed = static_cast<unsigned int>(cur_out_speed * 1000 / theApp.m_general_data.monitor_time_span);
+        theApp.m_in_speed = static_cast<unsigned __int64>(cur_in_speed * 1000 / theApp.m_general_data.monitor_time_span);
+        theApp.m_out_speed = static_cast<unsigned __int64>(cur_out_speed * 1000 / theApp.m_general_data.monitor_time_span);
 
 		m_connection_change_flag = false;	//清除连接发生变化的标志
 
@@ -932,14 +923,14 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			}
 		}
 
-		if (rtn == ERROR_INSUFFICIENT_BUFFER)
-		{
-			IniConnection();
-			CString info;
-			info.LoadString(IDS_INSUFFICIENT_BUFFER);
-			info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt));
-			CCommon::WriteLog(info, theApp.m_log_path.c_str());
-		}
+		//if (rtn == ERROR_NOT_ENOUGH_MEMORY)
+		//{
+		//	IniConnection();
+		//	CString info;
+		//	info.LoadString(IDS_INSUFFICIENT_BUFFER);
+		//	info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt));
+		//	CCommon::WriteLog(info, theApp.m_log_path.c_str());
+		//}
 
 		
         if (m_monitor_time_cnt % GetMonitorTimerCount(3) == GetMonitorTimerCount(3) - 1)
@@ -963,8 +954,8 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 			}
 			last_interface_num = interface_num;
 
-			string descr;
-			descr = (const char*)m_pIfTable->table[m_connections[m_connection_selected].index].bDescr;
+			wstring descr;
+			descr = m_pIfTable->Table[m_connections[m_connection_selected].index].Description;
 			if (descr != theApp.m_cfg_data.m_connection_name)
 			{
 				//写入额外的调试信息
@@ -1416,7 +1407,7 @@ void CTrafficMonitorDlg::OnNetworkInfo()
 {
 	// TODO: 在此添加命令处理程序代码
 	//弹出“连接详情”对话框
-	CNetworkInfoDlg aDlg(m_connections, m_pIfTable->table, m_connection_selected);
+	CNetworkInfoDlg aDlg(m_connections, m_pIfTable, m_connection_selected);
 	////向CNetworkInfoDlg类传递自启动以来已发送和接收的字节数
 	//aDlg.m_in_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwInOctets - m_connections[m_connection_selected].in_bytes;
 	//aDlg.m_out_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwOutOctets - m_connections[m_connection_selected].out_bytes;

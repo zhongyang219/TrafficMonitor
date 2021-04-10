@@ -76,7 +76,7 @@ const char* CCommon::GetFileContent(const wchar_t* file_path, size_t& length, bo
     return buff;
 }
 
-CString CCommon::DataSizeToString(unsigned int size, const PublicSettingData& cfg)
+CString CCommon::DataSizeToString(unsigned long long size, const PublicSettingData& cfg)
 {
 	//CString str;
 	CString value_str, unit_str;
@@ -751,25 +751,21 @@ CString CCommon::LoadTextFormat(UINT id, const std::initializer_list<CVariant>& 
 	return StringFormat(str.GetString(), paras);
 }
 
-CString CCommon::IntToString(int n, bool thousand_separation, bool is_unsigned)
+CString CCommon::IntToString(__int64 n, bool thousand_separation, bool is_unsigned)
 {
-	CString str;
-	if(is_unsigned)
-		str.Format(_T("%u"), static_cast<unsigned int>(n));
-	else
-		str.Format(_T("%d"), n);
-	int length{ str.GetLength() };
+	wstring str = std::to_wstring(is_unsigned ? static_cast<unsigned __int64>(n) : n);
 	int count{};
 	if (thousand_separation)
 	{
+        int length{ static_cast<int>(str.size()) };
 		for (int i{ length - 1 }; i > 0; i--)
 		{
 			count++;
 			if (count % 3 == 0)
-				str.Insert(i, _T(","));
+				str.insert(i, L",");
 		}
 	}
-	return str;
+	return str.c_str();
 }
 
 void CCommon::NormalizeFont(LOGFONT & font)
@@ -838,39 +834,6 @@ void CCommon::WStringCopy(wchar_t * str_dest, int dest_size, const wchar_t * str
 		str_dest[copy_cnt] = L'\0';
 	else
 		str_dest[dest_size - 1] = L'\0';
-}
-
-double CCommon::StringSimilarDegree_LD(const string & srcString, const string & matchString)
-{
-	int n = srcString.size();
-	int m = matchString.size();
-	//int[, ] d = new int[n + 1, m + 1]; // matrix
-	vector<vector<int>> d(n + 1, vector<int>(m + 1));
-	int cost; // cost
-			  // Step 1（如果其中一个字符串长度为0，则相似度为1）？
-			  //if (n == 0) return (double)m / max(srcString.size(), matchString.size());
-			  //if (m == 0) return (double)n / max(srcString.size(), matchString.size());
-	if (n == 0 || m == 0) return 0.0;	//如果其中一个字符串长度为0，则相似度为0
-										// Step 2
-	for (int i = 0; i <= n; d[i][0] = i++);
-	for (int j = 0; j <= m; d[0][j] = j++);
-	// Step 3
-	for (int i = 1; i <= n; i++)
-	{
-		//Step 4
-		for (int j = 1; j <= m; j++)
-		{
-			// Step 5
-			cost = (matchString.substr(j - 1, 1) == srcString.substr(i - 1, 1) ? 0 : 1);
-			// Step 6
-			d[i][j] = min(min(d[i - 1][j] + 1, d[i][j - 1] + 1), d[i - 1][j - 1] + cost);
-		}
-	}
-
-	// Step 7
-	double ds = 1 - (double)d[n][m] / max(srcString.size(), matchString.size());
-
-	return ds;
 }
 
 void CCommon::SetThreadLanguage(Language language)

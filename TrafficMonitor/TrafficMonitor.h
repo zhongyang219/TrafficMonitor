@@ -39,8 +39,8 @@ public:
 	wstring m_config_dir;
 
 	//以下数据定义为App类中的公共成员，以便于在主对话框和任务栏窗口中都能访问
-	unsigned int m_in_speed{};		//下载速度
-	unsigned int m_out_speed{};		//上传速度
+	unsigned __int64 m_in_speed{};		//下载速度
+	unsigned __int64 m_out_speed{};		//上传速度
 	int m_cpu_usage{ -1 };		//CPU利用率
 	int m_memory_usage{ -1 };	//内存利用率
 	int m_used_memory{};	//可用物理内存（单位为KB）

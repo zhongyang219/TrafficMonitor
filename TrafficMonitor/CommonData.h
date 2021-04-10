@@ -214,7 +214,7 @@ struct MainConfigData
 
 	bool m_auto_select{ false };	//自动选择连接
 	bool m_select_all{ false };		//统计所有连接的网速
-	string m_connection_name;		//当前选择网络的名称
+	wstring m_connection_name;		//当前选择网络的名称
 
 	wstring m_skin_name;			//选择的皮肤的名称
 	int m_dft_notify_icon = 0;		//默认的通知图标(用于区分win10的深色和浅色模式)

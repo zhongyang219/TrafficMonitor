@@ -1,4 +1,4 @@
-// CNetworkInfoDlg.cpp : ÊµÏÖÎÄ¼ş
+ï»¿// CNetworkInfoDlg.cpp : å®ç°æ–‡ä»¶
 //
 
 #include "stdafx.h"
@@ -7,12 +7,12 @@
 #include "afxdialogex.h"
 
 
-// CNetworkInfoDlg ¶Ô»°¿ò
+// CNetworkInfoDlg å¯¹è¯æ¡†
 
 IMPLEMENT_DYNAMIC(CNetworkInfoDlg, CBaseDialog)
 
-CNetworkInfoDlg::CNetworkInfoDlg(vector<NetWorkConection>& adapters, MIB_IFROW* pIfRow, int connection_selected, CWnd* pParent /*=NULL*/)
-	: CBaseDialog(IDD_NETWORK_INFO_DIALOG, pParent), m_connections(adapters), m_pIfRow(pIfRow), m_connection_selected(connection_selected)
+CNetworkInfoDlg::CNetworkInfoDlg(vector<NetWorkConection>& adapters, MIB_IF_TABLE2*& pIfTable, int connection_selected, CWnd* pParent /*=NULL*/)
+	: CBaseDialog(IDD_NETWORK_INFO_DIALOG, pParent), m_connections(adapters), m_pIfTable(pIfTable), m_connection_selected(connection_selected)
 {
 	m_current_connection = connection_selected;
 }
@@ -25,13 +25,13 @@ CNetworkInfoDlg::~CNetworkInfoDlg()
 void CNetworkInfoDlg::ShowInfo()
 {
 	CString temp;
-	MIB_IFROW& network_info = m_pIfRow[m_connections[m_connection_selected].index];
-	//½Ó¿ÚÃû
-	m_info_list.SetItemText(0, 1, network_info.wszName);
-	//½Ó¿ÚÃèÊö
-	m_info_list.SetItemText(1, 1, CCommon::StrToUnicode((const char*)network_info.bDescr).c_str());
-	//Á¬½ÓÀàĞÍ
-	switch (network_info.dwType)
+	MIB_IF_ROW2 network_info = m_pIfTable->Table[m_connections[m_connection_selected].index];
+	//æ¥å£å
+	m_info_list.SetItemText(0, 1, network_info.Alias);
+	//æ¥å£æè¿°
+	m_info_list.SetItemText(1, 1, network_info.Description);
+	//è¿æ¥ç±»å‹
+	switch (network_info.Type)
 	{
 	case IF_TYPE_OTHER: temp = CCommon::LoadText(IDS_IF_TYPE_OTHER); break;
 	case IF_TYPE_ETHERNET_CSMACD: temp = CCommon::LoadText(IDS_IF_TYPE_ETHERNET_CSMACD); break;
@@ -49,56 +49,71 @@ void CNetworkInfoDlg::ShowInfo()
 	default: temp = CCommon::LoadText(IDS_UNKNOW_CONNECTION); break;
 	}
 	m_info_list.SetItemText(2, 1, temp);
-	//ËÙ¶È
-	temp.Format(_T("%dMbps"), network_info.dwSpeed / 1000000);
+	//é€Ÿåº¦
+	temp.Format(_T("%dMbps"), network_info.TransmitLinkSpeed / 1000000);
 	m_info_list.SetItemText(3, 1, temp);
-	//ÊÊÅäÆ÷ÎïÀíµØÖ·
+	//é€‚é…å™¨ç‰©ç†åœ°å€
 	temp = _T("");
 	char buff[3];
-	for (size_t i{}; i < network_info.dwPhysAddrLen; i++)
+	for (size_t i{}; i < network_info.PhysicalAddressLength; i++)
 	{
-		sprintf_s(buff, "%.2x", network_info.bPhysAddr[i]);
+		sprintf_s(buff, "%.2x", network_info.PhysicalAddress[i]);
 		temp += buff;
-		if (i != network_info.dwPhysAddrLen - 1)
+		if (i != network_info.PhysicalAddressLength - 1)
 			temp += _T('-');
 	}
 	m_info_list.SetItemText(4, 1, temp);
-	//IPµØÖ·
+	//IPåœ°å€
 	m_info_list.SetItemText(5, 1, m_connections[m_connection_selected].ip_address.c_str());
-	//×ÓÍøÑÚÂë
+	//å­ç½‘æ©ç 
 	m_info_list.SetItemText(6, 1, m_connections[m_connection_selected].subnet_mask.c_str());
-	//Ä¬ÈÏÍø¹Ø
+	//é»˜è®¤ç½‘å…³
 	m_info_list.SetItemText(7, 1, m_connections[m_connection_selected].default_gateway.c_str());
-	//Á¬½Ó×´Ì¬
-	switch (network_info.dwOperStatus)
+	//è¿æ¥çŠ¶æ€
+	switch (network_info.OperStatus)
 	{
-	case IF_OPER_STATUS_NON_OPERATIONAL: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_NON_OPERATIONAL); break;
-	case IF_OPER_STATUS_UNREACHABLE: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_UNREACHABLE); break;
-	case IF_OPER_STATUS_DISCONNECTED: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_DISCONNECTED); break;
-	case IF_OPER_STATUS_CONNECTING: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_CONNECTING); break;
-	case IF_OPER_STATUS_CONNECTED: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_CONNECTED); break;
-	case IF_OPER_STATUS_OPERATIONAL: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_OPERATIONAL); break;
-	default: temp = CCommon::LoadText(IDS_UNKNOW_STATUS); break;
+	//case IF_OPER_STATUS_NON_OPERATIONAL: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_NON_OPERATIONAL); break;
+	//case IF_OPER_STATUS_UNREACHABLE: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_UNREACHABLE); break;
+	//case IF_OPER_STATUS_DISCONNECTED: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_DISCONNECTED); break;
+	//case IF_OPER_STATUS_CONNECTING: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_CONNECTING); break;
+	//case IF_OPER_STATUS_CONNECTED: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_CONNECTED); break;
+	//case IF_OPER_STATUS_OPERATIONAL: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_OPERATIONAL); break;
+    case IfOperStatusUp:
+        temp = CCommon::LoadText(IDS_IF_OPER_STATUS_UP);
+        break;
+    case IfOperStatusDown:
+    case IfOperStatusNotPresent:
+    case IfOperStatusLowerLayerDown:
+        temp = CCommon::LoadText(IDS_IF_OPER_STATUS_DOWN);
+        break;
+    case IfOperStatusTesting:
+    case IfOperStatusUnknown:
+        temp = CCommon::LoadText(IDS_UNKNOW_STATUS);
+        break;
+    case IfOperStatusDormant:
+        temp = CCommon::LoadText(IDS_IF_OPER_STATUS_DORMANT);
+        break;
+    default: temp = CCommon::LoadText(IDS_UNKNOW_STATUS); break;
 	}
 	m_info_list.SetItemText(8, 1, temp);
-	//ÒÑ½ÓÊÕ×Ö½ÚÊı
-	temp.Format(_T("%s (%s)"), CCommon::IntToString(network_info.dwInOctets, true, true), CCommon::DataSizeToString(network_info.dwInOctets));
+	//å·²æ¥æ”¶å­—èŠ‚æ•°
+	temp.Format(_T("%s (%s)"), CCommon::IntToString(network_info.InOctets, true, true), CCommon::DataSizeToString(network_info.InOctets));
 	m_info_list.SetItemText(9, 1, temp);
-	//ÒÑ·¢ËÍ×Ö½ÚÊı
-	temp.Format(_T("%s (%s)"), CCommon::IntToString(network_info.dwOutOctets, true, true), CCommon::DataSizeToString(network_info.dwOutOctets));
+	//å·²å‘é€å­—èŠ‚æ•°
+	temp.Format(_T("%s (%s)"), CCommon::IntToString(network_info.OutOctets, true, true), CCommon::DataSizeToString(network_info.OutOctets));
 	m_info_list.SetItemText(10, 1, temp);
-	//×Ô³ÌĞòÆô¶¯ÒÔÀ´ÒÑ½ÓÊÕ×Ö½ÚÊı
-	unsigned int in_bytes_since_start;
-	in_bytes_since_start = network_info.dwInOctets - m_connections[m_connection_selected].in_bytes;
+	//è‡ªç¨‹åºå¯åŠ¨ä»¥æ¥å·²æ¥æ”¶å­—èŠ‚æ•°
+	unsigned __int64 in_bytes_since_start;
+	in_bytes_since_start = network_info.InOctets - m_connections[m_connection_selected].in_bytes;
 	temp.Format(_T("%s (%s)"), CCommon::IntToString(in_bytes_since_start, true, true), CCommon::DataSizeToString(in_bytes_since_start));
 	m_info_list.SetItemText(11, 1, temp);
-	//×Ô³ÌĞòÆô¶¯ÒÔÀ´ÒÑ·¢ËÍ×Ö½ÚÊı
-	unsigned int out_bytes_since_start;
-	out_bytes_since_start = network_info.dwOutOctets - m_connections[m_connection_selected].out_bytes;
+	//è‡ªç¨‹åºå¯åŠ¨ä»¥æ¥å·²å‘é€å­—èŠ‚æ•°
+	unsigned __int64 out_bytes_since_start;
+	out_bytes_since_start = network_info.OutOctets - m_connections[m_connection_selected].out_bytes;
 	temp.Format(_T("%s (%s)"), CCommon::IntToString(out_bytes_since_start, true, true), CCommon::DataSizeToString(out_bytes_since_start));
 	m_info_list.SetItemText(12, 1, temp);
 
-	//ÏÔÊ¾µ±Ç°Ñ¡ÔñÖ¸Ê¾
+	//æ˜¾ç¤ºå½“å‰é€‰æ‹©æŒ‡ç¤º
 	CString str;
 	str.Format(_T("%d/%d"), m_connection_selected + 1, m_connections.size());
 	SetDlgItemText(IDC_INDEX_STATIC, str);
@@ -112,7 +127,7 @@ void CNetworkInfoDlg::ShowInfo()
 
 void CNetworkInfoDlg::GetProgramElapsedTime()
 {
-	//³ÌĞòÒÑÔËĞĞÊ±¼ä
+	//ç¨‹åºå·²è¿è¡Œæ—¶é—´
 	SYSTEMTIME current_time, time;
 	GetLocalTime(&current_time);
 	time = CCommon::CompareSystemTime(current_time, m_start_time);
@@ -123,13 +138,13 @@ void CNetworkInfoDlg::GetProgramElapsedTime()
 
 UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
 {
-	CCommon::SetThreadLanguage(theApp.m_general_data.language);		//ÉèÖÃÏß³ÌÓïÑÔ
+	CCommon::SetThreadLanguage(theApp.m_general_data.language);		//è®¾ç½®çº¿ç¨‹è¯­è¨€
 	CNetworkInfoDlg* p_instance = (CNetworkInfoDlg*)lpParam;
 	wstring ip_address, ip_location;
 
     //IPV4
-	CCommon::GetInternetIp2(ip_address, ip_location, false);			//»ñÈ¡ÍâÍøIPµØÖ·£¬
-	if (!IsWindow(p_instance->GetSafeHwnd()))		//Èç¹ûµ±Ç°¶Ô»°¿òÒÑ¾­Ïú»Ù£¬ÔòÍË³öÏß³Ì
+	CCommon::GetInternetIp2(ip_address, ip_location, false);			//è·å–å¤–ç½‘IPåœ°å€ï¼Œ
+	if (!IsWindow(p_instance->GetSafeHwnd()))		//å¦‚æœå½“å‰å¯¹è¯æ¡†å·²ç»é”€æ¯ï¼Œåˆ™é€€å‡ºçº¿ç¨‹
 		return 0;
 	if (!ip_address.empty())
 	{
@@ -147,8 +162,8 @@ UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
 
     //IPV6
     wstring ipv6_address, ipv6_location;
-    CCommon::GetInternetIp2(ip_address, ip_location, true);			//»ñÈ¡ÍâÍøIPµØÖ·£¬
-    if (!IsWindow(p_instance->GetSafeHwnd()))		//Èç¹ûµ±Ç°¶Ô»°¿òÒÑ¾­Ïú»Ù£¬ÔòÍË³öÏß³Ì
+    CCommon::GetInternetIp2(ip_address, ip_location, true);			//è·å–å¤–ç½‘IPåœ°å€ï¼Œ
+    if (!IsWindow(p_instance->GetSafeHwnd()))		//å¦‚æœå½“å‰å¯¹è¯æ¡†å·²ç»é”€æ¯ï¼Œåˆ™é€€å‡ºçº¿ç¨‹
         return 0;
     if (!ip_address.empty())
     {
@@ -192,31 +207,31 @@ BEGIN_MESSAGE_MAP(CNetworkInfoDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// CNetworkInfoDlg ÏûÏ¢´¦Àí³ÌĞò
+// CNetworkInfoDlg æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 
 BOOL CNetworkInfoDlg::OnInitDialog()
 {
 	CBaseDialog::OnInitDialog();
 
-	// TODO:  ÔÚ´ËÌí¼Ó¶îÍâµÄ³õÊ¼»¯
+	// TODO:  åœ¨æ­¤æ·»åŠ é¢å¤–çš„åˆå§‹åŒ–
 	SetWindowText(CCommon::LoadText(IDS_TITLE_CONNECTION_DETIAL));
-	SetIcon(theApp.GetMenuIcon(IDI_INFO), FALSE);		// ÉèÖÃĞ¡Í¼±ê
+	SetIcon(theApp.GetMenuIcon(IDI_INFO), FALSE);		// è®¾ç½®å°å›¾æ ‡
 
-	//ÖØĞÂ»ñÈ¡IPµØÖ·
+	//é‡æ–°è·å–IPåœ°å€
 	CAdapterCommon::RefreshIpAddress(m_connections);
 
-	//³õÊ¼»¯ÁĞ±í¿Ø¼ş
+	//åˆå§‹åŒ–åˆ—è¡¨æ§ä»¶
 	CRect rect;
 	m_info_list.GetClientRect(rect);
 	m_info_list.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
 	int width0, width1;
 	width0 = rect.Width() / 4;
 	width1 = rect.Width() - width0 - theApp.DPI(20) - 1;
-	m_info_list.InsertColumn(0, CCommon::LoadText(IDS_ITEM), LVCFMT_LEFT, width0);		//²åÈëµÚ0ÁĞ
-	m_info_list.InsertColumn(1, CCommon::LoadText(IDS_VALUE), LVCFMT_LEFT, width1);		//²åÈëµÚ1ÁĞ
+	m_info_list.InsertColumn(0, CCommon::LoadText(IDS_ITEM), LVCFMT_LEFT, width0);		//æ’å…¥ç¬¬0åˆ—
+	m_info_list.InsertColumn(1, CCommon::LoadText(IDS_VALUE), LVCFMT_LEFT, width1);		//æ’å…¥ç¬¬1åˆ—
 
-	//ÏòÁĞ±íÖĞ²åÈëĞĞ
+	//å‘åˆ—è¡¨ä¸­æ’å…¥è¡Œ
 	m_info_list.InsertItem(0, CCommon::LoadText(IDS_INTERFACE_NAME));
 	m_info_list.InsertItem(1, CCommon::LoadText(IDS_INTERFACE_DESCRIPTION));
 	m_info_list.InsertItem(2, CCommon::LoadText(IDS_CONNECTION_TYPE));
@@ -244,7 +259,7 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 		m_info_list.SetItemText(15, 1, CCommon::LoadText(IDS_DOUBLE_CLICK_TO_ACQUIRE));
 	//}
 
-	//ÏÔÊ¾ÁĞ±íÖĞµÄĞÅÏ¢
+	//æ˜¾ç¤ºåˆ—è¡¨ä¸­çš„ä¿¡æ¯
 	LOGFONT lf{};
 	GetFont()->GetLogFont(&lf);
 	lf.lfWeight = FW_BOLD;
@@ -254,23 +269,23 @@ BOOL CNetworkInfoDlg::OnInitDialog()
 
 	//CCommon::GetInternetIp();
 	//if (theApp.m_cfg_data.m_show_internet_ip)
- //       m_pGetIPThread = AfxBeginThread(GetInternetIPThreadFunc, this);		//Æô¶¯»ñÈ¡ÍâÍøIPµÄÏß³Ì
+ //       m_pGetIPThread = AfxBeginThread(GetInternetIPThreadFunc, this);		//å¯åŠ¨è·å–å¤–ç½‘IPçš„çº¿ç¨‹
 
-	//SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//È¡ÏûÖÃ¶¥
+	//SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//å–æ¶ˆç½®é¡¶
 	m_info_list.GetToolTips()->SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 
-	m_menu.LoadMenu(IDR_INFO_MENU); //×°ÔØÓÒ¼ü²Ëµ¥
+	m_menu.LoadMenu(IDR_INFO_MENU); //è£…è½½å³é”®èœå•
 
 	SetTimer(CONNECTION_DETAIL_TIMER, 1000, NULL);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-				  // Òì³£: OCX ÊôĞÔÒ³Ó¦·µ»Ø FALSE
+				  // å¼‚å¸¸: OCX å±æ€§é¡µåº”è¿”å› FALSE
 }
 
 
 void CNetworkInfoDlg::OnCopyText()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
 	if (!CCommon::CopyStringToClipboard(wstring(m_selected_string)))
 		MessageBox(CCommon::LoadText(IDS_COPY_TO_CLIPBOARD_FAILED), NULL, MB_ICONWARNING);
 }
@@ -279,19 +294,19 @@ void CNetworkInfoDlg::OnCopyText()
 void CNetworkInfoDlg::OnNMRClickInfoList1(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 
-	//»ñÈ¡Êó±êµã»÷´¦µÄÎÄ±¾
+	//è·å–é¼ æ ‡ç‚¹å‡»å¤„çš„æ–‡æœ¬
 	int item, sub_item;
 	item = pNMItemActivate->iItem;
 	sub_item = pNMItemActivate->iSubItem;
 	m_selected_string = m_info_list.GetItemText(item, sub_item);
 
-	//µ¯³öÓÒ¼ü²Ëµ¥
-	CMenu* pContextMenu = m_menu.GetSubMenu(0);	//»ñÈ¡µÚÒ»¸öµ¯³ö²Ëµ¥
-	CPoint point1;	//¶¨ÒåÒ»¸öÓÃÓÚÈ·¶¨¹â±êÎ»ÖÃµÄÎ»ÖÃ  
-	GetCursorPos(&point1);	//»ñÈ¡µ±Ç°¹â±êµÄÎ»ÖÃ£¬ÒÔ±ãÊ¹µÃ²Ëµ¥¿ÉÒÔ¸úËæ¹â±ê
-	pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //ÔÚÖ¸¶¨Î»ÖÃÏÔÊ¾µ¯³ö²Ëµ¥
+	//å¼¹å‡ºå³é”®èœå•
+	CMenu* pContextMenu = m_menu.GetSubMenu(0);	//è·å–ç¬¬ä¸€ä¸ªå¼¹å‡ºèœå•
+	CPoint point1;	//å®šä¹‰ä¸€ä¸ªç”¨äºç¡®å®šå…‰æ ‡ä½ç½®çš„ä½ç½®  
+	GetCursorPos(&point1);	//è·å–å½“å‰å…‰æ ‡çš„ä½ç½®ï¼Œä»¥ä¾¿ä½¿å¾—èœå•å¯ä»¥è·Ÿéšå…‰æ ‡
+	pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //åœ¨æŒ‡å®šä½ç½®æ˜¾ç¤ºå¼¹å‡ºèœå•
 
 	*pResult = 0;
 }
@@ -299,8 +314,8 @@ void CNetworkInfoDlg::OnNMRClickInfoList1(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CNetworkInfoDlg::OnClose()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
-	//¶Ô»°¿ò¹Ø±ÕÊ±Ç¿ÖÆ½áÊø»ñÈ¡IPµØÖ·µÄÏß³Ì
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
+	//å¯¹è¯æ¡†å…³é—­æ—¶å¼ºåˆ¶ç»“æŸè·å–IPåœ°å€çš„çº¿ç¨‹
 	//if(theApp.m_cfg_data.m_show_internet_ip)
  //       TerminateThread(m_pGetIPThread->m_hThread, 0);
 	CBaseDialog::OnClose();
@@ -309,7 +324,7 @@ void CNetworkInfoDlg::OnClose()
 
 void CNetworkInfoDlg::OnBnClickedPreviousButton()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	if (m_connection_selected > 0)
 	{
 		m_connection_selected--;
@@ -320,7 +335,7 @@ void CNetworkInfoDlg::OnBnClickedPreviousButton()
 
 void CNetworkInfoDlg::OnBnClickedNextButton()
 {
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	if (m_connection_selected < m_connections.size() - 1)
 	{
 		m_connection_selected++;
@@ -331,7 +346,7 @@ void CNetworkInfoDlg::OnBnClickedNextButton()
 
 BOOL CNetworkInfoDlg::PreTranslateMessage(MSG* pMsg)
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
 	if (pMsg->message == WM_KEYDOWN)
 	{
 		if (pMsg->wParam == VK_LEFT)
@@ -353,7 +368,7 @@ BOOL CNetworkInfoDlg::PreTranslateMessage(MSG* pMsg)
 
 void CNetworkInfoDlg::OnTimer(UINT_PTR nIDEvent)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 	if (nIDEvent == CONNECTION_DETAIL_TIMER)
 	{
 		GetProgramElapsedTime();
@@ -364,8 +379,8 @@ void CNetworkInfoDlg::OnTimer(UINT_PTR nIDEvent)
 
 BOOL CNetworkInfoDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
-	//Í¨¹ıÊó±ê¹öÂÖ·­Ò³
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
+	//é€šè¿‡é¼ æ ‡æ»šè½®ç¿»é¡µ
 	if (zDelta > 0)
 	{
 		OnBnClickedPreviousButton();
@@ -382,8 +397,8 @@ BOOL CNetworkInfoDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 void CNetworkInfoDlg::OnNMDblclkInfoList1(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-	// TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
-	if (/*!theApp.m_cfg_data.m_show_internet_ip && */!m_ip_acquired && (pNMItemActivate->iItem == 14 || pNMItemActivate->iItem == 15))		//Ë«»÷ÁËIPµØÖ·Ò»ĞĞÊ±
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
+	if (/*!theApp.m_cfg_data.m_show_internet_ip && */!m_ip_acquired && (pNMItemActivate->iItem == 14 || pNMItemActivate->iItem == 15))		//åŒå‡»äº†IPåœ°å€ä¸€è¡Œæ—¶
 	{
 		m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));
 		m_info_list.SetItemText(15, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));

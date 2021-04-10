@@ -117,7 +117,7 @@ public:
 	size：数据的字节数
 	返回值：转换后的字符串
 	*/
-	static CString DataSizeToString(unsigned int size, const PublicSettingData& cfg);
+	static CString DataSizeToString(unsigned long long size, const PublicSettingData& cfg);
 	static CString DataSizeToString(unsigned long long size);
 
     //将温度信息转换成字符串
@@ -220,7 +220,7 @@ public:
 	//n：要转换的数值
 	//thousand_separation：是否要每隔3位数使用逗号分隔
 	//is_unsigned：数值是否是无符号的
-	static CString IntToString(int n, bool thousand_separation = false, bool is_unsigned = false);
+	static CString IntToString(__int64 n, bool thousand_separation = false, bool is_unsigned = false);
 
 	//删除字体名称后面的Bold、Light等字符串，并根据这些字符串设置字体粗细
 	static void NormalizeFont(LOGFONT& font);
@@ -232,7 +232,39 @@ public:
 	/// 字符串相似度算法-编辑距离法
 	/// </summary>
 	/// <returns>返回的值为0~1，越大相似度越高</returns>
-	static double StringSimilarDegree_LD(const string& srcString, const string& matchString);
+    template<class T>
+    static double StringSimilarDegree_LD(const T& srcString, const T& matchString)
+    {
+        int n = srcString.size();
+        int m = matchString.size();
+        //int[, ] d = new int[n + 1, m + 1]; // matrix
+        vector<vector<int>> d(n + 1, vector<int>(m + 1));
+        int cost; // cost
+                  // Step 1（如果其中一个字符串长度为0，则相似度为1）？
+                  //if (n == 0) return (double)m / max(srcString.size(), matchString.size());
+                  //if (m == 0) return (double)n / max(srcString.size(), matchString.size());
+        if (n == 0 || m == 0) return 0.0;	//如果其中一个字符串长度为0，则相似度为0
+                                            // Step 2
+        for (int i = 0; i <= n; d[i][0] = i++);
+        for (int j = 0; j <= m; d[0][j] = j++);
+        // Step 3
+        for (int i = 1; i <= n; i++)
+        {
+            //Step 4
+            for (int j = 1; j <= m; j++)
+            {
+                // Step 5
+                cost = (matchString.substr(j - 1, 1) == srcString.substr(i - 1, 1) ? 0 : 1);
+                // Step 6
+                d[i][j] = min(min(d[i - 1][j] + 1, d[i][j - 1] + 1), d[i - 1][j - 1] + cost);
+            }
+        }
+
+        // Step 7
+        double ds = 1 - (double)d[n][m] / max(srcString.size(), matchString.size());
+
+        return ds;
+    }
 
 	//设置线程语言
 	static void SetThreadLanguage(Language language);

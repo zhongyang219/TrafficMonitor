@@ -91,7 +91,7 @@ void CTrafficMonitorApp::LoadConfig()
 	ini.LoadMainWndColors(_T("config"), _T("text_color"), m_main_wnd_data.text_colors, 16384);
 	m_main_wnd_data.specify_each_item_color = ini.GetBool(_T("config"), _T("specify_each_item_color"), false);
 	m_cfg_data.m_hide_main_window = ini.GetBool(_T("config"), _T("hide_main_window"), false);
-	m_cfg_data.m_connection_name = CCommon::UnicodeToStr(ini.GetString(L"connection", L"connection_name", L"").c_str());
+	m_cfg_data.m_connection_name = ini.GetString(L"connection", L"connection_name", L"");
 	m_cfg_data.m_skin_name = ini.GetString(_T("config"), _T("skin_selected"), _T(""));
 	if (m_cfg_data.m_skin_name.substr(0, 8) == L".\\skins\\")		//如果读取到的皮肤名称前面有".\\skins\\"，则把它删除。（用于和前一个版本保持兼容性）
 		m_cfg_data.m_skin_name = m_cfg_data.m_skin_name.substr(7);
@@ -266,7 +266,7 @@ void CTrafficMonitorApp::SaveConfig()
 	ini.SaveMainWndColors(L"config", L"text_color", m_main_wnd_data.text_colors);
 	ini.WriteBool(_T("config"), _T("specify_each_item_color"), m_main_wnd_data.specify_each_item_color);
 	ini.WriteInt(L"config", L"hide_main_window", m_cfg_data.m_hide_main_window);
-	ini.WriteString(L"connection", L"connection_name", CCommon::StrToUnicode(m_cfg_data.m_connection_name.c_str()).c_str());
+	ini.WriteString(L"connection", L"connection_name", m_cfg_data.m_connection_name.c_str());
 	ini.WriteString(_T("config"), _T("skin_selected"), m_cfg_data.m_skin_name.c_str());
 	ini.WriteInt(L"config", L"notify_icon_selected", m_cfg_data.m_notify_icon_selected);
     ini.WriteBool(L"config", L"notify_icon_auto_adapt", m_cfg_data.m_notify_icon_auto_adapt);

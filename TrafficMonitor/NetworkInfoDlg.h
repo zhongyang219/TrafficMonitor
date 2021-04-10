@@ -1,51 +1,51 @@
-#pragma once
+ï»¿#pragma once
 #include"Common.h"
 #include "afxcmn.h"
 #include "AdapterCommon.h"
 #include "BaseDialog.h"
 
-// CNetworkInfoDlg ¶Ô»°¿ò
+// CNetworkInfoDlg å¯¹è¯æ¡†
 
 class CNetworkInfoDlg : public CBaseDialog
 {
 	DECLARE_DYNAMIC(CNetworkInfoDlg)
 
 public:
-	CNetworkInfoDlg(vector<NetWorkConection>& adapters, MIB_IFROW* pIfRow, int connection_selected, CWnd* pParent = NULL);   // ±ê×¼¹¹Ôìº¯Êı
+	CNetworkInfoDlg(vector<NetWorkConection>& adapters, MIB_IF_TABLE2*& pIfTable, int connection_selected, CWnd* pParent = NULL);   // æ ‡å‡†æ„é€ å‡½æ•°
 	virtual ~CNetworkInfoDlg();
 
-// ¶Ô»°¿òÊı¾İ
+// å¯¹è¯æ¡†æ•°æ®
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_NETWORK_INFO_DIALOG };
 #endif
 
-	SYSTEMTIME m_start_time;		//³ÌĞòÆô¶¯µÄÊ±¼ä
+	SYSTEMTIME m_start_time;		//ç¨‹åºå¯åŠ¨çš„æ—¶é—´
 
 protected:
 
 	vector<NetWorkConection>& m_connections;
-	MIB_IFROW* m_pIfRow;
-	int m_connection_selected;		//µ±Ç°¶Ô»°¿òÏÔÊ¾µÄÁ¬½Ó
-	int m_current_connection;		//³õÊ¼Ñ¡ÔñµÄÁ¬½Ó
+    MIB_IF_TABLE2*& m_pIfTable;
+	int m_connection_selected;		//å½“å‰å¯¹è¯æ¡†æ˜¾ç¤ºçš„è¿æ¥
+	int m_current_connection;		//åˆå§‹é€‰æ‹©çš„è¿æ¥
 
 	CListCtrl m_info_list;
 	CMenu m_menu;
 	CString m_selected_string;
-	CFont m_font_bold;		//Ä¬ÈÏ×ÖÌåµÄ´ÖÌå
+	CFont m_font_bold;		//é»˜è®¤å­—ä½“çš„ç²—ä½“
 
-	CWinThread* m_pGetIPThread;			//»ñÈ¡ÍâÍøIPµÄÏß³Ì
-    bool m_ip_acquired{ false };        //Èç¹ûÒÑ»ñÈ¡ÍâÍøipµØÖ·£¬ÔòÎªtrue
+	CWinThread* m_pGetIPThread;			//è·å–å¤–ç½‘IPçš„çº¿ç¨‹
+    bool m_ip_acquired{ false };        //å¦‚æœå·²è·å–å¤–ç½‘ipåœ°å€ï¼Œåˆ™ä¸ºtrue
 
-	//void GetIPAddress();	//»ñÈ¡IPµØÖ·
+	//void GetIPAddress();	//è·å–IPåœ°å€
 	void ShowInfo();
 	void GetProgramElapsedTime();
 
-	//»ñÈ¡ÍâÍøIPµÄÏß³Ìº¯Êı
+	//è·å–å¤–ç½‘IPçš„çº¿ç¨‹å‡½æ•°
 	static UINT GetInternetIPThreadFunc(LPVOID lpParam);
 
 	virtual CString GetDialogName() const override;
 
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV æ”¯æŒ
 
 	DECLARE_MESSAGE_MAP()
 
