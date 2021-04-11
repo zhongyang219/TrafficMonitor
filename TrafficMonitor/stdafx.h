@@ -80,7 +80,7 @@ using std::ofstream;
 #define DELAY_TIMER 1235		//延时定时器ID
 #define TASKBAR_TIMER 1236
 #define CONNECTION_DETAIL_TIMER 1237
-#define MONITOR_TIMER 1238
+//#define MONITOR_TIMER 1238
 
 #define MAX_INSERT_TO_TASKBAR_CNT 5		//尝试嵌入任务栏的最大次数
 

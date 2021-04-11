@@ -22,6 +22,7 @@
 #include "AboutDlg.h"
 #include "CPUUsage.h"
 #include "HistoryTrafficFile.h"
+#include "HighResolutionTimer.h"
 
 // CTrafficMonitorDlg 对话框
 class CTrafficMonitorDlg : public CDialog
@@ -85,6 +86,9 @@ protected:
 	bool m_menu_popuped{ false };				//指示当前是否有菜单处于弹出状态
 
     HDC m_desktop_dc;
+
+    CHighResolutionTimer m_timer;			// 采用多媒体定时器(也防止了界面阻塞出现的卡顿现象)
+    static void TimerCallbackTemp(DWORD_PTR dwUser);
 
 	CString GetMouseTipsInfo();		//获取鼠标提示信息
 	void SetTransparency();			//根据m_transparency的值设置窗口透明度

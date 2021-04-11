@@ -417,6 +417,7 @@
     <ClInclude Include="DisplayTextSettingDlg.h" />
     <ClInclude Include="DrawCommonEx.h" />
     <ClInclude Include="FilePathHelper.h" />
+    <ClInclude Include="HighResolutionTimer.h" />
     <ClInclude Include="HistoryTrafficCalendarDlg.h" />
     <ClInclude Include="HistoryTrafficFile.h" />
     <ClInclude Include="HistoryTrafficListDlg.h" />
