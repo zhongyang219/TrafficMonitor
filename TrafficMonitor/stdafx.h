@@ -67,8 +67,9 @@ using std::ofstream;
 
 #define MY_WM_NOTIFYICON (WM_USER+1005)
 #define WM_TASKBAR_WND_CLOSED (WM_USER+1006)        //任务栏窗口关闭时发送此消息
+#define WM_MONITOR_INFO_UPDATED (WM_USER+1007)        //监控信息已更新
 
-#define WM_NEXT_USER_MSG (WM_USER+1007)
+#define WM_NEXT_USER_MSG (WM_USER+1008)
 
 //#define CONFIG_PATH _T(".\\config.ini")
 //#define CONFIG_PATHA ".\\config.ini"

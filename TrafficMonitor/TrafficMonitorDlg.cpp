@@ -104,6 +104,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_MESSAGE(WM_DPICHANGED, &CTrafficMonitorDlg::OnDpichanged)
     ON_MESSAGE(WM_TASKBAR_WND_CLOSED, &CTrafficMonitorDlg::OnTaskbarWndClosed)
     ON_COMMAND(ID_SHOW_GPU, &CTrafficMonitorDlg::OnShowGpuUsage)
+    ON_MESSAGE(WM_MONITOR_INFO_UPDATED, &CTrafficMonitorDlg::OnMonitorInfoUpdated)
 END_MESSAGE_MAP()
 
 
@@ -1009,21 +1010,11 @@ void CTrafficMonitorDlg::TimerCallbackTemp(DWORD_PTR dwUser)
     }
 #endif
 
-    pThis->Invalidate(FALSE);		//刷新窗口信息
-
-    //更新鼠标提示
-    if (theApp.m_main_wnd_data.show_tool_tip && pThis->m_tool_tips.GetSafeHwnd() != NULL)
-    {
-        CString tip_info;
-        tip_info = pThis->GetMouseTipsInfo();
-        pThis->m_tool_tips.UpdateTipText(tip_info, pThis);
-    }
-    //更新任务栏窗口鼠标提示
-    if (pThis->IsTaskbarWndValid())
-        pThis->m_tBarDlg->UpdateToolTips();
-
     //}
     pThis->m_monitor_time_cnt++;
+
+    //发送监控信息更新消息
+    pThis->PostMessage(WM_MONITOR_INFO_UPDATED);
 }
 
 void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
@@ -2325,4 +2316,22 @@ void CTrafficMonitorDlg::OnShowGpuUsage()
 {
     // TODO: 在此添加命令处理程序代码
     TaskbarShowHideItem(TDI_GPU_USAGE);
+}
+
+
+afx_msg LRESULT CTrafficMonitorDlg::OnMonitorInfoUpdated(WPARAM wParam, LPARAM lParam)
+{
+    Invalidate(FALSE);		//刷新窗口信息
+
+    //更新鼠标提示
+    if (theApp.m_main_wnd_data.show_tool_tip && m_tool_tips.GetSafeHwnd() != NULL)
+    {
+        CString tip_info;
+        tip_info = GetMouseTipsInfo();
+        m_tool_tips.UpdateTipText(tip_info, this);
+    }
+    //更新任务栏窗口鼠标提示
+    if (IsTaskbarWndValid())
+        m_tBarDlg->UpdateToolTips();
+    return 0;
 }
