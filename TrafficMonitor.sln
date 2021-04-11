@@ -39,17 +39,13 @@ Global
 		{09483BED-B1E9-4827-8120-A18302C84AA8}.Release|x86.ActiveCfg = Release|Win32
 		{09483BED-B1E9-4827-8120-A18302C84AA8}.Release|x86.Build.0 = Release|Win32
 		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Debug (without temperature)|x64.ActiveCfg = Debug|x64
-		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Debug (without temperature)|x64.Build.0 = Debug|x64
 		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Debug (without temperature)|x86.ActiveCfg = Debug|Win32
-		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Debug (without temperature)|x86.Build.0 = Debug|Win32
 		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Debug|x64.ActiveCfg = Debug|x64
 		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Debug|x64.Build.0 = Debug|x64
 		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Debug|x86.ActiveCfg = Debug|Win32
 		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Debug|x86.Build.0 = Debug|Win32
 		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Release (without temperature)|x64.ActiveCfg = Release|x64
-		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Release (without temperature)|x64.Build.0 = Release|x64
 		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Release (without temperature)|x86.ActiveCfg = Release|Win32
-		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Release (without temperature)|x86.Build.0 = Release|Win32
 		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Release|x64.ActiveCfg = Release|x64
 		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Release|x64.Build.0 = Release|x64
 		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Release|x86.ActiveCfg = Release|Win32
