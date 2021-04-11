@@ -112,9 +112,9 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 	CString tip_info;
 	CString temp;
 	temp.Format(_T("%s: %s (%s: %s/%s: %s)"), CCommon::LoadText(IDS_TRAFFIC_USED_TODAY),
-		CCommon::KBytesToString(static_cast<unsigned int>((theApp.m_today_up_traffic + theApp.m_today_down_traffic)/ 1024)),
-		CCommon::LoadText(IDS_UPLOAD), CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_up_traffic / 1024)),
-		CCommon::LoadText(IDS_DOWNLOAD), CCommon::KBytesToString(static_cast<unsigned int>(theApp.m_today_down_traffic / 1024))
+		CCommon::KBytesToString((theApp.m_today_up_traffic + theApp.m_today_down_traffic)/ 1024u),
+		CCommon::LoadText(IDS_UPLOAD), CCommon::KBytesToString(theApp.m_today_up_traffic / 1024u),
+		CCommon::LoadText(IDS_DOWNLOAD), CCommon::KBytesToString(theApp.m_today_down_traffic / 1024u)
 		);
 	tip_info += temp;
     const CSkinFile::Layout& skin_layout{ theApp.m_cfg_data.m_show_more_info ? m_skin.GetLayoutInfo().layout_l : m_skin.GetLayoutInfo().layout_s }; //当前的皮肤布局
@@ -910,8 +910,8 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 		//统计今天已使用的流量
 		theApp.m_today_up_traffic += cur_out_speed;
 		theApp.m_today_down_traffic += cur_in_speed;
-		m_history_traffic.GetTraffics()[0].up_kBytes = static_cast<unsigned int>(theApp.m_today_up_traffic / 1024);
-		m_history_traffic.GetTraffics()[0].down_kBytes = static_cast<unsigned int>(theApp.m_today_down_traffic / 1024);
+		m_history_traffic.GetTraffics()[0].up_kBytes = theApp.m_today_up_traffic / 1024u;
+		m_history_traffic.GetTraffics()[0].down_kBytes = theApp.m_today_down_traffic / 1024u;
 		//每隔30秒保存一次流量历史记录
 		if (m_monitor_time_cnt % GetMonitorTimerCount(30) == GetMonitorTimerCount(30) - 1)
 		{
