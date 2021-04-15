@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "DrawCommon.h"
 
 
@@ -10,258 +10,261 @@ CDrawCommon::~CDrawCommon()
 {
 }
 
-void CDrawCommon::Create(CDC * pDC, CWnd * pMainWnd)
+void CDrawCommon::Create(CDC* pDC, CWnd* pMainWnd)
 {
-	m_pDC = pDC;
-	m_pMainWnd = pMainWnd;
-	if(pMainWnd!=nullptr)
-		m_pfont = m_pMainWnd->GetFont();
+    m_pDC = pDC;
+    m_pMainWnd = pMainWnd;
+    if (pMainWnd != nullptr)
+        m_pfont = m_pMainWnd->GetFont();
 }
 
-void CDrawCommon::SetFont(CFont * pfont)
+void CDrawCommon::SetFont(CFont* pfont)
 {
-	m_pfont = pfont;
+    m_pfont = pfont;
 }
 
-void CDrawCommon::SetDC(CDC * pDC)
+void CDrawCommon::SetDC(CDC* pDC)
 {
-	m_pDC = pDC;
+    m_pDC = pDC;
 }
 
 void CDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align, bool draw_back_ground, bool multi_line)
 {
-	m_pDC->SetTextColor(color);
-	if(!draw_back_ground)
-		m_pDC->SetBkMode(TRANSPARENT);
-	m_pDC->SelectObject(m_pfont);
-	CSize text_size = m_pDC->GetTextExtent(lpszString);
+    m_pDC->SetTextColor(color);
+    if (!draw_back_ground)
+        m_pDC->SetBkMode(TRANSPARENT);
+    m_pDC->SelectObject(m_pfont);
+    CSize text_size = m_pDC->GetTextExtent(lpszString);
 
-	UINT format;		//CDC::DrawText()º¯ÊıµÄÎÄ±¾¸ñÊ½
-	if (multi_line)
-		format = DT_EDITCONTROL | DT_WORDBREAK | DT_NOPREFIX;
-	else
-		format = DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX;
+    UINT format;        //CDC::DrawText()å‡½æ•°çš„æ–‡æœ¬æ ¼å¼
+    if (multi_line)
+        format = DT_EDITCONTROL | DT_WORDBREAK | DT_NOPREFIX;
+    else
+        format = DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX;
 
-	if (text_size.cx > rect.Width())		//Èç¹ûÎÄ±¾¿í¶È³¬¹ıÁË¾ØĞÎÇøÓòµÄ¿í¶È£¬ÉèÖÃÁË¾ÓÖĞÊ±×ó¶ÔÆë
-	{
-		if (align == Alignment::RIGHT)
-			format |= DT_RIGHT;
-	}
-	else
-	{
-		switch (align)
-		{
-		case Alignment::RIGHT: format |= DT_RIGHT; break;
-		case Alignment::CENTER: format |= DT_CENTER; break;
-		}
-	}
-	if(draw_back_ground)
-		m_pDC->FillSolidRect(rect, m_back_color);
-	m_pDC->DrawText(lpszString, rect, format);
+    if (text_size.cx > rect.Width())        //å¦‚æœæ–‡æœ¬å®½åº¦è¶…è¿‡äº†çŸ©å½¢åŒºåŸŸçš„å®½åº¦ï¼Œè®¾ç½®äº†å±…ä¸­æ—¶å·¦å¯¹é½
+    {
+        if (align == Alignment::RIGHT)
+            format |= DT_RIGHT;
+    }
+    else
+    {
+        switch (align)
+        {
+        case Alignment::RIGHT: format |= DT_RIGHT; break;
+        case Alignment::CENTER: format |= DT_CENTER; break;
+        }
+    }
+    if (draw_back_ground)
+        m_pDC->FillSolidRect(rect, m_back_color);
+    m_pDC->DrawText(lpszString, rect, format);
 }
 
 
 void CDrawCommon::SetDrawRect(CRect rect)
 {
-	CRgn rgn;
-	rgn.CreateRectRgnIndirect(rect);
-	m_pDC->SelectClipRgn(&rgn);
+    CRgn rgn;
+    rgn.CreateRectRgnIndirect(rect);
+    m_pDC->SelectClipRgn(&rgn);
 }
 
-void CDrawCommon::SetDrawRect(CDC * pDC, CRect rect)
+void CDrawCommon::SetDrawRect(CDC* pDC, CRect rect)
 {
-	CRgn rgn;
-	rgn.CreateRectRgnIndirect(rect);
-	pDC->SelectClipRgn(&rgn);
+    CRgn rgn;
+    rgn.CreateRectRgnIndirect(rect);
+    pDC->SelectClipRgn(&rgn);
 }
 
-void CDrawCommon::DrawBitmap(CBitmap & bitmap, CPoint start_point, CSize size, StretchMode stretch_mode)
+void CDrawCommon::DrawBitmap(CBitmap& bitmap, CPoint start_point, CSize size, StretchMode stretch_mode)
 {
-	CDC memDC;
+    CDC memDC;
 
-	//»ñÈ¡Í¼ÏñÊµ¼Ê´óĞ¡
-	BITMAP bm;
-	GetObject(bitmap, sizeof(BITMAP), &bm);
+    //è·å–å›¾åƒå®é™…å¤§å°
+    BITMAP bm;
+    GetObject(bitmap, sizeof(BITMAP), &bm);
 
-	memDC.CreateCompatibleDC(m_pDC);
-	memDC.SelectObject(&bitmap);
-	// ÒÔÏÂÁ½ĞĞ±ÜÃâÍ¼Æ¬Ê§Õæ
-	m_pDC->SetStretchBltMode(HALFTONE);
-	m_pDC->SetBrushOrg(0, 0);
-	CSize draw_size;
-	if (size.cx == 0 || size.cy == 0)		//Èç¹ûÖ¸¶¨µÄsizeÎª0£¬ÔòÊ¹ÓÃÎ»Í¼µÄÊµ¼Ê´óĞ¡»æÖÆ
-	{
-		draw_size = CSize(bm.bmWidth, bm.bmHeight);
-	}
-	else
-	{
-		draw_size = size;
-		if (stretch_mode == StretchMode::FILL)
-		{
-			SetDrawRect(CRect(start_point, draw_size));
-			float w_h_radio, w_h_radio_draw;		//Í¼ÏñµÄ¿í¸ß±È¡¢»æÖÆ´óĞ¡µÄ¿í¸ß±È
-			w_h_radio = static_cast<float>(bm.bmWidth) / bm.bmHeight;
-			w_h_radio_draw = static_cast<float>(size.cx) / size.cy;
-			if (w_h_radio > w_h_radio_draw)		//Èç¹ûÍ¼ÏñµÄ¿í¸ß±È´óÓÚ»æÖÆÇøÓòµÄ¿í¸ß±È£¬ÔòĞèÒª²Ã¼ôÁ½±ßµÄÍ¼Ïñ
-			{
-				int image_width;		//°´±ÈÀıËõ·ÅºóµÄ¿í¶È
-				image_width = bm.bmWidth * draw_size.cy / bm.bmHeight;
-				start_point.x -= ((image_width - draw_size.cx) / 2);
-				draw_size.cx = image_width;
-			}
-			else
-			{
-				int image_height;		//°´±ÈÀıËõ·ÅºóµÄ¸ß¶È
-				image_height = bm.bmHeight * draw_size.cx / bm.bmWidth;
-				start_point.y -= ((image_height - draw_size.cy) / 2);
-				draw_size.cy = image_height;
-			}
-		}
-		else if (stretch_mode == StretchMode::FIT)
-		{
-			draw_size = CSize(bm.bmWidth, bm.bmHeight);
-			float w_h_radio, w_h_radio_draw;		//Í¼ÏñµÄ¿í¸ß±È¡¢»æÖÆ´óĞ¡µÄ¿í¸ß±È
-			w_h_radio = static_cast<float>(bm.bmWidth) / bm.bmHeight;
-			w_h_radio_draw = static_cast<float>(size.cx) / size.cy;
-			if (w_h_radio > w_h_radio_draw)		//Èç¹ûÍ¼ÏñµÄ¿í¸ß±È´óÓÚ»æÖÆÇøÓòµÄ¿í¸ß±È
-			{
-				draw_size.cy = draw_size.cy * size.cx / draw_size.cx;
-				draw_size.cx = size.cx;
-				start_point.y += ((size.cy - draw_size.cy) / 2);
-			}
-			else
-			{
-				draw_size.cx = draw_size.cx * size.cy / draw_size.cy;
-				draw_size.cy = size.cy;
-				start_point.x += ((size.cx - draw_size.cx) / 2);
-			}
-		}
-	}
+    memDC.CreateCompatibleDC(m_pDC);
+    memDC.SelectObject(&bitmap);
+    // ä»¥ä¸‹ä¸¤è¡Œé¿å…å›¾ç‰‡å¤±çœŸ
+    m_pDC->SetStretchBltMode(HALFTONE);
+    m_pDC->SetBrushOrg(0, 0);
+    CSize draw_size;
+    if (size.cx == 0 || size.cy == 0)       //å¦‚æœæŒ‡å®šçš„sizeä¸º0ï¼Œåˆ™ä½¿ç”¨ä½å›¾çš„å®é™…å¤§å°ç»˜åˆ¶
+    {
+        draw_size = CSize(bm.bmWidth, bm.bmHeight);
+    }
+    else
+    {
+        draw_size = size;
+        if (stretch_mode == StretchMode::FILL)
+        {
+            SetDrawRect(CRect(start_point, draw_size));
+            float w_h_radio, w_h_radio_draw;        //å›¾åƒçš„å®½é«˜æ¯”ã€ç»˜åˆ¶å¤§å°çš„å®½é«˜æ¯”
+            w_h_radio = static_cast<float>(bm.bmWidth) / bm.bmHeight;
+            w_h_radio_draw = static_cast<float>(size.cx) / size.cy;
+            if (w_h_radio > w_h_radio_draw)     //å¦‚æœå›¾åƒçš„å®½é«˜æ¯”å¤§äºç»˜åˆ¶åŒºåŸŸçš„å®½é«˜æ¯”ï¼Œåˆ™éœ€è¦è£å‰ªä¸¤è¾¹çš„å›¾åƒ
+            {
+                int image_width;        //æŒ‰æ¯”ä¾‹ç¼©æ”¾åçš„å®½åº¦
+                image_width = bm.bmWidth * draw_size.cy / bm.bmHeight;
+                start_point.x -= ((image_width - draw_size.cx) / 2);
+                draw_size.cx = image_width;
+            }
+            else
+            {
+                int image_height;       //æŒ‰æ¯”ä¾‹ç¼©æ”¾åçš„é«˜åº¦
+                image_height = bm.bmHeight * draw_size.cx / bm.bmWidth;
+                start_point.y -= ((image_height - draw_size.cy) / 2);
+                draw_size.cy = image_height;
+            }
+        }
+        else if (stretch_mode == StretchMode::FIT)
+        {
+            draw_size = CSize(bm.bmWidth, bm.bmHeight);
+            float w_h_radio, w_h_radio_draw;        //å›¾åƒçš„å®½é«˜æ¯”ã€ç»˜åˆ¶å¤§å°çš„å®½é«˜æ¯”
+            w_h_radio = static_cast<float>(bm.bmWidth) / bm.bmHeight;
+            w_h_radio_draw = static_cast<float>(size.cx) / size.cy;
+            if (w_h_radio > w_h_radio_draw)     //å¦‚æœå›¾åƒçš„å®½é«˜æ¯”å¤§äºç»˜åˆ¶åŒºåŸŸçš„å®½é«˜æ¯”
+            {
+                draw_size.cy = draw_size.cy * size.cx / draw_size.cx;
+                draw_size.cx = size.cx;
+                start_point.y += ((size.cy - draw_size.cy) / 2);
+            }
+            else
+            {
+                draw_size.cx = draw_size.cx * size.cy / draw_size.cy;
+                draw_size.cy = size.cy;
+                start_point.x += ((size.cx - draw_size.cx) / 2);
+            }
+        }
+    }
 
-	m_pDC->StretchBlt(start_point.x, start_point.y, draw_size.cx, draw_size.cy, &memDC, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
-	memDC.DeleteDC();
+    m_pDC->StretchBlt(start_point.x, start_point.y, draw_size.cx, draw_size.cy, &memDC, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
+    memDC.DeleteDC();
 }
 
 void CDrawCommon::DrawBitmap(UINT bitmap_id, CPoint start_point, CSize size, StretchMode stretch_mode)
 {
-	CBitmap bitmap;
-	bitmap.LoadBitmap(bitmap_id);
-	DrawBitmap(bitmap, start_point, size, stretch_mode);
+    CBitmap bitmap;
+    bitmap.LoadBitmap(bitmap_id);
+    DrawBitmap(bitmap, start_point, size, stretch_mode);
 }
 
 void CDrawCommon::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode)
 {
-	CBitmap bitmap;
-	if (!bitmap.Attach(hbitmap))
-		return;
-	DrawBitmap(bitmap, start_point, size, stretch_mode);
-	bitmap.Detach();
+    CBitmap bitmap;
+    if (!bitmap.Attach(hbitmap))
+        return;
+    DrawBitmap(bitmap, start_point, size, stretch_mode);
+    bitmap.Detach();
 }
 
-void CDrawCommon::BitmapStretch(CImage *pImage, CImage *ResultImage, CSize size)
+void CDrawCommon::BitmapStretch(CImage* pImage, CImage* ResultImage, CSize size)
 {
-	if (pImage->IsDIBSection())
-	{
-		// È¡µÃ pImage µÄ DC
-		CDC* pImageDC1 = CDC::FromHandle(pImage->GetDC()); // Image ÒòéÓĞ×Ô¼ºµÄ DC, ËùÒÔ±ØíšÊ¹ÓÃ FromHandle È¡µÃŒ¦‘ªµÄ DC
+    if (pImage->IsDIBSection())
+    {
+        // å–å¾— pImage çš„ DC
+        CDC* pImageDC1 = CDC::FromHandle(pImage->GetDC()); // Image å› ç‚ºæœ‰è‡ªå·±çš„ DC, æ‰€ä»¥å¿…é ˆä½¿ç”¨ FromHandle å–å¾—å°æ‡‰çš„ DC
 
-		CBitmap *bitmap1 = pImageDC1->GetCurrentBitmap();
-		BITMAP bmpInfo;
-		bitmap1->GetBitmap(&bmpInfo);
+        CBitmap* bitmap1 = pImageDC1->GetCurrentBitmap();
+        BITMAP bmpInfo;
+        bitmap1->GetBitmap(&bmpInfo);
 
-		// ½¨Á¢ĞÂµÄ CImage
-		ResultImage->Create(size.cx, size.cy, bmpInfo.bmBitsPixel);
-		CDC* ResultImageDC = CDC::FromHandle(ResultImage->GetDC());
+        // å»ºç«‹æ–°çš„ CImage
+        ResultImage->Create(size.cx, size.cy, bmpInfo.bmBitsPixel);
+        CDC* ResultImageDC = CDC::FromHandle(ResultImage->GetDC());
 
-		// ®” Destination ±Èİ^Ğ¡µÄ•rºò, •ş¸ù“ş Destination DC ÉÏµÄ Stretch Blt mode ›Q¶¨ÊÇ·ñÒª±£Áô±»„h³ıücµÄÙYÓ
-		ResultImageDC->SetStretchBltMode(HALFTONE); // Ê¹ÓÃ×î¸ßÆ·Ù|µÄ·½Ê½
-		::SetBrushOrgEx(ResultImageDC->m_hDC, 0, 0, NULL); // Õ{Õû Brush µÄÆğüc
+        // ç•¶ Destination æ¯”è¼ƒå°çš„æ™‚å€™, æœƒæ ¹æ“š Destination DC ä¸Šçš„ Stretch Blt mode æ±ºå®šæ˜¯å¦è¦ä¿ç•™è¢«åˆªé™¤é»çš„è³‡è¨Š
+        ResultImageDC->SetStretchBltMode(HALFTONE); // ä½¿ç”¨æœ€é«˜å“è³ªçš„æ–¹å¼
+        ::SetBrushOrgEx(ResultImageDC->m_hDC, 0, 0, NULL); // èª¿æ•´ Brush çš„èµ·é»
 
-		// °Ñ pImage ®‹µ½ ResultImage ÉÏÃæ
-		StretchBlt(*ResultImageDC, 0, 0, size.cx, size.cy, *pImageDC1, 0, 0, pImage->GetWidth(), pImage->GetHeight(), SRCCOPY);
-		// pImage->Draw(*ResultImageDC,0,0,StretchWidth,StretchHeight,0,0,pImage->GetWidth(),pImage->GetHeight());
+        // æŠŠ pImage ç•«åˆ° ResultImage ä¸Šé¢
+        StretchBlt(*ResultImageDC, 0, 0, size.cx, size.cy, *pImageDC1, 0, 0, pImage->GetWidth(), pImage->GetHeight(), SRCCOPY);
+        // pImage->Draw(*ResultImageDC,0,0,StretchWidth,StretchHeight,0,0,pImage->GetWidth(),pImage->GetHeight());
 
-		pImage->ReleaseDC();
-		ResultImage->ReleaseDC();
-	}
+        pImage->ReleaseDC();
+        ResultImage->ReleaseDC();
+    }
 }
 
 void CDrawCommon::FillRect(CRect rect, COLORREF color)
 {
-	m_pDC->FillSolidRect(rect, color);
+    m_pDC->FillSolidRect(rect, color);
 }
 
 void CDrawCommon::FillRectWithBackColor(CRect rect)
 {
-	m_pDC->FillSolidRect(rect, m_back_color);
+    m_pDC->FillSolidRect(rect, m_back_color);
 }
 
 void CDrawCommon::DrawRectOutLine(CRect rect, COLORREF color, int width, bool dot_line)
 {
-	CPen aPen, *pOldPen;
-	aPen.CreatePen((dot_line ? PS_DOT : PS_SOLID), width, color);
-	pOldPen = m_pDC->SelectObject(&aPen);
-	CBrush* pOldBrush{ dynamic_cast<CBrush*>(m_pDC->SelectStockObject(NULL_BRUSH)) };
+    CPen aPen, * pOldPen;
+    aPen.CreatePen((dot_line ? PS_DOT : PS_SOLID), width, color);
+    pOldPen = m_pDC->SelectObject(&aPen);
+    CBrush* pOldBrush{ dynamic_cast<CBrush*>(m_pDC->SelectStockObject(NULL_BRUSH)) };
 
-	rect.DeflateRect(width / 2, width / 2);
-	m_pDC->Rectangle(rect);
-	m_pDC->SelectObject(pOldPen);
-	m_pDC->SelectObject(pOldBrush);       // Restore the old brush
+    rect.DeflateRect(width / 2, width / 2);
+    m_pDC->Rectangle(rect);
+    m_pDC->SelectObject(pOldPen);
+    m_pDC->SelectObject(pOldBrush);       // Restore the old brush
+    aPen.DeleteObject();
 }
 
-void CDrawCommon::GetRegionFromImage(CRgn& rgn, CBitmap &cBitmap, int threshold)
+void CDrawCommon::GetRegionFromImage(CRgn& rgn, CBitmap& cBitmap, int threshold)
 {
-	CDC memDC;
+    CDC memDC;
 
-	memDC.CreateCompatibleDC(NULL);
-	CBitmap *pOldMemBmp = NULL;
-	pOldMemBmp = memDC.SelectObject(&cBitmap);
+    memDC.CreateCompatibleDC(NULL);
+    CBitmap* pOldMemBmp = NULL;
+    pOldMemBmp = memDC.SelectObject(&cBitmap);
 
-	//´´½¨×ÜµÄ´°ÌåÇøÓò£¬³õÊ¼regionÎª0
-	rgn.CreateRectRgn(0, 0, 0, 0);
+    //åˆ›å»ºæ€»çš„çª—ä½“åŒºåŸŸï¼Œåˆå§‹regionä¸º0
+    rgn.CreateRectRgn(0, 0, 0, 0);
 
-	BITMAP bit;
-	cBitmap.GetBitmap(&bit);//È¡µÃÎ»Í¼²ÎÊı£¬ÕâÀïÒªÓÃµ½Î»Í¼µÄ³¤ºÍ¿í
-	int y;
-	for (y = 0; y<bit.bmHeight; y++)
-	{
-		CRgn rgnTemp; //±£´æÁÙÊ±region
-		int iX = 0;
-		do
-		{
-			//Ìø¹ıÍ¸Ã÷É«ÕÒµ½ÏÂÒ»¸ö·ÇÍ¸Ã÷É«µÄµã.
-			while (iX < bit.bmWidth && GetColorBritness(memDC.GetPixel(iX, y)) <= threshold)
-				iX++;
-			int iLeftX = iX; //¼Ç×¡Õâ¸öÆğÊ¼µã
+    BITMAP bit;
+    cBitmap.GetBitmap(&bit);//å–å¾—ä½å›¾å‚æ•°ï¼Œè¿™é‡Œè¦ç”¨åˆ°ä½å›¾çš„é•¿å’Œå®½
+    int y;
+    for (y = 0; y < bit.bmHeight; y++)
+    {
+        CRgn rgnTemp; //ä¿å­˜ä¸´æ—¶region
+        int iX = 0;
+        do
+        {
+            //è·³è¿‡é€æ˜è‰²æ‰¾åˆ°ä¸‹ä¸€ä¸ªéé€æ˜è‰²çš„ç‚¹.
+            while (iX < bit.bmWidth && GetColorBritness(memDC.GetPixel(iX, y)) <= threshold)
+                iX++;
+            int iLeftX = iX; //è®°ä½è¿™ä¸ªèµ·å§‹ç‚¹
 
-							 //Ñ°ÕÒÏÂ¸öÍ¸Ã÷É«µÄµã
-			while (iX < bit.bmWidth && GetColorBritness(memDC.GetPixel(iX, y)) > threshold)
-				++iX;
+                             //å¯»æ‰¾ä¸‹ä¸ªé€æ˜è‰²çš„ç‚¹
+            while (iX < bit.bmWidth && GetColorBritness(memDC.GetPixel(iX, y)) > threshold)
+                ++iX;
 
-			//´´½¨Ò»¸ö°üº¬ÆğµãÓëÖØµã¼ä¸ßÎª1ÏñËØµÄÁÙÊ±¡°region¡±
-			rgnTemp.CreateRectRgn(iLeftX, y, iX, y + 1);
-			rgn.CombineRgn(&rgn, &rgnTemp, RGN_OR);
+            //åˆ›å»ºä¸€ä¸ªåŒ…å«èµ·ç‚¹ä¸é‡ç‚¹é—´é«˜ä¸º1åƒç´ çš„ä¸´æ—¶â€œregionâ€
+            rgnTemp.CreateRectRgn(iLeftX, y, iX, y + 1);
+            rgn.CombineRgn(&rgn, &rgnTemp, RGN_OR);
 
-			//É¾³ıÁÙÊ±"region",·ñÔòÏÂ´Î´´½¨Ê±ºÍ³ö´í
-			rgnTemp.DeleteObject();
-		} while (iX < bit.bmWidth);
-	}
+            //åˆ é™¤ä¸´æ—¶"region",å¦åˆ™ä¸‹æ¬¡åˆ›å»ºæ—¶å’Œå‡ºé”™
+            rgnTemp.DeleteObject();
+        } while (iX < bit.bmWidth);
+    }
+    memDC.DeleteDC();
 }
 
 int CDrawCommon::GetColorBritness(COLORREF color)
 {
-	return (GetRValue(color) + GetGValue(color) + GetBValue(color)) / 3;
+    return (GetRValue(color) + GetGValue(color) + GetBValue(color)) / 3;
 }
 
 void CDrawCommon::DrawLine(CPoint start_point, int height, COLORREF color)
 {
-	CPen aPen, *pOldPen;
-	aPen.CreatePen( PS_SOLID, 1, color);
-	pOldPen = m_pDC->SelectObject(&aPen);
-	CBrush* pOldBrush{ dynamic_cast<CBrush*>(m_pDC->SelectStockObject(NULL_BRUSH)) };
+    CPen aPen, * pOldPen;
+    aPen.CreatePen(PS_SOLID, 1, color);
+    pOldPen = m_pDC->SelectObject(&aPen);
+    CBrush* pOldBrush{ dynamic_cast<CBrush*>(m_pDC->SelectStockObject(NULL_BRUSH)) };
 
-	m_pDC->MoveTo(start_point); //ÒÆ¶¯µ½ÆğÊ¼µã£¬Ä¬ÈÏÊÇ´ÓÏÂÏòÉÏ»­
-	m_pDC->LineTo(CPoint(start_point.x,start_point.y - height));
-	m_pDC->SelectObject(pOldPen);
-	m_pDC->SelectObject(pOldBrush);       // Restore the old brush
+    m_pDC->MoveTo(start_point); //ç§»åŠ¨åˆ°èµ·å§‹ç‚¹ï¼Œé»˜è®¤æ˜¯ä»ä¸‹å‘ä¸Šç”»
+    m_pDC->LineTo(CPoint(start_point.x, start_point.y - height));
+    m_pDC->SelectObject(pOldPen);
+    m_pDC->SelectObject(pOldBrush);       // Restore the old brush
+    aPen.DeleteObject();
 }
