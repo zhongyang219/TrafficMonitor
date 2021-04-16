@@ -1,6 +1,12 @@
 ﻿<version>1.79.1</version>
-<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.79.1/TrafficMonitor_V1.79.1_x86.7z</link>
-<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.79.1/TrafficMonitor_V1.79.1_x64.7z</link_x64>
+<GitHub>
+	<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.79.1/TrafficMonitor_V1.79.1_x86.7z</link>
+	<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.79.1/TrafficMonitor_V1.79.1_x64.7z</link_x64>
+</GitHub>
+<Gitee>
+	<link>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/675897/download/TrafficMonitor_V1.79.1_x64.7z</link>
+	<link_x64>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/675898/download/TrafficMonitor_V1.79.1_x86.7z</link_x64>
+</Gitee>
 <update_contents>
 	<contents_zh_cn>修正注册表句柄泄漏的问题。\n修正当主窗口和任务栏窗口都不显示时，不统计CPU和内存利用率的问题。\n\n1.79版本更新日志：\n新增任务栏窗口颜色自动适应Windows10深色/浅色主题的功能。\n新增通知区图标自动适应Windows10深色/浅色主题的功能。\n增加CPU获取方式的设置，解决部分用户出现的CPU利用率始终为0的问题。\n选项设置>任务栏设置中去掉“透明色”的设置，新增“背景色透明”的选项。\n新增允许任务栏只显示CPU和内存利用率而不显示网速。\n修正了关机后设置可能会没有保存的问题。\n历史流量统计-日历视图中增加了每周第一天的设置。\n历史流量统计-列表视图中增加了按年、月、日、季度统计的功能。\n可能解决了历史流量数据有小概率丢失的问题。\n修正Windows10浅色主题时，如果任务栏窗口背景设置为透明，会无法弹出右键菜单的问题。\n修正流量统计不支持统计超过2TB数据的问题。\n为菜单项添加了图标。\n当程序所在目录无法写入时，将数据保存到AppData目录。\n新增设置监控时间间隔的功能。</contents_zh_cn>
 	<contents_en>Fix the problem of registry handle leak.\nFixed the problem that CPU and memory usage are not counted when the main window and taskbar window are not displayed.\n\nUpdate Log of version 1.79:\n\nAdd the function of automatically adapts to the Windows 10 dark/light theme of the taskbar window color.\nAdd the function of automatically adapts to the Windows 10 dark/light theme of the notification area icon.\nAdd the option of CPU usage acquisition method. Fix the problem that the CPU usage may always 0 of some users.\nRemove the option of "Transparent color" in "Options"-"Taskbar Window Settings", and add the option of "Background Color Transparent".\nAllows only CPU and memory usage displayed in the taskbar window without the net speed.\nFixes an problem that the settings may not be saved after the shutdown.\nAdd the setting of "the first day of the week" in the "Historical Traffic Statistics"-"Calendar View".\nAdd the function of displaying history traffic by day, month, quarter and year in the "Historical Traffic Statistics"-"List View".\nMay fixed the problem of the loss of historical traffic data in small probability.\nFixed the problem that the right-click menu cannot pop up if the taskbar window background is set to transparent in Windows 10 light theme.\nFixed the problem that traffic statistics does not support data exceeding 2TB.\nAdded icons for menu items.\nSave the data to the AppData directory when the program's directory cannot be written.\nAdd the function of setting the monitoring interval.</contents_en>

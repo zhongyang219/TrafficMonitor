@@ -1,4 +1,4 @@
-// OptionsDlg.cpp : ÊµÏÖÎÄ¼ş
+ï»¿// OptionsDlg.cpp : å®ç°æ–‡ä»¶
 //
 
 #include "stdafx.h"
@@ -7,12 +7,12 @@
 #include "afxdialogex.h"
 
 
-// COptionsDlg ¶Ô»°¿ò
+// COptionsDlg å¯¹è¯æ¡†
 
 IMPLEMENT_DYNAMIC(COptionsDlg, CBaseDialog)
 
 COptionsDlg::COptionsDlg(int tab, CWnd* pParent /*=NULL*/)
-	: CBaseDialog(IDD_OPTIONS_DIALOG, pParent), m_tab_selected{ tab }
+    : CBaseDialog(IDD_OPTIONS_DIALOG, pParent), m_tab_selected{ tab }
 {
 
 }
@@ -23,13 +23,13 @@ COptionsDlg::~COptionsDlg()
 
 CString COptionsDlg::GetDialogName() const
 {
-	return _T("OptionsDlg");
+    return _T("OptionsDlg");
 }
 
 void COptionsDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CBaseDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_TAB1, m_tab);
+    CBaseDialog::DoDataExchange(pDX);
+    DDX_Control(pDX, IDC_TAB1, m_tab);
 }
 
 
@@ -38,30 +38,30 @@ BEGIN_MESSAGE_MAP(COptionsDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// COptionsDlg ÏûÏ¢´¦Àí³ÌĞò
+// COptionsDlg æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 
 BOOL COptionsDlg::OnInitDialog()
 {
-	CBaseDialog::OnInitDialog();
+    CBaseDialog::OnInitDialog();
 
-	// TODO:  ÔÚ´ËÌí¼Ó¶îÍâµÄ³õÊ¼»¯
-	theApp.m_option_dlg = m_hWnd;
+    // TODO:  åœ¨æ­¤æ·»åŠ é¢å¤–çš„åˆå§‹åŒ–
+    theApp.m_option_dlg = m_hWnd;
 
-	SetWindowText(CCommon::LoadText(IDS_TITLE_OPTION));
-    SetIcon(theApp.GetMenuIcon(IDI_SETTINGS), FALSE);		// ÉèÖÃĞ¡Í¼±ê
+    SetWindowText(CCommon::LoadText(IDS_TITLE_OPTION));
+    SetIcon(theApp.GetMenuIcon(IDI_SETTINGS), FALSE);       // è®¾ç½®å°å›¾æ ‡
 
-	//´´½¨×Ó¶Ô»°¿ò
-	m_tab1_dlg.Create(IDD_MAIN_WND_SETTINGS_DIALOG, &m_tab);
-	m_tab2_dlg.Create(IDD_TASKBAR_SETTINGS_DIALOG, &m_tab);
-	m_tab3_dlg.Create(IDD_GENERAL_SETTINGS_DIALOG, &m_tab);
+    //åˆ›å»ºå­å¯¹è¯æ¡†
+    m_tab1_dlg.Create(IDD_MAIN_WND_SETTINGS_DIALOG, &m_tab);
+    m_tab2_dlg.Create(IDD_TASKBAR_SETTINGS_DIALOG, &m_tab);
+    m_tab3_dlg.Create(IDD_GENERAL_SETTINGS_DIALOG, &m_tab);
 
-    //±£´æ×Ó¶Ô»°¿ò
+    //ä¿å­˜å­å¯¹è¯æ¡†
     m_tab_vect.push_back(&m_tab1_dlg);
     m_tab_vect.push_back(&m_tab2_dlg);
     m_tab_vect.push_back(&m_tab3_dlg);
 
-    //»ñÈ¡×Ó¶Ô»°¿òµÄ³õÊ¼¸ß¶È
+    //è·å–å­å¯¹è¯æ¡†çš„åˆå§‹é«˜åº¦
     for (const auto* pDlg : m_tab_vect)
     {
         CRect rect;
@@ -69,35 +69,35 @@ BOOL COptionsDlg::OnInitDialog()
         m_tab_height.push_back(rect.Height());
     }
 
-	//Ìí¼Ó¶Ô»°¿ò
-	m_tab.AddWindow(&m_tab1_dlg, CCommon::LoadText(IDS_MAIN_WINDOW_SETTINGS));
-	m_tab.AddWindow(&m_tab2_dlg, CCommon::LoadText(IDS_TASKBAR_WINDOW_SETTINGS));
-	m_tab.AddWindow(&m_tab3_dlg, CCommon::LoadText(IDS_GENERAL_SETTINGS));
+    //æ·»åŠ å¯¹è¯æ¡†
+    m_tab.AddWindow(&m_tab1_dlg, CCommon::LoadText(IDS_MAIN_WINDOW_SETTINGS));
+    m_tab.AddWindow(&m_tab2_dlg, CCommon::LoadText(IDS_TASKBAR_WINDOW_SETTINGS));
+    m_tab.AddWindow(&m_tab3_dlg, CCommon::LoadText(IDS_GENERAL_SETTINGS));
 
-    //ÎªÃ¿¸ö×Ó´°¿ÚÉèÖÃ¹ö¶¯ĞÅÏ¢
+    //ä¸ºæ¯ä¸ªå­çª—å£è®¾ç½®æ»šåŠ¨ä¿¡æ¯
     for (size_t i = 0; i < m_tab_vect.size(); i++)
     {
         m_tab_vect[i]->SetScrollbarInfo(m_tab.m_tab_rect.Height(), m_tab_height[i]);
     }
 
-	//ÉèÖÃÄ¬ÈÏÑ¡ÖĞµÄ±êÇ©
+    //è®¾ç½®é»˜è®¤é€‰ä¸­çš„æ ‡ç­¾
     if (m_tab_selected < 0 || m_tab_selected >= m_tab.GetItemCount())
         m_tab_selected = 0;
     m_tab.SetCurTab(m_tab_selected);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // Òì³£: OCX ÊôĞÔÒ³Ó¦·µ»Ø FALSE
+    return TRUE;  // return TRUE unless you set the focus to a control
+                  // å¼‚å¸¸: OCX å±æ€§é¡µåº”è¿”å› FALSE
 }
 
 
 void COptionsDlg::OnOK()
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
-	m_tab1_dlg.OnOK();
-	m_tab2_dlg.OnOK();
-	m_tab3_dlg.OnOK();
+    // TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
+    m_tab1_dlg.OnOK();
+    m_tab2_dlg.OnOK();
+    m_tab3_dlg.OnOK();
 
-	CBaseDialog::OnOK();
+    CBaseDialog::OnOK();
 }
 
 
@@ -105,14 +105,23 @@ void COptionsDlg::OnSize(UINT nType, int cx, int cy)
 {
     CBaseDialog::OnSize(nType, cx, cy);
 
-    // TODO: ÔÚ´Ë´¦Ìí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂë
+    // TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
     if (nType != SIZE_MINIMIZED)
     {
-        //ÎªÃ¿¸ö×Ó´°¿ÚÉèÖÃ¹ö¶¯ĞÅÏ¢
+        //ä¸ºæ¯ä¸ªå­çª—å£è®¾ç½®æ»šåŠ¨ä¿¡æ¯
         for (size_t i = 0; i < m_tab_vect.size(); i++)
         {
             m_tab_vect[i]->ResetScroll();
             m_tab_vect[i]->SetScrollbarInfo(m_tab.m_tab_rect.Height(), m_tab_height[i]);
         }
     }
+}
+
+
+void COptionsDlg::OnCancel()
+{
+    // TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
+    m_tab3_dlg.OnCancel();
+
+    CBaseDialog::OnCancel();
 }

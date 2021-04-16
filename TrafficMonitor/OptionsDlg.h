@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "MainWndSettingsDlg.h"
 #include "TaskBarSettingsDlg.h"
 #include "GeneralSettingsDlg.h"
@@ -6,37 +6,38 @@
 #include "CTabCtrlEx.h"
 #include "BaseDialog.h"
 
-// COptionsDlg ¶Ô»°¿ò
+// COptionsDlg å¯¹è¯æ¡†
 
 class COptionsDlg : public CBaseDialog
 {
-	DECLARE_DYNAMIC(COptionsDlg)
+    DECLARE_DYNAMIC(COptionsDlg)
 
 public:
-	COptionsDlg(int tab = 0, CWnd* pParent = NULL);   // ±ê×¼¹¹Ôìº¯Êı
-	virtual ~COptionsDlg();
+    COptionsDlg(int tab = 0, CWnd* pParent = NULL);   // æ ‡å‡†æ„é€ å‡½æ•°
+    virtual ~COptionsDlg();
 
-// ¶Ô»°¿òÊı¾İ
+    // å¯¹è¯æ¡†æ•°æ®
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_OPTIONS_DIALOG };
+    enum { IDD = IDD_OPTIONS_DIALOG };
 #endif
 
-	CMainWndSettingsDlg m_tab1_dlg{ this };
-	CTaskBarSettingsDlg m_tab2_dlg{ this };
-	CGeneralSettingsDlg m_tab3_dlg{ this };
+    CMainWndSettingsDlg m_tab1_dlg{ this };
+    CTaskBarSettingsDlg m_tab2_dlg{ this };
+    CGeneralSettingsDlg m_tab3_dlg{ this };
 
 protected:
-	CTabCtrlEx m_tab;
-	int m_tab_selected;
+    CTabCtrlEx m_tab;
+    int m_tab_selected;
     std::vector<CTabDlg*> m_tab_vect;
     std::vector<int> m_tab_height;
 
-	virtual CString GetDialogName() const override;
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
+    virtual CString GetDialogName() const override;
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV æ”¯æŒ
 
-	DECLARE_MESSAGE_MAP()
+    DECLARE_MESSAGE_MAP()
 public:
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
+    virtual BOOL OnInitDialog();
+    virtual void OnOK();
     afx_msg void OnSize(UINT nType, int cx, int cy);
+    virtual void OnCancel();
 };
