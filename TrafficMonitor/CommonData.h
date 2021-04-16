@@ -228,6 +228,14 @@ struct MainConfigData
     bool m_sunday_first{ true };            //是否将周日作为一周的第一天
 };
 
+//内存显示方式
+enum class MemoryDisplay
+{
+    USAGE_PERCENTAGE,       //已使用百分比
+    MEMORY_USED,            //内存已使用
+    MEMORY_AVAILABLE        //内存可用
+};
+
 //选项设置中“主窗口设置”和“任务栏窗口设置”中公共的数据（不使用此结构体创建对象）
 struct PublicSettingData
 {
@@ -238,6 +246,8 @@ struct PublicSettingData
     bool speed_short_mode{ false };     //网速显示简洁模式（减少小数点的位数，单位不显示“B”）
     bool separate_value_unit_with_space{ true };    //网速数值和单位用空格分隔
     bool show_tool_tip{ true };         //显示鼠标提示
+    MemoryDisplay memory_display{ MemoryDisplay::USAGE_PERCENTAGE };    //内存显示方式
+
     bool unit_byte{ true };             //使用字节(B)而不是比特(b)为单位
     SpeedUnit speed_unit;       //网速的单位
     bool hide_unit;         //隐藏单位
