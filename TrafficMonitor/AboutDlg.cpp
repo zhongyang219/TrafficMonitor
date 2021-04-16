@@ -5,9 +5,9 @@
 #include "DrawCommon.h"
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
-	//ON_STN_CLICKED(IDC_STATIC_DONATE, &CAboutDlg::OnStnClickedStaticDonate)
-	ON_MESSAGE(WM_LINK_CLICKED, &CAboutDlg::OnLinkClicked)
-	ON_WM_PAINT()
+    //ON_STN_CLICKED(IDC_STATIC_DONATE, &CAboutDlg::OnStnClickedStaticDonate)
+    ON_MESSAGE(WM_LINK_CLICKED, &CAboutDlg::OnLinkClicked)
+    ON_WM_PAINT()
     ON_WM_ERASEBKGND()
     ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
@@ -29,25 +29,27 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_TINYXML2_LINK, m_tinyxml2_link);
     DDX_Control(pDX, IDC_MUSICPLAYER2_LINK, m_musicplayer2_link);
     DDX_Control(pDX, IDC_SIMPLENOTEPAD_LINK, m_simplenotepad_link);
+    DDX_Control(pDX, IDC_STATIC_GITEE, m_gitee);
 }
 
 CString CAboutDlg::GetDonateList()
 {
-	return CCommon::GetTextResource(IDR_ACKNOWLEDGEMENT_TEXT, 2);
+    return CCommon::GetTextResource(IDR_ACKNOWLEDGEMENT_TEXT, 2);
 }
 
 BOOL CAboutDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+    CDialog::OnInitDialog();
 
-	// TODO:  在此添加额外的初始化
-	SetWindowText(CCommon::LoadText(IDS_TITLE_ABOUT));
-	m_mail.SetURL(_T("mailto:zhongyang219@hotmail.com"));	//设置超链接
-															//m_check_update.SetURL(_T("http://pan.baidu.com/s/1c1LkPQ4"));
-	m_github.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor"));
-	m_donate.SetLinkIsURL(false);
-	m_acknowledgement.SetLinkIsURL(false);
-	m_license.SetLinkIsURL(false);
+    // TODO:  在此添加额外的初始化
+    SetWindowText(CCommon::LoadText(IDS_TITLE_ABOUT));
+    m_mail.SetURL(_T("mailto:zhongyang219@hotmail.com"));   //设置超链接
+    //m_check_update.SetURL(_T("http://pan.baidu.com/s/1c1LkPQ4"));
+    m_github.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor"));
+    m_gitee.SetURL(_T("https://gitee.com/zhongyang219/TrafficMonitor"));
+    m_donate.SetLinkIsURL(false);
+    m_acknowledgement.SetLinkIsURL(false);
+    m_license.SetLinkIsURL(false);
 
     m_openhardwaremonitor_link.SetURL(_T("https://github.com/openhardwaremonitor/openhardwaremonitor"));
     m_tinyxml2_link.SetURL(_T("https://github.com/leethomason/tinyxml2"));
@@ -58,58 +60,59 @@ BOOL CAboutDlg::OnInitDialog()
     m_musicplayer2_link.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
     m_simplenotepad_link.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
 
-	//设置版本信息
-	CString version_info;
-	GetDlgItemText(IDC_STATIC_VERSION, version_info);
-	version_info.Replace(_T("<version>"), VERSION);
+    //设置版本信息
+    CString version_info;
+    GetDlgItemText(IDC_STATIC_VERSION, version_info);
+    version_info.Replace(_T("<version>"), VERSION);
 
 #ifdef COMPILE_FOR_WINXP
-	version_info += _T(" (For WinXP)");
+    version_info += _T(" (For WinXP)");
 #endif // COMPILE_FOR_WINXP
 
 #ifdef _M_X64
-	version_info += _T(" (x64)");
+    version_info += _T(" (x64)");
 #endif
 
 #ifdef _DEBUG
-	version_info += _T(" (Debug)");
+    version_info += _T(" (Debug)");
 #endif
 
 #ifdef WITHOUT_TEMPERATURE
     version_info += CCommon::LoadText(_T(" ("), IDS_WITHOUT_TEMPERATURE, _T(")"));
 #endif
 
-	SetDlgItemText(IDC_STATIC_VERSION, version_info);
+    SetDlgItemText(IDC_STATIC_VERSION, version_info);
 
-	//设置最后编译日期
-	CString temp_str;
-	GetDlgItemText(IDC_STATIC_COPYRIGHT, temp_str);
-	temp_str.Replace(_T("<compile_date>"), COMPILE_DATE);
-	SetDlgItemText(IDC_STATIC_COPYRIGHT, temp_str);
+    //设置最后编译日期
+    CString temp_str;
+    GetDlgItemText(IDC_STATIC_COPYRIGHT, temp_str);
+    temp_str.Replace(_T("<compile_date>"), COMPILE_DATE);
+    SetDlgItemText(IDC_STATIC_COPYRIGHT, temp_str);
 
-	m_tool_tip.Create(this, TTS_ALWAYSTIP | TTS_NOPREFIX);
-	m_tool_tip.AddTool(&m_mail, CCommon::LoadText(IDS_SEND_EMAIL_TO_ATHOUR, _T("\r\nmailto:zhongyang219@hotmail.com")));
-	//m_tool_tip.AddTool(&m_check_update, _T("到百度网盘链接查看是否有更新\r\nhttp://pan.baidu.com/s/1c1LkPQ4"));
-	m_tool_tip.AddTool(&m_github, CCommon::LoadText(IDS_GOTO_GITHUB, _T("\r\nhttps://github.com/zhongyang219/TrafficMonitor")));
-	m_tool_tip.AddTool(&m_donate, CCommon::LoadText(IDS_DONATE_ATHOUR));
+    m_tool_tip.Create(this, TTS_ALWAYSTIP | TTS_NOPREFIX);
+    m_tool_tip.AddTool(&m_mail, CCommon::LoadText(IDS_SEND_EMAIL_TO_ATHOUR, _T("\r\nmailto:zhongyang219@hotmail.com")));
+    //m_tool_tip.AddTool(&m_check_update, _T("到百度网盘链接查看是否有更新\r\nhttp://pan.baidu.com/s/1c1LkPQ4"));
+    m_tool_tip.AddTool(&m_github, CCommon::LoadText(IDS_GOTO_GITHUB, _T("\r\nhttps://github.com/zhongyang219/TrafficMonitor")));
+    m_tool_tip.AddTool(&m_gitee, CCommon::LoadText(IDS_GOTO_GITEE, _T("\r\nhttps://gitee.com/zhongyang219/TrafficMonitor")));
+    m_tool_tip.AddTool(&m_donate, CCommon::LoadText(IDS_DONATE_ATHOUR));
     m_tool_tip.AddTool(&m_openhardwaremonitor_link, m_openhardwaremonitor_link.GetURL());
     m_tool_tip.AddTool(&m_tinyxml2_link, m_tinyxml2_link.GetURL());
     m_tool_tip.AddTool(&m_musicplayer2_link, CCommon::LoadText(IDS_MUSICPLAYER2_DESCRIPTION) + _T("\r\n") + m_musicplayer2_link.GetURL());
     m_tool_tip.AddTool(&m_simplenotepad_link, CCommon::LoadText(IDS_SIMPLENOTEPAD_DESCRIPTION) + _T("\r\n") + m_simplenotepad_link.GetURL());
 
-	m_tool_tip.SetDelayTime(300);	//设置延迟
-	m_tool_tip.SetMaxTipWidth(800);
+    m_tool_tip.SetDelayTime(300);   //设置延迟
+    m_tool_tip.SetMaxTipWidth(800);
 
-	//设置翻译者信息
-	int language_code;
-	language_code = _ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE));
-	if (language_code == 1 || language_code == 2)		//语言是简体中文和英文时不显示翻译者信息
-		m_translaotr_static.ShowWindow(SW_HIDE);
-	if (language_code == 3)		//显示繁体中文翻译者的信息
-	{
-		m_translaotr_static.SetURL(_T("http://mkvq.blogspot.com/"));
-		m_tool_tip.AddTool(&m_translaotr_static, CCommon::LoadText(IDS_CONTACT_TRANSLATOR, _T("\r\nhttp://mkvq.blogspot.com/")));
-	}
+    //设置翻译者信息
+    int language_code;
+    language_code = _ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE));
+    if (language_code == 1 || language_code == 2)       //语言是简体中文和英文时不显示翻译者信息
+        m_translaotr_static.ShowWindow(SW_HIDE);
+    if (language_code == 3)     //显示繁体中文翻译者的信息
+    {
+        m_translaotr_static.SetURL(_T("http://mkvq.blogspot.com/"));
+        m_tool_tip.AddTool(&m_translaotr_static, CCommon::LoadText(IDS_CONTACT_TRANSLATOR, _T("\r\nhttp://mkvq.blogspot.com/")));
+    }
     m_translaotr_static.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
 
     //设置图片的位置
@@ -125,44 +128,44 @@ BOOL CAboutDlg::OnInitDialog()
     //加载图片
     m_about_pic.LoadBitmap(IDB_ABOUT_BACKGROUND_HD);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // 异常: OCX 属性页应返回 FALSE
+    return TRUE;  // return TRUE unless you set the focus to a control
+                  // 异常: OCX 属性页应返回 FALSE
 }
 
 BOOL CAboutDlg::PreTranslateMessage(MSG* pMsg)
 {
-	// TODO: 在此添加专用代码和/或调用基类
-	if (pMsg->message == WM_MOUSEMOVE)
-		m_tool_tip.RelayEvent(pMsg);
+    // TODO: 在此添加专用代码和/或调用基类
+    if (pMsg->message == WM_MOUSEMOVE)
+        m_tool_tip.RelayEvent(pMsg);
 
-	return CDialog::PreTranslateMessage(pMsg);
+    return CDialog::PreTranslateMessage(pMsg);
 }
 
 //void CAboutDlg::OnStnClickedStaticDonate()
 //{
-//	CDonateDlg donateDlg;
-//	donateDlg.DoModal();
+//  CDonateDlg donateDlg;
+//  donateDlg.DoModal();
 //}
 
 afx_msg LRESULT CAboutDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
 {
-	CWnd* pCtrl = (CWnd*)wParam;
-	if (pCtrl == &m_donate)
-	{
-		CDonateDlg donateDlg;
-		donateDlg.DoModal();
-	}
-	else if (pCtrl == &m_acknowledgement)
-	{
-		CString strContent = GetDonateList();
-		//strContent += _T("\r\n");
-		//strContent += CCommon::LoadText(IDS_ACKNOWLEDGEMENT_EXPLAIN);
-		CMessageDlg dlg;
-		dlg.SetWindowTitle(CCommon::LoadText(IDS_TITLE_ACKNOWLEDGEMENT));
-		//dlg.SetInfoText(CCommon::LoadText(IDS_THANKS_DONORS));
-		dlg.SetMessageText(strContent);
-		dlg.DoModal();
-	}
+    CWnd* pCtrl = (CWnd*)wParam;
+    if (pCtrl == &m_donate)
+    {
+        CDonateDlg donateDlg;
+        donateDlg.DoModal();
+    }
+    else if (pCtrl == &m_acknowledgement)
+    {
+        CString strContent = GetDonateList();
+        //strContent += _T("\r\n");
+        //strContent += CCommon::LoadText(IDS_ACKNOWLEDGEMENT_EXPLAIN);
+        CMessageDlg dlg;
+        dlg.SetWindowTitle(CCommon::LoadText(IDS_TITLE_ACKNOWLEDGEMENT));
+        //dlg.SetInfoText(CCommon::LoadText(IDS_THANKS_DONORS));
+        dlg.SetMessageText(strContent);
+        dlg.DoModal();
+    }
     else if (pCtrl == &m_license)
     {
         CMessageDlg dlg;
@@ -172,7 +175,7 @@ afx_msg LRESULT CAboutDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
         dlg.DoModal();
     }
 
-	return 0;
+    return 0;
 }
 
 void CAboutDlg::OnPaint()
