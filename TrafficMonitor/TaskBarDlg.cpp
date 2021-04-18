@@ -266,9 +266,9 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
     if (type == TDI_MEMORY && (theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_USED || theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_AVAILABLE))
     {
         if (theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_USED)
-            str_value = CCommon::DataSizeToString(static_cast<unsigned long long>(theApp.m_used_memory) * 1024);
+            str_value = CCommon::DataSizeToString(static_cast<unsigned long long>(theApp.m_used_memory) * 1024, theApp.m_taskbar_data.separate_value_unit_with_space);
         else
-            str_value = CCommon::DataSizeToString((static_cast<unsigned long long>(theApp.m_total_memory) - static_cast<unsigned long long>(theApp.m_used_memory)) * 1024);
+            str_value = CCommon::DataSizeToString((static_cast<unsigned long long>(theApp.m_total_memory) - static_cast<unsigned long long>(theApp.m_used_memory)) * 1024, theApp.m_taskbar_data.separate_value_unit_with_space);
     }
     //绘制CPU或内存利用率
     else if (type == TDI_CPU || type == TDI_MEMORY || type == TDI_GPU_USAGE)
@@ -616,9 +616,9 @@ void CTaskBarDlg::CalculateWindowSize()
     if (theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_USED || theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_AVAILABLE)
     {
         if (theApp.m_taskbar_data.separate_value_unit_with_space)
-            str = _T("999 MB");
+            str = _T("19.99 GB");
         else
-            str = _T("999MB");
+            str = _T("19.99GB");
         memory_width = m_pDC->GetTextExtent(str).cx;
     }
     m_item_widths[TDI_CPU].value_width = value_width;

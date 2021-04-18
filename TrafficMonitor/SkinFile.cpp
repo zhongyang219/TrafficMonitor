@@ -71,7 +71,7 @@ void CSkinFile::Load(const wstring& file_path)
     m_background_l.Load((path_dir + BACKGROUND_IMAGE_L).c_str());
 }
 
-void CSkinFile::LoadFromXml(const wstring & file_path)
+void CSkinFile::LoadFromXml(const wstring& file_path)
 {
     m_skin_info = SkinInfo();
     m_layout_info = LayoutInfo();
@@ -180,7 +180,7 @@ void CSkinFile::LoadFromXml(const wstring & file_path)
 
 }
 
-void CSkinFile::LoadFromIni(const wstring & file_path)
+void CSkinFile::LoadFromIni(const wstring& file_path)
 {
     m_skin_info = SkinInfo();
     m_layout_info = LayoutInfo();
@@ -396,24 +396,31 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
     //获取每个项目显示的文本
     //上传/下载
     CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data);
-	CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data);
+    CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data);
 
     std::map<DisplayItem, CString> map_str;
     CString format_str;
-	if (theApp.m_main_wnd_data.hide_unit && theApp.m_main_wnd_data.speed_unit != SpeedUnit::AUTO)
-		format_str = _T("%s%s");
-	else
-		format_str = _T("%s%s/s");
+    if (theApp.m_main_wnd_data.hide_unit && theApp.m_main_wnd_data.speed_unit != SpeedUnit::AUTO)
+        format_str = _T("%s%s");
+    else
+        format_str = _T("%s%s/s");
     map_str[TDI_UP].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_UP).c_str()), out_speed.GetString());
     map_str[TDI_DOWN].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_DOWN).c_str()), in_speed.GetString());
     if (theApp.m_main_wnd_data.swap_up_down) //交换上传和下载位置
-	{
+    {
         std::swap(map_str[TDI_UP], map_str[TDI_DOWN]);
-	}
+    }
 
     //CPU/内存/显卡利用率
     map_str[TDI_CPU] = (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_CPU).c_str()) + CCommon::UsageToString(theApp.m_cpu_usage, theApp.m_main_wnd_data);
-    map_str[TDI_MEMORY] = (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_MEMORY).c_str()) + CCommon::UsageToString(theApp.m_memory_usage, theApp.m_main_wnd_data);
+    CString str_memory_value;
+    if (theApp.m_main_wnd_data.memory_display == MemoryDisplay::MEMORY_USED)
+        str_memory_value = CCommon::DataSizeToString(static_cast<unsigned long long>(theApp.m_used_memory) * 1024, theApp.m_main_wnd_data.separate_value_unit_with_space);
+    else if (theApp.m_main_wnd_data.memory_display == MemoryDisplay::MEMORY_AVAILABLE)
+        str_memory_value = CCommon::DataSizeToString((static_cast<unsigned long long>(theApp.m_total_memory) - static_cast<unsigned long long>(theApp.m_used_memory)) * 1024, theApp.m_main_wnd_data.separate_value_unit_with_space);
+    else
+        str_memory_value = CCommon::UsageToString(theApp.m_memory_usage, theApp.m_main_wnd_data);
+    map_str[TDI_MEMORY] = (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_MEMORY).c_str()) + str_memory_value;
     map_str[TDI_GPU_USAGE] = (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_GPU_USAGE).c_str()) + CCommon::UsageToString(theApp.m_gpu_usage, theApp.m_main_wnd_data);
 
     //温度
