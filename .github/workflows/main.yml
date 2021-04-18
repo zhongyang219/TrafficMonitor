@@ -28,6 +28,12 @@ jobs:
           Bin/x64/Release/TrafficMonitor.exe
           Bin/x64/Release/*.dll
 
+    - name : Upload pdb files
+      uses: actions/upload-artifact@v2
+      with:
+        name: x64_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor_pdb
+        path: Bin/x64/Release/*.pdb
+
   x86_build:
     runs-on: windows-latest
 
@@ -54,6 +60,12 @@ jobs:
         path: |
           Bin/Release/TrafficMonitor.exe
           Bin/Release/*.dll
+      
+    - name : Upload pdb files
+      uses: actions/upload-artifact@v2
+      with:
+        name: x86_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor_pdb
+        path: Bin/Release/*.pdb
 
   # winXP_build:
     # runs-on: windows-latest
