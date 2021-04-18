@@ -50,7 +50,7 @@ using std::ofstream;
 #include<io.h>
 #include<algorithm>
 #include <cmath>
-#include <afxinet.h>	//用于支持使用网络相关的类
+#include <afxinet.h>    //用于支持使用网络相关的类
 #include <afxwin.h>
 
 
@@ -75,20 +75,19 @@ using std::ofstream;
 //#define CONFIG_PATHA ".\\config.ini"
 //#define LOG_PATH _T(".\\error.log")
 //#define HISTORY_TRAFFIC_PATH _T(".\\history_traffic.dat")
-#define MAX_RESTART_CNT 10		//最大重新初始化次数
+#define MAX_RESTART_CNT 10      //最大重新初始化次数
 
-#define MAIN_TIMER 1234			//主定时器的ID
-#define DELAY_TIMER 1235		//延时定时器ID
+#define MAIN_TIMER 1234         //主定时器的ID
+#define DELAY_TIMER 1235        //延时定时器ID
 #define TASKBAR_TIMER 1236
 #define CONNECTION_DETAIL_TIMER 1237
 //#define MONITOR_TIMER 1238
 
-#define MAX_INSERT_TO_TASKBAR_CNT 5		//尝试嵌入任务栏的最大次数
+#define MAX_INSERT_TO_TASKBAR_CNT 5     //尝试嵌入任务栏的最大次数
 
 #define VERSION L"1.79.1"
-#define COMPILE_DATE L"2020/08/05"
 
-#define MAX_NOTIFY_ICON 6		//可选的通知区图标数量
+#define MAX_NOTIFY_ICON 6       //可选的通知区图标数量
 
 //背景图片的文件名
 #define BACKGROUND_IMAGE_S L"\\background.bmp"
