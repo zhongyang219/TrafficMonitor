@@ -151,7 +151,7 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
     else if (!theApp.m_taskbar_data.text_colors.empty())
     {
         label_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
-        text_color = theApp.m_taskbar_data.text_colors.begin()->second.value;
+        text_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
     }
 
     //设置标签和数值的矩形区域
@@ -907,8 +907,8 @@ void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
 
-    CPoint point1;  //定义一个用于确定光标位置的位置  
-    GetCursorPos(&point1);  //获取当前光标的位置，以便使得菜单可以跟随光标  
+    CPoint point1;  //定义一个用于确定光标位置的位置
+    GetCursorPos(&point1);  //获取当前光标的位置，以便使得菜单可以跟随光标
     theApp.m_taskbar_menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
     CDialogEx::OnRButtonUp(nFlags, point1);
 }
