@@ -31,7 +31,7 @@ jobs:
     - name : Upload pdb files
       uses: actions/upload-artifact@v2
       with:
-        name: x64_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor_pdb
+        name: x64_${{ steps.current-time.outputs.formattedTime }}_pdb
         path: Bin/x64/Release/*.pdb
 
   x86_build:
@@ -64,7 +64,7 @@ jobs:
     - name : Upload pdb files
       uses: actions/upload-artifact@v2
       with:
-        name: x86_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor_pdb
+        name: x86_${{ steps.current-time.outputs.formattedTime }}_pdb
         path: Bin/Release/*.pdb
 
   # winXP_build:
