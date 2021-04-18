@@ -173,6 +173,7 @@
       <Filter>资源文件</Filter>
     </Text>
     <Text Include="res\Acknowledgement_en.txt" />
+    <Text Include="compile_time.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -534,6 +535,9 @@
       <Filter>资源文件</Filter>
     </None>
     <None Include="..\LICENSE_CN" />
+    <None Include="res\menu_icon\text1.bin">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\TrafficMonitor.ico">

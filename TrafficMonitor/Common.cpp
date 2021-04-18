@@ -404,7 +404,7 @@ wstring CCommon::GetStartUpPath()
 
 void CCommon::GetFiles(const wchar_t* path, vector<wstring>& files)
 {
-    //文件句柄 
+    //文件句柄
     intptr_t hFile = 0;
     //文件信息（用Unicode保存使用_wfinddata_t，多字节字符集使用_finddata_t）
     _wfinddata_t fileinfo;
@@ -923,6 +923,14 @@ CString CCommon::GetTextResource(UINT id, int code_type)
         }
     }
     return res_str;
+}
+
+CString CCommon::GetLastCompileTime()
+{
+    CString str_compile_time = GetTextResource(IDR_COMPILE_TIME, 0);
+    str_compile_time.Replace(_T("\r\n"), _T(""));
+    str_compile_time.Delete(str_compile_time.GetLength() - 1, 1);
+    return str_compile_time;
 }
 
 HICON CCommon::LoadIconResource(UINT id, int size)

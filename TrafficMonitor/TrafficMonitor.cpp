@@ -646,6 +646,9 @@ CString CTrafficMonitorApp::GetSystemInfoString()
     info += CCommon::LoadText(_T(" ("), IDS_WITHOUT_TEMPERATURE, _T(")"));
 #endif
 
+    info += _T("\r\nLast compiled date: ");
+    info += CCommon::GetLastCompileTime();
+
     return info;
 }
 
