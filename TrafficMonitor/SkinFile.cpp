@@ -447,7 +447,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
     {
         for (const auto& item : AllDisplayItems)
         {
-            text_colors[item] = m_skin_info.text_color[0];
+            text_colors[item] = theApp.m_main_wnd_data.text_colors.begin()->second;
         }
     }
 
