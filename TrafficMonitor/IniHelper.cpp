@@ -202,12 +202,16 @@ void CIniHelper::LoadMainWndColors(const wchar_t * AppName, const wchar_t * KeyN
     str = _GetString(AppName, KeyName, default_str);
     std::vector<wstring> split_result;
     CCommon::StringSplit(str, L',', split_result);
-    int index = 0;
+    size_t index = 0;
     for (auto iter = AllDisplayItems.begin(); iter != AllDisplayItems.end(); ++iter)
     {
-        if (index < static_cast<int>(split_result.size()))
+        if (index < split_result.size())
         {
             text_colors[*iter] = _wtoi(split_result[index].c_str());
+        }
+        else
+        {
+            text_colors[*iter] = default_color;
         }
         index++;
     }
@@ -237,15 +241,15 @@ void CIniHelper::LoadTaskbarWndColors(const wchar_t * AppName, const wchar_t * K
     size_t index = 0;
     for (auto iter = AllDisplayItems.begin(); iter != AllDisplayItems.end(); ++iter)
     {
-        if (index < static_cast<int>(split_result.size()))
+        if (index < split_result.size())
             text_colors[*iter].label = _wtoi(split_result[index].c_str());
         else
-            text_colors[*iter].label = _wtoi(split_result[0].c_str());
+            text_colors[*iter].label = default_color;
 
-        if (index + 1 < static_cast<int>(split_result.size()))
+        if (index + 1 < split_result.size())
             text_colors[*iter].value = _wtoi(split_result[index + 1].c_str());
         else
-            text_colors[*iter].value = _wtoi(split_result[0].c_str());
+            text_colors[*iter].value = default_color;
         index += 2;
     }
 
