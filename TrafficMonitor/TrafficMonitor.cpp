@@ -93,8 +93,11 @@ void CTrafficMonitorApp::LoadConfig()
     m_cfg_data.m_position_y = ini.GetInt(_T("config"), _T("position_y"), -1);
     m_cfg_data.m_auto_select = ini.GetBool(_T("connection"), _T("auto_select"), true);
     m_cfg_data.m_select_all = ini.GetBool(_T("connection"), _T("select_all"), false);
-    //m_main_wnd_data.text_color = ini.GetInt(_T("config"), _T("text_color"), 16384);
-    ini.LoadMainWndColors(_T("config"), _T("text_color"), m_main_wnd_data.text_colors, 16384);
+    //判断皮肤是否存在
+    std::vector<wstring> skin_files;
+    CCommon::GetFiles(theApp.m_skin_path.c_str(), skin_files);
+    bool is_skin_exist = (!skin_files.empty());
+    ini.LoadMainWndColors(_T("config"), _T("text_color"), m_main_wnd_data.text_colors, (is_skin_exist ? 16384 : 16777215)); //根据皮肤是否存在来设置默认的文本颜色，皮肤文件不存在时文本颜色默认为白色
     m_main_wnd_data.specify_each_item_color = ini.GetBool(_T("config"), _T("specify_each_item_color"), false);
     m_cfg_data.m_hide_main_window = ini.GetBool(_T("config"), _T("hide_main_window"), false);
     m_cfg_data.m_connection_name = ini.GetString(L"connection", L"connection_name", L"");
