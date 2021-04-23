@@ -559,40 +559,10 @@ void CTrafficMonitorApp::SetAutoRun(bool auto_run)
 {
     //不含温度监控的版本使用添加注册表项的方式实现开机自启动
 #ifdef WITHOUT_TEMPERATURE
-    CRegKey key;
-    //打开注册表项
-    if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
-    {
-        AfxMessageBox(CCommon::LoadText(IDS_AUTORUN_FAILED_NO_KEY), MB_OK | MB_ICONWARNING);
-        return;
-    }
-    if (auto_run)       //写入注册表项
-    {
-        if (key.SetStringValue(_T("TrafficMonitor"), m_module_path_reg.c_str()) != ERROR_SUCCESS)
-        {
-            AfxMessageBox(CCommon::LoadText(IDS_AUTORUN_FAILED_NO_ACCESS), MB_OK | MB_ICONWARNING);
-            return;
-        }
-    }
-    else        //删除注册表项
-    {
-        //删除前先检查注册表项是否存在，如果不存在，则直接返回
-        wchar_t buff[256];
-        ULONG size{ 256 };
-        if (key.QueryStringValue(_T("TrafficMonitor"), buff, &size) != ERROR_SUCCESS)
-            return;
-        if (key.DeleteValue(_T("TrafficMonitor")) != ERROR_SUCCESS)
-        {
-            AfxMessageBox(CCommon::LoadText(IDS_AUTORUN_DELETE_FAILED), MB_OK | MB_ICONWARNING);
-            return;
-        }
-}
+    SetAutoRunByRegistry(auto_run);
 #else
     //包含温度监控的版本使用任务计划的方式实现开机自启动
-    if (auto_run)
-        create_auto_start_task_for_this_user(true);
-    else
-        delete_auto_start_task_for_this_user();
+    SetAutoRunByTaskScheduler(auto_run);
 #endif
 }
 
@@ -620,6 +590,52 @@ bool CTrafficMonitorApp::GetAutoRun()
     //包含温度监控的版本使用任务计划的方式实现开机自启动
     return is_auto_start_task_active_for_this_user();
 #endif
+}
+
+void CTrafficMonitorApp::SetAutoRunByRegistry(bool auto_run)
+{
+    CRegKey key;
+    //打开注册表项
+    if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
+    {
+        AfxMessageBox(CCommon::LoadText(IDS_AUTORUN_FAILED_NO_KEY), MB_OK | MB_ICONWARNING);
+        return;
+    }
+    if (auto_run)       //写入注册表项
+    {
+        if (key.SetStringValue(_T("TrafficMonitor"), m_module_path_reg.c_str()) != ERROR_SUCCESS)
+        {
+            AfxMessageBox(CCommon::LoadText(IDS_AUTORUN_FAILED_NO_ACCESS), MB_OK | MB_ICONWARNING);
+            return;
+        }
+    }
+    else        //删除注册表项
+    {
+        //删除前先检查注册表项是否存在，如果不存在，则直接返回
+        wchar_t buff[256];
+        ULONG size{ 256 };
+        if (key.QueryStringValue(_T("TrafficMonitor"), buff, &size) != ERROR_SUCCESS)
+            return;
+        if (key.DeleteValue(_T("TrafficMonitor")) != ERROR_SUCCESS)
+        {
+            AfxMessageBox(CCommon::LoadText(IDS_AUTORUN_DELETE_FAILED), MB_OK | MB_ICONWARNING);
+            return;
+        }
+    }
+
+    //通过注册表设置开机自启动项时删除计划任务中的自启动项
+    SetAutoRunByTaskScheduler(false);
+}
+
+void CTrafficMonitorApp::SetAutoRunByTaskScheduler(bool auto_run)
+{
+    if (auto_run)
+        create_auto_start_task_for_this_user(true);
+    else
+        delete_auto_start_task_for_this_user();
+
+    //通过计划任务设置开机自启动项时删除注册表中的自启动项
+    SetAutoRunByRegistry(false);
 }
 
 CString CTrafficMonitorApp::GetSystemInfoString()
