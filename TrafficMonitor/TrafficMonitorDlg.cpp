@@ -370,7 +370,7 @@ void CTrafficMonitorDlg::IniConnection()
         m_connection_selected = 0;
         for (size_t i{}; i < m_connections.size(); i++)
         {
-            if (m_connections[i].description_2 == theApp.m_cfg_data.m_connection_name)
+            if (m_connections[i].description_2 == m_connection_name_preferd)
                 m_connection_selected = i;
         }
     }
@@ -1366,8 +1366,8 @@ void CTrafficMonitorDlg::OnRButtonUp(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     //设置点击鼠标右键弹出菜单
-    CMenu* pContextMenu = theApp.m_main_menu.GetSubMenu(0); //获取第一个弹出菜单，所以第一个菜单必须有子菜单 
-    CPoint point1;  //定义一个用于确定光标位置的位置  
+    CMenu* pContextMenu = theApp.m_main_menu.GetSubMenu(0); //获取第一个弹出菜单，所以第一个菜单必须有子菜单
+    CPoint point1;  //定义一个用于确定光标位置的位置
     GetCursorPos(&point1);  //获取当前光标的位置，以便使得菜单可以跟随光标
     //设置默认菜单项
     switch (theApp.m_main_wnd_data.double_click_action)
@@ -1601,6 +1601,7 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
     {
         m_connection_selected = uMsg - ID_SELECT_ALL_CONNECTION - 1;
         theApp.m_cfg_data.m_connection_name = m_connections[m_connection_selected].description_2;
+        m_connection_name_preferd = theApp.m_cfg_data.m_connection_name;
         theApp.m_cfg_data.m_auto_select = false;
         theApp.m_cfg_data.m_select_all = false;
         theApp.SaveConfig();
@@ -1747,7 +1748,7 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
             m_tBarDlg->SetForegroundWindow();
         else                //否则将焦点设置到主窗口
             SetForegroundWindow();
-        CPoint point1;  //定义一个用于确定光标位置的位置  
+        CPoint point1;  //定义一个用于确定光标位置的位置
         GetCursorPos(&point1);  //获取当前光标的位置，以便使得菜单可以跟随光标
         theApp.m_main_menu.GetSubMenu(0)->SetDefaultItem(-1);       //设置没有默认菜单项
         theApp.m_main_menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
