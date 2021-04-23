@@ -697,7 +697,7 @@ void CTaskBarDlg::CalculateWindowSize()
         if (!horizontal_arrange)
             m_window_height = TASKBAR_WND_HEIGHT;
         else
-            m_window_height = TASKBAR_WND_HEIGHT * 3 / 4;
+            m_window_height = TASKBAR_WND_HEIGHT * 2 / 3;
     }
     else
     {
