@@ -591,10 +591,10 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 
         if (optionsDlg.m_tab3_dlg.IsMonitorTimeSpanModified())      //如果监控时间间隔改变了，则重设定时器
         {
-            //KillTimer(MONITOR_TIMER);
-            //SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, NULL);
-            m_timer.KillTimer();
-            m_timer.CreateTimer((DWORD_PTR)this, theApp.m_general_data.monitor_time_span, TimerCallbackTemp);
+            KillTimer(MONITOR_TIMER);
+            SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, NULL);
+            //m_timer.KillTimer();
+            //m_timer.CreateTimer((DWORD_PTR)this, theApp.m_general_data.monitor_time_span, MonitorThreadCallback);
         }
 
         //设置获取CPU利用率的方式
@@ -765,8 +765,8 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     //设置1000毫秒触发的定时器
     SetTimer(MAIN_TIMER, 1000, NULL);
 
-    //SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, NULL);
-    m_timer.CreateTimer((DWORD_PTR)this, theApp.m_general_data.monitor_time_span, TimerCallbackTemp);
+    SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, NULL);
+    //m_timer.CreateTimer((DWORD_PTR)this, theApp.m_general_data.monitor_time_span, MonitorThreadCallback);
 
 
     //初始化皮肤
@@ -830,9 +830,10 @@ static int GetMonitorTimerCount(int second)
 }
 
 
-void CTrafficMonitorDlg::TimerCallbackTemp(DWORD_PTR dwUser)
+UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
 {
     CTrafficMonitorDlg* pThis = (CTrafficMonitorDlg*)dwUser;
+    CSingleLock sync(&pThis->m_critical, TRUE);
 
     //获取网络连接速度
     FreeMibTable(pThis->m_pIfTable);
@@ -1016,15 +1017,18 @@ void CTrafficMonitorDlg::TimerCallbackTemp(DWORD_PTR dwUser)
     pThis->m_monitor_time_cnt++;
 
     //发送监控信息更新消息
-    pThis->PostMessage(WM_MONITOR_INFO_UPDATED);
+    pThis->SendMessage(WM_MONITOR_INFO_UPDATED);
+
+    return 0;
 }
 
 void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
-    //if (nIDEvent == MONITOR_TIMER)
-    //{
-    //}
+    if (nIDEvent == MONITOR_TIMER)
+    {
+        AfxBeginThread(MonitorThreadCallback, (LPVOID)this);
+    }
 
     if (nIDEvent == MAIN_TIMER)
     {

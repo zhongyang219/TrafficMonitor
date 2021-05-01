@@ -89,8 +89,9 @@ protected:
 
     wstring m_connection_name_preferd{ theApp.m_cfg_data.m_connection_name };          //保存用户手动选择的网络连接名称
 
-    CHighResolutionTimer m_timer;           // 采用多媒体定时器(也防止了界面阻塞出现的卡顿现象)
-    static void TimerCallbackTemp(DWORD_PTR dwUser);
+    //CHighResolutionTimer m_timer;           // 采用多媒体定时器(也防止了界面阻塞出现的卡顿现象)
+    CCriticalSection m_critical;
+    static UINT MonitorThreadCallback(LPVOID dwUser);
 
     CString GetMouseTipsInfo();     //获取鼠标提示信息
     void SetTransparency();         //根据m_transparency的值设置窗口透明度

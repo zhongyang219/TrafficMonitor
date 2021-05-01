@@ -716,7 +716,7 @@ void CTaskBarDlg::SetToolTipsTopMost()
 
 void CTaskBarDlg::UpdateToolTips()
 {
-    if (theApp.m_taskbar_data.show_tool_tip)
+    if (theApp.m_taskbar_data.show_tool_tip && IsWindow(m_tool_tips.GetSafeHwnd()))
     {
         CString tip_info;
         tip_info = GetMouseTipsInfo();
