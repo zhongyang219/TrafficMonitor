@@ -247,6 +247,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_taksbar_transparent_color_enable = ini.GetBool(L"other", L"taksbar_transparent_color_enable", !m_win_version.IsWindows7());
     m_last_light_mode = ini.GetBool(L"other", L"last_light_mode", m_win_version.IsWindows10LightTheme());
     m_show_mouse_panetrate_tip = ini.GetBool(L"other", L"show_mouse_panetrate_tip", true);
+    m_show_dot_net_notinstalled_tip = ini.GetBool(L"other", L"show_dot_net_notinstalled_tip", true);
 }
 
 void CTrafficMonitorApp::SaveConfig()
@@ -380,6 +381,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(_T("other"), _T("taksbar_transparent_color_enable"), m_taksbar_transparent_color_enable);
     ini.WriteBool(_T("other"), _T("last_light_mode"), m_last_light_mode);
     ini.WriteBool(_T("other"), _T("show_mouse_panetrate_tip"), m_show_mouse_panetrate_tip);
+    ini.WriteBool(_T("other"), _T("show_dot_net_notinstalled_tip"), m_show_dot_net_notinstalled_tip);
 
     ini.WriteString(L"app", L"version", VERSION);
 
@@ -891,8 +893,23 @@ BOOL CTrafficMonitorApp::InitInstance()
 #endif // !_DEBUG
 
 #ifndef WITHOUT_TEMPERATURE
-    //启动初始化OpenHardwareMonitor的线程。由于OpenHardwareMonitor初始化需要一定的时间，为了防止启动时程序卡顿，将其放到后台线程中处理
-    AfxBeginThread(InitOpenHardwareMonitorLibThreadFunc, NULL);
+    //检测是否安装.net framework 4.5
+    if (!CWinVersionHelper::IsDotNetFramework4Point5Installed())
+    {
+        if (theApp.m_show_dot_net_notinstalled_tip)
+        {
+            if (AfxMessageBox(CCommon::LoadText(IDS_DOTNET_NOT_INSTALLED_TIP), MB_OKCANCEL | MB_ICONWARNING) == IDCANCEL)       //点击“取消”不再提示
+            {
+                theApp.m_show_dot_net_notinstalled_tip = false;
+                SaveConfig();
+            }
+        }
+    }
+    else
+    {
+        //启动初始化OpenHardwareMonitor的线程。由于OpenHardwareMonitor初始化需要一定的时间，为了防止启动时程序卡顿，将其放到后台线程中处理
+        AfxBeginThread(InitOpenHardwareMonitorLibThreadFunc, NULL);
+    }
 #endif
 
     //执行测试代码
