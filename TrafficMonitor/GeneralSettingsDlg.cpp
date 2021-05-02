@@ -87,6 +87,7 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_MBD_TEMP_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedMbdTempTipCheck)
     ON_BN_CLICKED(IDC_GITHUB_RADIO, &CGeneralSettingsDlg::OnBnClickedGithubRadio)
     ON_BN_CLICKED(IDC_GITEE_RADIO, &CGeneralSettingsDlg::OnBnClickedGiteeRadio)
+    ON_BN_CLICKED(IDC_RESTORE_DEFAULT_TIME_SPAN_BUTTON, &CGeneralSettingsDlg::OnBnClickedRestoreDefaultTimeSpanButton)
 END_MESSAGE_MAP()
 
 
@@ -451,4 +452,11 @@ void CGeneralSettingsDlg::OnCancel()
     theApp.m_general_data.update_source = m_update_source_ori;      //点击“取消”时恢复开始的“更新源”选项
 
     CTabDlg::OnCancel();
+}
+
+
+void CGeneralSettingsDlg::OnBnClickedRestoreDefaultTimeSpanButton()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    m_monitor_span_edit.SetValue(1000);
 }
