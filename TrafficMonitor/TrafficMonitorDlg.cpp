@@ -833,7 +833,7 @@ static int GetMonitorTimerCount(int second)
 UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
 {
     CTrafficMonitorDlg* pThis = (CTrafficMonitorDlg*)dwUser;
-    CSingleLock sync(&pThis->m_critical, TRUE);
+    CFlagLocker flag_locker(pThis->m_is_monitor_thread_runing);
 
     //获取网络连接速度
     FreeMibTable(pThis->m_pIfTable);
@@ -1027,7 +1027,8 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     if (nIDEvent == MONITOR_TIMER)
     {
-        AfxBeginThread(MonitorThreadCallback, (LPVOID)this);
+        if (!m_is_monitor_thread_runing)    //确保线程已退出
+            AfxBeginThread(MonitorThreadCallback, (LPVOID)this);
     }
 
     if (nIDEvent == MAIN_TIMER)

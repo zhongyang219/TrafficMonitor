@@ -92,6 +92,7 @@ protected:
     //CHighResolutionTimer m_timer;           // 采用多媒体定时器(也防止了界面阻塞出现的卡顿现象)
     CCriticalSection m_critical;
     static UINT MonitorThreadCallback(LPVOID dwUser);
+    bool m_is_monitor_thread_runing{ false };
 
     CString GetMouseTipsInfo();     //获取鼠标提示信息
     void SetTransparency();         //根据m_transparency的值设置窗口透明度

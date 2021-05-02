@@ -27,18 +27,6 @@ END_MESSAGE_MAP()
 
 CTrafficMonitorApp* CTrafficMonitorApp::self = NULL;
 
-struct CTrafficMonitorApp::CheckForUpdateLocker
-{
-    CheckForUpdateLocker()
-    {
-        theApp.m_checking_update = true;
-    }
-    ~CheckForUpdateLocker()
-    {
-        theApp.m_checking_update = false;
-    }
-};
-
 
 // CTrafficMonitorApp 构造
 CTrafficMonitorApp::CTrafficMonitorApp()
@@ -470,7 +458,7 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
 {
     if (m_checking_update)      //如果还在检查更新，则直接返回
         return;
-    CheckForUpdateLocker update_locker;
+    CFlagLocker update_locker(m_checking_update);
     CWaitCursor wait_cursor;
 
     wstring version;        //程序版本

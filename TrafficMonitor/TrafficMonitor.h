@@ -139,8 +139,6 @@ private:
 
     bool m_checking_update{ false };        //是否正在检查更新
 
-    struct CheckForUpdateLocker;
-
     std::map<UINT, HICON> m_menu_icons;      //菜单图标资源。key是图标资源的ID，vlaue是图标的句柄
 
 // 重写
