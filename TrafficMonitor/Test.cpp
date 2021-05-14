@@ -16,6 +16,7 @@ void CTest::Test()
     //TestHttpQequest();
     //TestGetLicense();
     //TestSkin();
+    //TestCrash();
 }
 
 void CTest::TestHttpQequest()
@@ -46,4 +47,12 @@ void CTest::TestSkin()
     //skin.Load(L"C:\\Users\\zhong\\OneDrive\\文档\\TrafficMonitorSkin.xml");
     skin.Load(L"D:\\Projects\\GitHub Project\\TrafficMonitor\\TrafficMonitor\\skins\\0默认皮肤\\skin.ini");
     int a = 0;
+}
+
+void CTest::TestCrash()
+{
+    CString* pStr = nullptr;
+    int a = pStr->GetLength();
+    printf("%d", a);
+
 }

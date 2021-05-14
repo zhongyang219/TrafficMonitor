@@ -1,11 +1,15 @@
-// HelpDlg.cpp : ÊµÏÖÎÄ¼ş
+ï»¿// HelpDlg.cpp : å®ç°æ–‡ä»¶
 //
 
 #include "stdafx.h"
+#include "TrafficMonitor.h"
 #include "MessageDlg.h"
+#include "DrawCommon.h"
 
 
-// CMessageDlg ¶Ô»°¿ò
+// CMessageDlg å¯¹è¯æ¡†
+
+#define MESSAGE_DLG_ICON_SIZE (theApp.DPI(32))
 
 IMPLEMENT_DYNAMIC(CMessageDlg, CDialog)
 
@@ -34,6 +38,29 @@ void CMessageDlg::SetMessageText(LPCTSTR str)
 	m_message = str;
 }
 
+//void CMessageDlg::SetLinkInfo(LPCTSTR text, LPCTSTR url)
+//{
+//	m_link_text = text;
+//	m_link_url = url;
+//}
+
+void CMessageDlg::SetMessageIcon(HICON hIcon)
+{
+    m_icon = hIcon;
+}
+
+void CMessageDlg::SetInfoStaticSize(int cx)
+{
+    if (m_icon != NULL && m_info_static.GetSafeHwnd() != NULL)
+    {
+        CRect rc_info{ m_rc_info };
+        rc_info.left = m_rc_info.left + MESSAGE_DLG_ICON_SIZE + theApp.DPI(8);
+        if (cx > 0)
+            rc_info.right = cx;
+        m_info_static.MoveWindow(rc_info);
+    }
+}
+
 void CMessageDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -44,21 +71,24 @@ void CMessageDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CMessageDlg, CDialog)
 	ON_WM_GETMINMAXINFO()
+	//ON_NOTIFY(NM_CLICK, IDC_SYSLINK1, &CMessageDlg::OnNMClickSyslink1)
+    ON_WM_PAINT()
+    ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
-// CMessageDlg ÏûÏ¢´¦Àí³ÌĞò
+// CMessageDlg æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 
 BOOL CMessageDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	// TODO:  ÔÚ´ËÌí¼Ó¶îÍâµÄ³õÊ¼»¯
+	// TODO:  åœ¨æ­¤æ·»åŠ é¢å¤–çš„åˆå§‹åŒ–
 
-	SetIcon(AfxGetApp()->LoadIcon(IDR_MAINFRAME), FALSE);		// ÉèÖÃĞ¡Í¼±ê
+	SetIcon(AfxGetApp()->LoadIcon(IDR_MAINFRAME), FALSE);		// è®¾ç½®å°å›¾æ ‡
 
-	//»ñÈ¡³õÊ¼Ê±´°¿ÚµÄ´óĞ¡
+	//è·å–åˆå§‹æ—¶çª—å£çš„å¤§å°
 	CRect rect;
 	GetWindowRect(rect);
 	m_min_size.cx = rect.Width();
@@ -68,17 +98,69 @@ BOOL CMessageDlg::OnInitDialog()
 	m_info_static.SetWindowText(m_info);
 	m_message_edit.SetWindowText(m_message);
 
+	//CWnd* pLinkCtrl = GetDlgItem(IDC_SYSLINK1);
+	//if (pLinkCtrl != nullptr)
+	//{
+	//	pLinkCtrl->ShowWindow(m_show_link_ctrl);
+	//	pLinkCtrl->SetWindowText(_T("<a>") + m_link_text + _T("</a>"));
+	//}
+
+    //è®¾ç½®å›¾æ ‡çš„ä½ç½®
+    if (m_icon != NULL)
+    {
+        CRect rc_edit;
+        m_message_edit.GetWindowRect(rc_edit);
+        ScreenToClient(rc_edit);
+        m_icon_pos.x = rc_edit.left;
+        m_icon_pos.y = (rc_edit.top - MESSAGE_DLG_ICON_SIZE) / 2;
+
+        m_info_static.GetWindowRect(m_rc_info);
+        ScreenToClient(m_rc_info);
+        SetInfoStaticSize(0);
+    }
+
 	return TRUE;  // return TRUE unless you set the focus to a control
-				  // Òì³£: OCX ÊôĞÔÒ³Ó¦·µ»Ø FALSE
+				  // å¼‚å¸¸: OCX å±æ€§é¡µåº”è¿”å› FALSE
 }
 
 
 void CMessageDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
-	//ÏŞÖÆ´°¿Ú×îĞ¡´óĞ¡
-	lpMMI->ptMinTrackSize.x = m_min_size.cx;		//ÉèÖÃ×îĞ¡¿í¶È
-	lpMMI->ptMinTrackSize.y = m_min_size.cy;		//ÉèÖÃ×îĞ¡¸ß¶È
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
+	//é™åˆ¶çª—å£æœ€å°å¤§å°
+	lpMMI->ptMinTrackSize.x = m_min_size.cx;		//è®¾ç½®æœ€å°å®½åº¦
+	lpMMI->ptMinTrackSize.y = m_min_size.cy;		//è®¾ç½®æœ€å°é«˜åº¦
 
 	CDialog::OnGetMinMaxInfo(lpMMI);
+}
+
+
+//void CMessageDlg::OnNMClickSyslink1(NMHDR *pNMHDR, LRESULT *pResult)
+//{
+//	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
+//	if(!m_link_url.IsEmpty())
+//		ShellExecute(NULL, _T("open"), m_link_url, NULL, NULL, SW_SHOW);	//æ‰“å¼€è¶…é“¾æ¥
+//
+//	*pResult = 0;
+//}
+
+
+void CMessageDlg::OnPaint()
+{
+    CPaintDC dc(this); // device context for painting
+                       // TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
+                       // ä¸ä¸ºç»˜å›¾æ¶ˆæ¯è°ƒç”¨ CDialog::OnPaint()
+
+    CDrawCommon draw;
+    draw.Create(&dc, this);
+    draw.DrawIcon(m_icon, m_icon_pos, CSize(MESSAGE_DLG_ICON_SIZE, MESSAGE_DLG_ICON_SIZE));
+}
+
+
+void CMessageDlg::OnSize(UINT nType, int cx, int cy)
+{
+    CDialog::OnSize(nType, cx, cy);
+
+    // TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
+    SetInfoStaticSize(cx);
 }

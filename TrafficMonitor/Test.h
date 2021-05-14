@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 class CTest
 {
 public:
@@ -11,5 +11,5 @@ private:
     static void TestHttpQequest();
     static void TestGetLicense();
     static void TestSkin();
+    static void TestCrash();
 };
-

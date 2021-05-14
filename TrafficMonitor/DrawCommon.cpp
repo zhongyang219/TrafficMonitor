@@ -158,6 +158,16 @@ void CDrawCommon::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, St
     bitmap.Detach();
 }
 
+void CDrawCommon::DrawIcon(HICON hIcon, CPoint start_point, CSize size)
+{
+    if (m_pDC->GetSafeHdc() == NULL)
+        return;
+    if (size.cx == 0 || size.cy == 0)
+        ::DrawIconEx(m_pDC->GetSafeHdc(), start_point.x, start_point.y, hIcon, 0, 0, 0, NULL, DI_NORMAL | DI_DEFAULTSIZE);
+    else
+        ::DrawIconEx(m_pDC->GetSafeHdc(), start_point.x, start_point.y, hIcon, size.cx, size.cy, 0, NULL, DI_NORMAL);
+}
+
 void CDrawCommon::BitmapStretch(CImage* pImage, CImage* ResultImage, CSize size)
 {
     if (pImage->IsDIBSection())

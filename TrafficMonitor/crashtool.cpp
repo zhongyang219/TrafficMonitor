@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "crashtool.h"
 
 #include <strsafe.h>
@@ -19,7 +19,7 @@ public:
     }
     ~CCrashReport() {}
 public:
-    // Éú³ÉMiniDumpÎÄ¼ş
+    // ç”ŸæˆMiniDumpæ–‡ä»¶
     void CreateMiniDump(EXCEPTION_POINTERS* pEP)
     {
         SYSTEMTIME stLocalTime;
@@ -42,7 +42,7 @@ public:
         ExpParam.ExceptionPointers = pEP;
         ExpParam.ClientPointers = TRUE;
 
-        // Éú³ÉminidumpÎÄ¼ş
+        // ç”Ÿæˆminidumpæ–‡ä»¶
         BOOL bResult = ::MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hDumpFile, MiniDumpNormal, &ExpParam, NULL, NULL);
         ::CloseHandle(hDumpFile);
     }
@@ -56,9 +56,16 @@ public:
 		CString info = CCommon::LoadTextFormat(IDS_CRASH_INFO, { m_dumpFile });
 		info += _T("\r\n");
 		info += theApp.GetSystemInfoString();
-
 		dlg.SetMessageText(info);
-		dlg.DoModal();
+
+        //è®¾ç½®å›¾æ ‡
+        HICON hIcon;
+        HRESULT hr = LoadIconWithScaleDown(NULL, IDI_ERROR, theApp.DPI(32), theApp.DPI(32), &hIcon);
+
+        if (SUCCEEDED(hr))
+            dlg.SetMessageIcon(hIcon);
+
+        dlg.DoModal();
 	}
 
 private:
@@ -95,7 +102,7 @@ namespace CRASHREPORT
 {
     static LONG WINAPI __UnhandledExceptionFilter(PEXCEPTION_POINTERS pEP)
     {
-        ::SetErrorMode(0); //Ê¹ÓÃÄ¬ÈÏµÄ
+        ::SetErrorMode(0); //ä½¿ç”¨é»˜è®¤çš„
         CCrashReport cr;
         cr.CreateMiniDump(pEP);
 		cr.ShowCrashInfo();
