@@ -1,6 +1,26 @@
 **[简体中文](./update_log.md) | [繁體中文](./update_log_zh-tw.md) | English**<br>
 
 # TrafficMonitor Update log
+## V1.80 (2021/05/15)
+
+* Added the function of monitoring the temperature of CPU, GPU, hard disk and main board.
+* Added the function of monitoring the GPU usage.
+* Fixed the problem that the historical traffic statistics is not correct caused by the data overflowed.
+* Fixed the problem that the main window position was incorrect after the screen resolution was changed.
+* Fixed the problem that the size of the interface elements of the main window and taskbar window would not change after the system DPI was changed.
+* Added the ability to freely specify display items in the taskbar window.
+* Added xml format of the main window skin, supporting temperature display.
+* Fixed the problem that the sub-windows in the option settings cannot be scrolled by the touch screen when using a touch screen device.
+* Put the processing of checking for updates into a background thread to solve the problem that the program does not respond for a long time when checking for update.
+* Fix the problem that the program is abnormal after pressing Alt+F4 in the taskbar window.
+* Added support for net speeds above 4GB per second.
+* Added the option to set the update source as Gitee to solve the problem that the program cannot be updated sometimes due to the inaccessibility of GitHub in mainland China.
+* Added setting of memory display mode.
+* Fix the problem that the currently monitored network connection is closed or disabled, the previously monitored network connection cannot be automatically selected after restarted.
+* Auto run at boot is realized by Task Scheduler to solve the problem that the auto run at boot dose not work sometimes.
+* Fix some crashes.
+* Improvements in other details.
+
 ## V1.79.1 (2020/08/05)
 
 * Fix the problem of registry handle leak.
