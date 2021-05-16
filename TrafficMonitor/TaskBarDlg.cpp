@@ -480,7 +480,7 @@ CString CTaskBarDlg::GetMouseTipsInfo()
     }
     if (!IsShowCpu())
     {
-        temp.Format(_T("\r\n%s: %d%%"), CCommon::LoadText(IDS_CPU_USAGE), theApp.m_cpu_usage);
+        temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_CPU_USAGE), theApp.m_cpu_usage);
         tip_info += temp;
     }
     if (!IsShowCpuMemory())
@@ -491,7 +491,7 @@ CString CTaskBarDlg::GetMouseTipsInfo()
     }
     if (!IsShowMemory())
     {
-        temp.Format(_T("\r\n%s: %s/%s (%d%%)"), CCommon::LoadText(IDS_MEMORY_USAGE),
+        temp.Format(_T("\r\n%s: %s/%s (%d %%)"), CCommon::LoadText(IDS_MEMORY_USAGE),
             CCommon::KBytesToString(theApp.m_used_memory),
             CCommon::KBytesToString(theApp.m_total_memory), theApp.m_memory_usage);
         tip_info += temp;
@@ -506,7 +506,7 @@ CString CTaskBarDlg::GetMouseTipsInfo()
 #ifndef WITHOUT_TEMPERATURE
     if (!IsShowGpu() && theApp.m_gpu_usage >= 0)
     {
-        temp.Format(_T("\r\n%s: %d%%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
+        temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
         tip_info += temp;
     }
     if (!IsShowCpuTemperature() && theApp.m_cpu_temperature > 0)
