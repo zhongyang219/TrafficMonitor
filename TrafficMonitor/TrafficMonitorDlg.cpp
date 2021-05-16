@@ -700,6 +700,32 @@ void CTrafficMonitorDlg::TaskbarShowHideItem(DisplayItem type)
     }
 }
 
+bool CTrafficMonitorDlg::IsTemperatureNeeded() const
+{
+    //判断是否需要从OpenHardwareMonitor获取信息。
+    //只有主窗口和任务栏窗口中CPU温度、显卡利用率、显卡温度、硬盘温度和主板温度中至少有一个要显示，才返回true
+    bool needed = false;
+    if (theApp.m_cfg_data.m_show_task_bar_wnd && IsTaskbarWndValid())
+    {
+        needed |= m_tBarDlg->IsShowCpuTemperature();
+        needed |= m_tBarDlg->IsShowGpu();
+        needed |= m_tBarDlg->IsShowGpuTemperature();
+        needed |= m_tBarDlg->IsShowHddTemperature();
+        needed |= m_tBarDlg->IsShowMainboardTemperature();
+    }
+
+    if (!theApp.m_cfg_data.m_hide_main_window)
+    {
+        const CSkinFile::Layout& skin_layout{ theApp.m_cfg_data.m_show_more_info ? m_skin.GetLayoutInfo().layout_l : m_skin.GetLayoutInfo().layout_s }; //当前的皮肤布局
+        needed |= skin_layout.GetItem(TDI_CPU_TEMP).show;
+        needed |= skin_layout.GetItem(TDI_GPU_USAGE).show;
+        needed |= skin_layout.GetItem(TDI_GPU_TEMP).show;
+        needed |= skin_layout.GetItem(TDI_HDD_TEMP).show;
+        needed |= skin_layout.GetItem(TDI_MAIN_BOARD_TEMP).show;
+    }
+    return needed;
+}
+
 // CTrafficMonitorDlg 消息处理程序
 
 BOOL CTrafficMonitorDlg::OnInitDialog()
@@ -1002,7 +1028,7 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
 
 #ifndef WITHOUT_TEMPERATURE
     //获取温度
-    if (theApp.m_pMonitor != nullptr)
+    if (pThis->IsTemperatureNeeded() && theApp.m_pMonitor != nullptr)
     {
         theApp.m_pMonitor->GetHardwareInfo();
         theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
