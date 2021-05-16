@@ -28,7 +28,7 @@ namespace OpenHardwareMonitorApi
 
     float COpenHardwareMonitor::GpuTemperature()
     {
-        if (m_gpu_nvidia_temperature != 0)
+        if (m_gpu_nvidia_temperature >= 0)
             return m_gpu_nvidia_temperature;
         else
             return m_gpu_ati_temperature;
