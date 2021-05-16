@@ -506,16 +506,19 @@ void CTrafficMonitorDlg::UpdateNotifyIconTip()
     strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>/s"), { CCommon::LoadText(IDS_DOWNLOAD), in_speed });
     strTip += CCommon::StringFormat(_T("\r\nCPU: <%1%>%"), { theApp.m_cpu_usage });
     strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>%"), { CCommon::LoadText(IDS_MEMORY), theApp.m_memory_usage });
-    if (theApp.m_gpu_usage >= 0)
-        strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>"), { CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage });
-    if (theApp.m_cpu_temperature > 0)
-        strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>"), { CCommon::LoadText(IDS_CPU_TEMPERATURE), static_cast<int>(theApp.m_cpu_temperature) });
-    if (theApp.m_gpu_temperature > 0)
-        strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>"), { CCommon::LoadText(IDS_GPU_TEMPERATURE), static_cast<int>(theApp.m_gpu_temperature) });
-    if (theApp.m_hdd_temperature > 0)
-        strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>"), { CCommon::LoadText(IDS_HDD_TEMPERATURE), static_cast<int>(theApp.m_hdd_temperature) });
-    if (theApp.m_main_board_temperature > 0)
-        strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>"), { CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), static_cast<int>(theApp.m_main_board_temperature) });
+    if (IsTemperatureNeeded())
+    {
+        if (theApp.m_gpu_usage >= 0)
+            strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>"), { CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage });
+        if (theApp.m_cpu_temperature > 0)
+            strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>"), { CCommon::LoadText(IDS_CPU_TEMPERATURE), static_cast<int>(theApp.m_cpu_temperature) });
+        if (theApp.m_gpu_temperature > 0)
+            strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>"), { CCommon::LoadText(IDS_GPU_TEMPERATURE), static_cast<int>(theApp.m_gpu_temperature) });
+        if (theApp.m_hdd_temperature > 0)
+            strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>"), { CCommon::LoadText(IDS_HDD_TEMPERATURE), static_cast<int>(theApp.m_hdd_temperature) });
+        if (theApp.m_main_board_temperature > 0)
+            strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>"), { CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), static_cast<int>(theApp.m_main_board_temperature) });
+    }
 
     CCommon::WStringCopy(m_ntIcon.szTip, 128, strTip);
     ::Shell_NotifyIcon(NIM_MODIFY, &m_ntIcon);
