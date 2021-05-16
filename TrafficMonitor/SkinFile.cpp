@@ -311,7 +311,7 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
             format_str = _T("51 %%");
             break;
         case TDI_CPU_TEMP: case TDI_GPU_TEMP: case TDI_HDD_TEMP: case TDI_MAIN_BOARD_TEMP:
-            format_str = _T("40 ℃");
+            format_str = _T("40 °C");
             break;
         default:
             format_str = _T("99");

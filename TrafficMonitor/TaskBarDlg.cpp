@@ -627,9 +627,9 @@ void CTaskBarDlg::CalculateWindowSize()
 
     //计算温度显示的宽度
     if (theApp.m_taskbar_data.separate_value_unit_with_space)
-        str = _T("99 ℃");
+        str = _T("99 °C");
     else
-        str = _T("99℃");
+        str = _T("99°C");
     value_width = m_pDC->GetTextExtent(str).cx;
     value_width += theApp.DPI(2);
     m_item_widths[TDI_CPU_TEMP].value_width = value_width;

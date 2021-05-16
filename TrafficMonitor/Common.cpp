@@ -211,7 +211,7 @@ CString CCommon::TemperatureToString(float temperature, const PublicSettingData&
         str_val.Format(_T("%d"), static_cast<int>(temperature));
     if (cfg.separate_value_unit_with_space)
         str_val += _T(' ');
-    str_val += _T("℃");
+    str_val += _T("°C");
     return str_val;
 }
 
