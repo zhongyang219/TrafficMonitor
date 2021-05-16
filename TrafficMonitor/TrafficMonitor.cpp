@@ -22,6 +22,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorApp, CWinApp)
     //ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
     ON_COMMAND(ID_HELP, &CTrafficMonitorApp::OnHelp)
     ON_COMMAND(ID_FREQUENTY_ASKED_QUESTIONS, &CTrafficMonitorApp::OnFrequentyAskedQuestions)
+    ON_COMMAND(ID_UPDATE_LOG, &CTrafficMonitorApp::OnUpdateLog)
 END_MESSAGE_MAP()
 
 
@@ -957,4 +958,18 @@ void CTrafficMonitorApp::OnFrequentyAskedQuestions()
         ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/Help.md"), NULL, NULL, SW_SHOW);
     else
         ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/Help_en-us.md"), NULL, NULL, SW_SHOW);
+}
+
+
+void CTrafficMonitorApp::OnUpdateLog()
+{
+    // TODO: 在此添加命令处理程序代码
+    CString language_code;
+    language_code.LoadString(IDS_LANGUAGE_CODE);
+    if (language_code == _T("2"))
+        ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log.md"), NULL, NULL, SW_SHOW);
+    if (language_code == _T("3"))
+        ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_zh-tw.md"), NULL, NULL, SW_SHOW);
+    else
+        ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_en-us.md"), NULL, NULL, SW_SHOW);
 }
