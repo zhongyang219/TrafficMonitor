@@ -968,7 +968,7 @@ void CTrafficMonitorApp::OnUpdateLog()
     language_code.LoadString(IDS_LANGUAGE_CODE);
     if (language_code == _T("2"))
         ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log.md"), NULL, NULL, SW_SHOW);
-    if (language_code == _T("3"))
+    else if (language_code == _T("3"))
         ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_zh-tw.md"), NULL, NULL, SW_SHOW);
     else
         ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_en-us.md"), NULL, NULL, SW_SHOW);
