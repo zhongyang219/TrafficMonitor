@@ -125,12 +125,12 @@ namespace OpenHardwareMonitorApi
         //wchar_t buff[256];
         //swprintf(buff, L"%d\n", computer->Hardware->Length);
         //System::Diagnostics::Debug::WriteLine(gcnew System::String(buff));
-        for (int i = 0; i < computer->Hardware->Length; i++)
+        for (int i = 0; i < computer->Hardware->Count; i++)
         {
             //查找硬件类型
             switch (computer->Hardware[i]->HardwareType)
             {
-            case HardwareType::CPU:
+            case HardwareType::Cpu:
                 if (m_cpu_temperature < 0)
                     GetHardwareTemperature(computer->Hardware[i], m_cpu_temperature);
                 break;
@@ -140,17 +140,17 @@ namespace OpenHardwareMonitorApi
                 if (m_gpu_nvidia_usage < 0)
                     GetGpuUsage(computer->Hardware[i], m_gpu_nvidia_usage);
                 break;
-            case HardwareType::GpuAti:
+            case HardwareType::GpuAmd:
                 if (m_gpu_ati_temperature < 0)
                     GetHardwareTemperature(computer->Hardware[i], m_gpu_ati_temperature);
                 if (m_gpu_ati_usage < 0)
                     GetGpuUsage(computer->Hardware[i], m_gpu_ati_usage);
                 break;
-            case HardwareType::HDD:
+            case HardwareType::Storage:
                 if (m_hdd_temperature < 0)
                     GetHardwareTemperature(computer->Hardware[i], m_hdd_temperature);
                 break;
-            case HardwareType::Mainboard:
+            case HardwareType::Motherboard:
                 if (m_main_board_temperature < 0)
                     GetHardwareTemperature(computer->Hardware[i], m_main_board_temperature);
                 break;
@@ -175,10 +175,10 @@ namespace OpenHardwareMonitorApi
     {
         updateVisitor = gcnew UpdateVisitor();
         computer = gcnew Computer();
-        computer->CPUEnabled = true;
-        computer->GPUEnabled = true;
-        computer->HDDEnabled = true;
-        computer->MainboardEnabled = true;
+        computer->IsCpuEnabled = true;
+        computer->IsGpuEnabled = true;
+        computer->IsStorageEnabled = true;
+        computer->IsMotherboardEnabled = true;
         computer->Open();
         computer->Accept(updateVisitor);
     }
