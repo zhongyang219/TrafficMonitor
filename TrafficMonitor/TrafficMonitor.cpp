@@ -594,6 +594,9 @@ void CTrafficMonitorApp::SetAutoRunByRegistry(bool auto_run)
     }
     if (auto_run)       //写入注册表项
     {
+        //通过注册表设置开机自启动项时删除计划任务中的自启动项
+        SetAutoRunByTaskScheduler(false);
+
         if (key.SetStringValue(_T("TrafficMonitor"), m_module_path_reg.c_str()) != ERROR_SUCCESS)
         {
             AfxMessageBox(CCommon::LoadText(IDS_AUTORUN_FAILED_NO_ACCESS), MB_OK | MB_ICONWARNING);
@@ -613,20 +616,21 @@ void CTrafficMonitorApp::SetAutoRunByRegistry(bool auto_run)
             return;
         }
     }
-
-    //通过注册表设置开机自启动项时删除计划任务中的自启动项
-    SetAutoRunByTaskScheduler(false);
 }
 
 void CTrafficMonitorApp::SetAutoRunByTaskScheduler(bool auto_run)
 {
     if (auto_run)
-        create_auto_start_task_for_this_user(true);
-    else
-        delete_auto_start_task_for_this_user();
+    {
+        //通过计划任务设置开机自启动项时删除注册表中的自启动项
+        SetAutoRunByRegistry(false);
 
-    //通过计划任务设置开机自启动项时删除注册表中的自启动项
-    SetAutoRunByRegistry(false);
+        create_auto_start_task_for_this_user(true);
+    }
+    else
+    {
+        delete_auto_start_task_for_this_user();
+    }
 }
 
 CString CTrafficMonitorApp::GetSystemInfoString()
