@@ -151,30 +151,33 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
         tip_info += temp;
     }
 #ifndef WITHOUT_TEMPERATURE
-    if (!skin_layout.GetItem(TDI_GPU_USAGE).show && theApp.m_gpu_usage >= 0)
+    if (IsTemperatureNeeded())
     {
-        temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
-        tip_info += temp;
-    }
-    if (!skin_layout.GetItem(TDI_CPU_TEMP).show && theApp.m_cpu_temperature > 0)
-    {
-        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_main_wnd_data));
-        tip_info += temp;
-    }
-    if (!skin_layout.GetItem(TDI_GPU_TEMP).show && theApp.m_gpu_temperature > 0)
-    {
-        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_GPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_gpu_temperature, theApp.m_main_wnd_data));
-        tip_info += temp;
-    }
-    if (!skin_layout.GetItem(TDI_HDD_TEMP).show && theApp.m_hdd_temperature > 0)
-    {
-        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_HDD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_hdd_temperature, theApp.m_main_wnd_data));
-        tip_info += temp;
-    }
-    if (!skin_layout.GetItem(TDI_MAIN_BOARD_TEMP).show && theApp.m_main_board_temperature > 0)
-    {
-        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_main_board_temperature, theApp.m_main_wnd_data));
-        tip_info += temp;
+        if (!skin_layout.GetItem(TDI_GPU_USAGE).show && theApp.m_gpu_usage >= 0)
+        {
+            temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
+            tip_info += temp;
+        }
+        if (!skin_layout.GetItem(TDI_CPU_TEMP).show && theApp.m_cpu_temperature > 0)
+        {
+            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_main_wnd_data));
+            tip_info += temp;
+        }
+        if (!skin_layout.GetItem(TDI_GPU_TEMP).show && theApp.m_gpu_temperature > 0)
+        {
+            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_GPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_gpu_temperature, theApp.m_main_wnd_data));
+            tip_info += temp;
+        }
+        if (!skin_layout.GetItem(TDI_HDD_TEMP).show && theApp.m_hdd_temperature > 0)
+        {
+            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_HDD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_hdd_temperature, theApp.m_main_wnd_data));
+            tip_info += temp;
+        }
+        if (!skin_layout.GetItem(TDI_MAIN_BOARD_TEMP).show && theApp.m_main_board_temperature > 0)
+        {
+            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_main_board_temperature, theApp.m_main_wnd_data));
+            tip_info += temp;
+        }
     }
 #endif
     return tip_info;

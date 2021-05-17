@@ -5,6 +5,7 @@
 #include "TrafficMonitor.h"
 #include "TaskBarDlg.h"
 #include "afxdialogex.h"
+#include "TrafficMonitorDlg.h"
 
 
 // CTaskBarDlg 对话框
@@ -504,30 +505,34 @@ CString CTaskBarDlg::GetMouseTipsInfo()
         tip_info += temp;
     }
 #ifndef WITHOUT_TEMPERATURE
-    if (!IsShowGpu() && theApp.m_gpu_usage >= 0)
+    CTrafficMonitorDlg* pMainWnd = dynamic_cast<CTrafficMonitorDlg*>(theApp.m_pMainWnd);
+    if (pMainWnd->IsTemperatureNeeded())
     {
-        temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
-        tip_info += temp;
-    }
-    if (!IsShowCpuTemperature() && theApp.m_cpu_temperature > 0)
-    {
-        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_taskbar_data));
-        tip_info += temp;
-    }
-    if (!IsShowGpuTemperature() && theApp.m_gpu_temperature > 0)
-    {
-        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_GPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_gpu_temperature, theApp.m_taskbar_data));
-        tip_info += temp;
-    }
-    if (!IsShowHddTemperature() && theApp.m_hdd_temperature > 0)
-    {
-        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_HDD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_hdd_temperature, theApp.m_taskbar_data));
-        tip_info += temp;
-    }
-    if (!IsShowMainboardTemperature() && theApp.m_main_board_temperature > 0)
-    {
-        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_main_board_temperature, theApp.m_taskbar_data));
-        tip_info += temp;
+        if (!IsShowGpu() && theApp.m_gpu_usage >= 0)
+        {
+            temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
+            tip_info += temp;
+        }
+        if (!IsShowCpuTemperature() && theApp.m_cpu_temperature > 0)
+        {
+            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_taskbar_data));
+            tip_info += temp;
+        }
+        if (!IsShowGpuTemperature() && theApp.m_gpu_temperature > 0)
+        {
+            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_GPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_gpu_temperature, theApp.m_taskbar_data));
+            tip_info += temp;
+        }
+        if (!IsShowHddTemperature() && theApp.m_hdd_temperature > 0)
+        {
+            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_HDD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_hdd_temperature, theApp.m_taskbar_data));
+            tip_info += temp;
+        }
+        if (!IsShowMainboardTemperature() && theApp.m_main_board_temperature > 0)
+        {
+            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_main_board_temperature, theApp.m_taskbar_data));
+            tip_info += temp;
+        }
     }
 #endif
     return tip_info;
