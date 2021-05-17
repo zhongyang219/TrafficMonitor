@@ -1,4 +1,4 @@
-<version>1.80</version>
-<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.80/TrafficMonitor_V1.80_x86.zip</link>
-<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.80/TrafficMonitor_V1.80_x64.zip</link_x64>
-<contents>新增CPU、显卡、硬盘和主板温度监控的功能。\n新增显卡利用率监控的功能。\n修正历史流量统计数值溢出导致统计数值不正确的问题。\n修正屏幕分辨率更改后主窗口位置不正确的问题。\n修正系统DPI更改后，主窗口和任务栏窗口界面元素的大小不会随DPI变化的问题。\n新增任务栏窗口自由指定显示项目的功能。\n新增xml格式的主窗口皮肤，支持温度显示。\n修正使用触屏设备时，选项设置中的子窗口无法使用触屏滚动的问题。\n将检查更新的处理放到后台线程中，以解决检查更新时程序长时间没有响应的问题。\n修正任务栏窗口中按Alt+F4后程序异常的问题。\n新增对每秒4GB以上网速的支持。\n新增可选择更新源为Gitee，以解决中国大陆地区有时无法访问GitHub导致程序无法更新的问题。\n新增内存显示方式设置。\n修正当前监控的网卡被关闭或禁用，再次启动后无法自动选择之前监控的网卡的问题。\n开机自启动采用任务计划实现，以解决有时开机自启动无效的问题。\n修正一些崩溃的问题。\n其他细节方面的改进。</contents>
+<version>1.80.1</version>
+<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.80.1/TrafficMonitor_V1.80.1_x86_without_temperature.zip</link>
+<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.80.1/TrafficMonitor_V1.80.1_x64_without_temperature.zip</link_x64>
+<contents>修正无法获取AMD显卡温度的问题\n修正自动切换为浅色模式颜色预设时程序崩溃的问题\n修正无法获取11代Intel处理器温度的问题\n修正设置开机自启动无效的问题\n\n以下是1.80版本的更新日志：\n新增CPU、显卡、硬盘和主板温度监控的功能。\n新增显卡利用率监控的功能。\n修正历史流量统计数值溢出导致统计数值不正确的问题。\n修正屏幕分辨率更改后主窗口位置不正确的问题。\n修正系统DPI更改后，主窗口和任务栏窗口界面元素的大小不会随DPI变化的问题。\n新增任务栏窗口自由指定显示项目的功能。\n新增xml格式的主窗口皮肤，支持温度显示。\n修正使用触屏设备时，选项设置中的子窗口无法使用触屏滚动的问题。\n将检查更新的处理放到后台线程中，以解决检查更新时程序长时间没有响应的问题。\n修正任务栏窗口中按Alt+F4后程序异常的问题。\n新增对每秒4GB以上网速的支持。\n新增可选择更新源为Gitee，以解决中国大陆地区有时无法访问GitHub导致程序无法更新的问题。\n新增内存显示方式设置。\n修正当前监控的网卡被关闭或禁用，再次启动后无法自动选择之前监控的网卡的问题。\n开机自启动采用任务计划实现，以解决有时开机自启动无效的问题。\n修正一些崩溃的问题。\n其他细节方面的改进。</contents>
