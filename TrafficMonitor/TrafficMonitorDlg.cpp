@@ -307,10 +307,8 @@ void CTrafficMonitorDlg::AutoSelect()
     m_connection_change_flag = true;
 }
 
-void CTrafficMonitorDlg::IniConnection()
+void CTrafficMonitorDlg::UpdateConnections()
 {
-    FreeMibTable(m_pIfTable);
-    GetIfTable2(&m_pIfTable);
     //获取当前所有的连接，并保存到m_connections容器中
     if (!theApp.m_general_data.show_all_interface)
     {
@@ -389,6 +387,13 @@ void CTrafficMonitorDlg::IniConnection()
 
     m_restart_cnt++;    //记录初始化次数
     m_connection_change_flag = true;
+}
+
+void CTrafficMonitorDlg::IniConnection()
+{
+    FreeMibTable(m_pIfTable);
+    GetIfTable2(&m_pIfTable);
+    UpdateConnections();
 }
 
 void CTrafficMonitorDlg::IniConnectionMenu(CMenu* pMenu)
@@ -867,9 +872,14 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     CTrafficMonitorDlg* pThis = (CTrafficMonitorDlg*)dwUser;
     CFlagLocker flag_locker(pThis->m_is_monitor_thread_runing);
 
+    ULONG num_entries = pThis->m_pIfTable->NumEntries;
     //获取网络连接速度
     FreeMibTable(pThis->m_pIfTable);
     int rtn = GetIfTable2(&pThis->m_pIfTable);
+    if (num_entries != pThis->m_pIfTable->NumEntries)
+    {
+        pThis->UpdateConnections();
+    }
     if (!theApp.m_cfg_data.m_select_all)        //获取当前选中连接的网速
     {
         pThis->m_in_bytes = pThis->m_pIfTable->Table[pThis->m_connections[pThis->m_connection_selected].index].InOctets;

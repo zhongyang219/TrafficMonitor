@@ -102,7 +102,9 @@ protected:
     void CheckWindowPos();          //测试窗口的位置，如窗口的位置在屏幕外，则移动窗口使其全部都在屏幕内，并返回新位置
     void GetScreenSize();           //获取屏幕的大小
 
-    void AutoSelect();      //自动选择连接
+    void AutoSelect();
+    void UpdateConnections();
+    //自动选择连接
     void IniConnection();   //初始化连接
 
     void IniConnectionMenu(CMenu* pMenu);   //初始化“选择网络连接”菜单
