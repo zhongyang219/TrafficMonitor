@@ -6,7 +6,6 @@
 #include "UpdateVisitor.h"
 
 using namespace System;
-using namespace LibreHardwareMonitor::Hardware;
 
 namespace OpenHardwareMonitorApi {
 

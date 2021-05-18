@@ -1,7 +1,8 @@
 ﻿#pragma once
 
-using namespace LibreHardwareMonitor::Hardware;
+#include "OpenHardwareMonitor/OpenHardwareMonitorGlobal.h"
 
+using namespace HARDWAREMONITOR_HARDWARE_NAMESPACE;
 namespace OpenHardwareMonitorApi
 {
     public ref class UpdateVisitor : IVisitor
