@@ -125,32 +125,32 @@ namespace OpenHardwareMonitorApi
         //wchar_t buff[256];
         //swprintf(buff, L"%d\n", computer->Hardware->Length);
         //System::Diagnostics::Debug::WriteLine(gcnew System::String(buff));
-        for (int i = 0; i < computer->Hardware->Count; i++)
+        for (int i = 0; i < HARDWAREMONTOR_COMPUTER_GET_HARDWARE_COUNT(computer); i++)
         {
             //查找硬件类型
             switch (computer->Hardware[i]->HardwareType)
             {
-            case HardwareType::Cpu:
+            case HARDWAREMONTOR_HARDWARE_TYPE_CPU:
                 if (m_cpu_temperature < 0)
                     GetHardwareTemperature(computer->Hardware[i], m_cpu_temperature);
                 break;
-            case HardwareType::GpuNvidia:
+            case HARDWAREMONTOR_HARDWARE_TYPE_GPU_NVIDIA:
                 if (m_gpu_nvidia_temperature < 0)
                     GetHardwareTemperature(computer->Hardware[i], m_gpu_nvidia_temperature);
                 if (m_gpu_nvidia_usage < 0)
                     GetGpuUsage(computer->Hardware[i], m_gpu_nvidia_usage);
                 break;
-            case HardwareType::GpuAmd:
+            case HARDWAREMONTOR_HARDWARE_TYPE_GPU_AMD:
                 if (m_gpu_ati_temperature < 0)
                     GetHardwareTemperature(computer->Hardware[i], m_gpu_ati_temperature);
                 if (m_gpu_ati_usage < 0)
                     GetGpuUsage(computer->Hardware[i], m_gpu_ati_usage);
                 break;
-            case HardwareType::Storage:
+            case HARDWAREMONTOR_HARDWARE_TYPE_STORAGE:
                 if (m_hdd_temperature < 0)
                     GetHardwareTemperature(computer->Hardware[i], m_hdd_temperature);
                 break;
-            case HardwareType::Motherboard:
+            case HARDWAREMONTOR_HARDWARE_TYPE_MOTHERBOARD:
                 if (m_main_board_temperature < 0)
                     GetHardwareTemperature(computer->Hardware[i], m_main_board_temperature);
                 break;
@@ -175,10 +175,10 @@ namespace OpenHardwareMonitorApi
     {
         updateVisitor = gcnew UpdateVisitor();
         computer = gcnew Computer();
-        computer->IsCpuEnabled = true;
-        computer->IsGpuEnabled = true;
-        computer->IsStorageEnabled = true;
-        computer->IsMotherboardEnabled = true;
+        HARDWAREMONTOR_COMPUTER_SET_CPU_ENABLED(computer, true);
+        HARDWAREMONTOR_COMPUTER_SET_GPU_ENABLED(computer, true);
+        HARDWAREMONTOR_COMPUTER_SET_STORAGE_ENABLED(computer, true);
+        HARDWAREMONTOR_COMPUTER_SET_MOTHERBOARD_ENABLED(computer, true);
         computer->Open();
         computer->Accept(updateVisitor);
     }
