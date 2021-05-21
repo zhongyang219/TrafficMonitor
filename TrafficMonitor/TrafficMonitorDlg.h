@@ -107,6 +107,8 @@ protected:
     //自动选择连接
     void IniConnection();   //初始化连接
 
+    MIB_IF_ROW2 GetConnectIfTable(int connection_index);    //获取当前选择的网络连接的MIB_IF_ROW2对象。connection_index为m_connections中的索引
+
     void IniConnectionMenu(CMenu* pMenu);   //初始化“选择网络连接”菜单
     void IniTaskBarConnectionMenu();        //初始化任务栏窗口的“选择网络连接”菜单
     void SetConnectionMenuState(CMenu* pMenu);      //设置“选择网络连接”菜单中选中的项目

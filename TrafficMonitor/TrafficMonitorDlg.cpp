@@ -293,9 +293,10 @@ void CTrafficMonitorDlg::AutoSelect()
     //自动选择连接时，查找已发送和已接收字节数之和最多的那个连接，并将其设置为当前查看的连接
     for (size_t i{}; i < m_connections.size(); i++)
     {
-        if (m_pIfTable->Table[m_connections[i].index].OperStatus == IfOperStatusUp)     //只选择网络状态为正常的连接
+        auto table = GetConnectIfTable(i);
+        if (table.OperStatus == IfOperStatusUp)     //只选择网络状态为正常的连接
         {
-            in_out_bytes = m_pIfTable->Table[m_connections[i].index].InOctets + m_pIfTable->Table[m_connections[i].index].OutOctets;
+            in_out_bytes = table.InOctets + table.OutOctets;
             if (in_out_bytes > max_in_out_bytes)
             {
                 max_in_out_bytes = in_out_bytes;
@@ -394,6 +395,17 @@ void CTrafficMonitorDlg::IniConnection()
     FreeMibTable(m_pIfTable);
     GetIfTable2(&m_pIfTable);
     UpdateConnections();
+}
+
+MIB_IF_ROW2 CTrafficMonitorDlg::GetConnectIfTable(int connection_index)
+{
+    if (connection_index >= 0 && connection_index < static_cast<int>(m_connections.size()))
+    {
+        int index = m_connections[connection_index].index;
+        if (m_pIfTable != nullptr && index >= 0 && index < m_pIfTable->NumEntries)
+            return m_pIfTable->Table[index];
+    }
+    return MIB_IF_ROW2();
 }
 
 void CTrafficMonitorDlg::IniConnectionMenu(CMenu* pMenu)
@@ -884,8 +896,9 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     }
     if (!theApp.m_cfg_data.m_select_all)        //获取当前选中连接的网速
     {
-        pThis->m_in_bytes = pThis->m_pIfTable->Table[pThis->m_connections[pThis->m_connection_selected].index].InOctets;
-        pThis->m_out_bytes = pThis->m_pIfTable->Table[pThis->m_connections[pThis->m_connection_selected].index].OutOctets;
+        auto table = pThis->GetConnectIfTable(pThis->m_connection_selected);
+        pThis->m_in_bytes = table.InOctets;
+        pThis->m_out_bytes = table.OutOctets;
     }
     else        //获取全部连接的网速
     {
@@ -893,11 +906,12 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         pThis->m_out_bytes = 0;
         for (size_t i{}; i < pThis->m_connections.size(); i++)
         {
+            auto table = pThis->GetConnectIfTable(i);
             //if (i > 0 && m_pIfTable->table[m_connections[i].index].dwInOctets == m_pIfTable->table[m_connections[i - 1].index].dwInOctets
             //  && m_pIfTable->table[m_connections[i].index].dwOutOctets == m_pIfTable->table[m_connections[i - 1].index].dwOutOctets)
             //  continue;       //连接列表中可能会有相同的连接，统计所有连接的网速时，忽略掉已发送和已接收字节数完全相同的连接
-            pThis->m_in_bytes += pThis->m_pIfTable->Table[pThis->m_connections[i].index].InOctets;
-            pThis->m_out_bytes += pThis->m_pIfTable->Table[pThis->m_connections[i].index].OutOctets;
+            pThis->m_in_bytes += table.InOctets;
+            pThis->m_out_bytes += table.OutOctets;
         }
     }
 
@@ -1007,7 +1021,7 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         last_interface_num = interface_num;
 
         wstring descr;
-        descr = pThis->m_pIfTable->Table[pThis->m_connections[pThis->m_connection_selected].index].Description;
+        descr = pThis->GetConnectIfTable(pThis->m_connection_selected).Description;
         if (descr != theApp.m_cfg_data.m_connection_name)
         {
             //写入额外的调试信息
