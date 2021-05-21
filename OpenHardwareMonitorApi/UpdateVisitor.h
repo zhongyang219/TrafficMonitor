@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-using namespace OpenHardwareMonitor::Hardware;
+using namespace LibreHardwareMonitor::Hardware;
 
 namespace OpenHardwareMonitorApi
 {
@@ -14,4 +14,3 @@ namespace OpenHardwareMonitorApi
     };
 
 }
-

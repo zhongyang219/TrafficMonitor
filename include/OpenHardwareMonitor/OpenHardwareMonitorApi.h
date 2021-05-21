@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include <memory>
 #include "OpenHardwareMonitorGlobal.h"
+#include <map>
+#include <string>
 
 namespace OpenHardwareMonitorApi
 {
@@ -13,6 +15,7 @@ namespace OpenHardwareMonitorApi
         virtual float HDDTemperature() = 0;     //返回获取到的硬盘温度
         virtual float MainboardTemperature() = 0;   //返回获取到的主板温度
         virtual float GpuUsage() = 0;           //返回获取到的GPU利用率
+        virtual const std::map<std::wstring, float>& AllHDDTemperature() = 0; //返回所有硬盘的温度。map的key是硬盘的名称，value是硬盘的温度
     };
 
     OPENHARDWAREMONITOR_API std::shared_ptr<IOpenHardwareMonitor> CreateInstance();

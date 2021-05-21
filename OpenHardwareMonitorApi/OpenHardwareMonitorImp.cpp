@@ -52,6 +52,11 @@ namespace OpenHardwareMonitorApi
             return m_gpu_ati_usage;
     }
 
+    const std::map<std::wstring, float>& COpenHardwareMonitor::AllHDDTemperature()
+    {
+        return m_all_hdd_temperature;
+    }
+
     bool COpenHardwareMonitor::GetHardwareTemperature(IHardware^ hardware, float& temperature)
     {
         temperature = -1;
@@ -83,7 +88,31 @@ namespace OpenHardwareMonitorApi
         return false;
     }
 
-    bool COpenHardwareMonitor::GetGpuUsage(IHardware ^ hardware, float & gpu_usage)
+    bool COpenHardwareMonitor::GetCpuTemperature(IHardware^ hardware, float& temperature)
+    {
+        temperature = -1;
+        float core_average = -1;
+        float cpu_package = -1;
+        for (int i = 0; i < hardware->Sensors->Length; i++)
+        {
+            //找到温度传感器
+            if (hardware->Sensors[i]->SensorType == SensorType::Temperature)
+            {
+                String^ name = hardware->Sensors[i]->Name;
+                if (name == L"Core Average")
+                    core_average = Convert::ToDouble(hardware->Sensors[i]->Value);
+                else if (name == L"CPU Package")
+                    cpu_package = Convert::ToDouble(hardware->Sensors[i]->Value);
+            }
+        }
+        if (core_average > 0)
+            temperature = core_average;
+        else if (cpu_package > 0)
+            temperature = cpu_package;
+        return temperature > 0;
+    }
+
+    bool COpenHardwareMonitor::GetGpuUsage(IHardware^ hardware, float& gpu_usage)
     {
         for (int i = 0; i < hardware->Sensors->Length; i++)
         {
@@ -125,14 +154,14 @@ namespace OpenHardwareMonitorApi
         //wchar_t buff[256];
         //swprintf(buff, L"%d\n", computer->Hardware->Length);
         //System::Diagnostics::Debug::WriteLine(gcnew System::String(buff));
-        for (int i = 0; i < computer->Hardware->Length; i++)
+        for (int i = 0; i < computer->Hardware->Count; i++)
         {
             //查找硬件类型
             switch (computer->Hardware[i]->HardwareType)
             {
-            case HardwareType::CPU:
+            case HardwareType::Cpu:
                 if (m_cpu_temperature < 0)
-                    GetHardwareTemperature(computer->Hardware[i], m_cpu_temperature);
+                    GetCpuTemperature(computer->Hardware[i], m_cpu_temperature);
                 break;
             case HardwareType::GpuNvidia:
                 if (m_gpu_nvidia_temperature < 0)
@@ -140,17 +169,22 @@ namespace OpenHardwareMonitorApi
                 if (m_gpu_nvidia_usage < 0)
                     GetGpuUsage(computer->Hardware[i], m_gpu_nvidia_usage);
                 break;
-            case HardwareType::GpuAti:
+            case HardwareType::GpuAmd:
                 if (m_gpu_ati_temperature < 0)
                     GetHardwareTemperature(computer->Hardware[i], m_gpu_ati_temperature);
                 if (m_gpu_ati_usage < 0)
                     GetGpuUsage(computer->Hardware[i], m_gpu_ati_usage);
                 break;
-            case HardwareType::HDD:
+            case HardwareType::Storage:
+            {
+                float cur_hdd_temperature = -1;
+                GetHardwareTemperature(computer->Hardware[i], cur_hdd_temperature);
+                m_all_hdd_temperature[ClrStringToStdWstring(computer->Hardware[i]->Name)] = cur_hdd_temperature;
                 if (m_hdd_temperature < 0)
-                    GetHardwareTemperature(computer->Hardware[i], m_hdd_temperature);
+                    m_hdd_temperature = cur_hdd_temperature;
+            }
                 break;
-            case HardwareType::Mainboard:
+            case HardwareType::Motherboard:
                 if (m_main_board_temperature < 0)
                     GetHardwareTemperature(computer->Hardware[i], m_main_board_temperature);
                 break;
@@ -175,10 +209,10 @@ namespace OpenHardwareMonitorApi
     {
         updateVisitor = gcnew UpdateVisitor();
         computer = gcnew Computer();
-        computer->CPUEnabled = true;
-        computer->GPUEnabled = true;
-        computer->HDDEnabled = true;
-        computer->MainboardEnabled = true;
+        computer->IsCpuEnabled = true;
+        computer->IsGpuEnabled = true;
+        computer->IsStorageEnabled = true;
+        computer->IsMotherboardEnabled = true;
         computer->Open();
         computer->Accept(updateVisitor);
     }

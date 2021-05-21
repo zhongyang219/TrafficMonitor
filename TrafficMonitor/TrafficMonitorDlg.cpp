@@ -735,7 +735,7 @@ bool CTrafficMonitorDlg::IsTemperatureNeeded() const
         needed |= m_tBarDlg->IsShowGpuTemperature();
         needed |= m_tBarDlg->IsShowHddTemperature();
         needed |= m_tBarDlg->IsShowMainboardTemperature();
-        needed |= (m_tBarDlg->m_tool_tips.IsWindowVisible() != 0);
+        needed |= (::IsWindow(m_tBarDlg->m_tool_tips.GetSafeHwnd()) && m_tBarDlg->m_tool_tips.IsWindowVisible());
     }
 
     if (!theApp.m_cfg_data.m_hide_main_window)
@@ -746,7 +746,7 @@ bool CTrafficMonitorDlg::IsTemperatureNeeded() const
         needed |= skin_layout.GetItem(TDI_GPU_TEMP).show;
         needed |= skin_layout.GetItem(TDI_HDD_TEMP).show;
         needed |= skin_layout.GetItem(TDI_MAIN_BOARD_TEMP).show;
-        needed |= (m_tool_tips.IsWindowVisible() != 0);
+        needed |= (::IsWindow(m_tool_tips.GetSafeHwnd()) && m_tool_tips.IsWindowVisible());
     }
     return needed;
 }

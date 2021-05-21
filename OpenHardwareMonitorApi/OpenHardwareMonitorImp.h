@@ -4,9 +4,10 @@
 #include <string>
 #include "OpenHardwareMonitor/OpenHardwareMonitorApi.h"
 #include "UpdateVisitor.h"
+#include <map>
 
 using namespace System;
-using namespace OpenHardwareMonitor::Hardware;
+using namespace LibreHardwareMonitor::Hardware;
 
 namespace OpenHardwareMonitorApi {
 
@@ -21,9 +22,11 @@ namespace OpenHardwareMonitorApi {
         virtual float HDDTemperature() override;
         virtual float MainboardTemperature() override;
         virtual float GpuUsage() override;
+        virtual const std::map<std::wstring, float>& AllHDDTemperature() override;
 
     private:
         bool GetHardwareTemperature(IHardware^ hardware, float& temperature);
+        bool GetCpuTemperature(IHardware^ hardware, float& temperature);
         bool GetGpuUsage(IHardware^ hardware, float& gpu_usage);
 
         void ResetAllValues();
@@ -36,6 +39,7 @@ namespace OpenHardwareMonitorApi {
         float m_main_board_temperature{};
         float m_gpu_nvidia_usage{};
         float m_gpu_ati_usage{};
+        std::map<std::wstring, float> m_all_hdd_temperature;
     };
 
     //一个单实例类
