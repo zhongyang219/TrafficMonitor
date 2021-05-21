@@ -375,7 +375,8 @@ bool CTaskBarDlg::AdjustWindowPos()
             m_rect.MoveToY((rcBar.Height() - m_rect.Height()) / 2);
             if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())
                 m_rect.MoveToY(m_rect.top + theApp.DPI(1));
-            MoveWindow(m_rect);
+            if (IsWindow(m_hWnd))
+                ::MoveWindow(m_hWnd, m_rect.left, m_rect.top, m_rect.Width(), m_rect.Height(), TRUE);
         }
     }
     else        //当任务栏在屏幕在左侧或右侧时
@@ -399,7 +400,8 @@ bool CTaskBarDlg::AdjustWindowPos()
             m_rect.MoveToX((m_rcMin.Width() - m_window_width) / 2);
             if (m_rect.left < theApp.DPI(2))
                 m_rect.MoveToX(theApp.DPI(2));
-            MoveWindow(m_rect);
+            if (IsWindow(m_hWnd))
+                ::MoveWindow(m_hWnd, m_rect.left, m_rect.top, m_rect.Width(), m_rect.Height(), TRUE);
         }
     }
 
