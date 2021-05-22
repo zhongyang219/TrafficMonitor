@@ -958,16 +958,20 @@ BOOL CTrafficMonitorApp::InitInstance()
 
 void CTrafficMonitorApp::InitOpenHardwareLibInThread()
 {
+#ifndef WITHOUT_TEMPERATURE
     AfxBeginThread(InitOpenHardwareMonitorLibThreadFunc, NULL);
+#endif
 }
 
 
 void CTrafficMonitorApp::UpdateOpenHardwareMonitorEnableState()
 {
+#ifndef WITHOUT_TEMPERATURE
     m_pMonitor->SetCpuEnable(m_general_data.IsHardwareEnable(HI_CPU));
     m_pMonitor->SetGpuEnable(m_general_data.IsHardwareEnable(HI_GPU));
     m_pMonitor->SetHddEnable(m_general_data.IsHardwareEnable(HI_HDD));
     m_pMonitor->SetMainboardEnable(m_general_data.IsHardwareEnable(HI_MBD));
+#endif
 }
 
 void CTrafficMonitorApp::OnHelp()
