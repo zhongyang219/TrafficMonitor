@@ -584,8 +584,6 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 {
     COptionsDlg optionsDlg(tab);
 
-    bool is_hardware_monitor_item_changed = (optionsDlg.m_tab3_dlg.m_data.hardware_monitor_item != theApp.m_general_data.hardware_monitor_item);
-
     //将选项设置数据传递给选项设置对话框
     optionsDlg.m_tab1_dlg.m_data = theApp.m_main_wnd_data;
     optionsDlg.m_tab2_dlg.m_data = theApp.m_taskbar_data;
@@ -594,6 +592,8 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 
     if (optionsDlg.DoModal() == IDOK)
     {
+        bool is_hardware_monitor_item_changed = (optionsDlg.m_tab3_dlg.m_data.hardware_monitor_item != theApp.m_general_data.hardware_monitor_item);
+
         theApp.m_main_wnd_data = optionsDlg.m_tab1_dlg.m_data;
         theApp.m_taskbar_data = optionsDlg.m_tab2_dlg.m_data;
         theApp.m_general_data = optionsDlg.m_tab3_dlg.m_data;
@@ -1102,6 +1102,14 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         {
             theApp.m_hdd_temperature = -1;
         }
+    }
+    else
+    {
+        theApp.m_cpu_temperature = -1;
+        theApp.m_gpu_temperature = -1;
+        theApp.m_hdd_temperature = -1;
+        theApp.m_main_board_temperature = -1;
+        theApp.m_gpu_usage = -1;
     }
 #endif
 
