@@ -43,7 +43,7 @@ protected:
     CSpinEdit m_gpu_temp_tip_edit;
     CSpinEdit m_hdd_temp_tip_edit;
     CSpinEdit m_mbd_temp_tip_edit;
-
+    CComboBox2 m_hard_disk_combo;
 
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
@@ -78,4 +78,5 @@ public:
     afx_msg void OnBnClickedGiteeRadio();
     virtual void OnCancel();
     afx_msg void OnBnClickedRestoreDefaultTimeSpanButton();
+    afx_msg void OnCbnSelchangeSelectHardDiskCombo();
 };

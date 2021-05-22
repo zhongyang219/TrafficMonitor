@@ -1065,9 +1065,20 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         theApp.m_pMonitor->GetHardwareInfo();
         theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
         theApp.m_gpu_temperature = theApp.m_pMonitor->GpuTemperature();
-        theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
+        //theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
         theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
         theApp.m_gpu_usage = theApp.m_pMonitor->GpuUsage();
+        //获取硬盘温度
+        if (!theApp.m_pMonitor->AllHDDTemperature().empty())
+        {
+            auto iter = theApp.m_pMonitor->AllHDDTemperature().find(theApp.m_general_data.hard_disk_name);
+            if (iter == theApp.m_pMonitor->AllHDDTemperature().end())
+            {
+                iter = theApp.m_pMonitor->AllHDDTemperature().begin();
+                theApp.m_general_data.hard_disk_name = iter->first;
+            }
+            theApp.m_hdd_temperature = iter->second;
+        }
     }
 #endif
 

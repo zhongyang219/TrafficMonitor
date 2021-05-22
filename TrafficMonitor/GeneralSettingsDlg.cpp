@@ -34,6 +34,7 @@ void CGeneralSettingsDlg::SetControlMouseWheelEnable(bool enable)
     m_gpu_temp_tip_edit.SetMouseWheelEnable(enable);
     m_hdd_temp_tip_edit.SetMouseWheelEnable(enable);
     m_mbd_temp_tip_edit.SetMouseWheelEnable(enable);
+    m_hard_disk_combo.SetMouseWheelEnable(enable);
 }
 
 bool CGeneralSettingsDlg::IsMonitorTimeSpanModified() const
@@ -53,6 +54,7 @@ void CGeneralSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_GPU_TEMP_TIP_EDIT, m_gpu_temp_tip_edit);
     DDX_Control(pDX, IDC_HDD_TIP_EDIT, m_hdd_temp_tip_edit);
     DDX_Control(pDX, IDC_MBD_TEMP_TIP_EDIT, m_mbd_temp_tip_edit);
+    DDX_Control(pDX, IDC_SELECT_HARD_DISK_COMBO, m_hard_disk_combo);
 }
 
 void CGeneralSettingsDlg::SetControlEnable()
@@ -88,6 +90,7 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_GITHUB_RADIO, &CGeneralSettingsDlg::OnBnClickedGithubRadio)
     ON_BN_CLICKED(IDC_GITEE_RADIO, &CGeneralSettingsDlg::OnBnClickedGiteeRadio)
     ON_BN_CLICKED(IDC_RESTORE_DEFAULT_TIME_SPAN_BUTTON, &CGeneralSettingsDlg::OnBnClickedRestoreDefaultTimeSpanButton)
+    ON_CBN_SELCHANGE(IDC_SELECT_HARD_DISK_COMBO, &CGeneralSettingsDlg::OnCbnSelchangeSelectHardDiskCombo)
 END_MESSAGE_MAP()
 
 
@@ -179,6 +182,17 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
 
     m_monitor_time_span_ori = m_data.monitor_time_span;
     m_update_source_ori = m_data.update_source;
+
+#ifndef WITHOUT_TEMPERATURE
+    if (theApp.m_pMonitor != nullptr)
+    {
+        //初始化选择硬盘下拉列表
+        for (const auto& hdd_item : theApp.m_pMonitor->AllHDDTemperature())
+            m_hard_disk_combo.AddString(hdd_item.first.c_str());
+        int cur_index = m_hard_disk_combo.FindString(-1, m_data.hard_disk_name.c_str());
+        m_hard_disk_combo.SetCurSel(cur_index);
+    }
+#endif
 
     //不含温度监控的版本，禁用温度相关的控件
 #ifdef WITHOUT_TEMPERATURE
@@ -459,4 +473,13 @@ void CGeneralSettingsDlg::OnBnClickedRestoreDefaultTimeSpanButton()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_monitor_span_edit.SetValue(1000);
+}
+
+
+void CGeneralSettingsDlg::OnCbnSelchangeSelectHardDiskCombo()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    CString hard_disk_name;
+   m_hard_disk_combo.GetWindowText(hard_disk_name);
+   m_data.hard_disk_name = hard_disk_name.GetString();
 }
