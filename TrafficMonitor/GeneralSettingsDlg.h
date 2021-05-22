@@ -79,4 +79,8 @@ public:
     virtual void OnCancel();
     afx_msg void OnBnClickedRestoreDefaultTimeSpanButton();
     afx_msg void OnCbnSelchangeSelectHardDiskCombo();
+    afx_msg void OnBnClickedCpuCheck();
+    afx_msg void OnBnClickedGpuCheck();
+    afx_msg void OnBnClickedHddCheck();
+    afx_msg void OnBnClickedMbdCheck();
 };

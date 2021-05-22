@@ -57,6 +57,26 @@ namespace OpenHardwareMonitorApi
         return m_all_hdd_temperature;
     }
 
+    void COpenHardwareMonitor::SetCpuEnable(bool enable)
+    {
+        MonitorGlobal::Instance()->computer->IsCpuEnabled = enable;
+    }
+
+    void COpenHardwareMonitor::SetGpuEnable(bool enable)
+    {
+        MonitorGlobal::Instance()->computer->IsGpuEnabled = enable;
+    }
+
+    void COpenHardwareMonitor::SetHddEnable(bool enable)
+    {
+        MonitorGlobal::Instance()->computer->IsStorageEnabled = enable;
+    }
+
+    void COpenHardwareMonitor::SetMainboardEnable(bool enable)
+    {
+        MonitorGlobal::Instance()->computer->IsMotherboardEnabled = enable;
+    }
+
     bool COpenHardwareMonitor::GetHardwareTemperature(IHardware^ hardware, float& temperature)
     {
         temperature = -1;
@@ -144,6 +164,7 @@ namespace OpenHardwareMonitorApi
         m_main_board_temperature = -1;
         m_gpu_nvidia_usage = -1;
         m_gpu_ati_usage = -1;
+        m_all_hdd_temperature.clear();
     }
 
     void COpenHardwareMonitor::GetHardwareInfo()
@@ -209,10 +230,10 @@ namespace OpenHardwareMonitorApi
     {
         updateVisitor = gcnew UpdateVisitor();
         computer = gcnew Computer();
-        computer->IsCpuEnabled = true;
-        computer->IsGpuEnabled = true;
-        computer->IsStorageEnabled = true;
-        computer->IsMotherboardEnabled = true;
+        //computer->IsCpuEnabled = true;
+        //computer->IsGpuEnabled = true;
+        //computer->IsStorageEnabled = true;
+        //computer->IsMotherboardEnabled = true;
         computer->Open();
         computer->Accept(updateVisitor);
     }

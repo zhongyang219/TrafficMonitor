@@ -153,27 +153,27 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 #ifndef WITHOUT_TEMPERATURE
     if (IsTemperatureNeeded())
     {
-        if (!skin_layout.GetItem(TDI_GPU_USAGE).show && theApp.m_gpu_usage >= 0)
+        if (theApp.m_general_data.IsHardwareEnable(HI_GPU) && !skin_layout.GetItem(TDI_GPU_USAGE).show && theApp.m_gpu_usage >= 0)
         {
             temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
             tip_info += temp;
         }
-        if (!skin_layout.GetItem(TDI_CPU_TEMP).show && theApp.m_cpu_temperature > 0)
+        if (theApp.m_general_data.IsHardwareEnable(HI_CPU) && !skin_layout.GetItem(TDI_CPU_TEMP).show && theApp.m_cpu_temperature > 0)
         {
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_main_wnd_data));
             tip_info += temp;
         }
-        if (!skin_layout.GetItem(TDI_GPU_TEMP).show && theApp.m_gpu_temperature > 0)
+        if (theApp.m_general_data.IsHardwareEnable(HI_GPU) && !skin_layout.GetItem(TDI_GPU_TEMP).show && theApp.m_gpu_temperature > 0)
         {
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_GPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_gpu_temperature, theApp.m_main_wnd_data));
             tip_info += temp;
         }
-        if (!skin_layout.GetItem(TDI_HDD_TEMP).show && theApp.m_hdd_temperature > 0)
+        if (theApp.m_general_data.IsHardwareEnable(HI_HDD) && !skin_layout.GetItem(TDI_HDD_TEMP).show && theApp.m_hdd_temperature > 0)
         {
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_HDD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_hdd_temperature, theApp.m_main_wnd_data));
             tip_info += temp;
         }
-        if (!skin_layout.GetItem(TDI_MAIN_BOARD_TEMP).show && theApp.m_main_board_temperature > 0)
+        if (theApp.m_general_data.IsHardwareEnable(HI_MBD) && !skin_layout.GetItem(TDI_MAIN_BOARD_TEMP).show && theApp.m_main_board_temperature > 0)
         {
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_main_board_temperature, theApp.m_main_wnd_data));
             tip_info += temp;
@@ -528,15 +528,15 @@ void CTrafficMonitorDlg::UpdateNotifyIconTip()
     strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> %"), { CCommon::LoadText(IDS_MEMORY), theApp.m_memory_usage });
     if (IsTemperatureNeeded())
     {
-        if (theApp.m_gpu_usage >= 0)
+        if (theApp.m_general_data.IsHardwareEnable(HI_GPU) && theApp.m_gpu_usage >= 0)
             strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> %"), { CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage });
-        if (theApp.m_cpu_temperature > 0)
+        if (theApp.m_general_data.IsHardwareEnable(HI_CPU) && theApp.m_cpu_temperature > 0)
             strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> °C"), { CCommon::LoadText(IDS_CPU_TEMPERATURE), static_cast<int>(theApp.m_cpu_temperature) });
-        if (theApp.m_gpu_temperature > 0)
+        if (theApp.m_general_data.IsHardwareEnable(HI_GPU) && theApp.m_gpu_temperature > 0)
             strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> °C"), { CCommon::LoadText(IDS_GPU_TEMPERATURE), static_cast<int>(theApp.m_gpu_temperature) });
-        if (theApp.m_hdd_temperature > 0)
+        if (theApp.m_general_data.IsHardwareEnable(HI_HDD) && theApp.m_hdd_temperature > 0)
             strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> °C"), { CCommon::LoadText(IDS_HDD_TEMPERATURE), static_cast<int>(theApp.m_hdd_temperature) });
-        if (theApp.m_main_board_temperature > 0)
+        if (theApp.m_general_data.IsHardwareEnable(HI_MBD) && theApp.m_main_board_temperature > 0)
             strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> °C"), { CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), static_cast<int>(theApp.m_main_board_temperature) });
     }
 
@@ -583,6 +583,9 @@ void CTrafficMonitorDlg::BackupHistoryTrafficFile()
 void CTrafficMonitorDlg::_OnOptions(int tab)
 {
     COptionsDlg optionsDlg(tab);
+
+    bool is_hardware_monitor_item_changed = (optionsDlg.m_tab3_dlg.m_data.hardware_monitor_item != theApp.m_general_data.hardware_monitor_item);
+
     //将选项设置数据传递给选项设置对话框
     optionsDlg.m_tab1_dlg.m_data = theApp.m_main_wnd_data;
     optionsDlg.m_tab2_dlg.m_data = theApp.m_taskbar_data;
@@ -622,6 +625,19 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 
         //设置获取CPU利用率的方式
         m_cpu_usage.SetUseCPUTimes(theApp.m_general_data.m_get_cpu_usage_by_cpu_times);
+
+#ifndef WITHOUT_TEMPERATURE
+        if (is_hardware_monitor_item_changed)
+        {
+            if (theApp.m_pMonitor != nullptr)
+            {
+                theApp.m_pMonitor->SetCpuEnable(theApp.m_general_data.IsHardwareEnable(HI_CPU));
+                theApp.m_pMonitor->SetGpuEnable(theApp.m_general_data.IsHardwareEnable(HI_GPU));
+                theApp.m_pMonitor->SetHddEnable(theApp.m_general_data.IsHardwareEnable(HI_HDD));
+                theApp.m_pMonitor->SetMainboardEnable(theApp.m_general_data.IsHardwareEnable(HI_MBD));
+            }
+        }
+#endif
 
         theApp.SaveConfig();
         theApp.SaveGlobalConfig();
@@ -726,29 +742,32 @@ void CTrafficMonitorDlg::TaskbarShowHideItem(DisplayItem type)
 bool CTrafficMonitorDlg::IsTemperatureNeeded() const
 {
     //判断是否需要从OpenHardwareMonitor获取信息。
-    //只有主窗口和任务栏窗口中CPU温度、显卡利用率、显卡温度、硬盘温度和主板温度中至少有一个要显示，才返回true
-    bool needed = false;
-    if (theApp.m_cfg_data.m_show_task_bar_wnd && IsTaskbarWndValid())
-    {
-        needed |= m_tBarDlg->IsShowCpuTemperature();
-        needed |= m_tBarDlg->IsShowGpu();
-        needed |= m_tBarDlg->IsShowGpuTemperature();
-        needed |= m_tBarDlg->IsShowHddTemperature();
-        needed |= m_tBarDlg->IsShowMainboardTemperature();
-        needed |= (::IsWindow(m_tBarDlg->m_tool_tips.GetSafeHwnd()) && m_tBarDlg->m_tool_tips.IsWindowVisible());
-    }
+    ////只有主窗口和任务栏窗口中CPU温度、显卡利用率、显卡温度、硬盘温度和主板温度中至少有一个要显示，才返回true
+    //bool needed = false;
+    //if (theApp.m_cfg_data.m_show_task_bar_wnd && IsTaskbarWndValid())
+    //{
+    //    needed |= m_tBarDlg->IsShowCpuTemperature();
+    //    needed |= m_tBarDlg->IsShowGpu();
+    //    needed |= m_tBarDlg->IsShowGpuTemperature();
+    //    needed |= m_tBarDlg->IsShowHddTemperature();
+    //    needed |= m_tBarDlg->IsShowMainboardTemperature();
+    //    needed |= (::IsWindow(m_tBarDlg->m_tool_tips.GetSafeHwnd()) && m_tBarDlg->m_tool_tips.IsWindowVisible());
+    //}
 
-    if (!theApp.m_cfg_data.m_hide_main_window)
-    {
-        const CSkinFile::Layout& skin_layout{ theApp.m_cfg_data.m_show_more_info ? m_skin.GetLayoutInfo().layout_l : m_skin.GetLayoutInfo().layout_s }; //当前的皮肤布局
-        needed |= skin_layout.GetItem(TDI_CPU_TEMP).show;
-        needed |= skin_layout.GetItem(TDI_GPU_USAGE).show;
-        needed |= skin_layout.GetItem(TDI_GPU_TEMP).show;
-        needed |= skin_layout.GetItem(TDI_HDD_TEMP).show;
-        needed |= skin_layout.GetItem(TDI_MAIN_BOARD_TEMP).show;
-        needed |= (::IsWindow(m_tool_tips.GetSafeHwnd()) && m_tool_tips.IsWindowVisible());
-    }
-    return needed;
+    //if (!theApp.m_cfg_data.m_hide_main_window)
+    //{
+    //    const CSkinFile::Layout& skin_layout{ theApp.m_cfg_data.m_show_more_info ? m_skin.GetLayoutInfo().layout_l : m_skin.GetLayoutInfo().layout_s }; //当前的皮肤布局
+    //    needed |= skin_layout.GetItem(TDI_CPU_TEMP).show;
+    //    needed |= skin_layout.GetItem(TDI_GPU_USAGE).show;
+    //    needed |= skin_layout.GetItem(TDI_GPU_TEMP).show;
+    //    needed |= skin_layout.GetItem(TDI_HDD_TEMP).show;
+    //    needed |= skin_layout.GetItem(TDI_MAIN_BOARD_TEMP).show;
+    //    needed |= (::IsWindow(m_tool_tips.GetSafeHwnd()) && m_tool_tips.IsWindowVisible());
+    //}
+    //return needed;
+
+    return theApp.m_general_data.IsHardwareEnable(HI_CPU) || theApp.m_general_data.IsHardwareEnable(HI_GPU)
+        || theApp.m_general_data.IsHardwareEnable(HI_HDD) || theApp.m_general_data.IsHardwareEnable(HI_MBD);
 }
 
 // CTrafficMonitorDlg 消息处理程序
@@ -1078,6 +1097,10 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
                 theApp.m_general_data.hard_disk_name = iter->first;
             }
             theApp.m_hdd_temperature = iter->second;
+        }
+        else
+        {
+            theApp.m_hdd_temperature = -1;
         }
     }
 #endif

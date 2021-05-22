@@ -63,6 +63,7 @@ void CTrafficMonitorApp::LoadConfig()
     if (m_general_data.monitor_time_span < MONITOR_TIME_SPAN_MIN || m_general_data.monitor_time_span > MONITOR_TIME_SPAN_MAX)
         m_general_data.monitor_time_span = 1000;
     m_general_data.hard_disk_name = ini.GetString(L"general", L"hard_disk_name", L"");
+    m_general_data.hardware_monitor_item = ini.GetInt(L"general", L"hardware_monitor_item", HI_CPU | HI_GPU | HI_HDD | HI_MBD);
 
     //Windows10颜色模式设置
     bool is_windows10_light_theme = m_win_version.IsWindows10LightTheme();
@@ -253,6 +254,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(L"general", L"get_cpu_usage_by_cpu_times", m_general_data.m_get_cpu_usage_by_cpu_times);
     ini.WriteInt(L"general", L"monitor_time_span", m_general_data.monitor_time_span);
     ini.WriteString(L"general", L"hard_disk_name", m_general_data.hard_disk_name);
+    ini.WriteInt(L"general", L"hardware_monitor_item", m_general_data.hardware_monitor_item);
 
     //主窗口设置
     ini.WriteInt(L"config", L"transparency", m_cfg_data.m_transparency);
@@ -544,6 +546,11 @@ UINT CTrafficMonitorApp::InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam)
 {
 #ifndef WITHOUT_TEMPERATURE
     theApp.m_pMonitor = OpenHardwareMonitorApi::CreateInstance();
+    //设置硬件监控的启用状态
+    theApp.m_pMonitor->SetCpuEnable(theApp.m_general_data.IsHardwareEnable(HI_CPU));
+    theApp.m_pMonitor->SetGpuEnable(theApp.m_general_data.IsHardwareEnable(HI_GPU));
+    theApp.m_pMonitor->SetHddEnable(theApp.m_general_data.IsHardwareEnable(HI_HDD));
+    theApp.m_pMonitor->SetMainboardEnable(theApp.m_general_data.IsHardwareEnable(HI_MBD));
 #endif
     return 0;
 }

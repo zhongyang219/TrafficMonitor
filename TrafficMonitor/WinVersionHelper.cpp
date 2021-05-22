@@ -99,7 +99,7 @@ bool CWinVersionHelper::IsDotNetFramework4Point5Installed()
 	DWORD netFramewordRelease{};
 	if (!GetDWORDRegKeyData(HKEY_LOCAL_MACHINE, L"Software\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full", L"Release", netFramewordRelease))
 		return false;
-	return netFramewordRelease >= 378389;
+	return netFramewordRelease >= 379893;
 }
 
 LONG CWinVersionHelper::GetDWORDRegKeyData(HKEY hKey, const wstring& strValueName, DWORD& dwValueData)

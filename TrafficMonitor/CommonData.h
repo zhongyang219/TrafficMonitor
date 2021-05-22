@@ -71,6 +71,15 @@ enum DisplayItem
 //所有显示项目的集合
 const std::set<DisplayItem> AllDisplayItems{ TDI_UP, TDI_DOWN, TDI_CPU, TDI_MEMORY, TDI_GPU_USAGE, TDI_CPU_TEMP, TDI_GPU_TEMP, TDI_HDD_TEMP, TDI_MAIN_BOARD_TEMP };
 
+//硬件监控的项目
+enum HardwareItem
+{
+    HI_CPU = 1 << 0,        //CPU
+    HI_GPU = 1 << 1,        //显卡
+    HI_HDD = 1 << 2,        //硬盘
+    HI_MBD = 1 << 3         //主板
+};
+
 #define DEF_CH L'\"'        //写入和读取ini文件字符串时，在字符串前后添加的字符
 #define NONE_STR L"@@@"     //用于指定一个无效字符串
 struct DispStrings      //显示的文本
@@ -332,6 +341,19 @@ struct GeneralSettingData
     int monitor_time_span{ 1000 };    //监控的时间间隔
 
     std::wstring hard_disk_name;        //要监控的硬盘名称
+
+    unsigned int hardware_monitor_item{};   //要监控哪些硬件
+    bool IsHardwareEnable(HardwareItem item_type) const
+    {
+        return hardware_monitor_item & item_type;
+    }
+    void SetHardwareEnable(HardwareItem item_type, bool enable)
+    {
+        if (enable)
+            hardware_monitor_item |= item_type;
+        else
+            hardware_monitor_item &= ~item_type;
+    }
 };
 
 //定义监控时间间隔有效的最大值和最小值
