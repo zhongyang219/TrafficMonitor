@@ -51,7 +51,7 @@ BOOL CAboutDlg::OnInitDialog()
     m_acknowledgement.SetLinkIsURL(false);
     m_license.SetLinkIsURL(false);
 
-    m_openhardwaremonitor_link.SetURL(_T("https://github.com/openhardwaremonitor/openhardwaremonitor"));
+    m_openhardwaremonitor_link.SetURL(_T("https://github.com/LibreHardwareMonitor/LibreHardwareMonitor"));
     m_tinyxml2_link.SetURL(_T("https://github.com/leethomason/tinyxml2"));
     m_musicplayer2_link.SetURL(_T("https://github.com/zhongyang219/MusicPlayer2"));
     m_simplenotepad_link.SetURL(_T("https://github.com/zhongyang219/SimpleNotePad"));
