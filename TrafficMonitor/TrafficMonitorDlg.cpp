@@ -631,10 +631,11 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
         {
             if (theApp.m_pMonitor != nullptr)
             {
-                theApp.m_pMonitor->SetCpuEnable(theApp.m_general_data.IsHardwareEnable(HI_CPU));
-                theApp.m_pMonitor->SetGpuEnable(theApp.m_general_data.IsHardwareEnable(HI_GPU));
-                theApp.m_pMonitor->SetHddEnable(theApp.m_general_data.IsHardwareEnable(HI_HDD));
-                theApp.m_pMonitor->SetMainboardEnable(theApp.m_general_data.IsHardwareEnable(HI_MBD));
+                theApp.UpdateOpenHardwareMonitorEnableState();
+            }
+            else if (IsTemperatureNeeded())
+            {
+                theApp.InitOpenHardwareLibInThread();
             }
         }
 #endif

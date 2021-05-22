@@ -131,6 +131,9 @@ public:
 
     bool IsCheckingForUpdate() const { return m_checking_update; }      //是否正在检查更新
 
+    void InitOpenHardwareLibInThread();     //开启一个后台线程初始化OpenHardwareMonitor
+    void UpdateOpenHardwareMonitorEnableState();    //更新硬件监控的启用/禁用状态
+
 private:
     //int m_no_multistart_warning_time{};       //用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示
     bool m_no_multistart_warning{};         //如果为false，则永远都不会弹出“已经有一个程序正在运行”的警告提示
@@ -138,6 +141,7 @@ private:
     int m_dpi{ 96 };
 
     bool m_checking_update{ false };        //是否正在检查更新
+    CCriticalSection m_minitor_lib_init_critical;   //用于对OpenHardwareMonitor初始化进行线程同步的临界区对象
 
     std::map<UINT, HICON> m_menu_icons;      //菜单图标资源。key是图标资源的ID，vlaue是图标的句柄
 

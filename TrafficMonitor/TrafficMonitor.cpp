@@ -545,12 +545,10 @@ UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
 UINT CTrafficMonitorApp::InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam)
 {
 #ifndef WITHOUT_TEMPERATURE
+    CSingleLock sync(&theApp.m_minitor_lib_init_critical, TRUE);
     theApp.m_pMonitor = OpenHardwareMonitorApi::CreateInstance();
     //设置硬件监控的启用状态
-    theApp.m_pMonitor->SetCpuEnable(theApp.m_general_data.IsHardwareEnable(HI_CPU));
-    theApp.m_pMonitor->SetGpuEnable(theApp.m_general_data.IsHardwareEnable(HI_GPU));
-    theApp.m_pMonitor->SetHddEnable(theApp.m_general_data.IsHardwareEnable(HI_HDD));
-    theApp.m_pMonitor->SetMainboardEnable(theApp.m_general_data.IsHardwareEnable(HI_MBD));
+    theApp.UpdateOpenHardwareMonitorEnableState();
 #endif
     return 0;
 }
@@ -909,8 +907,13 @@ BOOL CTrafficMonitorApp::InitInstance()
     }
     else
     {
-        //启动初始化OpenHardwareMonitor的线程。由于OpenHardwareMonitor初始化需要一定的时间，为了防止启动时程序卡顿，将其放到后台线程中处理
-        AfxBeginThread(InitOpenHardwareMonitorLibThreadFunc, NULL);
+        //如果没有开启任何一项的硬件监控，则不初始化OpenHardwareMonitor
+        if (theApp.m_general_data.IsHardwareEnable(HI_CPU) || theApp.m_general_data.IsHardwareEnable(HI_GPU)
+            || theApp.m_general_data.IsHardwareEnable(HI_HDD) || theApp.m_general_data.IsHardwareEnable(HI_MBD))
+        {
+            //启动初始化OpenHardwareMonitor的线程。由于OpenHardwareMonitor初始化需要一定的时间，为了防止启动时程序卡顿，将其放到后台线程中处理
+            InitOpenHardwareLibInThread();
+        }
     }
 #endif
 
@@ -953,7 +956,19 @@ BOOL CTrafficMonitorApp::InitInstance()
     return FALSE;
 }
 
+void CTrafficMonitorApp::InitOpenHardwareLibInThread()
+{
+    AfxBeginThread(InitOpenHardwareMonitorLibThreadFunc, NULL);
+}
 
+
+void CTrafficMonitorApp::UpdateOpenHardwareMonitorEnableState()
+{
+    m_pMonitor->SetCpuEnable(m_general_data.IsHardwareEnable(HI_CPU));
+    m_pMonitor->SetGpuEnable(m_general_data.IsHardwareEnable(HI_GPU));
+    m_pMonitor->SetHddEnable(m_general_data.IsHardwareEnable(HI_HDD));
+    m_pMonitor->SetMainboardEnable(m_general_data.IsHardwareEnable(HI_MBD));
+}
 
 void CTrafficMonitorApp::OnHelp()
 {
