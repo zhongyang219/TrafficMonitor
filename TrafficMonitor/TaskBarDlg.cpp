@@ -881,10 +881,12 @@ BOOL CTaskBarDlg::OnInitDialog()
     SetBackgroundColor(theApp.m_taskbar_data.back_color);
 
     //初始化鼠标提示
-    m_tool_tips.Create(this, TTS_ALWAYSTIP);
-    m_tool_tips.SetMaxTipWidth(600);
-    m_tool_tips.AddTool(this, _T(""));
-    SetToolTipsTopMost();       //设置提示信息总是置顶
+    if (m_tool_tips.Create(this, TTS_ALWAYSTIP) && IsWindow(m_tool_tips.GetSafeHwnd()))
+    {
+        m_tool_tips.SetMaxTipWidth(600);
+        m_tool_tips.AddTool(this, _T(""));
+        SetToolTipsTopMost();       //设置提示信息总是置顶
+    }
 
     //SetTimer(TASKBAR_TIMER, 100, NULL);
 
@@ -987,7 +989,7 @@ BOOL CTaskBarDlg::PreTranslateMessage(MSG* pMsg)
     if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE) return TRUE;
     if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN) return TRUE;
 
-    if (theApp.m_taskbar_data.show_tool_tip && m_tool_tips.GetSafeHwnd() && (pMsg->message == WM_LBUTTONDOWN ||
+    if (theApp.m_taskbar_data.show_tool_tip && IsWindow(m_tool_tips.GetSafeHwnd()) && (pMsg->message == WM_LBUTTONDOWN ||
         pMsg->message == WM_LBUTTONUP ||
         pMsg->message == WM_MOUSEMOVE))
     {
