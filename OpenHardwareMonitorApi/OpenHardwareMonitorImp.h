@@ -15,6 +15,7 @@ namespace OpenHardwareMonitorApi {
 	{
     public:
         COpenHardwareMonitor();
+        virtual ~COpenHardwareMonitor();
 
         virtual void GetHardwareInfo() override;
         virtual float CpuTemperature() override;
@@ -64,6 +65,7 @@ namespace OpenHardwareMonitorApi {
         }
 
         void Init();
+        void UnInit();
 
         Computer^ computer;
         UpdateVisitor^ updateVisitor{};

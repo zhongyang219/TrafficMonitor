@@ -155,6 +155,11 @@ namespace OpenHardwareMonitorApi
         ResetAllValues();
     }
 
+    COpenHardwareMonitor::~COpenHardwareMonitor()
+    {
+        MonitorGlobal::Instance()->UnInit();
+    }
+
     void COpenHardwareMonitor::ResetAllValues()
     {
         m_cpu_temperature = -1;
@@ -172,9 +177,6 @@ namespace OpenHardwareMonitorApi
         ResetAllValues();
         auto computer = MonitorGlobal::Instance()->computer;
         computer->Accept(MonitorGlobal::Instance()->updateVisitor);
-        //wchar_t buff[256];
-        //swprintf(buff, L"%d\n", computer->Hardware->Length);
-        //System::Diagnostics::Debug::WriteLine(gcnew System::String(buff));
         for (int i = 0; i < computer->Hardware->Count; i++)
         {
             //查找硬件类型
@@ -230,12 +232,12 @@ namespace OpenHardwareMonitorApi
     {
         updateVisitor = gcnew UpdateVisitor();
         computer = gcnew Computer();
-        //computer->IsCpuEnabled = true;
-        //computer->IsGpuEnabled = true;
-        //computer->IsStorageEnabled = true;
-        //computer->IsMotherboardEnabled = true;
         computer->Open();
-        computer->Accept(updateVisitor);
+    }
+
+    void MonitorGlobal::UnInit()
+    {
+        computer->Close();
     }
 
 }
