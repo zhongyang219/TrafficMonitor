@@ -63,6 +63,7 @@ void CTrafficMonitorApp::LoadConfig()
     if (m_general_data.monitor_time_span < MONITOR_TIME_SPAN_MIN || m_general_data.monitor_time_span > MONITOR_TIME_SPAN_MAX)
         m_general_data.monitor_time_span = 1000;
     m_general_data.hard_disk_name = ini.GetString(L"general", L"hard_disk_name", L"");
+    m_general_data.cpu_core_name = ini.GetString(L"general", L"cpu_core_name", L"");
     m_general_data.hardware_monitor_item = ini.GetInt(L"general", L"hardware_monitor_item", HI_CPU | HI_GPU | HI_HDD | HI_MBD);
 
     //Windows10颜色模式设置
@@ -254,6 +255,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(L"general", L"get_cpu_usage_by_cpu_times", m_general_data.m_get_cpu_usage_by_cpu_times);
     ini.WriteInt(L"general", L"monitor_time_span", m_general_data.monitor_time_span);
     ini.WriteString(L"general", L"hard_disk_name", m_general_data.hard_disk_name);
+    ini.WriteString(L"general", L"cpu_core_name", m_general_data.cpu_core_name);
     ini.WriteInt(L"general", L"hardware_monitor_item", m_general_data.hardware_monitor_item);
 
     //主窗口设置

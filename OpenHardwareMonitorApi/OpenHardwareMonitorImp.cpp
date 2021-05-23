@@ -57,6 +57,11 @@ namespace OpenHardwareMonitorApi
         return m_all_hdd_temperature;
     }
 
+    const std::map<std::wstring, float>& COpenHardwareMonitor::AllCpuTemperature()
+    {
+        return m_all_cpu_temperature;
+    }
+
     void COpenHardwareMonitor::SetCpuEnable(bool enable)
     {
         MonitorGlobal::Instance()->computer->IsCpuEnabled = enable;
@@ -111,24 +116,25 @@ namespace OpenHardwareMonitorApi
     bool COpenHardwareMonitor::GetCpuTemperature(IHardware^ hardware, float& temperature)
     {
         temperature = -1;
-        float core_average = -1;
-        float cpu_package = -1;
+        m_all_cpu_temperature.clear();
         for (int i = 0; i < hardware->Sensors->Length; i++)
         {
             //找到温度传感器
             if (hardware->Sensors[i]->SensorType == SensorType::Temperature)
             {
                 String^ name = hardware->Sensors[i]->Name;
-                if (name == L"Core Average")
-                    core_average = Convert::ToDouble(hardware->Sensors[i]->Value);
-                else if (name == L"CPU Package")
-                    cpu_package = Convert::ToDouble(hardware->Sensors[i]->Value);
+                //保存每个CPU传感器的温度
+                m_all_cpu_temperature[ClrStringToStdWstring(name)] = Convert::ToDouble(hardware->Sensors[i]->Value);
             }
         }
-        if (core_average > 0)
-            temperature = core_average;
-        else if (cpu_package > 0)
-            temperature = cpu_package;
+        //计算平均温度
+        if (!m_all_cpu_temperature.empty())
+        {
+            float sum{};
+            for (const auto& item : m_all_cpu_temperature)
+                sum += item.second;
+            temperature = sum / m_all_cpu_temperature.size();
+        }
         return temperature > 0;
     }
 

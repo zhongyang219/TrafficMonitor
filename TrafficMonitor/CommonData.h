@@ -341,6 +341,7 @@ struct GeneralSettingData
     int monitor_time_span{ 1000 };    //监控的时间间隔
 
     std::wstring hard_disk_name;        //要监控的硬盘名称
+    std::wstring cpu_core_name;         //要监控的CPU核心的名称
 
     unsigned int hardware_monitor_item{};   //要监控哪些硬件
     bool IsHardwareEnable(HardwareItem item_type) const

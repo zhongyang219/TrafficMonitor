@@ -35,6 +35,7 @@ void CGeneralSettingsDlg::SetControlMouseWheelEnable(bool enable)
     m_hdd_temp_tip_edit.SetMouseWheelEnable(enable);
     m_mbd_temp_tip_edit.SetMouseWheelEnable(enable);
     m_hard_disk_combo.SetMouseWheelEnable(enable);
+    m_select_cpu_combo.SetMouseWheelEnable(enable);
 }
 
 bool CGeneralSettingsDlg::IsMonitorTimeSpanModified() const
@@ -55,6 +56,7 @@ void CGeneralSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_HDD_TIP_EDIT, m_hdd_temp_tip_edit);
     DDX_Control(pDX, IDC_MBD_TEMP_TIP_EDIT, m_mbd_temp_tip_edit);
     DDX_Control(pDX, IDC_SELECT_HARD_DISK_COMBO, m_hard_disk_combo);
+    DDX_Control(pDX, IDC_SELECT_CPU_COMBO, m_select_cpu_combo);
 }
 
 void CGeneralSettingsDlg::SetControlEnable()
@@ -95,6 +97,7 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_GPU_CHECK, &CGeneralSettingsDlg::OnBnClickedGpuCheck)
     ON_BN_CLICKED(IDC_HDD_CHECK, &CGeneralSettingsDlg::OnBnClickedHddCheck)
     ON_BN_CLICKED(IDC_MBD_CHECK, &CGeneralSettingsDlg::OnBnClickedMbdCheck)
+    ON_CBN_SELCHANGE(IDC_SELECT_CPU_COMBO, &CGeneralSettingsDlg::OnCbnSelchangeSelectCpuCombo)
 END_MESSAGE_MAP()
 
 
@@ -201,6 +204,14 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
             m_hard_disk_combo.AddString(hdd_item.first.c_str());
         int cur_index = m_hard_disk_combo.FindString(-1, m_data.hard_disk_name.c_str());
         m_hard_disk_combo.SetCurSel(cur_index);
+        //初始化选择CPU下拉列表
+        m_select_cpu_combo.AddString(CCommon::LoadText(IDS_AVREAGE_TEMPERATURE));
+        for (const auto& cpu_item : theApp.m_pMonitor->AllCpuTemperature())
+            m_select_cpu_combo.AddString(cpu_item.first.c_str());
+        cur_index = m_select_cpu_combo.FindString(-1, m_data.cpu_core_name.c_str());
+        if (cur_index < 0)
+            cur_index = 0;
+        m_select_cpu_combo.SetCurSel(cur_index);
     }
 #endif
 
@@ -525,4 +536,13 @@ void CGeneralSettingsDlg::OnBnClickedMbdCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.SetHardwareEnable(HI_MBD, IsDlgButtonChecked(IDC_MBD_CHECK) != 0);
+}
+
+
+void CGeneralSettingsDlg::OnCbnSelchangeSelectCpuCombo()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    CString cpu_core_name;
+    m_select_cpu_combo.GetWindowText(cpu_core_name);
+    m_data.cpu_core_name = cpu_core_name.GetString();
 }
