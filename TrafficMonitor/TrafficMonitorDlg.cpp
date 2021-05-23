@@ -906,7 +906,9 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     CTrafficMonitorDlg* pThis = (CTrafficMonitorDlg*)dwUser;
     CFlagLocker flag_locker(pThis->m_is_monitor_thread_runing);
 
-    ULONG num_entries = pThis->m_pIfTable->NumEntries;
+    ULONG num_entries = 0;
+    if (pThis->m_pIfTable != nullptr)
+        num_entries = pThis->m_pIfTable->NumEntries;
     //获取网络连接速度
     FreeMibTable(pThis->m_pIfTable);
     int rtn = GetIfTable2(&pThis->m_pIfTable);

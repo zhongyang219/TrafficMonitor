@@ -45,13 +45,13 @@ public:
 protected:
     HICON m_hIcon;
     NOTIFYICONDATA m_ntIcon;    //通知区域图标
-    CTaskBarDlg* m_tBarDlg;     //任务栏窗口的指针
+    CTaskBarDlg* m_tBarDlg{};     //任务栏窗口的指针
 
     vector<NetWorkConection> m_connections; //保存获取到的要显示到“选择网卡”菜单项中的所有网络连接
-    MIB_IF_TABLE2* m_pIfTable;
+    MIB_IF_TABLE2* m_pIfTable{};
     int m_connection_selected{ 0 }; //要显示流量的连接的序号
-    unsigned __int64 m_in_bytes;        //当前已接收的字节数
-    unsigned __int64 m_out_bytes;   //当前已发送的字节数
+    unsigned __int64 m_in_bytes{};        //当前已接收的字节数
+    unsigned __int64 m_out_bytes{};   //当前已发送的字节数
     unsigned __int64 m_last_in_bytes{}; //上次已接收的字节数
     unsigned __int64 m_last_out_bytes{};    //上次已发送的字节数
 
