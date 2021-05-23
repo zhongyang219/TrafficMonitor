@@ -89,6 +89,8 @@ protected:
     //  label_width: 标签区域的宽度
     void DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect rect, int label_width);
 
+	void MoveWindow(CRect rect);
+
 public:
 	void SetTextFont();
 	void ApplySettings();

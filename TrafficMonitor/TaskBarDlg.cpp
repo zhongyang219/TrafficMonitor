@@ -324,6 +324,14 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
     drawer.DrawWindowText(rect_value, str_value, text_color, value_alignment);
 }
 
+void CTaskBarDlg::MoveWindow(CRect rect)
+{
+    if (IsWindow(GetSafeHwnd()))
+    {
+        ::MoveWindow(GetSafeHwnd(), rect.left, rect.top, rect.Width(), rect.Height(), TRUE);
+    }
+}
+
 void CTaskBarDlg::TryDrawStatusBar(CDrawCommon& drawer, const CRect& rect_bar, int usage_percent)
 {
     if (!theApp.m_taskbar_data.show_status_bar)
@@ -375,8 +383,7 @@ bool CTaskBarDlg::AdjustWindowPos()
             m_rect.MoveToY((rcBar.Height() - m_rect.Height()) / 2);
             if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())
                 m_rect.MoveToY(m_rect.top + theApp.DPI(1));
-            if (IsWindow(m_hWnd))
-                ::MoveWindow(m_hWnd, m_rect.left, m_rect.top, m_rect.Width(), m_rect.Height(), TRUE);
+            MoveWindow(m_rect);
         }
     }
     else        //当任务栏在屏幕在左侧或右侧时
@@ -400,8 +407,7 @@ bool CTaskBarDlg::AdjustWindowPos()
             m_rect.MoveToX((m_rcMin.Width() - m_window_width) / 2);
             if (m_rect.left < theApp.DPI(2))
                 m_rect.MoveToX(theApp.DPI(2));
-            if (IsWindow(m_hWnd))
-                ::MoveWindow(m_hWnd, m_rect.left, m_rect.top, m_rect.Width(), m_rect.Height(), TRUE);
+            MoveWindow(m_rect);
         }
     }
 
@@ -881,7 +887,7 @@ BOOL CTaskBarDlg::OnInitDialog()
     SetBackgroundColor(theApp.m_taskbar_data.back_color);
 
     //初始化鼠标提示
-    if (m_tool_tips.Create(this, TTS_ALWAYSTIP) && IsWindow(m_tool_tips.GetSafeHwnd()))
+    if (IsWindow(GetSafeHwnd()) && m_tool_tips.Create(this, TTS_ALWAYSTIP) && IsWindow(m_tool_tips.GetSafeHwnd()))
     {
         m_tool_tips.SetMaxTipWidth(600);
         m_tool_tips.AddTool(this, _T(""));
