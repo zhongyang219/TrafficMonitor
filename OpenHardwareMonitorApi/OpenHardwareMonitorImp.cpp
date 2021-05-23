@@ -7,18 +7,41 @@
 
 namespace OpenHardwareMonitorApi
 {
+    static std::wstring error_message;
+
     //将CRL的String类型转换成C++的std::wstring类型
     static std::wstring ClrStringToStdWstring(System::String^ str)
     {
-        const wchar_t* chars = reinterpret_cast<const wchar_t*>((System::Runtime::InteropServices::Marshal::StringToHGlobalUni(str)).ToPointer());
-        return std::wstring(chars);
+        if (str == nullptr)
+        {
+            return std::wstring();
+        }
+        else
+        {
+            const wchar_t* chars = reinterpret_cast<const wchar_t*>((System::Runtime::InteropServices::Marshal::StringToHGlobalUni(str)).ToPointer());
+            return std::wstring(chars);
+        }
     }
 
 
     std::shared_ptr<IOpenHardwareMonitor> CreateInstance()
     {
-        MonitorGlobal::Instance()->Init();
-        return std::make_shared<COpenHardwareMonitor>();
+        std::shared_ptr<IOpenHardwareMonitor> pMonitor;
+        try
+        {
+            MonitorGlobal::Instance()->Init();
+            pMonitor = std::make_shared<COpenHardwareMonitor>();
+        }
+        catch (System::Exception^ e)
+        {
+            error_message = ClrStringToStdWstring(e->Message);
+        }
+        return pMonitor;
+    }
+
+    std::wstring GetErrorMessage()
+    {
+        return error_message;
     }
 
     float COpenHardwareMonitor::CpuTemperature()

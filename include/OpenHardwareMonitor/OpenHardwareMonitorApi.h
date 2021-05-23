@@ -25,4 +25,5 @@ namespace OpenHardwareMonitorApi
     };
 
     OPENHARDWAREMONITOR_API std::shared_ptr<IOpenHardwareMonitor> CreateInstance();
+    OPENHARDWAREMONITOR_API std::wstring GetErrorMessage();
 }

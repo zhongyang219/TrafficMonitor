@@ -549,6 +549,10 @@ UINT CTrafficMonitorApp::InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam)
 #ifndef WITHOUT_TEMPERATURE
     CSingleLock sync(&theApp.m_minitor_lib_init_critical, TRUE);
     theApp.m_pMonitor = OpenHardwareMonitorApi::CreateInstance();
+    if (theApp.m_pMonitor == nullptr)
+    {
+        AfxMessageBox(OpenHardwareMonitorApi::GetErrorMessage().c_str(), MB_ICONERROR | MB_OK);
+    }
     //设置硬件监控的启用状态
     theApp.UpdateOpenHardwareMonitorEnableState();
 #endif
@@ -969,10 +973,13 @@ void CTrafficMonitorApp::InitOpenHardwareLibInThread()
 void CTrafficMonitorApp::UpdateOpenHardwareMonitorEnableState()
 {
 #ifndef WITHOUT_TEMPERATURE
-    m_pMonitor->SetCpuEnable(m_general_data.IsHardwareEnable(HI_CPU));
-    m_pMonitor->SetGpuEnable(m_general_data.IsHardwareEnable(HI_GPU));
-    m_pMonitor->SetHddEnable(m_general_data.IsHardwareEnable(HI_HDD));
-    m_pMonitor->SetMainboardEnable(m_general_data.IsHardwareEnable(HI_MBD));
+    if (m_pMonitor != nullptr)
+    {
+        m_pMonitor->SetCpuEnable(m_general_data.IsHardwareEnable(HI_CPU));
+        m_pMonitor->SetGpuEnable(m_general_data.IsHardwareEnable(HI_GPU));
+        m_pMonitor->SetHddEnable(m_general_data.IsHardwareEnable(HI_HDD));
+        m_pMonitor->SetMainboardEnable(m_general_data.IsHardwareEnable(HI_MBD));
+    }
 #endif
 }
 
