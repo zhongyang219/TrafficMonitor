@@ -78,6 +78,14 @@ At the same time, you may also check "Auto adapt to Windows 10 dark/light theme"
 
 Some users have reported that turning on the HDR function in Windows 10 will cause the taskbar window to fail to display. If you encounter this problem, you can try turning off the "Background Transparent" option in "Option Settings" - "Taskbar Window Settings".
 
+### 13. TrafficMonitor cannot display the temperature of some hardware
+
+The temperature monitoring function of TrafficMonitor relies on a third-party open source library [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor). If you encounter the problem that the hardware temperature cannot be displayed, please download LibreHardwareMonitor first, and check whether LibreHardwareMonitor can display the corresponding temperature normally.
+
+If LibreHardwareMonitor cannot display the temperature of the corresponding hardware, then I cannot solve this problem. You can raise an issue to the author of LibreHardwareMonitor.
+
+If LibreHardwareMonitor can display the temperature of the corresponding hardware normally, please report this problem to me, and provide a screenshot of LibreHardwareMonitor so that I can investigate your problem. 
+
 <br><br>
 
 >If you have encountered any other problems, please click "Contact Author" in the "About" dialog box, or directly [click here](mailto:zhongyang219@hotmail.com) to send me an email.<br>

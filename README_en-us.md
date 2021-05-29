@@ -45,3 +45,7 @@ Options:<br>
 
 # Update log
 **[Click here to view the update log.](./UpdateLog/update_log_en-us.md)**
+
+# About the repository of this project on Gitee
+
+The repository on Gitee is only used as a backup of the GitHub repository. All my code submissions are made on GitHub. The Gitee repository will synchronize the updates of the GitHub repository from time to time. Therefore, the repository on Gitee does not accept any pull requests. If you want to contribute your code to TrafficMonitor, please submit your pull request on GitHub.

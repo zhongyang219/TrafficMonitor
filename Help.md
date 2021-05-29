@@ -109,7 +109,13 @@ portable_mode = true
 
 由于Windows10以上操作系统中任务管理器获取CPU利用率的方式发生了改变，因此选择“基于CPU使用时间”的方式获取到的CPU利用率会和任务管理器中显示的不一致。
 
+### 13. TrafficMonitor无法显示某些硬件的温度
 
+TrafficMonitor的温度监控功能依赖第三方开源库[LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)。如果你遇到硬件温度无法显示的问题，请先下载LibreHardwareMonitor，并查看LibreHardwareMonitor是否能正常显示对应的温度。
+
+如果LibreHardwareMonitor也无法显示对应硬件的温度，那么我也无法解决这个问题，你可以向LibreHardwareMonitor作者提issue。
+
+如果LibreHardwareMonitor可以正常显示对应硬件的温度，请向我反馈这个问题，同时提供LibreHardwareMonitor的截图，以便我调查你的问题。
 
 <br>
 

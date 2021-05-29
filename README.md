@@ -61,3 +61,6 @@ Traffic Monitor是一款用于Windows平台的网速监控悬浮窗软件，可�
 # 更新日志
 **[点击此处查看更新日志](./UpdateLog/update_log.md)**
 
+# 关于此项目在Gitee上的仓库
+
+Gitee上的仓库仅作为GitHub仓库的备份，我的所有代码提交都是在GitHub上进行，Gitee仓库会不定期地同步GitHub仓库的更新。因此Gitee上的仓库不接受任何pull request，如果你想向TrafficMonitor贡献你的代码，请在GitHub上提交你的pull request。
