@@ -9,12 +9,26 @@ Right click the main window and check "Show More Info". If you also need to disp
 Select "Options" In the right-click menu, switch to "Taskbar Window Settings" tab, check "Specify colors for each item", and then click the color block on the right side of "Text Color " to pop up the dialog box for taskbar window color settings. <br>
 If you do not check "Specify colors for each item", you can only set the uniform color for the text.
 ### 3. "Auto run when Windows start" dose not work
-The auto run function of the program is achieved by creating the "TrafficMonitor" key in the registry path of "Computer\HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run".
-If you encounter the problem of auto run dose not work, please check that the registry exists, and then check the program path is correct. If you move the location of the program, the auto run will be invalid because of the program location being invalid. In this case, you only need to uncheck "Auto run when Windows start" in the option settings, and then check it on.<br>
+Starting from version 1.80, the version with temperature monitoring and the version without temperature monitoring have adopted different methods to realize "auto run when Windows start".
 
-Note that some third-party security software may prevent TrafficMonitor from booting up automatically. Please try to allow TrafficMonitor to boot up automatically in the security software.
+* Versions without temperature monitoring and versions before 1.80:
 
-If you set the program to run as an administrator, the auto run function will also not work. Please try to remove running as an administrator.<br>
+  The auto run function of the versions without temperature monitoring and versions before 1.80 is achieved by creating the "TrafficMonitor" key in the registry path of "Computer\HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run".
+  If you encounter the problem of auto run dose not work, please check that the registry exists, and then check the program path is correct. If you move the location of the program, the auto run will be invalid because of the program location being invalid. In this case, you only need to uncheck "Auto run when Windows start" in the option settings, and then check it on.<br>
+
+  Note that some third-party security software may prevent TrafficMonitor from booting up automatically. Please try to allow TrafficMonitor to boot up automatically in the security software.
+
+  If you set the program to run as an administrator, the auto run function will also not work. Please try to remove running as an administrator.<br>
+
+* Version with temperature monitoring:
+
+  The version that includes temperature monitoring implements auto run function by creating a task plan. The task scheduler can be opened through `Control Panel\System and Security\Administrative Tools`.  As shown below:
+
+  <img src="./Screenshots/images/image3.jpg"/>
+
+  If you encounter that situation that the program cannot be started automatically after booting, please go to "Task Scheduler" to check whether the scheduled task of TrafficMonitor is created normally and the path of the exe file is correct.
+
+It should be noted that if you use the version without temperature monitoring to create a auto-start item in the registry, and then use the version that with temperature monitoring to turn on the "Auto run when Windows start" function, it will automatically delete the auto-start item in the registry, and then create a auto-start item in the task plan. vice versa.
 
 ### 4. The program pops up the "Unable to Save Settings" message box.
 If you encountered this problem, that means the program does not have permission to write data to its directory, causing the settings data cannot be saved. Try to move the program to another folder that has write permissions will save this problem. <br>

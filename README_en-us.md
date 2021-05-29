@@ -5,13 +5,17 @@
 [![GitHub release](https://img.shields.io/github/release/zhongyang219/TrafficMonitor.svg?style=flat-square)](https://github.com/zhongyang219/TrafficMonitor/releases/latest)
 
 # TrafficMonitor Introduction
-TrafficMonitor is a network monitoring suspension window software in Windows platform. It can display the current network speed, CPU and memory usage. It also support the functions of display in the taskbar, change skin and historical traffic statistics. <br>
-# Related Links<br>
+TrafficMonitor is a network monitoring suspension window software in Windows platform. It can display the current network speed, CPU and memory usage. It also support the functions of display in the taskbar, change skin and historical traffic statistics. 
+
+# Related Links
+
 Please [click here](https://github.com/zhongyang219/TrafficMonitor/releases/latest) to download the latest version of TrafficMonitor.<br>
 Alternate link: Download from [Baidu Netdisk](https://pan.baidu.com/s/15PMt7s-ASpyDwtS__4cUhg). Access code: `ou0m`<br>
 If you encounter any problems, please [click here](https://github.com/zhongyang219/TrafficMonitor/blob/master/Help_en-us.md).<br>
 
 You can also [click here](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI") to download the pre-release build version of TrafficMonitor.
+
+Starting from version 1.80,  the temperature monitoring function has been added. If you do not need the temperature monitoring function and you encounter problems with the version 1.80 or higher, it is recommended to download the version without temperature monitoring. (Find the version that contains `without_temperature` in the file name on the Release page.)
 
 # Main Features
 * Displays the current network transfer speed, CPU and memory usage.<br>

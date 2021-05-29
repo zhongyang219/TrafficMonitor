@@ -1,6 +1,27 @@
 **[简体中文](./update_log.md) | [繁體中文](./update_log_zh-tw.md) | English**<br>
 
 # TrafficMonitor Update log
+## V1.80.3 (2021/05/29)
+
+* Fixed the problem that the CPU temperature cannot be displayed
+* Added the function to select the temperature of specified CPU core to monitor.
+* Fixed a problem that caused the program crashed.
+
+## V1.80.2 (2021/05/22)
+
+* Fixed several issues that cause the program crashed.
+* Use LibreHardwareMonitor to obtain temperature information.
+* Added the function to select the temperature of which hard drive to monitor.
+* Added the function to select the hardware to monitor.
+* Fix the problem that the LibreHardwareMonitorLib.sys file is not released when the program exits.
+
+## V1.80.1 (2021/05/17)
+
+* Fixed the problem that the temperature of AMD GPU could not be obtained.
+* Fixed the problem that the program crashes when automatically switching to the light mode color preset.
+* Fixed the problem that the temperature of the 11th generation Intel processor cannot be obtained.
+* Fixed the problem that the auto-start setting does not work.
+
 ## V1.80 (2021/05/15)
 
 * Added the function of monitoring the temperature of CPU, GPU, hard disk and main board.
