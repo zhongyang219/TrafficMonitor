@@ -64,7 +64,7 @@ void CTrafficMonitorApp::LoadConfig()
         m_general_data.monitor_time_span = 1000;
     m_general_data.hard_disk_name = ini.GetString(L"general", L"hard_disk_name", L"");
     m_general_data.cpu_core_name = ini.GetString(L"general", L"cpu_core_name", L"");
-    m_general_data.hardware_monitor_item = ini.GetInt(L"general", L"hardware_monitor_item", HI_CPU | HI_GPU | HI_HDD | HI_MBD);
+    m_general_data.hardware_monitor_item = ini.GetInt(L"general", L"hardware_monitor_item", 0);
 
     //Windows10颜色模式设置
     bool is_windows10_light_theme = m_win_version.IsWindows10LightTheme();
@@ -170,6 +170,19 @@ void CTrafficMonitorApp::LoadConfig()
     m_cfg_data.m_tbar_display_item &= ~TDI_HDD_TEMP;
     m_cfg_data.m_tbar_display_item &= ~TDI_MAIN_BOARD_TEMP;
 #endif
+
+    //如果选项设置中关闭了某个硬件监控，则不显示对应的温度监控相关项目
+    if (!m_general_data.IsHardwareEnable(HI_CPU))
+        m_cfg_data.m_tbar_display_item &= ~TDI_CPU_TEMP;
+    if (!m_general_data.IsHardwareEnable(HI_GPU))
+    {
+        m_cfg_data.m_tbar_display_item &= ~TDI_GPU_USAGE;
+        m_cfg_data.m_tbar_display_item &= ~TDI_GPU_TEMP;
+    }
+    if (!m_general_data.IsHardwareEnable(HI_HDD))
+        m_cfg_data.m_tbar_display_item &= ~TDI_HDD_TEMP;
+    if (!m_general_data.IsHardwareEnable(HI_MBD))
+        m_cfg_data.m_tbar_display_item &= ~TDI_MAIN_BOARD_TEMP;
 
     m_taskbar_data.swap_up_down = ini.GetBool(_T("task_bar"), _T("task_bar_swap_up_down"), false);
 

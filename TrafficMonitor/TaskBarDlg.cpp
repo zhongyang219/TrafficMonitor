@@ -958,6 +958,13 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
     pMenu->EnableMenuItem(ID_SHOW_GPU_TEMPERATURE, MF_BYCOMMAND | MF_GRAYED);
     pMenu->EnableMenuItem(ID_SHOW_HDD_TEMPERATURE, MF_BYCOMMAND | MF_GRAYED);
     pMenu->EnableMenuItem(ID_SHOW_MAIN_BOARD_TEMPERATURE, MF_BYCOMMAND | MF_GRAYED);
+#else
+    //根据是否关闭硬件监控禁用对应的菜单项
+    pMenu->EnableMenuItem(ID_SHOW_GPU, MF_BYCOMMAND | (theApp.m_general_data.IsHardwareEnable(HI_GPU) ? MF_ENABLED : MF_GRAYED));
+    pMenu->EnableMenuItem(ID_SHOW_CPU_TEMPERATURE, MF_BYCOMMAND | (theApp.m_general_data.IsHardwareEnable(HI_CPU) ? MF_ENABLED : MF_GRAYED));
+    pMenu->EnableMenuItem(ID_SHOW_GPU_TEMPERATURE, MF_BYCOMMAND | (theApp.m_general_data.IsHardwareEnable(HI_GPU) ? MF_ENABLED : MF_GRAYED));
+    pMenu->EnableMenuItem(ID_SHOW_HDD_TEMPERATURE, MF_BYCOMMAND | (theApp.m_general_data.IsHardwareEnable(HI_HDD) ? MF_ENABLED : MF_GRAYED));
+    pMenu->EnableMenuItem(ID_SHOW_MAIN_BOARD_TEMPERATURE, MF_BYCOMMAND | (theApp.m_general_data.IsHardwareEnable(HI_MBD) ? MF_ENABLED : MF_GRAYED));
 #endif
 
     pMenu->EnableMenuItem(ID_SELECT_ALL_CONNECTION, MF_BYCOMMAND | (theApp.m_general_data.show_all_interface ? MF_GRAYED : MF_ENABLED));

@@ -68,6 +68,9 @@ void CGeneralSettingsDlg::SetControlEnable()
     m_gpu_temp_tip_edit.EnableWindow(m_data.gpu_temp_tip.enable);
     m_hdd_temp_tip_edit.EnableWindow(m_data.hdd_temp_tip.enable);
     m_mbd_temp_tip_edit.EnableWindow(m_data.mainboard_temp_tip.enable);
+
+    m_hard_disk_combo.EnableWindow(m_data.IsHardwareEnable(HI_HDD));
+    m_select_cpu_combo.EnableWindow(m_data.IsHardwareEnable(HI_CPU));
 }
 
 
@@ -318,6 +321,21 @@ void CGeneralSettingsDlg::OnOK()
     }
 
     m_data.monitor_time_span = m_monitor_span_edit.GetValue();
+
+    //如果选项设置中关闭了某个硬件监控，则不显示对应的温度监控相关项目
+    int taskbar_displat_item_ori = theApp.m_cfg_data.m_tbar_display_item;
+    if (!m_data.IsHardwareEnable(HI_CPU))
+        theApp.m_cfg_data.m_tbar_display_item &= ~TDI_CPU_TEMP;
+    if (!m_data.IsHardwareEnable(HI_GPU))
+    {
+        theApp.m_cfg_data.m_tbar_display_item &= ~TDI_GPU_USAGE;
+        theApp.m_cfg_data.m_tbar_display_item &= ~TDI_GPU_TEMP;
+    }
+    if (!m_data.IsHardwareEnable(HI_HDD))
+        theApp.m_cfg_data.m_tbar_display_item &= ~TDI_HDD_TEMP;
+    if (!m_data.IsHardwareEnable(HI_MBD))
+        theApp.m_cfg_data.m_tbar_display_item &= ~TDI_MAIN_BOARD_TEMP;
+    m_taskbar_item_modified = (theApp.m_cfg_data.m_tbar_display_item != taskbar_displat_item_ori);
 
     CTabDlg::OnOK();
 }
