@@ -58,7 +58,7 @@ BOOL CTaskbarColorDlg::OnInitDialog()
     int width2 = rect.Width() - width0 - width1 - theApp.DPI(20) - 1;
     m_list_ctrl.InsertColumn(0, CCommon::LoadText(IDS_ITEM), LVCFMT_LEFT, width0);
     m_list_ctrl.InsertColumn(1, CCommon::LoadText(IDS_COLOR_LABEL), LVCFMT_LEFT, width1);
-    m_list_ctrl.InsertColumn(1, CCommon::LoadText(IDS_COLOR_VALUE), LVCFMT_LEFT, width2);
+    m_list_ctrl.InsertColumn(2, CCommon::LoadText(IDS_COLOR_VALUE), LVCFMT_LEFT, width2);
     m_list_ctrl.SetDrawItemRangMargin(theApp.DPI(2));
 
     //向列表中插入行
