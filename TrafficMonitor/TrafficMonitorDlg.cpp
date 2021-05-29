@@ -908,9 +908,11 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
 
     ULONG num_entries = 0;
     if (pThis->m_pIfTable != nullptr)
+    {
         num_entries = pThis->m_pIfTable->NumEntries;
+        FreeMibTable(pThis->m_pIfTable);
+    }
     //获取网络连接速度
-    FreeMibTable(pThis->m_pIfTable);
     int rtn = GetIfTable2(&pThis->m_pIfTable);
     if (num_entries != pThis->m_pIfTable->NumEntries)
     {
