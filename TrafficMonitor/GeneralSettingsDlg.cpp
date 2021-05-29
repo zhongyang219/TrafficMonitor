@@ -233,6 +233,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     EnableDlgCtrl(IDC_HDD_CHECK, false);
     EnableDlgCtrl(IDC_MBD_CHECK, false);
     EnableDlgCtrl(IDC_SELECT_HARD_DISK_COMBO, false);
+    EnableDlgCtrl(IDC_SELECT_CPU_COMBO, false);
 #endif
 
     return TRUE;  // return TRUE unless you set the focus to a control
