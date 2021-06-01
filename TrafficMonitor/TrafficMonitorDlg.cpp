@@ -629,7 +629,13 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 #ifndef WITHOUT_TEMPERATURE
         if (is_hardware_monitor_item_changed)
         {
-            if (theApp.m_pMonitor != nullptr)
+            //如果关闭了硬件监控，则析构硬件监控类
+            if (theApp.m_general_data.hardware_monitor_item == 0)
+            {
+                CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
+                theApp.m_pMonitor.reset();
+            }
+            else if (theApp.m_pMonitor != nullptr)
             {
                 theApp.UpdateOpenHardwareMonitorEnableState();
             }
@@ -1086,6 +1092,7 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     //获取温度
     if (pThis->IsTemperatureNeeded() && theApp.m_pMonitor != nullptr)
     {
+        CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
         theApp.m_pMonitor->GetHardwareInfo();
         //theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
         theApp.m_gpu_temperature = theApp.m_pMonitor->GpuTemperature();

@@ -560,7 +560,7 @@ UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
 UINT CTrafficMonitorApp::InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam)
 {
 #ifndef WITHOUT_TEMPERATURE
-    CSingleLock sync(&theApp.m_minitor_lib_init_critical, TRUE);
+    CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
     theApp.m_pMonitor = OpenHardwareMonitorApi::CreateInstance();
     if (theApp.m_pMonitor == nullptr)
     {
@@ -988,6 +988,7 @@ void CTrafficMonitorApp::UpdateOpenHardwareMonitorEnableState()
 #ifndef WITHOUT_TEMPERATURE
     if (m_pMonitor != nullptr)
     {
+        CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
         m_pMonitor->SetCpuEnable(m_general_data.IsHardwareEnable(HI_CPU));
         m_pMonitor->SetGpuEnable(m_general_data.IsHardwareEnable(HI_GPU));
         m_pMonitor->SetHddEnable(m_general_data.IsHardwareEnable(HI_HDD));

@@ -90,6 +90,7 @@ public:
     std::shared_ptr<OpenHardwareMonitorApi::IOpenHardwareMonitor> m_pMonitor{};
 #endif // !WITHOUT_TEMPERATURE
 
+    CCriticalSection m_minitor_lib_critical;        //用于访问OpenHardwareMonitor进行线程同步的临界区对象
 
 public:
     CTrafficMonitorApp();
@@ -141,7 +142,6 @@ private:
     int m_dpi{ 96 };
 
     bool m_checking_update{ false };        //是否正在检查更新
-    CCriticalSection m_minitor_lib_init_critical;   //用于对OpenHardwareMonitor初始化进行线程同步的临界区对象
 
     std::map<UINT, HICON> m_menu_icons;      //菜单图标资源。key是图标资源的ID，vlaue是图标的句柄
 

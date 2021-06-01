@@ -202,6 +202,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
 
     if (theApp.m_pMonitor != nullptr)
     {
+        CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
         //初始化选择硬盘下拉列表
         for (const auto& hdd_item : theApp.m_pMonitor->AllHDDTemperature())
             m_hard_disk_combo.AddString(hdd_item.first.c_str());
