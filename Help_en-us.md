@@ -76,15 +76,19 @@ At the same time, you may also check "Auto adapt to Windows 10 dark/light theme"
 
 ### 9. The taskbar windows cannot be displayed when the HDR is turned on in Windows 10
 
-Some users have reported that turning on the HDR function in Windows 10 will cause the taskbar window to fail to display. If you encounter this problem, you can try turning off the "Background Transparent" option in "Option Settings" - "Taskbar Window Settings".
+Some users have reported that turning on the HDR function in Windows 10 will cause the taskbar window to fail to display. If you encounter this problem, you can try turning off the "Background Transparent" option in ["Option Settings" - "Taskbar Window Settings"](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#任务栏窗口设置).
 
-### 13. TrafficMonitor cannot display the temperature of some hardware
+### 13. About the temperature monitoring of TrafficMonitor
 
-The temperature monitoring function of TrafficMonitor relies on a third-party open source library [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor). If you encounter the problem that the hardware temperature cannot be displayed, please download LibreHardwareMonitor first, and check whether LibreHardwareMonitor can display the corresponding temperature normally.
+The temperature monitoring function of TrafficMonitor relies on a third-party open source library [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor). If you encounter the problem that the hardware temperature cannot be displayed, or the displayed temperature is incorrect, then  please download LibreHardwareMonitor first, and check whether LibreHardwareMonitor can display the corresponding temperature normally.
 
-If LibreHardwareMonitor cannot display the temperature of the corresponding hardware, then I cannot solve this problem. You can raise an issue to the author of LibreHardwareMonitor.
+If LibreHardwareMonitor cannot display the temperature of the corresponding hardware, then I cannot solve this problem. You can report your problem to the author of LibreHardwareMonitor.
 
 If LibreHardwareMonitor can display the temperature of the corresponding hardware normally, please report this problem to me, and provide a screenshot of LibreHardwareMonitor so that I can investigate your problem. 
+
+It should be noted that the temperature monitoring function is turned off by default. If you want to use the temperature monitoring function of TrafficMonitor, please go to ["Option Settings"-"General Settings"-"Hardware Monitoring"](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#硬件监控) to enable it.
+
+**Note: The hardware monitoring function (including temperature monitoring and GPU usage monitoring) may have some problems, which may cause more CPU and memory usage. According to feedback from some users, turning on the temperature function will cause problems such as program crashes and system crashes. Please decide to turn on the hardware monitoring function after you are aware of the above risks. Otherwise, please do not use the hardware monitoring function. **
 
 <br><br>
 

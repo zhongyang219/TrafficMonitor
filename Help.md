@@ -101,7 +101,7 @@ portable_mode = true
 
 ### 11. Windows10中开启HDR后任务栏窗口无法显示
 
-部分用户反馈，在Windows10中开始HDR功能会导致任务栏窗口无法显示。如果遇到这个问题，可以尝试在“选项设置”——“任务栏窗口设置”中关闭“背景透明”选项的勾选。
+部分用户反馈，在Windows10中开始HDR功能会导致任务栏窗口无法显示。如果遇到这个问题，可以尝试在[“选项设置”——“任务栏窗口设置”](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#任务栏窗口设置)中关闭“背景透明”选项的勾选。
 
 ### 12. CPU利用率显示和任务管理器不一致
 
@@ -109,13 +109,17 @@ portable_mode = true
 
 由于Windows10以上操作系统中任务管理器获取CPU利用率的方式发生了改变，因此选择“基于CPU使用时间”的方式获取到的CPU利用率会和任务管理器中显示的不一致。
 
-### 13. TrafficMonitor无法显示某些硬件的温度
+### 13. 关于TrafficMonitor温度监控的问题
 
-TrafficMonitor的温度监控功能依赖第三方开源库[LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)。如果你遇到硬件温度无法显示的问题，请先下载LibreHardwareMonitor，并查看LibreHardwareMonitor是否能正常显示对应的温度。
+TrafficMonitor的温度监控功能依赖第三方开源库[LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)。如果你遇到硬件温度无法显示，或者显示的温度异常的问题，请先下载LibreHardwareMonitor，并查看LibreHardwareMonitor是否能正常显示对应的温度。
 
-如果LibreHardwareMonitor也无法显示对应硬件的温度，那么我也无法解决这个问题，你可以向LibreHardwareMonitor作者提issue。
+如果LibreHardwareMonitor也无法显示对应硬件的温度，那么我也无法解决这个问题，你可以向LibreHardwareMonitor作者反馈你的问题。
 
 如果LibreHardwareMonitor可以正常显示对应硬件的温度，请向我反馈这个问题，同时提供LibreHardwareMonitor的截图，以便我调查你的问题。
+
+需要注意的是，温度监控功能默认是关闭的，如果你要使用TrafficMonitor的温度监控功能，请到[“选项设置”-“常规设置”-“硬件监控”](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#硬件监控)中开启。
+
+**注意：硬件监控功能（包括温度监控和显卡使用率监控）可能存在一些问题，它可能会占用更多的CPU和内存。据部分用户反馈，开启温度功能后会导致程序崩溃和系统死机等问题，请在知晓以上风险后再决定开启硬件监控功能。否则，请不要使用硬件监控功能。**
 
 <br>
 
