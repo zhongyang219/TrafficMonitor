@@ -1102,11 +1102,20 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         //获取CPU温度
         if (!theApp.m_pMonitor->AllCpuTemperature().empty())
         {
-            auto iter = theApp.m_pMonitor->AllCpuTemperature().find(theApp.m_general_data.cpu_core_name);
-            if (iter == theApp.m_pMonitor->AllCpuTemperature().end())
+            if (theApp.m_general_data.cpu_core_name == CCommon::LoadText(IDS_AVREAGE_TEMPERATURE).GetString())  //如果选择了平均温度
+            {
                 theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
+            }
             else
+            {
+                auto iter = theApp.m_pMonitor->AllCpuTemperature().find(theApp.m_general_data.cpu_core_name);
+                if (iter == theApp.m_pMonitor->AllCpuTemperature().end())
+                {
+                    iter = theApp.m_pMonitor->AllCpuTemperature().begin();
+                    theApp.m_general_data.cpu_core_name = iter->first;
+                }
                 theApp.m_cpu_temperature = iter->second;
+            }
         }
         else
         {
