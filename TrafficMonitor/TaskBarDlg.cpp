@@ -244,11 +244,13 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
         else if (type == TDI_DOWN)
             str_label = theApp.m_taskbar_data.disp_str.Get(TDI_UP);
     }
-    drawer.DrawWindowText(rect_label, str_label.c_str(), label_color);
+    drawer.DrawWindowText(rect_label, str_label.c_str(), label_color, (vertical ? Alignment::CENTER : Alignment::LEFT));
 
     //绘制数值
     CString str_value;
     Alignment value_alignment{ theApp.m_taskbar_data.value_right_align ? Alignment::RIGHT : Alignment::LEFT };      //数值的对齐方式
+    if (vertical)
+        value_alignment = Alignment::CENTER;
     //绘制上传或下载速度
     if (type == TDI_UP || type == TDI_DOWN)
     {
