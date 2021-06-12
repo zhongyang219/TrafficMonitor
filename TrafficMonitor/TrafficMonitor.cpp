@@ -997,6 +997,39 @@ void CTrafficMonitorApp::UpdateOpenHardwareMonitorEnableState()
 #endif
 }
 
+void CTrafficMonitorApp::UpdateTaskbarWndMenu()
+{
+    //获取“显示设置”子菜单
+    CMenu* pMenu = m_taskbar_menu.GetSubMenu(0)->GetSubMenu(5);
+    ASSERT(pMenu != nullptr);
+    if (pMenu != nullptr)
+    {
+        //将ID_SHOW_MEMORY_USAGE后面的所有菜单项删除
+        if (pMenu->GetMenuItemCount() > 4)
+        {
+            int start_pos = CCommon::GetMenuItemPosition(pMenu, ID_SHOW_MEMORY_USAGE) + 1;
+            while (pMenu->GetMenuItemCount() > start_pos)
+            {
+                pMenu->DeleteMenu(start_pos, MF_BYPOSITION);
+            }
+        }
+
+        //添加温度相关菜单项
+#ifndef WITHOUT_TEMPERATURE
+        if (m_general_data.IsHardwareEnable(HI_GPU))
+            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_GPU, CCommon::LoadText(IDS_GPU_USAGE));
+        if (m_general_data.IsHardwareEnable(HI_CPU))
+            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_CPU_TEMPERATURE, CCommon::LoadText(IDS_CPU_TEMPERATURE));
+        if (m_general_data.IsHardwareEnable(HI_GPU))
+            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_GPU_TEMPERATURE, CCommon::LoadText(IDS_GPU_TEMPERATURE));
+        if (m_general_data.IsHardwareEnable(HI_HDD))
+            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_HDD_TEMPERATURE, CCommon::LoadText(IDS_HDD_TEMPERATURE));
+        if (m_general_data.IsHardwareEnable(HI_MBD))
+            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_MAIN_BOARD_TEMPERATURE, CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE));
+#endif
+    }
+}
+
 void CTrafficMonitorApp::OnHelp()
 {
     // TODO: 在此添加命令处理程序代码

@@ -643,6 +643,8 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
             {
                 theApp.InitOpenHardwareLibInThread();
             }
+            //更新任务栏窗口右键菜单
+            theApp.UpdateTaskbarWndMenu();
         }
 #endif
 
@@ -798,7 +800,9 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     GetScreenSize();
     ::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0);   // 获得工作区大小
 
+    //初始化菜单
     theApp.InitMenuResourse();
+    theApp.UpdateTaskbarWndMenu();
 
     //设置窗口透明度
     SetTransparency();
