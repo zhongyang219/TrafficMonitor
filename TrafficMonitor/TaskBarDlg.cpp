@@ -111,7 +111,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                     else if (item_count % 2 == 1 && index == item_count - 1)
                     {
                         item_rect.MoveToXY(item_rect.right + theApp.DPI(4), 0);
-                        item_rect.bottom = TASKBAR_WND_HEIGHT / 2;
+                        item_rect.bottom = TASKBAR_WND_HEIGHT;
                         item_rect.right = item_rect.left + iter->second.TotalWidth();
                         DrawDisplayItem(draw, iter->first, item_rect, iter->second.label_width);
                     }
