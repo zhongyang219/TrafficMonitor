@@ -392,6 +392,7 @@ void CTrafficMonitorDlg::UpdateConnections()
 
 void CTrafficMonitorDlg::IniConnection()
 {
+    CSingleLock sync(&theApp.m_lftable_critical, TRUE);
     FreeMibTable(m_pIfTable);
     GetIfTable2(&m_pIfTable);
     UpdateConnections();
@@ -912,36 +913,40 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     CTrafficMonitorDlg* pThis = (CTrafficMonitorDlg*)dwUser;
     CFlagLocker flag_locker(pThis->m_is_monitor_thread_runing);
 
-    ULONG num_entries = 0;
-    if (pThis->m_pIfTable != nullptr)
     {
-        num_entries = pThis->m_pIfTable->NumEntries;
-        FreeMibTable(pThis->m_pIfTable);
-    }
-    //获取网络连接速度
-    int rtn = GetIfTable2(&pThis->m_pIfTable);
-    if (num_entries != pThis->m_pIfTable->NumEntries)
-    {
-        pThis->UpdateConnections();
-    }
-    if (!theApp.m_cfg_data.m_select_all)        //获取当前选中连接的网速
-    {
-        auto table = pThis->GetConnectIfTable(pThis->m_connection_selected);
-        pThis->m_in_bytes = table.InOctets;
-        pThis->m_out_bytes = table.OutOctets;
-    }
-    else        //获取全部连接的网速
-    {
-        pThis->m_in_bytes = 0;
-        pThis->m_out_bytes = 0;
-        for (size_t i{}; i < pThis->m_connections.size(); i++)
+        CSingleLock sync(&theApp.m_lftable_critical, TRUE);
+
+        ULONG num_entries = 0;
+        if (pThis->m_pIfTable != nullptr)
         {
-            auto table = pThis->GetConnectIfTable(i);
-            //if (i > 0 && m_pIfTable->table[m_connections[i].index].dwInOctets == m_pIfTable->table[m_connections[i - 1].index].dwInOctets
-            //  && m_pIfTable->table[m_connections[i].index].dwOutOctets == m_pIfTable->table[m_connections[i - 1].index].dwOutOctets)
-            //  continue;       //连接列表中可能会有相同的连接，统计所有连接的网速时，忽略掉已发送和已接收字节数完全相同的连接
-            pThis->m_in_bytes += table.InOctets;
-            pThis->m_out_bytes += table.OutOctets;
+            num_entries = pThis->m_pIfTable->NumEntries;
+            FreeMibTable(pThis->m_pIfTable);
+        }
+        //获取网络连接速度
+        int rtn = GetIfTable2(&pThis->m_pIfTable);
+        if (num_entries != pThis->m_pIfTable->NumEntries)
+        {
+            pThis->UpdateConnections();
+        }
+        if (!theApp.m_cfg_data.m_select_all)        //获取当前选中连接的网速
+        {
+            auto table = pThis->GetConnectIfTable(pThis->m_connection_selected);
+            pThis->m_in_bytes = table.InOctets;
+            pThis->m_out_bytes = table.OutOctets;
+        }
+        else        //获取全部连接的网速
+        {
+            pThis->m_in_bytes = 0;
+            pThis->m_out_bytes = 0;
+            for (size_t i{}; i < pThis->m_connections.size(); i++)
+            {
+                auto table = pThis->GetConnectIfTable(i);
+                //if (i > 0 && m_pIfTable->table[m_connections[i].index].dwInOctets == m_pIfTable->table[m_connections[i - 1].index].dwInOctets
+                //  && m_pIfTable->table[m_connections[i].index].dwOutOctets == m_pIfTable->table[m_connections[i - 1].index].dwOutOctets)
+                //  continue;       //连接列表中可能会有相同的连接，统计所有连接的网速时，忽略掉已发送和已接收字节数完全相同的连接
+                pThis->m_in_bytes += table.InOctets;
+                pThis->m_out_bytes += table.OutOctets;
+            }
         }
     }
 

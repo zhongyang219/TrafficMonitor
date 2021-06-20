@@ -24,6 +24,8 @@ CNetworkInfoDlg::~CNetworkInfoDlg()
 
 void CNetworkInfoDlg::ShowInfo()
 {
+    CSingleLock sync(&theApp.m_lftable_critical, TRUE);
+
 	CString temp;
 	MIB_IF_ROW2 network_info = m_pIfTable->Table[m_connections[m_connection_selected].index];
 	//接口名
@@ -304,7 +306,7 @@ void CNetworkInfoDlg::OnNMRClickInfoList1(NMHDR *pNMHDR, LRESULT *pResult)
 
 	//弹出右键菜单
 	CMenu* pContextMenu = m_menu.GetSubMenu(0);	//获取第一个弹出菜单
-	CPoint point1;	//定义一个用于确定光标位置的位置  
+	CPoint point1;	//定义一个用于确定光标位置的位置
 	GetCursorPos(&point1);	//获取当前光标的位置，以便使得菜单可以跟随光标
 	pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
 

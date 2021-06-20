@@ -91,6 +91,7 @@ public:
 #endif // !WITHOUT_TEMPERATURE
 
     CCriticalSection m_minitor_lib_critical;        //用于访问OpenHardwareMonitor进行线程同步的临界区对象
+    CCriticalSection m_lftable_critical;            //用于访问LfTable2进行线程同步的临界区对象
 
 public:
     CTrafficMonitorApp();
