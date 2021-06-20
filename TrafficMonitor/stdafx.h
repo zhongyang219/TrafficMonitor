@@ -85,6 +85,7 @@ using std::ofstream;
 
 #define MAX_INSERT_TO_TASKBAR_CNT 5     //尝试嵌入任务栏的最大次数
 
+#define APP_NAME _T("TrafficMonitor")
 #define VERSION L"1.80.3"
 
 #define MAX_NOTIFY_ICON 6       //可选的通知区图标数量

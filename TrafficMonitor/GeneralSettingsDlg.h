@@ -55,6 +55,10 @@ protected:
 
     virtual void SetControlMouseWheelEnable(bool enable) override;
 
+    //显示开启硬件监控时的提示，如果用户选择了“是”则返回true，否则返回false
+    //“以后不再显示该对话框”的标记保存在注册表“\HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\DontShowMeThisDialogAgain”
+    bool ShowHardwareMonitorWarning();
+
     DECLARE_MESSAGE_MAP()
 public:
     virtual BOOL OnInitDialog();

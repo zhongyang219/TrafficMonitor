@@ -50,7 +50,7 @@ public:
 	void ShowCrashInfo()
 	{
 		CMessageDlg dlg;
-		dlg.SetWindowTitle(L"TrafficMonitor");
+		dlg.SetWindowTitle(APP_NAME);
 		dlg.SetInfoText(CCommon::LoadText(IDS_ERROR_MESSAGE));
 
 		CString info = CCommon::LoadTextFormat(IDS_CRASH_INFO, { m_dumpFile });

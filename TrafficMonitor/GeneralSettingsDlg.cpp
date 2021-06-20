@@ -38,6 +38,18 @@ void CGeneralSettingsDlg::SetControlMouseWheelEnable(bool enable)
     m_select_cpu_combo.SetMouseWheelEnable(enable);
 }
 
+bool CGeneralSettingsDlg::ShowHardwareMonitorWarning()
+{
+    if (SHMessageBoxCheck(m_hWnd, CCommon::LoadText(IDS_HARDWARE_MONITOR_WARNING), APP_NAME, MB_OKCANCEL | MB_ICONWARNING, IDOK, _T("{B8A281A7-76DF-4F0F-BF6A-1A394EF8BAD5}")) == IDOK)
+    {
+        if (SHMessageBoxCheck(m_hWnd, CCommon::LoadText(IDS_HARDWARE_MONITOR_WARNING2), APP_NAME, MB_OKCANCEL | MB_ICONWARNING, IDOK, _T("{2777F260-6175-41E4-AF59-4085B3F58E32}")) == IDOK)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool CGeneralSettingsDlg::IsMonitorTimeSpanModified() const
 {
     return m_data.monitor_time_span != m_monitor_time_span_ori;
@@ -534,28 +546,53 @@ void CGeneralSettingsDlg::OnCbnSelchangeSelectHardDiskCombo()
 void CGeneralSettingsDlg::OnBnClickedCpuCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
-    m_data.SetHardwareEnable(HI_CPU, IsDlgButtonChecked(IDC_CPU_CHECK) != 0);
+    bool checked = IsDlgButtonChecked(IDC_CPU_CHECK) != 0;
+    if (checked && !ShowHardwareMonitorWarning())
+    {
+        checked = false;
+        CheckDlgButton(IDC_CPU_CHECK, FALSE);
+    }
+    m_data.SetHardwareEnable(HI_CPU, checked);
 }
 
 
 void CGeneralSettingsDlg::OnBnClickedGpuCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
-    m_data.SetHardwareEnable(HI_GPU, IsDlgButtonChecked(IDC_GPU_CHECK) != 0);
+    bool checked = IsDlgButtonChecked(IDC_GPU_CHECK) != 0;
+    if (checked && !ShowHardwareMonitorWarning())
+    {
+        checked = false;
+        CheckDlgButton(IDC_GPU_CHECK, FALSE);
+    }
+    m_data.SetHardwareEnable(HI_GPU, checked);
 }
 
 
 void CGeneralSettingsDlg::OnBnClickedHddCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
-    m_data.SetHardwareEnable(HI_HDD, IsDlgButtonChecked(IDC_HDD_CHECK) != 0);
+    bool checked = IsDlgButtonChecked(IDC_HDD_CHECK) != 0;
+    if (checked && !ShowHardwareMonitorWarning())
+    {
+        checked = false;
+        CheckDlgButton(IDC_HDD_CHECK, FALSE);
+    }
+    m_data.SetHardwareEnable(HI_HDD, checked);
 }
 
 
 void CGeneralSettingsDlg::OnBnClickedMbdCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
-    m_data.SetHardwareEnable(HI_MBD, IsDlgButtonChecked(IDC_MBD_CHECK) != 0);
+    bool checked = IsDlgButtonChecked(IDC_MBD_CHECK) != 0;
+    if (checked && !ShowHardwareMonitorWarning())
+    {
+        checked = false;
+        CheckDlgButton(IDC_MBD_CHECK, FALSE);
+    }
+    m_data.SetHardwareEnable(HI_MBD, checked);
+
 }
 
 

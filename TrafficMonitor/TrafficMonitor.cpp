@@ -595,7 +595,7 @@ bool CTrafficMonitorApp::GetAutoRun()
     }
     wchar_t buff[256];
     ULONG size{ 256 };
-    if (key.QueryStringValue(_T("TrafficMonitor"), buff, &size) == ERROR_SUCCESS)       //如果找到了“TrafficMonitor”键
+    if (key.QueryStringValue(APP_NAME, buff, &size) == ERROR_SUCCESS)       //如果找到了“TrafficMonitor”键
     {
         return (m_module_path_reg == buff); //如果“TrafficMonitor”的值是当前程序的路径，就返回true，否则返回false
     }
@@ -623,7 +623,7 @@ void CTrafficMonitorApp::SetAutoRunByRegistry(bool auto_run)
         //通过注册表设置开机自启动项时删除计划任务中的自启动项
         SetAutoRunByTaskScheduler(false);
 
-        if (key.SetStringValue(_T("TrafficMonitor"), m_module_path_reg.c_str()) != ERROR_SUCCESS)
+        if (key.SetStringValue(APP_NAME, m_module_path_reg.c_str()) != ERROR_SUCCESS)
         {
             AfxMessageBox(CCommon::LoadText(IDS_AUTORUN_FAILED_NO_ACCESS), MB_OK | MB_ICONWARNING);
             return;
@@ -634,9 +634,9 @@ void CTrafficMonitorApp::SetAutoRunByRegistry(bool auto_run)
         //删除前先检查注册表项是否存在，如果不存在，则直接返回
         wchar_t buff[256];
         ULONG size{ 256 };
-        if (key.QueryStringValue(_T("TrafficMonitor"), buff, &size) != ERROR_SUCCESS)
+        if (key.QueryStringValue(APP_NAME, buff, &size) != ERROR_SUCCESS)
             return;
-        if (key.DeleteValue(_T("TrafficMonitor")) != ERROR_SUCCESS)
+        if (key.DeleteValue(APP_NAME) != ERROR_SUCCESS)
         {
             AfxMessageBox(CCommon::LoadText(IDS_AUTORUN_DELETE_FAILED), MB_OK | MB_ICONWARNING);
             return;
