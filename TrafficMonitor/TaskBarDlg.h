@@ -56,6 +56,11 @@ protected:
         {
             return label_width + value_width;
         }
+
+		int MaxWidth() const	//最大宽度
+		{
+			return max(label_width, value_width);
+		}
     };
 
     std::map<DisplayItem, ItemWidth> m_item_widths;   //任务栏窗口每个部分的宽度
@@ -87,7 +92,8 @@ protected:
     //  type: 项目的类型
     //  rect: 绘制矩形区域
     //  label_width: 标签区域的宽度
-    void DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect rect, int label_width);
+	//  vertical: 如果为true，则标签和数值上下显示
+    void DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical = false);
 
 	void MoveWindow(CRect rect);
 

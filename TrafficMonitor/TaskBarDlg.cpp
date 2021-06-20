@@ -111,9 +111,9 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                     else if (item_count % 2 == 1 && index == item_count - 1)
                     {
                         item_rect.MoveToXY(item_rect.right + theApp.DPI(4), 0);
-                        item_rect.bottom = TASKBAR_WND_HEIGHT / 2;
-                        item_rect.right = item_rect.left + iter->second.TotalWidth();
-                        DrawDisplayItem(draw, iter->first, item_rect, iter->second.label_width);
+                        item_rect.bottom = TASKBAR_WND_HEIGHT;
+                        item_rect.right = item_rect.left + iter->second.MaxWidth();
+                        DrawDisplayItem(draw, iter->first, item_rect, iter->second.label_width, true);
                     }
                 }
             }
@@ -138,7 +138,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
     MemDC.DeleteDC();
 }
 
-void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect rect, int label_width)
+void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical)
 {
     m_item_display_width[type] = rect.Width();
     //设置要绘制的文本颜色
@@ -157,9 +157,17 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
 
     //设置标签和数值的矩形区域
     CRect rect_label{ rect };
-    rect_label.right = rect_label.left + label_width;
     CRect rect_value{ rect };
-    rect_value.left = rect_label.right;
+    if (!vertical)
+    {
+        rect_label.right = rect_label.left + label_width;
+        rect_value.left = rect_label.right;
+    }
+    else
+    {
+        rect_label.bottom = rect_label.top + (rect_label.Height() / 2);
+        rect_value.top = rect_label.bottom;
+    }
 
     // 绘制状态条
     if (type == TDI_CPU || type == TDI_MEMORY || type == TDI_GPU_USAGE || type == TDI_CPU_TEMP || type == TDI_GPU_TEMP || type == TDI_HDD_TEMP || type == TDI_MAIN_BOARD_TEMP)
@@ -236,11 +244,13 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
         else if (type == TDI_DOWN)
             str_label = theApp.m_taskbar_data.disp_str.Get(TDI_UP);
     }
-    drawer.DrawWindowText(rect, str_label.c_str(), label_color);
+    drawer.DrawWindowText(rect_label, str_label.c_str(), label_color, (vertical ? Alignment::CENTER : Alignment::LEFT));
 
     //绘制数值
     CString str_value;
     Alignment value_alignment{ theApp.m_taskbar_data.value_right_align ? Alignment::RIGHT : Alignment::LEFT };      //数值的对齐方式
+    if (vertical)
+        value_alignment = Alignment::CENTER;
     //绘制上传或下载速度
     if (type == TDI_UP || type == TDI_DOWN)
     {
@@ -681,7 +691,7 @@ void CTaskBarDlg::CalculateWindowSize()
                     }
                     if (item_count % 2 == 1 && index == item_count - 1) //项目数为奇数时加上最后一个的宽度
                     {
-                        m_window_width += iter->second.TotalWidth();
+                        m_window_width += iter->second.MaxWidth();
                     }
 
                     index++;
