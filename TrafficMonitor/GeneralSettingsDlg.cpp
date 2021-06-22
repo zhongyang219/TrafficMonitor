@@ -42,10 +42,10 @@ bool CGeneralSettingsDlg::ShowHardwareMonitorWarning()
 {
     if (SHMessageBoxCheck(m_hWnd, CCommon::LoadText(IDS_HARDWARE_MONITOR_WARNING), APP_NAME, MB_OKCANCEL | MB_ICONWARNING, IDOK, _T("{B8A281A7-76DF-4F0F-BF6A-1A394EF8BAD5}")) == IDOK)
     {
-        if (SHMessageBoxCheck(m_hWnd, CCommon::LoadText(IDS_HARDWARE_MONITOR_WARNING2), APP_NAME, MB_OKCANCEL | MB_ICONWARNING, IDOK, _T("{2777F260-6175-41E4-AF59-4085B3F58E32}")) == IDOK)
-        {
-            return true;
-        }
+        //if (SHMessageBoxCheck(m_hWnd, CCommon::LoadText(IDS_HARDWARE_MONITOR_WARNING2), APP_NAME, MB_OKCANCEL | MB_ICONWARNING, IDOK, _T("{2777F260-6175-41E4-AF59-4085B3F58E32}")) == IDOK)
+        //{
+        return true;
+        //}
     }
     return false;
 }
