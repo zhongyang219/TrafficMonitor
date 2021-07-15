@@ -39,6 +39,7 @@ protected:
 
 	HWND m_hTaskbar;	//任务栏窗口句柄
 	HWND m_hBar;		//任务栏窗口二级容器的句柄
+	HWND m_hBarSnap;	//任务栏窗口二级容器(Win11)的句柄
 	HWND m_hMin;		//最小化窗口的句柄
 	CRect m_rcBar;		//初始状态时任务栏窗口的矩形区域
 	CRect m_rcMin;		//初始状态时最小化窗口的矩形区域
