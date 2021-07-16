@@ -166,6 +166,9 @@
     <Filter Include="源文件和头文件\公共的类\HighResolutionTimer">
       <UniqueIdentifier>{c164ccd7-eb7c-465c-8828-d7a38eab573c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\tinyxml2">
+      <UniqueIdentifier>{24b802e1-bc90-4f4c-8862-0ba6310f05f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -353,6 +356,9 @@
     <ClInclude Include="HighResolutionTimer.h">
       <Filter>源文件和头文件\公共的类\HighResolutionTimer</Filter>
     </ClInclude>
+    <ClInclude Include="tinyxml2\tinyxml2.h">
+      <Filter>源文件和头文件\公共的类\tinyxml2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -520,6 +526,9 @@
     <ClCompile Include="ComboBox2.cpp">
       <Filter>源文件和头文件\派生的控件类\CComboBox2</Filter>
     </ClCompile>
+    <ClCompile Include="tinyxml2\tinyxml2.cpp">
+      <Filter>源文件和头文件\公共的类\tinyxml2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TrafficMonitor.rc">
@@ -535,9 +544,6 @@
       <Filter>资源文件</Filter>
     </None>
     <None Include="..\LICENSE_CN" />
-    <None Include="res\menu_icon\text1.bin">
-      <Filter>资源文件</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\TrafficMonitor.ico">

@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "tinyxml2.h"
+#include "tinyxml2/tinyxml2.h"
 #include <string>
 #include <functional>
 
@@ -16,13 +16,12 @@ public:
 
     //获取一个节点的属性（返回值不会为空指针，如果找不到则返回空字符串）
     static const char* ElementAttribute(tinyxml2::XMLElement* ele, const char* attr);
-    
+
     //获取一个节点的名称（返回值不会为空指针，如果找不到则返回空字符串）
     static const char* ElementName(tinyxml2::XMLElement* ele);
-    
+
     //获取一个节点的文本（返回值不会为空指针，如果找不到则返回空字符串）
     static const char* ElementText(tinyxml2::XMLElement* ele);
 
     static bool StringToBool(const char* str);
 };
-
