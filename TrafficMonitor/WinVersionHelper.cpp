@@ -31,6 +31,17 @@ CWinVersionHelper::~CWinVersionHelper()
 {
 }
 
+bool CWinVersionHelper::IsWindows11OrLater() const
+{
+	if (m_major_version > 10)
+		return true;
+	else if (m_major_version == 10 && m_minor_version > 0)
+		return true;
+	else if (m_major_version == 10 && m_minor_version == 0 && m_build_number >= 21996)
+		return true;
+	else return false;
+}
+
 bool CWinVersionHelper::IsWindows10FallCreatorOrLater() const
 {
 	if (m_major_version > 10)

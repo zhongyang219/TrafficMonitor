@@ -19,6 +19,8 @@ public:
     //选项设置数据
     TaskBarSettingData m_data;
 
+	CWinVersionHelper m_win_version;        //当前Windows的版本
+
     // 对话框数据
 #ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_TASKBAR_SETTINGS_DIALOG };

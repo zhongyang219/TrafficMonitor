@@ -359,9 +359,12 @@ bool CTaskBarDlg::AdjustWindowPos()
 {
     if (this->GetSafeHwnd() == NULL || !IsWindow(this->GetSafeHwnd()))
         return false;
-    CRect rcMin, rcBar;
+    CRect rcMin, rcBar, rcBarSnap;
     ::GetWindowRect(m_hMin, rcMin); //获得最小化窗口的区域
     ::GetWindowRect(m_hBar, rcBar); //获得二级容器的区域
+    if (theApp.m_win_version.IsWindows11OrLater()) {
+        ::GetWindowRect(m_hBarSnap, rcBarSnap); //获得二级容器(Win11)的区域
+    }
     static bool last_taskbar_on_top_or_bottom;
     CheckTaskbarOnTopOrBottom();
     if (m_taskbar_on_top_or_bottom != last_taskbar_on_top_or_bottom)
@@ -382,11 +385,29 @@ bool CTaskBarDlg::AdjustWindowPos()
             m_min_bar_width = m_rcMin.Width() - m_rect.Width(); //保存最小化窗口宽度
             if (!theApp.m_taskbar_data.tbar_wnd_on_left)
             {
+                if (theApp.m_win_version.IsWindows11OrLater()) {  //Win11兼容
+                    if (!theApp.m_taskbar_data.tbar_wnd_snap) {
+                        m_left_space = rcBar.right;   //显示在最右侧
+                    }
+                    else
+                    {
+                        m_left_space = rcBarSnap.left - theApp.DPI(90);   //贴靠在任务栏左侧（向左偏移90，防止挡住Win徽标）
+                    }
+                }
                 ::MoveWindow(m_hMin, m_left_space, 0, m_rcMin.Width() - m_rect.Width(), m_rcMin.Height(), TRUE);    //设置最小化窗口的位置
                 m_rect.MoveToX(m_left_space + m_rcMin.Width() - m_rect.Width() + 2);
             }
             else
             {
+                if (theApp.m_win_version.IsWindows11OrLater()) {  //Win11兼容
+                    if (!theApp.m_taskbar_data.tbar_wnd_snap) {
+                        m_left_space = 0;   //显示在最左侧
+                    }
+                    else
+                    {
+                        m_left_space = rcBarSnap.right;   //贴靠在任务栏右侧
+                    }
+                }
                 ::MoveWindow(m_hMin, m_left_space + m_rect.Width(), 0, m_rcMin.Width() - m_rect.Width(), m_rcMin.Height(), TRUE);
                 m_rect.MoveToX(m_left_space);
             }
@@ -827,6 +848,10 @@ BOOL CTaskBarDlg::OnInitDialog()
 
     ::GetWindowRect(m_hMin, m_rcMin);   //获得最小化窗口的区域
     ::GetWindowRect(m_hBar, m_rcBar);   //获得二级容器的区域
+    if (theApp.m_win_version.IsWindows11OrLater()) {
+        m_hBarSnap = ::FindWindowEx(m_hBar, 0, L"MSTaskSwWClass", NULL);    //寻找二级容器(Win11)的区域
+        m_hMin = ::FindWindowEx(m_hTaskbar, 0, L"MSTaskSwWClass", NULL);    //Hack
+    }
     m_left_space = m_rcMin.left - m_rcBar.left;
     m_top_space = m_rcMin.top - m_rcBar.top;
 

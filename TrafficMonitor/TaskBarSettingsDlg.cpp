@@ -417,6 +417,9 @@ void CTaskBarSettingsDlg::OnBnClickedTaskbarWndOnLeftCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.tbar_wnd_on_left = (((CButton*)GetDlgItem(IDC_TASKBAR_WND_ON_LEFT_CHECK))->GetCheck() != 0);
+	if (m_win_version.IsWindows11OrLater()) {
+        m_data.tbar_wnd_snap = (MessageBoxW(_T("将窗口贴靠到状态栏吗？\n不贴靠将置于底栏两端。"), _T("Windows11 兼容设置"), MB_YESNO | MB_ICONQUESTION) == 6); // 本地化暂缺。考虑增加一个设置项代替弹窗
+    }
 }
 
 
