@@ -1,4 +1,4 @@
-ï»¿#include "stdafx.h"
+#include "stdafx.h"
 #include "AdapterCommon.h"
 
 
@@ -14,27 +14,27 @@ CAdapterCommon::~CAdapterCommon()
 void CAdapterCommon::GetAdapterInfo(vector<NetWorkConection>& adapters)
 {
 	adapters.clear();
-	PIP_ADAPTER_INFO pIpAdapterInfo = new IP_ADAPTER_INFO();		//PIP_ADAPTER_INFOç»“æ„ä½“æŒ‡é’ˆå­˜å‚¨æœ¬æœºç½‘å¡ä¿¡æ¯
-	unsigned long stSize = sizeof(IP_ADAPTER_INFO);		//å¾—åˆ°ç»“æ„ä½“å¤§å°,ç”¨äºGetAdaptersInfoå‚æ•°
-	int nRel = GetAdaptersInfo(pIpAdapterInfo, &stSize);	//è°ƒç”¨GetAdaptersInfoå‡½æ•°,å¡«å……pIpAdapterInfoæŒ‡é’ˆå˜é‡;å…¶ä¸­stSizeå‚æ•°æ—¢æ˜¯ä¸€ä¸ªè¾“å…¥é‡ä¹Ÿæ˜¯ä¸€ä¸ªè¾“å‡ºé‡
+	PIP_ADAPTER_INFO pIpAdapterInfo = new IP_ADAPTER_INFO();		//PIP_ADAPTER_INFO½á¹¹ÌåÖ¸Õë´æ´¢±¾»úÍø¿¨ĞÅÏ¢
+	unsigned long stSize = sizeof(IP_ADAPTER_INFO);		//µÃµ½½á¹¹Ìå´óĞ¡,ÓÃÓÚGetAdaptersInfo²ÎÊı
+	int nRel = GetAdaptersInfo(pIpAdapterInfo, &stSize);	//µ÷ÓÃGetAdaptersInfoº¯Êı,Ìî³äpIpAdapterInfoÖ¸Õë±äÁ¿;ÆäÖĞstSize²ÎÊı¼ÈÊÇÒ»¸öÊäÈëÁ¿Ò²ÊÇÒ»¸öÊä³öÁ¿
 
 	if (ERROR_BUFFER_OVERFLOW == nRel)
 	{
-		//å¦‚æœå‡½æ•°è¿”å›çš„æ˜¯ERROR_BUFFER_OVERFLOW
-		//åˆ™è¯´æ˜GetAdaptersInfoå‚æ•°ä¼ é€’çš„å†…å­˜ç©ºé—´ä¸å¤Ÿ,åŒæ—¶å…¶ä¼ å‡ºstSize,è¡¨ç¤ºéœ€è¦çš„ç©ºé—´å¤§å°
-		//è¿™ä¹Ÿæ˜¯è¯´æ˜ä¸ºä»€ä¹ˆstSizeæ—¢æ˜¯ä¸€ä¸ªè¾“å…¥é‡ä¹Ÿæ˜¯ä¸€ä¸ªè¾“å‡ºé‡
-		delete pIpAdapterInfo;	//é‡Šæ”¾åŸæ¥çš„å†…å­˜ç©ºé—´
-		pIpAdapterInfo = (PIP_ADAPTER_INFO)new BYTE[stSize];	//é‡æ–°ç”³è¯·å†…å­˜ç©ºé—´ç”¨æ¥å­˜å‚¨æ‰€æœ‰ç½‘å¡ä¿¡æ¯
-		nRel = GetAdaptersInfo(pIpAdapterInfo, &stSize);		//å†æ¬¡è°ƒç”¨GetAdaptersInfoå‡½æ•°,å¡«å……pIpAdapterInfoæŒ‡é’ˆå˜é‡
+		//Èç¹ûº¯Êı·µ»ØµÄÊÇERROR_BUFFER_OVERFLOW
+		//ÔòËµÃ÷GetAdaptersInfo²ÎÊı´«µİµÄÄÚ´æ¿Õ¼ä²»¹»,Í¬Ê±Æä´«³östSize,±íÊ¾ĞèÒªµÄ¿Õ¼ä´óĞ¡
+		//ÕâÒ²ÊÇËµÃ÷ÎªÊ²Ã´stSize¼ÈÊÇÒ»¸öÊäÈëÁ¿Ò²ÊÇÒ»¸öÊä³öÁ¿
+		delete pIpAdapterInfo;	//ÊÍ·ÅÔ­À´µÄÄÚ´æ¿Õ¼ä
+		pIpAdapterInfo = (PIP_ADAPTER_INFO)new BYTE[stSize];	//ÖØĞÂÉêÇëÄÚ´æ¿Õ¼äÓÃÀ´´æ´¢ËùÓĞÍø¿¨ĞÅÏ¢
+		nRel = GetAdaptersInfo(pIpAdapterInfo, &stSize);		//ÔÙ´Îµ÷ÓÃGetAdaptersInfoº¯Êı,Ìî³äpIpAdapterInfoÖ¸Õë±äÁ¿
 	}
 
-	PIP_ADAPTER_INFO pIpAdapterInfoHead = pIpAdapterInfo;	//ä¿å­˜pIpAdapterInfoé“¾è¡¨ä¸­ç¬¬ä¸€ä¸ªå…ƒç´ çš„åœ°å€
+	PIP_ADAPTER_INFO pIpAdapterInfoHead = pIpAdapterInfo;	//±£´æpIpAdapterInfoÁ´±íÖĞµÚÒ»¸öÔªËØµÄµØÖ·
 	if (ERROR_SUCCESS == nRel)
 	{
 		while (pIpAdapterInfo)
 		{
 			NetWorkConection connection;
-			connection.description = CCommon::StrToUnicode(pIpAdapterInfo->Description);
+			connection.description = pIpAdapterInfo->Description;
 			connection.ip_address = CCommon::StrToUnicode(pIpAdapterInfo->IpAddressList.IpAddress.String);
 			connection.subnet_mask = CCommon::StrToUnicode(pIpAdapterInfo->IpAddressList.IpMask.String);
 			connection.default_gateway = CCommon::StrToUnicode(pIpAdapterInfo->GatewayList.IpAddress.String);
@@ -43,7 +43,7 @@ void CAdapterCommon::GetAdapterInfo(vector<NetWorkConection>& adapters)
 			pIpAdapterInfo = pIpAdapterInfo->Next;
 		}
 	}
-	//é‡Šæ”¾å†…å­˜ç©ºé—´
+	//ÊÍ·ÅÄÚ´æ¿Õ¼ä
 	if (pIpAdapterInfoHead)
 	{
 		delete pIpAdapterInfoHead;
@@ -51,7 +51,7 @@ void CAdapterCommon::GetAdapterInfo(vector<NetWorkConection>& adapters)
 	if (adapters.empty())
 	{
 		NetWorkConection connection{};
-		connection.description = CCommon::LoadText(L"<", IDS_NO_CONNECTION, L">");
+		connection.description = CCommon::UnicodeToStr(CCommon::LoadText(L"<", IDS_NO_CONNECTION, L">"));
 		adapters.push_back(connection);
 	}
 }
@@ -74,39 +74,39 @@ void CAdapterCommon::RefreshIpAddress(vector<NetWorkConection>& adapters)
 	}
 }
 
-void CAdapterCommon::GetIfTableInfo(vector<NetWorkConection>& adapters, MIB_IF_TABLE2* pIfTable)
+void CAdapterCommon::GetIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTABLE* pIfTable)
 {
-	//ä¾æ¬¡åœ¨IfTableé‡ŒæŸ¥æ‰¾æ¯ä¸ªè¿æ¥
+	//ÒÀ´ÎÔÚIfTableÀï²éÕÒÃ¿¸öÁ¬½Ó
 	for (size_t i{}; i < adapters.size(); i++)
 	{
 		if (adapters[i].description.empty())
 			continue;
 		int index;
 		index = FindConnectionInIfTable(adapters[i].description, pIfTable);
-		if (index == -1)		//å¦‚æœä½¿ç”¨ç²¾ç¡®åŒ¹é…çš„æ–¹å¼æ²¡æœ‰æ‰¾åˆ°ï¼Œåˆ™é‡‡ç”¨æ¨¡ç³ŠåŒ¹é…çš„æ–¹å¼å†æŸ¥æ‰¾ä¸€æ¬¡
+		if (index == -1)		//Èç¹ûÊ¹ÓÃ¾«È·Æ¥ÅäµÄ·½Ê½Ã»ÓĞÕÒµ½£¬Ôò²ÉÓÃÄ£ºıÆ¥ÅäµÄ·½Ê½ÔÙ²éÕÒÒ»´Î
 			index = FindConnectionInIfTableFuzzy(adapters[i].description, pIfTable);
 		//if (index != -1)
 		//{
 		adapters[i].index = index;
-		adapters[i].in_bytes = pIfTable->Table[index].InOctets;
-		adapters[i].out_bytes = pIfTable->Table[index].OutOctets;
-		adapters[i].description_2 = pIfTable->Table[index].Description;
+		adapters[i].in_bytes = pIfTable->table[index].dwInOctets;
+		adapters[i].out_bytes = pIfTable->table[index].dwOutOctets;
+		adapters[i].description_2 = (const char*)pIfTable->table[index].bDescr;
 		//}
 	}
 }
 
-void CAdapterCommon::GetAllIfTableInfo(vector<NetWorkConection>& adapters, MIB_IF_TABLE2 * pIfTable)
+void CAdapterCommon::GetAllIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTABLE * pIfTable)
 {
 	vector<NetWorkConection> adapters_tmp;
-	GetAdapterInfo(adapters_tmp);		//è·å–IPåœ°å€
+	GetAdapterInfo(adapters_tmp);		//»ñÈ¡IPµØÖ·
 	adapters.clear();
-	for (size_t i{}; i < pIfTable->NumEntries; i++)
+	for (size_t i{}; i < pIfTable->dwNumEntries; i++)
 	{
 		NetWorkConection connection;
-		connection.description = connection.description_2 = pIfTable->Table[i].Description;
+		connection.description = connection.description_2 = (const char*)pIfTable->table[i].bDescr;
 		connection.index = i;
-		connection.in_bytes = pIfTable->Table[i].InOctets;
-		connection.out_bytes = pIfTable->Table[i].OutOctets;
+		connection.in_bytes = pIfTable->table[i].dwInOctets;
+		connection.out_bytes = pIfTable->table[i].dwOutOctets;
 		for (size_t j{}; j < adapters_tmp.size(); j++)
 		{
 			if (connection.description.find(adapters_tmp[j].description) != string::npos)
@@ -121,24 +121,24 @@ void CAdapterCommon::GetAllIfTableInfo(vector<NetWorkConection>& adapters, MIB_I
 	}
 }
 
-int CAdapterCommon::FindConnectionInIfTable(wstring connection, MIB_IF_TABLE2* pIfTable)
+int CAdapterCommon::FindConnectionInIfTable(string connection, MIB_IFTABLE* pIfTable)
 {
-	for (size_t i{}; i < pIfTable->NumEntries; i++)
+	for (size_t i{}; i < pIfTable->dwNumEntries; i++)
 	{
-		wstring descr = pIfTable->Table[i].Description;
+		string descr = (const char*)pIfTable->table[i].bDescr;
 		if (descr == connection)
 			return i;
 	}
 	return -1;
 }
 
-int CAdapterCommon::FindConnectionInIfTableFuzzy(wstring connection, MIB_IF_TABLE2* pIfTable)
+int CAdapterCommon::FindConnectionInIfTableFuzzy(string connection, MIB_IFTABLE* pIfTable)
 {
-	for (size_t i{}; i < pIfTable->NumEntries; i++)
+	for (size_t i{}; i < pIfTable->dwNumEntries; i++)
 	{
-		wstring descr = pIfTable->Table[i].Description;
+		string descr = (const char*)pIfTable->table[i].bDescr;
 		size_t index;
-		//åœ¨è¾ƒé•¿çš„å­—ç¬¦ä¸²é‡ŒæŸ¥æ‰¾è¾ƒçŸ­çš„å­—ç¬¦ä¸²
+		//ÔÚ½Ï³¤µÄ×Ö·û´®Àï²éÕÒ½Ï¶ÌµÄ×Ö·û´®
 		if (descr.size() >= connection.size())
 			index = descr.find(connection);
 		else
@@ -146,12 +146,12 @@ int CAdapterCommon::FindConnectionInIfTableFuzzy(wstring connection, MIB_IF_TABL
 		if (index != wstring::npos)
 			return i;
 	}
-	//å¦‚æœè¿˜æ˜¯æ²¡æœ‰æ‰¾åˆ°ï¼Œåˆ™ä½¿ç”¨å­—ç¬¦ä¸²åŒ¹é…ç®—æ³•æŸ¥æ‰¾
+	//Èç¹û»¹ÊÇÃ»ÓĞÕÒµ½£¬ÔòÊ¹ÓÃ×Ö·û´®Æ¥ÅäËã·¨²éÕÒ
 	double max_degree{};
 	int best_index{};
-	for (size_t i{}; i < pIfTable->NumEntries; i++)
+	for (size_t i{}; i < pIfTable->dwNumEntries; i++)
 	{
-		wstring descr = pIfTable->Table[i].Description;
+		string descr = (const char*)pIfTable->table[i].bDescr;
 		double degree = CCommon::StringSimilarDegree_LD(descr, connection);
 		if (degree > max_degree)
 		{

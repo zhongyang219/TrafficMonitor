@@ -11,8 +11,8 @@
 
 IMPLEMENT_DYNAMIC(CNetworkInfoDlg, CBaseDialog)
 
-CNetworkInfoDlg::CNetworkInfoDlg(vector<NetWorkConection>& adapters, MIB_IF_TABLE2*& pIfTable, int connection_selected, CWnd* pParent /*=NULL*/)
-	: CBaseDialog(IDD_NETWORK_INFO_DIALOG, pParent), m_connections(adapters), m_pIfTable(pIfTable), m_connection_selected(connection_selected)
+CNetworkInfoDlg::CNetworkInfoDlg(vector<NetWorkConection>& adapters, MIB_IFROW* pIfRow, int connection_selected, CWnd* pParent /*=NULL*/)
+    : CBaseDialog(IDD_NETWORK_INFO_DIALOG, pParent), m_connections(adapters), m_pIfRow(pIfRow), m_connection_selected(connection_selected)
 {
 	m_current_connection = connection_selected;
 }
@@ -24,17 +24,15 @@ CNetworkInfoDlg::~CNetworkInfoDlg()
 
 void CNetworkInfoDlg::ShowInfo()
 {
-    CSingleLock sync(&theApp.m_lftable_critical, TRUE);
-
 	CString temp;
-	MIB_IF_ROW2 network_info = m_pIfTable->Table[m_connections[m_connection_selected].index];
-	//接口名
-	m_info_list.SetItemText(0, 1, network_info.Alias);
-	//接口描述
-	m_info_list.SetItemText(1, 1, network_info.Description);
-	//连接类型
-	switch (network_info.Type)
-	{
+    MIB_IFROW& network_info = m_pIfRow[m_connections[m_connection_selected].index];
+    //接口名
+    m_info_list.SetItemText(0, 1, network_info.wszName);
+    //接口描述
+    m_info_list.SetItemText(1, 1, CCommon::StrToUnicode((const char*)network_info.bDescr).c_str());
+    //连接类型
+    switch (network_info.dwType)
+    {
 	case IF_TYPE_OTHER: temp = CCommon::LoadText(IDS_IF_TYPE_OTHER); break;
 	case IF_TYPE_ETHERNET_CSMACD: temp = CCommon::LoadText(IDS_IF_TYPE_ETHERNET_CSMACD); break;
 	case IF_TYPE_ISO88025_TOKENRING: temp = CCommon::LoadText(IDS_IF_TYPE_ISO88025_TOKENRING); break;
@@ -52,16 +50,16 @@ void CNetworkInfoDlg::ShowInfo()
 	}
 	m_info_list.SetItemText(2, 1, temp);
 	//速度
-	temp.Format(_T("%dMbps"), network_info.TransmitLinkSpeed / 1000000);
+	temp.Format(_T("%dMbps"), network_info.dwSpeed / 1000000);
 	m_info_list.SetItemText(3, 1, temp);
 	//适配器物理地址
 	temp = _T("");
 	char buff[3];
-	for (size_t i{}; i < network_info.PhysicalAddressLength; i++)
+	for (size_t i{}; i < network_info.dwPhysAddrLen; i++)
 	{
-		sprintf_s(buff, "%.2x", network_info.PhysicalAddress[i]);
+		sprintf_s(buff, "%.2x", network_info.bPhysAddr[i]);
 		temp += buff;
-		if (i != network_info.PhysicalAddressLength - 1)
+		if (i != network_info.dwPhysAddrLen - 1)
 			temp += _T('-');
 	}
 	m_info_list.SetItemText(4, 1, temp);
@@ -72,46 +70,46 @@ void CNetworkInfoDlg::ShowInfo()
 	//默认网关
 	m_info_list.SetItemText(7, 1, m_connections[m_connection_selected].default_gateway.c_str());
 	//连接状态
-	switch (network_info.OperStatus)
+	switch (network_info.dwOperStatus)
 	{
-	//case IF_OPER_STATUS_NON_OPERATIONAL: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_NON_OPERATIONAL); break;
-	//case IF_OPER_STATUS_UNREACHABLE: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_UNREACHABLE); break;
-	//case IF_OPER_STATUS_DISCONNECTED: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_DISCONNECTED); break;
-	//case IF_OPER_STATUS_CONNECTING: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_CONNECTING); break;
-	//case IF_OPER_STATUS_CONNECTED: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_CONNECTED); break;
-	//case IF_OPER_STATUS_OPERATIONAL: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_OPERATIONAL); break;
-    case IfOperStatusUp:
-        temp = CCommon::LoadText(IDS_IF_OPER_STATUS_UP);
-        break;
-    case IfOperStatusDown:
-    case IfOperStatusNotPresent:
-    case IfOperStatusLowerLayerDown:
-        temp = CCommon::LoadText(IDS_IF_OPER_STATUS_DOWN);
-        break;
-    case IfOperStatusTesting:
-    case IfOperStatusUnknown:
-        temp = CCommon::LoadText(IDS_UNKNOW_STATUS);
-        break;
-    case IfOperStatusDormant:
-        temp = CCommon::LoadText(IDS_IF_OPER_STATUS_DORMANT);
-        break;
+	case IF_OPER_STATUS_NON_OPERATIONAL: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_NON_OPERATIONAL); break;
+	case IF_OPER_STATUS_UNREACHABLE: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_UNREACHABLE); break;
+	case IF_OPER_STATUS_DISCONNECTED: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_DISCONNECTED); break;
+	case IF_OPER_STATUS_CONNECTING: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_CONNECTING); break;
+	case IF_OPER_STATUS_CONNECTED: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_CONNECTED); break;
+	case IF_OPER_STATUS_OPERATIONAL: temp = CCommon::LoadText(IDS_IF_OPER_STATUS_OPERATIONAL); break;
+    //case IfOperStatusUp:
+    //    temp = CCommon::LoadText(IDS_IF_OPER_STATUS_UP);
+    //    break;
+    //case IfOperStatusDown:
+    //case IfOperStatusNotPresent:
+    //case IfOperStatusLowerLayerDown:
+    //    temp = CCommon::LoadText(IDS_IF_OPER_STATUS_DOWN);
+    //    break;
+    //case IfOperStatusTesting:
+    //case IfOperStatusUnknown:
+    //    temp = CCommon::LoadText(IDS_UNKNOW_STATUS);
+    //    break;
+    //case IfOperStatusDormant:
+    //    temp = CCommon::LoadText(IDS_IF_OPER_STATUS_DORMANT);
+        //break;
     default: temp = CCommon::LoadText(IDS_UNKNOW_STATUS); break;
 	}
 	m_info_list.SetItemText(8, 1, temp);
 	//已接收字节数
-	temp.Format(_T("%s (%s)"), CCommon::IntToString(network_info.InOctets, true, true), CCommon::DataSizeToString(network_info.InOctets));
+	temp.Format(_T("%s (%s)"), CCommon::IntToString(network_info.dwInOctets, true, true), CCommon::DataSizeToString(network_info.dwInOctets));
 	m_info_list.SetItemText(9, 1, temp);
 	//已发送字节数
-	temp.Format(_T("%s (%s)"), CCommon::IntToString(network_info.OutOctets, true, true), CCommon::DataSizeToString(network_info.OutOctets));
+	temp.Format(_T("%s (%s)"), CCommon::IntToString(network_info.dwOutOctets, true, true), CCommon::DataSizeToString(network_info.dwOutOctets));
 	m_info_list.SetItemText(10, 1, temp);
 	//自程序启动以来已接收字节数
 	unsigned __int64 in_bytes_since_start;
-	in_bytes_since_start = network_info.InOctets - m_connections[m_connection_selected].in_bytes;
+	in_bytes_since_start = network_info.dwInOctets - m_connections[m_connection_selected].in_bytes;
 	temp.Format(_T("%s (%s)"), CCommon::IntToString(in_bytes_since_start, true, true), CCommon::DataSizeToString(in_bytes_since_start));
 	m_info_list.SetItemText(11, 1, temp);
 	//自程序启动以来已发送字节数
 	unsigned __int64 out_bytes_since_start;
-	out_bytes_since_start = network_info.OutOctets - m_connections[m_connection_selected].out_bytes;
+	out_bytes_since_start = network_info.dwOutOctets - m_connections[m_connection_selected].out_bytes;
 	temp.Format(_T("%s (%s)"), CCommon::IntToString(out_bytes_since_start, true, true), CCommon::DataSizeToString(out_bytes_since_start));
 	m_info_list.SetItemText(12, 1, temp);
 
