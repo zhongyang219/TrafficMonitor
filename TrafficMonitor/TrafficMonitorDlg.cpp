@@ -105,6 +105,8 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_MESSAGE(WM_TASKBAR_WND_CLOSED, &CTrafficMonitorDlg::OnTaskbarWndClosed)
     ON_COMMAND(ID_SHOW_GPU, &CTrafficMonitorDlg::OnShowGpuUsage)
     ON_MESSAGE(WM_MONITOR_INFO_UPDATED, &CTrafficMonitorDlg::OnMonitorInfoUpdated)
+    ON_MESSAGE(WM_DISPLAYCHANGE, &CTrafficMonitorDlg::OnDisplaychange)
+    ON_WM_EXITSIZEMOVE()
 END_MESSAGE_MAP()
 
 
@@ -228,50 +230,62 @@ void CTrafficMonitorDlg::SetMousePenetrate()
     }
 }
 
-void CTrafficMonitorDlg::CheckWindowPos()
+POINT CTrafficMonitorDlg::CalculateWindowMoveOffset(CRect rect, bool screen_changed)
+{
+    POINT mov{};    // 所需偏移量
+    if (m_screen_rects.size() != 0)
+    {
+        // 确保窗口完整在一个监视器内并且可见，判断移动距离并向所需移动距离较小的方向移动
+        LONG mov_xy = 0;          // 记录移动距离
+        int i = 0;
+        for (auto& a : m_screen_rects)
+        {
+            LONG x = 0, y = 0;
+            if (rect.left < a.left)                 // 需要向右移动
+                x = a.left - rect.left;
+            if (rect.top < a.top)                   // 需要向下移动
+                y = a.top - rect.top;
+
+            CRect last_screen_rect = m_last_screen_rects[i];
+            if (screen_changed && a != last_screen_rect)
+            {
+                float proportion_width = (float)rect.left / (last_screen_rect.right - rect.Width());
+                float proportion_height = (float)rect.top / (last_screen_rect.bottom - rect.Height());
+                x = (a.right - rect.Width()) * proportion_width - rect.left;
+                y = (a.bottom - rect.Height()) * proportion_height - rect.top;
+            }
+            else
+            {
+                if (rect.right > a.right)          // 需要向左移动
+                    x = a.right - rect.right;
+                if (rect.bottom > a.bottom)        // 需要向上移动
+                    y = a.bottom - rect.bottom;
+            }
+            if (x == 0 && y == 0)           // mini窗口已在一个监视器内
+            {
+                mov.x = 0;
+                mov.y = 0;
+                break;
+            }
+            else if (abs(x) + abs(y) < mov_xy || mov_xy == 0)
+            {
+                mov.x = x;
+                mov.y = y;
+                mov_xy = abs(x) + abs(y);
+            }
+            i++;
+        }
+    }
+    return mov;
+}
+
+void CTrafficMonitorDlg::CheckWindowPos(bool screen_changed)
 {
     if (!theApp.m_main_wnd_data.m_alow_out_of_border)
     {
         CRect rect;
         GetWindowRect(rect);
-        if (m_screen_rect.Width() <= rect.Width() || m_screen_rect.Height() <= rect.Height())
-            return;
-        if (rect.left < m_screen_rect.left)
-        {
-            rect.MoveToX(m_screen_rect.left);
-            MoveWindow(rect);
-        }
-        if (rect.top < m_screen_rect.top)
-        {
-            rect.MoveToY(m_screen_rect.top);
-            MoveWindow(rect);
-        }
-
-        CRect cuccent_screen_rect;
-        ::SystemParametersInfo(SPI_GETWORKAREA, 0, &cuccent_screen_rect, 0);   // 获得当前工作区大小
-        if (m_screen_rect != cuccent_screen_rect)
-        {
-            float proportion_width = (float)rect.left / (m_screen_rect.right - rect.Width());
-            float proportion_height = (float)rect.top / (m_screen_rect.bottom - rect.Height());
-            int x = (cuccent_screen_rect.right - rect.Width()) * proportion_width;
-            int y = (cuccent_screen_rect.bottom - rect.Height()) * proportion_height;
-            m_screen_rect = cuccent_screen_rect;
-            rect.MoveToXY(x, y);
-            MoveWindow(rect);
-        }
-        else
-        {
-            if (rect.right > m_screen_rect.right)
-            {
-                rect.MoveToX(m_screen_rect.right - rect.Width());
-                MoveWindow(rect);
-            }
-            if (rect.bottom > m_screen_rect.bottom)
-            {
-                rect.MoveToY(m_screen_rect.bottom - rect.Height());
-                MoveWindow(rect);
-            }
-        }
+        MoveWindow(rect + CalculateWindowMoveOffset(rect, screen_changed));
     }
 }
 
@@ -281,6 +295,15 @@ void CTrafficMonitorDlg::GetScreenSize()
     m_screen_size.cy = GetSystemMetrics(SM_CYSCREEN);
 
     //::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0);   // 获得工作区大小
+
+    //获取所有屏幕工作区的大小
+    m_last_screen_rects = m_screen_rects;
+    m_screen_rects.clear();
+    Monitors monitors;
+    for (auto& a : monitors.monitorinfos)
+    {
+        m_screen_rects.push_back(a.rcWork);
+    }
 }
 
 
@@ -828,7 +851,8 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     theApp.DPIFromWindow(this);
     //获取屏幕大小
     GetScreenSize();
-    ::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0);   // 获得工作区大小
+    m_last_screen_rects = m_screen_rects;
+    //::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0);   // 获得工作区大小
 
     //初始化菜单
     theApp.InitMenuResourse();
@@ -1853,8 +1877,8 @@ void CTrafficMonitorDlg::OnMove(int x, int y)
         theApp.m_cfg_data.m_position_y = y;
     }
 
-    //确保窗口不会超出屏幕范围
-    CheckWindowPos();
+    ////确保窗口不会超出屏幕范围
+    //CheckWindowPos();
 }
 
 
@@ -2501,4 +2525,21 @@ afx_msg LRESULT CTrafficMonitorDlg::OnMonitorInfoUpdated(WPARAM wParam, LPARAM l
     if (IsTaskbarWndValid())
         m_tBarDlg->UpdateToolTips();
     return 0;
+}
+
+
+afx_msg LRESULT CTrafficMonitorDlg::OnDisplaychange(WPARAM wParam, LPARAM lParam)
+{
+    GetScreenSize();
+    CheckWindowPos(true);
+    return 0;
+}
+
+
+void CTrafficMonitorDlg::OnExitSizeMove()
+{
+    // TODO: 在此添加消息处理程序代码和/或调用默认值
+    CheckWindowPos();
+
+    CDialog::OnExitSizeMove();
 }

@@ -59,7 +59,32 @@ protected:
     CCPUUsage m_cpu_usage;
 
     bool m_first_start{ true };     //初始时为true，在定时器第一次启动后置为flase
-    CRect m_screen_rect;        //屏幕的范围（不包含任务栏）
+
+    // https://www.jianshu.com/p/9d4b68cdbd99
+    struct Monitors
+    {
+        std::vector<MONITORINFO> monitorinfos;
+
+        static BOOL CALLBACK MonitorEnum(HMONITOR hMon, HDC hdc, LPRECT lprcMonitor, LPARAM pData)
+        {
+            MONITORINFO iMonitor;
+            iMonitor.cbSize = sizeof(MONITORINFO);
+            GetMonitorInfo(hMon, &iMonitor);
+
+            Monitors* pThis = reinterpret_cast<Monitors*>(pData);
+            pThis->monitorinfos.push_back(iMonitor);
+            return TRUE;
+        }
+
+        Monitors()
+        {
+            EnumDisplayMonitors(0, 0, MonitorEnum, (LPARAM)this);
+        }
+    };
+
+    //CRect m_screen_rect;        //屏幕的范围（不包含任务栏）
+    vector<CRect> m_screen_rects;       //所有屏幕的范围（不包含任务栏）
+    vector<CRect> m_last_screen_rects;       //上一次所有屏幕的范围（不包含任务栏）
     CSize m_screen_size;        //屏幕的大小（包含任务栏）
     CSkinFile m_skin;
 
@@ -100,7 +125,8 @@ protected:
     void SetTransparency(int transparency);
     void SetAlwaysOnTop();          //根据m_always_on_top的值设置窗口置顶
     void SetMousePenetrate();       //根据m_mouse_penetrate的值设置是否鼠标穿透
-    void CheckWindowPos();          //测试窗口的位置，如窗口的位置在屏幕外，则移动窗口使其全部都在屏幕内，并返回新位置
+    POINT CalculateWindowMoveOffset(CRect rect, bool screen_changed);  //计算当窗口处于屏幕区域外时，移动到屏幕区域需要移动的位置
+    void CheckWindowPos(bool screen_changed = false);          //测试窗口的位置，如窗口的位置在屏幕外，则移动窗口使其全部都在屏幕内，并返回新位置
     void GetScreenSize();           //获取屏幕的大小
 
     void AutoSelect();
@@ -224,4 +250,7 @@ public:
     afx_msg void OnShowGpuUsage();
 protected:
     afx_msg LRESULT OnMonitorInfoUpdated(WPARAM wParam, LPARAM lParam);
+    afx_msg LRESULT OnDisplaychange(WPARAM wParam, LPARAM lParam);
+public:
+    afx_msg void OnExitSizeMove();
 };
