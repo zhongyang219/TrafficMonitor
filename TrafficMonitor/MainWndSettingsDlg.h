@@ -75,4 +75,8 @@ public:
     afx_msg void OnBnClickedBrowseButton();
     afx_msg void OnBnClickedDisplayTextSettingButton();
     afx_msg void OnCbnSelchangeMemoryDisplayCombo();
+    afx_msg void OnBnClickedAlwaysOnTopCheck();
+    afx_msg void OnBnClickedMousePenetrateCheck();
+    afx_msg void OnBnClickedLockWindowPosCheck();
+    afx_msg void OnBnClickedAlowOutOfBorderCheck();
 };

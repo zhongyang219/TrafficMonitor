@@ -207,11 +207,8 @@ enum class HistoryTrafficViewType
 //选项设置数据
 struct MainConfigData
 {
-    bool m_always_on_top{ false };      //窗口置顶
     int m_transparency{ 100 };          //窗口透明度
-    bool m_lock_window_pos{ false };    //锁定窗口位置
     bool m_show_more_info{ false };     //显示更多信息
-    bool m_mouse_penetrate{ false };    //鼠标穿透
     bool m_show_task_bar_wnd{ false };  //显示任务栏窗口
     bool m_hide_main_window;            //隐藏主窗口
     bool m_show_notify_icon{ true };    //显示通知区域图标
@@ -229,7 +226,6 @@ struct MainConfigData
     int m_dft_notify_icon = 0;      //默认的通知图标(用于区分win10的深色和浅色模式)
     int m_notify_icon_selected{};   //要显示的通知区图标
     bool m_notify_icon_auto_adapt{ false }; //通知区图标是否自动适应Win10深浅色模式
-    bool m_alow_out_of_border{ false };     //是否允许悬浮窗超出屏幕边界
 
     //bool m_show_internet_ip{ false };     //是否在“连接详情”对话框中显示外网IP地址
     bool m_use_log_scale{ false };          //“历史流量统计”对话框中绘制表示历史流量数值的矩形时是否使用对数比例
@@ -271,6 +267,11 @@ struct MainWndSettingData : public PublicSettingData
 {
     std::map<DisplayItem, COLORREF> text_colors{};    //方字的颜色
     bool hide_main_wnd_when_fullscreen;     //有程序全屏运行时隐藏悬浮窗
+    bool m_always_on_top{ false };      //窗口置顶
+    bool m_lock_window_pos{ false };    //锁定窗口位置
+    bool m_mouse_penetrate{ false };    //鼠标穿透
+    bool m_alow_out_of_border{ false };     //是否允许悬浮窗超出屏幕边界
+
 };
 
 //#define TASKBAR_COLOR_NUM 18      //任务栏窗口颜色数量

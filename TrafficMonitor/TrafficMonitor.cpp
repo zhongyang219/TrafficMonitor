@@ -75,11 +75,11 @@ void CTrafficMonitorApp::LoadConfig()
 
     //主窗口设置
     m_cfg_data.m_transparency = ini.GetInt(_T("config"), _T("transparency"), 80);
-    m_cfg_data.m_always_on_top = ini.GetBool(_T("config"), _T("always_on_top"), true);
-    m_cfg_data.m_lock_window_pos = ini.GetBool(_T("config"), _T("lock_window_pos"), false);
+    m_main_wnd_data.m_always_on_top = ini.GetBool(_T("config"), _T("always_on_top"), true);
+    m_main_wnd_data.m_lock_window_pos = ini.GetBool(_T("config"), _T("lock_window_pos"), false);
     m_cfg_data.m_show_notify_icon = ini.GetBool(_T("config"), _T("show_notify_icon"), true);
     m_cfg_data.m_show_more_info = ini.GetBool(_T("config"), _T("show_cpu_memory"), false);
-    m_cfg_data.m_mouse_penetrate = ini.GetBool(_T("config"), _T("mouse_penetrate"), false);
+    m_main_wnd_data.m_mouse_penetrate = ini.GetBool(_T("config"), _T("mouse_penetrate"), false);
     m_cfg_data.m_show_task_bar_wnd = ini.GetBool(_T("config"), _T("show_task_bar_wnd"), false);
     m_cfg_data.m_position_x = ini.GetInt(_T("config"), _T("position_x"), -1);
     m_cfg_data.m_position_y = ini.GetInt(_T("config"), _T("position_y"), -1);
@@ -131,7 +131,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_main_wnd_data.double_click_action = static_cast<DoubleClickAction>(ini.GetInt(_T("config"), _T("double_click_action"), 0));
     m_main_wnd_data.double_click_exe = ini.GetString(L"config", L"double_click_exe", (theApp.m_system_dir + L"\\Taskmgr.exe").c_str());
 
-    m_cfg_data.m_alow_out_of_border = ini.GetBool(_T("config"), _T("alow_out_of_border"), false);
+    m_main_wnd_data.m_alow_out_of_border = ini.GetBool(_T("config"), _T("alow_out_of_border"), false);
 
     m_general_data.traffic_tip_enable = ini.GetBool(L"notify_tip", L"traffic_tip_enable", false);
     m_general_data.traffic_tip_value = ini.GetInt(L"notify_tip", L"traffic_tip_value", 200);
@@ -275,11 +275,11 @@ void CTrafficMonitorApp::SaveConfig()
 
     //主窗口设置
     ini.WriteInt(L"config", L"transparency", m_cfg_data.m_transparency);
-    ini.WriteBool(L"config", L"always_on_top", m_cfg_data.m_always_on_top);
-    ini.WriteBool(L"config", L"lock_window_pos", m_cfg_data.m_lock_window_pos);
+    ini.WriteBool(L"config", L"always_on_top", m_main_wnd_data.m_always_on_top);
+    ini.WriteBool(L"config", L"lock_window_pos", m_main_wnd_data.m_lock_window_pos);
     ini.WriteBool(L"config", L"show_notify_icon", m_cfg_data.m_show_notify_icon);
     ini.WriteBool(L"config", L"show_cpu_memory", m_cfg_data.m_show_more_info);
-    ini.WriteBool(L"config", L"mouse_penetrate", m_cfg_data.m_mouse_penetrate);
+    ini.WriteBool(L"config", L"mouse_penetrate", m_main_wnd_data.m_mouse_penetrate);
     ini.WriteBool(L"config", L"show_task_bar_wnd", m_cfg_data.m_show_task_bar_wnd);
     ini.WriteInt(L"config", L"position_x", m_cfg_data.m_position_x);
     ini.WriteInt(L"config", L"position_y", m_cfg_data.m_position_y);
@@ -319,7 +319,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"config", L"double_click_action", static_cast<int>(m_main_wnd_data.double_click_action));
     ini.WriteString(L"config", L"double_click_exe", m_main_wnd_data.double_click_exe);
 
-    ini.WriteInt(L"config", L"alow_out_of_border", m_cfg_data.m_alow_out_of_border);
+    ini.WriteInt(L"config", L"alow_out_of_border", m_main_wnd_data.m_alow_out_of_border);
 
     ini.WriteBool(L"notify_tip", L"traffic_tip_enable", m_general_data.traffic_tip_enable);
     ini.WriteInt(L"notify_tip", L"traffic_tip_value", m_general_data.traffic_tip_value);
