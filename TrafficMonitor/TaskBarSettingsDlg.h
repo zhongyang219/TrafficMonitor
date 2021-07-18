@@ -107,4 +107,5 @@ public:
     afx_msg void OnBnClickedAutoSetBackColorCheck();
     afx_msg void OnBnClickedDisplayTextSettingButton();
     afx_msg void OnCbnSelchangeMemoryDisplayCombo();
+    afx_msg void OnBnClickedShowDashedBox();
 };

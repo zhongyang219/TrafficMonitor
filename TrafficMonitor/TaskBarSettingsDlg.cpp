@@ -88,22 +88,14 @@ void CTaskBarSettingsDlg::ModifyDefaultStyle(int index)
 void CTaskBarSettingsDlg::EnableControl()
 {
     bool exe_path_enable = (m_data.double_click_action == DoubleClickAction::SEPCIFIC_APP);
-    CWnd* pWnd{};
-    pWnd = GetDlgItem(IDC_EXE_PATH_STATIC);
-    if (pWnd != nullptr)
-        pWnd->ShowWindow(exe_path_enable ? SW_SHOW : SW_HIDE);
-
-    pWnd = GetDlgItem(IDC_EXE_PATH_EDIT);
-    if (pWnd != nullptr)
-        pWnd->ShowWindow(exe_path_enable ? SW_SHOW : SW_HIDE);
-
-    pWnd = GetDlgItem(IDC_BROWSE_BUTTON);
-    if (pWnd != nullptr)
-        pWnd->ShowWindow(exe_path_enable ? SW_SHOW : SW_HIDE);
-
-    pWnd = GetDlgItem(IDC_AUTO_ADAPT_SETTINGS_BUTTON);
-    if (pWnd != nullptr)
-        pWnd->EnableWindow(m_data.auto_adapt_light_theme);
+    ShowDlgCtrl(IDC_EXE_PATH_STATIC, exe_path_enable);
+    ShowDlgCtrl(IDC_EXE_PATH_EDIT, exe_path_enable);
+    ShowDlgCtrl(IDC_BROWSE_BUTTON, exe_path_enable);
+    EnableDlgCtrl(IDC_AUTO_ADAPT_SETTINGS_BUTTON, m_data.auto_adapt_light_theme);
+    EnableDlgCtrl(IDC_SHOW_DASHED_BOX, m_data.show_status_bar);
+    m_status_bar_color_static.EnableWindow(m_data.show_status_bar);
+    EnableDlgCtrl(IDC_CM_GRAPH_BAR_RADIO, m_data.show_status_bar);
+    EnableDlgCtrl(IDC_CM_GRAPH_PLOT_RADIO, m_data.show_status_bar);
 }
 
 void CTaskBarSettingsDlg::SetTaskabrTransparent(bool transparent)
@@ -186,6 +178,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_AUTO_SET_BACK_COLOR_CHECK, &CTaskBarSettingsDlg::OnBnClickedAutoSetBackColorCheck)
     ON_BN_CLICKED(IDC_DISPLAY_TEXT_SETTING_BUTTON, &CTaskBarSettingsDlg::OnBnClickedDisplayTextSettingButton)
     ON_CBN_SELCHANGE(IDC_MEMORY_DISPLAY_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeMemoryDisplayCombo)
+    ON_BN_CLICKED(IDC_SHOW_DASHED_BOX, &CTaskBarSettingsDlg::OnBnClickedShowDashedBox)
 END_MESSAGE_MAP()
 
 
@@ -289,9 +282,10 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     m_default_style_menu.LoadMenu(IDR_TASKBAR_STYLE_MENU);
 
     if (m_data.cm_graph_type)
-        ((CButton*)GetDlgItem(IDC_CM_GRAPH_PLOT_RADIO))->SetCheck(TRUE);
+        CheckDlgButton(IDC_CM_GRAPH_PLOT_RADIO, TRUE);
     else
-        ((CButton*)GetDlgItem(IDC_CM_GRAPH_BAR_RADIO))->SetCheck(TRUE);
+        CheckDlgButton(IDC_CM_GRAPH_BAR_RADIO, TRUE);
+    CheckDlgButton(IDC_SHOW_DASHED_BOX, m_data.show_graph_dashed_box);
 
     //初始化内存显示方式下拉列表
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_USAGE_PERCENTAGE));
@@ -609,6 +603,7 @@ void CTaskBarSettingsDlg::OnBnClickedShowStatusBarCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.show_status_bar = (((CButton*)GetDlgItem(IDC_SHOW_STATUS_BAR_CHECK))->GetCheck() != 0);
+    EnableControl();
 }
 
 
@@ -807,4 +802,11 @@ void CTaskBarSettingsDlg::OnCbnSelchangeMemoryDisplayCombo()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.memory_display = static_cast<MemoryDisplay>(m_memory_display_combo.GetCurSel());
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedShowDashedBox()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    m_data.show_graph_dashed_box = (IsDlgButtonChecked(IDC_SHOW_DASHED_BOX) != 0);
 }

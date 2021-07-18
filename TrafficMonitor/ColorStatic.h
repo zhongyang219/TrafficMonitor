@@ -1,5 +1,5 @@
-// CColorStatic
-//ÅÉÉú×ÔCStatic£¬ÓÃÓÚÏÔÊ¾ÑÕÉ«µÄStatic¿Ø¼ş
+ï»¿// CColorStatic
+//æ´¾ç”Ÿè‡ªCStaticï¼Œç”¨äºæ˜¾ç¤ºé¢œè‰²çš„Staticæ§ä»¶
 #pragma once
 #define WM_STATIC_CLICKED (WM_USER + 1001)
 
@@ -11,16 +11,17 @@ public:
 	CColorStatic();
 	virtual ~CColorStatic();
 
-	void SetFillColor(COLORREF fill_color);		//ÉèÖÃÒªÌî³äµ¥Ò»µÄ±³¾°É«
-	void SetColorNum(int color_num);			//ÉèÖÃÑÕÉ«µÄÊıÁ¿
+	void SetFillColor(COLORREF fill_color);		//è®¾ç½®è¦å¡«å……å•ä¸€çš„èƒŒæ™¯è‰²
+	void SetColorNum(int color_num);			//è®¾ç½®é¢œè‰²çš„æ•°é‡
 	void SetFillColor(int index, COLORREF fill_color);
-	void SetLinkCursor(bool link_cursor = true);		//ÉèÖÃÖ¸Ïò¿Ø¼şÊ±¹â±ê±ä³É³¬Á´½ÓĞÎ×´
+	void SetLinkCursor(bool link_cursor = true);		//è®¾ç½®æŒ‡å‘æ§ä»¶æ—¶å…‰æ ‡å˜æˆè¶…é“¾æ¥å½¢çŠ¶
+    void EnableWindow(bool enable);
 
 protected:
 	//COLORREF m_fill_color{ RGB(255, 255,255) };
 	vector<COLORREF> m_colors;
-	bool m_hover{ false };		//µ±Êó±êÖ¸Ïò¿Ø¼şÊ±Îªtrue
-	bool m_link_cursor{ false };	//ÊÇ·ñÆôÓÃ³¬Á´½ÓĞÎ×´µÄ¹â±ê
+	bool m_hover{ false };		//å½“é¼ æ ‡æŒ‡å‘æ§ä»¶æ—¶ä¸ºtrue
+	bool m_link_cursor{ false };	//æ˜¯å¦å¯ç”¨è¶…é“¾æ¥å½¢çŠ¶çš„å…‰æ ‡
 
 protected:
 	DECLARE_MESSAGE_MAP()
@@ -33,5 +34,3 @@ public:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 };
-
-

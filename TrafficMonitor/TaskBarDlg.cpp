@@ -354,7 +354,8 @@ void CTaskBarDlg::TryDrawStatusBar(CDrawCommon& drawer, const CRect& rect_bar, i
 
     CSize fill_size = CSize(rect_bar.Width() * usage_percent / 100, rect_bar.Height());
     CRect rect_fill(rect_bar.TopLeft(), fill_size);
-    drawer.DrawRectOutLine(rect_bar, theApp.m_taskbar_data.status_bar_color, 1, true);
+    if (theApp.m_taskbar_data.show_graph_dashed_box)
+        drawer.DrawRectOutLine(rect_bar, theApp.m_taskbar_data.status_bar_color, 1, true);
     drawer.FillRect(rect_fill, theApp.m_taskbar_data.status_bar_color);
 }
 
@@ -1146,7 +1147,8 @@ void CTaskBarDlg::TryDrawGraph(CDrawCommon& drawer, const CRect& value_rect, Dis
         return;
     }
     CList<int, int>& list = m_map_history_data[item_type];
-    drawer.DrawRectOutLine(value_rect, theApp.m_taskbar_data.status_bar_color, 1, true);
+    if (theApp.m_taskbar_data.show_graph_dashed_box)
+        drawer.DrawRectOutLine(value_rect, theApp.m_taskbar_data.status_bar_color, 1, true);
     POSITION pos = list.GetHeadPosition();
     if (NULL != pos)
     {

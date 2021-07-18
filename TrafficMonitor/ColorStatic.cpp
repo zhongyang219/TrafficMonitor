@@ -1,4 +1,4 @@
-// ColorStatic.cpp : ÊµÏÖÎÄ¼þ
+ï»¿// ColorStatic.cpp : å®žçŽ°æ–‡ä»¶
 //
 
 #include "stdafx.h"
@@ -45,6 +45,12 @@ void CColorStatic::SetLinkCursor(bool link_cursor)
 	m_link_cursor = link_cursor;
 }
 
+void CColorStatic::EnableWindow(bool enable)
+{
+    CStatic::EnableWindow(enable);
+    Invalidate(FALSE);
+}
+
 
 BEGIN_MESSAGE_MAP(CColorStatic, CStatic)
 	ON_WM_PAINT()
@@ -57,7 +63,7 @@ END_MESSAGE_MAP()
 
 
 
-// CColorStatic ÏûÏ¢´¦Àí³ÌÐò
+// CColorStatic æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 
 
@@ -65,8 +71,8 @@ END_MESSAGE_MAP()
 void CColorStatic::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
-					   // TODO: ÔÚ´Ë´¦Ìí¼ÓÏûÏ¢´¦Àí³ÌÐò´úÂë
-					   // ²»Îª»æÍ¼ÏûÏ¢µ÷ÓÃ CStatic::OnPaint()
+					   // TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
+					   // ä¸ä¸ºç»˜å›¾æ¶ˆæ¯è°ƒç”¨ CStatic::OnPaint()
 	CRect rect;
 	GetClientRect(rect);
 	rect.MoveToXY(0, 0);
@@ -163,12 +169,13 @@ void CColorStatic::OnPaint()
 			}
 		}
 
-		//»­±ß¿ò
+		//ç”»è¾¹æ¡†
 		draw.DrawRectOutLine(rect, RGB(160, 160, 160));
 	}
 	else
 	{
-		dc.FillSolidRect(rect, RGB(225, 225, 225));
+        CBrush brush(HS_BDIAGONAL, RGB(160, 160, 160));
+        dc.FillRect(rect, &brush);
 		draw.DrawRectOutLine(rect, RGB(192, 192, 192));
 	}
 }
@@ -176,7 +183,7 @@ void CColorStatic::OnPaint()
 
 void CColorStatic::OnMouseHover(UINT nFlags, CPoint point)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌÐò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 	m_hover = true;
 
 	CStatic::OnMouseHover(nFlags, point);
@@ -185,7 +192,7 @@ void CColorStatic::OnMouseHover(UINT nFlags, CPoint point)
 
 void CColorStatic::OnMouseLeave()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌÐò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 	m_hover = false;
 
 	CStatic::OnMouseLeave();
@@ -194,7 +201,7 @@ void CColorStatic::OnMouseLeave()
 
 BOOL CColorStatic::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌÐò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 	if(m_link_cursor && m_hover)
 	{
 		::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(32649)));
@@ -207,7 +214,7 @@ BOOL CColorStatic::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 
 void CColorStatic::PreSubclassWindow()
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
 	DWORD dwStyle = GetStyle();
 	::SetWindowLong(GetSafeHwnd(), GWL_STYLE, dwStyle | SS_NOTIFY);
 	ModifyStyleEx(WS_EX_STATICEDGE, NULL);
@@ -218,7 +225,7 @@ void CColorStatic::PreSubclassWindow()
 
 void CColorStatic::OnMouseMove(UINT nFlags, CPoint point)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌÐò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 	if (m_link_cursor)
 	{
 		TRACKMOUSEEVENT tme;
@@ -235,8 +242,8 @@ void CColorStatic::OnMouseMove(UINT nFlags, CPoint point)
 
 void CColorStatic::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌÐò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
-	//Èç¹ûµ¥»÷ÁËÊó±ê×ó¼ü£¬ÔòÏò¸¸´°¿Ú·¢ËÍÒ»¸öWM_STATIC_CLICKEDÏûÏ¢
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
+	//å¦‚æžœå•å‡»äº†é¼ æ ‡å·¦é”®ï¼Œåˆ™å‘çˆ¶çª—å£å‘é€ä¸€ä¸ªWM_STATIC_CLICKEDæ¶ˆæ¯
 	CWnd* pParent{ GetParent() };
 	if (pParent != nullptr)
 		pParent->SendMessage(WM_STATIC_CLICKED, (WPARAM)this);
