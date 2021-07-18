@@ -240,6 +240,8 @@ void CTrafficMonitorApp::LoadConfig()
     else
         m_taskbar_data.auto_set_background_color = false;
 
+    m_taskbar_data.item_order.FromString(ini.GetString(L"task_bar", L"item_order", L""));
+
     //其他设置
     //m_cfg_data.m_show_internet_ip = ini.GetBool(L"connection_details", L"show_internet_ip", false);
     m_cfg_data.m_use_log_scale = ini.GetBool(_T("histroy_traffic"), _T("use_log_scale"), true);
@@ -379,6 +381,8 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"task_bar", L"dark_default_style", m_taskbar_data.dark_default_style);
     ini.WriteInt(L"task_bar", L"light_default_style", m_taskbar_data.light_default_style);
     ini.WriteBool(L"task_bar", L"auto_set_background_color", m_taskbar_data.auto_set_background_color);
+
+    ini.WriteString(L"task_bar", L"item_order", m_taskbar_data.item_order.ToString());
 
     //其他设置
     //ini.WriteBool(L"connection_details", L"show_internet_ip", m_cfg_data.m_show_internet_ip);

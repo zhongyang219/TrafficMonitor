@@ -169,6 +169,9 @@
     <Filter Include="源文件和头文件\公共的类\tinyxml2">
       <UniqueIdentifier>{24b802e1-bc90-4f4c-8862-0ba6310f05f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\TaskbarItemOrderHelper">
+      <UniqueIdentifier>{22cfb8c5-2d79-4f91-add4-fb393e20475e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -359,6 +362,9 @@
     <ClInclude Include="tinyxml2\tinyxml2.h">
       <Filter>源文件和头文件\公共的类\tinyxml2</Filter>
     </ClInclude>
+    <ClInclude Include="TaskbarItemOrderHelper.h">
+      <Filter>源文件和头文件\公共的类\TaskbarItemOrderHelper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -528,6 +534,9 @@
     </ClCompile>
     <ClCompile Include="tinyxml2\tinyxml2.cpp">
       <Filter>源文件和头文件\公共的类\tinyxml2</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskbarItemOrderHelper.cpp">
+      <Filter>源文件和头文件\公共的类\TaskbarItemOrderHelper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

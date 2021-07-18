@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "CommonData.h"
 #include "CVariant.h"
+#include <set>
 
 class CCommon
 {
@@ -307,5 +308,24 @@ public:
 
     //获取一个数字的某个bit位
     static bool GetNumberBit(unsigned int num, int bit);
+
+    //在不排序的情况下删除vector中的重复元素
+    template<class T>
+    static void RemoveVectorDuplicateItem(vector<T>& vec)
+    {
+        std::set<int> si;
+        for (auto it = vec.begin(); it != vec.end();)
+        {
+            if (si.count(*it) == 0)//这里判断当前元素是否已经出现过，若没有出现过则将该元素保留，并做标记
+            {
+                si.insert(*it);
+                ++it;
+            }
+            else//如果前面已经出现过，则删除当前元素
+            {
+                it = vec.erase(it);//这里删除it指向的元素
+            }
+        }
+    }
 
 };

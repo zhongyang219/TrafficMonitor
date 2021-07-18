@@ -477,6 +477,7 @@
     <ClInclude Include="TaskbarColorDlg.h" />
     <ClInclude Include="TaskbarDefaultStyle.h" />
     <ClInclude Include="TaskBarDlg.h" />
+    <ClInclude Include="TaskbarItemOrderHelper.h" />
     <ClInclude Include="TaskBarSettingsDlg.h" />
     <ClInclude Include="Test.h" />
     <ClInclude Include="TinyXml2Helper.h" />
@@ -544,6 +545,7 @@
     <ClCompile Include="TaskbarColorDlg.cpp" />
     <ClCompile Include="TaskbarDefaultStyle.cpp" />
     <ClCompile Include="TaskBarDlg.cpp" />
+    <ClCompile Include="TaskbarItemOrderHelper.cpp" />
     <ClCompile Include="TaskBarSettingsDlg.cpp" />
     <ClCompile Include="Test.cpp" />
     <ClCompile Include="TinyXml2Helper.cpp" />

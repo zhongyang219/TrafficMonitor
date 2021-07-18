@@ -261,7 +261,7 @@ POINT CTrafficMonitorDlg::CalculateWindowMoveOffset(CRect rect, bool screen_chan
                 if (rect.bottom > a.bottom)        // 需要向上移动
                     y = a.bottom - rect.bottom;
             }
-            if (x == 0 && y == 0)           // mini窗口已在一个监视器内
+            if (x == 0 && y == 0)           // 窗口已在一个监视器内
             {
                 mov.x = 0;
                 mov.y = 0;

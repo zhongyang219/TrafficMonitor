@@ -1,6 +1,7 @@
 ﻿//此文件包含全局结构体、枚举类型的定义
 #pragma once
 #include "stdafx.h"
+#include "TaskbarItemOrderHelper.h"
 
 //储存某一天的历史流量
 struct HistoryTraffic
@@ -53,23 +54,6 @@ enum class SpeedUnit
     MBPS        //MB/s
 };
 
-
-//显示的项目
-enum DisplayItem
-{
-    TDI_UP = 1 << 0,
-    TDI_DOWN = 1 << 1,
-    TDI_CPU = 1 << 2,
-    TDI_MEMORY = 1 << 3,
-    TDI_GPU_USAGE = 1 << 4,
-    TDI_CPU_TEMP = 1 << 5,
-    TDI_GPU_TEMP = 1 << 6,
-    TDI_HDD_TEMP = 1 << 7,
-    TDI_MAIN_BOARD_TEMP = 1 << 8
-};
-
-//所有显示项目的集合
-const std::set<DisplayItem> AllDisplayItems{ TDI_UP, TDI_DOWN, TDI_CPU, TDI_MEMORY, TDI_GPU_USAGE, TDI_CPU_TEMP, TDI_GPU_TEMP, TDI_HDD_TEMP, TDI_MAIN_BOARD_TEMP };
 
 //硬件监控的项目
 enum HardwareItem
@@ -298,6 +282,8 @@ struct TaskBarSettingData : public PublicSettingData
     int dark_default_style{ 0 };                    //深色主题时使用的预设方案
     int light_default_style{ -1 };                  //浅色主题时使用的预设方案
     bool auto_set_background_color{ false };        //根据任务栏颜色自动设置背景色
+
+    CTaskbarItemOrderHelper item_order;
 
     bool value_right_align{ false };    //数值是否右对齐
     int digits_number{ 4 };             //数据位数
