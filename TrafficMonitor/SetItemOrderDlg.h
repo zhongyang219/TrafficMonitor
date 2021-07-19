@@ -26,6 +26,8 @@ private:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
     void ShowItem();
+    void EnableCtrl(int list_selected);
+    void EnableDlgCtrl(UINT id, bool enable);
 
     // 通过 CBaseDialog 继承
     virtual CString GetDialogName() const override;
@@ -36,4 +38,5 @@ public:
     afx_msg void OnBnClickedMoveUpButton();
     afx_msg void OnBnClickedMoveDownButton();
     afx_msg void OnBnClickedRestoreDefaultButton();
+    afx_msg void OnLbnSelchangeList1();
 };

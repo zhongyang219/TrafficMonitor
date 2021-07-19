@@ -42,6 +42,7 @@ BEGIN_MESSAGE_MAP(CSetItemOrderDlg, CBaseDialog)
     ON_BN_CLICKED(IDC_MOVE_UP_BUTTON, &CSetItemOrderDlg::OnBnClickedMoveUpButton)
     ON_BN_CLICKED(IDC_MOVE_DOWN_BUTTON, &CSetItemOrderDlg::OnBnClickedMoveDownButton)
     ON_BN_CLICKED(IDC_RESTORE_DEFAULT_BUTTON, &CSetItemOrderDlg::OnBnClickedRestoreDefaultButton)
+    ON_LBN_SELCHANGE(IDC_LIST1, &CSetItemOrderDlg::OnLbnSelchangeList1)
 END_MESSAGE_MAP()
 
 
@@ -53,6 +54,8 @@ BOOL CSetItemOrderDlg::OnInitDialog()
     CBaseDialog::OnInitDialog();
 
     // TODO:  在此添加额外的初始化
+    SetIcon(theApp.GetMenuIcon(IDI_ITEM), FALSE);		// 设置小图标
+    EnableCtrl(-1);
     ShowItem();
 
     return TRUE;  // return TRUE unless you set the focus to a control
@@ -67,6 +70,20 @@ void CSetItemOrderDlg::ShowItem()
     {
         m_list_ctrl.AddString(CTaskbarItemOrderHelper::GetItemDisplayName(item));
     }
+}
+
+void CSetItemOrderDlg::EnableCtrl(int list_selected)
+{
+    int item_count{ static_cast<int>(m_item_order.GetItemOrderConst().size()) };
+    EnableDlgCtrl(IDC_MOVE_UP_BUTTON, list_selected > 0 && list_selected < item_count);
+    EnableDlgCtrl(IDC_MOVE_DOWN_BUTTON, list_selected >= 0 && list_selected < item_count - 1);
+}
+
+void CSetItemOrderDlg::EnableDlgCtrl(UINT id, bool enable)
+{
+    CWnd* pCtrl = GetDlgItem(id);
+    if (pCtrl != nullptr)
+        pCtrl->EnableWindow(enable);
 }
 
 
@@ -111,4 +128,12 @@ void CSetItemOrderDlg::OnBnClickedRestoreDefaultButton()
 CString CSetItemOrderDlg::GetDialogName() const
 {
     return _T("SetItemOrderDlg");
+}
+
+
+void CSetItemOrderDlg::OnLbnSelchangeList1()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    int cur_index{ m_list_ctrl.GetCurSel() };
+    EnableCtrl(cur_index);
 }
