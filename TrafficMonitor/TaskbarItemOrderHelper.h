@@ -29,7 +29,10 @@ public:
     void FromString(const std::wstring& str);
     std::wstring ToString() const;
     void SetOrder(const vector<int>& item_order);
-    const vector<int>& GetItemOrder() const;
+    const vector<int>& GetItemOrderConst() const;
+    vector<int>& GetItemOrder();
+
+    static CString GetItemDisplayName(DisplayItem item);
 
 private:
     //规范m_item_order里的项目，如果m_item_order里有序号超过了显示项目的个数，则将其移除，并在后面添加缺少的项目的序号

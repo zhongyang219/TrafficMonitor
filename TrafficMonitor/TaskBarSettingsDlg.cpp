@@ -8,7 +8,7 @@
 #include "CMFCColorDialogEx.h"
 #include "CAutoAdaptSettingsDlg.h"
 #include "DisplayTextSettingDlg.h"
-
+#include "SetItemOrderDlg.h"
 
 // CTaskBarSettingsDlg 对话框
 
@@ -179,6 +179,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_DISPLAY_TEXT_SETTING_BUTTON, &CTaskBarSettingsDlg::OnBnClickedDisplayTextSettingButton)
     ON_CBN_SELCHANGE(IDC_MEMORY_DISPLAY_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeMemoryDisplayCombo)
     ON_BN_CLICKED(IDC_SHOW_DASHED_BOX, &CTaskBarSettingsDlg::OnBnClickedShowDashedBox)
+    ON_BN_CLICKED(IDC_SET_ORDER_BUTTON, &CTaskBarSettingsDlg::OnBnClickedSetOrderButton)
 END_MESSAGE_MAP()
 
 
@@ -809,4 +810,16 @@ void CTaskBarSettingsDlg::OnBnClickedShowDashedBox()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.show_graph_dashed_box = (IsDlgButtonChecked(IDC_SHOW_DASHED_BOX) != 0);
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedSetOrderButton()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    CSetItemOrderDlg dlg;
+    dlg.SetItemOrder(m_data.item_order.GetItemOrderConst());
+    if (dlg.DoModal() == IDOK)
+    {
+        m_data.item_order.SetOrder(dlg.GetItemOrder());
+    }
 }

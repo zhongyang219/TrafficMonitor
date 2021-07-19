@@ -172,6 +172,9 @@
     <Filter Include="源文件和头文件\公共的类\TaskbarItemOrderHelper">
       <UniqueIdentifier>{22cfb8c5-2d79-4f91-add4-fb393e20475e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\对话框类\选项设置对话框\SetItemOrderDlg">
+      <UniqueIdentifier>{bc164584-be21-4a91-9af5-772d61ed9529}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -365,6 +368,9 @@
     <ClInclude Include="TaskbarItemOrderHelper.h">
       <Filter>源文件和头文件\公共的类\TaskbarItemOrderHelper</Filter>
     </ClInclude>
+    <ClInclude Include="SetItemOrderDlg.h">
+      <Filter>源文件和头文件\对话框类\选项设置对话框\SetItemOrderDlg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -537,6 +543,9 @@
     </ClCompile>
     <ClCompile Include="TaskbarItemOrderHelper.cpp">
       <Filter>源文件和头文件\公共的类\TaskbarItemOrderHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="SetItemOrderDlg.cpp">
+      <Filter>源文件和头文件\对话框类\选项设置对话框\SetItemOrderDlg</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

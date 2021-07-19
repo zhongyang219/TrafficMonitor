@@ -466,6 +466,7 @@
     <ClInclude Include="OptionsDlg.h" />
     <ClInclude Include="PictureStatic.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SetItemOrderDlg.h" />
     <ClInclude Include="SimpleXML.h" />
     <ClInclude Include="SkinDlg.h" />
     <ClInclude Include="SkinFile.h" />
@@ -526,6 +527,7 @@
     <ClCompile Include="NetworkInfoDlg.cpp" />
     <ClCompile Include="OptionsDlg.cpp" />
     <ClCompile Include="PictureStatic.cpp" />
+    <ClCompile Include="SetItemOrderDlg.cpp" />
     <ClCompile Include="SimpleXML.cpp" />
     <ClCompile Include="SkinDlg.cpp" />
     <ClCompile Include="SkinFile.cpp" />

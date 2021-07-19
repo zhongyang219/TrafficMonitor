@@ -53,9 +53,42 @@ void CTaskbarItemOrderHelper::SetOrder(const vector<int>& item_order)
     NormalizeItemOrder();
 }
 
-const vector<int>& CTaskbarItemOrderHelper::GetItemOrder() const
+const vector<int>& CTaskbarItemOrderHelper::GetItemOrderConst() const
 {
     return m_item_order;
+}
+
+vector<int>& CTaskbarItemOrderHelper::GetItemOrder()
+{
+    return m_item_order;
+}
+
+CString CTaskbarItemOrderHelper::GetItemDisplayName(DisplayItem item)
+{
+    switch (item)
+    {
+    case TDI_UP:
+        return CCommon::LoadText(IDS_UPLOAD);
+    case TDI_DOWN:
+        return CCommon::LoadText(IDS_DOWNLOAD);
+    case TDI_CPU:
+        return CCommon::LoadText(IDS_CPU_USAGE);
+    case TDI_MEMORY:
+        return CCommon::LoadText(IDS_MEMORY_USAGE);
+    case TDI_GPU_USAGE:
+        return CCommon::LoadText(IDS_GPU_USAGE);
+    case TDI_CPU_TEMP:
+        return CCommon::LoadText(IDS_CPU_TEMPERATURE);
+    case TDI_GPU_TEMP:
+        return CCommon::LoadText(IDS_GPU_TEMPERATURE);
+    case TDI_HDD_TEMP:
+        return CCommon::LoadText(IDS_HDD_TEMPERATURE);
+    case TDI_MAIN_BOARD_TEMP:
+        return CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
+    default:
+        break;
+    }
+    return CString();
 }
 
 void CTaskbarItemOrderHelper::NormalizeItemOrder()

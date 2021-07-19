@@ -108,4 +108,5 @@ public:
     afx_msg void OnBnClickedDisplayTextSettingButton();
     afx_msg void OnCbnSelchangeMemoryDisplayCombo();
     afx_msg void OnBnClickedShowDashedBox();
+    afx_msg void OnBnClickedSetOrderButton();
 };
