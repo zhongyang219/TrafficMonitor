@@ -242,6 +242,7 @@ public:
     afx_msg void OnShowGpuTemperature();
     afx_msg void OnShowHddTemperature();
     afx_msg void OnShowMainBoardTemperature();
+    afx_msg void OnShowHddUsage();
     afx_msg void OnPaint();
 protected:
     afx_msg LRESULT OnDpichanged(WPARAM wParam, LPARAM lParam);

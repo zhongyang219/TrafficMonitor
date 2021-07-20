@@ -11,7 +11,8 @@ enum DisplayItem
     TDI_CPU_TEMP = 1 << 5,
     TDI_GPU_TEMP = 1 << 6,
     TDI_HDD_TEMP = 1 << 7,
-    TDI_MAIN_BOARD_TEMP = 1 << 8
+    TDI_MAIN_BOARD_TEMP = 1 << 8,
+    TDI_HDD_USAGE = 1 << 9
 };
 
 //所有显示项目的集合
@@ -19,7 +20,7 @@ const std::set<DisplayItem> AllDisplayItems
 {
     TDI_UP, TDI_DOWN, TDI_CPU, TDI_MEMORY
 #ifndef WITHOUT_TEMPERATURE
-    , TDI_GPU_USAGE, TDI_CPU_TEMP, TDI_GPU_TEMP, TDI_HDD_TEMP, TDI_MAIN_BOARD_TEMP
+    , TDI_GPU_USAGE, TDI_CPU_TEMP, TDI_GPU_TEMP, TDI_HDD_TEMP, TDI_MAIN_BOARD_TEMP, TDI_HDD_USAGE
 #endif
 };
 

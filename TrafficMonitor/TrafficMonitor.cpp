@@ -119,6 +119,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_main_wnd_data.disp_str.Get(TDI_GPU_TEMP) = ini.GetString(L"config", L"gpu_temp_string", CCommon::LoadText(IDS_GPU_DISP, _T(": $")));
     m_main_wnd_data.disp_str.Get(TDI_HDD_TEMP) = ini.GetString(L"config", L"hdd_temp_string", CCommon::LoadText(IDS_HDD_DISP, _T(": $")));
     m_main_wnd_data.disp_str.Get(TDI_MAIN_BOARD_TEMP) = ini.GetString(L"config", L"main_board_temp_string", CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": $")));
+    m_main_wnd_data.disp_str.Get(TDI_HDD_USAGE) = ini.GetString(L"config", L"hdd_string", CCommon::LoadText(IDS_HDD_DISP, _T(": $")));
 
     m_main_wnd_data.speed_short_mode = ini.GetBool(_T("config"), _T("speed_short_mode"), false);
     m_main_wnd_data.separate_value_unit_with_space = ini.GetBool(_T("config"), _T("separate_value_unit_with_space"), true);
@@ -169,6 +170,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_cfg_data.m_tbar_display_item &= ~TDI_GPU_TEMP;
     m_cfg_data.m_tbar_display_item &= ~TDI_HDD_TEMP;
     m_cfg_data.m_tbar_display_item &= ~TDI_MAIN_BOARD_TEMP;
+    m_cfg_data.m_tbar_display_item &= ~TDI_HDD_USAGE;
 #endif
 
     //如果选项设置中关闭了某个硬件监控，则不显示对应的温度监控相关项目
@@ -180,7 +182,10 @@ void CTrafficMonitorApp::LoadConfig()
         m_cfg_data.m_tbar_display_item &= ~TDI_GPU_TEMP;
     }
     if (!m_general_data.IsHardwareEnable(HI_HDD))
+    {
         m_cfg_data.m_tbar_display_item &= ~TDI_HDD_TEMP;
+        m_cfg_data.m_tbar_display_item &= ~TDI_HDD_USAGE;
+    }
     if (!m_general_data.IsHardwareEnable(HI_MBD))
         m_cfg_data.m_tbar_display_item &= ~TDI_MAIN_BOARD_TEMP;
 
@@ -208,6 +213,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.disp_str.Get(TDI_GPU_TEMP) = ini.GetString(L"task_bar", L"gpu_temp_string", CCommon::LoadText(IDS_GPU_DISP, _T(": ")));
     m_taskbar_data.disp_str.Get(TDI_HDD_TEMP) = ini.GetString(L"task_bar", L"hdd_temp_string", CCommon::LoadText(IDS_HDD_DISP, _T(": ")));
     m_taskbar_data.disp_str.Get(TDI_MAIN_BOARD_TEMP) = ini.GetString(L"task_bar", L"main_board_temp_string", CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": ")));
+    m_taskbar_data.disp_str.Get(TDI_HDD_USAGE) = ini.GetString(L"task_bar", L"hdd_string", CCommon::LoadText(IDS_HDD_DISP, _T(": ")));
 
     m_taskbar_data.tbar_wnd_on_left = ini.GetBool(_T("task_bar"), _T("task_bar_wnd_on_left"), false);
     m_taskbar_data.speed_short_mode = ini.GetBool(_T("task_bar"), _T("task_bar_speed_short_mode"), false);
@@ -309,6 +315,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteString(_T("config"), _T("gpu_temp_string"), m_main_wnd_data.disp_str.Get(TDI_GPU_TEMP));
     ini.WriteString(_T("config"), _T("hdd_temp_string"), m_main_wnd_data.disp_str.Get(TDI_HDD_TEMP));
     ini.WriteString(_T("config"), _T("main_board_temp_string"), m_main_wnd_data.disp_str.Get(TDI_MAIN_BOARD_TEMP));
+    ini.WriteString(_T("config"), _T("hdd_string"), m_main_wnd_data.disp_str.Get(TDI_HDD_USAGE));
 
     ini.WriteBool(L"config", L"speed_short_mode", m_main_wnd_data.speed_short_mode);
     ini.WriteBool(L"config", L"separate_value_unit_with_space", m_main_wnd_data.separate_value_unit_with_space);
@@ -357,6 +364,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteString(_T("task_bar"), _T("gpu_temp_string"), m_taskbar_data.disp_str.Get(TDI_GPU_TEMP));
     ini.WriteString(_T("task_bar"), _T("hdd_temp_string"), m_taskbar_data.disp_str.Get(TDI_HDD_TEMP));
     ini.WriteString(_T("task_bar"), _T("main_board_temp_string"), m_taskbar_data.disp_str.Get(TDI_MAIN_BOARD_TEMP));
+    ini.WriteString(_T("task_bar"), _T("hdd_string"), m_taskbar_data.disp_str.Get(TDI_HDD_USAGE));
 
     ini.WriteBool(L"task_bar", L"task_bar_wnd_on_left", m_taskbar_data.tbar_wnd_on_left);
     ini.WriteBool(L"task_bar", L"task_bar_wnd_snap", m_taskbar_data.tbar_wnd_snap);
@@ -1034,6 +1042,8 @@ void CTrafficMonitorApp::UpdateTaskbarWndMenu()
             pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_HDD_TEMPERATURE, CCommon::LoadText(IDS_HDD_TEMPERATURE));
         if (m_general_data.IsHardwareEnable(HI_MBD))
             pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_MAIN_BOARD_TEMPERATURE, CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE));
+        if (m_general_data.IsHardwareEnable(HI_HDD))
+            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_HDD, CCommon::LoadText(IDS_HDD_USAGE));
 #endif
     }
 }

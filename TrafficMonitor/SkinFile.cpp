@@ -422,6 +422,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
         str_memory_value = CCommon::UsageToString(theApp.m_memory_usage, theApp.m_main_wnd_data);
     map_str[TDI_MEMORY] = (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_MEMORY).c_str()) + str_memory_value;
     map_str[TDI_GPU_USAGE] = (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_GPU_USAGE).c_str()) + CCommon::UsageToString(theApp.m_gpu_usage, theApp.m_main_wnd_data);
+    map_str[TDI_HDD_USAGE] = (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_HDD_USAGE).c_str()) + CCommon::UsageToString(theApp.m_hdd_usage, theApp.m_main_wnd_data);
 
     //温度
     auto getTemperatureStr = [&](DisplayItem display_item, float temperature)
@@ -504,6 +505,9 @@ string CSkinFile::GetDisplayItemXmlNodeName(DisplayItem display_item)
         break;
     case TDI_MAIN_BOARD_TEMP:
         return "main_board_temperature";
+        break;
+    case TDI_HDD_USAGE:
+        return "hdd";
         break;
     default:
         return string();

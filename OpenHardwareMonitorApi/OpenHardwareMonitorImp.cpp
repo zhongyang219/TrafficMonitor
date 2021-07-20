@@ -85,6 +85,11 @@ namespace OpenHardwareMonitorApi
         return m_all_cpu_temperature;
     }
 
+    const std::map<std::wstring, float>& COpenHardwareMonitor::AllHDDUsage()
+    {
+        return m_all_hdd_usage;
+    }
+
     void COpenHardwareMonitor::SetCpuEnable(bool enable)
     {
         MonitorGlobal::Instance()->computer->IsCpuEnabled = enable;
@@ -174,7 +179,23 @@ namespace OpenHardwareMonitorApi
                     return true;
                 }
             }
+        }
+        return false;
+    }
 
+    bool COpenHardwareMonitor::GetHddUsage(IHardware^ hardware, float& hdd_usage)
+    {
+        for (int i = 0; i < hardware->Sensors->Length; i++)
+        {
+            //找到负载
+            if (hardware->Sensors[i]->SensorType == SensorType::Load)
+            {
+                if (hardware->Sensors[i]->Name == L"Total Activity")
+                {
+                    hdd_usage = Convert::ToDouble(hardware->Sensors[i]->Value);
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -232,6 +253,9 @@ namespace OpenHardwareMonitorApi
                 float cur_hdd_temperature = -1;
                 GetHardwareTemperature(computer->Hardware[i], cur_hdd_temperature);
                 m_all_hdd_temperature[ClrStringToStdWstring(computer->Hardware[i]->Name)] = cur_hdd_temperature;
+                float cur_hdd_usage = -1;
+                GetHddUsage(computer->Hardware[i], cur_hdd_usage);
+                m_all_hdd_usage[ClrStringToStdWstring(computer->Hardware[i]->Name)] = cur_hdd_usage;
                 if (m_hdd_temperature < 0)
                     m_hdd_temperature = cur_hdd_temperature;
             }

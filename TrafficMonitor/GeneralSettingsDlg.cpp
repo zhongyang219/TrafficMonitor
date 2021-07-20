@@ -346,7 +346,10 @@ void CGeneralSettingsDlg::OnOK()
         theApp.m_cfg_data.m_tbar_display_item &= ~TDI_GPU_TEMP;
     }
     if (!m_data.IsHardwareEnable(HI_HDD))
+    {
         theApp.m_cfg_data.m_tbar_display_item &= ~TDI_HDD_TEMP;
+        theApp.m_cfg_data.m_tbar_display_item &= ~TDI_HDD_USAGE;
+    }
     if (!m_data.IsHardwareEnable(HI_MBD))
         theApp.m_cfg_data.m_tbar_display_item &= ~TDI_MAIN_BOARD_TEMP;
     m_taskbar_item_modified = (theApp.m_cfg_data.m_tbar_display_item != taskbar_displat_item_ori);

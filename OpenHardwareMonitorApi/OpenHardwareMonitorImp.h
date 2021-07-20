@@ -25,6 +25,7 @@ namespace OpenHardwareMonitorApi {
         virtual float GpuUsage() override;
         virtual const std::map<std::wstring, float>& AllHDDTemperature() override;
         virtual const std::map<std::wstring, float>& AllCpuTemperature() override;
+        virtual const std::map<std::wstring, float>& AllHDDUsage() override;
 
         virtual void SetCpuEnable(bool enable) override;
         virtual void SetGpuEnable(bool enable) override;
@@ -35,6 +36,7 @@ namespace OpenHardwareMonitorApi {
         bool GetHardwareTemperature(IHardware^ hardware, float& temperature);
         bool GetCpuTemperature(IHardware^ hardware, float& temperature);
         bool GetGpuUsage(IHardware^ hardware, float& gpu_usage);
+        bool GetHddUsage(IHardware^ hardware, float& hdd_usage);
 
         void ResetAllValues();
 
@@ -48,6 +50,7 @@ namespace OpenHardwareMonitorApi {
         float m_gpu_ati_usage{};
         std::map<std::wstring, float> m_all_hdd_temperature;
         std::map<std::wstring, float> m_all_cpu_temperature;
+        std::map<std::wstring, float> m_all_hdd_usage;
     };
 
     //一个单实例类

@@ -100,6 +100,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_COMMAND(ID_SHOW_GPU_TEMPERATURE, &CTrafficMonitorDlg::OnShowGpuTemperature)
     ON_COMMAND(ID_SHOW_HDD_TEMPERATURE, &CTrafficMonitorDlg::OnShowHddTemperature)
     ON_COMMAND(ID_SHOW_MAIN_BOARD_TEMPERATURE, &CTrafficMonitorDlg::OnShowMainBoardTemperature)
+    ON_COMMAND(ID_SHOW_HDD, &CTrafficMonitorDlg::OnShowHddUsage)
     ON_WM_PAINT()
     ON_MESSAGE(WM_DPICHANGED, &CTrafficMonitorDlg::OnDpichanged)
     ON_MESSAGE(WM_TASKBAR_WND_CLOSED, &CTrafficMonitorDlg::OnTaskbarWndClosed)
@@ -178,6 +179,11 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
         if (theApp.m_general_data.IsHardwareEnable(HI_MBD) && !skin_layout.GetItem(TDI_MAIN_BOARD_TEMP).show && theApp.m_main_board_temperature > 0)
         {
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_main_board_temperature, theApp.m_main_wnd_data));
+            tip_info += temp;
+        }
+        if (theApp.m_general_data.IsHardwareEnable(HI_HDD) && !skin_layout.GetItem(TDI_HDD_USAGE).show && theApp.m_hdd_usage >= 0)
+        {
+            temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_HDD_USAGE), theApp.m_hdd_usage);
             tip_info += temp;
         }
     }
@@ -1185,6 +1191,21 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         {
             theApp.m_hdd_temperature = -1;
         }
+        //获取硬盘利用率
+        if (!theApp.m_pMonitor->AllHDDUsage().empty())
+        {
+            auto iter = theApp.m_pMonitor->AllHDDUsage().find(theApp.m_general_data.hard_disk_name);
+            if (iter == theApp.m_pMonitor->AllHDDUsage().end())
+            {
+                iter = theApp.m_pMonitor->AllHDDUsage().begin();
+                theApp.m_general_data.hard_disk_name = iter->first;
+            }
+            theApp.m_hdd_usage = iter->second;
+        }
+        else
+        {
+            theApp.m_hdd_usage = -1;
+        }
     }
     else
     {
@@ -1193,6 +1214,7 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         theApp.m_hdd_temperature = -1;
         theApp.m_main_board_temperature = -1;
         theApp.m_gpu_usage = -1;
+        theApp.m_hdd_usage = -1;
     }
 #endif
 
@@ -2455,6 +2477,13 @@ void CTrafficMonitorDlg::OnShowMainBoardTemperature()
 {
     // TODO: 在此添加命令处理程序代码
     TaskbarShowHideItem(TDI_MAIN_BOARD_TEMP);
+}
+
+
+void CTrafficMonitorDlg::OnShowHddUsage()
+{
+    // TODO: 在此添加命令处理程序代码
+    TaskbarShowHideItem(TDI_HDD_USAGE);
 }
 
 

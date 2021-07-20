@@ -95,6 +95,9 @@ BOOL CTaskbarColorDlg::OnInitDialog()
         case TDI_MAIN_BOARD_TEMP:
             item_name = CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
             break;
+        case TDI_HDD_USAGE:
+            item_name = CCommon::LoadText(IDS_HDD_USAGE);
+            break;
 #endif
         default:
             break;

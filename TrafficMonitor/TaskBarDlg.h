@@ -121,6 +121,7 @@ public:
     static bool IsShowGpuTemperature();
     static bool IsShowHddTemperature();
     static bool IsShowMainboardTemperature();
+    static bool IsShowHddUsage();
 
 	DECLARE_MESSAGE_MAP()
 

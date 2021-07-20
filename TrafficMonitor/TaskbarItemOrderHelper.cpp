@@ -85,6 +85,8 @@ CString CTaskbarItemOrderHelper::GetItemDisplayName(DisplayItem item)
         return CCommon::LoadText(IDS_HDD_TEMPERATURE);
     case TDI_MAIN_BOARD_TEMP:
         return CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
+    case TDI_HDD_USAGE:
+        return CCommon::LoadText(IDS_HDD_USAGE);
     default:
         break;
     }

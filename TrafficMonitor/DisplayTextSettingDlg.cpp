@@ -92,6 +92,9 @@ BOOL CDisplayTextSettingDlg::OnInitDialog()
         case TDI_MAIN_BOARD_TEMP:
             item_name = CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
             break;
+        case TDI_HDD_USAGE:
+            item_name = CCommon::LoadText(IDS_HDD_USAGE);
+            break;
 #endif
         default:
             break;
@@ -116,7 +119,7 @@ BOOL CDisplayTextSettingDlg::OnInitDialog()
 void CDisplayTextSettingDlg::OnOK()
 {
     // TODO: 在此添加专用代码和/或调用基类
-    
+
     int item_count = m_list_ctrl.GetItemCount();
     for (int i{}; i < item_count; i++)
     {
@@ -172,6 +175,9 @@ void CDisplayTextSettingDlg::OnBnClickedRestoreDefaultButton()
             break;
         case TDI_MAIN_BOARD_TEMP:
             default_text = CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": "));
+            break;
+        case TDI_HDD_USAGE:
+            default_text = CCommon::LoadText(IDS_HDD_DISP, _T(": "));
             break;
         default:
             break;
