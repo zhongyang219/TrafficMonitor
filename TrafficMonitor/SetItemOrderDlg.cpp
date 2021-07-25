@@ -90,7 +90,7 @@ void CSetItemOrderDlg::ShowItem()
 
 void CSetItemOrderDlg::EnableCtrl(int list_selected)
 {
-    int item_count{ static_cast<int>(m_item_order.GetItemOrderConst().size()) };
+    int item_count{ m_list_ctrl.GetCount() };
     EnableDlgCtrl(IDC_MOVE_UP_BUTTON, list_selected > 0 && list_selected < item_count);
     EnableDlgCtrl(IDC_MOVE_DOWN_BUTTON, list_selected >= 0 && list_selected < item_count - 1);
 }
