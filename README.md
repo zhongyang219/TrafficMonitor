@@ -42,8 +42,15 @@ Traffic Monitor是一款用于Windows平台的网速监控悬浮窗软件，可�
 多彩皮肤：<br>
 <img src="./Screenshots/skins.PNG" style="zoom:80%;" /><br>
 
-# 使用方法
-程序启动后在窗口点击鼠标右键可以弹出右键菜单，主要功能都集中在这个菜单中。如果需要让它嵌入到任务栏显示，请勾选“显示任务栏窗口”。要显示CPU和内存利用率，请勾选“显示更多信息”。
+# 如何使用
+程序启动后在会在屏幕中显示一个显示网速的悬浮窗。在悬浮窗上点击鼠标右键可以弹出右键菜单。
+
+TrafficMonitor支持将信息显示到任务栏。但是TrafficMonitor默认只显示主窗口（悬浮窗），如果需要让它嵌入到任务栏显示，请在右键菜单中选择“显示任务栏窗口”命令。
+
+任务栏窗口支持自定义显示项目，默认情况下只显示网速，如果需要显示CPU和内存利用率，请在任务栏右键菜单中的“显示设置”子菜单下勾选需要显示的项目，如下图所示：
+
+<img src="./Screenshots/taskbar_item_settings.png" style="zoom:80%;" />
+
 # 自定义皮肤
 <img src="./Screenshots/selecte_skin.png" style="zoom:80%;" /><br>
 在主窗口或通知区图标右键菜单上选择“其他功能”——“更换皮肤”可以打开更换皮肤界面。[点击此处](https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md)可以下载更多皮肤。用户还可以根据自己的需要编辑自己的皮肤。<br>

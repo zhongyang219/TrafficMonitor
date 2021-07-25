@@ -39,8 +39,15 @@ Traffic Monitor是一款用於Windows平台的網速監控懸浮窗軟體，可�
 多彩面板：<br>
 ![](./Screenshots/skins.PNG)<br>
 
-# 使用方法
-程式啟動後在視窗點選滑鼠右鍵可以彈出右鍵選單，主要功能都集中在這個選單中。如果需要讓它嵌入到工作列顯示，請勾選「顯示工作列視窗」。要顯示CPU和記憶體利用率，請勾選「顯示更多資訊」。
+# 如何使用
+程式啟動後在會在螢幕中顯示一個顯示網速的懸浮窗。在懸浮窗上點選滑鼠右鍵可以彈出右鍵選單。
+
+TrafficMonitor支援將資訊顯示到工作列。但是TrafficMonitor預設只顯示主視窗（懸浮窗），如果需要讓它嵌入到工作列顯示，請在右鍵選單中選擇“顯示工作列視窗”命令。
+
+工作列視窗支援自定義顯示專案，預設情況下只顯示網速，如果需要顯示CPU和記憶體利用率，請在工作列右鍵選單中的“顯示設定”子選單下勾選需要顯示的專案，如下圖所示：
+
+<img src="./Screenshots/taskbar_item_settings.png" style="zoom:80%;" />
+
 # 自訂面板
 ![](./Screenshots/selecte_skin.png)<br>
 在主視窗或通知區域圖示右鍵選單上選擇「其他功能」——「更換面板」可以打開更換面板介面。[點選此處](https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md)可以下載更多面板。使用者還可以根據自己的需要編輯自己的面板。<br>

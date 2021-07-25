@@ -43,6 +43,16 @@ Change Skins:<br>
 Options:<br>
 <img src="./Screenshots/en_us/option.jpg" style="zoom:80%;" /><br>
 
+# How to Use
+
+After the program is started, a floating window showing the network speed will be displayed on the screen. Click the right mouse button on the floating window to pop up the right-click menu.
+
+TrafficMonitor supports displaying information to the taskbar. But TrafficMonitor only displays the main window (floating window) by default. If you want to embed it in the taskbar display, please select the "Show taskbar window" command in the right-click menu.
+
+Taskbar window supports customization of display items. By default, only the network speed is displayed. If you need to display the CPU and memory usage, please check the items that need to be displayed under the "Display Settings" submenu in the taskbar right-click menu, as shown in the figure below:
+
+<img src="./Screenshots/en_us/taskbar_item_settings.png" style="zoom:80%;" />
+
 # About the hardware monitoring function
 
 Starting from version 1.80,  the hardware monitoring functions (including temperature monitoring and graphics card usage monitoring) has been added in TrafficMonitor. It relied on the  open source library [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor). If you encounter problems when using the temperature monitoring function, please [click here](https://github.com/zhongyang219/TrafficMonitor/blob/master/Help_en-us.md#13-about-the-temperature-monitoring-of-trafficmonitor). 
@@ -54,7 +64,3 @@ It should be noted that the temperature monitoring function is turned off by def
 # Update log
 
 **[Click here to view the update log.](./UpdateLog/update_log_en-us.md)**
-
-# About the repository of this project on Gitee
-
-The repository on Gitee is only used as a backup of the GitHub repository. All my code submissions are made on GitHub. The Gitee repository will synchronize the updates of the GitHub repository from time to time. Therefore, the repository on Gitee does not accept any pull requests. If you want to contribute your code to TrafficMonitor, please submit your pull request on GitHub.
