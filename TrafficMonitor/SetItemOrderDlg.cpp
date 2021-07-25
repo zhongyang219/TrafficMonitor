@@ -138,8 +138,9 @@ void CSetItemOrderDlg::OnBnClickedMoveDownButton()
 void CSetItemOrderDlg::OnBnClickedRestoreDefaultButton()
 {
     // TODO: 在此添加控件通知处理程序代码
-    auto& item_list{ m_item_order.GetItemOrder() };
+    auto item_list{ m_item_order.GetItemOrder() };
     std::sort(item_list.begin(), item_list.end());
+    m_item_order.SetOrder(item_list);
     ShowItem();
 }
 
