@@ -197,7 +197,6 @@ struct MainConfigData
     bool m_hide_main_window;            //隐藏主窗口
     bool m_show_notify_icon{ true };    //显示通知区域图标
     //bool m_tbar_show_cpu_memory;      //任务栏窗口显示CPU和内存利用率
-    unsigned int m_tbar_display_item{ TDI_UP | TDI_DOWN };      //任务栏窗口显示的项目
 
     int m_position_x;   //窗口位置的x坐标
     int m_position_y;   //窗口位置的y坐标
@@ -284,6 +283,7 @@ struct TaskBarSettingData : public PublicSettingData
     bool auto_set_background_color{ false };        //根据任务栏颜色自动设置背景色
 
     CTaskbarItemOrderHelper item_order;
+    unsigned int m_tbar_display_item{ TDI_UP | TDI_DOWN };      //任务栏窗口显示的项目
 
     bool value_right_align{ false };    //数值是否右对齐
     int digits_number{ 4 };             //数据位数

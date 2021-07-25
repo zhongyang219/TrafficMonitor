@@ -294,6 +294,9 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_MEMORY_AVAILABLE));
     m_memory_display_combo.SetCurSel(static_cast<int>(m_data.memory_display));
 
+    ((CButton*)GetDlgItem(IDC_SET_ORDER_BUTTON))->SetIcon(theApp.GetMenuIcon(IDI_ITEM));
+
+
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE
 }
@@ -818,8 +821,10 @@ void CTaskBarSettingsDlg::OnBnClickedSetOrderButton()
     // TODO: 在此添加控件通知处理程序代码
     CSetItemOrderDlg dlg;
     dlg.SetItemOrder(m_data.item_order.GetItemOrderConst());
+    dlg.SetDisplayItem(m_data.m_tbar_display_item);
     if (dlg.DoModal() == IDOK)
     {
         m_data.item_order.SetOrder(dlg.GetItemOrder());
+        m_data.m_tbar_display_item = dlg.GetDisplayItem();
     }
 }

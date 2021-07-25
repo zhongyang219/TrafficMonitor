@@ -793,14 +793,14 @@ void CTrafficMonitorDlg::TaskbarShowHideItem(DisplayItem type)
 {
     if (IsTaskbarWndValid())
     {
-        bool show = (theApp.m_cfg_data.m_tbar_display_item & type);
+        bool show = (theApp.m_taskbar_data.m_tbar_display_item & type);
         if (show)
         {
-            theApp.m_cfg_data.m_tbar_display_item &= ~type;
+            theApp.m_taskbar_data.m_tbar_display_item &= ~type;
         }
         else
         {
-            theApp.m_cfg_data.m_tbar_display_item |= type;
+            theApp.m_taskbar_data.m_tbar_display_item |= type;
         }
         CloseTaskBarWnd();
         OpenTaskBarWnd();
@@ -2052,16 +2052,16 @@ void CTrafficMonitorDlg::OnShowCpuMemory2()
     // TODO: 在此添加命令处理程序代码
     if (m_tBarDlg != nullptr)
     {
-        bool show_cpu_memory = ((theApp.m_cfg_data.m_tbar_display_item & TDI_CPU) || (theApp.m_cfg_data.m_tbar_display_item & TDI_MEMORY));
+        bool show_cpu_memory = ((theApp.m_taskbar_data.m_tbar_display_item & TDI_CPU) || (theApp.m_taskbar_data.m_tbar_display_item & TDI_MEMORY));
         if (show_cpu_memory)
         {
-            theApp.m_cfg_data.m_tbar_display_item &= ~TDI_CPU;
-            theApp.m_cfg_data.m_tbar_display_item &= ~TDI_MEMORY;
+            theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_CPU;
+            theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_MEMORY;
         }
         else
         {
-            theApp.m_cfg_data.m_tbar_display_item |= TDI_CPU;
-            theApp.m_cfg_data.m_tbar_display_item |= TDI_MEMORY;
+            theApp.m_taskbar_data.m_tbar_display_item |= TDI_CPU;
+            theApp.m_taskbar_data.m_tbar_display_item |= TDI_MEMORY;
         }
         //theApp.m_cfg_data.m_tbar_show_cpu_memory = !theApp.m_cfg_data.m_tbar_show_cpu_memory;
         //切换显示CPU和内存利用率时，删除任务栏窗口，再重新显示
@@ -2387,16 +2387,16 @@ void CTrafficMonitorDlg::OnShowNetSpeed()
     // TODO: 在此添加命令处理程序代码
     if (m_tBarDlg != nullptr)
     {
-        bool show_net_speed = ((theApp.m_cfg_data.m_tbar_display_item & TDI_UP) || (theApp.m_cfg_data.m_tbar_display_item & TDI_DOWN));
+        bool show_net_speed = ((theApp.m_taskbar_data.m_tbar_display_item & TDI_UP) || (theApp.m_taskbar_data.m_tbar_display_item & TDI_DOWN));
         if (show_net_speed)
         {
-            theApp.m_cfg_data.m_tbar_display_item &= ~TDI_UP;
-            theApp.m_cfg_data.m_tbar_display_item &= ~TDI_DOWN;
+            theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_UP;
+            theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_DOWN;
         }
         else
         {
-            theApp.m_cfg_data.m_tbar_display_item |= TDI_UP;
-            theApp.m_cfg_data.m_tbar_display_item |= TDI_DOWN;
+            theApp.m_taskbar_data.m_tbar_display_item |= TDI_UP;
+            theApp.m_taskbar_data.m_tbar_display_item |= TDI_DOWN;
         }
         CloseTaskBarWnd();
         OpenTaskBarWnd();

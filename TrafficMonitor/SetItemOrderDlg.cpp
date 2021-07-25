@@ -12,7 +12,7 @@
 IMPLEMENT_DYNAMIC(CSetItemOrderDlg, CBaseDialog)
 
 CSetItemOrderDlg::CSetItemOrderDlg(CWnd* pParent /*=nullptr*/)
-	: CBaseDialog(IDD_SELECT_ORDER_DIALOG, pParent)
+	: CBaseDialog(IDD_SELECT_ORDER_DIALOG, pParent), m_item_order(true)
 {
 
 }
@@ -29,6 +29,16 @@ void CSetItemOrderDlg::SetItemOrder(const std::vector<int>& item_order)
 const std::vector<int>& CSetItemOrderDlg::GetItemOrder() const
 {
     return m_item_order.GetItemOrderConst();
+}
+
+void CSetItemOrderDlg::SetDisplayItem(unsigned int display_item)
+{
+    m_display_item = display_item;
+}
+
+unsigned int CSetItemOrderDlg::GetDisplayItem() const
+{
+    return m_display_item;
 }
 
 void CSetItemOrderDlg::DoDataExchange(CDataExchange* pDX)
@@ -55,6 +65,8 @@ BOOL CSetItemOrderDlg::OnInitDialog()
 
     // TODO:  在此添加额外的初始化
     SetIcon(theApp.GetMenuIcon(IDI_ITEM), FALSE);		// 设置小图标
+
+    m_list_ctrl.SetItemHeight(0, theApp.DPI(20));
     EnableCtrl(-1);
     ShowItem();
 
@@ -69,6 +81,10 @@ void CSetItemOrderDlg::ShowItem()
     for (const auto& item : item_list)
     {
         m_list_ctrl.AddString(CTaskbarItemOrderHelper::GetItemDisplayName(item));
+        if (m_display_item & item)
+            m_list_ctrl.SetCheck(m_list_ctrl.GetCount() - 1, TRUE);
+        else
+            m_list_ctrl.SetCheck(m_list_ctrl.GetCount() - 1, FALSE);
     }
 }
 
@@ -98,6 +114,7 @@ void CSetItemOrderDlg::OnBnClickedMoveUpButton()
         std::swap(item_list[cur_index], item_list[cur_index - 1]);
         ShowItem();
         m_list_ctrl.SetCurSel(cur_index - 1);
+        EnableCtrl(cur_index - 1);
     }
 }
 
@@ -113,6 +130,7 @@ void CSetItemOrderDlg::OnBnClickedMoveDownButton()
         std::swap(item_list[cur_index], item_list[cur_index + 1]);
         ShowItem();
         m_list_ctrl.SetCurSel(cur_index + 1);
+        EnableCtrl(cur_index + 1);
     }
 }
 
@@ -136,4 +154,27 @@ void CSetItemOrderDlg::OnLbnSelchangeList1()
     // TODO: 在此添加控件通知处理程序代码
     int cur_index{ m_list_ctrl.GetCurSel() };
     EnableCtrl(cur_index);
+}
+
+
+void CSetItemOrderDlg::OnOK()
+{
+    // TODO: 在此添加专用代码和/或调用基类
+
+    //保存每个项目的勾选状态
+    auto item_list = m_item_order.GetAllDisplayItemsWithOrder();
+    for (int i = 0; i < static_cast<int>(item_list.size()); i++)
+    {
+        bool is_checked = (m_list_ctrl.GetCheck(i) != 0);
+        DisplayItem item = item_list[i];
+        if (is_checked)
+            m_display_item |= item;
+        else
+            m_display_item &= ~item;
+    }
+
+    if (m_display_item == 0)
+        m_display_item = TDI_UP;
+
+    CBaseDialog::OnOK();
 }

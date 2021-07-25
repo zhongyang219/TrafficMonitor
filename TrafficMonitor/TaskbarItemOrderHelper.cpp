@@ -1,8 +1,10 @@
 ﻿#include "stdafx.h"
 #include "TaskbarItemOrderHelper.h"
 #include "Common.h"
+#include "TrafficMonitor.h"
 
-CTaskbarItemOrderHelper::CTaskbarItemOrderHelper()
+CTaskbarItemOrderHelper::CTaskbarItemOrderHelper(bool displayed_only)
+    : m_displayed_only(displayed_only)
 {
     for (const auto& item : AllDisplayItems)
     {
@@ -16,7 +18,13 @@ std::vector<DisplayItem> CTaskbarItemOrderHelper::GetAllDisplayItemsWithOrder() 
     for (auto i : m_item_order)
     {
         if (i >= 0 && i < static_cast<int>(m_all_item_in_default_order.size()))
+        {
+            if (m_displayed_only && !IsItemDisplayed(m_all_item_in_default_order[i]))
+            {
+                continue;
+            }
             items.push_back(m_all_item_in_default_order[i]);
+        }
     }
 
     return items;
@@ -93,6 +101,21 @@ CString CTaskbarItemOrderHelper::GetItemDisplayName(DisplayItem item)
     return CString();
 }
 
+bool CTaskbarItemOrderHelper::IsItemDisplayed(DisplayItem item)
+{
+    bool displayed = true;
+    if (item == TDI_CPU_TEMP && !theApp.m_general_data.IsHardwareEnable(HI_CPU))
+        displayed = false;
+    if ((item == TDI_GPU_TEMP || item == TDI_GPU_USAGE) && !theApp.m_general_data.IsHardwareEnable(HI_GPU))
+        displayed = false;
+    if ((item == TDI_HDD_TEMP || item == TDI_HDD_USAGE) && !theApp.m_general_data.IsHardwareEnable(HI_HDD))
+        displayed = false;
+    if (item == TDI_MAIN_BOARD_TEMP && !theApp.m_general_data.IsHardwareEnable(HI_MBD))
+        displayed = false;
+
+    return displayed;
+}
+
 void CTaskbarItemOrderHelper::NormalizeItemOrder()
 {
     //检查是否有超出范围的序号
@@ -103,6 +126,23 @@ void CTaskbarItemOrderHelper::NormalizeItemOrder()
             iter = m_item_order.erase(iter);
         else
             ++iter;
+    }
+    //删除不显示的序号
+    if (m_displayed_only)
+    {
+        for (auto iter = m_item_order.begin(); iter != m_item_order.end();)
+        {
+            if (*iter >= 0 && *iter < static_cast<int>(m_all_item_in_default_order.size()))
+            {
+                DisplayItem item = m_all_item_in_default_order[*iter];
+                if (!IsItemDisplayed(item))
+                {
+                    iter = m_item_order.erase(iter);
+                    continue;
+                }
+            }
+            ++iter;
+        }
     }
     //删除重复的序号
     CCommon::RemoveVectorDuplicateItem(m_item_order);

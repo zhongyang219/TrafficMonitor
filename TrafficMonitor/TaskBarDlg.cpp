@@ -70,14 +70,14 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
     //计算各部分的位置
     int index = 0;
     CRect item_rect{};
-    int item_count = CCommon::CountOneBits(theApp.m_cfg_data.m_tbar_display_item);  //要显示的项目数量
+    int item_count = CCommon::CountOneBits(theApp.m_taskbar_data.m_tbar_display_item);  //要显示的项目数量
     auto item_order{ theApp.m_taskbar_data.item_order.GetAllDisplayItemsWithOrder() };
     auto last_iter = item_order.begin();
     for (auto iter = item_order.begin(); iter != item_order.end(); ++iter)
     {
         auto item_width = m_item_widths[*iter];
         auto last_item_width = m_item_widths[*last_iter];
-        if (theApp.m_cfg_data.m_tbar_display_item & *iter)    //如果此项需要显示出来才绘制
+        if (theApp.m_taskbar_data.m_tbar_display_item & *iter)    //如果此项需要显示出来才绘制
         {
             //任务栏在桌面顶部或底部
             if (IsTasksbarOnTopOrBottom())
@@ -613,9 +613,9 @@ void CTaskBarDlg::ApplySettings()
 void CTaskBarDlg::CalculateWindowSize()
 {
     bool horizontal_arrange = theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom;
-    if (theApp.m_cfg_data.m_tbar_display_item == 0)
-        theApp.m_cfg_data.m_tbar_display_item |= TDI_UP;        //至少显示一项
-    int item_count = CCommon::CountOneBits(theApp.m_cfg_data.m_tbar_display_item);
+    if (theApp.m_taskbar_data.m_tbar_display_item == 0)
+        theApp.m_taskbar_data.m_tbar_display_item |= TDI_UP;        //至少显示一项
+    int item_count = CCommon::CountOneBits(theApp.m_taskbar_data.m_tbar_display_item);
 
     m_item_widths.clear();
 
@@ -708,7 +708,7 @@ void CTaskBarDlg::CalculateWindowSize()
             for (auto iter = item_order.begin(); iter != item_order.end(); ++iter)
             {
                 auto item_width = m_item_widths[*iter];
-                if (theApp.m_cfg_data.m_tbar_display_item & *iter)
+                if (theApp.m_taskbar_data.m_tbar_display_item & *iter)
                     m_window_width += item_width.TotalWidth();
             }
             m_window_width += theApp.DPI(4) * item_count;   //加上每个标签间的空隙
@@ -720,7 +720,7 @@ void CTaskBarDlg::CalculateWindowSize()
             for (auto iter = item_order.begin(); iter != item_order.end(); ++iter)
             {
                 auto item_width = m_item_widths[*iter];
-                if (theApp.m_cfg_data.m_tbar_display_item & *iter)
+                if (theApp.m_taskbar_data.m_tbar_display_item & *iter)
                 {
                     if (index % 2 == 0)
                     {
@@ -747,7 +747,7 @@ void CTaskBarDlg::CalculateWindowSize()
         //所有标签中最大的宽度即为窗口宽度
         for (auto iter = m_item_widths.begin(); iter != m_item_widths.end(); ++iter)
         {
-            if (theApp.m_cfg_data.m_tbar_display_item & iter->first)
+            if (theApp.m_taskbar_data.m_tbar_display_item & iter->first)
             {
                 if (m_window_width < iter->second.TotalWidth())
                     m_window_width = iter->second.TotalWidth();
@@ -790,62 +790,62 @@ void CTaskBarDlg::UpdateToolTips()
 
 bool CTaskBarDlg::IsShowCpuMemory()
 {
-    return ((theApp.m_cfg_data.m_tbar_display_item & TDI_CPU) || (theApp.m_cfg_data.m_tbar_display_item & TDI_MEMORY));
+    return ((theApp.m_taskbar_data.m_tbar_display_item & TDI_CPU) || (theApp.m_taskbar_data.m_tbar_display_item & TDI_MEMORY));
 }
 
 bool CTaskBarDlg::IsShowNetSpeed()
 {
-    return ((theApp.m_cfg_data.m_tbar_display_item & TDI_UP) || (theApp.m_cfg_data.m_tbar_display_item & TDI_DOWN));
+    return ((theApp.m_taskbar_data.m_tbar_display_item & TDI_UP) || (theApp.m_taskbar_data.m_tbar_display_item & TDI_DOWN));
 }
 
 bool CTaskBarDlg::IsShowUp()
 {
-    return (theApp.m_cfg_data.m_tbar_display_item & TDI_UP);
+    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_UP);
 }
 
 bool CTaskBarDlg::IsShowDown()
 {
-    return (theApp.m_cfg_data.m_tbar_display_item & TDI_DOWN);
+    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_DOWN);
 }
 
 bool CTaskBarDlg::IsShowCpu()
 {
-    return (theApp.m_cfg_data.m_tbar_display_item & TDI_CPU);
+    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_CPU);
 }
 
 bool CTaskBarDlg::IsShowMemory()
 {
-    return (theApp.m_cfg_data.m_tbar_display_item & TDI_MEMORY);
+    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_MEMORY);
 }
 
 bool CTaskBarDlg::IsShowGpu()
 {
-    return (theApp.m_cfg_data.m_tbar_display_item & TDI_GPU_USAGE);
+    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_GPU_USAGE);
 }
 
 bool CTaskBarDlg::IsShowCpuTemperature()
 {
-    return (theApp.m_cfg_data.m_tbar_display_item & TDI_CPU_TEMP);
+    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_CPU_TEMP);
 }
 
 bool CTaskBarDlg::IsShowGpuTemperature()
 {
-    return (theApp.m_cfg_data.m_tbar_display_item & TDI_GPU_TEMP);
+    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_GPU_TEMP);
 }
 
 bool CTaskBarDlg::IsShowHddTemperature()
 {
-    return (theApp.m_cfg_data.m_tbar_display_item & TDI_HDD_TEMP);
+    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_HDD_TEMP);
 }
 
 bool CTaskBarDlg::IsShowMainboardTemperature()
 {
-    return (theApp.m_cfg_data.m_tbar_display_item & TDI_MAIN_BOARD_TEMP);
+    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_MAIN_BOARD_TEMP);
 }
 
 bool CTaskBarDlg::IsShowHddUsage()
 {
-    return (theApp.m_cfg_data.m_tbar_display_item & TDI_HDD_USAGE);
+    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_HDD_USAGE);
 }
 
 BOOL CTaskBarDlg::OnInitDialog()

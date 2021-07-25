@@ -11,8 +11,13 @@ public:
 	CSetItemOrderDlg(CWnd* pParent = nullptr);   // 标准构造函数
 	virtual ~CSetItemOrderDlg();
 
+    //设置/获取显示顺序
     void SetItemOrder(const std::vector<int>& item_order);
     const std::vector<int>& GetItemOrder() const;
+
+    //设置/获取显示项目，使用unsigned int的每个bit表示对应项目是否显示
+    void SetDisplayItem(unsigned int display_item);
+    unsigned int GetDisplayItem() const;
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
@@ -21,7 +26,8 @@ public:
 
 private:
     CTaskbarItemOrderHelper m_item_order;
-    CListBox m_list_ctrl;
+    CCheckListBox m_list_ctrl;
+    unsigned int m_display_item;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
@@ -39,4 +45,5 @@ public:
     afx_msg void OnBnClickedMoveDownButton();
     afx_msg void OnBnClickedRestoreDefaultButton();
     afx_msg void OnLbnSelchangeList1();
+    virtual void OnOK();
 };
