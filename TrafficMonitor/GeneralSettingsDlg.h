@@ -13,6 +13,8 @@ public:
     CGeneralSettingsDlg(CWnd* pParent = NULL);   // standard constructor
     virtual ~CGeneralSettingsDlg();
 
+    static void CheckTaskbarDisplayItem();
+
     //选项设置数据
     GeneralSettingData m_data;
 
@@ -25,14 +27,14 @@ public:
     bool IsAutoRunModified() const { return m_auto_run_modified; }
     bool IsShowAllInterfaceModified() const { return m_show_all_interface_modified; }
     bool IsMonitorTimeSpanModified() const;
-    bool IsTaskbarItemModified() const { return m_taskbar_item_modified; }
+    //bool IsTaskbarItemModified() const { return m_taskbar_item_modified; }
 
 protected:
     bool m_auto_run_modified{ false };      //如果更改了开机自动运行的设置，则会置为true
     bool m_show_all_interface_modified{ false };
     int m_monitor_time_span_ori{};
     int m_update_source_ori{};
-    bool m_taskbar_item_modified{ false };
+    //bool m_taskbar_item_modified{ false };
 
     //控件变量
     CSpinEdit m_traffic_tip_edit;

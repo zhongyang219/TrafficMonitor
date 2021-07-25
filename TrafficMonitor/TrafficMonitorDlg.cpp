@@ -636,6 +636,8 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
         theApp.m_taskbar_data = optionsDlg.m_tab2_dlg.m_data;
         theApp.m_general_data = optionsDlg.m_tab3_dlg.m_data;
 
+        CGeneralSettingsDlg::CheckTaskbarDisplayItem();
+
         SetTextFont();
 
         //CTaskBarDlg::SaveConfig();
