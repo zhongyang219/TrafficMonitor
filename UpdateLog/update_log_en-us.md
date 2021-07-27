@@ -1,6 +1,15 @@
 **[简体中文](./update_log.md) | [繁體中文](./update_log_zh-tw.md) | English**<br>
 
 # TrafficMonitor Update log
+## V1.81 (2021/07/27)
+
+* Fixed some crashes since version 1.80.
+* Added the support of custom sorting of the items in the taskbar window.
+* When the number of items displayed in the taskbar window is odd, the last item is arranged vertically to save space on the taskbar.
+* Added the function of monitoring the hard disk usage.
+* Add some settings in the right-click menu to the option settings dialog.
+* Added the support for multiple monitors of the main window. You can move the main window to other monitors without checking "Allow out of screen boundaries".
+
 ## V1.80.3 (2021/05/29)
 
 * Fixed the problem that the CPU temperature cannot be displayed
