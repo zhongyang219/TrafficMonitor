@@ -1058,24 +1058,40 @@ void CTrafficMonitorApp::OnHelp()
 void CTrafficMonitorApp::OnFrequentyAskedQuestions()
 {
     // TODO: 在此添加命令处理程序代码
-    CString language_code;
-    language_code.LoadString(IDS_LANGUAGE_CODE);
-    if (language_code == _T("2"))
-        ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/Help.md"), NULL, NULL, SW_SHOW);
+    CString url_domain;
+    if (static_cast<CUpdateHelper::UpdateSource>(m_general_data.update_source) == CUpdateHelper::UpdateSource::GiteeSource)
+        url_domain = _T("gitee.com");
     else
-        ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/Help_en-us.md"), NULL, NULL, SW_SHOW);
+        url_domain = _T("github.com");
+    CString language_code{ CCommon::LoadText(IDS_LANGUAGE_CODE) };
+    CString file_name;
+    if (language_code == _T("2"))
+        file_name = _T("Help.md");
+    else
+        file_name = _T("Help_en-us.md");
+    CString url;
+    url.Format(_T("https://%s/zhongyang219/TrafficMonitor/blob/master/%s"), url_domain.GetString(), file_name.GetString());
+    ShellExecute(NULL, _T("open"), url, NULL, NULL, SW_SHOW);
 }
 
 
 void CTrafficMonitorApp::OnUpdateLog()
 {
     // TODO: 在此添加命令处理程序代码
-    CString language_code;
-    language_code.LoadString(IDS_LANGUAGE_CODE);
-    if (language_code == _T("2"))
-        ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log.md"), NULL, NULL, SW_SHOW);
-    else if (language_code == _T("3"))
-        ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_zh-tw.md"), NULL, NULL, SW_SHOW);
+    CString url_domain;
+    if (static_cast<CUpdateHelper::UpdateSource>(m_general_data.update_source) == CUpdateHelper::UpdateSource::GiteeSource)
+        url_domain = _T("gitee.com");
     else
-        ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/blob/master/UpdateLog/update_log_en-us.md"), NULL, NULL, SW_SHOW);
+        url_domain = _T("github.com");
+    CString language_code{ CCommon::LoadText(IDS_LANGUAGE_CODE) };
+    CString file_name;
+    if (language_code == _T("2"))
+        file_name = _T("update_log.md");
+    else if (language_code == _T("3"))
+        file_name = _T("update_log_zh-tw.md");
+    else
+        file_name = _T("update_log_en-us.md");
+    CString url;
+    url.Format(_T("https://%s/zhongyang219/TrafficMonitor/blob/master/UpdateLog/%s"), url_domain.GetString(), file_name.GetString());
+    ShellExecute(NULL, _T("open"), url, NULL, NULL, SW_SHOW);
 }
