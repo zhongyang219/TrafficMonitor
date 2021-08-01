@@ -31,6 +31,8 @@
 
   如果你遇到无法开机自启动的情况，请到“任务计划程序”中检查TrafficMonitor的计划任务是否正常创建，exe文件的路径是否正确。
 
+开机无法自启动的一个常见原因是你可能移动了TrafficMonitor主程序的位置。如果你为TrafficMonitor设置好了开机自动运行，但是你将TrafficMonitor移动到了其他位置，那么开机自启动肯定就失效了。你需要打开TrafficMonitor的“选项设置”——“常规设置”，如果“开机时自动运行”处于勾选状态，先去掉勾选，然后再次打开“选项设置”——“常规设置”，重新勾选“开机时自动运行”即可。
+
 需要注意的是，如果你使用不含温度监控的版本在注册表中创建了开机自启动项，然后再使用包含温度监控的版本开启开机自启动功能，它会自动将注册表中的开机自启动项删除，再在任务计划中创建开机自启动项。反之亦然。
 
 ### 4. 程序弹出“无法保存设置”的对话框。
@@ -111,13 +113,13 @@ portable_mode = true
 
 ### 13. 关于TrafficMonitor温度监控的问题
 
+由于温度监控功能在某些电脑中存在一些问题，因此温度监控功能默认是关闭的，如果你要使用TrafficMonitor的温度监控功能，请到[“选项设置”-“常规设置”-“硬件监控”](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#硬件监控)中开启。开启后，任务栏右键菜单中的“显示设置”子菜单下才会出现温度相关的项目。
+
 TrafficMonitor的温度监控功能依赖第三方开源库[LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)。如果你遇到硬件温度无法显示，或者显示的温度异常的问题，请先下载LibreHardwareMonitor，并查看LibreHardwareMonitor是否能正常显示对应的温度。
 
 如果LibreHardwareMonitor也无法显示对应硬件的温度，那么我也无法解决这个问题，你可以向LibreHardwareMonitor作者反馈你的问题。
 
 如果LibreHardwareMonitor可以正常显示对应硬件的温度，请向我反馈这个问题，同时提供LibreHardwareMonitor的截图，以便我调查你的问题。
-
-需要注意的是，温度监控功能默认是关闭的，如果你要使用TrafficMonitor的温度监控功能，请到[“选项设置”-“常规设置”-“硬件监控”](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#硬件监控)中开启。
 
 **注意：硬件监控功能（包括温度监控和显卡使用率监控）可能存在一些问题，它可能会占用更多的CPU和内存。据部分用户反馈，开启温度功能后会导致程序崩溃和系统死机等问题，请在知晓以上风险后再决定开启硬件监控功能。否则，请不要使用硬件监控功能。**
 

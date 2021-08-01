@@ -11,7 +11,7 @@ Traffic Monitor是一款用於Windows平台的網速監控懸浮窗軟體，可�
 
 請[點選此處](https://github.com/zhongyang219/TrafficMonitor/releases/latest)下載TrafficMonitor的最新版本。<br>
 備用連結：[百度網盤下載](https://pan.baidu.com/s/15PMt7s-ASpyDwtS__4cUhg) 提取码：`ou0m`<br>
-如果遇到問題，請[點選此處](https://github.com/zhongyang219/TrafficMonitor/blob/master/Help.md)。<br>
+如果遇到問題，請[點選此處](./Help.md)。<br>
 
 你也可以[點擊此處](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI")下載TrafficMonitor的預發行構建版本。
 
@@ -56,7 +56,7 @@ TrafficMonitor支援將資訊顯示到工作列。但是TrafficMonitor預設只�
 
 從1.80版本開始增加了xml格式的面板配置檔案`skin.xml`，只有xml格式的面板配置檔案才支援溫度和顯示卡使用率顯示。
 
-詳細的面板製作教程請[點選此處](https://github.com/zhongyang219/TrafficMonitor/blob/master/皮肤制作教程.md)。<br>
+詳細的面板製作教程請[點選此處](./皮肤制作教程.md)。<br>
 推薦使用[面板編輯器](https://github.com/zhongyang219/TrafficMonitorSkinEditor/releases)來建立或編輯面板。<br>
 
 # 選項設定
@@ -67,7 +67,7 @@ TrafficMonitor支援將資訊顯示到工作列。但是TrafficMonitor預設只�
 
 # 關於硬體監控功能
 
-從1.80版本開始，TrafficMonitor加入了硬體監控功能（包括溫度監控和顯示卡使用率監控），它使用了第三方開源庫[LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)。如果你在使用溫度監控功能時遇到了問題，請[點選這裡](https://github.com/zhongyang219/TrafficMonitor/blob/master/Help.md#13-关于trafficmonitor温度监控的问题)。
+從1.80版本開始，TrafficMonitor加入了硬體監控功能（包括溫度監控和顯示卡使用率監控），它使用了第三方開源庫[LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)。如果你在使用溫度監控功能時遇到了問題，請[點選這裡](./Help.md#13-关于trafficmonitor温度监控的问题)。
 
 需要注意的是，溫度監控功能默認是關閉的，如果你要使用TrafficMonitor的溫度監控功能，請到[“選項設定”-“常規設定”-“硬體監控”](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#硬件监控)中開啟。
 

@@ -11,7 +11,7 @@ TrafficMonitor is a network monitoring suspension window software in Windows pla
 
 Please [click here](https://github.com/zhongyang219/TrafficMonitor/releases/latest) to download the latest version of TrafficMonitor.<br>
 Alternate link: Download from [Baidu Netdisk](https://pan.baidu.com/s/15PMt7s-ASpyDwtS__4cUhg). Access code: `ou0m`<br>
-If you encounter any problems, please [click here](https://github.com/zhongyang219/TrafficMonitor/blob/master/Help_en-us.md).<br>
+If you encounter any problems, please [click here](./Help_en-us.md).<br>
 
 You can also [click here](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI") to download the pre-release build version of TrafficMonitor.
 
@@ -55,7 +55,7 @@ Taskbar window supports customization of display items. By default, only the net
 
 # About the hardware monitoring function
 
-Starting from version 1.80,  the hardware monitoring functions (including temperature monitoring and graphics card usage monitoring) has been added in TrafficMonitor. It relied on the  open source library [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor). If you encounter problems when using the temperature monitoring function, please [click here](https://github.com/zhongyang219/TrafficMonitor/blob/master/Help_en-us.md#13-about-the-temperature-monitoring-of-trafficmonitor). 
+Starting from version 1.80,  the hardware monitoring functions (including temperature monitoring and graphics card usage monitoring) has been added in TrafficMonitor. It relied on the  open source library [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor). If you encounter problems when using the temperature monitoring function, please [click here](./Help_en-us.md#13-about-the-temperature-monitoring-of-trafficmonitor). 
 
 It should be noted that the temperature monitoring function is turned off by default. If you want to use the temperature monitoring function of TrafficMonitor, please go to ["Option Settings"-"General Settings"-"Hardware Monitoring"](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#硬件监控) to enable it.
 

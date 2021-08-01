@@ -14,7 +14,7 @@ Traffic Monitor是一款用于Windows平台的网速监控悬浮窗软件，可�
 
 国内用户如果遇到Github下载缓慢的问题，可以[点击此处](https://gitee.com/zhongyang219/TrafficMonitor)转到此项目在Gitee上的页面。
 
-如果遇到问题，请[点击此处](https://github.com/zhongyang219/TrafficMonitor/blob/master/Help.md)。<br>
+如果遇到问题，请[点击此处](./Help.md)。<br>
 
 你也可以[点击此处](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI")下载TrafficMonitor的预发行构建版本。
 
@@ -59,7 +59,7 @@ TrafficMonitor支持将信息显示到任务栏。但是TrafficMonitor默认只�
 
 从1.80版本开始增加了xml格式的皮肤配置文件`skin.xml`，只有xml格式的皮肤配置文件才支持温度和显卡使用率显示。
 
-详细的皮肤制作教程请[点击此处](https://github.com/zhongyang219/TrafficMonitor/blob/master/皮肤制作教程.md)。<br>
+详细的皮肤制作教程请[点击此处](./皮肤制作教程.md)。<br>
 推荐使用[皮肤编辑器](https://github.com/zhongyang219/TrafficMonitorSkinEditor/releases)来创建或编辑皮肤。<br>
 
 # 选项设置
@@ -70,7 +70,7 @@ TrafficMonitor支持将信息显示到任务栏。但是TrafficMonitor默认只�
 
 # 关于硬件监控功能
 
-从1.80版本开始，TrafficMonitor加入了硬件监控功能（包括温度监控和显卡使用率监控），它使用了第三方开源库[LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)。如果你在使用温度监控功能时遇到了问题，请[点击这里](https://github.com/zhongyang219/TrafficMonitor/blob/master/Help.md#13-关于trafficmonitor温度监控的问题)。
+从1.80版本开始，TrafficMonitor加入了硬件监控功能（包括温度监控和显卡使用率监控），它使用了第三方开源库[LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)。如果你在使用温度监控功能时遇到了问题，请[点击这里](./Help.md#13-关于trafficmonitor温度监控的问题)。
 
 需要注意的是，温度监控功能默认是关闭的，如果你要使用TrafficMonitor的温度监控功能，请到[“选项设置”-“常规设置”-“硬件监控”](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#硬件监控)中开启。
 
