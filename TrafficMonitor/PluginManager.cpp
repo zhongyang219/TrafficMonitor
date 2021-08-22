@@ -29,11 +29,10 @@ void CPluginManager::LoadPlugins()
             continue;
         }
         //获取函数的入口地址
-        typedef int (*pfTMPluginGetItemNum)();
         pfTMPluginGetItemNum TMPluginGetItemNum = (pfTMPluginGetItemNum)::GetProcAddress(plugin_info.plugin_module, "TMPluginGetItemNum");
-        typedef IPluginItem* (*pfTMPluginCreateInstance)(int);
         pfTMPluginCreateInstance TMPluginCreateInstance = (pfTMPluginCreateInstance)::GetProcAddress(plugin_info.plugin_module, "TMPluginCreateInstance");
-        if (TMPluginGetItemNum == NULL || TMPluginCreateInstance == NULL)
+        plugin_info.MPluginInfoRequired = (pfTMPluginInfoRequired)::GetProcAddress(plugin_info.plugin_module, "TMPluginInfoRequired");
+        if (TMPluginGetItemNum == NULL || TMPluginCreateInstance == NULL || plugin_info.MPluginInfoRequired == NULL)
         {
             plugin_info.state = PluginState::PS_FUNCTION_GET_FAILED;
             plugin_info.error_code = GetLastError();
@@ -49,7 +48,12 @@ void CPluginManager::LoadPlugins()
     }
 }
 
-const std::vector<std::shared_ptr<IPluginItem>>& CPluginManager::GetPlugins()
+const std::vector<std::shared_ptr<IPluginItem>>& CPluginManager::GetPluginItems()
 {
     return m_plugins;
+}
+
+const std::vector<CPluginManager::PluginInfo>& CPluginManager::GetPlugins()
+{
+    return m_modules;
 }

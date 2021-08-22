@@ -378,7 +378,7 @@
       <Filter>源文件和头文件\头文件</Filter>
     </ClInclude>
     <ClInclude Include="PluginManager.h">
-      <Filter>源文件和头文件\头文件</Filter>
+      <Filter>源文件和头文件\公共的类\PluginManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -557,7 +557,7 @@
       <Filter>源文件和头文件\对话框类\选项设置对话框\SetItemOrderDlg</Filter>
     </ClCompile>
     <ClCompile Include="PluginManager.cpp">
-      <Filter>源文件和头文件</Filter>
+      <Filter>源文件和头文件\公共的类\PluginManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

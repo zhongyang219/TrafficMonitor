@@ -2,6 +2,10 @@
 #include "PluginInterface.h"
 #include <memory>
 
+typedef int (*pfTMPluginGetItemNum)();
+typedef IPluginItem* (*pfTMPluginCreateInstance)(int);
+typedef void (*pfTMPluginInfoRequired)();
+
 //用于加载和管理插件
 class CPluginManager
 {
@@ -22,12 +26,14 @@ public:
         std::vector<std::shared_ptr<IPluginItem>> plugin_items; //插件提供的所有显示项目
         PluginState state{};    //插件的状态
         DWORD error_code{};     //错误代码（GetLastError的返回值）
+        pfTMPluginInfoRequired MPluginInfoRequired{};   //模块中MPluginInfoRequired函数的指针
     };
 
     CPluginManager();
     void LoadPlugins();
 
-    const std::vector<std::shared_ptr<IPluginItem>>& GetPlugins();
+    const std::vector<std::shared_ptr<IPluginItem>>& GetPluginItems();
+    const std::vector<PluginInfo>& GetPlugins();
 
 private:
     std::vector<std::shared_ptr<IPluginItem>> m_plugins;

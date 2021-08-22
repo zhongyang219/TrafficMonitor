@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include <wchar.h>
 #include "PluginSystemDate.h"
+#include "DataManager.h"
 
 const wchar_t* CPluginSystemDate::GetPluginName() const
 {
@@ -14,11 +15,7 @@ const wchar_t* CPluginSystemDate::GetItemLableText() const
 
 const wchar_t* CPluginSystemDate::GetItemValueText() const
 {
-    SYSTEMTIME system_time;
-    GetSystemTime(&system_time);
-    static wchar_t buff[128];
-    swprintf_s(buff, L"%d/%.2d/%.2d", system_time.wYear, system_time.wMonth, system_time.wDay);
-    return buff;
+    return CDataManager::Instance().m_cur_date.c_str();
 }
 
 const wchar_t* CPluginSystemDate::GetItemValueSampleText() const

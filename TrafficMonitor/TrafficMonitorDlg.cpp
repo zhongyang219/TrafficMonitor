@@ -1220,6 +1220,13 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     }
 #endif
 
+    //通知插件获取数据
+    for (const auto& plugin : theApp.m_plugins.GetPlugins())
+    {
+        if (plugin.MPluginInfoRequired != NULL)
+            plugin.MPluginInfoRequired();
+    }
+
     //}
     pThis->m_monitor_time_cnt++;
 
