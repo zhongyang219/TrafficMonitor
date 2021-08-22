@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.779
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TrafficMonitor", "TrafficMonitor\TrafficMonitor.vcxproj", "{09483BED-B1E9-4827-8120-A18302C84AA8}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TrafficMonitor", "TrafficMo
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenHardwareMonitorApi", "OpenHardwareMonitorApi\OpenHardwareMonitorApi.vcxproj", "{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PluginDemo", "PluginDemo\PluginDemo.vcxproj", "{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +52,22 @@ Global
 		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Release|x64.Build.0 = Release|x64
 		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Release|x86.ActiveCfg = Release|Win32
 		{C0A42F4A-ABB3-4575-B4D5-CEDD8379AC26}.Release|x86.Build.0 = Release|Win32
+		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Debug (without temperature)|x64.ActiveCfg = Debug|x64
+		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Debug (without temperature)|x64.Build.0 = Debug|x64
+		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Debug (without temperature)|x86.ActiveCfg = Debug|Win32
+		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Debug (without temperature)|x86.Build.0 = Debug|Win32
+		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Debug|x64.ActiveCfg = Debug|x64
+		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Debug|x64.Build.0 = Debug|x64
+		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Debug|x86.ActiveCfg = Debug|Win32
+		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Debug|x86.Build.0 = Debug|Win32
+		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Release (without temperature)|x64.ActiveCfg = Release|x64
+		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Release (without temperature)|x64.Build.0 = Release|x64
+		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Release (without temperature)|x86.ActiveCfg = Release|Win32
+		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Release (without temperature)|x86.Build.0 = Release|Win32
+		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Release|x64.ActiveCfg = Release|x64
+		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Release|x64.Build.0 = Release|x64
+		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Release|x86.ActiveCfg = Release|Win32
+		{D1CA3ECC-DC32-445A-B734-C4DB08D4BA34}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

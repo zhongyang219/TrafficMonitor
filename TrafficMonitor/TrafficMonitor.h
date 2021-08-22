@@ -16,6 +16,7 @@
 #include "TaskbarDefaultStyle.h"
 #include <map>
 #include "OpenHardwareMonitor/OpenHardwareMonitorApi.h"
+#include "PluginManager.h"
 
 // CTrafficMonitorApp:
 // 有关此类的实现，请参阅 TrafficMonitor.cpp
@@ -82,6 +83,7 @@ public:
 
     HWND m_option_dlg{};        //选项设置对话框的句柄
 
+    CPluginManager m_plugins;
 
     CMenu m_main_menu;
     CMenu m_taskbar_menu;

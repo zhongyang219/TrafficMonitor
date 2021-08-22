@@ -175,6 +175,9 @@
     <Filter Include="源文件和头文件\对话框类\选项设置对话框\SetItemOrderDlg">
       <UniqueIdentifier>{bc164584-be21-4a91-9af5-772d61ed9529}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\PluginManager">
+      <UniqueIdentifier>{f7dd3288-085a-4de2-9f83-d8ba2f3eff47}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -371,6 +374,12 @@
     <ClInclude Include="SetItemOrderDlg.h">
       <Filter>源文件和头文件\对话框类\选项设置对话框\SetItemOrderDlg</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\PluginInterface.h">
+      <Filter>源文件和头文件\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PluginManager.h">
+      <Filter>源文件和头文件\头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -546,6 +555,9 @@
     </ClCompile>
     <ClCompile Include="SetItemOrderDlg.cpp">
       <Filter>源文件和头文件\对话框类\选项设置对话框\SetItemOrderDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="PluginManager.cpp">
+      <Filter>源文件和头文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

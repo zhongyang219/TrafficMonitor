@@ -87,7 +87,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_cfg_data.m_select_all = ini.GetBool(_T("connection"), _T("select_all"), false);
     //判断皮肤是否存在
     std::vector<wstring> skin_files;
-    CCommon::GetFiles(theApp.m_skin_path.c_str(), skin_files);
+    CCommon::GetFiles((theApp.m_skin_path + L"\\*").c_str(), skin_files);
     bool is_skin_exist = (!skin_files.empty());
     ini.LoadMainWndColors(_T("config"), _T("text_color"), m_main_wnd_data.text_colors, (is_skin_exist ? 16384 : 16777215)); //根据皮肤是否存在来设置默认的文本颜色，皮肤文件不存在时文本颜色默认为白色
     m_main_wnd_data.specify_each_item_color = ini.GetBool(_T("config"), _T("specify_each_item_color"), false);
@@ -951,6 +951,8 @@ BOOL CTrafficMonitorApp::InitInstance()
         }
     }
 #endif
+
+    m_plugins.LoadPlugins();
 
     //执行测试代码
 #ifdef _DEBUG

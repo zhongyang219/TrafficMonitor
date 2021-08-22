@@ -426,6 +426,7 @@
     <Text Include="res\Acknowledgement_en.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\PluginInterface.h" />
     <ClInclude Include="AboutDlg.h" />
     <ClInclude Include="AdapterCommon.h" />
     <ClInclude Include="auto_start_helper.h" />
@@ -465,6 +466,7 @@
     <ClInclude Include="NetworkInfoDlg.h" />
     <ClInclude Include="OptionsDlg.h" />
     <ClInclude Include="PictureStatic.h" />
+    <ClInclude Include="PluginManager.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SetItemOrderDlg.h" />
     <ClInclude Include="SimpleXML.h" />
@@ -527,6 +529,7 @@
     <ClCompile Include="NetworkInfoDlg.cpp" />
     <ClCompile Include="OptionsDlg.cpp" />
     <ClCompile Include="PictureStatic.cpp" />
+    <ClCompile Include="PluginManager.cpp" />
     <ClCompile Include="SetItemOrderDlg.cpp" />
     <ClCompile Include="SimpleXML.cpp" />
     <ClCompile Include="SkinDlg.cpp" />

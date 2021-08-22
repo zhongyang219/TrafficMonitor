@@ -409,7 +409,7 @@ void CCommon::GetFiles(const wchar_t* path, vector<wstring>& files)
     //文件信息（用Unicode保存使用_wfinddata_t，多字节字符集使用_finddata_t）
     _wfinddata_t fileinfo;
     wstring file_name;
-    if ((hFile = _wfindfirst(wstring(path).append(L"\\*").c_str(), &fileinfo)) != -1)
+    if ((hFile = _wfindfirst(path, &fileinfo)) != -1)
     {
         do
         {
