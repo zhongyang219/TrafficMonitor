@@ -65,6 +65,7 @@ protected:
     };
 
     std::map<DisplayItem, ItemWidth> m_item_widths;   //任务栏窗口每个部分的宽度
+    std::vector<ItemWidth> m_plugin_item_width;  //插件项目每个部分的宽度
     std::map<DisplayItem, int> m_item_display_width;    //任务栏窗口每个部分实际显示的宽度
 
 	int m_min_bar_width;	//最小化窗口缩小宽度后的宽度
@@ -95,6 +96,14 @@ protected:
     //  label_width: 标签区域的宽度
 	//  vertical: 如果为true，则标签和数值上下显示
     void DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical = false);
+
+    //绘制任务栏窗口中的一个插件项目
+   //  drawer: 绘图类的对象
+   //  item: 插件显示项目的指针
+   //  rect: 绘制矩形区域
+   //  label_width: 标签区域的宽度
+   //  vertical: 如果为true，则标签和数值上下显示
+    void DrawPluginItem(CDrawCommon& drawer, IPluginItem* item, CRect rect, int label_width, bool vertical = false);
 
 	void MoveWindow(CRect rect);
 

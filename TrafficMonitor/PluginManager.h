@@ -34,6 +34,7 @@ public:
 
     const std::vector<std::shared_ptr<IPluginItem>>& GetPluginItems();
     const std::vector<PluginInfo>& GetPlugins();
+    std::shared_ptr<IPluginItem> GetItemByName(const std::wstring& item_name);
 
 private:
     std::vector<std::shared_ptr<IPluginItem>> m_plugins;

@@ -57,3 +57,13 @@ const std::vector<CPluginManager::PluginInfo>& CPluginManager::GetPlugins()
 {
     return m_modules;
 }
+
+std::shared_ptr<IPluginItem> CPluginManager::GetItemByName(const std::wstring& item_name)
+{
+    for (const auto& item : m_plugins)
+    {
+        if (item->GetPluginName() == item_name)
+            return item;
+    }
+    return nullptr;
+}
