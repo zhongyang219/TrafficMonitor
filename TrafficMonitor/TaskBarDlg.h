@@ -64,8 +64,15 @@ protected:
 		}
     };
 
-    std::map<DisplayItem, ItemWidth> m_item_widths;   //任务栏窗口每个部分的宽度
-    std::vector<ItemWidth> m_plugin_item_width;  //插件项目每个部分的宽度
+    struct ItemWidthInfo
+    {
+        bool is_plugin{ false };
+        DisplayItem item_type;
+        IPluginItem* plugin_item{};
+        ItemWidth item_width;
+    };
+
+    std::vector<ItemWidthInfo> m_item_widths;   //任务栏窗口每个部分的宽度
     std::map<DisplayItem, int> m_item_display_width;    //任务栏窗口每个部分实际显示的宽度
 
 	int m_min_bar_width;	//最小化窗口缩小宽度后的宽度
