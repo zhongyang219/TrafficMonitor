@@ -22,13 +22,12 @@ public:
 /*
 * 注意：插件dll需要导出如下函数
 *
-* int TMPluginGetItemNum();
-*   一个插件dll可以提供多个实现IPluginItem接口的对象，对应多个显示项目。
-*   TMPluginGetItemNum函数返回对象的个数。
-*
 * IPluginItem* TMPluginCreateInstance(int index);
 *   TMPluginCreateInstance函数用于创建对象，返回IPluginItem接口的指针，
-*   参数index为对象的索引，它的值必须大于或等于0且小于TMPluginGetItemNum的返回值。
+*   一个插件dll可以提供多个实现IPluginItem接口的对象，对应多个显示项目。
+*   参数index为对象的索引，它的值必须大于或等于0且小于IPluginItem接口的对象的个数。
+*   例如插件提供两个显示项目，则当index等于0或1时返回对应IPluginItem接口的对象，
+*   其他值时必须返回空指针。
 *
 * void TMPluginInfoRequired();
 *   主程序会每隔一定时间调用此函数，插件需要在函数里获取一次监控的数据

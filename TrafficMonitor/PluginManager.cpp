@@ -29,21 +29,23 @@ void CPluginManager::LoadPlugins()
             continue;
         }
         //获取函数的入口地址
-        pfTMPluginGetItemNum TMPluginGetItemNum = (pfTMPluginGetItemNum)::GetProcAddress(plugin_info.plugin_module, "TMPluginGetItemNum");
         pfTMPluginCreateInstance TMPluginCreateInstance = (pfTMPluginCreateInstance)::GetProcAddress(plugin_info.plugin_module, "TMPluginCreateInstance");
         plugin_info.MPluginInfoRequired = (pfTMPluginInfoRequired)::GetProcAddress(plugin_info.plugin_module, "TMPluginInfoRequired");
-        if (TMPluginGetItemNum == NULL || TMPluginCreateInstance == NULL || plugin_info.MPluginInfoRequired == NULL)
+        if (TMPluginCreateInstance == NULL || plugin_info.MPluginInfoRequired == NULL)
         {
             plugin_info.state = PluginState::PS_FUNCTION_GET_FAILED;
             plugin_info.error_code = GetLastError();
             continue;
         }
-        int item_num = TMPluginGetItemNum();
-        for (int i = 0; i < item_num; i++)
+        int index = 0;
+        while (true)
         {
-            std::shared_ptr<IPluginItem> item = std::shared_ptr<IPluginItem>(TMPluginCreateInstance(i));
+            std::shared_ptr<IPluginItem> item = std::shared_ptr<IPluginItem>(TMPluginCreateInstance(index));
+            if (item == nullptr)
+                break;
             plugin_info.plugin_items.push_back(item);
             m_plugins.push_back(item);
+            index++;
         }
     }
 }

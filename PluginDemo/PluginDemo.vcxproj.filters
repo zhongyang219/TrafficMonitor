@@ -33,6 +33,9 @@
     <ClInclude Include="DataManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\PluginInterface.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

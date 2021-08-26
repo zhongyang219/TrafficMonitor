@@ -22,11 +22,6 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
-int TMPluginGetItemNum()
-{
-    return 2;
-}
-
 IPluginItem* TMPluginCreateInstance(int index)
 {
     switch (index)

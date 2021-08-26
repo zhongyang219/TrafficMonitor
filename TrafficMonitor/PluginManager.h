@@ -2,7 +2,6 @@
 #include "PluginInterface.h"
 #include <memory>
 
-typedef int (*pfTMPluginGetItemNum)();
 typedef IPluginItem* (*pfTMPluginCreateInstance)(int);
 typedef void (*pfTMPluginInfoRequired)();
 
