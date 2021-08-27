@@ -6,6 +6,14 @@ CPluginManager::CPluginManager()
 {
 }
 
+static wstring WcharArrayToWString(const wchar_t* str)
+{
+    if (str == nullptr)
+        return wstring();
+    else
+        return wstring(str);
+}
+
 void CPluginManager::LoadPlugins()
 {
     //从plugins目录下加载插件
@@ -38,6 +46,17 @@ void CPluginManager::LoadPlugins()
             continue;
         }
         plugin_info.TMPluginOptions = (pfTMPluginOptions)::GetProcAddress(plugin_info.plugin_module, "TMPluginOptions");
+        //获取插件信息
+        pfTMPluginGetInfo TMPluginGetInfo = (pfTMPluginGetInfo)::GetProcAddress(plugin_info.plugin_module, "TMPluginGetInfo");
+        if (TMPluginGetInfo != nullptr)
+        {
+            plugin_info.name = WcharArrayToWString(TMPluginGetInfo(TMI_NAME));
+            plugin_info.description = WcharArrayToWString(TMPluginGetInfo(TMI_DESCRIPTION));
+            plugin_info.author = WcharArrayToWString(TMPluginGetInfo(TMI_AUTHOR));
+            plugin_info.copyright = WcharArrayToWString(TMPluginGetInfo(TMI_COPYRIGHT));
+        }
+
+        //获取插件显示项目
         int index = 0;
         while (true)
         {

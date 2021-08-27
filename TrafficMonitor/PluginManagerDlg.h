@@ -33,4 +33,6 @@ public:
     afx_msg void OnNMRClickList1(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg void OnNMClickList1(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg void OnBnClickedOptinsButton();
+    afx_msg void OnBnClickedPluginInfoButton();
+    afx_msg void OnNMDblclkList1(NMHDR* pNMHDR, LRESULT* pResult);
 };

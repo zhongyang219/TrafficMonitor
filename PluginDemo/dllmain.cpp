@@ -65,3 +65,25 @@ void TMPluginOptions(HWND hParent)
         CDataManager::Instance().m_setting_data = dlg.m_data;
     }
 }
+
+const wchar_t* TMPluginGetInfo(int index)
+{
+    AFX_MANAGE_STATE(AfxGetStaticModuleState());
+    static CString str;
+    switch (index)
+    {
+    case TMI_NAME:
+        str.LoadString(IDS_PLUGIN_NAME);
+        return str.GetString();
+    case TMI_DESCRIPTION:
+        str.LoadString(IDS_PLUGIN_DESCRIPTION);
+        return str.GetString();
+    case TMI_AUTHOR:
+        return L"zhongyang219";
+    case TMI_COPYRIGHT:
+        return L"Copyright (C) by Zhong Yang 2021";
+    default:
+        break;
+    }
+    return L"";
+}

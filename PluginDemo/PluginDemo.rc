@@ -91,6 +91,18 @@ BEGIN
     0
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_PLUGIN_NAME         "日期时间插件"
+    IDS_PLUGIN_DESCRIPTION  "提供显示时间和日期的示例插件。"
+END
+
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -146,6 +158,18 @@ END
 IDD_OPTIONS_DIALOG AFX_DIALOG_LAYOUT
 BEGIN
     0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_PLUGIN_NAME         "Date time plugin"
+    IDS_PLUGIN_DESCRIPTION  "Examples of plug-in to provide display time and date."
 END
 
 #endif    // 英语(美国) resources

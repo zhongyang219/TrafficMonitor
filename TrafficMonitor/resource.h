@@ -254,6 +254,16 @@
 #define IDS_PLUGIN_LOAD_SUCCEED         350
 #define IDS_PLUGIN_MODULE_LOAD_FAILED   351
 #define IDS_PLUGIN_FUNCTION_GET_FAILED  352
+#define IDS_PLUGIN_INFO                 353
+#define IDS_NAME                        354
+#define IDS_DESCRIPTION                 355
+#define IDS_FILE_PATH                   356
+#define IDS_ITEM_NUM                    357
+#define IDS_ITEM_NAMES                  358
+#define IDS_AUTHOR                      359
+#define IDS_COPYRIGHT                   360
+#define IDS_PLUGIN_NO_OPTIONS_INFO      361
+#define IDS_PLUGIN_NAME                 362
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
 #define IDC_STATIC_DOWN                 1002
@@ -443,6 +453,7 @@
 #define IDC_SET_ORDER_BUTTON            1137
 #define IDC_OPTINS_BUTTON               1139
 #define IDC_PLUGIN_MANAGE_BUTTON        1140
+#define IDC_PLUGIN_INFO_BUTTON          1141
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -563,7 +574,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        335
 #define _APS_NEXT_COMMAND_VALUE         32884
-#define _APS_NEXT_CONTROL_VALUE         1141
+#define _APS_NEXT_CONTROL_VALUE         1142
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

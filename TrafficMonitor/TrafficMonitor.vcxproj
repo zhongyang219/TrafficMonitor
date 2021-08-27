@@ -466,6 +466,7 @@
     <ClInclude Include="NetworkInfoDlg.h" />
     <ClInclude Include="OptionsDlg.h" />
     <ClInclude Include="PictureStatic.h" />
+    <ClInclude Include="PluginInfoDlg.h" />
     <ClInclude Include="PluginManager.h" />
     <ClInclude Include="PluginManagerDlg.h" />
     <ClInclude Include="Resource.h" />
@@ -530,6 +531,7 @@
     <ClCompile Include="NetworkInfoDlg.cpp" />
     <ClCompile Include="OptionsDlg.cpp" />
     <ClCompile Include="PictureStatic.cpp" />
+    <ClCompile Include="PluginInfoDlg.cpp" />
     <ClCompile Include="PluginManager.cpp" />
     <ClCompile Include="PluginManagerDlg.cpp" />
     <ClCompile Include="SetItemOrderDlg.cpp" />

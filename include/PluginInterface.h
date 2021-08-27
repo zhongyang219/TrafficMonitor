@@ -19,6 +19,15 @@ public:
     virtual const wchar_t* GetItemValueSampleText() const = 0;
 };
 
+//插件信息的索引
+enum TMPluginInfoIndex
+{
+    TMI_NAME,           //名称
+    TMI_DESCRIPTION,    //描述
+    TMI_AUTHOR,         //作者
+    TMI_COPYRIGHT       //版权
+};
+
 /*
 * 注意：插件dll需要导出如下函数
 *

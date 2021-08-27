@@ -386,6 +386,9 @@
     <ClInclude Include="PluginManagerDlg.h">
       <Filter>源文件和头文件\对话框类\PluginManagerDlg</Filter>
     </ClInclude>
+    <ClInclude Include="PluginInfoDlg.h">
+      <Filter>源文件和头文件\对话框类\PluginManagerDlg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -566,6 +569,9 @@
       <Filter>源文件和头文件\公共的类\PluginManager</Filter>
     </ClCompile>
     <ClCompile Include="PluginManagerDlg.cpp">
+      <Filter>源文件和头文件\对话框类\PluginManagerDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="PluginInfoDlg.cpp">
       <Filter>源文件和头文件\对话框类\PluginManagerDlg</Filter>
     </ClCompile>
   </ItemGroup>
