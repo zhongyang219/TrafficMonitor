@@ -4,26 +4,28 @@
 #include "PluginSystemTime.h"
 #include "PluginDemo.h"
 #include "DataManager.h"
+#include "OptionsDlg.h"
 
-
-BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-                     )
-{
-    switch (ul_reason_for_call)
-    {
-    case DLL_PROCESS_ATTACH:
-    case DLL_THREAD_ATTACH:
-    case DLL_THREAD_DETACH:
-    case DLL_PROCESS_DETACH:
-        break;
-    }
-    return TRUE;
-}
+//BOOL APIENTRY DllMain( HMODULE hModule,
+//                       DWORD  ul_reason_for_call,
+//                       LPVOID lpReserved
+//                     )
+//{
+//    switch (ul_reason_for_call)
+//    {
+//    case DLL_PROCESS_ATTACH:
+//    case DLL_THREAD_ATTACH:
+//    case DLL_THREAD_DETACH:
+//    case DLL_PROCESS_DETACH:
+//        break;
+//    }
+//    return TRUE;
+//}
 
 IPluginItem* TMPluginCreateInstance(int index)
 {
+    AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
     switch (index)
     {
     case 0:
@@ -38,6 +40,7 @@ IPluginItem* TMPluginCreateInstance(int index)
 
 void TMPluginInfoRequired()
 {
+    AFX_MANAGE_STATE(AfxGetStaticModuleState());
     //获取时间和日期
     SYSTEMTIME system_time;
     GetSystemTime(&system_time);
@@ -46,4 +49,11 @@ void TMPluginInfoRequired()
     CDataManager::Instance().m_cur_date = buff;
     swprintf_s(buff, L"%.2d:%.2d:%.2d", system_time.wHour, system_time.wMinute, system_time.wSecond);
     CDataManager::Instance().m_cur_time = buff;
+}
+
+void TMPluginOptions()
+{
+    AFX_MANAGE_STATE(AfxGetStaticModuleState());
+    COptionsDlg dlg;
+    dlg.DoModal();
 }

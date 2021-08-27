@@ -178,6 +178,9 @@
     <Filter Include="源文件和头文件\公共的类\PluginManager">
       <UniqueIdentifier>{f7dd3288-085a-4de2-9f83-d8ba2f3eff47}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\对话框类\PluginManagerDlg">
+      <UniqueIdentifier>{dbacfb68-1e03-4bcb-a08b-e87ba558985f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -380,6 +383,9 @@
     <ClInclude Include="PluginManager.h">
       <Filter>源文件和头文件\公共的类\PluginManager</Filter>
     </ClInclude>
+    <ClInclude Include="PluginManagerDlg.h">
+      <Filter>源文件和头文件\对话框类\PluginManagerDlg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -559,6 +565,9 @@
     <ClCompile Include="PluginManager.cpp">
       <Filter>源文件和头文件\公共的类\PluginManager</Filter>
     </ClCompile>
+    <ClCompile Include="PluginManagerDlg.cpp">
+      <Filter>源文件和头文件\对话框类\PluginManagerDlg</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TrafficMonitor.rc">
@@ -664,6 +673,9 @@
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="res\notifyicon5.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\menu_icon\plugins.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

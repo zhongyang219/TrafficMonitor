@@ -6,6 +6,8 @@
 #include "TrafficMonitor.h"
 #include "TrafficMonitorDlg.h"
 #include "afxdialogex.h"
+#include "Test.h"
+#include "PluginManagerDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -108,6 +110,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_MESSAGE(WM_MONITOR_INFO_UPDATED, &CTrafficMonitorDlg::OnMonitorInfoUpdated)
     ON_MESSAGE(WM_DISPLAYCHANGE, &CTrafficMonitorDlg::OnDisplaychange)
     ON_WM_EXITSIZEMOVE()
+    ON_COMMAND(ID_PLUGIN_MANAGE, &CTrafficMonitorDlg::OnPluginManage)
 END_MESSAGE_MAP()
 
 
@@ -1826,6 +1829,12 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
         theApp.SaveConfig();
         m_connection_change_flag = true;
     }
+#ifdef DEBUG
+    if (uMsg == ID_CMD_TEST)
+    {
+        CTest::TestCommand();
+    }
+#endif // DEBUG
 
     return CDialog::OnCommand(wParam, lParam);
 }
@@ -2580,4 +2589,12 @@ void CTrafficMonitorDlg::OnExitSizeMove()
     CheckWindowPos();
 
     CDialog::OnExitSizeMove();
+}
+
+
+void CTrafficMonitorDlg::OnPluginManage()
+{
+    // TODO: 在此添加命令处理程序代码
+    CPluginManagerDlg dlg;
+    dlg.DoModal();
 }

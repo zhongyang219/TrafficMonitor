@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "TrafficMonitor.h"
 #include "GeneralSettingsDlg.h"
-#include "afxdialogex.h"
+#include "PluginManagerDlg.h"
 
 
 // CGeneralSettingsDlg dialog
@@ -89,6 +89,7 @@ void CGeneralSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_MBD_TEMP_TIP_EDIT, m_mbd_temp_tip_edit);
     DDX_Control(pDX, IDC_SELECT_HARD_DISK_COMBO, m_hard_disk_combo);
     DDX_Control(pDX, IDC_SELECT_CPU_COMBO, m_select_cpu_combo);
+    DDX_Control(pDX, IDC_PLUGIN_MANAGE_BUTTON, m_plugin_manager_btn);
 }
 
 void CGeneralSettingsDlg::SetControlEnable()
@@ -133,6 +134,7 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_HDD_CHECK, &CGeneralSettingsDlg::OnBnClickedHddCheck)
     ON_BN_CLICKED(IDC_MBD_CHECK, &CGeneralSettingsDlg::OnBnClickedMbdCheck)
     ON_CBN_SELCHANGE(IDC_SELECT_CPU_COMBO, &CGeneralSettingsDlg::OnCbnSelchangeSelectCpuCombo)
+    ON_BN_CLICKED(IDC_PLUGIN_MANAGE_BUTTON, &CGeneralSettingsDlg::OnBnClickedPluginManageButton)
 END_MESSAGE_MAP()
 
 
@@ -268,6 +270,8 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     EnableDlgCtrl(IDC_SELECT_HARD_DISK_COMBO, false);
     EnableDlgCtrl(IDC_SELECT_CPU_COMBO, false);
 #endif
+
+    m_plugin_manager_btn.SetIcon(theApp.GetMenuIcon(IDI_PLUGINS));
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE
@@ -609,4 +613,12 @@ void CGeneralSettingsDlg::OnCbnSelchangeSelectCpuCombo()
     CString cpu_core_name;
     m_select_cpu_combo.GetWindowText(cpu_core_name);
     m_data.cpu_core_name = cpu_core_name.GetString();
+}
+
+
+void CGeneralSettingsDlg::OnBnClickedPluginManageButton()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    CPluginManagerDlg dlg;
+    dlg.DoModal();
 }

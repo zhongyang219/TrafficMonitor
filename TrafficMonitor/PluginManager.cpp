@@ -37,6 +37,7 @@ void CPluginManager::LoadPlugins()
             plugin_info.error_code = GetLastError();
             continue;
         }
+        plugin_info.TMPluginOptions = (pfTMPluginOptions)::GetProcAddress(plugin_info.plugin_module, "TMPluginOptions");
         int index = 0;
         while (true)
         {

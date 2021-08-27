@@ -232,8 +232,10 @@
 #define IDD_SELECT_ORDER_DIALOG         330
 #define IDS_COLOR                       331
 #define IDS_COLOR_LABEL                 332
+#define IDD_PLUGIN_MANAGER_DIALOG       332
 #define IDS_COLOR_VALUE                 333
 #define IDS_GPU_USAGE                   334
+#define IDI_PLUGINS                     334
 #define IDS_IF_OPER_STATUS_UP           335
 #define IDS_IF_OPER_STATUS_DOWN         336
 #define IDS_IF_OPER_STATUS_DORMANT      337
@@ -247,6 +249,8 @@
 #define IDS_HARDWARE_MONITOR_WARNING    345
 #define IDS_HARDWARE_MONITOR_WARNING2   346
 #define IDS_HDD_USAGE                   347
+#define IDS_FILE_NAME                   348
+#define IDS_STATUS                      349
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
 #define IDC_STATIC_DOWN                 1002
@@ -434,6 +438,8 @@
 #define IDC_MOVE_UP_BUTTON              1136
 #define IDC_MOVE_DOWN_BUTTON            1137
 #define IDC_SET_ORDER_BUTTON            1137
+#define IDC_OPTINS_BUTTON               1139
+#define IDC_PLUGIN_MANAGE_BUTTON        1140
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -530,7 +536,7 @@
 #define ID_FIRST_DAY_OF_WEEK_MONDAY     32866
 #define ID_CALENDAR_JUMP_TO_TODAY       32867
 #define ID_FREQUENTY_ASKED_QUESTIONS    32868
-#define ID_32869                        32869
+#define ID_CMD_TEST                     32869
 #define ID_SHOW_UP_SPEED                32870
 #define ID_SHOW_DOWN_SPEED              32871
 #define ID_SHOW_CPU_USAGE               32872
@@ -543,16 +549,18 @@
 #define ID_SHOW_HDD                     32879
 #define ID_UPDATE_LOG                   32880
 #define ID_HELP_32881                   32881
+#define ID_32882                        32882
+#define ID_PLUGIN_MANAGE                32883
 #define ID_SELETE_CONNECTION            33000
 #define ID_SELECT_ALL_CONNECTION        33001
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        332
-#define _APS_NEXT_COMMAND_VALUE         32882
-#define _APS_NEXT_CONTROL_VALUE         1139
+#define _APS_NEXT_RESOURCE_VALUE        335
+#define _APS_NEXT_COMMAND_VALUE         32884
+#define _APS_NEXT_CONTROL_VALUE         1141
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

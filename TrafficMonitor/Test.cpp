@@ -2,6 +2,7 @@
 #include "Test.h"
 #include "Common.h"
 #include "SkinFile.h"
+#include "TrafficMonitor.h"
 
 CTest::CTest()
 {
@@ -17,6 +18,11 @@ void CTest::Test()
     //TestGetLicense();
     //TestSkin();
     //TestCrash();
+}
+
+void CTest::TestCommand()
+{
+    TestPlugin();
 }
 
 void CTest::TestHttpQequest()
@@ -55,4 +61,12 @@ void CTest::TestCrash()
     int a = pStr->GetLength();
     printf("%d", a);
 
+}
+
+void CTest::TestPlugin()
+{
+    if (!theApp.m_plugins.GetPlugins().empty())
+    {
+        theApp.m_plugins.GetPlugins()[0].TMPluginOptions();
+    }
 }

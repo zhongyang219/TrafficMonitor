@@ -254,4 +254,5 @@ protected:
     afx_msg LRESULT OnDisplaychange(WPARAM wParam, LPARAM lParam);
 public:
     afx_msg void OnExitSizeMove();
+    afx_msg void OnPluginManage();
 };

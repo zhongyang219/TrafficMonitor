@@ -30,6 +30,7 @@ private:
 
 protected:
 	virtual CString GetDialogName() const = 0;
+    void EnableDlgCtrl(UINT id, bool enable);
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 

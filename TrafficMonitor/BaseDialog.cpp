@@ -44,6 +44,13 @@ void CBaseDialog::SaveConfig() const
 	ini.Save();
 }
 
+void CBaseDialog::EnableDlgCtrl(UINT id, bool enable)
+{
+    CWnd* pWnd = GetDlgItem(id);
+    if (pWnd != nullptr)
+        pWnd->EnableWindow(enable);
+}
+
 void CBaseDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);

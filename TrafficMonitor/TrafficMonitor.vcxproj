@@ -467,6 +467,7 @@
     <ClInclude Include="OptionsDlg.h" />
     <ClInclude Include="PictureStatic.h" />
     <ClInclude Include="PluginManager.h" />
+    <ClInclude Include="PluginManagerDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SetItemOrderDlg.h" />
     <ClInclude Include="SimpleXML.h" />
@@ -530,6 +531,7 @@
     <ClCompile Include="OptionsDlg.cpp" />
     <ClCompile Include="PictureStatic.cpp" />
     <ClCompile Include="PluginManager.cpp" />
+    <ClCompile Include="PluginManagerDlg.cpp" />
     <ClCompile Include="SetItemOrderDlg.cpp" />
     <ClCompile Include="SimpleXML.cpp" />
     <ClCompile Include="SkinDlg.cpp" />
@@ -598,6 +600,7 @@
     <Image Include="res\menu_icon\mouse.ico" />
     <Image Include="res\menu_icon\notify.ico" />
     <Image Include="res\menu_icon\pin.ico" />
+    <Image Include="res\menu_icon\plugins.ico" />
     <Image Include="res\menu_icon\setting.ico" />
     <Image Include="res\menu_icon\skn.ico" />
     <Image Include="res\menu_icon\statistics.ico" />

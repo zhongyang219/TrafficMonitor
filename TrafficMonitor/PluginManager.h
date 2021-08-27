@@ -4,6 +4,7 @@
 
 typedef IPluginItem* (*pfTMPluginCreateInstance)(int);
 typedef void (*pfTMPluginInfoRequired)();
+typedef void (*pfTMPluginOptions)();
 
 //用于加载和管理插件
 class CPluginManager
@@ -26,6 +27,7 @@ public:
         PluginState state{};    //插件的状态
         DWORD error_code{};     //错误代码（GetLastError的返回值）
         pfTMPluginInfoRequired MPluginInfoRequired{};   //模块中MPluginInfoRequired函数的指针
+        pfTMPluginOptions TMPluginOptions{};            //模块中TMPluginOptions函数的指针
     };
 
     CPluginManager();
