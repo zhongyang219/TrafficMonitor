@@ -47,13 +47,21 @@ void TMPluginInfoRequired()
     wchar_t buff[128];
     swprintf_s(buff, L"%d/%.2d/%.2d", system_time.wYear, system_time.wMonth, system_time.wDay);
     CDataManager::Instance().m_cur_date = buff;
-    swprintf_s(buff, L"%.2d:%.2d:%.2d", system_time.wHour, system_time.wMinute, system_time.wSecond);
+
+    if (CDataManager::Instance().m_setting_data.show_second)
+        swprintf_s(buff, L"%.2d:%.2d:%.2d", system_time.wHour, system_time.wMinute, system_time.wSecond);
+    else
+        swprintf_s(buff, L"%.2d:%.2d", system_time.wHour, system_time.wMinute);
     CDataManager::Instance().m_cur_time = buff;
 }
 
-void TMPluginOptions()
+void TMPluginOptions(HWND hParent)
 {
     AFX_MANAGE_STATE(AfxGetStaticModuleState());
-    COptionsDlg dlg;
-    dlg.DoModal();
+    COptionsDlg dlg(CWnd::FromHandle(hParent));
+    dlg.m_data = CDataManager::Instance().m_setting_data;
+    if (dlg.DoModal() == IDOK)
+    {
+        CDataManager::Instance().m_setting_data = dlg.m_data;
+    }
 }

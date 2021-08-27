@@ -7,7 +7,7 @@ extern "C" {
 
     __declspec(dllexport) IPluginItem* TMPluginCreateInstance(int index);
     __declspec(dllexport) void TMPluginInfoRequired();
-    __declspec(dllexport) void TMPluginOptions();
+    __declspec(dllexport) void TMPluginOptions(HWND hParent);
 
 #ifdef __cplusplus
 }

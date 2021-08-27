@@ -74,13 +74,13 @@ BOOL CPluginManagerDlg::OnInitDialog()
         switch (plugin.state)
         {
         case CPluginManager::PluginState::PS_SUCCEED:
-            status = _T("加载成功");
+            status = CCommon::LoadText(IDS_PLUGIN_LOAD_SUCCEED);
             break;
         case CPluginManager::PluginState::PS_MUDULE_LOAD_FAILED:
-            status.Format(_T("插件模块加载失败，故障代码：%d"), plugin.error_code);
+            status = CCommon::LoadTextFormat(IDS_PLUGIN_MODULE_LOAD_FAILED, { static_cast<int>(plugin.error_code) });
             break;
         case CPluginManager::PluginState::PS_FUNCTION_GET_FAILED:
-            status.Format(_T("函数获取失败，故障代码：%d"), plugin.error_code);
+            status = CCommon::LoadTextFormat(IDS_PLUGIN_FUNCTION_GET_FAILED, { static_cast<int>(plugin.error_code) });
             break;
         }
         int index = m_list_ctrl.GetItemCount();
@@ -122,6 +122,6 @@ void CPluginManagerDlg::OnBnClickedOptinsButton()
     {
         auto plugin = theApp.m_plugins.GetPlugins()[m_item_selected];
         if (plugin.TMPluginOptions != nullptr)
-            plugin.TMPluginOptions();
+            plugin.TMPluginOptions(m_hWnd);
     }
 }

@@ -28,7 +28,28 @@ void COptionsDlg::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(COptionsDlg, CDialog)
+    ON_BN_CLICKED(IDC_SHOW_SECOND_CHECK, &COptionsDlg::OnBnClickedShowSecondCheck)
 END_MESSAGE_MAP()
 
 
 // COptionsDlg 消息处理程序
+
+
+BOOL COptionsDlg::OnInitDialog()
+{
+    CDialog::OnInitDialog();
+
+    // TODO:  在此添加额外的初始化
+    //初始化控件状态
+    CheckDlgButton(IDC_SHOW_SECOND_CHECK, m_data.show_second);
+
+    return TRUE;  // return TRUE unless you set the focus to a control
+                  // 异常: OCX 属性页应返回 FALSE
+}
+
+
+void COptionsDlg::OnBnClickedShowSecondCheck()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    m_data.show_second = (IsDlgButtonChecked(IDC_SHOW_SECOND_CHECK) != 0);
+}

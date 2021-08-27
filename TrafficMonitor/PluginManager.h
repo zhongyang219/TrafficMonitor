@@ -4,7 +4,7 @@
 
 typedef IPluginItem* (*pfTMPluginCreateInstance)(int);
 typedef void (*pfTMPluginInfoRequired)();
-typedef void (*pfTMPluginOptions)();
+typedef void (*pfTMPluginOptions)(HWND);
 
 //用于加载和管理插件
 class CPluginManager

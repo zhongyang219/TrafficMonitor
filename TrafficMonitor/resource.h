@@ -251,6 +251,9 @@
 #define IDS_HDD_USAGE                   347
 #define IDS_FILE_NAME                   348
 #define IDS_STATUS                      349
+#define IDS_PLUGIN_LOAD_SUCCEED         350
+#define IDS_PLUGIN_MODULE_LOAD_FAILED   351
+#define IDS_PLUGIN_FUNCTION_GET_FAILED  352
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
 #define IDC_STATIC_DOWN                 1002

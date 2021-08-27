@@ -22,7 +22,7 @@ void CTest::Test()
 
 void CTest::TestCommand()
 {
-    TestPlugin();
+    //TestPlugin();
 }
 
 void CTest::TestHttpQequest()
@@ -67,6 +67,6 @@ void CTest::TestPlugin()
 {
     if (!theApp.m_plugins.GetPlugins().empty())
     {
-        theApp.m_plugins.GetPlugins()[0].TMPluginOptions();
+        theApp.m_plugins.GetPlugins()[0].TMPluginOptions(theApp.m_pMainWnd->m_hWnd);
     }
 }

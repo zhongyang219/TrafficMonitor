@@ -50,13 +50,15 @@ END
 // Dialog
 //
 
-IDD_OPTIONS_DIALOG DIALOGEX 0, 0, 310, 178
+IDD_OPTIONS_DIALOG DIALOGEX 0, 0, 165, 90
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "时期和日期设置"
 FONT 9, "微软雅黑", 400, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "确定",IDOK,199,157,50,14
-    PUSHBUTTON      "取消",IDCANCEL,253,157,50,14
+    DEFPUSHBUTTON   "确定",IDOK,50,69,50,14
+    PUSHBUTTON      "取消",IDCANCEL,108,69,50,14
+    GROUPBOX        "时间格式",IDC_STATIC,7,7,151,55
+    CONTROL         "显示秒",IDC_SHOW_SECOND_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,21,63,10
 END
 
 
@@ -71,9 +73,9 @@ BEGIN
     IDD_OPTIONS_DIALOG, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 303
+        RIGHTMARGIN, 158
         TOPMARGIN, 7
-        BOTTOMMARGIN, 171
+        BOTTOMMARGIN, 83
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -90,6 +92,63 @@ BEGIN
 END
 
 #endif    // 中文(简体，中国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// 英语(美国) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_OPTIONS_DIALOG DIALOGEX 0, 0, 165, 90
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Time and date settings"
+FONT 9, "Segoe UI", 400, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,50,69,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,108,69,50,14
+    GROUPBOX        "Time format",IDC_STATIC,7,7,151,55
+    CONTROL         "Show seconds",IDC_SHOW_SECOND_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,21,63,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_OPTIONS_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 158
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 83
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_OPTIONS_DIALOG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+#endif    // 英语(美国) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
