@@ -1,7 +1,11 @@
-﻿#pragma once
-//插件接口的定义
+﻿/*********************************************************
+* TrafficMonitor 插件接口
+* Copyright (C) by Zhong Yang 2021
+* zhongyang219@hotmail.com
+**********************************************************/
+#pragma once
 
-//接件显示项目的接口
+//插件显示项目的接口
 class IPluginItem
 {
 public:
@@ -13,7 +17,7 @@ public:
 
     //获取项目数值的文本
     //由于此函数可能会被频繁调用，因此不要在这里获取监控数据，
-    //而是在TMPluginInfoRequired函数中获取数据后保存起来，然后在这里返回获取的数值
+    //而是在ITMPlugin::DataRequired函数中获取数据后保存起来，然后在这里返回获取的数值
     virtual const wchar_t* GetItemValueText() const = 0;
 
     //获取项目数值的示例文本
@@ -21,7 +25,7 @@ public:
 };
 
 
-//接件接口
+//插件接口
 class ITMPlugin
 {
 public:
