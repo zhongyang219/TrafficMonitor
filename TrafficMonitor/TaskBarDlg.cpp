@@ -764,7 +764,7 @@ void CTaskBarDlg::CalculateWindowSize()
         {
             ItemWidthInfo width_info;
             width_info.is_plugin = true;
-            width_info.plugin_item = plugin.get();
+            width_info.plugin_item = plugin;
             CString lable_text = plugin->GetItemLableText();
             if (!lable_text.IsEmpty())
                 lable_text += L' ';

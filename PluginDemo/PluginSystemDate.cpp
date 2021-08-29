@@ -3,7 +3,7 @@
 #include "PluginSystemDate.h"
 #include "DataManager.h"
 
-const wchar_t* CPluginSystemDate::GetPluginName() const
+const wchar_t* CPluginSystemDate::GetItemName() const
 {
     return L"Date";
 }

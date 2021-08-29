@@ -38,29 +38,27 @@ void CPluginManager::LoadPlugins()
         }
         //获取函数的入口地址
         pfTMPluginCreateInstance TMPluginCreateInstance = (pfTMPluginCreateInstance)::GetProcAddress(plugin_info.plugin_module, "TMPluginCreateInstance");
-        plugin_info.MPluginInfoRequired = (pfTMPluginInfoRequired)::GetProcAddress(plugin_info.plugin_module, "TMPluginInfoRequired");
-        if (TMPluginCreateInstance == NULL || plugin_info.MPluginInfoRequired == NULL)
+        if (TMPluginCreateInstance == NULL)
         {
             plugin_info.state = PluginState::PS_FUNCTION_GET_FAILED;
             plugin_info.error_code = GetLastError();
             continue;
         }
-        plugin_info.TMPluginOptions = (pfTMPluginOptions)::GetProcAddress(plugin_info.plugin_module, "TMPluginOptions");
+        //创建插件对象
+        plugin_info.plugin = std::shared_ptr<ITMPlugin>(TMPluginCreateInstance());
+        if (plugin_info.plugin == nullptr)
+            continue;
         //获取插件信息
-        pfTMPluginGetInfo TMPluginGetInfo = (pfTMPluginGetInfo)::GetProcAddress(plugin_info.plugin_module, "TMPluginGetInfo");
-        if (TMPluginGetInfo != nullptr)
-        {
-            plugin_info.name = WcharArrayToWString(TMPluginGetInfo(TMI_NAME));
-            plugin_info.description = WcharArrayToWString(TMPluginGetInfo(TMI_DESCRIPTION));
-            plugin_info.author = WcharArrayToWString(TMPluginGetInfo(TMI_AUTHOR));
-            plugin_info.copyright = WcharArrayToWString(TMPluginGetInfo(TMI_COPYRIGHT));
-        }
+        plugin_info.name = WcharArrayToWString(plugin_info.plugin->GetInfo(ITMPlugin::TMI_NAME));
+        plugin_info.description = WcharArrayToWString(plugin_info.plugin->GetInfo(ITMPlugin::TMI_DESCRIPTION));
+        plugin_info.author = WcharArrayToWString(plugin_info.plugin->GetInfo(ITMPlugin::TMI_AUTHOR));
+        plugin_info.copyright = WcharArrayToWString(plugin_info.plugin->GetInfo(ITMPlugin::TMI_COPYRIGHT));
 
         //获取插件显示项目
         int index = 0;
         while (true)
         {
-            std::shared_ptr<IPluginItem> item = std::shared_ptr<IPluginItem>(TMPluginCreateInstance(index));
+            IPluginItem* item = plugin_info.plugin->GetItem(index);
             if (item == nullptr)
                 break;
             plugin_info.plugin_items.push_back(item);
@@ -70,7 +68,7 @@ void CPluginManager::LoadPlugins()
     }
 }
 
-const std::vector<std::shared_ptr<IPluginItem>>& CPluginManager::GetPluginItems()
+const std::vector<IPluginItem*>& CPluginManager::GetPluginItems()
 {
     return m_plugins;
 }
@@ -80,11 +78,11 @@ const std::vector<CPluginManager::PluginInfo>& CPluginManager::GetPlugins()
     return m_modules;
 }
 
-std::shared_ptr<IPluginItem> CPluginManager::GetItemByName(const std::wstring& item_name)
+IPluginItem* CPluginManager::GetItemByName(const std::wstring& item_name)
 {
     for (const auto& item : m_plugins)
     {
-        if (item->GetPluginName() == item_name)
+        if (item->GetItemName() == item_name)
             return item;
     }
     return nullptr;

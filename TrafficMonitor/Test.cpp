@@ -67,6 +67,6 @@ void CTest::TestPlugin()
 {
     if (!theApp.m_plugins.GetPlugins().empty())
     {
-        theApp.m_plugins.GetPlugins()[0].TMPluginOptions(theApp.m_pMainWnd->m_hWnd);
+        theApp.m_plugins.GetPlugins()[0].plugin->ShowOptionsDialog(theApp.m_pMainWnd->m_hWnd);
     }
 }

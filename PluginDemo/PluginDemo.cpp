@@ -1,46 +1,28 @@
-﻿// dllmain.cpp : 定义 DLL 应用程序的入口点。
-#include "pch.h"
-#include "PluginSystemDate.h"
-#include "PluginSystemTime.h"
+﻿#include "pch.h"
 #include "PluginDemo.h"
 #include "DataManager.h"
 #include "OptionsDlg.h"
 
-//BOOL APIENTRY DllMain( HMODULE hModule,
-//                       DWORD  ul_reason_for_call,
-//                       LPVOID lpReserved
-//                     )
-//{
-//    switch (ul_reason_for_call)
-//    {
-//    case DLL_PROCESS_ATTACH:
-//    case DLL_THREAD_ATTACH:
-//    case DLL_THREAD_DETACH:
-//    case DLL_PROCESS_DETACH:
-//        break;
-//    }
-//    return TRUE;
-//}
-
-IPluginItem* TMPluginCreateInstance(int index)
+CPluginDemo::CPluginDemo()
 {
-    AFX_MANAGE_STATE(AfxGetStaticModuleState());
+}
 
+IPluginItem* CPluginDemo::GetItem(int index)
+{
     switch (index)
     {
     case 0:
-        return new CPluginSystemDate();
+        return &m_system_date;
     case 1:
-        return new CPluginSystemTime();
+        return &m_system_time;
     default:
         break;
     }
     return nullptr;
 }
 
-void TMPluginInfoRequired()
+void CPluginDemo::DataRequired()
 {
-    AFX_MANAGE_STATE(AfxGetStaticModuleState());
     //获取时间和日期
     SYSTEMTIME system_time;
     GetSystemTime(&system_time);
@@ -55,18 +37,7 @@ void TMPluginInfoRequired()
     CDataManager::Instance().m_cur_time = buff;
 }
 
-void TMPluginOptions(HWND hParent)
-{
-    AFX_MANAGE_STATE(AfxGetStaticModuleState());
-    COptionsDlg dlg(CWnd::FromHandle(hParent));
-    dlg.m_data = CDataManager::Instance().m_setting_data;
-    if (dlg.DoModal() == IDOK)
-    {
-        CDataManager::Instance().m_setting_data = dlg.m_data;
-    }
-}
-
-const wchar_t* TMPluginGetInfo(int index)
+const wchar_t* CPluginDemo::GetInfo(PluginInfoIndex index)
 {
     AFX_MANAGE_STATE(AfxGetStaticModuleState());
     static CString str;
@@ -86,4 +57,23 @@ const wchar_t* TMPluginGetInfo(int index)
         break;
     }
     return L"";
+}
+
+bool CPluginDemo::ShowOptionsDialog(HWND hParent)
+{
+    AFX_MANAGE_STATE(AfxGetStaticModuleState());
+    COptionsDlg dlg(CWnd::FromHandle(hParent));
+    dlg.m_data = CDataManager::Instance().m_setting_data;
+    if (dlg.DoModal() == IDOK)
+    {
+        CDataManager::Instance().m_setting_data = dlg.m_data;
+    }
+    return true;
+}
+
+
+ITMPlugin* TMPluginCreateInstance()
+{
+    AFX_MANAGE_STATE(AfxGetStaticModuleState());
+    return new CPluginDemo();
 }

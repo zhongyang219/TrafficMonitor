@@ -41,7 +41,7 @@ void CPluginInfoDlg::ShowInfo()
         wstring item_names;
         for (const auto& item : plugin.plugin_items)
         {
-            item_names += item->GetPluginName();
+            item_names += item->GetItemName();
             item_names += L";";
         }
         if (!plugin.plugin_items.empty())

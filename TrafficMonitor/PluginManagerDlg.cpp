@@ -126,10 +126,8 @@ void CPluginManagerDlg::OnBnClickedOptinsButton()
     // TODO: 在此添加控件通知处理程序代码
     if (m_item_selected >= 0 && m_item_selected < static_cast<int>(theApp.m_plugins.GetPlugins().size()))
     {
-        auto plugin = theApp.m_plugins.GetPlugins()[m_item_selected];
-        if (plugin.TMPluginOptions != nullptr)
-            plugin.TMPluginOptions(m_hWnd);
-        else
+        auto plugin_info = theApp.m_plugins.GetPlugins()[m_item_selected];
+        if (!plugin_info.plugin->ShowOptionsDialog(m_hWnd))
             MessageBox(CCommon::LoadText(IDS_PLUGIN_NO_OPTIONS_INFO), nullptr, MB_ICONINFORMATION | MB_OK);
     }
 }

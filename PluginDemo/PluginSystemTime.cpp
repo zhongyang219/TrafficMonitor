@@ -3,7 +3,7 @@
 #include "PluginSystemTime.h"
 #include "DataManager.h"
 
-const wchar_t* CPluginSystemTime::GetPluginName() const
+const wchar_t* CPluginSystemTime::GetItemName() const
 {
     return L"Time";
 }
