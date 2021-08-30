@@ -127,7 +127,8 @@ void CPluginManagerDlg::OnBnClickedOptinsButton()
     if (m_item_selected >= 0 && m_item_selected < static_cast<int>(theApp.m_plugins.GetPlugins().size()))
     {
         auto plugin_info = theApp.m_plugins.GetPlugins()[m_item_selected];
-        if (!plugin_info.plugin->ShowOptionsDialog(m_hWnd))
+        ITMPlugin::OptionReturn rtn = plugin_info.plugin->ShowOptionsDialog(m_hWnd);
+        if (rtn == ITMPlugin::OR_OPTION_NOT_PROVIDED)
             MessageBox(CCommon::LoadText(IDS_PLUGIN_NO_OPTIONS_INFO), nullptr, MB_ICONINFORMATION | MB_OK);
     }
 }

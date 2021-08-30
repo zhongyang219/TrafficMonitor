@@ -45,13 +45,21 @@ public:
     */
     virtual void DataRequired() = 0;
 
+    //选项设置对话框的返回值
+    enum OptionReturn
+    {
+        OR_OPTION_CHANGED,          //选项设置对话框中更改了选项设置
+        OR_OPTION_UNCHANGED,        //选项设置对话框中未更改选项设置
+        OR_OPTION_NOT_PROVIDED      //未提供选项设置对话框
+    };
+
     /*
     * 主程序调用此函数以打开插件的选项设置对话框
     * hParent 为父窗口的句柄
-    * 此函数不一定要重写。如果插件提供了选项设置界面，则应该重写此函数，并在最后返回true。
-    * 返回值为false则认为插件不提供选项设置对话框。
+    * 此函数不一定要重写。如果插件提供了选项设置界面，则应该重写此函数，并在最后返回OR_OPTION_CHANGED或OR_OPTION_UNCHANGED。
+    * 返回值为OR_OPTION_NOT_PRVIDED则认为插件不提供选项设置对话框。
     */
-    virtual bool ShowOptionsDialog(HWND hParent) { return false; };
+    virtual OptionReturn ShowOptionsDialog(HWND hParent) { return OR_OPTION_NOT_PROVIDED; };
 
     //插件信息的索引
     enum PluginInfoIndex

@@ -12,7 +12,7 @@ public:
     virtual IPluginItem* GetItem(int index) override;
     virtual void DataRequired() override;
     virtual const wchar_t* GetInfo(PluginInfoIndex index) override;
-    virtual bool ShowOptionsDialog(HWND hParent) override;
+    virtual OptionReturn ShowOptionsDialog(HWND hParent) override;
 
 private:
     CPluginSystemDate m_system_date;

@@ -59,7 +59,7 @@ const wchar_t* CPluginDemo::GetInfo(PluginInfoIndex index)
     return L"";
 }
 
-bool CPluginDemo::ShowOptionsDialog(HWND hParent)
+ITMPlugin::OptionReturn CPluginDemo::ShowOptionsDialog(HWND hParent)
 {
     AFX_MANAGE_STATE(AfxGetStaticModuleState());
     COptionsDlg dlg(CWnd::FromHandle(hParent));
@@ -67,8 +67,9 @@ bool CPluginDemo::ShowOptionsDialog(HWND hParent)
     if (dlg.DoModal() == IDOK)
     {
         CDataManager::Instance().m_setting_data = dlg.m_data;
+        return ITMPlugin::OR_OPTION_CHANGED;
     }
-    return true;
+    return ITMPlugin::OR_OPTION_UNCHANGED;
 }
 
 
