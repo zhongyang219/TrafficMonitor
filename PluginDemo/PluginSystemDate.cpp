@@ -10,7 +10,10 @@ const wchar_t* CPluginSystemDate::GetItemName() const
 
 const wchar_t* CPluginSystemDate::GetItemLableText() const
 {
-    return L"日期";
+    if (CDataManager::Instance().m_setting_data.show_label_text)
+        return L"日期";
+    else
+        return L"";
 }
 
 const wchar_t* CPluginSystemDate::GetItemValueText() const

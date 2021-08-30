@@ -27,12 +27,19 @@ void CDataManager::LoadConfig()
 {
     std::wstring config_path = m_module_path + L".ini";
     m_setting_data.show_second = GetPrivateProfileInt(_T("config"), _T("show_second"), 0, config_path.c_str());
+    m_setting_data.show_label_text = GetPrivateProfileInt(_T("config"), _T("show_label_text"), 1, config_path.c_str());
+}
+
+static void WritePrivateProfileInt(const wchar_t* app_name, const wchar_t* key_name, int value, const wchar_t* file_path)
+{
+    wchar_t buff[16];
+    swprintf_s(buff, L"%d", value);
+    WritePrivateProfileString(app_name, key_name, buff, file_path);
 }
 
 void CDataManager::SaveConfig() const
 {
     std::wstring config_path = m_module_path + L".ini";
-    wchar_t buff[16];
-    swprintf_s(buff, L"%d", m_setting_data.show_second);
-    WritePrivateProfileString(_T("config"), _T("show_second"), buff, config_path.c_str());
+    WritePrivateProfileInt(_T("config"), _T("show_second"), m_setting_data.show_second, config_path.c_str());
+    WritePrivateProfileInt(_T("config"), _T("show_label_text"), m_setting_data.show_label_text, config_path.c_str());
 }

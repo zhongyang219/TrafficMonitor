@@ -25,4 +25,5 @@ protected:
 public:
     virtual BOOL OnInitDialog();
     afx_msg void OnBnClickedShowSecondCheck();
+    afx_msg void OnBnClickedShowLabelCheck();
 };

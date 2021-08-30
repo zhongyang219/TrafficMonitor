@@ -3,7 +3,8 @@
 
 struct SettingData
 {
-    bool show_second{ false };
+    bool show_second{};
+    bool show_label_text{};
 };
 
 class CDataManager
