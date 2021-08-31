@@ -14,29 +14,13 @@ struct HistoryTraffic
     unsigned __int64 down_kBytes{};
     bool mixed{ true };     //如果不区分上传和下载流量，则为true
 
-    unsigned __int64 kBytes() const
-    {
-        return up_kBytes + down_kBytes;
-    }
+    unsigned __int64 kBytes() const;
 
     //比较两个HistoryTraffic对象的日期，如果a的时间大于b，则返回true
-    static bool DateGreater(const HistoryTraffic& a, const HistoryTraffic& b)
-    {
-        if (a.year != b.year)
-            return a.year > b.year;
-        else if (a.month != b.month)
-            return a.month > b.month;
-        else if (a.day != b.day)
-            return a.day > b.day;
-        else
-            return false;
-    }
+    static bool DateGreater(const HistoryTraffic& a, const HistoryTraffic& b);
 
     //判断两个HistoryTraffic对象的日期是否相等
-    static bool DateEqual(const HistoryTraffic& a, const HistoryTraffic& b)
-    {
-        return a.year == b.year && a.month == b.month && a.day == b.day;
-    }
+    static bool DateEqual(const HistoryTraffic& a, const HistoryTraffic& b);
 };
 
 //历史流量统计中用于指示不同范围内的流量的颜色
@@ -73,37 +57,14 @@ private:
 
 public:
     //获取一个显示的文本
-    wstring& Get(DisplayItem item)
-    {
-        return map_str[item];
-    }
+    wstring& Get(DisplayItem item);
 
-    const std::map<DisplayItem, wstring>& GetAllItems() const
-    {
-        return map_str;
-    }
+    const std::map<DisplayItem, wstring>& GetAllItems() const;
 
-    void operator=(const DispStrings& disp_str)     //重载赋值运算符
-    {
-        map_str = disp_str.map_str;
-        //如果赋值的字符串是定义的无效字符串，则不赋值
-        for (auto& iter = map_str.begin(); iter != map_str.end(); ++iter)
-        {
-            if (iter->second == NONE_STR)
-                iter->second.clear();
-        }
-    }
+    void operator=(const DispStrings& disp_str);     //重载赋值运算符
 
     //是否无效
-    bool IsInvalid() const
-    {
-        for (auto& iter = map_str.begin(); iter != map_str.end(); ++iter)
-        {
-            if (iter->second == NONE_STR)
-                return true;
-        }
-        return false;
-    }
+    bool IsInvalid() const;
 };
 
 //鼠标双击窗口的动作
@@ -284,6 +245,11 @@ struct TaskBarSettingData : public PublicSettingData
 
     CTaskbarItemOrderHelper item_order;
     unsigned int m_tbar_display_item{ TDI_UP | TDI_DOWN };      //任务栏窗口显示的项目
+    std::set<std::wstring> plugin_display_item;    //任务窗口显示的插件项目
+    bool IsPluginItemDisplayed(const std::wstring& id) const;
+    void SetPluginItemDisplayed(const std::wstring& id, bool displayed);
+    void PluginDisplayItemFromString(const std::wstring& str);
+    std::wstring PluginDisplayItemToString() const;
 
     bool value_right_align{ false };    //数值是否右对齐
     int digits_number{ 4 };             //数据位数

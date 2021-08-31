@@ -12,6 +12,9 @@ public:
     //获取显示项目的名称
     virtual const wchar_t* GetItemName() const = 0;
 
+    //获取显示项目的唯一ID
+    virtual const wchar_t* GetItemId() const = 0;
+
     //获取项目标签的文本
     virtual const wchar_t* GetItemLableText() const = 0;
 

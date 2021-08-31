@@ -181,6 +181,9 @@
     <Filter Include="源文件和头文件\对话框类\PluginManagerDlg">
       <UniqueIdentifier>{dbacfb68-1e03-4bcb-a08b-e87ba558985f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\CommonData">
+      <UniqueIdentifier>{554c1c22-3662-416f-9a24-ad76bfb5eecd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -241,9 +244,6 @@
     </ClInclude>
     <ClInclude Include="PictureStatic.h">
       <Filter>源文件和头文件\派生的控件类\PictureStatic</Filter>
-    </ClInclude>
-    <ClInclude Include="CommonData.h">
-      <Filter>源文件和头文件\头文件</Filter>
     </ClInclude>
     <ClInclude Include="CSkinPreviewView.h">
       <Filter>源文件和头文件\对话框类\SkinDlg</Filter>
@@ -388,6 +388,9 @@
     </ClInclude>
     <ClInclude Include="PluginInfoDlg.h">
       <Filter>源文件和头文件\对话框类\PluginManagerDlg</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonData.h">
+      <Filter>源文件和头文件\公共的类\CommonData</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -573,6 +576,9 @@
     </ClCompile>
     <ClCompile Include="PluginInfoDlg.cpp">
       <Filter>源文件和头文件\对话框类\PluginManagerDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonData.cpp">
+      <Filter>源文件和头文件\公共的类\CommonData</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

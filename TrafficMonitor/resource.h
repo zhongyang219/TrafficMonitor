@@ -565,15 +565,18 @@
 #define ID_HELP_32881                   32881
 #define ID_32882                        32882
 #define ID_PLUGIN_MANAGE                32883
-#define ID_SELETE_CONNECTION            33000
-#define ID_SELECT_ALL_CONNECTION        33001
+#define ID_SHOW_PLUGIN_ITEM_START       32834
+#define ID_SHOW_PLUGIN_ITEM_MAX         33090
+#define ID_SELETE_CONNECTION            33091
+#define ID_SELECT_ALL_CONNECTION        33092
+#define ID_SELETE_CONNECTION_MAX        33348
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        335
-#define _APS_NEXT_COMMAND_VALUE         32884
+#define _APS_NEXT_COMMAND_VALUE         33349
 #define _APS_NEXT_CONTROL_VALUE         1142
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

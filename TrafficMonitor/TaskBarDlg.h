@@ -64,11 +64,8 @@ protected:
 		}
     };
 
-    struct ItemWidthInfo
+    struct ItemWidthInfo : public TaskbarItem
     {
-        bool is_plugin{ false };
-        DisplayItem item_type;
-        IPluginItem* plugin_item{};
         ItemWidth item_width;
     };
 

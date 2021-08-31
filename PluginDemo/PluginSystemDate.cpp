@@ -8,6 +8,11 @@ const wchar_t* CPluginSystemDate::GetItemName() const
     return L"Date";
 }
 
+const wchar_t* CPluginSystemDate::GetItemId() const
+{
+    return L"o282ffc4";
+}
+
 const wchar_t* CPluginSystemDate::GetItemLableText() const
 {
     if (CDataManager::Instance().m_setting_data.show_label_text)

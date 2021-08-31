@@ -372,16 +372,19 @@ void CTaskBarDlg::DrawPluginItem(CDrawCommon& drawer, IPluginItem* item, CRect r
 
     CRect rect_label, rect_value;
     rect_label = rect_value = rect;
-    if (!vertical)
+    if (label_width > 0)
     {
-        rect_label = rect_value = rect;
-        rect_label.right = rect_label.left + label_width;
-        rect_value.left = rect_label.right;
-    }
-    else
-    {
-        rect_label.bottom = rect_label.top + rect.Height() / 2;
-        rect_value.top = rect_label.bottom;
+        if (!vertical)
+        {
+            rect_label = rect_value = rect;
+            rect_label.right = rect_label.left + label_width;
+            rect_value.left = rect_label.right;
+        }
+        else
+        {
+            rect_label.bottom = rect_label.top + rect.Height() / 2;
+            rect_value.top = rect_label.bottom;
+        }
     }
     //画标签
     CString lable_text = item->GetItemLableText();
@@ -760,7 +763,7 @@ void CTaskBarDlg::CalculateWindowSize()
     //计算插件项目的宽度
     for (const auto& plugin : theApp.m_plugins.GetPluginItems())
     {
-        if (plugin != nullptr)
+        if (plugin != nullptr && theApp.m_taskbar_data.IsPluginItemDisplayed(plugin->GetItemId()))
         {
             ItemWidthInfo width_info;
             width_info.is_plugin = true;
@@ -1099,6 +1102,17 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
     pMenu->EnableMenuItem(ID_SHOW_HDD, MF_BYCOMMAND | (theApp.m_general_data.IsHardwareEnable(HI_HDD) ? MF_ENABLED : MF_GRAYED));
 #endif
 
+    //设置“显示设置”子菜单中插件项目的勾选状态
+    for (int i{}; i < static_cast<int>(theApp.m_plugins.GetPluginItems().size()); i++)
+    {
+        IPluginItem* item = theApp.m_plugins.GetPluginItems()[i];
+        if (item != nullptr)
+        {
+            bool displayed{ theApp.m_taskbar_data.IsPluginItemDisplayed(item->GetItemId()) };
+            pMenu->CheckMenuItem(ID_SHOW_PLUGIN_ITEM_START + i, MF_BYCOMMAND | (displayed ? MF_CHECKED : MF_UNCHECKED));
+        }
+    }
+
     pMenu->EnableMenuItem(ID_SELECT_ALL_CONNECTION, MF_BYCOMMAND | (theApp.m_general_data.show_all_interface ? MF_GRAYED : MF_ENABLED));
 
     pMenu->EnableMenuItem(ID_CHECK_UPDATE, MF_BYCOMMAND | (theApp.IsCheckingForUpdate() ? MF_GRAYED : MF_ENABLED));
@@ -1202,10 +1216,22 @@ BOOL CTaskBarDlg::OnCommand(WPARAM wParam, LPARAM lParam)
     // TODO: 在此添加专用代码和/或调用基类
     UINT uMsg = LOWORD(wParam);
     if (uMsg == ID_SELECT_ALL_CONNECTION || uMsg == ID_SELETE_CONNECTION
-        || (uMsg > ID_SELECT_ALL_CONNECTION && uMsg <= ID_SELECT_ALL_CONNECTION + 98))
+        || (uMsg > ID_SELECT_ALL_CONNECTION && uMsg <= ID_SELETE_CONNECTION_MAX))
     {
         ::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_COMMAND, wParam, lParam);    //如果点击了“选择网络连接”子菜单项，将消息转发到主窗口
         return TRUE;
+    }
+
+    //选择了“显示项目”中的插件项目
+    if (uMsg >= ID_SHOW_PLUGIN_ITEM_START && uMsg <= ID_SHOW_PLUGIN_ITEM_MAX)
+    {
+        IPluginItem* item = theApp.m_plugins.GetItemByIndex(uMsg - ID_SHOW_PLUGIN_ITEM_START);
+        if (item != nullptr)
+        {
+            bool displayed = theApp.m_taskbar_data.IsPluginItemDisplayed(item->GetItemId());
+            theApp.m_taskbar_data.SetPluginItemDisplayed(item->GetItemId(), !displayed);
+            ::PostMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_REOPEN_TASKBAR_WND, 0, 0);
+        }
     }
 
     return CDialogEx::OnCommand(wParam, lParam);

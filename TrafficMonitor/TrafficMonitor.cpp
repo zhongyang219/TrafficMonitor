@@ -247,6 +247,7 @@ void CTrafficMonitorApp::LoadConfig()
         m_taskbar_data.auto_set_background_color = false;
 
     m_taskbar_data.item_order.FromString(ini.GetString(L"task_bar", L"item_order", L""));
+    m_taskbar_data.PluginDisplayItemFromString(ini.GetString(L"task_bar", L"plugin_display_item", L""));
 
     //其他设置
     //m_cfg_data.m_show_internet_ip = ini.GetBool(L"connection_details", L"show_internet_ip", false);
@@ -391,6 +392,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(L"task_bar", L"auto_set_background_color", m_taskbar_data.auto_set_background_color);
 
     ini.WriteString(L"task_bar", L"item_order", m_taskbar_data.item_order.ToString());
+    ini.WriteString(L"task_bar", L"plugin_display_item", m_taskbar_data.PluginDisplayItemToString());
 
     //其他设置
     //ini.WriteBool(L"connection_details", L"show_internet_ip", m_cfg_data.m_show_internet_ip);
@@ -1051,6 +1053,16 @@ void CTrafficMonitorApp::UpdateTaskbarWndMenu()
         if (m_general_data.IsHardwareEnable(HI_HDD))
             pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_HDD, CCommon::LoadText(IDS_HDD_USAGE));
 #endif
+
+        //添加插件菜单项
+        if (!m_plugins.GetPluginItems().empty())
+            pMenu->AppendMenu(MF_SEPARATOR);
+        int plugin_index = 0;
+        for (const auto& plugin_item : m_plugins.GetPluginItems())
+        {
+            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_PLUGIN_ITEM_START + plugin_index, plugin_item->GetItemName());
+            plugin_index++;
+        }
     }
 }
 

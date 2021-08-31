@@ -503,6 +503,7 @@
     <ClCompile Include="CMFCColorDialogEx.cpp" />
     <ClCompile Include="ColorSettingListCtrl.cpp" />
     <ClCompile Include="ComboBox2.cpp" />
+    <ClCompile Include="CommonData.cpp" />
     <ClCompile Include="CPUUsage.cpp" />
     <ClCompile Include="crashtool.cpp" />
     <ClCompile Include="CTabCtrlEx.cpp" />

@@ -6,6 +6,13 @@ CPluginManager::CPluginManager()
 {
 }
 
+CPluginManager::~CPluginManager()
+{
+    //卸载插件
+    for (const auto& m : m_modules)
+        FreeLibrary(m.plugin_module);
+}
+
 static wstring WcharArrayToWString(const wchar_t* str)
 {
     if (str == nullptr)
@@ -78,12 +85,29 @@ const std::vector<CPluginManager::PluginInfo>& CPluginManager::GetPlugins()
     return m_modules;
 }
 
-IPluginItem* CPluginManager::GetItemByName(const std::wstring& item_name)
+IPluginItem* CPluginManager::GetItemById(const std::wstring& item_id)
 {
     for (const auto& item : m_plugins)
     {
-        if (item->GetItemName() == item_name)
+        if (item->GetItemId() == item_id)
             return item;
     }
     return nullptr;
+}
+
+IPluginItem* CPluginManager::GetItemByIndex(int index)
+{
+    if (index >= 0 && index < static_cast<int>(m_plugins.size()))
+        return m_plugins[index];
+    return nullptr;
+}
+
+int CPluginManager::GetItemIndex(IPluginItem* item) const
+{
+    for (auto iter = m_plugins.begin(); iter != m_plugins.end(); ++iter)
+    {
+        if (*iter == item)
+            return iter - m_plugins.begin();
+    }
+    return -1;
 }

@@ -252,6 +252,7 @@ public:
 protected:
     afx_msg LRESULT OnMonitorInfoUpdated(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnDisplaychange(WPARAM wParam, LPARAM lParam);
+    afx_msg LRESULT OnReopenTaksbarWnd(WPARAM wParam, LPARAM lParam);
 public:
     afx_msg void OnExitSizeMove();
     afx_msg void OnPluginManage();

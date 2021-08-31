@@ -130,6 +130,8 @@ void CPluginManagerDlg::OnBnClickedOptinsButton()
         ITMPlugin::OptionReturn rtn = plugin_info.plugin->ShowOptionsDialog(m_hWnd);
         if (rtn == ITMPlugin::OR_OPTION_NOT_PROVIDED)
             MessageBox(CCommon::LoadText(IDS_PLUGIN_NO_OPTIONS_INFO), nullptr, MB_ICONINFORMATION | MB_OK);
+        else if (rtn == ITMPlugin::OR_OPTION_CHANGED)
+            theApp.m_pMainWnd->SendMessage(WM_REOPEN_TASKBAR_WND);
     }
 }
 

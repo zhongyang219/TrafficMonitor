@@ -3,6 +3,32 @@
 #include "Common.h"
 #include "TrafficMonitor.h"
 
+bool TaskbarItem::operator<(const TaskbarItem item) const
+{
+    if (is_plugin && !item.is_plugin)
+        return false;
+    else if (!is_plugin && item.is_plugin)
+        return true;
+    else if (!is_plugin)
+        return item_type < item.item_type;
+    else
+        return theApp.m_plugins.GetItemIndex(plugin_item) < theApp.m_plugins.GetItemIndex(item.plugin_item);
+}
+
+bool TaskbarItem::operator==(const TaskbarItem item) const
+{
+    if (is_plugin != item.is_plugin)
+        return false;
+    else if (!is_plugin)
+        return item_type == item.item_type;
+    else
+        return plugin_item == item.plugin_item;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+
 CTaskbarItemOrderHelper::CTaskbarItemOrderHelper(bool displayed_only)
     : m_displayed_only(displayed_only)
 {
