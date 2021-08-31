@@ -247,7 +247,7 @@ void CTrafficMonitorApp::LoadConfig()
         m_taskbar_data.auto_set_background_color = false;
 
     m_taskbar_data.item_order.FromString(ini.GetString(L"task_bar", L"item_order", L""));
-    m_taskbar_data.PluginDisplayItemFromString(ini.GetString(L"task_bar", L"plugin_display_item", L""));
+    m_taskbar_data.plugin_display_item.FromString(ini.GetString(L"task_bar", L"plugin_display_item", L""));
 
     //其他设置
     //m_cfg_data.m_show_internet_ip = ini.GetBool(L"connection_details", L"show_internet_ip", false);
@@ -264,6 +264,8 @@ void CTrafficMonitorApp::LoadConfig()
     m_last_light_mode = ini.GetBool(L"other", L"last_light_mode", m_win_version.IsWindows10LightTheme());
     m_show_mouse_panetrate_tip = ini.GetBool(L"other", L"show_mouse_panetrate_tip", true);
     m_show_dot_net_notinstalled_tip = ini.GetBool(L"other", L"show_dot_net_notinstalled_tip", true);
+
+    m_cfg_data.plugin_disabled.FromString(ini.GetString(L"config", L"plugin_disabled", L""));
 }
 
 void CTrafficMonitorApp::SaveConfig()
@@ -392,7 +394,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(L"task_bar", L"auto_set_background_color", m_taskbar_data.auto_set_background_color);
 
     ini.WriteString(L"task_bar", L"item_order", m_taskbar_data.item_order.ToString());
-    ini.WriteString(L"task_bar", L"plugin_display_item", m_taskbar_data.PluginDisplayItemToString());
+    ini.WriteString(L"task_bar", L"plugin_display_item", m_taskbar_data.plugin_display_item.ToString());
 
     //其他设置
     //ini.WriteBool(L"connection_details", L"show_internet_ip", m_cfg_data.m_show_internet_ip);
@@ -408,6 +410,8 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(_T("other"), _T("last_light_mode"), m_last_light_mode);
     ini.WriteBool(_T("other"), _T("show_mouse_panetrate_tip"), m_show_mouse_panetrate_tip);
     ini.WriteBool(_T("other"), _T("show_dot_net_notinstalled_tip"), m_show_dot_net_notinstalled_tip);
+
+    ini.WriteString(L"config", L"plugin_disabled", m_cfg_data.plugin_disabled.ToString());
 
     ini.WriteString(L"app", L"version", VERSION);
 

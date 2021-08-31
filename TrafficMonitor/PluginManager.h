@@ -14,6 +14,7 @@ public:
         PS_SUCCEED,             //载入成功
         PS_MUDULE_LOAD_FAILED,  //dll加载失败
         PS_FUNCTION_GET_FAILED, //插件函数获取失败
+        PS_DISABLE              //已禁用
     };
 
     //插件信息

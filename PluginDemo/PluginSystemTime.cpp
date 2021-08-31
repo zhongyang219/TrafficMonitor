@@ -28,5 +28,8 @@ const wchar_t* CPluginSystemTime::GetItemValueText() const
 
 const wchar_t* CPluginSystemTime::GetItemValueSampleText() const
 {
-    return L"12:00:00";
+    if (CDataManager::Instance().m_setting_data.show_second)
+        return L"12:00:00";
+    else
+        return L"12:00";
 }

@@ -30,9 +30,27 @@ void CPluginManagerDlg::DoDataExchange(CDataExchange* pDX)
 
 void CPluginManagerDlg::EnableControl()
 {
-    bool select_enable{ m_item_selected >= 0 && m_item_selected < m_list_ctrl.GetItemCount() };
-    EnableDlgCtrl(IDC_OPTINS_BUTTON, select_enable);
-    EnableDlgCtrl(IDC_PLUGIN_INFO_BUTTON, select_enable);
+    bool enable{ IsSelectedPluginEnable() };
+    EnableDlgCtrl(IDC_OPTINS_BUTTON, enable);
+    EnableDlgCtrl(IDC_PLUGIN_INFO_BUTTON, enable);
+}
+
+bool CPluginManagerDlg::IsSelectedValid()
+{
+    return m_item_selected >= 0 && m_item_selected < static_cast<int>(theApp.m_plugins.GetPlugins().size());
+}
+
+bool CPluginManagerDlg::IsSelectedPluginEnable()
+{
+    CPluginManager::PluginInfo plugin_info{};
+    bool plugin_loaded{ false };
+    if (IsSelectedValid())
+    {
+        plugin_info = theApp.m_plugins.GetPlugins()[m_item_selected];
+        plugin_loaded = (plugin_info.state == CPluginManager::PluginState::PS_SUCCEED);
+    }
+
+    return plugin_loaded;
 }
 
 CString CPluginManagerDlg::GetDialogName() const
@@ -47,6 +65,10 @@ BEGIN_MESSAGE_MAP(CPluginManagerDlg, CBaseDialog)
     ON_BN_CLICKED(IDC_OPTINS_BUTTON, &CPluginManagerDlg::OnBnClickedOptinsButton)
     ON_BN_CLICKED(IDC_PLUGIN_INFO_BUTTON, &CPluginManagerDlg::OnBnClickedPluginInfoButton)
     ON_NOTIFY(NM_DBLCLK, IDC_LIST1, &CPluginManagerDlg::OnNMDblclkList1)
+    ON_WM_INITMENU()
+    ON_COMMAND(ID_PLUGIN_DETAIL, &CPluginManagerDlg::OnPluginDetail)
+    ON_COMMAND(ID_PLUGIN_OPTIONS, &CPluginManagerDlg::OnPluginOptions)
+    ON_COMMAND(ID_PLUGIN_DISABLE, &CPluginManagerDlg::OnPluginDisable)
 END_MESSAGE_MAP()
 
 
@@ -87,6 +109,9 @@ BOOL CPluginManagerDlg::OnInitDialog()
         case CPluginManager::PluginState::PS_FUNCTION_GET_FAILED:
             status = CCommon::LoadTextFormat(IDS_PLUGIN_FUNCTION_GET_FAILED, { static_cast<int>(plugin.error_code) });
             break;
+        case CPluginManager::PluginState::PS_DISABLE:
+            status = CCommon::LoadText(IDS_DISABLED);
+            break;
         }
         int index = m_list_ctrl.GetItemCount();
         m_list_ctrl.InsertItem(index, file_name.c_str());
@@ -95,6 +120,8 @@ BOOL CPluginManagerDlg::OnInitDialog()
     }
 
     EnableControl();
+
+    m_menu.LoadMenu(IDR_PLUGIN_MANAGER_MENU); //装载右键菜单
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE
@@ -107,6 +134,13 @@ void CPluginManagerDlg::OnNMRClickList1(NMHDR* pNMHDR, LRESULT* pResult)
     // TODO: 在此添加控件通知处理程序代码
     m_item_selected = pNMItemActivate->iItem;
     EnableControl();
+
+    //弹出右键菜单
+    CMenu* pContextMenu = m_menu.GetSubMenu(0);	//获取第一个弹出菜单
+    CPoint point1;	//定义一个用于确定光标位置的位置
+    GetCursorPos(&point1);	//获取当前光标的位置，以便使得菜单可以跟随光标
+    pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
+
     *pResult = 0;
 }
 
@@ -127,11 +161,14 @@ void CPluginManagerDlg::OnBnClickedOptinsButton()
     if (m_item_selected >= 0 && m_item_selected < static_cast<int>(theApp.m_plugins.GetPlugins().size()))
     {
         auto plugin_info = theApp.m_plugins.GetPlugins()[m_item_selected];
-        ITMPlugin::OptionReturn rtn = plugin_info.plugin->ShowOptionsDialog(m_hWnd);
-        if (rtn == ITMPlugin::OR_OPTION_NOT_PROVIDED)
-            MessageBox(CCommon::LoadText(IDS_PLUGIN_NO_OPTIONS_INFO), nullptr, MB_ICONINFORMATION | MB_OK);
-        else if (rtn == ITMPlugin::OR_OPTION_CHANGED)
-            theApp.m_pMainWnd->SendMessage(WM_REOPEN_TASKBAR_WND);
+        if (plugin_info.plugin != nullptr)
+        {
+            ITMPlugin::OptionReturn rtn = plugin_info.plugin->ShowOptionsDialog(m_hWnd);
+            if (rtn == ITMPlugin::OR_OPTION_NOT_PROVIDED)
+                MessageBox(CCommon::LoadText(IDS_PLUGIN_NO_OPTIONS_INFO), nullptr, MB_ICONINFORMATION | MB_OK);
+            //else if (rtn == ITMPlugin::OR_OPTION_CHANGED)
+            //    theApp.m_pMainWnd->SendMessage(WM_REOPEN_TASKBAR_WND);
+        }
     }
 }
 
@@ -139,8 +176,11 @@ void CPluginManagerDlg::OnBnClickedOptinsButton()
 void CPluginManagerDlg::OnBnClickedPluginInfoButton()
 {
     // TODO: 在此添加控件通知处理程序代码
-    CPluginInfoDlg dlg(m_item_selected);
-    dlg.DoModal();
+    if (IsSelectedPluginEnable())
+    {
+        CPluginInfoDlg dlg(m_item_selected);
+        dlg.DoModal();
+    }
 }
 
 
@@ -151,4 +191,51 @@ void CPluginManagerDlg::OnNMDblclkList1(NMHDR* pNMHDR, LRESULT* pResult)
     m_item_selected = pNMItemActivate->iItem;
     OnBnClickedPluginInfoButton();
     *pResult = 0;
+}
+
+
+void CPluginManagerDlg::OnInitMenu(CMenu* pMenu)
+{
+    CBaseDialog::OnInitMenu(pMenu);
+
+    // TODO: 在此处添加消息处理程序代码
+    bool enable{ IsSelectedPluginEnable() };
+    pMenu->EnableMenuItem(ID_PLUGIN_DETAIL, MF_BYCOMMAND | (enable ? MF_ENABLED : MF_GRAYED));
+    pMenu->EnableMenuItem(ID_PLUGIN_OPTIONS, MF_BYCOMMAND | (enable ? MF_ENABLED : MF_GRAYED));
+    pMenu->EnableMenuItem(ID_PLUGIN_DISABLE, MF_BYCOMMAND | (IsSelectedValid() ? MF_ENABLED : MF_GRAYED));
+
+    bool disabled{};
+    CPluginManager::PluginInfo plugin_info;
+    if (m_item_selected >= 0 && m_item_selected < static_cast<int>(theApp.m_plugins.GetPlugins().size()))
+    {
+        plugin_info = theApp.m_plugins.GetPlugins()[m_item_selected];
+        std::wstring file_name = CFilePathHelper(plugin_info.file_path).GetFileName();
+        disabled = theApp.m_cfg_data.plugin_disabled.Contains(file_name);
+    }
+    pMenu->CheckMenuItem(ID_PLUGIN_DISABLE, MF_BYCOMMAND | (disabled ? MF_CHECKED : MF_UNCHECKED));
+}
+
+
+void CPluginManagerDlg::OnPluginDetail()
+{
+    OnBnClickedOptinsButton();
+}
+
+
+void CPluginManagerDlg::OnPluginOptions()
+{
+    OnBnClickedOptinsButton();
+}
+
+
+void CPluginManagerDlg::OnPluginDisable()
+{
+    if (m_item_selected >= 0 && m_item_selected < static_cast<int>(theApp.m_plugins.GetPlugins().size()))
+    {
+        CPluginManager::PluginInfo plugin_info = theApp.m_plugins.GetPlugins()[m_item_selected];
+        std::wstring file_name = CFilePathHelper(plugin_info.file_path).GetFileName();
+        bool disabled = theApp.m_cfg_data.plugin_disabled.Contains(file_name);
+        theApp.m_cfg_data.plugin_disabled.SetStrContained(file_name, !disabled);
+        MessageBox(CCommon::LoadText(IDS_RESTART_TO_APPLY_CHANGE_INFO), nullptr, MB_OK | MB_ICONINFORMATION);
+    }
 }

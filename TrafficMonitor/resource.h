@@ -237,6 +237,8 @@
 #define IDS_GPU_USAGE                   334
 #define IDI_PLUGINS                     334
 #define IDS_IF_OPER_STATUS_UP           335
+#define IDR_MENU3                       335
+#define IDR_PLUGIN_MANAGER_MENU         335
 #define IDS_IF_OPER_STATUS_DOWN         336
 #define IDS_IF_OPER_STATUS_DORMANT      337
 #define IDS_GOTO_GITEE                  338
@@ -264,6 +266,8 @@
 #define IDS_COPYRIGHT                   360
 #define IDS_PLUGIN_NO_OPTIONS_INFO      361
 #define IDS_PLUGIN_NAME                 362
+#define IDS_DISABLED                    363
+#define IDS_RESTART_TO_APPLY_CHANGE_INFO 364
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
 #define IDC_STATIC_DOWN                 1002
@@ -565,18 +569,21 @@
 #define ID_HELP_32881                   32881
 #define ID_32882                        32882
 #define ID_PLUGIN_MANAGE                32883
-#define ID_SHOW_PLUGIN_ITEM_START       32834
-#define ID_SHOW_PLUGIN_ITEM_MAX         33090
-#define ID_SELETE_CONNECTION            33091
-#define ID_SELECT_ALL_CONNECTION        33092
-#define ID_SELETE_CONNECTION_MAX        33348
+#define ID_SHOW_PLUGIN_ITEM_START       32884
+#define ID_SHOW_PLUGIN_ITEM_MAX         33140
+#define ID_SELETE_CONNECTION            33141
+#define ID_SELECT_ALL_CONNECTION        33142
+#define ID_SELETE_CONNECTION_MAX        33398
+#define ID_PLUGIN_DETAIL                33399
+#define ID_PLUGIN_OPTIONS               33400
+#define ID_PLUGIN_DISABLE               33401
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        335
-#define _APS_NEXT_COMMAND_VALUE         33349
+#define _APS_NEXT_RESOURCE_VALUE        336
+#define _APS_NEXT_COMMAND_VALUE         33402
 #define _APS_NEXT_CONTROL_VALUE         1142
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

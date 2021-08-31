@@ -61,42 +61,40 @@ bool DispStrings::IsInvalid() const
 
 
 ///////////////////////////////////////////////////////////////////////////////////
-//TaskBarSettingData
-bool TaskBarSettingData::IsPluginItemDisplayed(const std::wstring& id) const
+bool StringSet::Contains(const std::wstring& str) const
 {
-    return plugin_display_item.count(id) != 0;
+    return string_set.count(str) != 0;
 }
 
-void TaskBarSettingData::SetPluginItemDisplayed(const std::wstring& id, bool displayed)
+void StringSet::SetStrContained(const std::wstring& str, bool contained)
 {
-    if (displayed)
-        plugin_display_item.insert(id);
+    if (contained)
+        string_set.insert(str);
     else
-        plugin_display_item.erase(id);
+        string_set.erase(str);
 }
 
-void TaskBarSettingData::PluginDisplayItemFromString(const std::wstring& str)
+void StringSet::FromString(const std::wstring& str)
 {
-    std::vector<std::wstring> plugin_display_item_vect;
-    CCommon::StringSplit(str, L',', plugin_display_item_vect);
-    plugin_display_item.clear();
-    for (const auto& i : plugin_display_item_vect)
-        plugin_display_item.insert(i);
-
+    std::vector<std::wstring> item_vect;
+    CCommon::StringSplit(str, L',', item_vect);
+    string_set.clear();
+    for (const auto& i : item_vect)
+        string_set.insert(i);
 }
 
-std::wstring TaskBarSettingData::PluginDisplayItemToString() const
+std::wstring StringSet::ToString() const
 {
-    std::vector<std::wstring> plugin_display_item_vect;
-    for (const auto& i : plugin_display_item)
-        plugin_display_item_vect.push_back(i);
-    std::wstring plugin_display_item_str;
-    for (const auto& i : plugin_display_item_vect)
+    std::vector<std::wstring> item_vect;
+    for (const auto& i : string_set)
+        item_vect.push_back(i);
+    std::wstring item_str;
+    for (const auto& i : item_vect)
     {
-        plugin_display_item_str += i;
-        plugin_display_item_str += L',';
+        item_str += i;
+        item_str += L',';
     }
-    if (!plugin_display_item_str.empty())
-        plugin_display_item_str.pop_back();
-    return plugin_display_item_str;
+    if (!item_str.empty())
+        item_str.pop_back();
+    return item_str;
 }

@@ -19,10 +19,13 @@ public:
 private:
     CListCtrl m_list_ctrl;
     int m_item_selected{ -1 };
+    CMenu m_menu;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
     void EnableControl();
+    bool IsSelectedValid();
+    bool IsSelectedPluginEnable();     //选中插件是否可用
 
 	DECLARE_MESSAGE_MAP()
 
@@ -35,4 +38,8 @@ public:
     afx_msg void OnBnClickedOptinsButton();
     afx_msg void OnBnClickedPluginInfoButton();
     afx_msg void OnNMDblclkList1(NMHDR* pNMHDR, LRESULT* pResult);
+    afx_msg void OnInitMenu(CMenu* pMenu);
+    afx_msg void OnPluginDetail();
+    afx_msg void OnPluginOptions();
+    afx_msg void OnPluginDisable();
 };

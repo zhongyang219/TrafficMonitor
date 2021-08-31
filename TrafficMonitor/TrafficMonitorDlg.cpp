@@ -1227,7 +1227,8 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     //通知插件获取数据
     for (const auto& plugin_info : theApp.m_plugins.GetPlugins())
     {
-        plugin_info.plugin->DataRequired();
+        if (plugin_info.plugin != nullptr)
+            plugin_info.plugin->DataRequired();
     }
 
     //}

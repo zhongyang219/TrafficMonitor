@@ -763,7 +763,7 @@ void CTaskBarDlg::CalculateWindowSize()
     //计算插件项目的宽度
     for (const auto& plugin : theApp.m_plugins.GetPluginItems())
     {
-        if (plugin != nullptr && theApp.m_taskbar_data.IsPluginItemDisplayed(plugin->GetItemId()))
+        if (plugin != nullptr && theApp.m_taskbar_data.plugin_display_item.Contains(plugin->GetItemId()))
         {
             ItemWidthInfo width_info;
             width_info.is_plugin = true;
@@ -1108,7 +1108,7 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
         IPluginItem* item = theApp.m_plugins.GetPluginItems()[i];
         if (item != nullptr)
         {
-            bool displayed{ theApp.m_taskbar_data.IsPluginItemDisplayed(item->GetItemId()) };
+            bool displayed{ theApp.m_taskbar_data.plugin_display_item.Contains(item->GetItemId()) };
             pMenu->CheckMenuItem(ID_SHOW_PLUGIN_ITEM_START + i, MF_BYCOMMAND | (displayed ? MF_CHECKED : MF_UNCHECKED));
         }
     }
@@ -1228,8 +1228,8 @@ BOOL CTaskBarDlg::OnCommand(WPARAM wParam, LPARAM lParam)
         IPluginItem* item = theApp.m_plugins.GetItemByIndex(uMsg - ID_SHOW_PLUGIN_ITEM_START);
         if (item != nullptr)
         {
-            bool displayed = theApp.m_taskbar_data.IsPluginItemDisplayed(item->GetItemId());
-            theApp.m_taskbar_data.SetPluginItemDisplayed(item->GetItemId(), !displayed);
+            bool displayed = theApp.m_taskbar_data.plugin_display_item.Contains(item->GetItemId());
+            theApp.m_taskbar_data.plugin_display_item.SetStrContained(item->GetItemId(), !displayed);
             ::PostMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_REOPEN_TASKBAR_WND, 0, 0);
         }
     }

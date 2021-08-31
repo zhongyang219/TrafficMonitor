@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "PluginManager.h"
 #include "Common.h"
+#include "TrafficMonitor.h"
 
 CPluginManager::CPluginManager()
 {
@@ -35,6 +36,16 @@ void CPluginManager::LoadPlugins()
         PluginInfo& plugin_info{ m_modules.back() };
         //插件dll的路径
         plugin_info.file_path = plugin_dir + file;
+        //插件文件名
+        std::wstring file_name{ file };
+        if (!file_name.empty() && (file_name[0] == L'\\' || file_name[0] == L'/'))
+            file_name = file_name.substr(1);
+        //如果插件被禁用，则不加载插件
+        if (theApp.m_cfg_data.plugin_disabled.Contains(file_name))
+        {
+            plugin_info.state = PluginState::PS_DISABLE;
+            continue;
+        }
         //载入dll
         plugin_info.plugin_module = LoadLibrary(plugin_info.file_path.c_str());
         if (plugin_info.plugin_module == NULL)

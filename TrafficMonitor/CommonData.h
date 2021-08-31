@@ -149,6 +149,17 @@ enum class HistoryTrafficViewType
     HV_YEAR            //年视图
 };
 
+struct StringSet
+{
+public:
+    bool Contains(const std::wstring& str) const;
+    void SetStrContained(const std::wstring& str, bool contained);
+    void FromString(const std::wstring& str);
+    std::wstring ToString() const;
+private:
+    std::set<std::wstring> string_set;
+};
+
 //选项设置数据
 struct MainConfigData
 {
@@ -175,6 +186,7 @@ struct MainConfigData
     bool m_use_log_scale{ false };          //“历史流量统计”对话框中绘制表示历史流量数值的矩形时是否使用对数比例
     HistoryTrafficViewType m_view_type{};
     bool m_sunday_first{ true };            //是否将周日作为一周的第一天
+    StringSet plugin_disabled;      //已禁用的插件
 };
 
 //内存显示方式
@@ -245,11 +257,7 @@ struct TaskBarSettingData : public PublicSettingData
 
     CTaskbarItemOrderHelper item_order;
     unsigned int m_tbar_display_item{ TDI_UP | TDI_DOWN };      //任务栏窗口显示的项目
-    std::set<std::wstring> plugin_display_item;    //任务窗口显示的插件项目
-    bool IsPluginItemDisplayed(const std::wstring& id) const;
-    void SetPluginItemDisplayed(const std::wstring& id, bool displayed);
-    void PluginDisplayItemFromString(const std::wstring& str);
-    std::wstring PluginDisplayItemToString() const;
+    StringSet plugin_display_item;                  //任务窗口显示的插件项目
 
     bool value_right_align{ false };    //数值是否右对齐
     int digits_number{ 4 };             //数据位数
