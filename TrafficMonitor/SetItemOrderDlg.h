@@ -19,6 +19,9 @@ public:
     void SetDisplayItem(unsigned int display_item);
     unsigned int GetDisplayItem() const;
 
+    void SetPluginDisplayItem(const StringSet& plugin_item);
+    const StringSet& GetPluginDisplayItem() const;
+
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_SELECT_ORDER_DIALOG };
@@ -28,6 +31,8 @@ private:
     CTaskbarItemOrderHelper m_item_order;
     CCheckListBox m_list_ctrl;
     unsigned int m_display_item;
+    StringSet m_plugin_item;
+    int m_item_coumt{};             //除插件项目以外的项目的个数
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
