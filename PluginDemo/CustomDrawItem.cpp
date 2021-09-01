@@ -14,7 +14,7 @@ const wchar_t* CCustomDrawItem::GetItemId() const
 
 const wchar_t* CCustomDrawItem::GetItemLableText() const
 {
-    return nullptr;
+    return L"";
 }
 
 const wchar_t* CCustomDrawItem::GetItemValueText() const

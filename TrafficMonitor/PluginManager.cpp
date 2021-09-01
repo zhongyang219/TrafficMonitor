@@ -55,15 +55,15 @@ void CPluginManager::LoadPlugins()
             continue;
         }
         //获取函数的入口地址
-        pfTMPluginCreateInstance TMPluginCreateInstance = (pfTMPluginCreateInstance)::GetProcAddress(plugin_info.plugin_module, "TMPluginCreateInstance");
-        if (TMPluginCreateInstance == NULL)
+        pfTMPluginGetInstance TMPluginGetInstance = (pfTMPluginGetInstance)::GetProcAddress(plugin_info.plugin_module, "TMPluginGetInstance");
+        if (TMPluginGetInstance == NULL)
         {
             plugin_info.state = PluginState::PS_FUNCTION_GET_FAILED;
             plugin_info.error_code = GetLastError();
             continue;
         }
         //创建插件对象
-        plugin_info.plugin = std::shared_ptr<ITMPlugin>(TMPluginCreateInstance());
+        plugin_info.plugin = TMPluginGetInstance();
         if (plugin_info.plugin == nullptr)
             continue;
         //获取插件信息

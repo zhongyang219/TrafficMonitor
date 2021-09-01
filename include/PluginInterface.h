@@ -103,7 +103,7 @@ public:
 
 /*
 * 注意：插件dll需导出以下函数
-* ITMPlugin* TMPluginCreateInstance();
-*   函数创建一个实现了ITMPlugin接口的对象，并返回其指针。
-*   对象的释放由调用者来完成。
+* ITMPlugin* TMPluginGetInstance();
+*   函数返回一个ITMPlugin接口的对象的指针。
+*   此对象通常应该为一个全局或静态的对象，在程序运行结束前，它都不应该被释放。
 */

@@ -3,8 +3,15 @@
 #include "DataManager.h"
 #include "OptionsDlg.h"
 
+CPluginDemo CPluginDemo::m_instance;
+
 CPluginDemo::CPluginDemo()
 {
+}
+
+CPluginDemo& CPluginDemo::Instance()
+{
+    return m_instance;
 }
 
 IPluginItem* CPluginDemo::GetItem(int index)
@@ -77,8 +84,8 @@ ITMPlugin::OptionReturn CPluginDemo::ShowOptionsDialog(HWND hParent)
 }
 
 
-ITMPlugin* TMPluginCreateInstance()
+ITMPlugin* TMPluginGetInstance()
 {
     AFX_MANAGE_STATE(AfxGetStaticModuleState());
-    return new CPluginDemo();
+    return &CPluginDemo::Instance();
 }
