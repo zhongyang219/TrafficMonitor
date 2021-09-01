@@ -67,10 +67,11 @@ void CPluginManager::LoadPlugins()
         if (plugin_info.plugin == nullptr)
             continue;
         //获取插件信息
-        plugin_info.name = WcharArrayToWString(plugin_info.plugin->GetInfo(ITMPlugin::TMI_NAME));
-        plugin_info.description = WcharArrayToWString(plugin_info.plugin->GetInfo(ITMPlugin::TMI_DESCRIPTION));
-        plugin_info.author = WcharArrayToWString(plugin_info.plugin->GetInfo(ITMPlugin::TMI_AUTHOR));
-        plugin_info.copyright = WcharArrayToWString(plugin_info.plugin->GetInfo(ITMPlugin::TMI_COPYRIGHT));
+        for (int i{}; i < ITMPlugin::TMI_MAX; i++)
+        {
+            ITMPlugin::PluginInfoIndex index{ static_cast<ITMPlugin::PluginInfoIndex>(i) };
+            plugin_info.properties[index] = WcharArrayToWString(plugin_info.plugin->GetInfo(index));
+        }
 
         //获取插件显示项目
         int index = 0;

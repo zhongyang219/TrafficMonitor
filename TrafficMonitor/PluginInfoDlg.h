@@ -33,6 +33,7 @@ private:
         RI_ITEM_NAMES,
         RI_AUTHOR,
         RI_COPYRIGHT,
+        RI_VERSION,
         RI_MAX
     };
 

@@ -115,7 +115,7 @@ BOOL CPluginManagerDlg::OnInitDialog()
         }
         int index = m_list_ctrl.GetItemCount();
         m_list_ctrl.InsertItem(index, file_name.c_str());
-        m_list_ctrl.SetItemText(index, 1, plugin.name.c_str());
+        m_list_ctrl.SetItemText(index, 1, plugin.properties.at(ITMPlugin::TMI_NAME).c_str());
         m_list_ctrl.SetItemText(index, 2, status);
     }
 

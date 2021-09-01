@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "PluginInterface.h"
 #include <memory>
+#include <map>
 
 typedef ITMPlugin* (*pfTMPluginCreateInstance)();
 
@@ -26,10 +27,7 @@ public:
         std::vector<IPluginItem*> plugin_items; //插件提供的所有显示项目
         PluginState state{};    //插件的状态
         DWORD error_code{};     //错误代码（GetLastError的返回值）
-        wstring name;
-        wstring description;
-        wstring author;
-        wstring copyright;
+        std::map<ITMPlugin::PluginInfoIndex, std::wstring> properties;    //插件属性
     };
 
     CPluginManager();

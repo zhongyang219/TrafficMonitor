@@ -24,7 +24,27 @@ public:
     virtual const wchar_t* GetItemValueText() const = 0;
 
     //获取项目数值的示例文本
+    //此函数返回的字符串的长度会用于计算显示区域的宽度
     virtual const wchar_t* GetItemValueSampleText() const = 0;
+
+    //显示区域是否由插件自行绘制
+    //如果返回false，则根据GetItemLableText和GetItemValueText返回的文本由主程序绘制显示区域，重写DrawItem函数将不起作用。
+    //如果重写此函数并返回true，则必须重写DrawItem函数并在里面添加绘制显示区域的代码，
+    //此时GetItemLableText、GetItemValueText和GetItemValueSampleText的返回值将被主程序忽略
+    virtual bool IsCustomDraw() const { return false; }
+
+    //获取显示区域的宽度
+    //只有当CustomDraw()函数返回true时重写此函数才有效。
+    //返回的值为DPI为96（100%）时的宽度，主程序会根据当前系统DPI的设置自动按比例放大，
+    //因此你不需要为不同的DPI设置返回不同的值。
+    //需要注意的是，这里的返回值代表了自绘区域所需要的最小宽度，DrawItem函数中的参数w的值可能会大于这个值
+    virtual int GetItemWidth() const { return 0; }
+
+    //自定义绘制显示区域的函数，只有当CustomDraw()函数返回true时重写此函数才有效
+    //hDC: 绘图的上下文句柄
+    //x,y,h,w: 绘图的矩形区域
+    //dark_mode: 深色模式为true，浅色模式为false
+    virtual void DrawItem(void* hDC, int x, int y, int w, int h, bool dark_mode) {}
 };
 
 
@@ -70,7 +90,9 @@ public:
         TMI_NAME,           //名称
         TMI_DESCRIPTION,    //描述
         TMI_AUTHOR,         //作者
-        TMI_COPYRIGHT       //版权
+        TMI_COPYRIGHT,      //版权
+        TMI_VERSION,        //版本
+        TMI_MAX             //插件信息的最大值
     };
 
     /*

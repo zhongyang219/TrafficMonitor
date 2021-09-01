@@ -22,6 +22,7 @@ public:
 public:
     std::wstring m_cur_time;
     std::wstring m_cur_date;
+    SYSTEMTIME m_system_time;
     SettingData m_setting_data;
 
 private:

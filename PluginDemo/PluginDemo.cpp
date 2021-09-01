@@ -15,6 +15,8 @@ IPluginItem* CPluginDemo::GetItem(int index)
         return &m_system_date;
     case 1:
         return &m_system_time;
+    case 2:
+        return &m_custom_draw_item;
     default:
         break;
     }
@@ -24,8 +26,8 @@ IPluginItem* CPluginDemo::GetItem(int index)
 void CPluginDemo::DataRequired()
 {
     //获取时间和日期
-    SYSTEMTIME system_time;
-    GetSystemTime(&system_time);
+    SYSTEMTIME& system_time{ CDataManager::Instance().m_system_time };
+    GetLocalTime(&system_time);
     wchar_t buff[128];
     swprintf_s(buff, L"%d/%.2d/%.2d", system_time.wYear, system_time.wMonth, system_time.wDay);
     CDataManager::Instance().m_cur_date = buff;
@@ -53,6 +55,8 @@ const wchar_t* CPluginDemo::GetInfo(PluginInfoIndex index)
         return L"zhongyang219";
     case TMI_COPYRIGHT:
         return L"Copyright (C) by Zhong Yang 2021";
+    case TMI_VERSION:
+        return L"1.0";
     default:
         break;
     }

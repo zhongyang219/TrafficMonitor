@@ -100,8 +100,8 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_PLUGIN_NAME         "日期时间插件"
-    IDS_PLUGIN_DESCRIPTION  "提供显示时间和日期的示例插件。"
+    IDS_PLUGIN_NAME         "TrafficMonitor示例插件"
+    IDS_PLUGIN_DESCRIPTION  "用于TrafficMonitor的示例插件，为开发者开发TrafficMonitor插件提供范例。"
 END
 
 #endif    // 中文(简体，中国) resources
@@ -170,8 +170,8 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_PLUGIN_NAME         "Date time plugin"
-    IDS_PLUGIN_DESCRIPTION  "Examples of plug-in to provide display time and date."
+    IDS_PLUGIN_NAME         "A sample plug-in for TrafficMonitor."
+    IDS_PLUGIN_DESCRIPTION  "A sample plug-in for TrafficMonitor, providing an example for developers to develop TrafficMonitor plug-ins."
 END
 
 #endif    // 英语(美国) resources

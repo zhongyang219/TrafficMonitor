@@ -364,38 +364,48 @@ void CTaskBarDlg::DrawPluginItem(CDrawCommon& drawer, IPluginItem* item, CRect r
 {
     if (item == nullptr)
         return;
-    COLORREF text_color = theApp.m_taskbar_data.dft_text_colors;
-    if (!theApp.m_taskbar_data.text_colors.empty())
+    if (item->IsCustomDraw())
     {
-        text_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
+        //根据背景色的亮度判断深色还是浅色模式
+        const COLORREF& bk{ theApp.m_taskbar_data.back_color };
+        int background_brightness{ (GetRValue(bk) + GetGValue(bk) + GetBValue(bk)) / 3 };
+        //由插件自绘
+        item->DrawItem(drawer.GetDC()->GetSafeHdc(), rect.left, rect.top, rect.Width(), rect.Height(), background_brightness < 128);
     }
-
-    CRect rect_label, rect_value;
-    rect_label = rect_value = rect;
-    if (label_width > 0)
+    else
     {
-        if (!vertical)
+        COLORREF text_color = theApp.m_taskbar_data.dft_text_colors;
+        if (!theApp.m_taskbar_data.text_colors.empty())
         {
-            rect_label = rect_value = rect;
-            rect_label.right = rect_label.left + label_width;
-            rect_value.left = rect_label.right;
+            text_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
         }
-        else
-        {
-            rect_label.bottom = rect_label.top + rect.Height() / 2;
-            rect_value.top = rect_label.bottom;
-        }
-    }
-    //画标签
-    CString lable_text = item->GetItemLableText();
-    lable_text += L' ';
-    drawer.DrawWindowText(rect_label, lable_text, text_color, (vertical ? Alignment::CENTER : Alignment::LEFT));
-    //画数值
-    Alignment value_alignment{ theApp.m_taskbar_data.value_right_align ? Alignment::RIGHT : Alignment::LEFT };      //数值的对齐方式
-    if (vertical)
-        value_alignment = Alignment::CENTER;
-    drawer.DrawWindowText(rect_value, item->GetItemValueText(), text_color, value_alignment);
 
+        CRect rect_label, rect_value;
+        rect_label = rect_value = rect;
+        if (label_width > 0)
+        {
+            if (!vertical)
+            {
+                rect_label = rect_value = rect;
+                rect_label.right = rect_label.left + label_width;
+                rect_value.left = rect_label.right;
+            }
+            else
+            {
+                rect_label.bottom = rect_label.top + rect.Height() / 2;
+                rect_value.top = rect_label.bottom;
+            }
+        }
+        //画标签
+        CString lable_text = item->GetItemLableText();
+        lable_text += L' ';
+        drawer.DrawWindowText(rect_label, lable_text, text_color, (vertical ? Alignment::CENTER : Alignment::LEFT));
+        //画数值
+        Alignment value_alignment{ theApp.m_taskbar_data.value_right_align ? Alignment::RIGHT : Alignment::LEFT };      //数值的对齐方式
+        if (vertical)
+            value_alignment = Alignment::CENTER;
+        drawer.DrawWindowText(rect_value, item->GetItemValueText(), text_color, value_alignment);
+    }
 }
 
 void CTaskBarDlg::MoveWindow(CRect rect)
@@ -768,11 +778,19 @@ void CTaskBarDlg::CalculateWindowSize()
             ItemWidthInfo width_info;
             width_info.is_plugin = true;
             width_info.plugin_item = plugin;
-            CString lable_text = plugin->GetItemLableText();
-            if (!lable_text.IsEmpty())
-                lable_text += L' ';
-            width_info.item_width.label_width = m_pDC->GetTextExtent(lable_text).cx;
-            width_info.item_width.value_width = m_pDC->GetTextExtent(plugin->GetItemValueSampleText()).cx;
+            if (plugin->IsCustomDraw())
+            {
+                width_info.item_width.label_width = 0;
+                width_info.item_width.value_width = theApp.DPI(plugin->GetItemWidth());
+            }
+            else
+            {
+                CString lable_text = plugin->GetItemLableText();
+                if (!lable_text.IsEmpty())
+                    lable_text += L' ';
+                width_info.item_width.label_width = m_pDC->GetTextExtent(lable_text).cx;
+                width_info.item_width.value_width = m_pDC->GetTextExtent(plugin->GetItemValueSampleText()).cx;
+            }
             m_item_widths.push_back(width_info);
         }
     }
