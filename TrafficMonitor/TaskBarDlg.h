@@ -64,7 +64,7 @@ protected:
 		}
     };
 
-    struct ItemWidthInfo : public TaskbarItem
+    struct ItemWidthInfo : public CommonDisplayItem
     {
         ItemWidth item_width;
     };

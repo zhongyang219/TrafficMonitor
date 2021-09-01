@@ -1,11 +1,13 @@
 ﻿#pragma once
 #include "CommonData.h"
+#include "TinyXml2Helper.h"
 
 class CSkinFile
 {
 public:
     CSkinFile();
     ~CSkinFile();
+
 
     //从文件载入皮肤信息
     void Load(const wstring& file_path);
@@ -45,8 +47,8 @@ public:
     {
         int width{};        //宽度
         int height{};       //高度
-        std::map<DisplayItem, LayoutItem> layout_items; //每一项的布局信息
-        LayoutItem GetItem(DisplayItem display_item) const
+        std::map<CommonDisplayItem, LayoutItem> layout_items; //每一项的布局信息
+        LayoutItem GetItem(CommonDisplayItem display_item) const
         {
             auto iter = layout_items.find(display_item);
             if (iter != layout_items.end())
@@ -97,21 +99,23 @@ public:
     void DrawInfoS(CDC* pDC, CFont& font);
 
     static string GetDisplayItemXmlNodeName(DisplayItem display_item);
-    
+
 private:
     void LoadFromXml(const wstring& file_path);     //从xml文件读取皮肤数据
     void LoadFromIni(const wstring& file_path);     //从ini文件读取皮肤数据（用于兼容旧版皮肤）
 
     void DrawInfo(CDC* pDC, bool show_more_info, CFont& font);
 
+    CSkinFile::Layout LayoutFromXmlNode(tinyxml2::XMLElement* ele);
+
 private:
     SkinInfo m_skin_info;
     LayoutInfo m_layout_info;
     PreviewInfo m_preview_info;
+    std::map<std::string, std::string> m_plugin_map;  //插件名称与xml节点名称的映射关系。key是xml节点名称，value是插件名称
 
     CFont m_font;
     CImage m_background_s;
     CImage m_background_l;
 
 };
-

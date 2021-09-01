@@ -3,7 +3,20 @@
 #include "Common.h"
 #include "TrafficMonitor.h"
 
-bool TaskbarItem::operator<(const TaskbarItem item) const
+CommonDisplayItem::CommonDisplayItem(DisplayItem item)
+{
+    is_plugin = false;
+    item_type = item;
+    plugin_item = nullptr;
+}
+
+CommonDisplayItem::CommonDisplayItem(IPluginItem* item)
+{
+    is_plugin = true;
+    plugin_item = item;
+}
+
+bool CommonDisplayItem::operator<(const CommonDisplayItem& item) const
 {
     if (is_plugin && !item.is_plugin)
         return false;
@@ -15,7 +28,7 @@ bool TaskbarItem::operator<(const TaskbarItem item) const
         return theApp.m_plugins.GetItemIndex(plugin_item) < theApp.m_plugins.GetItemIndex(item.plugin_item);
 }
 
-bool TaskbarItem::operator==(const TaskbarItem item) const
+bool CommonDisplayItem::operator==(const CommonDisplayItem& item) const
 {
     if (is_plugin != item.is_plugin)
         return false;

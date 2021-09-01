@@ -9,13 +9,17 @@
 			<down>下载: </down>
 			<cpu>CPU: </cpu>
 			<memory>内存: </memory>
-      <gpu>显卡: </gpu>
+			<gpu>显卡: </gpu>
 			<cpu_temperature>CPU温度: </cpu_temperature>
 			<gpu_temperature>显卡温度: </gpu_temperature>
-			<hdd_temperature>硬盘温度: </hdd_temperature>
-			<main_board_temperature>主板温度: </main_board_temperature>
+			<time></time>
+			<cosutom_item></cosutom_item>
 		</display_text>
 	</skin>
+	<plugin_map>
+		<time>Time</time>
+		<cosutom_item>Custom draw item</cosutom_item>
+	</plugin_map>
 	<layout text_height="20" no_label="0">
 		<layout_l width="232" height="107">
 			<cpu x="14" y="3" width="106" align="0" show="1"/>
@@ -25,8 +29,8 @@
 			<down x="122" y="27" width="106" align="0" show="1"/>
 			<cpu_temperature x="32" y="57" width="94" align="0" show="1"/>
 			<gpu_temperature x="32" y="83" width="94" align="0" show="1"/>
-			<hdd_temperature x="142" y="57" width="94" align="0" show="1"/>
-			<main_board_temperature x="142" y="83" width="94" align="0" show="1"/>
+			<time x="142" y="57" width="94" align="0" show="1"/>
+			<cosutom_item x="142" y="83" width="94" align="0" show="1"/>
 		</layout_l>
 		<layout_s width="232" height="50">
 			<cpu x="14" y="3" width="106" align="0" show="1"/>

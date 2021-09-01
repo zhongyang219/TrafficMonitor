@@ -16,15 +16,19 @@ enum DisplayItem
     TDI_HDD_USAGE = 1 << 9
 };
 
-//任务栏显示的项目
-struct TaskbarItem
+//显示的项目
+struct CommonDisplayItem
 {
     bool is_plugin{};           //是否为插件项目
     DisplayItem item_type;      //内建的显示项目
     IPluginItem* plugin_item{}; //插件显示项目
 
-    bool operator<(const TaskbarItem) const;
-    bool operator==(const TaskbarItem) const;
+    CommonDisplayItem() {}
+    CommonDisplayItem(DisplayItem item);
+    CommonDisplayItem(IPluginItem* item);
+
+    bool operator<(const CommonDisplayItem&) const;
+    bool operator==(const CommonDisplayItem&) const;
 };
 
 //所有显示项目的集合

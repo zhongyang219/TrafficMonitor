@@ -1,6 +1,5 @@
 ﻿#include "stdafx.h"
 #include "SkinFile.h"
-#include "TinyXml2Helper.h"
 #include "Common.h"
 #include "FilePathHelper.h"
 #include "TrafficMonitor.h"
@@ -28,12 +27,12 @@ static CSkinFile::LayoutItem LayoutItemFromXmlNode(tinyxml2::XMLElement* ele)
     return layout_item;
 }
 
-static CSkinFile::Layout LayoutFromXmlNode(tinyxml2::XMLElement* ele)
+CSkinFile::Layout CSkinFile::LayoutFromXmlNode(tinyxml2::XMLElement* ele)
 {
     CSkinFile::Layout layout;
     layout.width = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(ele, "width")));
     layout.height = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(ele, "height")));
-    CTinyXml2Helper::IterateChildNode(ele, [&layout](tinyxml2::XMLElement* ele_layout_item)
+    CTinyXml2Helper::IterateChildNode(ele, [&](tinyxml2::XMLElement* ele_layout_item)
     {
         string str_layout_item = CTinyXml2Helper::ElementName(ele_layout_item);
         for (auto display_item : AllDisplayItems)
@@ -42,6 +41,18 @@ static CSkinFile::Layout LayoutFromXmlNode(tinyxml2::XMLElement* ele)
             {
                 layout.layout_items[display_item] = LayoutItemFromXmlNode(ele_layout_item);
                 break;
+            }
+        }
+        wstring plugin_name = CCommon::StrToUnicode(m_plugin_map[str_layout_item].c_str(), true);
+        if (!plugin_name.empty())
+        {
+            for (const auto& plugin_item : theApp.m_plugins.GetPluginItems())
+            {
+                if (plugin_name == plugin_item->GetItemName())
+                {
+                    layout.layout_items[plugin_item] = LayoutItemFromXmlNode(ele_layout_item);
+                    break;
+                }
             }
         }
     });
@@ -173,6 +184,16 @@ void CSkinFile::LoadFromXml(const wstring& file_path)
                         m_preview_info.s_pos.x = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(ele_priview_item, "x")));
                         m_preview_info.s_pos.y = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(ele_priview_item, "y")));
                     }
+                });
+            }
+            //插件名称映射
+            else if (ele_name == "plugin_map")
+            {
+                CTinyXml2Helper::IterateChildNode(child, [this](tinyxml2::XMLElement* plugin_item)
+                {
+                    string ele_name = CTinyXml2Helper::ElementName(plugin_item);
+                    string ele_text = CTinyXml2Helper::ElementText(plugin_item);
+                    m_plugin_map[ele_name] = ele_text;
                 });
             }
         });
@@ -361,6 +382,37 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
                 draw.DrawWindowText(rect, iter->second, text_color, layout.layout_items[iter->first].align);
             }
         }
+
+        //绘制插件项目
+        for (const auto& plugin_item : theApp.m_plugins.GetPluginItems())
+        {
+            LayoutItem layout_item = layout.GetItem(plugin_item);
+            if (layout_item.show)
+            {
+                COLORREF cl{};
+                if (!text_colors.empty())
+                    cl = text_colors.begin()->second;
+                if (plugin_item->IsCustomDraw())
+                {
+                    int brightness{ (GetRValue(cl) + GetGValue(cl) + GetBValue(cl)) / 2 };
+                    plugin_item->DrawItem(draw.GetDC()->GetSafeHdc(), layout_item.x, layout_item.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
+                }
+                else
+                {
+                    //矩形区域
+                    CRect rect(CPoint(layout_item.x, layout_item.y), CSize(layout_item.width, m_layout_info.text_height));
+
+                    //绘制文本
+                    CString display_text;
+                    display_text += plugin_item->GetItemLableText();
+                    if (!display_text.IsEmpty())
+                        display_text += _T(" ");
+                    display_text += plugin_item->GetItemValueSampleText();
+                    draw.DrawWindowText(rect, display_text, cl, layout_item.align);
+                }
+            }
+        }
+
     };
 
     //绘制小预览图文本
@@ -472,6 +524,37 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
             draw.DrawWindowText(rect, map_str[iter->first].GetString(), text_color, layout_item.align);
         }
         index++;
+    }
+
+    //绘制插件项目
+    for (const auto& plugin_item : theApp.m_plugins.GetPluginItems())
+    {
+        const auto& layout_item = layout.GetItem(plugin_item);
+        if (layout_item.show)
+        {
+            //插件项目自绘
+            COLORREF cl{};
+            if (!text_colors.empty())
+                cl = text_colors.begin()->second;
+            if (plugin_item->IsCustomDraw())
+            {
+                int brightness{ (GetRValue(cl) + GetGValue(cl) + GetBValue(cl)) / 2 };
+                plugin_item->DrawItem(draw.GetDC()->GetSafeHdc(), layout_item.x, layout_item.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
+            }
+            else
+            {
+                //矩形区域
+                CRect rect(CPoint(layout_item.x, layout_item.y), CSize(layout_item.width, m_layout_info.text_height));
+
+                //绘制文本
+                CString display_text;
+                display_text += plugin_item->GetItemLableText();
+                if (!display_text.IsEmpty())
+                    display_text += _T(" ");
+                display_text += plugin_item->GetItemValueText();
+                draw.DrawWindowText(rect, display_text, cl, layout_item.align);
+            }
+        }
     }
 }
 
