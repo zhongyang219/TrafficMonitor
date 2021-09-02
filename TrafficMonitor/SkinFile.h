@@ -112,7 +112,7 @@ private:
     SkinInfo m_skin_info;
     LayoutInfo m_layout_info;
     PreviewInfo m_preview_info;
-    std::map<std::string, std::string> m_plugin_map;  //插件名称与xml节点名称的映射关系。key是xml节点名称，value是插件名称
+    std::map<std::string, std::string> m_plugin_map;  //插件名称与xml节点名称的映射关系。key是xml节点名称，value是插件ID
 
     CFont m_font;
     CImage m_background_s;

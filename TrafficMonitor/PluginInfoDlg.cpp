@@ -39,14 +39,21 @@ void CPluginInfoDlg::ShowInfo()
         m_info_list.SetItemText(RI_FILE_PATH, 1, plugin.file_path.c_str());
         m_info_list.SetItemText(RI_ITEM_NUM, 1, std::to_wstring(plugin.plugin_items.size()).c_str());
         wstring item_names;
+        wstring item_id;
         for (const auto& item : plugin.plugin_items)
         {
             item_names += item->GetItemName();
             item_names += L";";
+            item_id += item->GetItemId();
+            item_id += L";";
         }
         if (!plugin.plugin_items.empty())
+        {
             item_names.pop_back();
+            item_id.pop_back();
+        }
         m_info_list.SetItemText(RI_ITEM_NAMES, 1, item_names.c_str());
+        m_info_list.SetItemText(RI_ITEM_ID, 1, item_id.c_str());
         m_info_list.SetItemText(RI_AUTHOR, 1, plugin.properties.at(ITMPlugin::TMI_AUTHOR).c_str());
         m_info_list.SetItemText(RI_COPYRIGHT, 1, plugin.properties.at(ITMPlugin::TMI_COPYRIGHT).c_str());
         m_info_list.SetItemText(RI_VERSION, 1, plugin.properties.at(ITMPlugin::TMI_VERSION).c_str());
@@ -206,6 +213,8 @@ CString CPluginInfoDlg::GetRowName(int row_index)
         return CCommon::LoadText(IDS_ITEM_NUM);
     case CPluginInfoDlg::RI_ITEM_NAMES:
         return CCommon::LoadText(IDS_ITEM_NAMES);
+    case CPluginInfoDlg::RI_ITEM_ID:
+        return CCommon::LoadText(IDS_DISP_ITEM_ID);
     case CPluginInfoDlg::RI_AUTHOR:
         return CCommon::LoadText(IDS_AUTHOR);
     case CPluginInfoDlg::RI_COPYRIGHT:

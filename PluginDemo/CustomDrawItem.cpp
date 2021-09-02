@@ -68,8 +68,8 @@ void CCustomDrawItem::DrawItem(void* hDC, int x, int y, int w, int h, bool dark_
     rect3.DeflateRect(1, 1);
     //根据当前时间计算矩形的宽度
     SYSTEMTIME& time{ CDataManager::Instance().m_system_time };
-    int hour_width{ time.wHour * w / 24 };
-    int min_width{ time.wMinute * w / 60 };
+    int hour_width{ static_cast<int>((time.wHour + time.wMinute / 60.0) * w / 24) };
+    int min_width{ static_cast<int>((time.wMinute + time.wSecond / 60.0) * w / 60) };
     int sec_width{ time.wSecond * w / 60 };
     rect1.right = rect1.left + hour_width;
     rect2.right = rect2.left + min_width;

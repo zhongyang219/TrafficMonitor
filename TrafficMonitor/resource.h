@@ -269,6 +269,7 @@
 #define IDS_DISABLED                    363
 #define IDS_RESTART_TO_APPLY_CHANGE_INFO 364
 #define IDS_VERSION                     365
+#define IDS_DISP_ITEM_ID                366
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
 #define IDC_STATIC_DOWN                 1002

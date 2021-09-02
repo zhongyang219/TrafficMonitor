@@ -43,12 +43,12 @@ CSkinFile::Layout CSkinFile::LayoutFromXmlNode(tinyxml2::XMLElement* ele)
                 break;
             }
         }
-        wstring plugin_name = CCommon::StrToUnicode(m_plugin_map[str_layout_item].c_str(), true);
-        if (!plugin_name.empty())
+        wstring plugin_id = CCommon::StrToUnicode(m_plugin_map[str_layout_item].c_str(), true);
+        if (!plugin_id.empty())
         {
             for (const auto& plugin_item : theApp.m_plugins.GetPluginItems())
             {
-                if (plugin_name == plugin_item->GetItemName())
+                if (plugin_id == plugin_item->GetItemId())
                 {
                     layout.layout_items[plugin_item] = LayoutItemFromXmlNode(ele_layout_item);
                     break;

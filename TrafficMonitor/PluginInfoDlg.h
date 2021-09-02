@@ -31,6 +31,7 @@ private:
         RI_DESCRIPTION,
         RI_ITEM_NUM,
         RI_ITEM_NAMES,
+        RI_ITEM_ID,
         RI_AUTHOR,
         RI_COPYRIGHT,
         RI_VERSION,
