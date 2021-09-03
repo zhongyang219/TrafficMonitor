@@ -6,6 +6,9 @@
 #define IDD_OPTIONS_DIALOG              101
 #define IDS_PLUGIN_NAME                 103
 #define IDS_PLUGIN_DESCRIPTION          104
+#define IDS_TIME                        105
+#define IDS_DATE                        106
+#define IDS_CUSTOM_DRAW_ITEM            107
 #define IDC_SHOW_SECOND_CHECK           1001
 #define IDC_SHOW_LABEL_CHECK            1002
 

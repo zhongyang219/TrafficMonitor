@@ -3,9 +3,13 @@
 #include "PluginSystemDate.h"
 #include "DataManager.h"
 
+CPluginSystemDate::CPluginSystemDate()
+{
+}
+
 const wchar_t* CPluginSystemDate::GetItemName() const
 {
-    return L"Date";
+    return CDataManager::Instance().StringRes(IDS_DATE);
 }
 
 const wchar_t* CPluginSystemDate::GetItemId() const
@@ -16,7 +20,7 @@ const wchar_t* CPluginSystemDate::GetItemId() const
 const wchar_t* CPluginSystemDate::GetItemLableText() const
 {
     if (CDataManager::Instance().m_setting_data.show_label_text)
-        return L"日期";
+        return CDataManager::Instance().StringRes(IDS_DATE);
     else
         return L"";
 }

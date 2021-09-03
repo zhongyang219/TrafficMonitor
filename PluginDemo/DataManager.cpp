@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "DataManager.h"
 
+CDataManager CDataManager::m_instance;
+
 CDataManager::CDataManager()
 {
     //获取模块的路径
@@ -19,8 +21,7 @@ CDataManager::~CDataManager()
 
 CDataManager& CDataManager::Instance()
 {
-    static CDataManager instance;
-    return instance;
+    return m_instance;
 }
 
 void CDataManager::LoadConfig()
@@ -42,4 +43,19 @@ void CDataManager::SaveConfig() const
     std::wstring config_path = m_module_path + L".ini";
     WritePrivateProfileInt(_T("config"), _T("show_second"), m_setting_data.show_second, config_path.c_str());
     WritePrivateProfileInt(_T("config"), _T("show_label_text"), m_setting_data.show_label_text, config_path.c_str());
+}
+
+const CString& CDataManager::StringRes(UINT id)
+{
+    auto iter = m_string_table.find(id);
+    if (iter != m_string_table.end())
+    {
+        return iter->second;
+    }
+    else
+    {
+        AFX_MANAGE_STATE(AfxGetStaticModuleState());
+        m_string_table[id].LoadString(id);
+        return m_string_table[id];
+    }
 }

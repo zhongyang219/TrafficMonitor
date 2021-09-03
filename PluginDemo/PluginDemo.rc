@@ -102,6 +102,9 @@ STRINGTABLE
 BEGIN
     IDS_PLUGIN_NAME         "TrafficMonitor示例插件"
     IDS_PLUGIN_DESCRIPTION  "用于TrafficMonitor的示例插件，为开发者开发TrafficMonitor插件提供范例。"
+    IDS_TIME                "时间"
+    IDS_DATE                "日期"
+    IDS_CUSTOM_DRAW_ITEM    "自绘示例"
 END
 
 #endif    // 中文(简体，中国) resources
@@ -172,6 +175,9 @@ STRINGTABLE
 BEGIN
     IDS_PLUGIN_NAME         "A sample plug-in for TrafficMonitor."
     IDS_PLUGIN_DESCRIPTION  "A sample plug-in for TrafficMonitor, providing an example for developers to develop TrafficMonitor plug-ins."
+    IDS_TIME                "Time"
+    IDS_DATE                "Date"
+    IDS_CUSTOM_DRAW_ITEM    "Custom draw example"
 END
 
 #endif    // 英语(美国) resources

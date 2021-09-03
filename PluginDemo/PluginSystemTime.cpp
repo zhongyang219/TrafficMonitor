@@ -3,9 +3,13 @@
 #include "PluginSystemTime.h"
 #include "DataManager.h"
 
+CPluginSystemTime::CPluginSystemTime()
+{
+}
+
 const wchar_t* CPluginSystemTime::GetItemName() const
 {
-    return L"Time";
+    return CDataManager::Instance().StringRes(IDS_TIME);
 }
 
 const wchar_t* CPluginSystemTime::GetItemId() const
@@ -16,7 +20,7 @@ const wchar_t* CPluginSystemTime::GetItemId() const
 const wchar_t* CPluginSystemTime::GetItemLableText() const
 {
     if (CDataManager::Instance().m_setting_data.show_label_text)
-        return L"时间";
+        return CDataManager::Instance().StringRes(IDS_TIME);
     else
         return L"";
 }

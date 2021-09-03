@@ -4,7 +4,7 @@
 
 const wchar_t* CCustomDrawItem::GetItemName() const
 {
-    return L"Custom draw item";
+    return CDataManager::Instance().StringRes(IDS_CUSTOM_DRAW_ITEM);
 }
 
 const wchar_t* CCustomDrawItem::GetItemId() const
