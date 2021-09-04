@@ -35,6 +35,7 @@ private:
         RI_AUTHOR,
         RI_COPYRIGHT,
         RI_VERSION,
+        RI_API_VERSION,
         RI_MAX
     };
 

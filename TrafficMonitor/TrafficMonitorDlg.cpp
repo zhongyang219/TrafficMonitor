@@ -1224,11 +1224,25 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     }
 #endif
 
-    //通知插件获取数据
+    //通知插件获取数据，以及向插件传递监控数据
     for (const auto& plugin_info : theApp.m_plugins.GetPlugins())
     {
         if (plugin_info.plugin != nullptr)
+        {
             plugin_info.plugin->DataRequired();
+            ITMPlugin::MonitorInfo monitor_info;
+            monitor_info.up_speed = theApp.m_out_speed;
+            monitor_info.down_speed = theApp.m_in_speed;
+            monitor_info.cpu_usage = theApp.m_cpu_usage;
+            monitor_info.memory_usage = theApp.m_memory_usage;
+            monitor_info.gpu_usage = theApp.m_gpu_usage;
+            monitor_info.hdd_usage = theApp.m_hdd_usage;
+            monitor_info.cpu_temperature = theApp.m_cpu_temperature;
+            monitor_info.gpu_temperature = theApp.m_gpu_temperature;
+            monitor_info.hdd_temperature = theApp.m_hdd_temperature;
+            monitor_info.main_board_temperature = theApp.m_main_board_temperature;
+            plugin_info.plugin->OnMonitorInfo(monitor_info);
+        }
     }
 
     //}
