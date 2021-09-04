@@ -27,6 +27,7 @@ public:
         PluginState state{};    //插件的状态
         DWORD error_code{};     //错误代码（GetLastError的返回值）
         std::map<ITMPlugin::PluginInfoIndex, std::wstring> properties;    //插件属性
+        std::wstring Property(ITMPlugin::PluginInfoIndex) const;
     };
 
     CPluginManager();

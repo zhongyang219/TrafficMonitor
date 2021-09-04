@@ -33,8 +33,8 @@ void CPluginInfoDlg::ShowInfo()
     if (m_cur_index >= 0 && m_cur_index < static_cast<int>(theApp.m_plugins.GetPlugins().size()))
     {
         auto& plugin_info = theApp.m_plugins.GetPlugins()[m_cur_index];
-        m_info_list.SetItemText(RI_NAME, 1, plugin_info.properties.at(ITMPlugin::TMI_NAME).c_str());
-        m_info_list.SetItemText(RI_DESCRIPTION, 1, plugin_info.properties.at(ITMPlugin::TMI_DESCRIPTION).c_str());
+        m_info_list.SetItemText(RI_NAME, 1, plugin_info.Property(ITMPlugin::TMI_NAME).c_str());
+        m_info_list.SetItemText(RI_DESCRIPTION, 1, plugin_info.Property(ITMPlugin::TMI_DESCRIPTION).c_str());
         m_info_list.SetItemText(RI_FILE_NAME, 1, CFilePathHelper(plugin_info.file_path).GetFileName().c_str());
         m_info_list.SetItemText(RI_FILE_PATH, 1, plugin_info.file_path.c_str());
         m_info_list.SetItemText(RI_ITEM_NUM, 1, std::to_wstring(plugin_info.plugin_items.size()).c_str());
@@ -54,9 +54,9 @@ void CPluginInfoDlg::ShowInfo()
         }
         m_info_list.SetItemText(RI_ITEM_NAMES, 1, item_names.c_str());
         m_info_list.SetItemText(RI_ITEM_ID, 1, item_id.c_str());
-        m_info_list.SetItemText(RI_AUTHOR, 1, plugin_info.properties.at(ITMPlugin::TMI_AUTHOR).c_str());
-        m_info_list.SetItemText(RI_COPYRIGHT, 1, plugin_info.properties.at(ITMPlugin::TMI_COPYRIGHT).c_str());
-        m_info_list.SetItemText(RI_VERSION, 1, plugin_info.properties.at(ITMPlugin::TMI_VERSION).c_str());
+        m_info_list.SetItemText(RI_AUTHOR, 1, plugin_info.Property(ITMPlugin::TMI_AUTHOR).c_str());
+        m_info_list.SetItemText(RI_COPYRIGHT, 1, plugin_info.Property(ITMPlugin::TMI_COPYRIGHT).c_str());
+        m_info_list.SetItemText(RI_VERSION, 1, plugin_info.Property(ITMPlugin::TMI_VERSION).c_str());
         if (plugin_info.plugin != nullptr)
             m_info_list.SetItemText(RI_API_VERSION, 1, std::to_wstring(plugin_info.plugin->GetAPIVersion()).c_str());
     }

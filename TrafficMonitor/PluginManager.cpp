@@ -123,3 +123,11 @@ int CPluginManager::GetItemIndex(IPluginItem* item) const
     }
     return -1;
 }
+
+std::wstring CPluginManager::PluginInfo::Property(ITMPlugin::PluginInfoIndex index) const
+{
+    auto iter = properties.find(index);
+    if (iter != properties.end())
+        return iter->second;
+    return wstring();
+}
