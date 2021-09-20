@@ -225,48 +225,56 @@ namespace OpenHardwareMonitorApi
     void COpenHardwareMonitor::GetHardwareInfo()
     {
         ResetAllValues();
-        auto computer = MonitorGlobal::Instance()->computer;
-        computer->Accept(MonitorGlobal::Instance()->updateVisitor);
-        for (int i = 0; i < computer->Hardware->Count; i++)
+        error_message.clear();
+        try
         {
-            //查找硬件类型
-            switch (computer->Hardware[i]->HardwareType)
+            auto computer = MonitorGlobal::Instance()->computer;
+            computer->Accept(MonitorGlobal::Instance()->updateVisitor);
+            for (int i = 0; i < computer->Hardware->Count; i++)
             {
-            case HardwareType::Cpu:
-                if (m_cpu_temperature < 0)
-                    GetCpuTemperature(computer->Hardware[i], m_cpu_temperature);
-                break;
-            case HardwareType::GpuNvidia:
-                if (m_gpu_nvidia_temperature < 0)
-                    GetHardwareTemperature(computer->Hardware[i], m_gpu_nvidia_temperature);
-                if (m_gpu_nvidia_usage < 0)
-                    GetGpuUsage(computer->Hardware[i], m_gpu_nvidia_usage);
-                break;
-            case HardwareType::GpuAmd:
-                if (m_gpu_ati_temperature < 0)
-                    GetHardwareTemperature(computer->Hardware[i], m_gpu_ati_temperature);
-                if (m_gpu_ati_usage < 0)
-                    GetGpuUsage(computer->Hardware[i], m_gpu_ati_usage);
-                break;
-            case HardwareType::Storage:
-            {
-                float cur_hdd_temperature = -1;
-                GetHardwareTemperature(computer->Hardware[i], cur_hdd_temperature);
-                m_all_hdd_temperature[ClrStringToStdWstring(computer->Hardware[i]->Name)] = cur_hdd_temperature;
-                float cur_hdd_usage = -1;
-                GetHddUsage(computer->Hardware[i], cur_hdd_usage);
-                m_all_hdd_usage[ClrStringToStdWstring(computer->Hardware[i]->Name)] = cur_hdd_usage;
-                if (m_hdd_temperature < 0)
-                    m_hdd_temperature = cur_hdd_temperature;
+                //查找硬件类型
+                switch (computer->Hardware[i]->HardwareType)
+                {
+                case HardwareType::Cpu:
+                    if (m_cpu_temperature < 0)
+                        GetCpuTemperature(computer->Hardware[i], m_cpu_temperature);
+                    break;
+                case HardwareType::GpuNvidia:
+                    if (m_gpu_nvidia_temperature < 0)
+                        GetHardwareTemperature(computer->Hardware[i], m_gpu_nvidia_temperature);
+                    if (m_gpu_nvidia_usage < 0)
+                        GetGpuUsage(computer->Hardware[i], m_gpu_nvidia_usage);
+                    break;
+                case HardwareType::GpuAmd:
+                    if (m_gpu_ati_temperature < 0)
+                        GetHardwareTemperature(computer->Hardware[i], m_gpu_ati_temperature);
+                    if (m_gpu_ati_usage < 0)
+                        GetGpuUsage(computer->Hardware[i], m_gpu_ati_usage);
+                    break;
+                case HardwareType::Storage:
+                {
+                    float cur_hdd_temperature = -1;
+                    GetHardwareTemperature(computer->Hardware[i], cur_hdd_temperature);
+                    m_all_hdd_temperature[ClrStringToStdWstring(computer->Hardware[i]->Name)] = cur_hdd_temperature;
+                    float cur_hdd_usage = -1;
+                    GetHddUsage(computer->Hardware[i], cur_hdd_usage);
+                    m_all_hdd_usage[ClrStringToStdWstring(computer->Hardware[i]->Name)] = cur_hdd_usage;
+                    if (m_hdd_temperature < 0)
+                        m_hdd_temperature = cur_hdd_temperature;
+                }
+                    break;
+                case HardwareType::Motherboard:
+                    if (m_main_board_temperature < 0)
+                        GetHardwareTemperature(computer->Hardware[i], m_main_board_temperature);
+                    break;
+                default:
+                    break;
+                }
             }
-                break;
-            case HardwareType::Motherboard:
-                if (m_main_board_temperature < 0)
-                    GetHardwareTemperature(computer->Hardware[i], m_main_board_temperature);
-                break;
-            default:
-                break;
-            }
+        }
+        catch (System::Exception^ e)
+        {
+            error_message = ClrStringToStdWstring(e->Message);
         }
     }
 

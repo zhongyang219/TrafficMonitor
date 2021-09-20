@@ -1155,6 +1155,11 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     {
         CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
         theApp.m_pMonitor->GetHardwareInfo();
+        auto monitor_error_message{ OpenHardwareMonitorApi::GetErrorMessage() };
+        if (!monitor_error_message.empty())
+        {
+            AfxMessageBox(monitor_error_message.c_str(), MB_ICONERROR | MB_OK);
+        }
         //theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
         theApp.m_gpu_temperature = theApp.m_pMonitor->GpuTemperature();
         //theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
