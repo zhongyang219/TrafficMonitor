@@ -203,7 +203,6 @@ struct PublicSettingData
     bool specify_each_item_color{ false };      //是否指定每个项目的颜色
     FontInfo font;          //字体
     DispStrings disp_str;   //显示的文本
-    bool swap_up_down{ false };     //交换上传和下载显示的位置
     bool speed_short_mode{ false };     //网速显示简洁模式（减少小数点的位数，单位不显示“B”）
     bool separate_value_unit_with_space{ true };    //网速数值和单位用空格分隔
     bool show_tool_tip{ true };         //显示鼠标提示
@@ -222,6 +221,7 @@ struct PublicSettingData
 struct MainWndSettingData : public PublicSettingData
 {
     std::map<DisplayItem, COLORREF> text_colors{};    //方字的颜色
+    bool swap_up_down{ false };     //交换上传和下载显示的位置
     bool hide_main_wnd_when_fullscreen;     //有程序全屏运行时隐藏悬浮窗
     bool m_always_on_top{ false };      //窗口置顶
     bool m_lock_window_pos{ false };    //锁定窗口位置

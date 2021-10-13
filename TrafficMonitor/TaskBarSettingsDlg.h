@@ -68,7 +68,7 @@ public:
     //afx_msg void OnEnChangeCpuEdit1();
     //afx_msg void OnEnChangeMemoryEdit1();
     //afx_msg void OnBnClickedSetDefaultButton1();
-    afx_msg void OnBnClickedSwitchUpDownCheck1();
+    //afx_msg void OnBnClickedSwitchUpDownCheck1();
     afx_msg void OnBnClickedTaskbarWndOnLeftCheck();
     afx_msg void OnBnClickedSpeedShortModeCheck();
     virtual BOOL PreTranslateMessage(MSG* pMsg);

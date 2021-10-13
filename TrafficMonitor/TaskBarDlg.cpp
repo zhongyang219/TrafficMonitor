@@ -259,13 +259,13 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
     if (label_width > 0)
     {
         wstring str_label = theApp.m_taskbar_data.disp_str.Get(type);
-        if (theApp.m_taskbar_data.swap_up_down)
-        {
-            if (type == TDI_UP)
-                str_label = theApp.m_taskbar_data.disp_str.Get(TDI_DOWN);
-            else if (type == TDI_DOWN)
-                str_label = theApp.m_taskbar_data.disp_str.Get(TDI_UP);
-        }
+        //if (theApp.m_taskbar_data.swap_up_down)
+        //{
+        //    if (type == TDI_UP)
+        //        str_label = theApp.m_taskbar_data.disp_str.Get(TDI_DOWN);
+        //    else if (type == TDI_DOWN)
+        //        str_label = theApp.m_taskbar_data.disp_str.Get(TDI_UP);
+        //}
         drawer.DrawWindowText(rect_label, str_label.c_str(), label_color, (vertical ? Alignment::CENTER : Alignment::LEFT));
     }
 
@@ -284,8 +284,8 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
             format_str = _T("%s/s");
         CString str_in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data);
         CString str_out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data);
-        if (theApp.m_taskbar_data.swap_up_down)
-            std::swap(str_in_speed, str_out_speed);
+        //if (theApp.m_taskbar_data.swap_up_down)
+        //    std::swap(str_in_speed, str_out_speed);
         if (type == TDI_UP)
         {
             str_value.Format(format_str, str_out_speed.GetString());

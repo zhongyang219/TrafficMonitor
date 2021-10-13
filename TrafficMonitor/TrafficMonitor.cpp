@@ -189,7 +189,7 @@ void CTrafficMonitorApp::LoadConfig()
     if (!m_general_data.IsHardwareEnable(HI_MBD))
         m_taskbar_data.m_tbar_display_item &= ~TDI_MAIN_BOARD_TEMP;
 
-    m_taskbar_data.swap_up_down = ini.GetBool(_T("task_bar"), _T("task_bar_swap_up_down"), false);
+    //m_taskbar_data.swap_up_down = ini.GetBool(_T("task_bar"), _T("task_bar_swap_up_down"), false);
 
     if (m_taskbar_data.back_color == 0 && !m_taskbar_data.text_colors.empty() && m_taskbar_data.text_colors.begin()->second.label == 0)     //万一读取到的背景色和文本颜色都为0（黑色），则将文本色和背景色设置成默认颜色
     {
@@ -356,7 +356,7 @@ void CTrafficMonitorApp::SaveConfig()
     //ini.WriteBool(L"task_bar", L"task_bar_show_cpu_memory", m_cfg_data.m_tbar_show_cpu_memory);
     ini.WriteInt(L"task_bar", L"tbar_display_item", m_taskbar_data.m_tbar_display_item);
     ini.SaveFontData(L"task_bar", m_taskbar_data.font);
-    ini.WriteBool(L"task_bar", L"task_bar_swap_up_down", m_taskbar_data.swap_up_down);
+    //ini.WriteBool(L"task_bar", L"task_bar_swap_up_down", m_taskbar_data.swap_up_down);
 
     ini.WriteString(_T("task_bar"), _T("up_string"), m_taskbar_data.disp_str.Get(TDI_UP));
     ini.WriteString(_T("task_bar"), _T("down_string"), m_taskbar_data.disp_str.Get(TDI_DOWN));
