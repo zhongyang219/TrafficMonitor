@@ -700,7 +700,7 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
         if (is_mouse_penerate_changed)
         {
             SetMousePenetrate();
-            if (theApp.m_main_wnd_data.m_mouse_penetrate && !theApp.m_cfg_data.m_show_notify_icon)   //鼠标穿透时，如果通知图标没有显示，则将它显示出来，否则无法呼出右键菜单
+            if (!theApp.m_cfg_data.m_show_notify_icon && theApp.IsForceShowNotifyIcon())   //鼠标穿透时，如果通知图标没有显示，则将它显示出来，否则无法呼出右键菜单
             {
                 //添加通知栏图标
                 AddNotifyIcon();
@@ -1876,7 +1876,7 @@ void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
     default: break;
     }
 
-    if (!theApp.m_cfg_data.m_show_task_bar_wnd && (theApp.m_cfg_data.m_hide_main_window || theApp.m_main_wnd_data.m_mouse_penetrate))    //如果没有显示任务栏窗口，且隐藏了主窗口或设置了鼠标穿透，则禁用“显示通知区图标”菜单项
+    if (theApp.IsForceShowNotifyIcon())    //如果没有显示任务栏窗口，且隐藏了主窗口或设置了鼠标穿透，则禁用“显示通知区图标”菜单项
         pMenu->EnableMenuItem(ID_SHOW_NOTIFY_ICON, MF_BYCOMMAND | MF_GRAYED);
     else
         pMenu->EnableMenuItem(ID_SHOW_NOTIFY_ICON, MF_BYCOMMAND | MF_ENABLED);
@@ -2116,7 +2116,7 @@ void CTrafficMonitorDlg::OnMousePenetrate()
     // TODO: 在此添加命令处理程序代码
     theApp.m_main_wnd_data.m_mouse_penetrate = !theApp.m_main_wnd_data.m_mouse_penetrate;
     SetMousePenetrate();
-    if (theApp.m_main_wnd_data.m_mouse_penetrate && !theApp.m_cfg_data.m_show_notify_icon)   //鼠标穿透时，如果通知图标没有显示，则将它显示出来，否则无法呼出右键菜单
+    if (!theApp.m_cfg_data.m_show_notify_icon && theApp.IsForceShowNotifyIcon())   //鼠标穿透时，如果通知图标没有显示，则将它显示出来，否则无法呼出右键菜单
     {
         //添加通知栏图标
         AddNotifyIcon();
@@ -2159,7 +2159,7 @@ void CTrafficMonitorDlg::OnShowTaskBarWnd()
     {
         theApp.m_cfg_data.m_show_task_bar_wnd = false;
         //关闭任务栏窗口后，如果没有显示通知区图标，且没有显示主窗口或设置了鼠标穿透，则将通知区图标显示出来
-        if (!theApp.m_cfg_data.m_show_notify_icon && (theApp.m_cfg_data.m_hide_main_window || theApp.m_main_wnd_data.m_mouse_penetrate))
+        if (!theApp.m_cfg_data.m_show_notify_icon && theApp.IsForceShowNotifyIcon())
         {
             AddNotifyIcon();
             theApp.m_cfg_data.m_show_notify_icon = true;
@@ -2215,7 +2215,7 @@ void CTrafficMonitorDlg::OnShowMainWnd()
         ShowWindow(SW_HIDE);
         theApp.m_cfg_data.m_hide_main_window = true;
         //隐藏主窗口后，如果没有显示通知栏图标，则将其显示出来
-        if (!theApp.m_cfg_data.m_show_notify_icon && !theApp.m_cfg_data.m_show_task_bar_wnd)
+        if (!theApp.m_cfg_data.m_show_notify_icon && theApp.IsForceShowNotifyIcon())
         {
             AddNotifyIcon();
             theApp.m_cfg_data.m_show_notify_icon = true;
@@ -2556,7 +2556,7 @@ afx_msg LRESULT CTrafficMonitorDlg::OnTaskbarWndClosed(WPARAM wParam, LPARAM lPa
 {
     theApp.m_cfg_data.m_show_task_bar_wnd = false;
     //关闭任务栏窗口后，如果没有显示通知区图标，且没有显示主窗口或设置了鼠标穿透，则将通知区图标显示出来
-    if (!theApp.m_cfg_data.m_show_notify_icon && (theApp.m_cfg_data.m_hide_main_window || theApp.m_main_wnd_data.m_mouse_penetrate))
+    if (!theApp.m_cfg_data.m_show_notify_icon && theApp.IsForceShowNotifyIcon())
     {
         AddNotifyIcon();
         theApp.m_cfg_data.m_show_notify_icon = true;

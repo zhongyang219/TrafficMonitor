@@ -1070,6 +1070,12 @@ void CTrafficMonitorApp::UpdateTaskbarWndMenu()
     }
 }
 
+bool CTrafficMonitorApp::IsForceShowNotifyIcon()
+{
+    return ((!m_cfg_data.m_show_task_bar_wnd || m_win_version.IsWindows11OrLater())
+        && (m_cfg_data.m_hide_main_window || m_main_wnd_data.m_mouse_penetrate));    //如果没有显示任务栏窗口，且隐藏了主窗口或设置了鼠标穿透，则禁用“显示通知区图标”菜单项
+}
+
 void CTrafficMonitorApp::OnHelp()
 {
     // TODO: 在此添加命令处理程序代码
