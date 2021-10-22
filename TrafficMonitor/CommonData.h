@@ -167,7 +167,6 @@ struct MainConfigData
     bool m_show_more_info{ false };     //显示更多信息
     bool m_show_task_bar_wnd{ false };  //显示任务栏窗口
     bool m_hide_main_window;            //隐藏主窗口
-    bool m_show_notify_icon{ true };    //显示通知区域图标
     //bool m_tbar_show_cpu_memory;      //任务栏窗口显示CPU和内存利用率
 
     int m_position_x;   //窗口位置的x坐标
@@ -203,7 +202,6 @@ struct PublicSettingData
     bool specify_each_item_color{ false };      //是否指定每个项目的颜色
     FontInfo font;          //字体
     DispStrings disp_str;   //显示的文本
-    bool swap_up_down{ false };     //交换上传和下载显示的位置
     bool speed_short_mode{ false };     //网速显示简洁模式（减少小数点的位数，单位不显示“B”）
     bool separate_value_unit_with_space{ true };    //网速数值和单位用空格分隔
     bool show_tool_tip{ true };         //显示鼠标提示
@@ -222,6 +220,7 @@ struct PublicSettingData
 struct MainWndSettingData : public PublicSettingData
 {
     std::map<DisplayItem, COLORREF> text_colors{};    //方字的颜色
+    bool swap_up_down{ false };     //交换上传和下载显示的位置
     bool hide_main_wnd_when_fullscreen;     //有程序全屏运行时隐藏悬浮窗
     bool m_always_on_top{ false };      //窗口置顶
     bool m_lock_window_pos{ false };    //锁定窗口位置
@@ -277,7 +276,8 @@ struct GeneralSettingData
     bool auto_run{ false };
     bool allow_skin_cover_font{ true };
     bool allow_skin_cover_text{ true };
-    //通知消息
+    bool show_notify_icon{ true };    //显示通知区域图标
+//通知消息
     bool traffic_tip_enable{ false };       //是否启用流量超出时提示
     int traffic_tip_value;                  //要提示的流量临界值
     int traffic_tip_unit{};                 //要提示的流量值的单位（0: MB, 1: GB）

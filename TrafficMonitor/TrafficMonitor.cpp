@@ -77,7 +77,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_cfg_data.m_transparency = ini.GetInt(_T("config"), _T("transparency"), 80);
     m_main_wnd_data.m_always_on_top = ini.GetBool(_T("config"), _T("always_on_top"), true);
     m_main_wnd_data.m_lock_window_pos = ini.GetBool(_T("config"), _T("lock_window_pos"), false);
-    m_cfg_data.m_show_notify_icon = ini.GetBool(_T("config"), _T("show_notify_icon"), true);
+    m_general_data.show_notify_icon = ini.GetBool(_T("config"), _T("show_notify_icon"), true);
     m_cfg_data.m_show_more_info = ini.GetBool(_T("config"), _T("show_cpu_memory"), false);
     m_main_wnd_data.m_mouse_penetrate = ini.GetBool(_T("config"), _T("mouse_penetrate"), false);
     m_cfg_data.m_show_task_bar_wnd = ini.GetBool(_T("config"), _T("show_task_bar_wnd"), false);
@@ -189,7 +189,7 @@ void CTrafficMonitorApp::LoadConfig()
     if (!m_general_data.IsHardwareEnable(HI_MBD))
         m_taskbar_data.m_tbar_display_item &= ~TDI_MAIN_BOARD_TEMP;
 
-    m_taskbar_data.swap_up_down = ini.GetBool(_T("task_bar"), _T("task_bar_swap_up_down"), false);
+    //m_taskbar_data.swap_up_down = ini.GetBool(_T("task_bar"), _T("task_bar_swap_up_down"), false);
 
     if (m_taskbar_data.back_color == 0 && !m_taskbar_data.text_colors.empty() && m_taskbar_data.text_colors.begin()->second.label == 0)     //万一读取到的背景色和文本颜色都为0（黑色），则将文本色和背景色设置成默认颜色
     {
@@ -288,7 +288,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"config", L"transparency", m_cfg_data.m_transparency);
     ini.WriteBool(L"config", L"always_on_top", m_main_wnd_data.m_always_on_top);
     ini.WriteBool(L"config", L"lock_window_pos", m_main_wnd_data.m_lock_window_pos);
-    ini.WriteBool(L"config", L"show_notify_icon", m_cfg_data.m_show_notify_icon);
+    ini.WriteBool(L"config", L"show_notify_icon", m_general_data.show_notify_icon);
     ini.WriteBool(L"config", L"show_cpu_memory", m_cfg_data.m_show_more_info);
     ini.WriteBool(L"config", L"mouse_penetrate", m_main_wnd_data.m_mouse_penetrate);
     ini.WriteBool(L"config", L"show_task_bar_wnd", m_cfg_data.m_show_task_bar_wnd);
@@ -356,7 +356,7 @@ void CTrafficMonitorApp::SaveConfig()
     //ini.WriteBool(L"task_bar", L"task_bar_show_cpu_memory", m_cfg_data.m_tbar_show_cpu_memory);
     ini.WriteInt(L"task_bar", L"tbar_display_item", m_taskbar_data.m_tbar_display_item);
     ini.SaveFontData(L"task_bar", m_taskbar_data.font);
-    ini.WriteBool(L"task_bar", L"task_bar_swap_up_down", m_taskbar_data.swap_up_down);
+    //ini.WriteBool(L"task_bar", L"task_bar_swap_up_down", m_taskbar_data.swap_up_down);
 
     ini.WriteString(_T("task_bar"), _T("up_string"), m_taskbar_data.disp_str.Get(TDI_UP));
     ini.WriteString(_T("task_bar"), _T("down_string"), m_taskbar_data.disp_str.Get(TDI_DOWN));
@@ -1068,6 +1068,12 @@ void CTrafficMonitorApp::UpdateTaskbarWndMenu()
             plugin_index++;
         }
     }
+}
+
+bool CTrafficMonitorApp::IsForceShowNotifyIcon()
+{
+    return ((!m_cfg_data.m_show_task_bar_wnd || m_win_version.IsWindows11OrLater())
+        && (m_cfg_data.m_hide_main_window || m_main_wnd_data.m_mouse_penetrate));    //如果没有显示任务栏窗口，且隐藏了主窗口或设置了鼠标穿透，则禁用“显示通知区图标”菜单项
 }
 
 void CTrafficMonitorApp::OnHelp()

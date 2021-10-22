@@ -461,6 +461,7 @@
 #define IDC_OPTINS_BUTTON               1139
 #define IDC_PLUGIN_MANAGE_BUTTON        1140
 #define IDC_PLUGIN_INFO_BUTTON          1141
+#define IDC_SHOW_NOTIFY_ICON_CHECK      1142
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -587,7 +588,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        336
 #define _APS_NEXT_COMMAND_VALUE         33402
-#define _APS_NEXT_CONTROL_VALUE         1142
+#define _APS_NEXT_CONTROL_VALUE         1143
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

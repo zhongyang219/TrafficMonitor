@@ -95,4 +95,5 @@ public:
     afx_msg void OnCbnSelchangeSelectCpuCombo();
     afx_msg void OnBnClickedPluginManageButton();
     CButton m_plugin_manager_btn;
+    afx_msg void OnBnClickedShowNotifyIconCheck();
 };
