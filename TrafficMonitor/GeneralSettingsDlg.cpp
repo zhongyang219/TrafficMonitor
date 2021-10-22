@@ -135,6 +135,7 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_MBD_CHECK, &CGeneralSettingsDlg::OnBnClickedMbdCheck)
     ON_CBN_SELCHANGE(IDC_SELECT_CPU_COMBO, &CGeneralSettingsDlg::OnCbnSelchangeSelectCpuCombo)
     ON_BN_CLICKED(IDC_PLUGIN_MANAGE_BUTTON, &CGeneralSettingsDlg::OnBnClickedPluginManageButton)
+    ON_BN_CLICKED(IDC_SHOW_NOTIFY_ICON_CHECK, &CGeneralSettingsDlg::OnBnClickedShowNotifyIconCheck)
 END_MESSAGE_MAP()
 
 
@@ -150,6 +151,12 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     ((CButton*)GetDlgItem(IDC_CHECK_UPDATE_CHECK))->SetCheck(m_data.check_update_when_start);
     ((CButton*)GetDlgItem(IDC_ALLOW_SKIN_FONT_CHECK))->SetCheck(m_data.allow_skin_cover_font);
     ((CButton*)GetDlgItem(IDC_ALLOW_SKIN_DISP_STR_CHECK))->SetCheck(m_data.allow_skin_cover_text);
+    if (theApp.IsForceShowNotifyIcon())
+    {
+        m_data.show_notify_icon = true;
+        EnableDlgCtrl(IDC_SHOW_NOTIFY_ICON_CHECK, FALSE);
+    }
+    CheckDlgButton(IDC_SHOW_NOTIFY_ICON_CHECK, m_data.show_notify_icon);
 
     if (m_data.update_source == 0)
         CheckDlgButton(IDC_GITHUB_RADIO, TRUE);
@@ -621,4 +628,11 @@ void CGeneralSettingsDlg::OnBnClickedPluginManageButton()
     // TODO: 在此添加控件通知处理程序代码
     CPluginManagerDlg dlg;
     dlg.DoModal();
+}
+
+
+void CGeneralSettingsDlg::OnBnClickedShowNotifyIconCheck()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    m_data.show_notify_icon = (IsDlgButtonChecked(IDC_SHOW_NOTIFY_ICON_CHECK) != 0);
 }

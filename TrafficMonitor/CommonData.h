@@ -167,7 +167,6 @@ struct MainConfigData
     bool m_show_more_info{ false };     //显示更多信息
     bool m_show_task_bar_wnd{ false };  //显示任务栏窗口
     bool m_hide_main_window;            //隐藏主窗口
-    bool m_show_notify_icon{ true };    //显示通知区域图标
     //bool m_tbar_show_cpu_memory;      //任务栏窗口显示CPU和内存利用率
 
     int m_position_x;   //窗口位置的x坐标
@@ -277,7 +276,8 @@ struct GeneralSettingData
     bool auto_run{ false };
     bool allow_skin_cover_font{ true };
     bool allow_skin_cover_text{ true };
-    //通知消息
+    bool show_notify_icon{ true };    //显示通知区域图标
+//通知消息
     bool traffic_tip_enable{ false };       //是否启用流量超出时提示
     int traffic_tip_value;                  //要提示的流量临界值
     int traffic_tip_unit{};                 //要提示的流量值的单位（0: MB, 1: GB）
