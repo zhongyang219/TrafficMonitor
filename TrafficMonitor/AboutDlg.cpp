@@ -63,7 +63,11 @@ BOOL CAboutDlg::OnInitDialog()
     //设置版本信息
     CString version_info;
     GetDlgItemText(IDC_STATIC_VERSION, version_info);
-    version_info.Replace(_T("<version>"), VERSION);
+    CString str_lite;
+#ifdef WITHOUT_TEMPERATURE
+    str_lite = CCommon::LoadText(_T(" ("), IDS_WITHOUT_TEMPERATURE, _T(")"));
+#endif
+    version_info = CCommon::StringFormat(version_info, { str_lite, VERSION });
 
 #ifdef COMPILE_FOR_WINXP
     version_info += _T(" (For WinXP)");
@@ -75,10 +79,6 @@ BOOL CAboutDlg::OnInitDialog()
 
 #ifdef _DEBUG
     version_info += _T(" (Debug)");
-#endif
-
-#ifdef WITHOUT_TEMPERATURE
-    version_info += CCommon::LoadText(_T(" ("), IDS_WITHOUT_TEMPERATURE, _T(")"));
 #endif
 
     SetDlgItemText(IDC_STATIC_VERSION, version_info);
