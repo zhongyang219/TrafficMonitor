@@ -535,7 +535,15 @@ bool CTaskBarDlg::AdjustWindowPos()
 void CTaskBarDlg::ApplyWindowTransparentColor()
 {
 #ifndef COMPILE_FOR_WINXP
-    if (theApp.m_taskbar_data.transparent_color != 0 && theApp.m_taksbar_transparent_color_enable)
+    if (theApp.m_win_version.IsWindows11OrLater())      //Windows11下背景色不使用纯黑色，以解决深色模式下右键菜单无法弹出的问题
+    {
+        if (theApp.m_taskbar_data.transparent_color == 0 && theApp.m_taskbar_data.back_color == 0)
+        {
+            theApp.m_taskbar_data.transparent_color = 1;
+            theApp.m_taskbar_data.back_color = 1;
+        }
+    }
+    if ((theApp.m_taskbar_data.transparent_color != 0) && theApp.m_taksbar_transparent_color_enable)
     {
         SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
         SetLayeredWindowAttributes(theApp.m_taskbar_data.transparent_color, 0, LWA_COLORKEY);
