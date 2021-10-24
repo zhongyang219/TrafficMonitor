@@ -1119,8 +1119,8 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
                 CCommon::WriteLog(info, theApp.m_log_path.c_str());
             }
             pThis->IniConnection();
+            last_interface_num = interface_num;
         }
-        last_interface_num = interface_num;
 
         string descr;
         descr = (const char*)pThis->GetConnectIfTable(pThis->m_connection_selected).bDescr;
