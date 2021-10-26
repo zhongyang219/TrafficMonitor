@@ -240,6 +240,8 @@
 #define IDR_MENU3                       335
 #define IDR_PLUGIN_MANAGER_MENU         335
 #define IDS_IF_OPER_STATUS_DOWN         336
+#define IDI_ICON1                       336
+#define IDI_TASK_MANAGER                336
 #define IDS_IF_OPER_STATUS_DORMANT      337
 #define IDS_GOTO_GITEE                  338
 #define IDS_USAGE_PERCENTAGE            339
@@ -581,13 +583,15 @@
 #define ID_PLUGIN_DETAIL                33399
 #define ID_PLUGIN_OPTIONS               33400
 #define ID_PLUGIN_DISABLE               33401
+#define ID_33402                        33402
+#define ID_OPEN_TASK_MANAGER            33403
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        336
-#define _APS_NEXT_COMMAND_VALUE         33402
+#define _APS_NEXT_RESOURCE_VALUE        337
+#define _APS_NEXT_COMMAND_VALUE         33404
 #define _APS_NEXT_CONTROL_VALUE         1143
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

@@ -256,4 +256,5 @@ protected:
 public:
     afx_msg void OnExitSizeMove();
     afx_msg void OnPluginManage();
+    afx_msg void OnOpenTaskManager();
 };

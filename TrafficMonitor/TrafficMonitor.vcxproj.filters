@@ -690,5 +690,8 @@
     <Image Include="res\menu_icon\plugins.ico">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="res\menu_icon\task_manager.ico">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

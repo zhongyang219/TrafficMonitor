@@ -608,6 +608,7 @@
     <Image Include="res\menu_icon\skn.ico" />
     <Image Include="res\menu_icon\statistics.ico" />
     <Image Include="res\menu_icon\taskbar_window.ico" />
+    <Image Include="res\menu_icon\task_manager.ico" />
     <Image Include="res\notifyicon.ico" />
     <Image Include="res\notifyicon2.ico" />
     <Image Include="res\notifyicon3.ico" />
