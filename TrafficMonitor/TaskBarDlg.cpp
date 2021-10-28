@@ -51,19 +51,14 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
     if (this->GetSafeHwnd() == NULL || pDC == nullptr || !IsWindow(this->GetSafeHwnd())) return;
 
     if (m_rect.IsRectEmpty() || m_rect.IsRectNull()) return;
-
-    //设置缓冲的DC
-    CDC MemDC;
-    CBitmap MemBitmap;
-    MemDC.CreateCompatibleDC(NULL);
-    MemBitmap.CreateCompatibleBitmap(pDC, m_window_width, m_window_height);
-    MemDC.SelectObject(&MemBitmap);
-    //绘图
     CRect draw_rect{ m_rect };      //绘图的矩形区域
     draw_rect.MoveToXY(0, 0);
-    MemDC.FillSolidRect(draw_rect, theApp.m_taskbar_data.back_color);       //填充背景色
+    //设置缓冲的DC
+    CDrawDoubleBuffer draw_double_buffer(pDC, draw_rect);
+    //绘图
     CDrawCommon draw;
-    draw.Create(&MemDC, nullptr);
+    draw.Create(draw_double_buffer.GetMemDC(), nullptr);
+    draw.FillRect(draw_rect, theApp.m_taskbar_data.back_color);       //填充背景色
     draw.SetFont(&m_font);
     draw.SetBackColor(theApp.m_taskbar_data.back_color);
 
@@ -145,11 +140,6 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
         index++;
         last_iter = iter;
     }
-
-    //将缓冲区DC中的图像拷贝到屏幕中显示
-    pDC->BitBlt(0, 0, m_window_width, m_window_height, &MemDC, 0, 0, SRCCOPY);
-    MemBitmap.DeleteObject();
-    MemDC.DeleteDC();
 }
 
 void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical)
@@ -374,10 +364,12 @@ void CTaskBarDlg::DrawPluginItem(CDrawCommon& drawer, IPluginItem* item, CRect r
     }
     else
     {
-        COLORREF text_color = theApp.m_taskbar_data.dft_text_colors;
+        COLORREF label_text_color = theApp.m_taskbar_data.dft_text_colors;
+        COLORREF value_text_color = theApp.m_taskbar_data.dft_text_colors;
         if (!theApp.m_taskbar_data.text_colors.empty())
         {
-            text_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
+            label_text_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
+            value_text_color = theApp.m_taskbar_data.text_colors.begin()->second.value;
         }
 
         CRect rect_label, rect_value;
@@ -399,12 +391,12 @@ void CTaskBarDlg::DrawPluginItem(CDrawCommon& drawer, IPluginItem* item, CRect r
         //画标签
         CString lable_text = item->GetItemLableText();
         lable_text += L' ';
-        drawer.DrawWindowText(rect_label, lable_text, text_color, (vertical ? Alignment::CENTER : Alignment::LEFT));
+        drawer.DrawWindowText(rect_label, lable_text, label_text_color, (vertical ? Alignment::CENTER : Alignment::LEFT));
         //画数值
         Alignment value_alignment{ theApp.m_taskbar_data.value_right_align ? Alignment::RIGHT : Alignment::LEFT };      //数值的对齐方式
         if (vertical)
             value_alignment = Alignment::CENTER;
-        drawer.DrawWindowText(rect_value, item->GetItemValueText(), text_color, value_alignment);
+        drawer.DrawWindowText(rect_value, item->GetItemValueText(), value_text_color, value_alignment);
     }
 }
 
@@ -848,8 +840,8 @@ void CTaskBarDlg::CalculateWindowSize()
         //所有标签中最大的宽度即为窗口宽度
         for (auto iter = m_item_widths.begin(); iter != m_item_widths.end(); ++iter)
         {
-                if (m_window_width < iter->item_width.TotalWidth())
-                    m_window_width = iter->item_width.TotalWidth();
+            if (m_window_width < iter->item_width.TotalWidth())
+                m_window_width = iter->item_width.TotalWidth();
         }
     }
 
