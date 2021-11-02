@@ -276,6 +276,13 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     EnableDlgCtrl(IDC_MBD_CHECK, false);
     EnableDlgCtrl(IDC_SELECT_HARD_DISK_COMBO, false);
     EnableDlgCtrl(IDC_SELECT_CPU_COMBO, false);
+    EnableDlgCtrl(IDC_CPU_TEMP_STATIC, false);
+    EnableDlgCtrl(IDC_GPU_TEMP_STATIC, false);
+    EnableDlgCtrl(IDC_HDD_STATIC, false);
+    EnableDlgCtrl(IDC_MBD_TEMP_STATIC, false);
+    EnableDlgCtrl(IDC_SELECT_HDD_STATIC, false);
+    EnableDlgCtrl(IDC_SELECT_CPU_STATIC, false);
+    EnableDlgCtrl(IDC_HARDWARE_MONITOR_STATIC, false);
 #endif
 
     m_plugin_manager_btn.SetIcon(theApp.GetMenuIcon(IDI_PLUGINS));
@@ -556,8 +563,8 @@ void CGeneralSettingsDlg::OnCbnSelchangeSelectHardDiskCombo()
 {
     // TODO: 在此添加控件通知处理程序代码
     CString hard_disk_name;
-   m_hard_disk_combo.GetWindowText(hard_disk_name);
-   m_data.hard_disk_name = hard_disk_name.GetString();
+    m_hard_disk_combo.GetWindowText(hard_disk_name);
+    m_data.hard_disk_name = hard_disk_name.GetString();
 }
 
 

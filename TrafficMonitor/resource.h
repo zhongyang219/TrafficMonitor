@@ -240,7 +240,6 @@
 #define IDR_MENU3                       335
 #define IDR_PLUGIN_MANAGER_MENU         335
 #define IDS_IF_OPER_STATUS_DOWN         336
-#define IDI_ICON1                       336
 #define IDI_TASK_MANAGER                336
 #define IDS_IF_OPER_STATUS_DORMANT      337
 #define IDS_GOTO_GITEE                  338
@@ -464,6 +463,10 @@
 #define IDC_PLUGIN_MANAGE_BUTTON        1140
 #define IDC_PLUGIN_INFO_BUTTON          1141
 #define IDC_SHOW_NOTIFY_ICON_CHECK      1142
+#define IDC_HDD_STATIC                  1143
+#define IDC_HARDWARE_MONITOR_STATIC     1144
+#define IDC_SELECT_HDD_STATIC           1145
+#define IDC_SELECT_CPU_STATIC           1146
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -592,7 +595,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        337
 #define _APS_NEXT_COMMAND_VALUE         33404
-#define _APS_NEXT_CONTROL_VALUE         1143
+#define _APS_NEXT_CONTROL_VALUE         1147
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
