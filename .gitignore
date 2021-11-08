@@ -294,5 +294,6 @@ __pycache__/
 /TrafficMonitor/skins/test*
 [Dd]ebug (without temperature)/
 [Rr]elease (without temperature)/
-
+[Dd]ebug (lite)/
+[Rr]elease (lite)/
 /TrafficMonitor/compile_time.txt
