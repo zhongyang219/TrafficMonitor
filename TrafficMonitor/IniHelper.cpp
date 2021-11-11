@@ -195,7 +195,7 @@ void CIniHelper::LoadFontData(const wchar_t * AppName, FontInfo & font, const Fo
     font.strike_out = style[3];
 }
 
-void CIniHelper::LoadMainWndColors(const wchar_t * AppName, const wchar_t * KeyName, std::map<DisplayItem, COLORREF>& text_colors, COLORREF default_color)
+void CIniHelper::LoadMainWndColors(const wchar_t * AppName, const wchar_t * KeyName, std::map<CommonDisplayItem, COLORREF>& text_colors, COLORREF default_color)
 {
     CString default_str;
     default_str.Format(_T("%d"), default_color);
@@ -204,7 +204,7 @@ void CIniHelper::LoadMainWndColors(const wchar_t * AppName, const wchar_t * KeyN
     std::vector<wstring> split_result;
     CCommon::StringSplit(str, L',', split_result);
     size_t index = 0;
-    for (auto iter = AllDisplayItems.begin(); iter != AllDisplayItems.end(); ++iter)
+    for (auto iter = theApp.m_plugins.AllDisplayItemsWithPlugins().begin(); iter != theApp.m_plugins.AllDisplayItemsWithPlugins().end(); ++iter)
     {
         if (index < split_result.size())
         {
@@ -218,7 +218,7 @@ void CIniHelper::LoadMainWndColors(const wchar_t * AppName, const wchar_t * KeyN
     }
 }
 
-void CIniHelper::SaveMainWndColors(const wchar_t * AppName, const wchar_t * KeyName, const std::map<DisplayItem, COLORREF>& text_colors)
+void CIniHelper::SaveMainWndColors(const wchar_t * AppName, const wchar_t * KeyName, const std::map<CommonDisplayItem, COLORREF>& text_colors)
 {
     CString str;
     for (auto iter = text_colors.begin(); iter != text_colors.end(); ++iter)

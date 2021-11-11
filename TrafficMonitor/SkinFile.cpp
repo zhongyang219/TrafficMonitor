@@ -210,7 +210,7 @@ void CSkinFile::LoadFromIni(const wstring& file_path)
     //获取皮肤信息
     CIniHelper ini(file_path);
     //获取当前皮肤的文字颜色
-    std::map<DisplayItem, COLORREF> text_colors{};
+    std::map<CommonDisplayItem, COLORREF> text_colors{};
     ini.LoadMainWndColors(_T("skin"), _T("text_color"), text_colors, 0);
     for (const auto& item : text_colors)
     {
@@ -346,11 +346,11 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
     }
 
     //获取文本颜色
-    std::map<DisplayItem, COLORREF> text_colors{};
+    std::map<CommonDisplayItem, COLORREF> text_colors{};
     if (m_skin_info.specify_each_item_color)
     {
         int i{};
-        for (const auto& item : AllDisplayItems)
+        for (const auto& item : theApp.m_plugins.AllDisplayItemsWithPlugins())
         {
             if (i < static_cast<int>(m_skin_info.text_color.size()))
                 text_colors[item] = m_skin_info.text_color[i];
@@ -359,7 +359,7 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
     }
     else if (!m_skin_info.text_color.empty())
     {
-        for (const auto& item : AllDisplayItems)
+        for (const auto& item : theApp.m_plugins.AllDisplayItemsWithPlugins())
         {
             if (!m_skin_info.text_color.empty())
                 text_colors[item] = m_skin_info.text_color[0];
@@ -390,7 +390,10 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
             if (layout_item.show)
             {
                 COLORREF cl{};
-                if (!text_colors.empty())
+                auto iter = text_colors.find(plugin_item);
+                if (iter != text_colors.end())
+                    cl = iter->second;
+                else if (!text_colors.empty())
                     cl = text_colors.begin()->second;
                 if (plugin_item->IsCustomDraw())
                 {
@@ -491,14 +494,14 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
     getTemperatureStr(TDI_MAIN_BOARD_TEMP, theApp.m_main_board_temperature);
 
     //获取文本颜色
-    std::map<DisplayItem, COLORREF> text_colors{};
+    std::map<CommonDisplayItem, COLORREF> text_colors{};
     if (theApp.m_main_wnd_data.specify_each_item_color)
     {
         text_colors = theApp.m_main_wnd_data.text_colors;
     }
     else if (!theApp.m_main_wnd_data.text_colors.empty())
     {
-        for (const auto& item : AllDisplayItems)
+        for (const auto& item : theApp.m_plugins.AllDisplayItemsWithPlugins())
         {
             text_colors[item] = theApp.m_main_wnd_data.text_colors.begin()->second;
         }
@@ -534,7 +537,10 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
         {
             //插件项目自绘
             COLORREF cl{};
-            if (!text_colors.empty())
+            auto iter = text_colors.find(plugin_item);
+            if (iter != text_colors.end())
+                cl = iter->second;
+            else if (!text_colors.empty())
                 cl = text_colors.begin()->second;
             if (plugin_item->IsCustomDraw())
             {

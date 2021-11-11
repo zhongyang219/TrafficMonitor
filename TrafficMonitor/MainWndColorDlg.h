@@ -1,33 +1,33 @@
-#pragma once
+ï»¿#pragma once
 #include "ColorStatic.h"
 #include "afxwin.h"
 #include "ColorSettingListCtrl.h"
 #include "BaseDialog.h"
 
-// CMainWndColorDlg ¶Ô»°¿ò
+// CMainWndColorDlg å¯¹è¯æ¡†
 
 class CMainWndColorDlg : public CBaseDialog
 {
 	DECLARE_DYNAMIC(CMainWndColorDlg)
 
 public:
-	CMainWndColorDlg(const std::map<DisplayItem, COLORREF>& colors, CWnd* pParent = NULL);   // ±ê×¼¹¹Ôìº¯Êı
+	CMainWndColorDlg(const std::map<CommonDisplayItem, COLORREF>& colors, CWnd* pParent = NULL);   // æ ‡å‡†æ„é€ å‡½æ•°
 	virtual ~CMainWndColorDlg();
 
-    const std::map<DisplayItem, COLORREF>& GetColors() const { return m_colors; }
+    const std::map<CommonDisplayItem, COLORREF>& GetColors() const { return m_colors; }
 
-// ¶Ô»°¿òÊı¾İ
+// å¯¹è¯æ¡†æ•°æ®
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_MAIN_COLOR_DIALOG };
 #endif
 protected:
-    std::map<DisplayItem, COLORREF> m_colors;
+    std::map<CommonDisplayItem, COLORREF> m_colors;
     CColorSettingListCtrl m_list_ctrl;
 
     virtual CString GetDialogName() const override;
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV æ”¯æŒ
 
 	DECLARE_MESSAGE_MAP()
 public:

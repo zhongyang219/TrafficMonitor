@@ -28,8 +28,8 @@ public:
 	void SaveFontData(const wchar_t * AppName, const FontInfo& font);
 	void LoadFontData(const wchar_t * AppName, FontInfo& font, const FontInfo& default_font) const;
 
-    void LoadMainWndColors(const wchar_t * AppName, const wchar_t * KeyName, std::map<DisplayItem, COLORREF>& text_colors, COLORREF default_color);
-    void SaveMainWndColors(const wchar_t * AppName, const wchar_t * KeyName, const std::map<DisplayItem, COLORREF>& text_colors);
+    void LoadMainWndColors(const wchar_t * AppName, const wchar_t * KeyName, std::map<CommonDisplayItem, COLORREF>& text_colors, COLORREF default_color);
+    void SaveMainWndColors(const wchar_t * AppName, const wchar_t * KeyName, const std::map<CommonDisplayItem, COLORREF>& text_colors);
 
     void LoadTaskbarWndColors(const wchar_t * AppName, const wchar_t * KeyName, std::map<CommonDisplayItem, TaskbarItemColor>& text_colors, COLORREF default_color);
     void SaveTaskbarWndColors(const wchar_t * AppName, const wchar_t * KeyName, const std::map<CommonDisplayItem, TaskbarItemColor>& text_colors);

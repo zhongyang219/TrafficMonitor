@@ -219,7 +219,7 @@ struct PublicSettingData
 //选项设置中“主窗口设置”的数据
 struct MainWndSettingData : public PublicSettingData
 {
-    std::map<DisplayItem, COLORREF> text_colors{};    //方字的颜色
+    std::map<CommonDisplayItem, COLORREF> text_colors{};    //方字的颜色
     bool swap_up_down{ false };     //交换上传和下载显示的位置
     bool hide_main_wnd_when_fullscreen;     //有程序全屏运行时隐藏悬浮窗
     bool m_always_on_top{ false };      //窗口置顶
