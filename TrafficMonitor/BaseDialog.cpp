@@ -8,6 +8,7 @@
 #include "TrafficMonitor.h"
 
 // CBaseDialog 对话框
+std::map<CString, HWND> CBaseDialog::m_unique_hwnd;
 
 IMPLEMENT_DYNAMIC(CBaseDialog, CDialog)
 
@@ -25,6 +26,11 @@ void CBaseDialog::SetMinSize(int cx, int cy)
 {
 	m_min_size.cx = cx;
 	m_min_size.cy = cy;
+}
+
+HWND CBaseDialog::GetUniqueHandel(LPCTSTR dlg_name)
+{
+    return m_unique_hwnd[dlg_name];
 }
 
 void CBaseDialog::LoadConfig()
@@ -69,6 +75,7 @@ END_MESSAGE_MAP()
 
 BOOL CBaseDialog::OnInitDialog()
 {
+    m_unique_hwnd[GetDialogName()] = m_hWnd;
 	CDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
@@ -101,6 +108,7 @@ void CBaseDialog::OnDestroy()
 	CDialog::OnDestroy();
 
 	// TODO: 在此处添加消息处理程序代码
+    m_unique_hwnd[GetDialogName()] = NULL;
 	SaveConfig();
 }
 
@@ -131,4 +139,17 @@ void CBaseDialog::OnSize(UINT nType, int cx, int cy)
 		m_window_size.cy = rect.Height();
 	}
 
+}
+
+
+INT_PTR CBaseDialog::DoModal()
+{
+    HWND unique_hwnd{ m_unique_hwnd[GetDialogName()] };
+    if (unique_hwnd != NULL)      ///如果对话框已存在，则显示已存在的对话框
+    {
+        ::ShowWindow(unique_hwnd, SW_RESTORE);
+        ::SetForegroundWindow(unique_hwnd);
+        return 0;
+    }
+    return CDialog::DoModal();
 }

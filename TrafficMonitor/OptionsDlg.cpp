@@ -23,7 +23,7 @@ COptionsDlg::~COptionsDlg()
 
 CString COptionsDlg::GetDialogName() const
 {
-    return _T("OptionsDlg");
+    return OPTION_DLG_NAME;
 }
 
 void COptionsDlg::DoDataExchange(CDataExchange* pDX)
@@ -47,8 +47,6 @@ BOOL COptionsDlg::OnInitDialog()
     CBaseDialog::OnInitDialog();
 
     // TODO:  在此添加额外的初始化
-    theApp.m_option_dlg = m_hWnd;
-
     SetWindowText(CCommon::LoadText(IDS_TITLE_OPTION));
     SetIcon(theApp.GetMenuIcon(IDI_SETTINGS), FALSE);       // 设置小图标
 

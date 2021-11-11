@@ -19,6 +19,7 @@ public:
 //#endif
 
 	void SetMinSize(int cx, int cy);		//设置窗口的最小大小，如果未设置，则使用窗口的初始大小作为最小大小
+    static HWND GetUniqueHandel(LPCTSTR dlg_name);          //获取此窗口唯一的句柄
 
 private:
 	void LoadConfig();
@@ -27,6 +28,7 @@ private:
 private:
 	CSize m_min_size{};     //窗口的最小大小（以 96dpi 的大小保存）
 	CSize m_window_size{ -1, -1 };
+    static std::map<CString, HWND> m_unique_hwnd;        //针对每一个基类的唯一的窗口句柄
 
 protected:
 	virtual CString GetDialogName() const = 0;
@@ -40,4 +42,5 @@ public:
 	afx_msg void OnDestroy();
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+    virtual INT_PTR DoModal();
 };

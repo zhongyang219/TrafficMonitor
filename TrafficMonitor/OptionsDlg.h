@@ -8,6 +8,8 @@
 
 // COptionsDlg 对话框
 
+#define OPTION_DLG_NAME _T("OptionsDlg")
+
 class COptionsDlg : public CBaseDialog
 {
     DECLARE_DYNAMIC(COptionsDlg)

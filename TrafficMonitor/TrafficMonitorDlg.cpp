@@ -490,10 +490,10 @@ void CTrafficMonitorDlg::CloseTaskBarWnd()
 {
     if (m_tBarDlg != nullptr)
     {
-        HWND hParent = ::GetParent(theApp.m_option_dlg);
+        HWND hParent = ::GetParent(COptionsDlg::GetUniqueHandel(OPTION_DLG_NAME));
         if (hParent == m_tBarDlg->GetSafeHwnd())            //关闭任务栏窗口前，如果选项设置窗口已打开且父窗口是任务栏窗口，则将其关闭
         {
-            ::SendMessage(theApp.m_option_dlg, WM_COMMAND, IDCANCEL, 0);
+            ::SendMessage(COptionsDlg::GetUniqueHandel(OPTION_DLG_NAME), WM_COMMAND, IDCANCEL, 0);
         }
 
         if (IsTaskbarWndValid())
@@ -626,10 +626,13 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
     COptionsDlg optionsDlg(tab, this);
 
     //将选项设置数据传递给选项设置对话框
-    optionsDlg.m_tab1_dlg.m_data = theApp.m_main_wnd_data;
-    optionsDlg.m_tab2_dlg.m_data = theApp.m_taskbar_data;
-    optionsDlg.m_tab3_dlg.m_data = theApp.m_general_data;
-    optionsDlg.m_tab1_dlg.m_text_disable = m_skin.GetLayoutInfo().no_label;
+    if (COptionsDlg::GetUniqueHandel(OPTION_DLG_NAME) == NULL)     //确保此时选项设置对话框已经关闭
+    {
+        optionsDlg.m_tab1_dlg.m_data = theApp.m_main_wnd_data;
+        optionsDlg.m_tab2_dlg.m_data = theApp.m_taskbar_data;
+        optionsDlg.m_tab3_dlg.m_data = theApp.m_general_data;
+        optionsDlg.m_tab1_dlg.m_text_disable = m_skin.GetLayoutInfo().no_label;
+    }
 
     if (optionsDlg.DoModal() == IDOK)
     {
