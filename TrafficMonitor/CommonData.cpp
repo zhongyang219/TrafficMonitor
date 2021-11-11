@@ -1,15 +1,21 @@
 ﻿#include "stdafx.h"
 #include "CommonData.h"
 #include "Common.h"
+#include "CalendarHelper.h"
 
 ///////////////////////////////////////////////////////////////////////////////////
-//HistoryTraffic
-unsigned __int64 HistoryTraffic::kBytes() const
+int Date::week() const
 {
-    return up_kBytes + down_kBytes;
+    int days{};
+    for (int i{}; i < month; i++)
+    {
+        days += CCalendarHelper::DaysInMonth(year, i);
+    }
+    days += day;
+    return days / 7 + 1;
 }
 
-bool HistoryTraffic::DateGreater(const HistoryTraffic& a, const HistoryTraffic& b)
+bool Date::DateGreater(const Date& a, const Date& b)
 {
     if (a.year != b.year)
         return a.year > b.year;
@@ -21,9 +27,17 @@ bool HistoryTraffic::DateGreater(const HistoryTraffic& a, const HistoryTraffic& 
         return false;
 }
 
-bool HistoryTraffic::DateEqual(const HistoryTraffic& a, const HistoryTraffic& b)
+bool Date::DateEqual(const Date& a, const Date& b)
 {
     return a.year == b.year && a.month == b.month && a.day == b.day;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////
+//HistoryTraffic
+unsigned __int64 HistoryTraffic::kBytes() const
+{
+    return up_kBytes + down_kBytes;
 }
 
 
