@@ -154,6 +154,8 @@ protected:
 
     void _OnOptions(int tab);   //打开“选项”对话框的处理，参数为打开时切换的标签
 
+    void ApplySettings(COptionsDlg& optionsDlg);
+
     void SetItemPosition();     //设置显示的4个项目的位置
     void LoadSkinLayout();      //从当前皮肤获取布局数据
 
@@ -257,4 +259,6 @@ public:
     afx_msg void OnExitSizeMove();
     afx_msg void OnPluginManage();
     afx_msg void OnOpenTaskManager();
+protected:
+    afx_msg LRESULT OnSettingsApplied(WPARAM wParam, LPARAM lParam);
 };

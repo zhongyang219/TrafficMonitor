@@ -113,6 +113,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_COMMAND(ID_PLUGIN_MANAGE, &CTrafficMonitorDlg::OnPluginManage)
     ON_MESSAGE(WM_REOPEN_TASKBAR_WND, &CTrafficMonitorDlg::OnReopenTaksbarWnd)
     ON_COMMAND(ID_OPEN_TASK_MANAGER, &CTrafficMonitorDlg::OnOpenTaskManager)
+    ON_MESSAGE(WM_SETTINGS_APPLIED, &CTrafficMonitorDlg::OnSettingsApplied)
 END_MESSAGE_MAP()
 
 
@@ -622,7 +623,7 @@ void CTrafficMonitorDlg::BackupHistoryTrafficFile()
 
 void CTrafficMonitorDlg::_OnOptions(int tab)
 {
-    COptionsDlg optionsDlg(tab);
+    COptionsDlg optionsDlg(tab, this);
 
     //将选项设置数据传递给选项设置对话框
     optionsDlg.m_tab1_dlg.m_data = theApp.m_main_wnd_data;
@@ -632,102 +633,107 @@ void CTrafficMonitorDlg::_OnOptions(int tab)
 
     if (optionsDlg.DoModal() == IDOK)
     {
-        bool is_hardware_monitor_item_changed = (optionsDlg.m_tab3_dlg.m_data.hardware_monitor_item != theApp.m_general_data.hardware_monitor_item);
-        bool is_always_on_top_changed = (optionsDlg.m_tab1_dlg.m_data.m_always_on_top != theApp.m_main_wnd_data.m_always_on_top);
-        bool is_mouse_penerate_changed = (optionsDlg.m_tab1_dlg.m_data.m_mouse_penetrate != theApp.m_main_wnd_data.m_mouse_penetrate);
-        bool is_alow_out_of_border_changed = (optionsDlg.m_tab1_dlg.m_data.m_alow_out_of_border != theApp.m_main_wnd_data.m_alow_out_of_border);
-        bool is_show_notify_icon_changed = (optionsDlg.m_tab3_dlg.m_data.show_notify_icon != theApp.m_general_data.show_notify_icon);
+        ApplySettings(optionsDlg);
+    }
+}
 
-        theApp.m_main_wnd_data = optionsDlg.m_tab1_dlg.m_data;
-        theApp.m_taskbar_data = optionsDlg.m_tab2_dlg.m_data;
-        theApp.m_general_data = optionsDlg.m_tab3_dlg.m_data;
+void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
+{
+    bool is_hardware_monitor_item_changed = (optionsDlg.m_tab3_dlg.m_data.hardware_monitor_item != theApp.m_general_data.hardware_monitor_item);
+    bool is_always_on_top_changed = (optionsDlg.m_tab1_dlg.m_data.m_always_on_top != theApp.m_main_wnd_data.m_always_on_top);
+    bool is_mouse_penerate_changed = (optionsDlg.m_tab1_dlg.m_data.m_mouse_penetrate != theApp.m_main_wnd_data.m_mouse_penetrate);
+    bool is_alow_out_of_border_changed = (optionsDlg.m_tab1_dlg.m_data.m_alow_out_of_border != theApp.m_main_wnd_data.m_alow_out_of_border);
+    bool is_show_notify_icon_changed = (optionsDlg.m_tab3_dlg.m_data.show_notify_icon != theApp.m_general_data.show_notify_icon);
 
-        CGeneralSettingsDlg::CheckTaskbarDisplayItem();
+    theApp.m_main_wnd_data = optionsDlg.m_tab1_dlg.m_data;
+    theApp.m_taskbar_data = optionsDlg.m_tab2_dlg.m_data;
+    theApp.m_general_data = optionsDlg.m_tab3_dlg.m_data;
 
-        SetTextFont();
+    CGeneralSettingsDlg::CheckTaskbarDisplayItem();
 
-        //CTaskBarDlg::SaveConfig();
-        if (IsTaskbarWndValid())
-        {
-            m_tBarDlg->ApplySettings();
-            //如果更改了任务栏窗口字体或显示的文本，则任务栏窗口可能要变化，于是关闭再打开任务栏窗口
-            CloseTaskBarWnd();
-            OpenTaskBarWnd();
-        }
+    SetTextFont();
 
-        if (optionsDlg.m_tab3_dlg.IsAutoRunModified())
-            theApp.SetAutoRun(theApp.m_general_data.auto_run);
+    //CTaskBarDlg::SaveConfig();
+    if (IsTaskbarWndValid())
+    {
+        m_tBarDlg->ApplySettings();
+        //如果更改了任务栏窗口字体或显示的文本，则任务栏窗口可能要变化，于是关闭再打开任务栏窗口
+        CloseTaskBarWnd();
+        OpenTaskBarWnd();
+    }
 
-        if (optionsDlg.m_tab3_dlg.IsShowAllInterfaceModified())
-            IniConnection();
+    if (optionsDlg.m_tab3_dlg.IsAutoRunModified())
+        theApp.SetAutoRun(theApp.m_general_data.auto_run);
 
-        if (optionsDlg.m_tab3_dlg.IsMonitorTimeSpanModified())      //如果监控时间间隔改变了，则重设定时器
-        {
-            KillTimer(MONITOR_TIMER);
-            SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, NULL);
-            //m_timer.KillTimer();
-            //m_timer.CreateTimer((DWORD_PTR)this, theApp.m_general_data.monitor_time_span, MonitorThreadCallback);
-        }
+    if (optionsDlg.m_tab3_dlg.IsShowAllInterfaceModified())
+        IniConnection();
 
-        //设置获取CPU利用率的方式
-        m_cpu_usage.SetUseCPUTimes(theApp.m_general_data.m_get_cpu_usage_by_cpu_times);
+    if (optionsDlg.m_tab3_dlg.IsMonitorTimeSpanModified())      //如果监控时间间隔改变了，则重设定时器
+    {
+        KillTimer(MONITOR_TIMER);
+        SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, NULL);
+        //m_timer.KillTimer();
+        //m_timer.CreateTimer((DWORD_PTR)this, theApp.m_general_data.monitor_time_span, MonitorThreadCallback);
+    }
+
+    //设置获取CPU利用率的方式
+    m_cpu_usage.SetUseCPUTimes(theApp.m_general_data.m_get_cpu_usage_by_cpu_times);
 
 #ifndef WITHOUT_TEMPERATURE
-        if (is_hardware_monitor_item_changed)
+    if (is_hardware_monitor_item_changed)
+    {
+        //如果关闭了硬件监控，则析构硬件监控类
+        if (theApp.m_general_data.hardware_monitor_item == 0)
         {
-            //如果关闭了硬件监控，则析构硬件监控类
-            if (theApp.m_general_data.hardware_monitor_item == 0)
-            {
-                CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
-                theApp.m_pMonitor.reset();
-            }
-            else if (theApp.m_pMonitor != nullptr)
-            {
-                theApp.UpdateOpenHardwareMonitorEnableState();
-            }
-            else if (IsTemperatureNeeded())
-            {
-                theApp.InitOpenHardwareLibInThread();
-            }
-            //更新任务栏窗口右键菜单
-            theApp.UpdateTaskbarWndMenu();
+            CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
+            theApp.m_pMonitor.reset();
         }
+        else if (theApp.m_pMonitor != nullptr)
+        {
+            theApp.UpdateOpenHardwareMonitorEnableState();
+        }
+        else if (IsTemperatureNeeded())
+        {
+            theApp.InitOpenHardwareLibInThread();
+        }
+        //更新任务栏窗口右键菜单
+        theApp.UpdateTaskbarWndMenu();
+    }
 #endif
 
-        if (is_always_on_top_changed)
-        {
-            SetAlwaysOnTop();
-        }
-
-        if (is_mouse_penerate_changed)
-        {
-            SetMousePenetrate();
-            if (!theApp.m_general_data.show_notify_icon && theApp.IsForceShowNotifyIcon())   //鼠标穿透时，如果通知图标没有显示，则将它显示出来，否则无法呼出右键菜单
-            {
-                //添加通知栏图标
-                AddNotifyIcon();
-                theApp.m_general_data.show_notify_icon = true;
-            }
-        }
-
-        if (is_alow_out_of_border_changed)
-        {
-            CheckWindowPos();
-        }
-
-        if (is_show_notify_icon_changed)
-        {
-            if (theApp.IsForceShowNotifyIcon())
-                theApp.m_general_data.show_notify_icon = true;
-            if (theApp.m_general_data.show_notify_icon)
-                AddNotifyIcon();
-            else
-                DeleteNotifyIcon();
-        }
-
-        theApp.SaveConfig();
-        theApp.SaveGlobalConfig();
+    if (is_always_on_top_changed)
+    {
+        SetAlwaysOnTop();
     }
+
+    if (is_mouse_penerate_changed)
+    {
+        SetMousePenetrate();
+        if (!theApp.m_general_data.show_notify_icon && theApp.IsForceShowNotifyIcon())   //鼠标穿透时，如果通知图标没有显示，则将它显示出来，否则无法呼出右键菜单
+        {
+            //添加通知栏图标
+            AddNotifyIcon();
+            theApp.m_general_data.show_notify_icon = true;
+        }
+    }
+
+    if (is_alow_out_of_border_changed)
+    {
+        CheckWindowPos();
+    }
+
+    if (is_show_notify_icon_changed)
+    {
+        if (theApp.IsForceShowNotifyIcon())
+            theApp.m_general_data.show_notify_icon = true;
+        if (theApp.m_general_data.show_notify_icon)
+            AddNotifyIcon();
+        else
+            DeleteNotifyIcon();
+    }
+
+    theApp.SaveConfig();
+    theApp.SaveGlobalConfig();
 }
 
 void CTrafficMonitorDlg::SetItemPosition()
@@ -2647,4 +2653,15 @@ LRESULT CTrafficMonitorDlg::OnReopenTaksbarWnd(WPARAM wParam, LPARAM lParam)
 void CTrafficMonitorDlg::OnOpenTaskManager()
 {
     ShellExecuteW(NULL, _T("open"), (theApp.m_system_dir + L"\\Taskmgr.exe").c_str(), NULL, NULL, SW_NORMAL);       //打开任务管理器
+}
+
+
+afx_msg LRESULT CTrafficMonitorDlg::OnSettingsApplied(WPARAM wParam, LPARAM lParam)
+{
+    COptionsDlg* pOptionsDlg = (COptionsDlg*)wParam;
+    if (pOptionsDlg != nullptr)
+    {
+        ApplySettings(*pOptionsDlg);
+    }
+    return 0;
 }

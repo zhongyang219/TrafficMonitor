@@ -35,6 +35,7 @@ void COptionsDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(COptionsDlg, CBaseDialog)
     ON_WM_SIZE()
+    ON_BN_CLICKED(IDC_APPLY_BUTTON, &COptionsDlg::OnBnClickedApplyButton)
 END_MESSAGE_MAP()
 
 
@@ -124,4 +125,10 @@ void COptionsDlg::OnCancel()
     m_tab3_dlg.OnCancel();
 
     CBaseDialog::OnCancel();
+}
+
+
+void COptionsDlg::OnBnClickedApplyButton()
+{
+    ::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_SETTINGS_APPLIED, (WPARAM)this, 0);
 }

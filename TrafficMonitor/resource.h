@@ -467,6 +467,7 @@
 #define IDC_HARDWARE_MONITOR_STATIC     1144
 #define IDC_SELECT_HDD_STATIC           1145
 #define IDC_SELECT_CPU_STATIC           1146
+#define IDC_APPLY_BUTTON                1147
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -595,7 +596,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        337
 #define _APS_NEXT_COMMAND_VALUE         33404
-#define _APS_NEXT_CONTROL_VALUE         1147
+#define _APS_NEXT_CONTROL_VALUE         1148
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
