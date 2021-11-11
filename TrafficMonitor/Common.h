@@ -2,6 +2,7 @@
 #include "CommonData.h"
 #include "CVariant.h"
 #include <set>
+#include <functional>
 
 class CCommon
 {
@@ -161,8 +162,16 @@ public:
     //获取path路径下的文件或文件夹，并将文件或文件夹名称保存在files容器中。
     static void GetFiles(const wchar_t* path, vector<wstring>& files);
 
+    //获取path路径下的文件或文件夹，每次遍历时调用函数对数func
+    //path: 查找的路径
+    //func: 可以是一个函数对象或lambda表达式，参数是遍历到的文件或文件夹名
+    static void GetFiles(const wchar_t* path, std::function<void(const wstring&)> func);
+
     //判断一个文件是否存在
     static bool FileExist(LPCTSTR file_name);
+
+    //判断是否是文件夹
+    static bool IsFolder(const wstring& path);
 
     static bool MoveAFile(LPCTSTR exist_file, LPCTSTR new_file);
 
