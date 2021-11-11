@@ -1,34 +1,34 @@
-#pragma once
+ï»¿#pragma once
 #include "ColorStatic.h"
 #include "afxwin.h"
 #include "ColorSettingListCtrl.h"
 #include "BaseDialog.h"
 
-// CTaskbarColorDlg ¶Ô»°¿ò
+// CTaskbarColorDlg å¯¹è¯æ¡†
 
 class CTaskbarColorDlg : public CBaseDialog
 {
 	DECLARE_DYNAMIC(CTaskbarColorDlg)
 
 public:
-	CTaskbarColorDlg(const std::map<DisplayItem, TaskbarItemColor>& colors, CWnd* pParent = NULL);   // ±ê×¼¹¹Ôìº¯Êı
+	CTaskbarColorDlg(const std::map<CommonDisplayItem, TaskbarItemColor>& colors, CWnd* pParent = NULL);   // æ ‡å‡†æ„é€ å‡½æ•°
 	virtual ~CTaskbarColorDlg();
 
-    const std::map<DisplayItem, TaskbarItemColor>& GetColors() const { return m_colors; }
+    const std::map<CommonDisplayItem, TaskbarItemColor>& GetColors() const { return m_colors; }
 
-	// ¶Ô»°¿òÊı¾İ
+	// å¯¹è¯æ¡†æ•°æ®
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_TASKBAR_COLOR_DIALOG };
 #endif
 
 protected:
-    std::map<DisplayItem, TaskbarItemColor> m_colors;
+    std::map<CommonDisplayItem, TaskbarItemColor> m_colors;
     CColorSettingListCtrl m_list_ctrl;
 
     virtual CString GetDialogName() const override;
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV æ”¯æŒ
 
 	DECLARE_MESSAGE_MAP()
 public:

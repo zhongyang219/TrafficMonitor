@@ -12,7 +12,7 @@
 
 IMPLEMENT_DYNAMIC(CTaskbarColorDlg, CBaseDialog)
 
-CTaskbarColorDlg::CTaskbarColorDlg(const std::map<DisplayItem, TaskbarItemColor>& colors, CWnd* pParent /*=NULL*/)
+CTaskbarColorDlg::CTaskbarColorDlg(const std::map<CommonDisplayItem, TaskbarItemColor>& colors, CWnd* pParent /*=NULL*/)
 	: CBaseDialog(IDD_TASKBAR_COLOR_DIALOG, pParent), m_colors(colors)
 {
 }
@@ -62,45 +62,52 @@ BOOL CTaskbarColorDlg::OnInitDialog()
     m_list_ctrl.SetDrawItemRangMargin(theApp.DPI(2));
 
     //向列表中插入行
-    for (auto iter = AllDisplayItems.begin(); iter != AllDisplayItems.end(); ++iter)
+    for (auto iter = theApp.m_plugins.AllDisplayItemsWithPlugins().begin(); iter != theApp.m_plugins.AllDisplayItemsWithPlugins().end(); ++iter)
     {
         CString item_name;
-        switch (*iter)
+        if (iter->is_plugin)
         {
-        case TDI_UP:
-            item_name = CCommon::LoadText(IDS_UPLOAD);
-            break;
-        case TDI_DOWN:
-            item_name = CCommon::LoadText(IDS_DOWNLOAD);
-            break;
-        case TDI_CPU:
-            item_name = CCommon::LoadText(IDS_CPU_USAGE);
-            break;
-        case TDI_MEMORY:
-            item_name = CCommon::LoadText(IDS_MEMORY_USAGE);
-            break;
+            item_name = iter->plugin_item->GetItemName();
+        }
+        else
+        {
+            switch (iter->item_type)
+            {
+            case TDI_UP:
+                item_name = CCommon::LoadText(IDS_UPLOAD);
+                break;
+            case TDI_DOWN:
+                item_name = CCommon::LoadText(IDS_DOWNLOAD);
+                break;
+            case TDI_CPU:
+                item_name = CCommon::LoadText(IDS_CPU_USAGE);
+                break;
+            case TDI_MEMORY:
+                item_name = CCommon::LoadText(IDS_MEMORY_USAGE);
+                break;
 #ifndef WITHOUT_TEMPERATURE
-        case TDI_GPU_USAGE:
-            item_name = CCommon::LoadText(IDS_GPU_USAGE);
-            break;
-        case TDI_CPU_TEMP:
-            item_name = CCommon::LoadText(IDS_CPU_TEMPERATURE);
-            break;
-        case TDI_GPU_TEMP:
-            item_name = CCommon::LoadText(IDS_GPU_TEMPERATURE);
-            break;
-        case TDI_HDD_TEMP:
-            item_name = CCommon::LoadText(IDS_HDD_TEMPERATURE);
-            break;
-        case TDI_MAIN_BOARD_TEMP:
-            item_name = CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
-            break;
-        case TDI_HDD_USAGE:
-            item_name = CCommon::LoadText(IDS_HDD_USAGE);
-            break;
+            case TDI_GPU_USAGE:
+                item_name = CCommon::LoadText(IDS_GPU_USAGE);
+                break;
+            case TDI_CPU_TEMP:
+                item_name = CCommon::LoadText(IDS_CPU_TEMPERATURE);
+                break;
+            case TDI_GPU_TEMP:
+                item_name = CCommon::LoadText(IDS_GPU_TEMPERATURE);
+                break;
+            case TDI_HDD_TEMP:
+                item_name = CCommon::LoadText(IDS_HDD_TEMPERATURE);
+                break;
+            case TDI_MAIN_BOARD_TEMP:
+                item_name = CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
+                break;
+            case TDI_HDD_USAGE:
+                item_name = CCommon::LoadText(IDS_HDD_USAGE);
+                break;
 #endif
-        default:
-            break;
+            default:
+                break;
+            }
         }
         if (!item_name.IsEmpty())
         {
@@ -108,7 +115,7 @@ BOOL CTaskbarColorDlg::OnInitDialog()
             m_list_ctrl.InsertItem(index, item_name);
             m_list_ctrl.SetItemColor(index, 1, m_colors[*iter].label);
             m_list_ctrl.SetItemColor(index, 2, m_colors[*iter].value);
-            m_list_ctrl.SetItemData(index, *iter);
+            m_list_ctrl.SetItemData(index, (DWORD_PTR)&(*iter));
         }
     }
 
@@ -132,10 +139,11 @@ void CTaskbarColorDlg::OnNMDblclkList1(NMHDR *pNMHDR, LRESULT *pResult)
         {
             color = colorDlg.GetColor();
             m_list_ctrl.SetItemColor(index, col, color);
+            CommonDisplayItem* item = (CommonDisplayItem*)(m_list_ctrl.GetItemData(index));
             if (col == 1)
-                m_colors[static_cast<DisplayItem>(m_list_ctrl.GetItemData(index))].label = color;
+                m_colors[*item].label = color;
             else
-                m_colors[static_cast<DisplayItem>(m_list_ctrl.GetItemData(index))].value = color;
+                m_colors[*item].value = color;
         }
     }
 

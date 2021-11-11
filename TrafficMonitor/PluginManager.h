@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "PluginInterface.h"
 #include <map>
+#include "TaskbarItemOrderHelper.h"
 
 typedef ITMPlugin* (*pfTMPluginGetInstance)();
 
@@ -40,7 +41,10 @@ public:
     IPluginItem* GetItemByIndex(int index);
     int GetItemIndex(IPluginItem* item) const;
 
+    const std::set<CommonDisplayItem>& AllDisplayItemsWithPlugins();
+
 private:
     std::vector<IPluginItem*> m_plugins;
     std::vector<PluginInfo> m_modules;
+    std::set<CommonDisplayItem> m_all_display_items_with_plugins;   //包含插件在内的所有任务栏显示项目
 };

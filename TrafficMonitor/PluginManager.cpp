@@ -85,6 +85,16 @@ void CPluginManager::LoadPlugins()
             index++;
         }
     }
+
+    //初始化所有任务栏显示项目
+    for (const auto& display_item : AllDisplayItems)
+    {
+        m_all_display_items_with_plugins.insert(display_item);
+    }
+    for (const auto& display_item : m_plugins)
+    {
+        m_all_display_items_with_plugins.insert(display_item);
+    }
 }
 
 const std::vector<IPluginItem*>& CPluginManager::GetPluginItems()
@@ -122,6 +132,11 @@ int CPluginManager::GetItemIndex(IPluginItem* item) const
             return iter - m_plugins.begin();
     }
     return -1;
+}
+
+const std::set<CommonDisplayItem>& CPluginManager::AllDisplayItemsWithPlugins()
+{
+    return m_all_display_items_with_plugins;
 }
 
 std::wstring CPluginManager::PluginInfo::Property(ITMPlugin::PluginInfoIndex index) const

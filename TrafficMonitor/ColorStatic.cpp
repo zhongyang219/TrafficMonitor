@@ -83,7 +83,7 @@ void CColorStatic::OnPaint()
 
     int color_num = static_cast<int>(m_colors.size());
 
-	if (IsWindowEnabled())
+	if (IsWindowEnabled() && color_num > 0)
 	{
 		switch (color_num)
 		{

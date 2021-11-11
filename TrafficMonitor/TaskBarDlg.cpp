@@ -364,12 +364,18 @@ void CTaskBarDlg::DrawPluginItem(CDrawCommon& drawer, IPluginItem* item, CRect r
     }
     else
     {
-        COLORREF label_text_color = theApp.m_taskbar_data.dft_text_colors;
-        COLORREF value_text_color = theApp.m_taskbar_data.dft_text_colors;
-        if (!theApp.m_taskbar_data.text_colors.empty())
+        //设置要绘制的文本颜色
+        COLORREF label_text_color{};
+        COLORREF value_text_color{};
+        if (theApp.m_taskbar_data.specify_each_item_color)
+        {
+            label_text_color = theApp.m_taskbar_data.text_colors[item].label;
+            value_text_color = theApp.m_taskbar_data.text_colors[item].value;
+        }
+        else if (!theApp.m_taskbar_data.text_colors.empty())
         {
             label_text_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
-            value_text_color = theApp.m_taskbar_data.text_colors.begin()->second.value;
+            value_text_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
         }
 
         CRect rect_label, rect_value;

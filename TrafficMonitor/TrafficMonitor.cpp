@@ -871,6 +871,9 @@ BOOL CTrafficMonitorApp::InitInstance()
 
     bool is_windows10_fall_creator = m_win_version.IsWindows10FallCreatorOrLater();
 
+    //载入插件
+    m_plugins.LoadPlugins();
+
     //从ini文件载入设置
     LoadConfig();
 
@@ -973,8 +976,6 @@ BOOL CTrafficMonitorApp::InitInstance()
         }
     }
 #endif
-
-    m_plugins.LoadPlugins();
 
     //执行测试代码
 #ifdef _DEBUG

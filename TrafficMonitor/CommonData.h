@@ -243,7 +243,7 @@ struct TaskBarSettingData : public PublicSettingData
     COLORREF  back_color{ RGB(0, 0, 0) };   //背景颜色
     COLORREF transparent_color{ RGB(0, 0, 0) };     //透明色
     COLORREF status_bar_color{ RGB(0, 0, 0) };      // CPU/内存 状态条颜色
-    std::map<DisplayItem, TaskbarItemColor> text_colors{};    //文字的颜色
+    std::map<CommonDisplayItem, TaskbarItemColor> text_colors{};    //文字的颜色
     int dft_back_color = 0;                         //默认背景颜色
     int dft_transparent_color = 0;                  //默认透明色
     int dft_status_bar_color = 0x005A5A5A;          //默认CPU/内存 状态条颜色
