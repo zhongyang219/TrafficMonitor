@@ -2287,7 +2287,7 @@ void CTrafficMonitorDlg::OnChangeSkin()
         //获取皮肤的文字颜色
         theApp.m_main_wnd_data.specify_each_item_color = skinDlg.GetSkinData().GetSkinInfo().specify_each_item_color;
         int i{};
-        for (const auto& item : AllDisplayItems)
+        for (const auto& item : theApp.m_plugins.AllDisplayItemsWithPlugins())
         {
             theApp.m_main_wnd_data.text_colors[item] = skinDlg.GetSkinData().GetSkinInfo().TextColor(i);
             i++;

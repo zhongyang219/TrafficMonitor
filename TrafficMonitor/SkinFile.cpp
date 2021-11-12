@@ -111,8 +111,14 @@ void CSkinFile::LoadFromXml(const wstring& file_path)
                             m_skin_info.text_color.push_back(atoi(str.c_str()));
                         }
                     }
-                    if (m_skin_info.text_color.size() < AllDisplayItems.size())
-                        m_skin_info.text_color.resize(AllDisplayItems.size());
+
+                    if (m_skin_info.text_color.size() < theApp.m_plugins.AllDisplayItemsWithPlugins().size())
+                    {
+                        COLORREF default_color{};
+                        if (!m_skin_info.text_color.empty())
+                            default_color = m_skin_info.text_color.front();
+                        m_skin_info.text_color.resize(theApp.m_plugins.AllDisplayItemsWithPlugins().size(), default_color);
+                    }
                     //指定每个项目的颜色
                     else if (skin_item_name == "specify_each_item_color")
                     {
