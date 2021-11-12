@@ -653,6 +653,11 @@ CString CTaskBarDlg::GetMouseTipsInfo()
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_main_board_temperature, theApp.m_taskbar_data));
             tip_info += temp;
         }
+        if (!IsShowHddUsage() && theApp.m_hdd_usage >= 0)
+        {
+            temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_HDD_USAGE), theApp.m_hdd_usage);
+            tip_info += temp;
+        }
     }
 #endif
     return tip_info;
