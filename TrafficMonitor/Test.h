@@ -14,4 +14,5 @@ private:
     static void TestSkin();
     static void TestCrash();
     static void TestPlugin();
+    static void TestDate();
 };

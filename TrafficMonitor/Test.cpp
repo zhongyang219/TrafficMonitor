@@ -18,6 +18,7 @@ void CTest::Test()
     //TestGetLicense();
     //TestSkin();
     //TestCrash();
+    //TestDate();
 }
 
 void CTest::TestCommand()
@@ -69,4 +70,14 @@ void CTest::TestPlugin()
     {
         theApp.m_plugins.GetPlugins()[0].plugin->ShowOptionsDialog(theApp.m_pMainWnd->m_hWnd);
     }
+}
+
+void CTest::TestDate()
+{
+    Date d;
+    d.year = 2021;
+    d.month = 1;
+    d.day = 4;
+    int week = d.week();
+    int a = 0;
 }

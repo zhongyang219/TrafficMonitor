@@ -2,16 +2,28 @@
 #include "CommonData.h"
 #include "Common.h"
 #include "CalendarHelper.h"
+#include "TrafficMonitor.h"
 
 ///////////////////////////////////////////////////////////////////////////////////
 int Date::week() const
 {
+    //计算当前是一年的第几天
     int days{};
-    for (int i{}; i < month; i++)
+    for (int i{ 1 }; i < month; i++)
     {
         days += CCalendarHelper::DaysInMonth(year, i);
     }
     days += day;
+    //计算这一年的1月1日是星期几
+    int week_day = CCalendarHelper::CaculateWeekDay(year, 1, 1);
+    if (theApp.m_cfg_data.m_sunday_first)
+    {
+        days += (week_day - 1);
+    }
+    else
+    {
+        days += (week_day - 2);
+    }
     return days / 7 + 1;
 }
 
