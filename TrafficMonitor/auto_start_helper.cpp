@@ -5,6 +5,7 @@
 
 #include <comdef.h>
 #include <taskschd.h>
+#include "SimpleXML.h"
 # pragma comment(lib, "taskschd.lib")
 
 // Helper macros from wix.
@@ -364,6 +365,7 @@ bool is_auto_start_task_active_for_this_user()
     hr = pService->GetFolder(_bstr_t(L"\\TrafficMonitor"), &pTaskFolder);
     ExitOnFailure(hr, "ITaskFolder doesn't exist: %x", hr);
 
+    bool command_path_match{};
     // ------------------------------------------------------
     // If the task exists, disable.
     {
@@ -374,6 +376,16 @@ bool is_auto_start_task_active_for_this_user()
             // Task exists, get its value.
             VARIANT_BOOL is_enabled;
             hr = pExistingRegisteredTask->get_Enabled(&is_enabled);
+            //判断已存在的任务计划命令的exe文件路径是否为当前exe的路径
+            BSTR xml_buff{};
+            pExistingRegisteredTask->get_Xml(&xml_buff);
+            CSimpleXML xml;
+            xml.LoadXMLContentDirect(xml_buff);
+            std::wstring command_path = xml.GetNode(L"Command", L"Exec");
+            WCHAR wszExecutablePath[MAX_PATH];
+            GetModuleFileName(NULL, wszExecutablePath, MAX_PATH);
+            command_path_match = (command_path == wszExecutablePath);
+
             pExistingRegisteredTask->Release();
             if (SUCCEEDED(hr))
             {
@@ -389,6 +401,7 @@ LExit:
         pService->Release();
     if (pTaskFolder)
         pTaskFolder->Release();
+    //delete[] buff;
 
-    return (SUCCEEDED(hr));
+    return (SUCCEEDED(hr) && command_path_match);
 }
