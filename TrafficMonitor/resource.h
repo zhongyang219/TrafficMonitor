@@ -274,6 +274,7 @@
 #define IDS_PLUGIN_API_VERSION          367
 #define IDS_WEEK_VIEW                   368
 #define IDS_WEEK_NUM                    369
+#define IDS_URL                         370
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
 #define IDC_STATIC_DOWN                 1002

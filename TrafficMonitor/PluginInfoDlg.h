@@ -34,6 +34,7 @@ private:
         RI_ITEM_ID,
         RI_AUTHOR,
         RI_COPYRIGHT,
+        RI_URL,
         RI_VERSION,
         RI_API_VERSION,
         RI_MAX

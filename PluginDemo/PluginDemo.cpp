@@ -64,6 +64,9 @@ const wchar_t* CPluginDemo::GetInfo(PluginInfoIndex index)
         return L"Copyright (C) by Zhong Yang 2021";
     case TMI_VERSION:
         return L"1.0";
+    case ITMPlugin::TMI_URL:
+        return L"https://github.com/zhongyang219/TrafficMonitor";
+        break;
     default:
         break;
     }

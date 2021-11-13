@@ -128,6 +128,7 @@ public:
         TMI_AUTHOR,         /**< 作者 */
         TMI_COPYRIGHT,      /**< 版权 */
         TMI_VERSION,        /**< 版本 */
+        TMI_URL,            /**< 主页 */
         TMI_MAX             /**< 插件信息的最大值 */
     };
 

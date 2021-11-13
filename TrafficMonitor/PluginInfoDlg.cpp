@@ -56,6 +56,7 @@ void CPluginInfoDlg::ShowInfo()
         m_info_list.SetItemText(RI_ITEM_ID, 1, item_id.c_str());
         m_info_list.SetItemText(RI_AUTHOR, 1, plugin_info.Property(ITMPlugin::TMI_AUTHOR).c_str());
         m_info_list.SetItemText(RI_COPYRIGHT, 1, plugin_info.Property(ITMPlugin::TMI_COPYRIGHT).c_str());
+        m_info_list.SetItemText(RI_URL, 1, plugin_info.Property(ITMPlugin::TMI_URL).c_str());
         m_info_list.SetItemText(RI_VERSION, 1, plugin_info.Property(ITMPlugin::TMI_VERSION).c_str());
         if (plugin_info.plugin != nullptr)
             m_info_list.SetItemText(RI_API_VERSION, 1, std::to_wstring(plugin_info.plugin->GetAPIVersion()).c_str());
@@ -221,6 +222,8 @@ CString CPluginInfoDlg::GetRowName(int row_index)
         return CCommon::LoadText(IDS_AUTHOR);
     case CPluginInfoDlg::RI_COPYRIGHT:
         return CCommon::LoadText(IDS_COPYRIGHT);
+    case CPluginInfoDlg::RI_URL:
+        return CCommon::LoadText(IDS_URL);
     case CPluginInfoDlg::RI_VERSION:
         return CCommon::LoadText(IDS_VERSION);
     case CPluginInfoDlg::RI_API_VERSION:
