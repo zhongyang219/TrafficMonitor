@@ -62,49 +62,56 @@ BOOL CDisplayTextSettingDlg::OnInitDialog()
     for (auto iter = m_display_texts.GetAllItems().begin(); iter != m_display_texts.GetAllItems().end(); ++iter)
     {
         CString item_name;
-        switch (iter->first)
+        if (iter->first.is_plugin)
         {
-        case TDI_UP:
-            item_name = CCommon::LoadText(IDS_UPLOAD);
-            break;
-        case TDI_DOWN:
-            item_name = CCommon::LoadText(IDS_DOWNLOAD);
-            break;
-        case TDI_CPU:
-            item_name = CCommon::LoadText(IDS_CPU_USAGE);
-            break;
-        case TDI_MEMORY:
-            item_name = CCommon::LoadText(IDS_MEMORY_USAGE);
-            break;
+            item_name = iter->first.plugin_item->GetItemName();
+        }
+        else
+        {
+            switch (iter->first.item_type)
+            {
+            case TDI_UP:
+                item_name = CCommon::LoadText(IDS_UPLOAD);
+                break;
+            case TDI_DOWN:
+                item_name = CCommon::LoadText(IDS_DOWNLOAD);
+                break;
+            case TDI_CPU:
+                item_name = CCommon::LoadText(IDS_CPU_USAGE);
+                break;
+            case TDI_MEMORY:
+                item_name = CCommon::LoadText(IDS_MEMORY_USAGE);
+                break;
 #ifndef WITHOUT_TEMPERATURE
-        case TDI_GPU_USAGE:
-            item_name = CCommon::LoadText(IDS_GPU_USAGE);
-            break;
-        case TDI_CPU_TEMP:
-            item_name = CCommon::LoadText(IDS_CPU_TEMPERATURE);
-            break;
-        case TDI_GPU_TEMP:
-            item_name = CCommon::LoadText(IDS_GPU_TEMPERATURE);
-            break;
-        case TDI_HDD_TEMP:
-            item_name = CCommon::LoadText(IDS_HDD_TEMPERATURE);
-            break;
-        case TDI_MAIN_BOARD_TEMP:
-            item_name = CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
-            break;
-        case TDI_HDD_USAGE:
-            item_name = CCommon::LoadText(IDS_HDD_USAGE);
-            break;
+            case TDI_GPU_USAGE:
+                item_name = CCommon::LoadText(IDS_GPU_USAGE);
+                break;
+            case TDI_CPU_TEMP:
+                item_name = CCommon::LoadText(IDS_CPU_TEMPERATURE);
+                break;
+            case TDI_GPU_TEMP:
+                item_name = CCommon::LoadText(IDS_GPU_TEMPERATURE);
+                break;
+            case TDI_HDD_TEMP:
+                item_name = CCommon::LoadText(IDS_HDD_TEMPERATURE);
+                break;
+            case TDI_MAIN_BOARD_TEMP:
+                item_name = CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
+                break;
+            case TDI_HDD_USAGE:
+                item_name = CCommon::LoadText(IDS_HDD_USAGE);
+                break;
 #endif
-        default:
-            break;
+            default:
+                break;
+            }
         }
         if (!item_name.IsEmpty())
         {
             int index = m_list_ctrl.GetItemCount();
             m_list_ctrl.InsertItem(index, item_name);
             m_list_ctrl.SetItemText(index, 1, iter->second.c_str());
-            m_list_ctrl.SetItemData(index, iter->first);
+            m_list_ctrl.SetItemData(index, (DWORD_PTR)&(iter->first));
         }
     }
 
@@ -115,6 +122,11 @@ BOOL CDisplayTextSettingDlg::OnInitDialog()
                   // 异常: OCX 属性页应返回 FALSE
 }
 
+CommonDisplayItem CDisplayTextSettingDlg::GetDisplayItem(int row)
+{
+    CommonDisplayItem* item = (CommonDisplayItem*)m_list_ctrl.GetItemData(row);
+    return *item;
+}
 
 void CDisplayTextSettingDlg::OnOK()
 {
@@ -123,7 +135,7 @@ void CDisplayTextSettingDlg::OnOK()
     int item_count = m_list_ctrl.GetItemCount();
     for (int i{}; i < item_count; i++)
     {
-        DisplayItem display_item = static_cast<DisplayItem>(m_list_ctrl.GetItemData(i));
+        CommonDisplayItem display_item = GetDisplayItem(i);
         m_display_texts.Get(display_item) = m_list_ctrl.GetItemText(i, 1).GetString();
     }
 
@@ -138,49 +150,56 @@ void CDisplayTextSettingDlg::OnBnClickedRestoreDefaultButton()
     int item_count = m_list_ctrl.GetItemCount();
     for (int i{}; i < item_count; i++)
     {
-        DisplayItem display_item = static_cast<DisplayItem>(m_list_ctrl.GetItemData(i));
+        CommonDisplayItem display_item = GetDisplayItem(i);
         CString default_text;
-        switch (display_item)
+        if (display_item.is_plugin)
         {
-        case TDI_UP:
-            if (m_main_window_text)
-                default_text = CCommon::LoadText(IDS_UPLOAD_DISP, _T(": "));
-            else
-                default_text = _T("↑: ");
-            break;
-        case TDI_DOWN:
-            if (m_main_window_text)
-                default_text = CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": "));
-            else
-                default_text = _T("↓: ");
-            break;
-            break;
-        case TDI_CPU:
-            default_text = _T("CPU: ");
-            break;
-        case TDI_MEMORY:
-            default_text = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
-            break;
-        case TDI_GPU_USAGE:
-            default_text = CCommon::LoadText(IDS_GPU_DISP, _T(": "));
-            break;
-        case TDI_CPU_TEMP:
-            default_text = _T("CPU: ");
-            break;
-        case TDI_GPU_TEMP:
-            default_text = CCommon::LoadText(IDS_GPU_DISP, _T(": "));
-            break;
-        case TDI_HDD_TEMP:
-            default_text = CCommon::LoadText(IDS_HDD_DISP, _T(": "));
-            break;
-        case TDI_MAIN_BOARD_TEMP:
-            default_text = CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": "));
-            break;
-        case TDI_HDD_USAGE:
-            default_text = CCommon::LoadText(IDS_HDD_DISP, _T(": "));
-            break;
-        default:
-            break;
+            default_text = display_item.plugin_item->GetItemLableText();
+        }
+        else
+        {
+            switch (display_item.item_type)
+            {
+            case TDI_UP:
+                if (m_main_window_text)
+                    default_text = CCommon::LoadText(IDS_UPLOAD_DISP, _T(": "));
+                else
+                    default_text = _T("↑: ");
+                break;
+            case TDI_DOWN:
+                if (m_main_window_text)
+                    default_text = CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": "));
+                else
+                    default_text = _T("↓: ");
+                break;
+                break;
+            case TDI_CPU:
+                default_text = _T("CPU: ");
+                break;
+            case TDI_MEMORY:
+                default_text = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
+                break;
+            case TDI_GPU_USAGE:
+                default_text = CCommon::LoadText(IDS_GPU_DISP, _T(": "));
+                break;
+            case TDI_CPU_TEMP:
+                default_text = _T("CPU: ");
+                break;
+            case TDI_GPU_TEMP:
+                default_text = CCommon::LoadText(IDS_GPU_DISP, _T(": "));
+                break;
+            case TDI_HDD_TEMP:
+                default_text = CCommon::LoadText(IDS_HDD_DISP, _T(": "));
+                break;
+            case TDI_MAIN_BOARD_TEMP:
+                default_text = CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": "));
+                break;
+            case TDI_HDD_USAGE:
+                default_text = CCommon::LoadText(IDS_HDD_DISP, _T(": "));
+                break;
+            default:
+                break;
+            }
         }
         m_list_ctrl.SetItemText(i, 1, default_text);
     }

@@ -54,12 +54,12 @@ unsigned __int64 HistoryTraffic::kBytes() const
 
 
 ///////////////////////////////////////////////////////////////////////////////////
-wstring& DispStrings::Get(DisplayItem item)
+wstring& DispStrings::Get(CommonDisplayItem item)
 {
     return map_str[item];
 }
 
-const std::map<DisplayItem, wstring>& DispStrings::GetAllItems() const
+const std::map<CommonDisplayItem, wstring>& DispStrings::GetAllItems() const
 {
     return map_str;
 }
@@ -85,6 +85,14 @@ bool DispStrings::IsInvalid() const
     return false;
 }
 
+void DispStrings::Load(const std::wstring& plugin_id, const std::wstring& disp_str)
+{
+    auto plugin = theApp.m_plugins.GetItemById(plugin_id);
+    if (plugin != nullptr)
+    {
+        map_str[plugin] = disp_str;
+    }
+}
 
 ///////////////////////////////////////////////////////////////////////////////////
 bool StringSet::Contains(const std::wstring& str) const

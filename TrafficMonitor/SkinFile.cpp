@@ -560,7 +560,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
 
                 //绘制文本
                 CString display_text;
-                display_text += plugin_item->GetItemLableText();
+                display_text += theApp.m_main_wnd_data.disp_str.Get(plugin_item).c_str();
                 if (!display_text.IsEmpty())
                     display_text += _T(" ");
                 display_text += plugin_item->GetItemValueText();

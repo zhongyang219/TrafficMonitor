@@ -270,6 +270,26 @@ void CIniHelper::SaveTaskbarWndColors(const wchar_t * AppName, const wchar_t * K
     _WriteString(AppName, KeyName, wstring(str));
 }
 
+void CIniHelper::LoadPluginDisplayStr(bool is_main_window)
+{
+    DispStrings& disp_str{ is_main_window ? theApp.m_main_wnd_data.disp_str : theApp.m_taskbar_data.disp_str };
+    std::wstring app_name{ is_main_window ? L"plugin_display_str_main_window" : L"plugin_display_str_taskbar_window" };
+    for (const auto& plugin : theApp.m_plugins.GetPluginItems())
+    {
+        disp_str.Load(plugin->GetItemId(), GetString(app_name.c_str(), plugin->GetItemId(), plugin->GetItemLableText()));
+    }
+}
+
+void CIniHelper::SavePluginDisplayStr(bool is_main_window)
+{
+    DispStrings& disp_str{ is_main_window ? theApp.m_main_wnd_data.disp_str : theApp.m_taskbar_data.disp_str };
+    std::wstring app_name{ is_main_window ? L"plugin_display_str_main_window" : L"plugin_display_str_taskbar_window" };
+    for (const auto& plugin : theApp.m_plugins.GetPluginItems())
+    {
+        WriteString(app_name.c_str(), plugin->GetItemId(), disp_str.Get(plugin));
+    }
+}
+
 void CIniHelper::_WriteString(const wchar_t * AppName, const wchar_t * KeyName, const wstring & str)
 {
     wstring app_str{ L"[" };

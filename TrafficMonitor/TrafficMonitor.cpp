@@ -110,6 +110,7 @@ void CTrafficMonitorApp::LoadConfig()
     //m_main_wnd_data.font.name = ini.GetString(_T("config"), _T("font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();
     //m_main_wnd_data.font.size = ini.GetInt(_T("config"), _T("font_size"), 10);
 
+    //载入显示文本设置
     m_main_wnd_data.disp_str.Get(TDI_UP) = ini.GetString(_T("config"), L"up_string", CCommon::LoadText(IDS_UPLOAD_DISP, _T(": $")));
     m_main_wnd_data.disp_str.Get(TDI_DOWN) = ini.GetString(L"config", L"down_string", CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": $")));
     m_main_wnd_data.disp_str.Get(TDI_CPU) = ini.GetString(L"config", L"cpu_string", L"CPU: $");
@@ -120,6 +121,9 @@ void CTrafficMonitorApp::LoadConfig()
     m_main_wnd_data.disp_str.Get(TDI_HDD_TEMP) = ini.GetString(L"config", L"hdd_temp_string", CCommon::LoadText(IDS_HDD_DISP, _T(": $")));
     m_main_wnd_data.disp_str.Get(TDI_MAIN_BOARD_TEMP) = ini.GetString(L"config", L"main_board_temp_string", CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": $")));
     m_main_wnd_data.disp_str.Get(TDI_HDD_USAGE) = ini.GetString(L"config", L"hdd_string", CCommon::LoadText(IDS_HDD_DISP, _T(": $")));
+
+    //载入插件项目的显示文本设置
+    ini.LoadPluginDisplayStr(true);
 
     m_main_wnd_data.speed_short_mode = ini.GetBool(_T("config"), _T("speed_short_mode"), false);
     m_main_wnd_data.separate_value_unit_with_space = ini.GetBool(_T("config"), _T("separate_value_unit_with_space"), true);
@@ -214,6 +218,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.disp_str.Get(TDI_HDD_TEMP) = ini.GetString(L"task_bar", L"hdd_temp_string", CCommon::LoadText(IDS_HDD_DISP, _T(": ")));
     m_taskbar_data.disp_str.Get(TDI_MAIN_BOARD_TEMP) = ini.GetString(L"task_bar", L"main_board_temp_string", CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": ")));
     m_taskbar_data.disp_str.Get(TDI_HDD_USAGE) = ini.GetString(L"task_bar", L"hdd_string", CCommon::LoadText(IDS_HDD_DISP, _T(": ")));
+    ini.LoadPluginDisplayStr(false);
 
     m_taskbar_data.tbar_wnd_on_left = ini.GetBool(_T("task_bar"), _T("task_bar_wnd_on_left"), false);
     m_taskbar_data.speed_short_mode = ini.GetBool(_T("task_bar"), _T("task_bar_speed_short_mode"), false);
@@ -319,6 +324,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteString(_T("config"), _T("hdd_temp_string"), m_main_wnd_data.disp_str.Get(TDI_HDD_TEMP));
     ini.WriteString(_T("config"), _T("main_board_temp_string"), m_main_wnd_data.disp_str.Get(TDI_MAIN_BOARD_TEMP));
     ini.WriteString(_T("config"), _T("hdd_string"), m_main_wnd_data.disp_str.Get(TDI_HDD_USAGE));
+    ini.SavePluginDisplayStr(true);
 
     ini.WriteBool(L"config", L"speed_short_mode", m_main_wnd_data.speed_short_mode);
     ini.WriteBool(L"config", L"separate_value_unit_with_space", m_main_wnd_data.separate_value_unit_with_space);
@@ -368,6 +374,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteString(_T("task_bar"), _T("hdd_temp_string"), m_taskbar_data.disp_str.Get(TDI_HDD_TEMP));
     ini.WriteString(_T("task_bar"), _T("main_board_temp_string"), m_taskbar_data.disp_str.Get(TDI_MAIN_BOARD_TEMP));
     ini.WriteString(_T("task_bar"), _T("hdd_string"), m_taskbar_data.disp_str.Get(TDI_HDD_USAGE));
+    ini.SavePluginDisplayStr(false);
 
     ini.WriteBool(L"task_bar", L"task_bar_wnd_on_left", m_taskbar_data.tbar_wnd_on_left);
     ini.WriteBool(L"task_bar", L"task_bar_wnd_snap", m_taskbar_data.tbar_wnd_snap);

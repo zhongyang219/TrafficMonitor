@@ -34,6 +34,9 @@ public:
     void LoadTaskbarWndColors(const wchar_t * AppName, const wchar_t * KeyName, std::map<CommonDisplayItem, TaskbarItemColor>& text_colors, COLORREF default_color);
     void SaveTaskbarWndColors(const wchar_t * AppName, const wchar_t * KeyName, const std::map<CommonDisplayItem, TaskbarItemColor>& text_colors);
 
+    void LoadPluginDisplayStr(bool is_main_window);
+    void SavePluginDisplayStr(bool is_main_window);
+
 	bool Save();		//将ini文件保存到文件，成功返回true
 
 protected:

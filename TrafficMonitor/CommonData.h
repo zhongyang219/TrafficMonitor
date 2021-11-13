@@ -61,15 +61,18 @@ enum HardwareItem
 struct DispStrings      //显示的文本
 {
 private:
-    std::map<DisplayItem, wstring> map_str;
+    std::map<CommonDisplayItem, wstring> map_str;
 
 public:
     //获取一个显示的文本
-    wstring& Get(DisplayItem item);
+    wstring& Get(CommonDisplayItem item);
 
-    const std::map<DisplayItem, wstring>& GetAllItems() const;
+    const std::map<CommonDisplayItem, wstring>& GetAllItems() const;
 
     void operator=(const DispStrings& disp_str);     //重载赋值运算符
+
+    //载入一个插件项目的显示文本
+    void Load(const std::wstring& plugin_id, const std::wstring& disp_str);
 
     //是否无效
     bool IsInvalid() const;

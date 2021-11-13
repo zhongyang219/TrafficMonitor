@@ -395,7 +395,7 @@ void CTaskBarDlg::DrawPluginItem(CDrawCommon& drawer, IPluginItem* item, CRect r
             }
         }
         //画标签
-        CString lable_text = item->GetItemLableText();
+        CString lable_text = theApp.m_taskbar_data.disp_str.Get(item).c_str();
         lable_text += L' ';
         drawer.DrawWindowText(rect_label, lable_text, label_text_color, (vertical ? Alignment::CENTER : Alignment::LEFT));
         //画数值
@@ -687,14 +687,15 @@ void CTaskBarDlg::CalculateWindowSize()
         theApp.m_taskbar_data.m_tbar_display_item |= TDI_UP;        //至少显示一项
 
     m_item_widths.clear();
+    //内置显示项目的宽度
     std::map<DisplayItem, ItemWidth> item_widths;
 
     m_pDC->SelectObject(&m_font);
     //计算标签宽度
-    const auto& item_map = theApp.m_taskbar_data.disp_str.GetAllItems();
-    for (auto iter = item_map.begin(); iter != item_map.end(); ++iter)
+    //const auto& item_map = theApp.m_taskbar_data.disp_str.GetAllItems();
+    for (auto iter = AllDisplayItems.begin(); iter != AllDisplayItems.end(); ++iter)
     {
-        item_widths[iter->first].label_width = m_pDC->GetTextExtent(iter->second.c_str()).cx;
+        item_widths[*iter].label_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.Get(*iter).c_str()).cx;
     }
 
     //计算数值部分宽度
@@ -796,7 +797,7 @@ void CTaskBarDlg::CalculateWindowSize()
             }
             else
             {
-                CString lable_text = plugin->GetItemLableText();
+                CString lable_text = theApp.m_taskbar_data.disp_str.Get(plugin).c_str();
                 if (!lable_text.IsEmpty())
                     lable_text += L' ';
                 width_info.item_width.label_width = m_pDC->GetTextExtent(lable_text).cx;
