@@ -435,7 +435,7 @@ bool CTaskBarDlg::AdjustWindowPos()
     CRect rcMin, rcBar, rcBarSnap;
     ::GetWindowRect(m_hMin, rcMin); //获得最小化窗口的区域
     ::GetWindowRect(m_hBar, rcBar); //获得二级容器的区域
-    if (theApp.m_win_version.IsWindows11OrLater()) {
+    if (theApp.m_is_windows11_taskbar) {
         ::GetWindowRect(m_hBarSnap, rcBarSnap); //获得二级容器(Win11)的区域
     }
     static bool last_taskbar_on_top_or_bottom;
@@ -458,7 +458,7 @@ bool CTaskBarDlg::AdjustWindowPos()
             m_min_bar_width = m_rcMin.Width() - m_rect.Width(); //保存最小化窗口宽度
             if (!theApp.m_taskbar_data.tbar_wnd_on_left)
             {
-                if (theApp.m_win_version.IsWindows11OrLater()) {  //Win11兼容
+                if (theApp.m_is_windows11_taskbar) {  //Win11兼容
                     if (!theApp.m_taskbar_data.tbar_wnd_snap) {
                         m_left_space = rcBar.right;   //显示在最右侧
                     }
@@ -472,7 +472,7 @@ bool CTaskBarDlg::AdjustWindowPos()
             }
             else
             {
-                if (theApp.m_win_version.IsWindows11OrLater()) {  //Win11兼容
+                if (theApp.m_is_windows11_taskbar) {  //Win11兼容
                     if (!theApp.m_taskbar_data.tbar_wnd_snap) {
                         m_left_space = 0;   //显示在最左侧
                     }
@@ -533,7 +533,7 @@ bool CTaskBarDlg::AdjustWindowPos()
 void CTaskBarDlg::ApplyWindowTransparentColor()
 {
 #ifndef COMPILE_FOR_WINXP
-    if (theApp.m_win_version.IsWindows11OrLater())      //Windows11下背景色不使用纯黑色，以解决深色模式下右键菜单无法弹出的问题
+    if (theApp.m_is_windows11_taskbar)      //Windows11下背景色不使用纯黑色，以解决深色模式下右键菜单无法弹出的问题
     {
         if (theApp.m_taskbar_data.transparent_color == 0 && theApp.m_taskbar_data.back_color == 0)
         {
@@ -970,12 +970,17 @@ BOOL CTaskBarDlg::OnInitDialog()
     m_hBar = ::FindWindowEx(m_hTaskbar, 0, L"ReBarWindow32", NULL); //寻找二级容器的句柄
     m_hMin = ::FindWindowEx(m_hBar, 0, L"MSTaskSwWClass", NULL);    //寻找最小化窗口的句柄
 
+    //在“Shell_TrayWnd”的子窗口找到类名为“Windows.UI.Composition.DesktopWindowContentBridge”的窗口则认为是Windows11的任务栏
+    if (theApp.m_win_version.IsWindows11OrLater())
+    {
+        theApp.m_is_windows11_taskbar = (::FindWindowExW(m_hTaskbar, 0, L"Windows.UI.Composition.DesktopWindowContentBridge", NULL) != NULL);
+    }
     //设置窗口透明色
     ApplyWindowTransparentColor();
 
     ::GetWindowRect(m_hMin, m_rcMin);   //获得最小化窗口的区域
     ::GetWindowRect(m_hBar, m_rcBar);   //获得二级容器的区域
-    if (theApp.m_win_version.IsWindows11OrLater()) {
+    if (theApp.m_is_windows11_taskbar) {
         m_hBarSnap = ::FindWindowEx(m_hBar, 0, L"MSTaskSwWClass", NULL);    //寻找二级容器(Win11)的区域
         m_hMin = ::FindWindowEx(m_hTaskbar, 0, L"MSTaskSwWClass", NULL);    //Hack
     }
