@@ -43,7 +43,10 @@ BOOL CTabDlg::OnInitDialog()
 
 	// TODO:  在此添加额外的初始化
 	//将窗口背景设置成白色
-	SetBackgroundColor(RGB(255, 255, 255));
+    if (theApp.m_win_version.IsWindows11OrLater())
+	    SetBackgroundColor(RGB(249, 249, 249));
+    else
+	    SetBackgroundColor(RGB(255, 255, 255));
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
