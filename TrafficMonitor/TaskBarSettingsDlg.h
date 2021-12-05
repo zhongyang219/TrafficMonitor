@@ -109,4 +109,5 @@ public:
     afx_msg void OnCbnSelchangeMemoryDisplayCombo();
     afx_msg void OnBnClickedShowDashedBox();
     afx_msg void OnBnClickedSetOrderButton();
+    afx_msg void OnBnClickedTaskbarWndSnapCheck();
 };

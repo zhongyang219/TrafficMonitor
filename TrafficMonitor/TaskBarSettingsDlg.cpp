@@ -96,6 +96,7 @@ void CTaskBarSettingsDlg::EnableControl()
     m_status_bar_color_static.EnableWindow(m_data.show_status_bar);
     EnableDlgCtrl(IDC_CM_GRAPH_BAR_RADIO, m_data.show_status_bar);
     EnableDlgCtrl(IDC_CM_GRAPH_PLOT_RADIO, m_data.show_status_bar);
+    EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, theApp.m_win_version.IsWindows11OrLater() && !m_data.tbar_wnd_on_left);
 }
 
 void CTaskBarSettingsDlg::SetTaskabrTransparent(bool transparent)
@@ -180,6 +181,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_CBN_SELCHANGE(IDC_MEMORY_DISPLAY_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeMemoryDisplayCombo)
     ON_BN_CLICKED(IDC_SHOW_DASHED_BOX, &CTaskBarSettingsDlg::OnBnClickedShowDashedBox)
     ON_BN_CLICKED(IDC_SET_ORDER_BUTTON, &CTaskBarSettingsDlg::OnBnClickedSetOrderButton)
+    ON_BN_CLICKED(IDC_TASKBAR_WND_SNAP_CHECK, &CTaskBarSettingsDlg::OnBnClickedTaskbarWndSnapCheck)
 END_MESSAGE_MAP()
 
 
@@ -215,6 +217,9 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     ((CButton*)GetDlgItem(IDC_SHOW_STATUS_BAR_CHECK))->SetCheck(m_data.show_status_bar);
     ((CButton*)GetDlgItem(IDC_SEPARATE_VALUE_UNIT_CHECK))->SetCheck(m_data.separate_value_unit_with_space);
     ((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->SetCheck(m_data.show_tool_tip);
+
+    EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, theApp.m_win_version.IsWindows11OrLater());
+    CheckDlgButton(IDC_TASKBAR_WND_SNAP_CHECK, m_data.tbar_wnd_snap);
 
     m_text_color_static.SetLinkCursor();
     m_back_color_static.SetLinkCursor();
@@ -415,9 +420,7 @@ void CTaskBarSettingsDlg::OnBnClickedTaskbarWndOnLeftCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.tbar_wnd_on_left = (((CButton*)GetDlgItem(IDC_TASKBAR_WND_ON_LEFT_CHECK))->GetCheck() != 0);
-	//if (m_win_version.IsWindows11OrLater()) {
- //       m_data.tbar_wnd_snap = (MessageBoxW(_T("将窗口贴靠到状态栏吗？\n不贴靠将置于底栏两端。"), _T("Windows11 兼容设置"), MB_YESNO | MB_ICONQUESTION) == 6); // 本地化暂缺。考虑增加一个设置项代替弹窗
- //   }
+    EnableControl();
 }
 
 
@@ -829,4 +832,11 @@ void CTaskBarSettingsDlg::OnBnClickedSetOrderButton()
         m_data.m_tbar_display_item = dlg.GetDisplayItem();
         m_data.plugin_display_item = dlg.GetPluginDisplayItem();
     }
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedTaskbarWndSnapCheck()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    m_data.tbar_wnd_snap = (IsDlgButtonChecked(IDC_TASKBAR_WND_SNAP_CHECK) != 0);
 }
