@@ -76,7 +76,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
             if (theApp.m_taskbar_data.horizontal_arrange)   //水平排列
             {
                 if (index > 0)
-                    item_rect.MoveToX(item_rect.right + theApp.DPI(4));
+                    item_rect.MoveToX(item_rect.right + theApp.DPI(theApp.m_taskbar_data.item_space));
                 item_rect.right = item_rect.left + iter->item_width.TotalWidth();
                 item_rect.bottom = item_rect.top + m_window_height;
                 if (iter->is_plugin)
@@ -91,7 +91,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                 {
                     CRect item_rect_up;     //上面一个项目的矩形区域
                     if (index > 0)
-                        item_rect_up.MoveToXY(item_rect.right + theApp.DPI(4), 0);
+                        item_rect_up.MoveToXY(item_rect.right + theApp.DPI(theApp.m_taskbar_data.item_space), 0);
                     item_rect.left = item_rect_up.left;
                     item_rect.top = (m_window_height - TASKBAR_WND_HEIGHT / 2);
                     //确定窗口大小
@@ -114,7 +114,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                 //要绘制的项目为奇数时绘制最后一个
                 else if (item_count % 2 == 1 && index == item_count - 1)
                 {
-                    item_rect.MoveToXY(item_rect.right + theApp.DPI(4), 0);
+                    item_rect.MoveToXY(item_rect.right + theApp.DPI(theApp.m_taskbar_data.item_space), 0);
                     item_rect.bottom = TASKBAR_WND_HEIGHT;
                     item_rect.right = item_rect.left + iter->item_width.MaxWidth();
                     if (iter->is_plugin)
@@ -128,9 +128,9 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
         else
         {
             if (index > 0)
-                item_rect.MoveToXY(0, item_rect.bottom + theApp.DPI(2));
+                item_rect.MoveToXY(0, item_rect.bottom + theApp.DPI(theApp.m_taskbar_data.item_space));
             item_rect.bottom = item_rect.top + TASKBAR_WND_HEIGHT / 2;
-            item_rect.right = item_rect.left + min(m_window_width, m_rcMin.Width() - theApp.DPI(2));
+            item_rect.right = item_rect.left + min(m_window_width, m_rcMin.Width() - theApp.DPI(theApp.m_taskbar_data.item_space));
             if (iter->is_plugin)
                 DrawPluginItem(draw, iter->plugin_item, item_rect, iter->item_width.label_width);
             else
@@ -817,7 +817,7 @@ void CTaskBarDlg::CalculateWindowSize()
             {
                 m_window_width += iter->item_width.TotalWidth();
             }
-            m_window_width += theApp.DPI(4) * item_count;   //加上每个标签间的空隙
+            m_window_width += theApp.DPI(theApp.m_taskbar_data.item_space) * item_count;   //加上每个标签间的空隙
         }
         else        //非水平排列时，每两个一组排列
         {
@@ -841,7 +841,7 @@ void CTaskBarDlg::CalculateWindowSize()
                 index++;
             }
 
-            m_window_width += theApp.DPI(4) * ((item_count + 1) / 2 + 1);   //加上每个标签间的空隙
+            m_window_width += theApp.DPI(theApp.m_taskbar_data.item_space) * ((item_count + 1) / 2 + 1);   //加上每个标签间的空隙
         }
     }
     else        //任务栏在桌面两侧时
@@ -866,7 +866,7 @@ void CTaskBarDlg::CalculateWindowSize()
     else
     {
         m_window_height = TASKBAR_WND_HEIGHT / 2 * item_count;
-        m_window_height += (theApp.DPI(2) * item_count);   //加上每个标签间的空隙
+        m_window_height += (theApp.DPI(theApp.m_taskbar_data.item_space) * item_count);   //加上每个标签间的空隙
     }
     m_rect.right = m_rect.left + m_window_width;
     m_rect.bottom = m_rect.top + m_window_height;

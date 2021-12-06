@@ -43,6 +43,7 @@ protected:
     CButton m_atuo_adapt_light_theme_chk;
     CButton m_auto_set_back_color_chk;
     CComboBox2 m_memory_display_combo;
+    CSpinEdit m_item_space_edit;
 
 protected:
     void DrawStaticColor();
@@ -110,4 +111,5 @@ public:
     afx_msg void OnBnClickedShowDashedBox();
     afx_msg void OnBnClickedSetOrderButton();
     afx_msg void OnBnClickedTaskbarWndSnapCheck();
+    afx_msg void OnEnChangeItemSpaceEdit();
 };

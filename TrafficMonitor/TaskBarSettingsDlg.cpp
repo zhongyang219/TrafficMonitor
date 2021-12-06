@@ -116,6 +116,7 @@ void CTaskBarSettingsDlg::SetControlMouseWheelEnable(bool enable)
     m_digit_number_combo.SetMouseWheelEnable(enable);
     m_font_size_edit.SetMouseWheelEnable(enable);
     m_memory_display_combo.SetMouseWheelEnable(enable);
+    m_item_space_edit.SetMouseWheelEnable(enable);
 }
 
 void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
@@ -134,6 +135,7 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_AUTO_ADAPT_LIGHT_THEME_CHECK, m_atuo_adapt_light_theme_chk);
     DDX_Control(pDX, IDC_AUTO_SET_BACK_COLOR_CHECK, m_auto_set_back_color_chk);
     DDX_Control(pDX, IDC_MEMORY_DISPLAY_COMBO, m_memory_display_combo);
+    DDX_Control(pDX, IDC_ITEM_SPACE_EDIT, m_item_space_edit);
 }
 
 
@@ -182,6 +184,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_SHOW_DASHED_BOX, &CTaskBarSettingsDlg::OnBnClickedShowDashedBox)
     ON_BN_CLICKED(IDC_SET_ORDER_BUTTON, &CTaskBarSettingsDlg::OnBnClickedSetOrderButton)
     ON_BN_CLICKED(IDC_TASKBAR_WND_SNAP_CHECK, &CTaskBarSettingsDlg::OnBnClickedTaskbarWndSnapCheck)
+    ON_EN_CHANGE(IDC_ITEM_SPACE_EDIT, &CTaskBarSettingsDlg::OnEnChangeItemSpaceEdit)
 END_MESSAGE_MAP()
 
 
@@ -292,6 +295,8 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     else
         CheckDlgButton(IDC_CM_GRAPH_BAR_RADIO, TRUE);
     CheckDlgButton(IDC_SHOW_DASHED_BOX, m_data.show_graph_dashed_box);
+    m_item_space_edit.SetRange(0, 32);
+    m_item_space_edit.SetValue(m_data.item_space);
 
     //初始化内存显示方式下拉列表
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_USAGE_PERCENTAGE));
@@ -839,4 +844,17 @@ void CTaskBarSettingsDlg::OnBnClickedTaskbarWndSnapCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.tbar_wnd_snap = (IsDlgButtonChecked(IDC_TASKBAR_WND_SNAP_CHECK) != 0);
+}
+
+
+void CTaskBarSettingsDlg::OnEnChangeItemSpaceEdit()
+{
+    // TODO:  如果该控件是 RICHEDIT 控件，它将不
+    // 发送此通知，除非重写 CTabDlg::OnInitDialog()
+    // 函数并调用 CRichEditCtrl().SetEventMask()，
+    // 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+    // TODO:  在此添加控件通知处理程序代码
+    m_data.item_space = m_item_space_edit.GetValue();
+    m_data.ValidItemSpace();
 }

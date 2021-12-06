@@ -132,3 +132,11 @@ std::wstring StringSet::ToString() const
         item_str.pop_back();
     return item_str;
 }
+
+void TaskBarSettingData::ValidItemSpace()
+{
+    if (item_space < 0)
+        item_space = 0;
+    if (item_space > 32)
+        item_space = 32;
+}
