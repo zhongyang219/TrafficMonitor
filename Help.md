@@ -123,6 +123,12 @@ TrafficMonitor的温度监控功能依赖第三方开源库[LibreHardwareMonitor
 
 **注意：硬件监控功能（包括温度监控和显卡使用率监控）可能存在一些问题，它可能会占用更多的CPU和内存。据部分用户反馈，开启温度功能后会导致程序崩溃和系统死机等问题，请在知晓以上风险后再决定开启硬件监控功能。否则，请不要使用硬件监控功能。**
 
+## 14. 程序启动时提示找不到“MSVC\*.dll”或“mfc\*.dll”
+
+点击以下链接下载并安装Microsoft Visual C++ 运行环境。
+
+[最新支持的 Visual C++ 可再发行程序包下载 | Microsoft Docs](https://docs.microsoft.com/zh-CN/cpp/windows/latest-supported-vc-redist?view=msvc-170)
+
 <br>
 
 >如果还遇到其他问题，请点击“关于”对话框中的“联系作者”，或者直接[点击此处](mailto:zhongyang219@hotmail.com)向我发送电子邮件。但我由于作者的能力有限，我并不能保证可以解决所有问题，但是你的反馈也许可以帮助我更好的改进这个软件。<br>
