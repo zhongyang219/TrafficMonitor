@@ -1,6 +1,17 @@
 **[简体中文](./update_log.md) | [繁體中文](./update_log_zh-tw.md) | English**<br>
 
 # TrafficMonitor Update log
+## V1.82 (2021/12/12)
+
+* Added a new plug-in system, you can display more customized content in the taskbar window and the main window through the plug-in.
+
+* Added the "Task Manager" command to the taskbar window context menu.
+* Added the "Apply" button to the option settings dialog.
+* Added weekly view in historical traffic statistics.
+* Added the setting of task bar item spacing.
+* Fixed the problem that the taskbar window context menu cannot pop up in the dark mode of Windows 11.
+* Fixed the problem that the taskbar window could not be displayed when the taskbar was restored to the Windows 10 style using software such as StartAllBack under Windows 11.
+
 ## V1.81 (2021/07/27)
 
 * Fixed some crashes since version 1.80.

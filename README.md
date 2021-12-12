@@ -18,15 +18,42 @@ Traffic Monitor是一款用于Windows平台的网速监控悬浮窗软件，可�
 
 你也可以[点击此处](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI")下载TrafficMonitor的预发行构建版本。
 
-从1.80版本开始，TrafficMonitor加入了温度监控功能，如果你不需要温度监控功能，并且在使用1.80以上版本中遇到了问题，建议下载不含温度监控的版本。（在Release页面找到文件名包含`without_temperature`的版本。）
+从1.80版本开始，TrafficMonitor加入了温度监控功能，如果你不需要温度监控功能，并且在使用1.80以上版本中遇到了问题，建议下载不含温度监控的版本（Lite版本）。（在Release页面找到文件名包含`Lite`的版本。）
+
+TrafficMonitor依赖于Microsoft Visual C++ 运行环境，如果程序启动时提示“找不到MSVC*.dll”，请点击以下链接下载并安装Microsoft Visual C++ 运行环境。
+
+[最新支持的 Visual C++ 可再发行程序包下载 | Microsoft Docs](https://docs.microsoft.com/zh-CN/cpp/windows/latest-supported-vc-redist?view=msvc-170)
+
+# 版本说明
+
+TrafficMonitor提供了普通版和Lite版两种版本可用。普通版包含了所有的功能，Lite版本则不包含温度监控、显卡利用率、硬盘利用率等硬件监控功能。普通版运行需要管理员权限，而Lite版本则不需要。
+
+如果没有监控温度等硬件信息的需要，建议使用Lite版。
+
+以下是两个版本功能对比。
+
+| 功能                          | 普通版 | Lite版 |
+| ----------------------------- | ------ | ------ |
+| 网速监控                      | ✔      | ✔      |
+| CPU、内存利用率监控           | ✔      | ✔      |
+| CPU、显卡、硬盘、主板温度监控 | ✔      | ❌      |
+| 显卡利用率监控                | ✔      | ❌      |
+| 硬盘利用率监控                | ✔      | ❌      |
+| 网络详细信息                  | ✔      | ✔      |
+| 插件系统                      | ✔      | ✔      |
+| 主窗口更换皮肤                | ✔      | ✔      |
+| 需要管理员权限                | 是     | 否     |
 
 # 主要特性
-* 显示当前实现网络传输速率、CPU和内存占用率<br>
-* 如果电脑有多个网卡，支持自动和手动选择网络连接<br>
-* 查看网络详细信息<br>
-* 支持嵌入到任务栏显示<br>
-* 支持更换皮肤和自定义皮肤<br>
-* 历史流量统计<br>
+
+* 显示当前实现网络传输速率、CPU和内存占用率
+* 如果电脑有多个网卡，支持自动和手动选择网络连接
+* 查看网络详细信息
+* 支持嵌入到任务栏显示
+* 支持更换皮肤和自定义皮肤
+* 历史流量统计
+* 硬件信息监控
+* 插件系统
 # 使用说明
 
 **[点击这里](https://github.com/zhongyang219/TrafficMonitor/wiki)转到Wiki页面查看关于TrafficMonitor的详细说明文档。**
@@ -68,6 +95,12 @@ TrafficMonitor支持将信息显示到任务栏。但是TrafficMonitor默认只�
 在“常规设置”选项卡中，可以设置是否在程序时自动检查更新，以及是否需要在开机是自动运行。可以设置在什么时候需要发出消息通知。<br>
 从1.72版本开始，支持每个项目文本颜色单独设置。勾选“指定每个项目的颜色”后，点击“文本颜色”右边的颜色框，会弹出详细颜色设置的对话框，可以在这里单独指定每个项目的颜色。<br>
 
+# 插件系统
+
+从1.82版本开始增加了插件系统，插件dll必须放在“TrafficMonitor.exe”同级目录的“plugins”目录下。程序启动后，插件会自动加载。你可以在右键菜单“更多功能”——“插件管理”中查看并管理已加载的插件。
+
+关于如何开发TrafficMonitor的说明，请参见[插件开发指南 · zhongyang219/TrafficMonitor Wiki (github.com)](https://github.com/zhongyang219/TrafficMonitor/wiki/插件开发指南)。
+
 # 关于硬件监控功能
 
 从1.80版本开始，TrafficMonitor加入了硬件监控功能（包括温度监控和显卡使用率监控），它使用了第三方开源库[LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)。如果你在使用温度监控功能时遇到了问题，请[点击这里](./Help.md#13-关于trafficmonitor温度监控的问题)。
@@ -79,7 +112,3 @@ TrafficMonitor支持将信息显示到任务栏。但是TrafficMonitor默认只�
 # 更新日志
 
 **[点击此处查看更新日志](./UpdateLog/update_log.md)**
-
-# 关于此项目在Gitee上的仓库
-
-Gitee上的仓库仅作为GitHub仓库的备份，我的所有代码提交都是在GitHub上进行，Gitee仓库会不定期地同步GitHub仓库的更新。因此Gitee上的仓库不接受任何pull request，如果你想向TrafficMonitor贡献你的代码，请在GitHub上提交你的pull request。
