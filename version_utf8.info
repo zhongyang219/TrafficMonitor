@@ -1,18 +1,18 @@
-﻿<version>1.81</version>
+﻿<version>1.82</version>
 <GitHub>
-	<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.81/TrafficMonitor_V1.81_x86.zip</link>
-	<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.81/TrafficMonitor_V1.81_x64.zip</link_x64>
-	<link_without_temperature>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.81/TrafficMonitor_V1.81_x86_without_temperature.zip</link_without_temperature>
-	<link_without_temperature_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.81/TrafficMonitor_V1.81_x64_without_temperature.zip</link_without_temperature_x64>
+	<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.82/TrafficMonitor_V1.82_x86.zip</link>
+	<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.82/TrafficMonitor_V1.82_x64.zip</link_x64>
+	<link_without_temperature>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.82/TrafficMonitor_V1.82_x86_Lite.zip</link_without_temperature>
+	<link_without_temperature_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.82/TrafficMonitor_V1.82_x64_Lite.zip</link_without_temperature_x64>
 </GitHub>
 <Gitee>
-	<link>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/784346/download/TrafficMonitor_V1.81_x86.zip</link>
-	<link_x64>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/784345/download/TrafficMonitor_V1.81_x64.zip</link_x64>
-	<link_without_temperature>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/784343/download/TrafficMonitor_V1.81_x86_without_temperature.zip</link_without_temperature>
-	<link_without_temperature_x64>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/784344/download/TrafficMonitor_V1.81_x64_without_temperature.zip</link_without_temperature_x64>
+	<link>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/910359/download/TrafficMonitor_V1.82_x86.zip</link>
+	<link_x64>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/910360/download/TrafficMonitor_V1.82_x64.zip</link_x64>
+	<link_without_temperature>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/910357/download/TrafficMonitor_V1.82_x86_Lite.zip</link_without_temperature>
+	<link_without_temperature_x64>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/910358/download/TrafficMonitor_V1.82_x64_Lite.zip</link_without_temperature_x64>
 </Gitee>
 <update_contents>
-	<contents_zh_cn>修正1.80版本以来的一些崩溃的问题。\n任务栏窗口显示项目支持自定义排序。\n任务栏窗口中显示的项目数量为奇数时，最后一个项目垂直排列，以节省任务栏空间。\n新增显示硬盘利用率的功能。\n将右键菜单中的一些设置添加到选项设置界面中。\n新增主窗口对多显示器的支持，在不勾选“允许超出屏幕边界”的情况下也能移动到其他显示器了。</contents_zh_cn>
-	<contents_en>Fixed some crashes since version 1.80.\nAdded the support of custom sorting of the items in the taskbar window.\nWhen the number of items displayed in the taskbar window is odd, the last item is arranged vertically to save space on the taskbar.\nAdded the function of monitoring the hard disk usage.\nAdd some settings in the right-click menu to the option settings dialog.\nAdded the support for multiple monitors of the main window. You can move the main window to other monitors without checking "Allow out of screen boundaries".</contents_en>
-	<contents_zh_tw>修正1.80版本以來的一些崩潰的問題。\n工作列視窗顯示專案支援自定義排序。\n工作列視窗中顯示的專案數量為奇數時，最後一個專案垂直排列，以節省工作列空間。\n新增顯示硬碟利用率的功能。\n將右鍵選單中的一些設定新增到選項設定介面中。\n新增主視窗對多顯示器的支援，在不勾選“允許超出螢幕邊界”的情況下也能移動到其他顯示器了。</contents_zh_tw>
+	<contents_zh_cn>新增插件系统，可以通过插件在任务栏窗口和主窗口显示更多自定义内容。\n任务栏右键菜单中增加“任务管理器”命令。\n选项设置中新增“应用”按钮。\n历史流量统计中增加周视图。\n新增任务栏项目间距的设置。\n修正Windows11深色模式下任务栏右键菜单无法弹出的问题。\n修正Windows11下使用StartAllBack等软件将任务栏恢复为Windows10样式时，任务栏窗口无法显示的问题。</contents_zh_cn>
+	<contents_en>Added a new plug-in system, you can display more customized content in the taskbar window and the main window through the plug-in.\nAdded the "Task Manager" command to the taskbar window context menu.\nAdded the "Apply" button to the option settings dialog.\nAdded weekly view in historical traffic statistics.\nAdded the setting of task bar item spacing.\nFixed the problem that the taskbar window context menu cannot pop up in the dark mode of Windows 11.\nFixed the problem that the taskbar window could not be displayed when the taskbar was restored to the Windows 10 style using software such as StartAllBack under Windows 11.</contents_en>
+	<contents_zh_tw>新增外掛系統，可以透過外掛在工作列視窗和主視窗顯示更多自定義內容。\n工作列右鍵選單中增加“工作管理員”命令。\n選項設定中新增“應用”按鈕。\n歷史流量統計中增加周檢視。\n新增工作列專案間距的設定。\n修正Windows11深色模式下工作列右鍵選單無法彈出的問題。\n修正Windows11下使用StartAllBack等軟體將工作列恢復為Windows10樣式時，工作列視窗無法顯示的問題。</contents_zh_tw>
 </update_contents>

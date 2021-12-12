@@ -1,4 +1,4 @@
-<version>1.81</version>
-<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.81/TrafficMonitor_V1.81_x86_without_temperature.zip</link>
-<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.81/TrafficMonitor_V1.81_x64_without_temperature.zip</link_x64>
-<contents>修正1.80版本以来的一些崩溃的问题。\n任务栏窗口显示项目支持自定义排序。\n任务栏窗口中显示的项目数量为奇数时，最后一个项目垂直排列，以节省任务栏空间。\n新增显示硬盘利用率的功能。\n将右键菜单中的一些设置添加到选项设置界面中。\n新增主窗口对多显示器的支持，在不勾选“允许超出屏幕边界”的情况下也能移动到其他显示器了。</contents>
+<version>1.82</version>
+<link>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/910357/download/TrafficMonitor_V1.82_x86_Lite.zip</link>
+<link_x64>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/910358/download/TrafficMonitor_V1.82_x64_Lite.zip</link_x64>
+<contents>新增插件系统，可以通过插件在任务栏窗口和主窗口显示更多自定义内容。\n任务栏右键菜单中增加“任务管理器”命令。\n选项设置中新增“应用”按钮。\n历史流量统计中增加周视图。\n新增任务栏项目间距的设置。\n修正Windows11深色模式下任务栏右键菜单无法弹出的问题。\n修正Windows11下使用StartAllBack等软件将任务栏恢复为Windows10样式时，任务栏窗口无法显示的问题。</contents>
