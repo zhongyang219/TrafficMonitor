@@ -10,6 +10,7 @@
 #include "Test.h"
 #include "WIC.h"
 #include "auto_start_helper.h"
+#include "AppAlreadyRuningDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -634,7 +635,7 @@ bool CTrafficMonitorApp::GetAutoRun()
     else
     {
         return false;       //没有找到“TrafficMonitor”键，返回false
-}
+    }
 #else
     //包含温度监控的版本使用任务计划的方式实现开机自启动
     return is_auto_start_task_active_for_this_user();
@@ -825,9 +826,11 @@ CTrafficMonitorApp theApp;
 
 BOOL CTrafficMonitorApp::InitInstance()
 {
-    //CSimpleXML xml(L"C:\\Temp\\xmldoc_test1.xml");
-    //wstring str;
-    //str = xml.GetNode(L"panorama", L"face1");
+    //替换掉对话框程序的默认类名
+    WNDCLASS wc;
+    ::GetClassInfo(AfxGetInstanceHandle(), _T("#32770"), &wc);       //MFC默认的所有对话框的类名为#32770
+    wc.lpszClassName = APP_CLASS_NAME;      //将对话框的类名修改为新类名
+    AfxRegisterClass(&wc);
 
     //设置配置文件的路径
     wchar_t path[MAX_PATH];
@@ -887,7 +890,6 @@ BOOL CTrafficMonitorApp::InitInstance()
     //初始化界面语言
     CCommon::SetThreadLanguage(m_general_data.language);
 
-#ifndef _DEBUG
     //wstring cmd_line{ m_lpCmdLine };
     //bool is_restart{ cmd_line.find(L"RestartByRestartManager") != wstring::npos };        //如果命令行参数中含有字符串“RestartByRestartManager”则说明程序是被Windows重新启动的
     ////bool when_start{ CCommon::WhenStart(m_no_multistart_warning_time) };
@@ -898,7 +900,13 @@ BOOL CTrafficMonitorApp::InitInstance()
     //}
 
     //检查是否已有实例正在运行
-    HANDLE hMutex = ::CreateMutex(NULL, TRUE, _T("TrafficMonitor-1419J3XLKL1w8OZc"));
+    LPCTSTR mutex_name{};
+#ifdef _DEBUG
+    mutex_name = _T("TrafficMonitor-e8Ahk24HP6JC8hDy");
+#else
+    mutex_name = _T("TrafficMonitor-1419J3XLKL1w8OZc");
+#endif
+    HANDLE hMutex = ::CreateMutex(NULL, TRUE, mutex_name);
     if (hMutex != NULL)
     {
         if (GetLastError() == ERROR_ALREADY_EXISTS)
@@ -909,12 +917,22 @@ BOOL CTrafficMonitorApp::InitInstance()
             //CCommon::WriteLog(buff, _T(".\\start.log"));
             if (!m_no_multistart_warning)
             {
-                AfxMessageBox(CCommon::LoadText(IDS_AN_INSTANCE_RUNNING));
+                //查找已存在TrafficMonitor进程的主窗口的句柄
+                HWND exist_handel = ::FindWindow(APP_CLASS_NAME, NULL);
+                if (exist_handel != NULL)
+                {
+                    //弹出“TrafficMonitor已在运行”对话框
+                    CAppAlreadyRuningDlg dlg(exist_handel);
+                    dlg.DoModal();
+                }
+                else
+                {
+                    AfxMessageBox(CCommon::LoadText(IDS_AN_INSTANCE_RUNNING));
+                }
             }
             return FALSE;
         }
     }
-#endif
 
     m_taskbar_default_style.LoadConfig();
 

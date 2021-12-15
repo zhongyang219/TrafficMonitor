@@ -429,6 +429,7 @@
     <ClInclude Include="..\include\PluginInterface.h" />
     <ClInclude Include="AboutDlg.h" />
     <ClInclude Include="AdapterCommon.h" />
+    <ClInclude Include="AppAlreadyRuningDlg.h" />
     <ClInclude Include="auto_start_helper.h" />
     <ClInclude Include="BaseDialog.h" />
     <ClInclude Include="CalendarHelper.h" />
@@ -496,6 +497,7 @@
   <ItemGroup>
     <ClCompile Include="AboutDlg.cpp" />
     <ClCompile Include="AdapterCommon.cpp" />
+    <ClCompile Include="AppAlreadyRuningDlg.cpp" />
     <ClCompile Include="auto_start_helper.cpp" />
     <ClCompile Include="BaseDialog.cpp" />
     <ClCompile Include="CalendarHelper.cpp" />

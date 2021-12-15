@@ -392,6 +392,9 @@
     <ClInclude Include="CommonData.h">
       <Filter>源文件和头文件\公共的类\CommonData</Filter>
     </ClInclude>
+    <ClInclude Include="AppAlreadyRuningDlg.h">
+      <Filter>源文件和头文件\头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -579,6 +582,9 @@
     </ClCompile>
     <ClCompile Include="CommonData.cpp">
       <Filter>源文件和头文件\公共的类\CommonData</Filter>
+    </ClCompile>
+    <ClCompile Include="AppAlreadyRuningDlg.cpp">
+      <Filter>源文件和头文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

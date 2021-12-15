@@ -242,6 +242,7 @@
 #define IDS_IF_OPER_STATUS_DOWN         336
 #define IDI_TASK_MANAGER                336
 #define IDS_IF_OPER_STATUS_DORMANT      337
+#define IDD_APP_ALREAD_RUNING_DIALOG    337
 #define IDS_GOTO_GITEE                  338
 #define IDS_USAGE_PERCENTAGE            339
 #define IDS_MEMORY_USED                 340
@@ -473,6 +474,10 @@
 #define IDC_APPLY_BUTTON                1147
 #define IDC_TASKBAR_WND_SNAP_CHECK      1148
 #define IDC_ITEM_SPACE_EDIT             1149
+#define IDC_EXIT_INST_BUTTON            1150
+#define IDC_OPEN_SETTINGS_BUTTON        1151
+#define IDC_SHOW_HIDE_MAIN_WINDOW_BUTTON 1152
+#define IDC_SHOW_HIDE_TASKBAR_WINDOW_BUTTON 1153
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -599,9 +604,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        337
+#define _APS_NEXT_RESOURCE_VALUE        339
 #define _APS_NEXT_COMMAND_VALUE         33404
-#define _APS_NEXT_CONTROL_VALUE         1150
+#define _APS_NEXT_CONTROL_VALUE         1153
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
