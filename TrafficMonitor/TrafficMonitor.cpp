@@ -678,16 +678,13 @@ void CTrafficMonitorApp::SetAutoRunByRegistry(bool auto_run)
 
 void CTrafficMonitorApp::SetAutoRunByTaskScheduler(bool auto_run)
 {
+    delete_auto_start_task_for_this_user();     //先删除开机自启动
     if (auto_run)
     {
         //通过计划任务设置开机自启动项时删除注册表中的自启动项
         SetAutoRunByRegistry(false);
 
         create_auto_start_task_for_this_user(true);
-    }
-    else
-    {
-        delete_auto_start_task_for_this_user();
     }
 }
 
