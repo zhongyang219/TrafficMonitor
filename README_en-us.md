@@ -89,6 +89,8 @@ The plug-in system has been added since version 1.82. The plug-in dll must be pl
 
 For instructions on how to develop the plugin-in of TrafficMonitor, please see [Plug-in development guide · zhongyang219/TrafficMonitor Wiki (github.com)](https://github.com/zhongyang219/TrafficMonitor/wiki/插件开发指南) (Only Chinese Available)。
 
+To download the TrafficMonitor plug-in, please [click here](https://github.com/zhongyang219/TrafficMonitorPlugins/blob/main/download/plugin_download.md).
+
 # About the hardware monitoring function
 
 Starting from version 1.80, the hardware monitoring functions (including temperature monitoring and graphics card usage monitoring) has been added in TrafficMonitor. It relies on the open source library [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor). If you encounter problems during using the temperature monitoring function, please [click here](./Help_en-us.md#13-about-the-temperature-monitoring-of-trafficmonitor). 

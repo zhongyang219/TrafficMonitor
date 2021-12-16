@@ -101,6 +101,8 @@ TrafficMonitor支持将信息显示到任务栏。但是TrafficMonitor默认只�
 
 关于如何开发TrafficMonitor的说明，请参见[插件开发指南 · zhongyang219/TrafficMonitor Wiki (github.com)](https://github.com/zhongyang219/TrafficMonitor/wiki/插件开发指南)。
 
+要下载TrafficMonitor插件，请[点击这里](https://github.com/zhongyang219/TrafficMonitorPlugins/blob/main/download/plugin_download.md)。
+
 # 关于硬件监控功能
 
 从1.80版本开始，TrafficMonitor加入了硬件监控功能（包括温度监控和显卡使用率监控），它使用了第三方开源库[LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)。如果你在使用温度监控功能时遇到了问题，请[点击这里](./Help.md#13-关于trafficmonitor温度监控的问题)。
