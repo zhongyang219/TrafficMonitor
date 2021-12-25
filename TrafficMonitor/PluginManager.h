@@ -35,8 +35,8 @@ public:
     ~CPluginManager();
     void LoadPlugins();
 
-    const std::vector<IPluginItem*>& GetPluginItems();
-    const std::vector<PluginInfo>& GetPlugins();
+    const std::vector<IPluginItem*>& GetPluginItems() const;
+    const std::vector<PluginInfo>& GetPlugins() const;
     IPluginItem* GetItemById(const std::wstring& item_id);
     IPluginItem* GetItemByIndex(int index);
     int GetItemIndex(IPluginItem* item) const;

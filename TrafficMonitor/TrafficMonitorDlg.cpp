@@ -194,6 +194,9 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
         }
     }
 #endif
+    //添加插件项目的鼠标提示
+    tip_info += theApp.GetPlauginTooltipInfo().c_str();
+
     return tip_info;
 }
 
