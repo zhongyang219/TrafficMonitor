@@ -92,7 +92,7 @@ If LibreHardwareMonitor can display the temperature of the corresponding hardwar
 
 **Note: The hardware monitoring function (including temperature monitoring and GPU usage monitoring) may have some problems, which may cause more CPU and memory usage. According to feedback from some users, turning on the temperature function will cause problems such as program crashes and system crashes. Please decide to turn on the hardware monitoring function after you are aware of the above risks. Otherwise, please do not use the hardware monitoring function.**
 
-## 14. The program prompts that "MSVC\*.dll" or "mfc\*.dll" connot be found when the program starts
+## 14. The program prompts that "MSVC\*.dll" or "mfc\*.dll" cannot be found when the program starts
 
 Click the link below to download and install the Microsoft Visual C++ runtime environment.
 
