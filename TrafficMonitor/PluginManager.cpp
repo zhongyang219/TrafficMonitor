@@ -3,6 +3,8 @@
 #include "Common.h"
 #include "TrafficMonitor.h"
 
+#define PLUGIN_UNSUPPORT_VERSION 0      //不被支持的插件版本
+
 CPluginManager::CPluginManager()
 {
 }
@@ -66,6 +68,13 @@ void CPluginManager::LoadPlugins()
         plugin_info.plugin = TMPluginGetInstance();
         if (plugin_info.plugin == nullptr)
             continue;
+        //检查插件版本
+        int version = plugin_info.plugin->GetAPIVersion();
+        if (version <= PLUGIN_UNSUPPORT_VERSION)
+        {
+            plugin_info.state = PluginState::PS_VERSION_NOT_SUPPORT;
+            continue;
+        }
         //获取插件信息
         for (int i{}; i < ITMPlugin::TMI_MAX; i++)
         {
@@ -82,6 +91,7 @@ void CPluginManager::LoadPlugins()
                 break;
             plugin_info.plugin_items.push_back(item);
             m_plugins.push_back(item);
+            m_plguin_item_map[item] = plugin_info.plugin;
             index++;
         }
     }
@@ -132,6 +142,11 @@ int CPluginManager::GetItemIndex(IPluginItem* item) const
             return iter - m_plugins.begin();
     }
     return -1;
+}
+
+ITMPlugin* CPluginManager::GetPluginByItem(IPluginItem* pItem)
+{
+    return m_plguin_item_map[pItem];
 }
 
 const std::set<CommonDisplayItem>& CPluginManager::AllDisplayItemsWithPlugins()

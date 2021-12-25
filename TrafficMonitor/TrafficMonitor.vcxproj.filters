@@ -184,6 +184,9 @@
     <Filter Include="源文件和头文件\公共的类\CommonData">
       <UniqueIdentifier>{554c1c22-3662-416f-9a24-ad76bfb5eecd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\对话框类\AppAlreadyRuningDlg">
+      <UniqueIdentifier>{cecf73f6-6479-4ce2-aefe-879c9363ab24}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -393,7 +396,7 @@
       <Filter>源文件和头文件\公共的类\CommonData</Filter>
     </ClInclude>
     <ClInclude Include="AppAlreadyRuningDlg.h">
-      <Filter>源文件和头文件\头文件</Filter>
+      <Filter>源文件和头文件\对话框类\AppAlreadyRuningDlg</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -584,7 +587,7 @@
       <Filter>源文件和头文件\公共的类\CommonData</Filter>
     </ClCompile>
     <ClCompile Include="AppAlreadyRuningDlg.cpp">
-      <Filter>源文件和头文件</Filter>
+      <Filter>源文件和头文件\对话框类\AppAlreadyRuningDlg</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

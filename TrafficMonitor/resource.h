@@ -276,6 +276,7 @@
 #define IDS_WEEK_VIEW                   368
 #define IDS_WEEK_NUM                    369
 #define IDS_URL                         370
+#define IDS_PLUGIN_VERSION_NOT_SUPPORT  371
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
 #define IDC_STATIC_DOWN                 1002
@@ -478,6 +479,8 @@
 #define IDC_OPEN_SETTINGS_BUTTON        1151
 #define IDC_SHOW_HIDE_MAIN_WINDOW_BUTTON 1152
 #define IDC_SHOW_HIDE_TASKBAR_WINDOW_BUTTON 1153
+#define IDC_PLUGIN_DEV_GUID_STATIC      1153
+#define IDC_PLUGIN_DOWNLOAD_STATIC      1154
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -606,7 +609,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        339
 #define _APS_NEXT_COMMAND_VALUE         33404
-#define _APS_NEXT_CONTROL_VALUE         1153
+#define _APS_NEXT_CONTROL_VALUE         1155
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
