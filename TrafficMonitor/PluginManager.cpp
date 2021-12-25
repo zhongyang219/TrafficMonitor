@@ -97,12 +97,12 @@ void CPluginManager::LoadPlugins()
     }
 }
 
-const std::vector<IPluginItem*>& CPluginManager::GetPluginItems()
+const std::vector<IPluginItem*>& CPluginManager::GetPluginItems() const
 {
     return m_plugins;
 }
 
-const std::vector<CPluginManager::PluginInfo>& CPluginManager::GetPlugins()
+const std::vector<CPluginManager::PluginInfo>& CPluginManager::GetPlugins() const
 {
     return m_modules;
 }

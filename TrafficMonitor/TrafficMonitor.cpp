@@ -1114,6 +1114,24 @@ bool CTrafficMonitorApp::IsForceShowNotifyIcon()
         && (m_cfg_data.m_hide_main_window || m_main_wnd_data.m_mouse_penetrate));    //如果没有显示任务栏窗口，且隐藏了主窗口或设置了鼠标穿透，则禁用“显示通知区图标”菜单项
 }
 
+std::wstring CTrafficMonitorApp::GetPlauginTooltipInfo() const
+{
+    std::wstring tip_info;
+    for (const auto& item : m_plugins.GetPlugins())
+    {
+        if (item.plugin != nullptr && item.plugin->GetAPIVersion() >= 2)
+        {
+            std::wstring plugin_tooltip = item.plugin->GetTooltipInfo();
+            if (!plugin_tooltip.empty())
+            {
+                tip_info += L"\r\n";
+                tip_info += plugin_tooltip.c_str();
+            }
+        }
+    }
+    return tip_info;
+}
+
 void CTrafficMonitorApp::OnHelp()
 {
     // TODO: 在此添加命令处理程序代码
