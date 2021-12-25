@@ -13,7 +13,7 @@
 IMPLEMENT_DYNAMIC(CPluginManagerDlg, CBaseDialog)
 
 CPluginManagerDlg::CPluginManagerDlg(CWnd* pParent /*=nullptr*/)
-	: CBaseDialog(IDD_PLUGIN_MANAGER_DIALOG, pParent)
+    : CBaseDialog(IDD_PLUGIN_MANAGER_DIALOG, pParent)
 {
 
 }
@@ -26,6 +26,8 @@ void CPluginManagerDlg::DoDataExchange(CDataExchange* pDX)
 {
     CBaseDialog::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_LIST1, m_list_ctrl);
+    DDX_Control(pDX, IDC_PLUGIN_DOWNLOAD_STATIC, m_plugin_download_lnk);
+    DDX_Control(pDX, IDC_PLUGIN_DEV_GUID_STATIC, m_plugin_dev_guide_lnk);
 }
 
 void CPluginManagerDlg::EnableControl()
@@ -112,12 +114,20 @@ BOOL CPluginManagerDlg::OnInitDialog()
         case CPluginManager::PluginState::PS_DISABLE:
             status = CCommon::LoadText(IDS_DISABLED);
             break;
+        case CPluginManager::PluginState::PS_VERSION_NOT_SUPPORT:
+            status = CCommon::LoadText(IDS_PLUGIN_VERSION_NOT_SUPPORT);
+            break;
+        default:
+            break;
         }
         int index = m_list_ctrl.GetItemCount();
         m_list_ctrl.InsertItem(index, file_name.c_str());
         m_list_ctrl.SetItemText(index, 1, plugin.Property(ITMPlugin::TMI_NAME).c_str());
         m_list_ctrl.SetItemText(index, 2, status);
     }
+
+    m_plugin_download_lnk.SetURL(L"https://github.com/zhongyang219/TrafficMonitor/wiki/%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97");
+    m_plugin_dev_guide_lnk.SetURL(L"https://github.com/zhongyang219/TrafficMonitorPlugins/blob/main/download/plugin_download.md");
 
     EnableControl();
 

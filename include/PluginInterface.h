@@ -161,6 +161,21 @@ public:
      * @brief   获取插件要在鼠标提示中显示的文本
      */
     virtual const wchar_t* GetTooltipInfo() { return L""; }
+
+    enum ExtendedInfoIndex
+    {
+        EI_LABEL_TEXT_COLOR,
+        EI_VALUE_TEXT_COLOR,
+    };
+
+    /**
+     * @brief   主程序调用此函数以向插件传递更多信息
+     * @param   ExtendedInfoIndex index 信息的索引，用于区分向插件传递的信息
+     * @param   const wchar_t* data 传递的数据
+     * @return  void
+     */
+    virtual void OnExtenedInfo(ExtendedInfoIndex index, const wchar_t* data) {}
+
 };
 
 /*

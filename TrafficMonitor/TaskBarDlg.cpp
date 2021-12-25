@@ -354,30 +354,36 @@ void CTaskBarDlg::DrawPluginItem(CDrawCommon& drawer, IPluginItem* item, CRect r
 {
     if (item == nullptr)
         return;
+    //设置要绘制的文本颜色
+    COLORREF label_text_color{};
+    COLORREF value_text_color{};
+    if (theApp.m_taskbar_data.specify_each_item_color)
+    {
+        label_text_color = theApp.m_taskbar_data.text_colors[item].label;
+        value_text_color = theApp.m_taskbar_data.text_colors[item].value;
+    }
+    else if (!theApp.m_taskbar_data.text_colors.empty())
+    {
+        label_text_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
+        value_text_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
+    }
+
     if (item->IsCustomDraw())
     {
         //根据背景色的亮度判断深色还是浅色模式
         const COLORREF& bk{ theApp.m_taskbar_data.back_color };
         int background_brightness{ (GetRValue(bk) + GetGValue(bk) + GetBValue(bk)) / 3 };
         //由插件自绘
+        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(item);
+        if (plugin != nullptr && plugin->GetAPIVersion() >= 2)
+        {
+            plugin->OnExtenedInfo(ITMPlugin::EI_LABEL_TEXT_COLOR, std::to_wstring(label_text_color).c_str());
+            plugin->OnExtenedInfo(ITMPlugin::EI_VALUE_TEXT_COLOR, std::to_wstring(value_text_color).c_str());
+        }
         item->DrawItem(drawer.GetDC()->GetSafeHdc(), rect.left, rect.top, rect.Width(), rect.Height(), background_brightness < 128);
     }
     else
     {
-        //设置要绘制的文本颜色
-        COLORREF label_text_color{};
-        COLORREF value_text_color{};
-        if (theApp.m_taskbar_data.specify_each_item_color)
-        {
-            label_text_color = theApp.m_taskbar_data.text_colors[item].label;
-            value_text_color = theApp.m_taskbar_data.text_colors[item].value;
-        }
-        else if (!theApp.m_taskbar_data.text_colors.empty())
-        {
-            label_text_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
-            value_text_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
-        }
-
         CRect rect_label, rect_value;
         rect_label = rect_value = rect;
         if (label_width > 0)
