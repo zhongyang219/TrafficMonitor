@@ -407,6 +407,7 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
                     ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(plugin_item);
                     if (plugin != nullptr && plugin->GetAPIVersion() >= 2)
                         plugin->OnExtenedInfo(ITMPlugin::EI_VALUE_TEXT_COLOR, std::to_wstring(cl).c_str());
+                    draw.GetDC()->SetTextColor(cl);
                     plugin_item->DrawItem(draw.GetDC()->GetSafeHdc(), layout_item.x, layout_item.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
                 }
                 else
@@ -557,6 +558,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
                 ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(plugin_item);
                 if (plugin != nullptr && plugin->GetAPIVersion() >= 2)
                     plugin->OnExtenedInfo(ITMPlugin::EI_VALUE_TEXT_COLOR, std::to_wstring(cl).c_str());
+                draw.GetDC()->SetTextColor(cl);
                 plugin_item->DrawItem(draw.GetDC()->GetSafeHdc(), layout_item.x, layout_item.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
             }
             else
