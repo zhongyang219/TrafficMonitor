@@ -272,8 +272,6 @@ void CTrafficMonitorApp::LoadConfig()
     m_last_light_mode = ini.GetBool(L"other", L"last_light_mode", m_win_version.IsWindows10LightTheme());
     m_show_mouse_panetrate_tip = ini.GetBool(L"other", L"show_mouse_panetrate_tip", true);
     m_show_dot_net_notinstalled_tip = ini.GetBool(L"other", L"show_dot_net_notinstalled_tip", true);
-
-    m_cfg_data.plugin_disabled.FromString(ini.GetString(L"config", L"plugin_disabled", L""));
 }
 
 void CTrafficMonitorApp::SaveConfig()
@@ -439,6 +437,12 @@ void CTrafficMonitorApp::SaveConfig()
         m_cannot_save_config_warning = false;
         return;
     }
+}
+
+void CTrafficMonitorApp::LoadPluginDisabledSettings()
+{
+    CIniHelper ini{ m_config_path };
+    m_cfg_data.plugin_disabled.FromString(ini.GetString(L"config", L"plugin_disabled", L""));
 }
 
 void CTrafficMonitorApp::LoadGlobalConfig()
@@ -882,6 +886,7 @@ BOOL CTrafficMonitorApp::InitInstance()
     bool is_windows10_fall_creator = m_win_version.IsWindows10FallCreatorOrLater();
 
     //载入插件
+    LoadPluginDisabledSettings();
     m_plugins.LoadPlugins();
 
     //从ini文件载入设置

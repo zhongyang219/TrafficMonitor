@@ -5,7 +5,7 @@
 #pragma once
 
 #ifndef __AFXWIN_H__
-    #error "在包含此文件之前包含“stdafx.h”以生成 PCH 文件"
+#error "在包含此文件之前包含“stdafx.h”以生成 PCH 文件"
 #endif
 
 #include "resource.h"       // 主符号
@@ -100,6 +100,7 @@ public:
 
     void LoadConfig();
     void SaveConfig();
+    void LoadPluginDisabledSettings();
 
     void LoadGlobalConfig();
     void SaveGlobalConfig();
@@ -157,7 +158,7 @@ private:
 public:
     virtual BOOL InitInstance();
 
-// 实现
+    // 实现
 
     DECLARE_MESSAGE_MAP()
     afx_msg void OnHelp();
