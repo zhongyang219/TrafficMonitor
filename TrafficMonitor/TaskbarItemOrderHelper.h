@@ -20,7 +20,7 @@ enum DisplayItem
 struct CommonDisplayItem
 {
     bool is_plugin{};           //是否为插件项目
-    DisplayItem item_type;      //内建的显示项目
+    DisplayItem item_type{};    //内建的显示项目
     IPluginItem* plugin_item{}; //插件显示项目
 
     CommonDisplayItem() {}

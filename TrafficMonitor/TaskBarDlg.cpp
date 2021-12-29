@@ -144,7 +144,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 
 void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical)
 {
-    m_item_display_width[type] = rect.Width();
+    m_item_rects[type] = rect;
     //设置要绘制的文本颜色
     COLORREF label_color{};
     COLORREF text_color{};
@@ -354,6 +354,7 @@ void CTaskBarDlg::DrawPluginItem(CDrawCommon& drawer, IPluginItem* item, CRect r
 {
     if (item == nullptr)
         return;
+    m_item_rects[item] = rect;
     //设置要绘制的文本颜色
     COLORREF label_text_color{};
     COLORREF value_text_color{};
@@ -1040,6 +1041,7 @@ void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
 
+    CheckClickedItem(point);
     CPoint point1;  //定义一个用于确定光标位置的位置
     GetCursorPos(&point1);  //获取当前光标的位置，以便使得菜单可以跟随光标
     CMenu* pMenu = theApp.m_taskbar_menu.GetSubMenu(0);
@@ -1159,6 +1161,7 @@ void CTaskBarDlg::OnMouseMove(UINT nFlags, CPoint point)
 void CTaskBarDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
+    CheckClickedItem(point);
     switch (theApp.m_taskbar_data.double_click_action)
     {
     case DoubleClickAction::CONNECTION_INFO:
@@ -1239,7 +1242,7 @@ void CTaskBarDlg::AddHisToList(DisplayItem item_type, int current_usage_percent)
 {
     CList<int, int>& list = m_map_history_data[item_type];
     list.AddHead(current_usage_percent);
-    int graph_max_length = m_item_display_width[item_type] * TASKBAR_GRAPH_STEP;
+    int graph_max_length = m_item_rects[item_type].Width() * TASKBAR_GRAPH_STEP;
     //判断是否超过最大长度，如果超过，将链表尾部数据移除
     if (list.GetCount() > graph_max_length)
     {
@@ -1247,6 +1250,18 @@ void CTaskBarDlg::AddHisToList(DisplayItem item_type, int current_usage_percent)
     }
 }
 
+
+void CTaskBarDlg::CheckClickedItem(CPoint point)
+{
+    for (const auto& item : m_item_rects)
+    {
+        if (item.second.PtInRect(point))
+        {
+            m_clicked_item = item.first;
+            break;
+        }
+    }
+}
 
 void CTaskBarDlg::TryDrawGraph(CDrawCommon& drawer, const CRect& value_rect, DisplayItem item_type)
 {

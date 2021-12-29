@@ -146,6 +146,8 @@ int CPluginManager::GetItemIndex(IPluginItem* item) const
 
 ITMPlugin* CPluginManager::GetPluginByItem(IPluginItem* pItem)
 {
+    if (pItem == nullptr)
+        return nullptr;
     return m_plguin_item_map[pItem];
 }
 

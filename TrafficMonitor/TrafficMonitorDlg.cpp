@@ -2386,6 +2386,20 @@ void CTrafficMonitorDlg::OnOptions()
 void CTrafficMonitorDlg::OnOptions2()
 {
     // TODO: 在此添加命令处理程序代码
+    //判断任务栏窗口中点击的项目是否是插件项目
+    if (IsTaskbarWndValid() && m_tBarDlg->GetClickedItem().is_plugin)
+    {
+        //找到对应的插件
+        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_tBarDlg->GetClickedItem().plugin_item);
+        if (plugin != nullptr)
+        {
+            //显示插件的选项设置
+            auto rtn = plugin->ShowOptionsDialog(m_tBarDlg->GetSafeHwnd());
+            if (rtn != ITMPlugin::OR_OPTION_NOT_PROVIDED)
+                return;
+        }
+    }
+
     _OnOptions(1);
 }
 

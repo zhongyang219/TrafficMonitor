@@ -70,7 +70,8 @@ protected:
     };
 
     std::vector<ItemWidthInfo> m_item_widths;   //任务栏窗口每个部分的宽度
-    std::map<DisplayItem, int> m_item_display_width;    //任务栏窗口每个部分实际显示的宽度
+    std::map<CommonDisplayItem, CRect> m_item_rects;    //任务栏窗口每个部分的矩形区域
+    CommonDisplayItem m_clicked_item;           //鼠标点击的任务栏项目
 
     int m_min_bar_width;	//最小化窗口缩小宽度后的宽度
     int m_min_bar_height;	//最小化窗口缩小高度后的高度（用于任务栏在屏幕左侧或右侧时）
@@ -92,6 +93,9 @@ protected:
     CString GetMouseTipsInfo();		//获取鼠标提示
 
     void AddHisToList(DisplayItem item_type, int current_usage_percent);		//将当前利用率数值添加进链表
+
+    //判断一个点在哪个显示项目的区域内，并保存到m_clicked_item
+    void CheckClickedItem(CPoint point);
 
     //绘制任务栏窗口中的一个显示项目
     //  drawer: 绘图类的对象
@@ -135,6 +139,8 @@ public:
     static bool IsShowHddTemperature();
     static bool IsShowMainboardTemperature();
     static bool IsShowHddUsage();
+
+    CommonDisplayItem GetClickedItem() const { return m_clicked_item; }
 
     DECLARE_MESSAGE_MAP()
 
