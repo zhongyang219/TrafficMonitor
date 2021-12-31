@@ -1111,7 +1111,7 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         }
     }
 
-    if (rtn == ERROR_NOT_ENOUGH_MEMORY)
+    if (rtn == ERROR_INSUFFICIENT_BUFFER)
     {
         pThis->IniConnection();
         CString info;
