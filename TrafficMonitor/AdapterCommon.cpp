@@ -14,7 +14,7 @@ CAdapterCommon::~CAdapterCommon()
 void CAdapterCommon::GetAdapterInfo(vector<NetWorkConection>& adapters)
 {
 	adapters.clear();
-	PIP_ADAPTER_INFO pIpAdapterInfo = new IP_ADAPTER_INFO();		//PIP_ADAPTER_INFO结构体指针存储本机网卡信息
+	PIP_ADAPTER_INFO pIpAdapterInfo = (PIP_ADAPTER_INFO)new BYTE[sizeof(IP_ADAPTER_INFO)];		//PIP_ADAPTER_INFO结构体指针存储本机网卡信息
 	unsigned long stSize = sizeof(IP_ADAPTER_INFO);		//得到结构体大小,用于GetAdaptersInfo参数
 	int nRel = GetAdaptersInfo(pIpAdapterInfo, &stSize);	//调用GetAdaptersInfo函数,填充pIpAdapterInfo指针变量;其中stSize参数既是一个输入量也是一个输出量
 
@@ -23,7 +23,7 @@ void CAdapterCommon::GetAdapterInfo(vector<NetWorkConection>& adapters)
 		//如果函数返回的是ERROR_BUFFER_OVERFLOW
 		//则说明GetAdaptersInfo参数传递的内存空间不够,同时其传出stSize,表示需要的空间大小
 		//这也是说明为什么stSize既是一个输入量也是一个输出量
-		delete pIpAdapterInfo;	//释放原来的内存空间
+		delete[] (BYTE*)pIpAdapterInfo;	//释放原来的内存空间
 		pIpAdapterInfo = (PIP_ADAPTER_INFO)new BYTE[stSize];	//重新申请内存空间用来存储所有网卡信息
 		nRel = GetAdaptersInfo(pIpAdapterInfo, &stSize);		//再次调用GetAdaptersInfo函数,填充pIpAdapterInfo指针变量
 	}
@@ -46,7 +46,7 @@ void CAdapterCommon::GetAdapterInfo(vector<NetWorkConection>& adapters)
 	//释放内存空间
 	if (pIpAdapterInfoHead)
 	{
-		delete pIpAdapterInfoHead;
+		delete[] (BYTE*)pIpAdapterInfoHead;
 	}
 	if (adapters.empty())
 	{
