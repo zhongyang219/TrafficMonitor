@@ -18,8 +18,10 @@ namespace OpenHardwareMonitorApi
         }
         else
         {
-            const wchar_t* chars = reinterpret_cast<const wchar_t*>((System::Runtime::InteropServices::Marshal::StringToHGlobalUni(str)).ToPointer());
-            return std::wstring(chars);
+            const wchar_t* chars = (const wchar_t*)(Runtime::InteropServices::Marshal::StringToHGlobalUni(str)).ToPointer();
+            std::wstring os = chars;
+            Runtime::InteropServices::Marshal::FreeHGlobal(IntPtr((void*)chars));
+            return os;
         }
     }
 
@@ -114,6 +116,19 @@ namespace OpenHardwareMonitorApi
     {
         temperature = -1;
         std::vector<float> all_temperature;
+        float core_temperature{ -1 };
+        System::String^ temperature_name;
+        switch (hardware->HardwareType)
+        {
+        case HardwareType::Cpu:
+            temperature_name = L"Core Average";
+            break;
+        case HardwareType::GpuNvidia: case HardwareType::GpuAmd:
+            temperature_name = L"GPU Core";
+            break;
+        default:
+            break;
+        }
         for (int i = 0; i < hardware->Sensors->Length; i++)
         {
             //找到温度传感器
@@ -121,7 +136,14 @@ namespace OpenHardwareMonitorApi
             {
                 float cur_temperture = Convert::ToDouble(hardware->Sensors[i]->Value);
                 all_temperature.push_back(cur_temperture);
+                if (hardware->Sensors[i]->Name == temperature_name) //如果找到了名称为temperature_name的温度传感器，则将温度保存到core_temperature里
+                    core_temperature = cur_temperture;
             }
+        }
+        if (core_temperature >= 0)
+        {
+            temperature = core_temperature;
+            return true;
         }
         if (!all_temperature.empty())
         {
@@ -131,7 +153,7 @@ namespace OpenHardwareMonitorApi
                 sum += i;
             temperature = sum / all_temperature.size();
             return true;
-       }
+        }
         //如果没有找到温度传感器，则在SubHardware中寻找
         for (int i = 0; i < hardware->SubHardware->Length; i++)
         {
@@ -262,7 +284,7 @@ namespace OpenHardwareMonitorApi
                     if (m_hdd_temperature < 0)
                         m_hdd_temperature = cur_hdd_temperature;
                 }
-                    break;
+                break;
                 case HardwareType::Motherboard:
                     if (m_main_board_temperature < 0)
                         GetHardwareTemperature(computer->Hardware[i], m_main_board_temperature);
