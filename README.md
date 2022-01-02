@@ -86,7 +86,10 @@ TrafficMonitor支持将信息显示到任务栏。但是TrafficMonitor默认只�
 
 从1.80版本开始增加了xml格式的皮肤配置文件`skin.xml`，只有xml格式的皮肤配置文件才支持温度和显卡使用率显示。
 
-详细的皮肤制作教程请[点击此处](./皮肤制作教程.md)。<br>
+详细的皮肤制作教程请点击以下链接：
+
+[皮肤制作教程 · zhongyang219/TrafficMonitor Wiki (github.com)](https://github.com/zhongyang219/TrafficMonitor/wiki/皮肤制作教程)
+
 推荐使用[皮肤编辑器](https://github.com/zhongyang219/TrafficMonitorSkinEditor/releases)来创建或编辑皮肤。<br>
 
 # 选项设置

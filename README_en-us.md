@@ -87,7 +87,7 @@ Taskbar window supports customization of display items. By default, only the net
 
 The plug-in system has been added since version 1.82. The plug-in dll must be placed in the "plugins" directory of the same level directory of "TrafficMonitor.exe". After the program is started, the plug-in will be loaded automatically. You can view and manage the loaded plugins in the context menu "More Functions"-"Plugin Management".
 
-For instructions on how to develop the plugin-in of TrafficMonitor, please see [Plug-in development guide · zhongyang219/TrafficMonitor Wiki (github.com)](https://github.com/zhongyang219/TrafficMonitor/wiki/插件开发指南) (Only Chinese Available)。
+For instructions on how to develop the plugin-in of TrafficMonitor, please see [Plugin Development Guide · zhongyang219/TrafficMonitor Wiki (github.com)](https://github.com/zhongyang219/TrafficMonitor/wiki/Plugin-Development-Guide).
 
 To download the TrafficMonitor plug-in, please [click here](https://github.com/zhongyang219/TrafficMonitorPlugins/blob/main/download/plugin_download.md).
 
