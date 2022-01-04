@@ -67,6 +67,13 @@ protected:
     struct ItemWidthInfo : public CommonDisplayItem
     {
         ItemWidth item_width;
+
+        ItemWidthInfo()
+        {}
+
+        ItemWidthInfo(const CommonDisplayItem& item)
+            : CommonDisplayItem(item)
+        {}
     };
 
     std::vector<ItemWidthInfo> m_item_widths;   //任务栏窗口每个部分的宽度

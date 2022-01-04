@@ -143,6 +143,7 @@ public:
     bool IsForceShowNotifyIcon();       //是否需要强制显示通知区图标
 
     std::wstring GetPlauginTooltipInfo() const;
+    bool IsTaksbarItemDisplayed(CommonDisplayItem item) const;
 
 private:
     //int m_no_multistart_warning_time{};       //用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示

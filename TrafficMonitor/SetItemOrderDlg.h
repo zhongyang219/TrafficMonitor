@@ -5,11 +5,11 @@
 
 class CSetItemOrderDlg : public CBaseDialog
 {
-	DECLARE_DYNAMIC(CSetItemOrderDlg)
+    DECLARE_DYNAMIC(CSetItemOrderDlg)
 
 public:
-	CSetItemOrderDlg(CWnd* pParent = nullptr);   // 标准构造函数
-	virtual ~CSetItemOrderDlg();
+    CSetItemOrderDlg(CWnd* pParent = nullptr);   // 标准构造函数
+    virtual ~CSetItemOrderDlg();
 
     //设置/获取显示顺序
     void SetItemOrder(const std::vector<int>& item_order);
@@ -22,9 +22,9 @@ public:
     void SetPluginDisplayItem(const StringSet& plugin_item);
     const StringSet& GetPluginDisplayItem() const;
 
-// 对话框数据
+    // 对话框数据
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_SELECT_ORDER_DIALOG };
+    enum { IDD = IDD_SELECT_ORDER_DIALOG };
 #endif
 
 private:
@@ -35,15 +35,18 @@ private:
     int m_item_coumt{};             //除插件项目以外的项目的个数
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
     void ShowItem();
     void EnableCtrl(int list_selected);
     void EnableDlgCtrl(UINT id, bool enable);
 
+    bool GetItemChecked(CommonDisplayItem item);
+    void SaveItemChecked(CommonDisplayItem item, bool checked);
+
     // 通过 CBaseDialog 继承
     virtual CString GetDialogName() const override;
 
-	DECLARE_MESSAGE_MAP()
+    DECLARE_MESSAGE_MAP()
 public:
     virtual BOOL OnInitDialog();
     afx_msg void OnBnClickedMoveUpButton();

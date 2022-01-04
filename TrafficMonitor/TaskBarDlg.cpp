@@ -697,15 +697,37 @@ void CTaskBarDlg::CalculateWindowSize()
         theApp.m_taskbar_data.m_tbar_display_item |= TDI_UP;        //至少显示一项
 
     m_item_widths.clear();
-    //内置显示项目的宽度
-    std::map<DisplayItem, ItemWidth> item_widths;
+    //显示项目的宽度
+    std::map<CommonDisplayItem, ItemWidth> item_widths;
 
     m_pDC->SelectObject(&m_font);
     //计算标签宽度
     //const auto& item_map = theApp.m_taskbar_data.disp_str.GetAllItems();
-    for (auto iter = AllDisplayItems.begin(); iter != AllDisplayItems.end(); ++iter)
+    for (auto iter = theApp.m_plugins.AllDisplayItemsWithPlugins().begin(); iter != theApp.m_plugins.AllDisplayItemsWithPlugins().end(); ++iter)
     {
-        item_widths[*iter].label_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.Get(*iter).c_str()).cx;
+        if (iter->is_plugin)
+        {
+            auto plugin = iter->plugin_item;
+            if (plugin != nullptr)
+            {
+                int& label_width{ item_widths[*iter].label_width };
+                if (plugin->IsCustomDraw())
+                {
+                    label_width = 0;
+                }
+                else
+                {
+                    CString lable_text = theApp.m_taskbar_data.disp_str.Get(plugin).c_str();
+                    if (!lable_text.IsEmpty())
+                        lable_text += L' ';
+                    label_width = m_pDC->GetTextExtent(lable_text).cx;
+                }
+            }
+        }
+        else
+        {
+            item_widths[*iter].label_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.Get(*iter).c_str()).cx;
+        }
     }
 
     //计算数值部分宽度
@@ -779,40 +801,30 @@ void CTaskBarDlg::CalculateWindowSize()
     item_widths[TDI_HDD_TEMP].value_width = value_width;
     item_widths[TDI_MAIN_BOARD_TEMP].value_width = value_width;
 
-    auto item_order{ theApp.m_taskbar_data.item_order.GetAllDisplayItemsWithOrder() };
-    for (const auto& item : item_order)
-    {
-        if (theApp.m_taskbar_data.m_tbar_display_item & item)
-        {
-            ItemWidthInfo width_info;
-            width_info.is_plugin = false;
-            width_info.item_type = item;
-            width_info.item_width = item_widths[item];
-            m_item_widths.push_back(width_info);
-        }
-    }
-
     //计算插件项目的宽度
     for (const auto& plugin : theApp.m_plugins.GetPluginItems())
     {
+        int& value_width{ item_widths[plugin].value_width };
         if (plugin != nullptr && theApp.m_taskbar_data.plugin_display_item.Contains(plugin->GetItemId()))
         {
-            ItemWidthInfo width_info;
-            width_info.is_plugin = true;
-            width_info.plugin_item = plugin;
             if (plugin->IsCustomDraw())
             {
-                width_info.item_width.label_width = 0;
-                width_info.item_width.value_width = theApp.DPI(plugin->GetItemWidth());
+                value_width = theApp.DPI(plugin->GetItemWidth());
             }
             else
             {
-                CString lable_text = theApp.m_taskbar_data.disp_str.Get(plugin).c_str();
-                if (!lable_text.IsEmpty())
-                    lable_text += L' ';
-                width_info.item_width.label_width = m_pDC->GetTextExtent(lable_text).cx;
-                width_info.item_width.value_width = m_pDC->GetTextExtent(plugin->GetItemValueSampleText()).cx;
+                value_width = m_pDC->GetTextExtent(plugin->GetItemValueSampleText()).cx;
             }
+        }
+    }
+
+    auto item_order{ theApp.m_taskbar_data.item_order.GetAllDisplayItemsWithOrder() };
+    for (const auto& item : item_order)
+    {
+        if (theApp.IsTaksbarItemDisplayed(item))
+        {
+            ItemWidthInfo width_info = item;
+            width_info.item_width = item_widths[item];
             m_item_widths.push_back(width_info);
         }
     }

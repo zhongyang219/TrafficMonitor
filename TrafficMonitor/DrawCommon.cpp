@@ -21,6 +21,7 @@ void CDrawCommon::Create(CDC* pDC, CWnd* pMainWnd)
 void CDrawCommon::SetFont(CFont* pfont)
 {
     m_pfont = pfont;
+    m_pDC->SelectObject(m_pfont);
 }
 
 void CDrawCommon::SetDC(CDC* pDC)

@@ -254,6 +254,7 @@ void CTrafficMonitorApp::LoadConfig()
     else
         m_taskbar_data.auto_set_background_color = false;
 
+    m_taskbar_data.item_order.Init();
     m_taskbar_data.item_order.FromString(ini.GetString(L"task_bar", L"item_order", L""));
     m_taskbar_data.plugin_display_item.FromString(ini.GetString(L"task_bar", L"plugin_display_item", L""));
 
@@ -1135,6 +1136,20 @@ std::wstring CTrafficMonitorApp::GetPlauginTooltipInfo() const
         }
     }
     return tip_info;
+}
+
+bool CTrafficMonitorApp::IsTaksbarItemDisplayed(CommonDisplayItem item) const
+{
+    if (item.is_plugin)
+    {
+        if (item.plugin_item != nullptr)
+            return m_taskbar_data.plugin_display_item.Contains(item.plugin_item->GetItemId());
+    }
+    else
+    {
+        return m_taskbar_data.m_tbar_display_item & item.item_type;
+    }
+    return false;
 }
 
 void CTrafficMonitorApp::OnHelp()
