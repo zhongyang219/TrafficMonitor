@@ -247,6 +247,11 @@ struct TaskbarItemColor //任务栏窗口每一项的颜色
 {
     COLORREF label{};   //标签颜色
     COLORREF value{};   //数值颜色
+
+    bool operator==(const TaskbarItemColor& item) const
+    {
+        return label == item.label && value == item.value;
+    }
 };
 
 //选项设置中“任务栏窗口设置”的数据

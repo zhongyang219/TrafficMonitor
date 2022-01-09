@@ -24,6 +24,17 @@ CTaskBarSettingsDlg::~CTaskBarSettingsDlg()
 {
 }
 
+bool CTaskBarSettingsDlg::IsStyleModified()
+{
+    bool modified{};
+    modified |= (theApp.m_taskbar_data.text_colors != m_data.text_colors);
+    modified |= (theApp.m_taskbar_data.back_color != m_data.back_color);
+    modified |= (theApp.m_taskbar_data.transparent_color != m_data.transparent_color);
+    modified |= (theApp.m_taskbar_data.status_bar_color != m_data.status_bar_color);
+    modified |= (theApp.m_taskbar_data.specify_each_item_color != m_data.specify_each_item_color);
+    return modified && m_style_modified;
+}
+
 void CTaskBarSettingsDlg::DrawStaticColor()
 {
     //CCommon::FillStaticColor(m_text_color_static, m_data.text_color);
@@ -415,9 +426,21 @@ void CTaskBarSettingsDlg::OnOK()
     bool is_taskbar_transparent_checked = (m_background_transparent_chk.GetCheck() != 0);
     SetTaskabrTransparent(is_taskbar_transparent_checked);
 
+    SaveColorSettingToDefaultStyle();
+
     CTabDlg::OnOK();
 }
 
+
+void CTaskBarSettingsDlg::SaveColorSettingToDefaultStyle()
+{
+    //如果开启了自动适应Windows10深色/浅色模式功能时，自动将当前配置保存到对应预设
+    if (m_data.auto_adapt_light_theme && m_style_modified)
+    {
+        int default_style_saved{ theApp.m_win_version.IsWindows10LightTheme() ? m_data.light_default_style : m_data.dark_default_style };
+        ModifyDefaultStyle(default_style_saved);
+    }
+}
 
 void CTaskBarSettingsDlg::OnBnClickedValueRightAlignCheck()
 {
@@ -447,6 +470,7 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
             {
                 m_data.text_colors = colorDlg.GetColors();
                 DrawStaticColor();
+                m_style_modified = true;
             }
         }
         else if (!m_data.text_colors.empty())
@@ -458,6 +482,7 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
                 if (m_data.back_color == m_data.text_colors.begin()->second.label)
                     MessageBox(CCommon::LoadText(IDS_SAME_TEXT_BACK_COLOR_WARNING), NULL, MB_ICONWARNING);
                 DrawStaticColor();
+                m_style_modified = true;
             }
         }
         break;
@@ -479,6 +504,7 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
                 m_data.transparent_color = m_data.back_color;
             }
             DrawStaticColor();
+            m_style_modified = true;
         }
         break;
     }
@@ -499,6 +525,7 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
         {
             m_data.status_bar_color = colorDlg.GetColor();
             DrawStaticColor();
+            m_style_modified = true;
         }
         break;
     }
@@ -514,6 +541,7 @@ void CTaskBarSettingsDlg::OnBnClickedSpecifyEachItemColorCheck()
     // TODO: 在此添加控件通知处理程序代码
     m_data.specify_each_item_color = (((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->GetCheck() != 0);
     DrawStaticColor();
+    m_style_modified = true;
 }
 
 

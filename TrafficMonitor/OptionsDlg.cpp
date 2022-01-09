@@ -128,5 +128,6 @@ void COptionsDlg::OnCancel()
 
 void COptionsDlg::OnBnClickedApplyButton()
 {
+    m_tab2_dlg.SaveColorSettingToDefaultStyle();
     ::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_SETTINGS_APPLIED, (WPARAM)this, 0);
 }

@@ -16,6 +16,11 @@ public:
     CTaskBarSettingsDlg(CWnd* pParent = NULL);   // 标准构造函数
     virtual ~CTaskBarSettingsDlg();
 
+    bool IsStyleModified();
+
+    //如果开启了自动适应Windows10深色/浅色模式功能时，将当前配置保存到对应预设
+    void SaveColorSettingToDefaultStyle();
+
     //选项设置数据
     TaskBarSettingData m_data;
 
@@ -46,13 +51,18 @@ protected:
     CComboBox2 m_memory_display_combo;
     CSpinEdit m_item_space_edit;
 
+    bool m_style_modified{};
+
 protected:
     void DrawStaticColor();
     void IniUnitCombo();
 
     void ApplyDefaultStyle(int index);      //应用一个预设方案
+
+public:
     void ModifyDefaultStyle(int index);     //将当前颜色设置保存到一个预设方案
 
+protected:
     void EnableControl();
 
     void SetTaskabrTransparent(bool transparent);
