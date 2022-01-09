@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "CommonData.h"
 
-#define TASKBAR_DEFAULT_STYLE_NUM 3
-#define TASKBAR_DEFAULT_LIGHT_STYLE_INDEX (-1)
+#define TASKBAR_DEFAULT_STYLE_NUM 4
+#define TASKBAR_DEFAULT_LIGHT_STYLE_INDEX 3
 
 class CTaskbarDefaultStyle
 {
@@ -23,7 +23,7 @@ public:
 	void SaveConfig() const;
 
 	void ApplyDefaultStyle(int index, TaskBarSettingData& data) const;		//应用一个颜色预设
-	static void ApplyDefaultLightStyle(TaskBarSettingData& data);		//应用默认的浅色模式预设
+	//static void ApplyDefaultLightStyle(TaskBarSettingData& data);		//应用默认的浅色模式预设
 	void ModifyDefaultStyle(int index, TaskBarSettingData& data);     //将当前颜色设置保存到一个预设方案
 
 	static bool IsTaskbarTransparent(const TaskBarSettingData& data);

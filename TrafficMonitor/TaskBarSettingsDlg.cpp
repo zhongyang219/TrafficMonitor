@@ -141,12 +141,6 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_SET_FONT_BUTTON1, &CTaskBarSettingsDlg::OnBnClickedSetFontButton1)
-    //ON_EN_CHANGE(IDC_UPLOAD_EDIT1, &CTaskBarSettingsDlg::OnEnChangeUploadEdit1)
-    //ON_EN_CHANGE(IDC_DOWNLOAD_EDIT1, &CTaskBarSettingsDlg::OnEnChangeDownloadEdit1)
-    //ON_EN_CHANGE(IDC_CPU_EDIT1, &CTaskBarSettingsDlg::OnEnChangeCpuEdit1)
-    //ON_EN_CHANGE(IDC_MEMORY_EDIT1, &CTaskBarSettingsDlg::OnEnChangeMemoryEdit1)
-    //ON_BN_CLICKED(IDC_SET_DEFAULT_BUTTON1, &CTaskBarSettingsDlg::OnBnClickedSetDefaultButton1)
-    //ON_BN_CLICKED(IDC_SWITCH_UP_DOWN_CHECK1, &CTaskBarSettingsDlg::OnBnClickedSwitchUpDownCheck1)
     ON_BN_CLICKED(IDC_TASKBAR_WND_ON_LEFT_CHECK, &CTaskBarSettingsDlg::OnBnClickedTaskbarWndOnLeftCheck)
     ON_BN_CLICKED(IDC_SPEED_SHORT_MODE_CHECK, &CTaskBarSettingsDlg::OnBnClickedSpeedShortModeCheck)
     ON_CBN_SELCHANGE(IDC_UNIT_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeUnitCombo)
@@ -162,14 +156,6 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_UNIT_BYTE_RADIO, &CTaskBarSettingsDlg::OnBnClickedUnitByteRadio)
     ON_BN_CLICKED(IDC_UNIT_BIT_RADIO, &CTaskBarSettingsDlg::OnBnClickedUnitBitRadio)
     ON_BN_CLICKED(IDC_SHOW_TOOL_TIP_CHK, &CTaskBarSettingsDlg::OnBnClickedShowToolTipChk)
-    //ON_BN_CLICKED(IDC_SET_LIGHT_MODE_BUTTON, &CTaskBarSettingsDlg::OnBnClickedSetLightMode)
-    ON_COMMAND(ID_DEFAULT_STYLE1, &CTaskBarSettingsDlg::OnDefaultStyle1)
-    ON_COMMAND(ID_DEFAULT_STYLE2, &CTaskBarSettingsDlg::OnDefaultStyle2)
-    ON_COMMAND(ID_DEFAULT_STYLE3, &CTaskBarSettingsDlg::OnDefaultStyle3)
-    ON_COMMAND(ID_MODIFY_DEFAULT_STYLE1, &CTaskBarSettingsDlg::OnModifyDefaultStyle1)
-    ON_COMMAND(ID_MODIFY_DEFAULT_STYLE2, &CTaskBarSettingsDlg::OnModifyDefaultStyle2)
-    ON_COMMAND(ID_MODIFY_DEFAULT_STYLE3, &CTaskBarSettingsDlg::OnModifyDefaultStyle3)
-    ON_COMMAND(ID_LIGHT_MODE_STYLE, &CTaskBarSettingsDlg::OnLightModeStyle)
     ON_BN_CLICKED(IDC_DEFAULT_STYLE_BUTTON, &CTaskBarSettingsDlg::OnBnClickedDefaultStyleButton)
     ON_WM_DESTROY()
     ON_BN_CLICKED(IDC_BROWSE_BUTTON, &CTaskBarSettingsDlg::OnBnClickedBrowseButton)
@@ -288,7 +274,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     SetDlgItemText(IDC_EXE_PATH_EDIT, m_data.double_click_exe.c_str());
     EnableControl();
 
-    m_default_style_menu.LoadMenu(IDR_TASKBAR_STYLE_MENU);
+    //m_default_style_menu.LoadMenu(IDR_TASKBAR_STYLE_MENU);
 
     if (m_data.cm_graph_type)
         CheckDlgButton(IDC_CM_GRAPH_PLOT_RADIO, TRUE);
@@ -306,6 +292,18 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 
     ((CButton*)GetDlgItem(IDC_SET_ORDER_BUTTON))->SetIcon(theApp.GetMenuIcon(IDI_ITEM));
 
+    //初始化“预设方案”菜单
+    m_default_style_menu.CreatePopupMenu();
+    m_modify_default_style_menu.CreatePopupMenu();
+    for (int i{ 0 }; i < TASKBAR_DEFAULT_STYLE_NUM; i++)
+    {
+        CString item_name;
+        item_name.Format(_T("%s %d"), CCommon::LoadText(IDS_PRESET).GetString(), i + 1);
+        m_default_style_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_DEFAULT_STYLE1 + i, item_name);
+        m_modify_default_style_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_MODIFY_DEFAULT_STYLE1 + i, item_name);
+    }
+    m_default_style_menu.AppendMenu(MF_SEPARATOR);
+    m_default_style_menu.AppendMenu(MF_POPUP | MF_STRING, (UINT)m_modify_default_style_menu.m_hMenu, CCommon::LoadText(IDS_MODIFY_PRESET));
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE
@@ -342,83 +340,6 @@ void CTaskBarSettingsDlg::OnBnClickedSetFontButton1()
         SetDlgItemText(IDC_FONT_SIZE_EDIT1, buff);
     }
 }
-
-
-//void CTaskBarSettingsDlg::OnEnChangeUploadEdit1()
-//{
-//  // TODO:  如果该控件是 RICHEDIT 控件，它将不
-//  // 发送此通知，除非重写 CTabDlg::OnInitDialog()
-//  // 函数并调用 CRichEditCtrl().SetEventMask()，
-//  // 同时将 ENM_CHANGE 标志“或”运算到掩码中。
-//
-//  // TODO:  在此添加控件通知处理程序代码
-//  CString tmp;
-//  GetDlgItemText(IDC_UPLOAD_EDIT1, tmp);
-//  m_data.disp_str.Get(TDI_UP) = tmp;
-//}
-//
-//
-//void CTaskBarSettingsDlg::OnEnChangeDownloadEdit1()
-//{
-//  // TODO:  如果该控件是 RICHEDIT 控件，它将不
-//  // 发送此通知，除非重写 CTabDlg::OnInitDialog()
-//  // 函数并调用 CRichEditCtrl().SetEventMask()，
-//  // 同时将 ENM_CHANGE 标志“或”运算到掩码中。
-//
-//  // TODO:  在此添加控件通知处理程序代码
-//  CString tmp;
-//  GetDlgItemText(IDC_DOWNLOAD_EDIT1, tmp);
-//  m_data.disp_str.Get(TDI_DOWN) = tmp;
-//}
-//
-//
-//void CTaskBarSettingsDlg::OnEnChangeCpuEdit1()
-//{
-//  // TODO:  如果该控件是 RICHEDIT 控件，它将不
-//  // 发送此通知，除非重写 CTabDlg::OnInitDialog()
-//  // 函数并调用 CRichEditCtrl().SetEventMask()，
-//  // 同时将 ENM_CHANGE 标志“或”运算到掩码中。
-//
-//  // TODO:  在此添加控件通知处理程序代码
-//  CString tmp;
-//  GetDlgItemText(IDC_CPU_EDIT1, tmp);
-//  m_data.disp_str.Get(TDI_CPU) = tmp;
-//}
-//
-//
-//void CTaskBarSettingsDlg::OnEnChangeMemoryEdit1()
-//{
-//  // TODO:  如果该控件是 RICHEDIT 控件，它将不
-//  // 发送此通知，除非重写 CTabDlg::OnInitDialog()
-//  // 函数并调用 CRichEditCtrl().SetEventMask()，
-//  // 同时将 ENM_CHANGE 标志“或”运算到掩码中。
-//
-//  // TODO:  在此添加控件通知处理程序代码
-//  CString tmp;
-//  GetDlgItemText(IDC_MEMORY_EDIT1, tmp);
-//  m_data.disp_str.Get(TDI_MEMORY) = tmp;
-//}
-
-
-//void CTaskBarSettingsDlg::OnBnClickedSetDefaultButton1()
-//{
-//  // TODO: 在此添加控件通知处理程序代码
-//  m_data.disp_str.Get(TDI_UP) = L"↑: ";
-//  m_data.disp_str.Get(TDI_DOWN) = L"↓: ";
-//  m_data.disp_str.Get(TDI_CPU) = L"CPU: ";
-//  m_data.disp_str.Get(TDI_MEMORY) = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
-//  SetDlgItemText(IDC_UPLOAD_EDIT1, m_data.disp_str.Get(TDI_UP).c_str());
-//  SetDlgItemText(IDC_DOWNLOAD_EDIT1, m_data.disp_str.Get(TDI_DOWN).c_str());
-//  SetDlgItemText(IDC_CPU_EDIT1, m_data.disp_str.Get(TDI_CPU).c_str());
-//  SetDlgItemText(IDC_MEMORY_EDIT1, m_data.disp_str.Get(TDI_MEMORY).c_str());
-//}
-
-
-//void CTaskBarSettingsDlg::OnBnClickedSwitchUpDownCheck1()
-//{
-//    // TODO: 在此添加控件通知处理程序代码
-//    m_data.swap_up_down = (((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK1))->GetCheck() != 0);
-//}
 
 
 void CTaskBarSettingsDlg::OnBnClickedTaskbarWndOnLeftCheck()
@@ -648,77 +569,6 @@ void CTaskBarSettingsDlg::OnBnClickedShowToolTipChk()
     m_data.show_tool_tip = (((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->GetCheck() != 0);
 }
 
-//void CTaskBarSettingsDlg::OnBnClickedSetLightMode()
-//{
-//  // TODO: 在此添加控件通知处理程序代码
-//  for (int i{}; i < TASKBAR_COLOR_NUM; i++)
-//      m_data.text_colors[i] = RGB(0, 0, 0);
-//  m_data.back_color = RGB(210, 210, 210);
-//  m_data.transparent_color = RGB(210, 210, 210);
-//  m_data.status_bar_color = RGB(165, 165, 165);
-//  DrawStaticColor();
-//}
-
-
-void CTaskBarSettingsDlg::OnDefaultStyle1()
-{
-    // TODO: 在此添加命令处理程序代码
-    ApplyDefaultStyle(0);
-}
-
-
-void CTaskBarSettingsDlg::OnDefaultStyle2()
-{
-    // TODO: 在此添加命令处理程序代码
-    ApplyDefaultStyle(1);
-}
-
-
-void CTaskBarSettingsDlg::OnDefaultStyle3()
-{
-    // TODO: 在此添加命令处理程序代码
-    ApplyDefaultStyle(2);
-}
-
-
-void CTaskBarSettingsDlg::OnModifyDefaultStyle1()
-{
-    // TODO: 在此添加命令处理程序代码
-    if (MessageBox(CCommon::LoadTextFormat(IDS_SAVE_DEFAULT_STYLE_INQUIRY, { 1 }), NULL, MB_ICONQUESTION | MB_YESNO) == IDYES)
-    {
-        ModifyDefaultStyle(0);
-    }
-}
-
-
-void CTaskBarSettingsDlg::OnModifyDefaultStyle2()
-{
-    // TODO: 在此添加命令处理程序代码
-    if (MessageBox(CCommon::LoadTextFormat(IDS_SAVE_DEFAULT_STYLE_INQUIRY, { 2 }), NULL, MB_ICONQUESTION | MB_YESNO) == IDYES)
-    {
-        ModifyDefaultStyle(1);
-    }
-}
-
-
-void CTaskBarSettingsDlg::OnModifyDefaultStyle3()
-{
-    // TODO: 在此添加命令处理程序代码
-    if (MessageBox(CCommon::LoadTextFormat(IDS_SAVE_DEFAULT_STYLE_INQUIRY, { 3 }), NULL, MB_ICONQUESTION | MB_YESNO) == IDYES)
-    {
-        ModifyDefaultStyle(2);
-    }
-}
-
-
-void CTaskBarSettingsDlg::OnLightModeStyle()
-{
-    // TODO: 在此添加命令处理程序代码
-    CTaskbarDefaultStyle::ApplyDefaultLightStyle(m_data);
-    DrawStaticColor();
-    m_background_transparent_chk.SetCheck(IsTaskbarTransparent());
-}
-
 
 void CTaskBarSettingsDlg::OnBnClickedDefaultStyleButton()
 {
@@ -731,11 +581,8 @@ void CTaskBarSettingsDlg::OnBnClickedDefaultStyleButton()
         pBtn->GetWindowRect(rect);
         point.x = rect.left;
         point.y = rect.bottom;
-        CMenu* pMenu = m_default_style_menu.GetSubMenu(0);
-        if (pMenu != NULL)
-            pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+        m_default_style_menu.TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
     }
-
 }
 
 
@@ -857,4 +704,27 @@ void CTaskBarSettingsDlg::OnEnChangeItemSpaceEdit()
     // TODO:  在此添加控件通知处理程序代码
     m_data.item_space = m_item_space_edit.GetValue();
     m_data.ValidItemSpace();
+}
+
+
+BOOL CTaskBarSettingsDlg::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+    // TODO: 在此添加专用代码和/或调用基类
+    UINT cmd = LOWORD(wParam);
+
+    if (cmd >= ID_DEFAULT_STYLE1 && cmd < ID_DEFAULT_STYLE_MAX)
+    {
+        int default_style = cmd - ID_DEFAULT_STYLE1;
+        ApplyDefaultStyle(default_style);
+    }
+    if (cmd >= ID_MODIFY_DEFAULT_STYLE1 && cmd < ID_MODIFY_DEFAULT_STYLE_MAX)
+    {
+        int default_style = cmd - ID_MODIFY_DEFAULT_STYLE1;
+        if (MessageBox(CCommon::LoadTextFormat(IDS_SAVE_DEFAULT_STYLE_INQUIRY, { default_style + 1 }), NULL, MB_ICONQUESTION | MB_YESNO) == IDYES)
+        {
+            ModifyDefaultStyle(default_style);
+        }
+    }
+
+    return CTabDlg::OnCommand(wParam, lParam);
 }

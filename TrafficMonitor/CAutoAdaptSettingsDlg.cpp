@@ -23,26 +23,21 @@ CAutoAdaptSettingsDlg::~CAutoAdaptSettingsDlg()
 
 void CAutoAdaptSettingsDlg::InitComboBox(CComboBox& combo_box, int style_sel)
 {
-	combo_box.AddString(CCommon::LoadText(IDS_LIGHT_MODE));
 	for (int i = 0; i < TASKBAR_DEFAULT_STYLE_NUM; i++)
 		combo_box.AddString(CCommon::LoadText(IDS_PRESET, std::to_wstring(i + 1).c_str()));
-	if (style_sel == TASKBAR_DEFAULT_LIGHT_STYLE_INDEX)
-		combo_box.SetCurSel(0);
-	else if (style_sel >= 0 && style_sel < TASKBAR_DEFAULT_STYLE_NUM)
-		combo_box.SetCurSel(style_sel + 1);
+	if (style_sel >= 0 && style_sel < TASKBAR_DEFAULT_STYLE_NUM)
+		combo_box.SetCurSel(style_sel);
 	else
-		combo_box.SetCurSel(1);
+		combo_box.SetCurSel(0);
 }
 
 int CAutoAdaptSettingsDlg::GetComboBoxSel(const CComboBox& combo_box)
 {
 	int sel = combo_box.GetCurSel();
-	if (sel == 0)
-		return TASKBAR_DEFAULT_LIGHT_STYLE_INDEX;
-	else if (sel >= 1 && sel < TASKBAR_DEFAULT_STYLE_NUM + 1)
-		return sel - 1;
+	if (sel >= 0 && sel < TASKBAR_DEFAULT_STYLE_NUM)
+		return sel;
 	else
-		return 1;
+		return 0;
 }
 
 void CAutoAdaptSettingsDlg::DoDataExchange(CDataExchange* pDX)

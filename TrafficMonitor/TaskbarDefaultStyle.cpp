@@ -17,14 +17,18 @@ void CTaskbarDefaultStyle::LoadConfig()
 	CIniHelper ini{ theApp.m_config_path };
 	for (int i = 0; i < TASKBAR_DEFAULT_STYLE_NUM; i++)
 	{
-		wchar_t buff[64];
-		swprintf_s(buff, L"default%d_", i + 1);
-		wstring key_name = buff;
-		ini.LoadTaskbarWndColors(L"taskbar_default_style", (key_name + L"text_color").c_str(), m_default_style[i].text_colors, RGB(255, 255, 255));
-		m_default_style[i].back_color = ini.GetInt(L"taskbar_default_style", (key_name + L"back_color").c_str(), 0);
-		m_default_style[i].transparent_color = ini.GetInt(L"taskbar_default_style", (key_name + L"transparent_color").c_str(), 0);
-		m_default_style[i].status_bar_color = ini.GetInt(L"taskbar_default_style", (key_name + L"status_bar_color").c_str(), 0x005A5A5A);
-		m_default_style[i].specify_each_item_color = ini.GetBool(L"taskbar_default_style", (key_name + L"specify_each_item_color").c_str(), false);
+        COLORREF default_text_color = (i == TASKBAR_DEFAULT_LIGHT_STYLE_INDEX ? RGB(0, 0, 0) : RGB(255, 255, 255));
+        COLORREF default_back_color = (i == TASKBAR_DEFAULT_LIGHT_STYLE_INDEX ? RGB(210, 210, 211) : 0);
+        COLORREF default_transparent_color = (i == TASKBAR_DEFAULT_LIGHT_STYLE_INDEX ? RGB(210, 210, 211) : 0);
+        COLORREF default_status_bar_color = (i == TASKBAR_DEFAULT_LIGHT_STYLE_INDEX ? RGB(165, 165, 165) : 0x005A5A5A);
+        wchar_t buff[64];
+        swprintf_s(buff, L"default%d_", i + 1);
+        wstring key_name = buff;
+        ini.LoadTaskbarWndColors(L"taskbar_default_style", (key_name + L"text_color").c_str(), m_default_style[i].text_colors, default_text_color);
+        m_default_style[i].back_color = ini.GetInt(L"taskbar_default_style", (key_name + L"back_color").c_str(), default_back_color);
+        m_default_style[i].transparent_color = ini.GetInt(L"taskbar_default_style", (key_name + L"transparent_color").c_str(), default_transparent_color);
+        m_default_style[i].status_bar_color = ini.GetInt(L"taskbar_default_style", (key_name + L"status_bar_color").c_str(), default_status_bar_color);
+        m_default_style[i].specify_each_item_color = ini.GetBool(L"taskbar_default_style", (key_name + L"specify_each_item_color").c_str(), false);
 	}
 }
 
@@ -59,11 +63,11 @@ void CTaskbarDefaultStyle::SaveConfig() const
 
 void CTaskbarDefaultStyle::ApplyDefaultStyle(int index, TaskBarSettingData & data) const
 {
-    if (index == TASKBAR_DEFAULT_LIGHT_STYLE_INDEX)
-	{
-		ApplyDefaultLightStyle(data);
-	}
-	else if(index >= 0 && index < TASKBAR_DEFAULT_STYLE_NUM)
+    /*if (index == TASKBAR_DEFAULT_LIGHT_STYLE_INDEX)
+    {
+        ApplyDefaultLightStyle(data);
+    }
+    else */if (index >= 0 && index < TASKBAR_DEFAULT_STYLE_NUM)
 	{
         if (!IsTaskBarStyleDataValid(m_default_style[index]))
             return;
@@ -81,17 +85,17 @@ void CTaskbarDefaultStyle::ApplyDefaultStyle(int index, TaskBarSettingData & dat
 	}
 }
 
-void CTaskbarDefaultStyle::ApplyDefaultLightStyle(TaskBarSettingData& data)
-{
-	for (auto& item : data.text_colors)
-    {
-        item.second.label = RGB(0, 0, 0);
-        item.second.value = RGB(0, 0, 0);
-    }
-	data.back_color = RGB(210, 210, 211);
-	data.transparent_color = RGB(210, 210, 211);
-	data.status_bar_color = RGB(165, 165, 165);
-}
+//void CTaskbarDefaultStyle::ApplyDefaultLightStyle(TaskBarSettingData& data)
+//{
+//	for (auto& item : data.text_colors)
+//    {
+//        item.second.label = RGB(0, 0, 0);
+//        item.second.value = RGB(0, 0, 0);
+//    }
+//	data.back_color = RGB(210, 210, 211);
+//	data.transparent_color = RGB(210, 210, 211);
+//	data.status_bar_color = RGB(165, 165, 165);
+//}
 
 void CTaskbarDefaultStyle::ModifyDefaultStyle(int index, TaskBarSettingData & data)
 {
