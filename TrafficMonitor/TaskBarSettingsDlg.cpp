@@ -435,7 +435,7 @@ void CTaskBarSettingsDlg::OnOK()
 void CTaskBarSettingsDlg::SaveColorSettingToDefaultStyle()
 {
     //如果开启了自动适应Windows10深色/浅色模式功能时，自动将当前配置保存到对应预设
-    if (m_data.auto_adapt_light_theme && m_style_modified)
+    if (theApp.m_cfg_data.m_auto_save_taskbar_color_settings_to_preset && m_data.auto_adapt_light_theme && IsStyleModified())
     {
         int default_style_saved{ theApp.m_win_version.IsWindows10LightTheme() ? m_data.light_default_style : m_data.dark_default_style };
         ModifyDefaultStyle(default_style_saved);

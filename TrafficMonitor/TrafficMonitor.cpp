@@ -263,6 +263,8 @@ void CTrafficMonitorApp::LoadConfig()
     m_cfg_data.m_use_log_scale = ini.GetBool(_T("histroy_traffic"), _T("use_log_scale"), true);
     m_cfg_data.m_sunday_first = ini.GetBool(_T("histroy_traffic"), _T("sunday_first"), true);
     m_cfg_data.m_view_type = static_cast<HistoryTrafficViewType>(ini.GetInt(_T("histroy_traffic"), _T("view_type"), static_cast<int>(HistoryTrafficViewType::HV_DAY)));
+    
+    m_cfg_data.m_auto_save_taskbar_color_settings_to_preset = ini.GetBool(L"task_bar", L"auto_save_taskbar_color_settings_to_preset", true);
 
     m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), false);
     m_notify_interval = ini.GetInt(_T("other"), _T("notify_interval"), 60);
@@ -411,6 +413,8 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(L"histroy_traffic", L"use_log_scale", m_cfg_data.m_use_log_scale);
     ini.WriteBool(L"histroy_traffic", L"sunday_first", m_cfg_data.m_sunday_first);
     ini.WriteInt(L"histroy_traffic", L"view_type", static_cast<int>(m_cfg_data.m_view_type));
+
+    ini.WriteBool(L"task_bar", L"auto_save_taskbar_color_settings_to_preset", m_cfg_data.m_auto_save_taskbar_color_settings_to_preset);
 
     ini.WriteBool(_T("other"), _T("no_multistart_warning"), m_no_multistart_warning);
     ini.WriteBool(_T("other"), _T("exit_when_start_by_restart_manager"), m_exit_when_start_by_restart_manager);

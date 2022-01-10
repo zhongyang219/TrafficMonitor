@@ -198,6 +198,7 @@ struct MainConfigData
     HistoryTrafficViewType m_view_type{};
     bool m_sunday_first{ true };            //是否将周日作为一周的第一天
     StringSet plugin_disabled;      //已禁用的插件
+    bool m_auto_save_taskbar_color_settings_to_preset{};    //当启用“自动适应Windows10深色/浅色主题”时，是否在颜色设置有更改时自动将当前颜色设置保存到对应的预设
 };
 
 //内存显示方式
