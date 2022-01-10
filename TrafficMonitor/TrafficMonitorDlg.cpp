@@ -364,7 +364,14 @@ void CTrafficMonitorDlg::IniConnection()
     //获取当前所有的连接，并保存到m_connections容器中
     if (!theApp.m_general_data.show_all_interface)
     {
-        CAdapterCommon::GetAdapterInfo(m_connections);
+        m_connections.clear();
+        vector<NetWorkConection> connections;
+        CAdapterCommon::GetAdapterInfo(connections);
+        for (const auto& item : connections)
+        {
+            if (!theApp.m_general_data.connections_hide.Contains(CCommon::StrToUnicode(item.description.c_str())))
+                m_connections.push_back(item);
+        }
         CAdapterCommon::GetIfTableInfo(m_connections, m_pIfTable);
     }
     else
@@ -652,6 +659,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     bool is_mouse_penerate_changed = (optionsDlg.m_tab1_dlg.m_data.m_mouse_penetrate != theApp.m_main_wnd_data.m_mouse_penetrate);
     bool is_alow_out_of_border_changed = (optionsDlg.m_tab1_dlg.m_data.m_alow_out_of_border != theApp.m_main_wnd_data.m_alow_out_of_border);
     bool is_show_notify_icon_changed = (optionsDlg.m_tab3_dlg.m_data.show_notify_icon != theApp.m_general_data.show_notify_icon);
+    bool is_connections_hide_changed = (optionsDlg.m_tab3_dlg.m_data.connections_hide.data() != theApp.m_general_data.connections_hide.data());
 
     theApp.m_main_wnd_data = optionsDlg.m_tab1_dlg.m_data;
     theApp.m_taskbar_data = optionsDlg.m_tab2_dlg.m_data;
@@ -673,7 +681,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     if (optionsDlg.m_tab3_dlg.IsAutoRunModified())
         theApp.SetAutoRun(theApp.m_general_data.auto_run);
 
-    if (optionsDlg.m_tab3_dlg.IsShowAllInterfaceModified())
+    if (optionsDlg.m_tab3_dlg.IsShowAllInterfaceModified() || is_connections_hide_changed)
         IniConnection();
 
     if (optionsDlg.m_tab3_dlg.IsMonitorTimeSpanModified())      //如果监控时间间隔改变了，则重设定时器

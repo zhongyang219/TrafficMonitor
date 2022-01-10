@@ -5,6 +5,7 @@
 #include "TrafficMonitor.h"
 #include "GeneralSettingsDlg.h"
 #include "PluginManagerDlg.h"
+#include "SelectConnectionsDlg.h"
 
 
 // CGeneralSettingsDlg dialog
@@ -90,6 +91,7 @@ void CGeneralSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_SELECT_HARD_DISK_COMBO, m_hard_disk_combo);
     DDX_Control(pDX, IDC_SELECT_CPU_COMBO, m_select_cpu_combo);
     DDX_Control(pDX, IDC_PLUGIN_MANAGE_BUTTON, m_plugin_manager_btn);
+    DDX_Control(pDX, IDC_SELECT_CONNECTIONS_BUTTON, m_select_connection_btn);
 }
 
 void CGeneralSettingsDlg::SetControlEnable()
@@ -136,6 +138,7 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_CBN_SELCHANGE(IDC_SELECT_CPU_COMBO, &CGeneralSettingsDlg::OnCbnSelchangeSelectCpuCombo)
     ON_BN_CLICKED(IDC_PLUGIN_MANAGE_BUTTON, &CGeneralSettingsDlg::OnBnClickedPluginManageButton)
     ON_BN_CLICKED(IDC_SHOW_NOTIFY_ICON_CHECK, &CGeneralSettingsDlg::OnBnClickedShowNotifyIconCheck)
+    ON_BN_CLICKED(IDC_SELECT_CONNECTIONS_BUTTON, &CGeneralSettingsDlg::OnBnClickedSelectConnectionsButton)
 END_MESSAGE_MAP()
 
 
@@ -286,6 +289,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
 #endif
 
     m_plugin_manager_btn.SetIcon(theApp.GetMenuIcon(IDI_PLUGINS));
+    m_select_connection_btn.SetIcon(theApp.GetMenuIcon(IDI_CONNECTION));
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE
@@ -642,4 +646,15 @@ void CGeneralSettingsDlg::OnBnClickedShowNotifyIconCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.show_notify_icon = (IsDlgButtonChecked(IDC_SHOW_NOTIFY_ICON_CHECK) != 0);
+}
+
+
+void CGeneralSettingsDlg::OnBnClickedSelectConnectionsButton()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    CSelectConnectionsDlg dlg(m_data.connections_hide);
+    if (dlg.DoModal() == IDOK)
+    {
+        m_data.connections_hide = dlg.GetData();
+    }
 }

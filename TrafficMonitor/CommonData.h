@@ -168,6 +168,9 @@ public:
     void SetStrContained(const std::wstring& str, bool contained);
     void FromString(const std::wstring& str);
     std::wstring ToString() const;
+    void FromVector(const std::vector<std::wstring>& vec);
+    std::vector<std::wstring> ToVector() const;
+    std::set<std::wstring>& data();
 private:
     std::set<std::wstring> string_set;
 };
@@ -338,6 +341,8 @@ struct GeneralSettingData
         else
             hardware_monitor_item &= ~item_type;
     }
+
+    StringSet connections_hide;     //用于保存哪些网络要从“选择网络连接”子菜单项中隐藏
 };
 
 //定义监控时间间隔有效的最大值和最小值

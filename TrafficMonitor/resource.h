@@ -244,6 +244,7 @@
 #define IDD_APP_ALREAD_RUNING_DIALOG    337
 #define IDS_GOTO_GITEE                  338
 #define IDS_USAGE_PERCENTAGE            339
+#define IDD_SELECT_CONNECTIONS_DIALOG   339
 #define IDS_MEMORY_USED                 340
 #define IDS_MEMORY_AVAILABLE            341
 #define IDS_DOTNET_NOT_INSTALLED_TIP    342
@@ -277,6 +278,7 @@
 #define IDS_URL                         370
 #define IDS_PLUGIN_VERSION_NOT_SUPPORT  371
 #define IDS_MODIFY_PRESET               372
+#define IDS_SELECT_AT_LEASE_ONE_WARNING 373
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
 #define IDC_STATIC_DOWN                 1002
@@ -481,6 +483,7 @@
 #define IDC_SHOW_HIDE_TASKBAR_WINDOW_BUTTON 1153
 #define IDC_PLUGIN_DEV_GUID_STATIC      1153
 #define IDC_PLUGIN_DOWNLOAD_STATIC      1154
+#define IDC_SELECT_CONNECTIONS_BUTTON   1155
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -594,9 +597,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        339
+#define _APS_NEXT_RESOURCE_VALUE        341
 #define _APS_NEXT_COMMAND_VALUE         33404
-#define _APS_NEXT_CONTROL_VALUE         1155
+#define _APS_NEXT_CONTROL_VALUE         1156
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -24,6 +24,8 @@ public:
 	void GetIntArray(const wchar_t * AppName, const wchar_t * KeyName, int* values, int size, int default_value = 0) const;		//读取一个int数组，储存到values，元素个数为size
 	void WriteBoolArray(const wchar_t * AppName, const wchar_t * KeyName, const bool* values, int size);
 	void GetBoolArray(const wchar_t * AppName, const wchar_t * KeyName, bool* values, int size, bool default_value = false) const;
+    void WriteStringList(const wchar_t* AppName, const wchar_t* KeyName, const vector<wstring>& values);      //写入一个字符串列表，由于保存到ini文件中时字符串前后会加上引号，所以字符串中不能包含引号
+    void GetStringList(const wchar_t* AppName, const wchar_t* KeyName, vector<wstring>& values, const vector<wstring>& default_value) const;
 
 	void SaveFontData(const wchar_t * AppName, const FontInfo& font);
 	void LoadFontData(const wchar_t * AppName, FontInfo& font, const FontInfo& default_font) const;
@@ -46,4 +48,7 @@ protected:
 
 	void _WriteString(const wchar_t* AppName, const wchar_t* KeyName, const wstring& str);
 	wstring _GetString(const wchar_t* AppName, const wchar_t* KeyName, const wchar_t* default_str) const;
+
+    static wstring MergeStringList(const vector<wstring>& values);
+    static void SplitStringList(vector<wstring>& values, wstring str_value);
 };

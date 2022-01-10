@@ -133,6 +133,26 @@ std::wstring StringSet::ToString() const
     return item_str;
 }
 
+void StringSet::FromVector(const std::vector<std::wstring>& vec)
+{
+    string_set.clear();
+    for (const auto& str : vec)
+        string_set.insert(str);
+}
+
+std::vector<std::wstring> StringSet::ToVector() const
+{
+    std::vector<std::wstring> vec;
+    for (const auto& str : string_set)
+        vec.push_back(str);
+    return vec;
+}
+
+std::set<std::wstring>& StringSet::data()
+{
+    return string_set;
+}
+
 void TaskBarSettingData::ValidItemSpace()
 {
     if (item_space < 0)

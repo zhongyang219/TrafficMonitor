@@ -471,6 +471,7 @@
     <ClInclude Include="PluginManager.h" />
     <ClInclude Include="PluginManagerDlg.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SelectConnectionsDlg.h" />
     <ClInclude Include="SetItemOrderDlg.h" />
     <ClInclude Include="SimpleXML.h" />
     <ClInclude Include="SkinDlg.h" />
@@ -537,6 +538,7 @@
     <ClCompile Include="PluginInfoDlg.cpp" />
     <ClCompile Include="PluginManager.cpp" />
     <ClCompile Include="PluginManagerDlg.cpp" />
+    <ClCompile Include="SelectConnectionsDlg.cpp" />
     <ClCompile Include="SetItemOrderDlg.cpp" />
     <ClCompile Include="SimpleXML.cpp" />
     <ClCompile Include="SkinDlg.cpp" />

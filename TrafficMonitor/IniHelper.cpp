@@ -152,6 +152,19 @@ void CIniHelper::GetBoolArray(const wchar_t * AppName, const wchar_t * KeyName, 
     }
 }
 
+void CIniHelper::WriteStringList(const wchar_t* AppName, const wchar_t* KeyName, const vector<wstring>& values)
+{
+    wstring str_write = MergeStringList(values);
+    _WriteString(AppName, KeyName, str_write);
+}
+
+void CIniHelper::GetStringList(const wchar_t* AppName, const wchar_t* KeyName, vector<wstring>& values, const vector<wstring>& default_value) const
+{
+    wstring default_str = MergeStringList(default_value);
+    wstring str_value = _GetString(AppName, KeyName, default_str.c_str());
+    SplitStringList(values, str_value);
+}
+
 void CIniHelper::SaveFontData(const wchar_t * AppName, const FontInfo & font)
 {
     WriteString(AppName, L"font_name", wstring(font.name));
@@ -380,5 +393,33 @@ wstring CIniHelper::_GetString(const wchar_t * AppName, const wchar_t * KeyName,
         //如果前后有空格，则将其删除
         CCommon::StringNormalize(return_str);
         return return_str;
+    }
+}
+
+wstring CIniHelper::MergeStringList(const vector<wstring>& values)
+{
+    wstring str_merge;
+    int index = 0;
+    //在每个字符串前后加上引号，再将它们用逗号连接起来
+    for (const wstring& str : values)
+    {
+        if (index > 0)
+            str_merge.push_back(L',');
+        str_merge.push_back(L'\"');
+        str_merge += str;
+        str_merge.push_back(L'\"');
+        index++;
+    }
+    return str_merge;
+}
+
+void CIniHelper::SplitStringList(vector<wstring>& values, wstring str_value)
+{
+    CCommon::StringSplit(str_value, wstring(L"\",\""), values);
+    if (!values.empty())
+    {
+        //结果中第一项前面和最后一项的后面各还有一个引号，将它们删除
+        values.front() = values.front().substr(1);
+        values.back().pop_back();
     }
 }
