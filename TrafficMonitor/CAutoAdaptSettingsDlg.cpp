@@ -62,6 +62,11 @@ BOOL CAutoAdaptSettingsDlg::OnInitDialog()
 	// TODO:  在此添加额外的初始化
 	InitComboBox(m_dark_mode_default_style_combo, m_data.dark_default_style);
 	InitComboBox(m_light_mode_default_style_combo, m_data.light_default_style);
+    CheckDlgButton(IDC_AUTO_SAVE_TO_PRESET_CHECK, m_data.auto_save_taskbar_color_settings_to_preset);
+
+    m_toolTip.Create(this);
+    m_toolTip.SetMaxTipWidth(theApp.DPI(300));
+    m_toolTip.AddTool(GetDlgItem(IDC_AUTO_SAVE_TO_PRESET_CHECK), CCommon::LoadText(IDS_AUTO_SAVE_TO_PRESET_TIP));
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -75,6 +80,17 @@ void CAutoAdaptSettingsDlg::OnOK()
 	//获取控件中的设置
 	m_data.dark_default_style = GetComboBoxSel(m_dark_mode_default_style_combo);
 	m_data.light_default_style = GetComboBoxSel(m_light_mode_default_style_combo);
+    m_data.auto_save_taskbar_color_settings_to_preset = (IsDlgButtonChecked(IDC_AUTO_SAVE_TO_PRESET_CHECK) != 0);
 
 	CDialog::OnOK();
+}
+
+
+BOOL CAutoAdaptSettingsDlg::PreTranslateMessage(MSG* pMsg)
+{
+    // TODO: 在此添加专用代码和/或调用基类
+    if (pMsg->message == WM_MOUSEMOVE)
+        m_toolTip.RelayEvent(pMsg);
+
+    return CDialog::PreTranslateMessage(pMsg);
 }

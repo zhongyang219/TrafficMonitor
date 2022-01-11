@@ -20,6 +20,7 @@ private:
 	CComboBox m_dark_mode_default_style_combo;
 	CComboBox m_light_mode_default_style_combo;
 	TaskBarSettingData& m_data;
+    CToolTipCtrl m_toolTip;
 
 private:
 	void InitComboBox(CComboBox& combo_box, int style_sel);
@@ -32,4 +33,5 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 	virtual void OnOK();
+    virtual BOOL PreTranslateMessage(MSG* pMsg);
 };
