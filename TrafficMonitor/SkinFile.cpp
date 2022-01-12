@@ -406,7 +406,10 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
                     int brightness{ (GetRValue(cl) + GetGValue(cl) + GetBValue(cl)) / 2 };
                     ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(plugin_item);
                     if (plugin != nullptr && plugin->GetAPIVersion() >= 2)
+                    {
                         plugin->OnExtenedInfo(ITMPlugin::EI_VALUE_TEXT_COLOR, std::to_wstring(cl).c_str());
+                        plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_TASKBAR_WND, L"0");
+                    }
                     draw.GetDC()->SetTextColor(cl);
                     plugin_item->DrawItem(draw.GetDC()->GetSafeHdc(), layout_item.x, layout_item.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
                 }
@@ -557,7 +560,10 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
                 int brightness{ (GetRValue(cl) + GetGValue(cl) + GetBValue(cl)) / 2 };
                 ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(plugin_item);
                 if (plugin != nullptr && plugin->GetAPIVersion() >= 2)
+                {
                     plugin->OnExtenedInfo(ITMPlugin::EI_VALUE_TEXT_COLOR, std::to_wstring(cl).c_str());
+                    plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_TASKBAR_WND, L"0");
+                }
                 draw.GetDC()->SetTextColor(cl);
                 plugin_item->DrawItem(draw.GetDC()->GetSafeHdc(), layout_item.x, layout_item.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
             }

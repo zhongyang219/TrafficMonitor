@@ -164,8 +164,27 @@ public:
 
     enum ExtendedInfoIndex
     {
-        EI_LABEL_TEXT_COLOR,
-        EI_VALUE_TEXT_COLOR,
+        EI_LABEL_TEXT_COLOR,    //绘图的标签文本颜色
+        EI_VALUE_TEXT_COLOR,    //绘图的数值文本颜色
+        EI_DRAW_TASKBAR_WND,    //是否绘制任务栏窗口
+
+        //主窗口选项设置
+        EI_NAIN_WND_NET_SPEED_SHORT_MODE,   //网速显示简洁模式
+        EI_MAIN_WND_SPERATE_WITH_SPACE,     //数值和单位使用空格分隔
+        EI_MAIN_WND_UNIT_BYTE,              //网速单位是否使用B（字节）
+        EI_MAIN_WND_UNIT_SELECT,            //网速单位选择（0：自动，1：固定为KB/s，2：固定为MB/s）
+        EI_MAIN_WND_NOT_SHOW_UNIT,          //不显示网速单位
+        EI_MAIN_WND_NOT_SHOW_PERCENT,       //不显示百分号
+
+        //任务栏窗口设置
+        EI_TASKBAR_WND_NET_SPEED_SHORT_MODE,    //网速显示简洁模式
+        EI_TASKBAR_WND_SPERATE_WITH_SPACE,      //数值和单位使用空格分隔
+        EI_TASKBAR_WND_VALUE_RIGHT_ALIGN,       //数值右对齐
+        EI_TASKBAR_WND_NET_SPEED_WIDTH,         //网速数据宽度
+        EI_TASKBAR_WND_UNIT_BYTE,               //网速单位是否使用B（字节）
+        EI_TASKBAR_WND_UNIT_SELECT,             //网速单位选择（0：自动，1：固定为KB/s，2：固定为MB/s）
+        EI_TASKBAR_WND_NOT_SHOW_UNIT,           //不显示网速单位
+        EI_TASKBAR_WND_NOT_SHOW_PERCENT,        //不显示百分号
     };
 
     /**
