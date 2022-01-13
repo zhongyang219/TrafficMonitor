@@ -289,6 +289,12 @@ struct TaskBarSettingData : public PublicSettingData
     bool show_graph_dashed_box{ true }; //显示占用图虚线框
     int item_space{};                   //任务栏项目间距
     void ValidItemSpace();
+
+    bool show_netspeed_figure{ false };     //是否显示网速占用图
+    int netspeed_figure_max_value;          //网速占用图的最大值
+    int netspeed_figure_max_value_unit{};   //网速占用图最大值的单位（0: KB, 1: MB）
+    unsigned __int64 GetNetspeedFigureMaxValueInBytes() const;  //获取网速占用图的最大值（以字节为单位）
+
 };
 
 //选项设置中“常规设置”的数据

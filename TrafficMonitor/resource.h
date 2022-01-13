@@ -281,6 +281,8 @@
 #define IDS_SELECT_AT_LEASE_ONE_WARNING 373
 #define IDS_AUTO_SAVE_TO_PRESET_TIP     374
 #define IDS_TOTAL_NET_SPEED             375
+#define IDS_SHOW_RESOURCE_USAGE_GRAPH_TIP 376
+#define IDS_SHOW_NET_SPEED_GRAPH_TIP    377
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
 #define IDC_STATIC_DOWN                 1002
@@ -487,6 +489,9 @@
 #define IDC_PLUGIN_DOWNLOAD_STATIC      1154
 #define IDC_SELECT_CONNECTIONS_BUTTON   1155
 #define IDC_AUTO_SAVE_TO_PRESET_CHECK   1156
+#define IDC_SHOW_NET_SPEED_FIGURE_CHECK 1157
+#define IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT 1158
+#define IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO 1159
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -602,7 +607,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        341
 #define _APS_NEXT_COMMAND_VALUE         33404
-#define _APS_NEXT_CONTROL_VALUE         1157
+#define _APS_NEXT_CONTROL_VALUE         1160
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

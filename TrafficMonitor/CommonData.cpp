@@ -160,3 +160,11 @@ void TaskBarSettingData::ValidItemSpace()
     if (item_space > 32)
         item_space = 32;
 }
+
+unsigned __int64 TaskBarSettingData::GetNetspeedFigureMaxValueInBytes() const
+{
+    if (netspeed_figure_max_value_unit == 0)        //单位为KB
+        return static_cast<unsigned __int64>(netspeed_figure_max_value) * 1024;
+    else
+        return static_cast<unsigned __int64>(netspeed_figure_max_value) * 1024 * 1024;
+}

@@ -102,6 +102,8 @@ protected:
 
     void AddHisToList(DisplayItem item_type, int current_usage_percent);		//将当前利用率数值添加进链表
 
+    int CalculateNetspeedPercent(unsigned __int64 net_speed);     //计算网速占网速占用图的最大值的百分比
+
     //判断一个点在哪个显示项目的区域内，并保存到m_clicked_item
     void CheckClickedItem(CPoint point);
 

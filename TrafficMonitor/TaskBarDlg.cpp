@@ -174,74 +174,62 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
     }
 
     // 绘制状态条
-    if (type == TDI_CPU || type == TDI_MEMORY || type == TDI_GPU_USAGE || type == TDI_CPU_TEMP || type == TDI_GPU_TEMP || type == TDI_HDD_TEMP || type == TDI_MAIN_BOARD_TEMP || type == TDI_HDD_USAGE)
+    if (type == TDI_CPU || type == TDI_MEMORY || type == TDI_GPU_USAGE || type == TDI_CPU_TEMP
+        || type == TDI_GPU_TEMP || type == TDI_HDD_TEMP || type == TDI_MAIN_BOARD_TEMP || type == TDI_HDD_USAGE
+        || type == TDI_UP || type == TDI_DOWN || type == TDI_TOTAL_SPEED)
     {
-        if (theApp.m_taskbar_data.cm_graph_type)
+        int figure_value{};
+        switch (type)
         {
-            switch (type)
-            {
-            case TDI_CPU:
-                AddHisToList(type, theApp.m_cpu_usage);
-                break;
-            case TDI_MEMORY:
-                AddHisToList(type, theApp.m_memory_usage);
-                break;
-            case TDI_GPU_USAGE:
-                AddHisToList(type, theApp.m_gpu_usage);
-                break;
-            case TDI_CPU_TEMP:
-                AddHisToList(type, theApp.m_cpu_temperature);
-                break;
-            case TDI_GPU_TEMP:
-                AddHisToList(type, theApp.m_gpu_temperature);
-                break;
-            case TDI_HDD_TEMP:
-                AddHisToList(type, theApp.m_hdd_temperature);
-                break;
-            case TDI_MAIN_BOARD_TEMP:
-                AddHisToList(type, theApp.m_main_board_temperature);
-                break;
-            case TDI_HDD_USAGE:
-                AddHisToList(type, theApp.m_hdd_usage);
-                break;
-            default:
-                break;
-            }
-            TryDrawGraph(drawer, rect, type);
+        case TDI_CPU:
+            figure_value = theApp.m_cpu_usage;
+            break;
+        case TDI_MEMORY:
+            figure_value = theApp.m_memory_usage;
+            break;
+        case TDI_GPU_USAGE:
+            figure_value = theApp.m_gpu_usage;
+            break;
+        case TDI_CPU_TEMP:
+            figure_value = theApp.m_cpu_temperature;
+            break;
+        case TDI_GPU_TEMP:
+            figure_value = theApp.m_gpu_temperature;
+            break;
+        case TDI_HDD_TEMP:
+            figure_value = theApp.m_hdd_temperature;
+            break;
+        case TDI_MAIN_BOARD_TEMP:
+            figure_value = theApp.m_main_board_temperature;
+            break;
+        case TDI_HDD_USAGE:
+            figure_value = theApp.m_hdd_usage;
+            break;
+        case TDI_UP:
+            figure_value = CalculateNetspeedPercent(theApp.m_out_speed);
+            break;
+        case TDI_DOWN:
+            figure_value = CalculateNetspeedPercent(theApp.m_in_speed);
+            break;
+        case TDI_TOTAL_SPEED:
+            figure_value = CalculateNetspeedPercent(theApp.m_in_speed + theApp.m_out_speed);
+            break;
+        default:
+            break;
         }
-        else
+
+        if ((type != TDI_UP && type != TDI_DOWN && type != TDI_TOTAL_SPEED) && theApp.m_taskbar_data.show_status_bar
+            || (type == TDI_UP || type == TDI_DOWN || type == TDI_TOTAL_SPEED) && theApp.m_taskbar_data.show_netspeed_figure)
         {
-            int value{};
-            switch (type)
+            if (theApp.m_taskbar_data.cm_graph_type)
             {
-            case TDI_CPU:
-                value = theApp.m_cpu_usage;
-                break;
-            case TDI_MEMORY:
-                value = theApp.m_memory_usage;
-                break;
-            case TDI_GPU_USAGE:
-                value = theApp.m_gpu_usage;
-                break;
-            case TDI_CPU_TEMP:
-                value = theApp.m_cpu_temperature;
-                break;
-            case TDI_GPU_TEMP:
-                value = theApp.m_gpu_temperature;
-                break;
-            case TDI_HDD_TEMP:
-                value = theApp.m_hdd_temperature;
-                break;
-            case TDI_MAIN_BOARD_TEMP:
-                value = theApp.m_main_board_temperature;
-                break;
-            case TDI_HDD_USAGE:
-                value = theApp.m_hdd_usage;
-                break;
-            default:
-                break;
+                AddHisToList(type, figure_value);
+                TryDrawGraph(drawer, rect, type);
             }
-            TryDrawStatusBar(drawer, rect, value);
+            else
+            {
+                TryDrawStatusBar(drawer, rect, figure_value);
+            }
         }
     }
 
@@ -430,11 +418,6 @@ void CTaskBarDlg::MoveWindow(CRect rect)
 
 void CTaskBarDlg::TryDrawStatusBar(CDrawCommon& drawer, const CRect& rect_bar, int usage_percent)
 {
-    if (!theApp.m_taskbar_data.show_status_bar)
-    {
-        return;
-    }
-
     CSize fill_size = CSize(rect_bar.Width() * usage_percent / 100, rect_bar.Height());
     CRect rect_fill(rect_bar.TopLeft(), fill_size);
     if (theApp.m_taskbar_data.show_graph_dashed_box)
@@ -1276,6 +1259,18 @@ void CTaskBarDlg::AddHisToList(DisplayItem item_type, int current_usage_percent)
 }
 
 
+int CTaskBarDlg::CalculateNetspeedPercent(unsigned __int64 net_speed)
+{
+    int percet = 0;
+    unsigned __int64 max_value{ theApp.m_taskbar_data.GetNetspeedFigureMaxValueInBytes() };
+
+    if (net_speed >= max_value)
+        percet = 100;
+    else if (max_value > 0)
+        percet = net_speed * 100 / max_value;
+    return percet;
+}
+
 void CTaskBarDlg::CheckClickedItem(CPoint point)
 {
     for (const auto& item : m_item_rects)
@@ -1290,10 +1285,6 @@ void CTaskBarDlg::CheckClickedItem(CPoint point)
 
 void CTaskBarDlg::TryDrawGraph(CDrawCommon& drawer, const CRect& value_rect, DisplayItem item_type)
 {
-    if (!theApp.m_taskbar_data.show_status_bar)
-    {
-        return;
-    }
     CList<int, int>& list = m_map_history_data[item_type];
     if (theApp.m_taskbar_data.show_graph_dashed_box)
         drawer.DrawRectOutLine(value_rect, theApp.m_taskbar_data.status_bar_color, 1, true);
