@@ -280,6 +280,7 @@
 #define IDS_MODIFY_PRESET               372
 #define IDS_SELECT_AT_LEASE_ONE_WARNING 373
 #define IDS_AUTO_SAVE_TO_PRESET_TIP     374
+#define IDS_TOTAL_NET_SPEED             375
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
 #define IDC_STATIC_DOWN                 1002
@@ -592,7 +593,7 @@
 #define ID_PLUGIN_DETAIL                33399
 #define ID_PLUGIN_OPTIONS               33400
 #define ID_PLUGIN_DISABLE               33401
-#define ID_33402                        33402
+#define ID_SHOW_TOTAL_SPEED             33402
 #define ID_OPEN_TASK_MANAGER            33403
 
 // Next default values for new objects

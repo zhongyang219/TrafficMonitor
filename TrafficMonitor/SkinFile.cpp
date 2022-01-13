@@ -331,6 +331,9 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
         case TDI_DOWN:
             format_str = _T("88.9 KB/s");
             break;
+        case TDI_TOTAL_SPEED:
+            format_str = _T("90 KB/s");
+            break;
         case TDI_CPU:
             format_str = _T("50 %%");
             break;
@@ -465,6 +468,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
     //上传/下载
     CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data);
     CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data);
+    CString total_speed = CCommon::DataSizeToString(theApp.m_in_speed + theApp.m_out_speed, theApp.m_main_wnd_data);
 
     std::map<DisplayItem, CString> map_str;
     CString format_str;
@@ -478,6 +482,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
     {
         std::swap(map_str[TDI_UP], map_str[TDI_DOWN]);
     }
+    map_str[TDI_TOTAL_SPEED].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_TOTAL_SPEED).c_str()), total_speed.GetString());
 
     //CPU/内存/显卡利用率
     map_str[TDI_CPU] = (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_CPU).c_str()) + CCommon::UsageToString(theApp.m_cpu_usage, theApp.m_main_wnd_data);
@@ -593,6 +598,9 @@ string CSkinFile::GetDisplayItemXmlNodeName(DisplayItem display_item)
         break;
     case TDI_DOWN:
         return "down";
+        break;
+    case TDI_TOTAL_SPEED:
+        return "total_speed";
         break;
     case TDI_CPU:
         return "cpu";

@@ -61,51 +61,7 @@ BOOL CDisplayTextSettingDlg::OnInitDialog()
     //向列表中插入行
     for (auto iter = m_display_texts.GetAllItems().begin(); iter != m_display_texts.GetAllItems().end(); ++iter)
     {
-        CString item_name;
-        if (iter->first.is_plugin)
-        {
-            item_name = iter->first.plugin_item->GetItemName();
-        }
-        else
-        {
-            switch (iter->first.item_type)
-            {
-            case TDI_UP:
-                item_name = CCommon::LoadText(IDS_UPLOAD);
-                break;
-            case TDI_DOWN:
-                item_name = CCommon::LoadText(IDS_DOWNLOAD);
-                break;
-            case TDI_CPU:
-                item_name = CCommon::LoadText(IDS_CPU_USAGE);
-                break;
-            case TDI_MEMORY:
-                item_name = CCommon::LoadText(IDS_MEMORY_USAGE);
-                break;
-#ifndef WITHOUT_TEMPERATURE
-            case TDI_GPU_USAGE:
-                item_name = CCommon::LoadText(IDS_GPU_USAGE);
-                break;
-            case TDI_CPU_TEMP:
-                item_name = CCommon::LoadText(IDS_CPU_TEMPERATURE);
-                break;
-            case TDI_GPU_TEMP:
-                item_name = CCommon::LoadText(IDS_GPU_TEMPERATURE);
-                break;
-            case TDI_HDD_TEMP:
-                item_name = CCommon::LoadText(IDS_HDD_TEMPERATURE);
-                break;
-            case TDI_MAIN_BOARD_TEMP:
-                item_name = CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
-                break;
-            case TDI_HDD_USAGE:
-                item_name = CCommon::LoadText(IDS_HDD_USAGE);
-                break;
-#endif
-            default:
-                break;
-            }
-        }
+        CString item_name = iter->first.GetItemName();
         if (!item_name.IsEmpty())
         {
             int index = m_list_ctrl.GetItemCount();
@@ -172,6 +128,8 @@ void CDisplayTextSettingDlg::OnBnClickedRestoreDefaultButton()
                 else
                     default_text = _T("↓: ");
                 break;
+            case TDI_TOTAL_SPEED:
+                default_text = _T("↑↓: ");
                 break;
             case TDI_CPU:
                 default_text = _T("CPU: ");

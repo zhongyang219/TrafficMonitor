@@ -117,6 +117,7 @@ void CTrafficMonitorApp::LoadConfig()
     //载入显示文本设置
     m_main_wnd_data.disp_str.Get(TDI_UP) = ini.GetString(_T("config"), L"up_string", CCommon::LoadText(IDS_UPLOAD_DISP, _T(": $")));
     m_main_wnd_data.disp_str.Get(TDI_DOWN) = ini.GetString(L"config", L"down_string", CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": $")));
+    m_main_wnd_data.disp_str.Get(TDI_TOTAL_SPEED) = ini.GetString(L"config", L"total_speed_string", _T("↑↓: $"));
     m_main_wnd_data.disp_str.Get(TDI_CPU) = ini.GetString(L"config", L"cpu_string", L"CPU: $");
     m_main_wnd_data.disp_str.Get(TDI_MEMORY) = ini.GetString(L"config", L"memory_string", CCommon::LoadText(IDS_MEMORY_DISP, _T(": $")));
     m_main_wnd_data.disp_str.Get(TDI_GPU_USAGE) = ini.GetString(L"config", L"gpu_string", CCommon::LoadText(IDS_GPU_DISP, _T(": $")));
@@ -214,6 +215,7 @@ void CTrafficMonitorApp::LoadConfig()
 
     m_taskbar_data.disp_str.Get(TDI_UP) = ini.GetString(L"task_bar", L"up_string", L"↑: $");
     m_taskbar_data.disp_str.Get(TDI_DOWN) = ini.GetString(L"task_bar", L"down_string", L"↓: $");
+    m_taskbar_data.disp_str.Get(TDI_TOTAL_SPEED) = ini.GetString(L"task_bar", L"total_speed_string", L"↑↓: $");
     m_taskbar_data.disp_str.Get(TDI_CPU) = ini.GetString(L"task_bar", L"cpu_string", L"CPU: $");
     m_taskbar_data.disp_str.Get(TDI_MEMORY) = ini.GetString(L"task_bar", L"memory_string", CCommon::LoadText(IDS_MEMORY_DISP, _T(": $")));
     m_taskbar_data.disp_str.Get(TDI_GPU_USAGE) = ini.GetString(L"task_bar", L"gpu_string", CCommon::LoadText(IDS_GPU_DISP, _T(": $")));
@@ -323,6 +325,7 @@ void CTrafficMonitorApp::SaveConfig()
 
     ini.WriteString(_T("config"), _T("up_string"), m_main_wnd_data.disp_str.Get(TDI_UP));
     ini.WriteString(_T("config"), _T("down_string"), m_main_wnd_data.disp_str.Get(TDI_DOWN));
+    ini.WriteString(_T("config"), _T("total_speed_string"), m_main_wnd_data.disp_str.Get(TDI_TOTAL_SPEED));
     ini.WriteString(_T("config"), _T("cpu_string"), m_main_wnd_data.disp_str.Get(TDI_CPU));
     ini.WriteString(_T("config"), _T("memory_string"), m_main_wnd_data.disp_str.Get(TDI_MEMORY));
     ini.WriteString(_T("config"), _T("gpu_string"), m_main_wnd_data.disp_str.Get(TDI_GPU_USAGE));
@@ -373,6 +376,7 @@ void CTrafficMonitorApp::SaveConfig()
 
     ini.WriteString(_T("task_bar"), _T("up_string"), m_taskbar_data.disp_str.Get(TDI_UP));
     ini.WriteString(_T("task_bar"), _T("down_string"), m_taskbar_data.disp_str.Get(TDI_DOWN));
+    ini.WriteString(_T("task_bar"), _T("total_speed_string"), m_taskbar_data.disp_str.Get(TDI_TOTAL_SPEED));
     ini.WriteString(_T("task_bar"), _T("cpu_string"), m_taskbar_data.disp_str.Get(TDI_CPU));
     ini.WriteString(_T("task_bar"), _T("memory_string"), m_taskbar_data.disp_str.Get(TDI_MEMORY));
     ini.WriteString(_T("task_bar"), _T("gpu_string"), m_taskbar_data.disp_str.Get(TDI_GPU_USAGE));
@@ -1109,6 +1113,8 @@ void CTrafficMonitorApp::UpdateTaskbarWndMenu()
         if (m_general_data.IsHardwareEnable(HI_HDD))
             pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_HDD, CCommon::LoadText(IDS_HDD_USAGE));
 #endif
+
+        pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_TOTAL_SPEED, CCommon::LoadText(IDS_TOTAL_NET_SPEED));
 
         //添加插件菜单项
         if (!m_plugins.GetPluginItems().empty())

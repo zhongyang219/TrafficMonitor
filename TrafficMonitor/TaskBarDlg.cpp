@@ -265,7 +265,7 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
     if (vertical)
         value_alignment = Alignment::CENTER;
     //绘制上传或下载速度
-    if (type == TDI_UP || type == TDI_DOWN)
+    if (type == TDI_UP || type == TDI_DOWN || type == TDI_TOTAL_SPEED)
     {
         CString format_str;
         if (theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO)
@@ -274,15 +274,20 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
             format_str = _T("%s/s");
         CString str_in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data);
         CString str_out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data);
+        CString str_total_speed = CCommon::DataSizeToString(theApp.m_in_speed + theApp.m_out_speed, theApp.m_taskbar_data);
         //if (theApp.m_taskbar_data.swap_up_down)
         //    std::swap(str_in_speed, str_out_speed);
         if (type == TDI_UP)
         {
             str_value.Format(format_str, str_out_speed.GetString());
         }
-        else
+        else if (type == TDI_DOWN)
         {
             str_value.Format(format_str, str_in_speed.GetString());
+        }
+        else
+        {
+            str_value.Format(format_str, str_total_speed.GetString());
         }
     }
 
@@ -759,6 +764,7 @@ void CTaskBarDlg::CalculateWindowSize()
     value_width = m_pDC->GetTextExtent(sample_str).cx;      //计算使用当前字体显示文本需要的宽度值
     item_widths[TDI_UP].value_width = value_width;
     item_widths[TDI_DOWN].value_width = value_width;
+    item_widths[TDI_TOTAL_SPEED].value_width = value_width;
 
     //计算显示CPU、内存部分所需要的宽度
     CString str;
@@ -911,6 +917,11 @@ void CTaskBarDlg::UpdateToolTips()
         tip_info = GetMouseTipsInfo();
         m_tool_tips.UpdateTipText(tip_info, this);
     }
+}
+
+bool CTaskBarDlg::IsItemShow(DisplayItem item)
+{
+    return (theApp.m_taskbar_data.m_tbar_display_item & item);
 }
 
 bool CTaskBarDlg::IsShowCpuMemory()
@@ -1084,6 +1095,7 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
     pMenu->CheckMenuItem(ID_SHOW_HDD_TEMPERATURE, MF_BYCOMMAND | ((IsShowHddTemperature()) ? MF_CHECKED : MF_UNCHECKED));
     pMenu->CheckMenuItem(ID_SHOW_MAIN_BOARD_TEMPERATURE, MF_BYCOMMAND | ((IsShowMainboardTemperature()) ? MF_CHECKED : MF_UNCHECKED));
     pMenu->CheckMenuItem(ID_SHOW_HDD, MF_BYCOMMAND | ((IsShowHddUsage()) ? MF_CHECKED : MF_UNCHECKED));
+    pMenu->CheckMenuItem(ID_SHOW_TOTAL_SPEED, MF_BYCOMMAND | (IsItemShow(TDI_TOTAL_SPEED) ? MF_CHECKED : MF_UNCHECKED));
 
     //不含温度监控的版本，禁用温度监控相关菜单项
 #ifdef WITHOUT_TEMPERATURE

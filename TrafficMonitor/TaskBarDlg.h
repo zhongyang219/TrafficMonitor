@@ -4,6 +4,7 @@
 #include "DrawCommon.h"
 #include "IniHelper.h"
 #include "CommonData.h"
+#include "TaskbarItemOrderHelper.h"
 
 // CTaskBarDlg 对话框
 #define TASKBAR_WND_HEIGHT theApp.DPI(32)				//任务栏窗口的高度
@@ -134,6 +135,7 @@ public:
     int GetErrorCode() const { return m_error_code; }
     bool IsTasksbarOnTopOrBottom() { return m_taskbar_on_top_or_bottom; }
 
+    static bool IsItemShow(DisplayItem item);
     static bool IsShowCpuMemory();
     static bool IsShowNetSpeed();
     static bool IsShowUp();

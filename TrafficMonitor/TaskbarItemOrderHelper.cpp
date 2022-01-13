@@ -28,6 +28,60 @@ bool CommonDisplayItem::operator<(const CommonDisplayItem& item) const
         return theApp.m_plugins.GetItemIndex(plugin_item) < theApp.m_plugins.GetItemIndex(item.plugin_item);
 }
 
+CString CommonDisplayItem::GetItemName() const
+{
+    CString item_name;
+    if (is_plugin)
+    {
+        if (plugin_item != nullptr)
+            item_name = plugin_item->GetItemName();
+    }
+    else
+    {
+        switch (item_type)
+        {
+        case TDI_UP:
+            item_name = CCommon::LoadText(IDS_UPLOAD);
+            break;
+        case TDI_DOWN:
+            item_name = CCommon::LoadText(IDS_DOWNLOAD);
+            break;
+        case TDI_TOTAL_SPEED:
+            item_name = CCommon::LoadText(IDS_TOTAL_NET_SPEED);
+            break;
+        case TDI_CPU:
+            item_name = CCommon::LoadText(IDS_CPU_USAGE);
+            break;
+        case TDI_MEMORY:
+            item_name = CCommon::LoadText(IDS_MEMORY_USAGE);
+            break;
+#ifndef WITHOUT_TEMPERATURE
+        case TDI_GPU_USAGE:
+            item_name = CCommon::LoadText(IDS_GPU_USAGE);
+            break;
+        case TDI_CPU_TEMP:
+            item_name = CCommon::LoadText(IDS_CPU_TEMPERATURE);
+            break;
+        case TDI_GPU_TEMP:
+            item_name = CCommon::LoadText(IDS_GPU_TEMPERATURE);
+            break;
+        case TDI_HDD_TEMP:
+            item_name = CCommon::LoadText(IDS_HDD_TEMPERATURE);
+            break;
+        case TDI_MAIN_BOARD_TEMP:
+            item_name = CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
+            break;
+        case TDI_HDD_USAGE:
+            item_name = CCommon::LoadText(IDS_HDD_USAGE);
+            break;
+#endif
+        default:
+            break;
+        }
+    }
+    return item_name;
+}
+
 bool CommonDisplayItem::operator==(const CommonDisplayItem& item) const
 {
     if (is_plugin != item.is_plugin)
@@ -131,6 +185,8 @@ CString CTaskbarItemOrderHelper::GetItemDisplayName(CommonDisplayItem item)
             return CCommon::LoadText(IDS_UPLOAD);
         case TDI_DOWN:
             return CCommon::LoadText(IDS_DOWNLOAD);
+        case TDI_TOTAL_SPEED:
+            return CCommon::LoadText(IDS_TOTAL_NET_SPEED);
         case TDI_CPU:
             return CCommon::LoadText(IDS_CPU_USAGE);
         case TDI_MEMORY:

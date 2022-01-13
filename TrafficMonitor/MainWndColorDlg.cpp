@@ -63,51 +63,7 @@ BOOL CMainWndColorDlg::OnInitDialog()
     //向列表中插入行
     for (auto iter = theApp.m_plugins.AllDisplayItemsWithPlugins().begin(); iter != theApp.m_plugins.AllDisplayItemsWithPlugins().end(); ++iter)
     {
-        CString item_name;
-        if (iter->is_plugin)
-        {
-            item_name = iter->plugin_item->GetItemName();
-        }
-        else
-        {
-            switch (iter->item_type)
-            {
-            case TDI_UP:
-                item_name = CCommon::LoadText(IDS_UPLOAD);
-                break;
-            case TDI_DOWN:
-                item_name = CCommon::LoadText(IDS_DOWNLOAD);
-                break;
-            case TDI_CPU:
-                item_name = CCommon::LoadText(IDS_CPU_USAGE);
-                break;
-            case TDI_MEMORY:
-                item_name = CCommon::LoadText(IDS_MEMORY_USAGE);
-                break;
-#ifndef WITHOUT_TEMPERATURE
-            case TDI_GPU_USAGE:
-                item_name = CCommon::LoadText(IDS_GPU_USAGE);
-                break;
-            case TDI_CPU_TEMP:
-                item_name = CCommon::LoadText(IDS_CPU_TEMPERATURE);
-                break;
-            case TDI_GPU_TEMP:
-                item_name = CCommon::LoadText(IDS_GPU_TEMPERATURE);
-                break;
-            case TDI_HDD_TEMP:
-                item_name = CCommon::LoadText(IDS_HDD_TEMPERATURE);
-                break;
-            case TDI_MAIN_BOARD_TEMP:
-                item_name = CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
-                break;
-            case TDI_HDD_USAGE:
-                item_name = CCommon::LoadText(IDS_HDD_USAGE);
-                break;
-#endif
-            default:
-                break;
-            }
-        }
+        CString item_name = iter->GetItemName();
         if (!item_name.IsEmpty())
         {
             int index = m_list_ctrl.GetItemCount();

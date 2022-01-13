@@ -13,7 +13,8 @@ enum DisplayItem
     TDI_GPU_TEMP = 1 << 6,
     TDI_HDD_TEMP = 1 << 7,
     TDI_MAIN_BOARD_TEMP = 1 << 8,
-    TDI_HDD_USAGE = 1 << 9
+    TDI_HDD_USAGE = 1 << 9,
+    TDI_TOTAL_SPEED = 1 << 10
 };
 
 //显示的项目
@@ -29,6 +30,8 @@ struct CommonDisplayItem
 
     bool operator<(const CommonDisplayItem&) const;
     bool operator==(const CommonDisplayItem&) const;
+
+    CString GetItemName() const;
 };
 
 //所有显示项目的集合
@@ -38,6 +41,7 @@ const std::set<DisplayItem> AllDisplayItems
 #ifndef WITHOUT_TEMPERATURE
     , TDI_GPU_USAGE, TDI_CPU_TEMP, TDI_GPU_TEMP, TDI_HDD_TEMP, TDI_MAIN_BOARD_TEMP, TDI_HDD_USAGE
 #endif
+    , TDI_TOTAL_SPEED
 };
 
 
