@@ -242,6 +242,34 @@ namespace OpenHardwareMonitorApi
         m_gpu_nvidia_usage = -1;
         m_gpu_ati_usage = -1;
         m_all_hdd_temperature.clear();
+        m_all_hdd_usage.clear();
+    }
+
+    void COpenHardwareMonitor::InsertValueToMap(std::map<std::wstring, float>& value_map, const std::wstring& key, float value)
+    {
+        auto iter = value_map.find(key);
+        if (iter == value_map.end())
+        {
+            value_map[key] = value;
+        }
+        else
+        {
+            std::wstring key_exist = iter->first;
+            size_t index = key_exist.rfind(L'#');   //查找字符串是否含有#号
+            if (index != std::wstring::npos)
+            {
+                //取到#号后面的数字，将其加1
+                int num = _wtoi(key_exist.substr(index + 1).c_str());
+                num++;
+                key_exist = key_exist.substr(0, index + 1);
+                key_exist += std::to_wstring(num);
+            }
+            else //没有#号则在末尾添加" #1"
+            {
+                key_exist += L" #1";
+            }
+            value_map[key_exist] = value;
+        }
     }
 
     void COpenHardwareMonitor::GetHardwareInfo()
@@ -277,10 +305,12 @@ namespace OpenHardwareMonitorApi
                 {
                     float cur_hdd_temperature = -1;
                     GetHardwareTemperature(computer->Hardware[i], cur_hdd_temperature);
-                    m_all_hdd_temperature[ClrStringToStdWstring(computer->Hardware[i]->Name)] = cur_hdd_temperature;
+                    //m_all_hdd_temperature[ClrStringToStdWstring(computer->Hardware[i]->Name)] = cur_hdd_temperature;
+                    InsertValueToMap(m_all_hdd_temperature, ClrStringToStdWstring(computer->Hardware[i]->Name), cur_hdd_temperature);
                     float cur_hdd_usage = -1;
                     GetHddUsage(computer->Hardware[i], cur_hdd_usage);
-                    m_all_hdd_usage[ClrStringToStdWstring(computer->Hardware[i]->Name)] = cur_hdd_usage;
+                    //m_all_hdd_usage[ClrStringToStdWstring(computer->Hardware[i]->Name)] = cur_hdd_usage;
+                    InsertValueToMap(m_all_hdd_usage, ClrStringToStdWstring(computer->Hardware[i]->Name), cur_hdd_usage);
                     if (m_hdd_temperature < 0)
                         m_hdd_temperature = cur_hdd_temperature;
                 }

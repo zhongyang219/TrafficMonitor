@@ -39,6 +39,8 @@ namespace OpenHardwareMonitorApi {
         bool GetHddUsage(IHardware^ hardware, float& hdd_usage);
 
         void ResetAllValues();
+        //向map中插入一个数值，如果key已经存在，则自动对新插入的key重命名
+        static void InsertValueToMap(std::map<std::wstring, float>& value_map, const std::wstring& key, float value);
 
     private:
         float m_cpu_temperature{};
