@@ -1307,7 +1307,7 @@ void CTaskBarDlg::TryDrawGraph(CDrawCommon& drawer, const CRect& value_rect, Dis
     for (const auto& item : list)
     {
         i++;
-        if (i == 0)     //不绘制链接头部的个数，因此在累加中，还未取平均数
+        if (i == 0)     //不绘制链表头部的数据，因为在累加中，还未取平均数
             continue;
         if (i >= value_rect.Width())
             break;
