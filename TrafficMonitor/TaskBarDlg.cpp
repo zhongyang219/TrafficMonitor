@@ -22,7 +22,7 @@ CTaskBarDlg::~CTaskBarDlg()
 {
     for (auto iter = m_map_history_data.begin(); iter != m_map_history_data.end(); ++iter)
     {
-        iter->second.RemoveAll();
+        iter->second.clear();
     }
 }
 
@@ -1248,14 +1248,29 @@ void CTaskBarDlg::OnPaint()
 
 void CTaskBarDlg::AddHisToList(DisplayItem item_type, int current_usage_percent)
 {
-    CList<int, int>& list = m_map_history_data[item_type];
-    list.AddHead(current_usage_percent);
-    int graph_max_length = m_item_rects[item_type].Width() * TASKBAR_GRAPH_STEP;
-    //判断是否超过最大长度，如果超过，将链表尾部数据移除
-    if (list.GetCount() > graph_max_length)
+    int& data_count{ m_history_data_count[item_type] };
+    std::list<int>& list = m_map_history_data[item_type];
+    //将数累加到加链表的头部，直到添加的数据数量达到TASKBAR_GRAPH_STEP的倍数时计算平均数
+    if (data_count % TASKBAR_GRAPH_STEP == 0)
     {
-        list.RemoveTail();
+        //计算前面累加的TASKBAR_GRAPH_STEP个数据的平均数
+        if (!list.empty())
+            list.front() /= TASKBAR_GRAPH_STEP;
+        //将新的数据添加到末尾
+        list.push_front(current_usage_percent);
     }
+    else
+    {
+        //数累加到加链表的头部
+        list.front() += current_usage_percent;
+    }
+    size_t graph_max_length = m_item_rects[item_type].Width();
+    //判断是否超过最大长度，如果超过，将链表尾部数据移除
+    if (list.size() > graph_max_length)
+    {
+        list.pop_back();
+    }
+    data_count++;
 }
 
 
@@ -1285,32 +1300,21 @@ void CTaskBarDlg::CheckClickedItem(CPoint point)
 
 void CTaskBarDlg::TryDrawGraph(CDrawCommon& drawer, const CRect& value_rect, DisplayItem item_type)
 {
-    CList<int, int>& list = m_map_history_data[item_type];
+    std::list<int>& list = m_map_history_data[item_type];
     if (theApp.m_taskbar_data.show_graph_dashed_box)
         drawer.DrawRectOutLine(value_rect, theApp.m_taskbar_data.status_bar_color, 1, true);
-    POSITION pos = list.GetHeadPosition();
-    if (NULL != pos)
+    int i{ -1 };
+    for (const auto& item : list)
     {
-        //有数据才需要画线
-        for (int i = 0; i < value_rect.Width(); i++)
-        {
-            //从右往左画线
-
-            CPoint start_point = CPoint(value_rect.right - i, value_rect.bottom);
-            int height = 0;
-
-            for (int j = 0; j < TASKBAR_GRAPH_STEP; j++)
-            {
-                height = list.GetNext(pos) * value_rect.Height() / 100;
-                if (NULL == pos)
-                {
-                    //没数据了直接返回。
-                    return;
-                }
-
-            }
-            drawer.DrawLine(start_point, height, theApp.m_taskbar_data.status_bar_color);
-        }
+        i++;
+        if (i == 0)     //不绘制链接头部的个数，因此在累加中，还未取平均数
+            continue;
+        if (i >= value_rect.Width())
+            break;
+        //从右往左画线
+        CPoint start_point = CPoint(value_rect.right - i, value_rect.bottom);
+        int height = item * value_rect.Height() / 100;
+        drawer.DrawLine(start_point, height, theApp.m_taskbar_data.status_bar_color);
     }
 }
 

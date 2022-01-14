@@ -5,6 +5,7 @@
 #include "IniHelper.h"
 #include "CommonData.h"
 #include "TaskbarItemOrderHelper.h"
+#include <list>
 
 // CTaskBarDlg 对话框
 #define TASKBAR_WND_HEIGHT theApp.DPI(32)				//任务栏窗口的高度
@@ -84,7 +85,8 @@ protected:
     int m_min_bar_width;	//最小化窗口缩小宽度后的宽度
     int m_min_bar_height;	//最小化窗口缩小高度后的高度（用于任务栏在屏幕左侧或右侧时）
 
-    std::map<DisplayItem, CList<int, int>> m_map_history_data;  //保存各项数据历史数据的链表，链表保存按照时间顺序，越靠近头部数据越新
+    std::map<DisplayItem, std::list<int>> m_map_history_data;  //保存各项数据历史数据的链表，链表保存按照时间顺序，越靠近头部数据越新
+    std::map<DisplayItem, int> m_history_data_count;            //统计添加到历史数据链表的次数
 
     int m_left_space{};			//最小化窗口和二级窗口窗口左侧的边距
     int m_top_space{};			//最小化窗口和二级窗口窗口顶部的边距（用于任务栏在屏幕左侧或右侧时）
