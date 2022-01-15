@@ -1853,6 +1853,12 @@ void CTrafficMonitorDlg::OnClose()
     if (IsTaskbarWndValid())
         m_tBarDlg->OnCancel();
 
+    //确保在退出前关闭所有窗口
+    for (const auto& item : CBaseDialog::AllUniqueHandels())
+    {
+        ::SendMessage(item.second, WM_COMMAND, IDCANCEL, 0);
+    }
+
     CDialog::OnClose();
 }
 
@@ -1986,25 +1992,15 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
     HWND handle{};
     if (lParam == WM_LBUTTONDOWN || lParam == WM_RBUTTONUP || lParam == WM_LBUTTONDBLCLK)
     {
-        const int WIND_NUM{ 7 };
-        //const CString diloge_title[WIND_NUM]{ _T("关于 TrafficMonitor"),_T("捐助"), _T("历史流量统计"), _T("连接详情"), _T("更换皮肤"), _T("选项设置"), _T("更换通知区图标") };
-        const CString diloge_title[WIND_NUM]{ CCommon::LoadText(IDS_TITLE_ABOUT), CCommon::LoadText(IDS_TITLE_DONATE), CCommon::LoadText(IDS_TITLE_HISTORY_TRAFFIC),
-            CCommon::LoadText(IDS_TITLE_CONNECTION_DETIAL), CCommon::LoadText(IDS_TITLE_CHANGE_SKIN), CCommon::LoadText(IDS_TITLE_OPTION), CCommon::LoadText(IDS_TITLE_CHANGE_ICON) };
-        //依次查找程序中的每一个对话框，如果找到一个没有关闭的对话框时，则不允许弹出右键菜单，防止用户在此时退出程序
-        for (int i{}; i < WIND_NUM; i++)
+        for (const auto& item : CBaseDialog::AllUniqueHandels())
         {
-            handle = ::FindWindow(NULL, diloge_title[i]);
-            if (handle != NULL)
+            if (IsWindow(item.second))
             {
-                HWND hParent = ::GetParent(handle);     //查找找到的窗口的父窗口的句柄
-                if (hParent == m_hWnd || (m_tBarDlg != nullptr && hParent == m_tBarDlg->m_hWnd))            //只有当找到的窗口的父窗口是程序主窗口或任务栏窗口时，才说明找到了
-                {
-                    dialog_exist = true;
-                    break;
-                }
+                dialog_exist = true;
+                handle = item.second;
+                break;
             }
         }
-
     }
 
     if (lParam == WM_LBUTTONDOWN)
@@ -2026,7 +2022,7 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
             }
         }
     }
-    if (lParam == WM_RBUTTONUP && !dialog_exist)
+    if (lParam == WM_RBUTTONUP/* && !dialog_exist*/)
     {
         //在通知区点击右键弹出右键菜单
         if (IsTaskbarWndValid())        //如果显示了任务栏窗口，则在右击了通知区图标后将焦点设置到任务栏窗口

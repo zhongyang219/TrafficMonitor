@@ -1,4 +1,4 @@
-// DonateDlg.cpp : ÊµÏÖÎÄ¼ş
+ï»¿// DonateDlg.cpp : å®ç°æ–‡ä»¶
 //
 
 #include "stdafx.h"
@@ -8,12 +8,12 @@
 #include "DrawCommon.h"
 
 
-// CDonateDlg ¶Ô»°¿ò
+// CDonateDlg å¯¹è¯æ¡†
 
-IMPLEMENT_DYNAMIC(CDonateDlg, CDialog)
+IMPLEMENT_DYNAMIC(CDonateDlg, CBaseDialog)
 
 CDonateDlg::CDonateDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD_DONATE_DIALOG, pParent)
+    : CBaseDialog(IDD_DONATE_DIALOG, pParent)
 {
 
 }
@@ -24,27 +24,32 @@ CDonateDlg::~CDonateDlg()
 
 void CDonateDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	//DDX_Control(pDX, IDC_DONATE_PIC, m_donate_pic);
+    CBaseDialog::DoDataExchange(pDX);
+    //DDX_Control(pDX, IDC_DONATE_PIC, m_donate_pic);
 }
 
 
-BEGIN_MESSAGE_MAP(CDonateDlg, CDialog)
+CString CDonateDlg::GetDialogName() const
+{
+    return _T("");
+}
+
+BEGIN_MESSAGE_MAP(CDonateDlg, CBaseDialog)
     ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 
-// CDonateDlg ÏûÏ¢´¦Àí³ÌĞò
+// CDonateDlg æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 
 BOOL CDonateDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+    CBaseDialog::OnInitDialog();
 
-	// TODO:  ÔÚ´ËÌí¼Ó¶îÍâµÄ³õÊ¼»¯
-	SetWindowText(CCommon::LoadText(IDS_TITLE_DONATE));
+    // TODO:  åœ¨æ­¤æ·»åŠ é¢å¤–çš„åˆå§‹åŒ–
+    SetWindowText(CCommon::LoadText(IDS_TITLE_DONATE));
 
-    //¼ÆËãÁ½¸ö¶şÎ¬ÂëÍ¼Æ¬µÄÎ»ÖÃ
+    //è®¡ç®—ä¸¤ä¸ªäºŒç»´ç å›¾ç‰‡çš„ä½ç½®
     CRect rect{};
     CWnd* pWnd = nullptr;
     pWnd = GetDlgItem(IDC_TEXT_STATIC);
@@ -72,16 +77,16 @@ BOOL CDonateDlg::OnInitDialog()
     m_pic2_rect = rc_pic_area;
     m_pic2_rect.left = m_pic2_rect.right - (rc_pic_area.Width() / 2) + theApp.DPI(4);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // Òì³£: OCX ÊôĞÔÒ³Ó¦·µ»Ø FALSE
+    return TRUE;  // return TRUE unless you set the focus to a control
+                  // å¼‚å¸¸: OCX å±æ€§é¡µåº”è¿”å› FALSE
 }
 
 
 void CDonateDlg::OnPaint()
 {
     CPaintDC dc(this); // device context for painting
-                       // TODO: ÔÚ´Ë´¦Ìí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂë
-                       // ²»Îª»æÍ¼ÏûÏ¢µ÷ÓÃ CDialog::OnPaint()
+                       // TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
+                       // ä¸ä¸ºç»˜å›¾æ¶ˆæ¯è°ƒç”¨ CBaseDialog::OnPaint()
     CDrawCommon draw;
     draw.Create(&dc, this);
     draw.DrawBitmap(IDB_DONATE_BITMAP, m_pic1_rect.TopLeft(), m_pic1_rect.Size(), CDrawCommon::StretchMode::FIT);

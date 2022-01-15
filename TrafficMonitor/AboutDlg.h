@@ -1,10 +1,11 @@
 ﻿#pragma once
 #include "DonateDlg.h"
 #include "LinkStatic.h"
+#include "BaseDialog.h"
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
-class CAboutDlg : public CDialog
+class CAboutDlg : public CBaseDialog
 {
 public:
     CAboutDlg();
@@ -33,6 +34,7 @@ protected:
 
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
     CString GetDonateList();        //从资源文件加载捐赠人员名单
+    virtual CString GetDialogName() const override;
 
     // 实现
 protected:

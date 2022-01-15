@@ -4,7 +4,7 @@
 #include "MessageDlg.h"
 #include "DrawCommon.h"
 
-BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
+BEGIN_MESSAGE_MAP(CAboutDlg, CBaseDialog)
     //ON_STN_CLICKED(IDC_STATIC_DONATE, &CAboutDlg::OnStnClickedStaticDonate)
     ON_MESSAGE(WM_LINK_CLICKED, &CAboutDlg::OnLinkClicked)
     ON_WM_PAINT()
@@ -12,13 +12,13 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
     ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
-CAboutDlg::CAboutDlg() : CDialog(IDD_ABOUTBOX)
+CAboutDlg::CAboutDlg() : CBaseDialog(IDD_ABOUTBOX)
 {
 }
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
-    CDialog::DoDataExchange(pDX);
+    CBaseDialog::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_STATIC_MAIL, m_mail);
     DDX_Control(pDX, IDC_STATIC_ACKNOWLEDGEMENT, m_acknowledgement);
     DDX_Control(pDX, IDC_STATIC_GITHUB, m_github);
@@ -37,9 +37,14 @@ CString CAboutDlg::GetDonateList()
     return CCommon::GetTextResource(IDR_ACKNOWLEDGEMENT_TEXT, 2);
 }
 
+CString CAboutDlg::GetDialogName() const
+{
+    return _T("");
+}
+
 BOOL CAboutDlg::OnInitDialog()
 {
-    CDialog::OnInitDialog();
+    CBaseDialog::OnInitDialog();
 
     // TODO:  在此添加额外的初始化
     SetWindowText(CCommon::LoadText(IDS_TITLE_ABOUT));
@@ -139,7 +144,7 @@ BOOL CAboutDlg::PreTranslateMessage(MSG* pMsg)
     if (pMsg->message == WM_MOUSEMOVE)
         m_tool_tip.RelayEvent(pMsg);
 
-    return CDialog::PreTranslateMessage(pMsg);
+    return CBaseDialog::PreTranslateMessage(pMsg);
 }
 
 //void CAboutDlg::OnStnClickedStaticDonate()
@@ -183,7 +188,7 @@ void CAboutDlg::OnPaint()
 {
     CPaintDC dc(this); // device context for painting
                        // TODO: 在此处添加消息处理程序代码
-                       // 不为绘图消息调用 CDialog::OnPaint()
+                       // 不为绘图消息调用 CBaseDialog::OnPaint()
     CDrawCommon draw;
     draw.Create(&dc, this);
     draw.GetDC()->FillSolidRect(m_rc_pic, RGB(161, 200, 255));
@@ -218,13 +223,13 @@ BOOL CAboutDlg::OnEraseBkgnd(CDC* pDC)
     pDC->FillSolidRect(rc_gray, GetSysColor(COLOR_BTNFACE));
 
     return TRUE;
-    //return CDialog::OnEraseBkgnd(pDC);
+    //return CBaseDialog::OnEraseBkgnd(pDC);
 }
 
 
 HBRUSH CAboutDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
-    HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+    HBRUSH hbr = CBaseDialog::OnCtlColor(pDC, pWnd, nCtlColor);
 
     // TODO:  在此更改 DC 的任何特性
     //去掉static控件的灰色灰色背景

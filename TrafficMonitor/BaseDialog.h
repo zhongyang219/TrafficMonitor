@@ -19,8 +19,8 @@ public:
     //#endif
 
     void SetMinSize(int cx, int cy);		//设置窗口的最小大小，如果未设置，则使用窗口的初始大小作为最小大小
-    static HWND GetUniqueHandel(LPCTSTR dlg_name);          //获取此窗口唯一的句柄
-    static const std::map<CString, HWND>& AllUniqueHandels();
+    static HWND GetUniqueHandel(LPCTSTR dlg_name);          //获指定窗口唯一的句柄
+    static const std::map<CString, HWND>& AllUniqueHandels();   //获取所有窗口的句柄
 
 private:
     void LoadConfig();

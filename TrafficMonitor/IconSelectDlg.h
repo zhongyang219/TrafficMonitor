@@ -1,54 +1,56 @@
-#pragma once
+ï»¿#pragma once
 #include "afxwin.h"
 #include "PictureStatic.h"
+#include "BaseDialog.h"
 
-// CIconSelectDlg ¶Ô»°¿ò
+// CIconSelectDlg å¯¹è¯æ¡†
 
-class CIconSelectDlg : public CDialog
+class CIconSelectDlg : public CBaseDialog
 {
-	DECLARE_DYNAMIC(CIconSelectDlg)
+    DECLARE_DYNAMIC(CIconSelectDlg)
 
 public:
-	CIconSelectDlg(int icon_selected, CWnd* pParent = NULL);   // ±ê×¼¹¹Ôìº¯Êı
-	virtual ~CIconSelectDlg();
+    CIconSelectDlg(int icon_selected, CWnd* pParent = NULL);   // æ ‡å‡†æ„é€ å‡½æ•°
+    virtual ~CIconSelectDlg();
 
-	int GetIconSelected() const;
+    int GetIconSelected() const;
 
     void SetAutoAdaptNotifyIcon(bool val);
     bool AutoAdaptNotifyIcon() const;
 
-// ¶Ô»°¿òÊı¾İ
+    // å¯¹è¯æ¡†æ•°æ®
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_ICON_SELECT_DIALOG };
+    enum { IDD = IDD_ICON_SELECT_DIALOG };
 #endif
 
-#define PREVIEW_WIDTH theApp.DPI(200)		//Ô¤ÀÀÍ¼µÄ¿í¸ß
+#define PREVIEW_WIDTH theApp.DPI(200)		//é¢„è§ˆå›¾çš„å®½é«˜
 #define PREVIEW_HEIGHT theApp.DPI(40)
 
-#define ICON_X theApp.DPI(46)		//Ô¤ÀÀÍ¼ÖĞÍ¼±êµÄÎ»ÖÃ
+#define ICON_X theApp.DPI(46)		//é¢„è§ˆå›¾ä¸­å›¾æ ‡çš„ä½ç½®
 #define ICON_Y theApp.DPI(12)
 
 protected:
-	CPictureStatic m_preview_pic;
-	CComboBox m_icon_select_combo;
+    CPictureStatic m_preview_pic;
+    CComboBox m_icon_select_combo;
     CButton m_auto_adapt_chk;
 
-	int m_icon_selected{};
+    int m_icon_selected{};
 
     bool m_atuo_adapt_notify_icon;
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV æ”¯æŒ
+    virtual CString GetDialogName() const override;
 
-	void DrawPreviewIcon(CDC* pDC);
+    void DrawPreviewIcon(CDC* pDC);
 
-	DECLARE_MESSAGE_MAP()
+    DECLARE_MESSAGE_MAP()
 public:
-	virtual BOOL OnInitDialog();
-	//afx_msg void OnTimer(UINT_PTR nIDEvent);
-	afx_msg void OnCbnSelchangeCombo1();
+    virtual BOOL OnInitDialog();
+    //afx_msg void OnTimer(UINT_PTR nIDEvent);
+    afx_msg void OnCbnSelchangeCombo1();
 protected:
-	afx_msg LRESULT OnControlRepaint(WPARAM wParam, LPARAM lParam);
+    afx_msg LRESULT OnControlRepaint(WPARAM wParam, LPARAM lParam);
 public:
     afx_msg void OnBnClickedAutoAdaptCheck();
 };

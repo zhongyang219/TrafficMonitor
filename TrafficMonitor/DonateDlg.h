@@ -1,31 +1,34 @@
-#pragma once
+ï»¿#pragma once
 #include "afxwin.h"
 #include "PictureStatic.h"
+#include "BaseDialog.h"
 
-// CDonateDlg ¶Ô»°¿ò
+// CDonateDlg å¯¹è¯æ¡†
 
-class CDonateDlg : public CDialog
+class CDonateDlg : public CBaseDialog
 {
-	DECLARE_DYNAMIC(CDonateDlg)
+    DECLARE_DYNAMIC(CDonateDlg)
 
 public:
-	CDonateDlg(CWnd* pParent = NULL);   // ±ê×¼¹¹Ôìº¯Êı
-	virtual ~CDonateDlg();
+    CDonateDlg(CWnd* pParent = NULL);   // æ ‡å‡†æ„é€ å‡½æ•°
+    virtual ~CDonateDlg();
 
-// ¶Ô»°¿òÊı¾İ
+    // å¯¹è¯æ¡†æ•°æ®
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_DONATE_DIALOG };
+    enum { IDD = IDD_DONATE_DIALOG };
 #endif
 
 protected:
-	//CPictureStatic m_donate_pic;
+    //CPictureStatic m_donate_pic;
     CRect m_pic1_rect;
     CRect m_pic2_rect;
 
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV æ”¯æŒ
+    virtual CString GetDialogName() const override;
 
-	DECLARE_MESSAGE_MAP()
+    DECLARE_MESSAGE_MAP()
+
 public:
-	virtual BOOL OnInitDialog();
+    virtual BOOL OnInitDialog();
     afx_msg void OnPaint();
 };
