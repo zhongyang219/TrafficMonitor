@@ -28,11 +28,11 @@ public:
 #endif
 
 private:
-    CTaskbarItemOrderHelper m_item_order;
+    CTaskbarItemOrderHelper m_item_order;   //显示项目的顺序
     CCheckListBox m_list_ctrl;
-    unsigned int m_display_item;
-    StringSet m_plugin_item;
-    int m_item_coumt{};             //除插件项目以外的项目的个数
+    unsigned int m_display_item;        //使用每个bit位表示的要显示的内置项目
+    StringSet m_plugin_item;            //要显示的插件项目
+    std::vector<CommonDisplayItem> m_all_displayed_item;    //在列表中显示的所有项目
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
@@ -53,5 +53,6 @@ public:
     afx_msg void OnBnClickedMoveDownButton();
     afx_msg void OnBnClickedRestoreDefaultButton();
     afx_msg void OnLbnSelchangeList1();
+    afx_msg void OnCheckChanged();
     virtual void OnOK();
 };

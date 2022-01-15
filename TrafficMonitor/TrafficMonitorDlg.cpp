@@ -8,6 +8,7 @@
 #include "afxdialogex.h"
 #include "Test.h"
 #include "PluginManagerDlg.h"
+#include "SetItemOrderDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -94,16 +95,16 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_MESSAGE(WM_TASKBAR_MENU_POPED_UP, &CTrafficMonitorDlg::OnTaskbarMenuPopedUp)
     ON_COMMAND(ID_SHOW_NET_SPEED, &CTrafficMonitorDlg::OnShowNetSpeed)
     ON_WM_QUERYENDSESSION()
-    ON_COMMAND(ID_SHOW_UP_SPEED, &CTrafficMonitorDlg::OnShowUpSpeed)
-    ON_COMMAND(ID_SHOW_DOWN_SPEED, &CTrafficMonitorDlg::OnShowDownSpeed)
-    ON_COMMAND(ID_SHOW_CPU_USAGE, &CTrafficMonitorDlg::OnShowCpuUsage)
-    ON_COMMAND(ID_SHOW_MEMORY_USAGE, &CTrafficMonitorDlg::OnShowMemoryUsage)
-    ON_COMMAND(ID_SHOW_CPU_TEMPERATURE, &CTrafficMonitorDlg::OnShowCpuTemperature)
-    ON_COMMAND(ID_SHOW_GPU_TEMPERATURE, &CTrafficMonitorDlg::OnShowGpuTemperature)
-    ON_COMMAND(ID_SHOW_HDD_TEMPERATURE, &CTrafficMonitorDlg::OnShowHddTemperature)
-    ON_COMMAND(ID_SHOW_MAIN_BOARD_TEMPERATURE, &CTrafficMonitorDlg::OnShowMainBoardTemperature)
-    ON_COMMAND(ID_SHOW_HDD, &CTrafficMonitorDlg::OnShowHddUsage)
-    ON_COMMAND(ID_SHOW_TOTAL_SPEED, &CTrafficMonitorDlg::OnShowTotalSpeed)
+    //ON_COMMAND(ID_SHOW_UP_SPEED, &CTrafficMonitorDlg::OnShowUpSpeed)
+    //ON_COMMAND(ID_SHOW_DOWN_SPEED, &CTrafficMonitorDlg::OnShowDownSpeed)
+    //ON_COMMAND(ID_SHOW_CPU_USAGE, &CTrafficMonitorDlg::OnShowCpuUsage)
+    //ON_COMMAND(ID_SHOW_MEMORY_USAGE, &CTrafficMonitorDlg::OnShowMemoryUsage)
+    //ON_COMMAND(ID_SHOW_CPU_TEMPERATURE, &CTrafficMonitorDlg::OnShowCpuTemperature)
+    //ON_COMMAND(ID_SHOW_GPU_TEMPERATURE, &CTrafficMonitorDlg::OnShowGpuTemperature)
+    //ON_COMMAND(ID_SHOW_HDD_TEMPERATURE, &CTrafficMonitorDlg::OnShowHddTemperature)
+    //ON_COMMAND(ID_SHOW_MAIN_BOARD_TEMPERATURE, &CTrafficMonitorDlg::OnShowMainBoardTemperature)
+    //ON_COMMAND(ID_SHOW_HDD, &CTrafficMonitorDlg::OnShowHddUsage)
+    //ON_COMMAND(ID_SHOW_TOTAL_SPEED, &CTrafficMonitorDlg::OnShowTotalSpeed)
     ON_WM_PAINT()
     ON_MESSAGE(WM_DPICHANGED, &CTrafficMonitorDlg::OnDpichanged)
     ON_MESSAGE(WM_TASKBAR_WND_CLOSED, &CTrafficMonitorDlg::OnTaskbarWndClosed)
@@ -115,6 +116,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_MESSAGE(WM_REOPEN_TASKBAR_WND, &CTrafficMonitorDlg::OnReopenTaksbarWnd)
     ON_COMMAND(ID_OPEN_TASK_MANAGER, &CTrafficMonitorDlg::OnOpenTaskManager)
     ON_MESSAGE(WM_SETTINGS_APPLIED, &CTrafficMonitorDlg::OnSettingsApplied)
+    ON_COMMAND(ID_DISPLAY_SETTINGS, &CTrafficMonitorDlg::OnDisplaySettings)
 END_MESSAGE_MAP()
 
 
@@ -501,12 +503,6 @@ void CTrafficMonitorDlg::CloseTaskBarWnd()
 {
     if (m_tBarDlg != nullptr)
     {
-        HWND hParent = ::GetParent(COptionsDlg::GetUniqueHandel(OPTION_DLG_NAME));
-        if (hParent == m_tBarDlg->GetSafeHwnd())            //关闭任务栏窗口前，如果选项设置窗口已打开且父窗口是任务栏窗口，则将其关闭
-        {
-            ::SendMessage(COptionsDlg::GetUniqueHandel(OPTION_DLG_NAME), WM_COMMAND, IDCANCEL, 0);
-        }
-
         if (IsTaskbarWndValid())
             m_tBarDlg->OnCancel();
         delete m_tBarDlg;
@@ -715,7 +711,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
             theApp.InitOpenHardwareLibInThread();
         }
         //更新任务栏窗口右键菜单
-        theApp.UpdateTaskbarWndMenu();
+        //theApp.UpdateTaskbarWndMenu();
     }
 #endif
 
@@ -904,7 +900,7 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 
     //初始化菜单
     theApp.InitMenuResourse();
-    theApp.UpdateTaskbarWndMenu();
+    //theApp.UpdateTaskbarWndMenu();
 
     //设置窗口透明度
     SetTransparency();
@@ -2522,73 +2518,73 @@ BOOL CTrafficMonitorDlg::OnQueryEndSession()
 }
 
 
-void CTrafficMonitorDlg::OnShowUpSpeed()
-{
-    // TODO: 在此添加命令处理程序代码
-    TaskbarShowHideItem(TDI_UP);
-}
-
-
-void CTrafficMonitorDlg::OnShowDownSpeed()
-{
-    // TODO: 在此添加命令处理程序代码
-    TaskbarShowHideItem(TDI_DOWN);
-}
-
-
-void CTrafficMonitorDlg::OnShowCpuUsage()
-{
-    // TODO: 在此添加命令处理程序代码
-    TaskbarShowHideItem(TDI_CPU);
-}
-
-
-void CTrafficMonitorDlg::OnShowMemoryUsage()
-{
-    // TODO: 在此添加命令处理程序代码
-    TaskbarShowHideItem(TDI_MEMORY);
-}
-
-
-void CTrafficMonitorDlg::OnShowCpuTemperature()
-{
-    // TODO: 在此添加命令处理程序代码
-    TaskbarShowHideItem(TDI_CPU_TEMP);
-}
-
-
-void CTrafficMonitorDlg::OnShowGpuTemperature()
-{
-    // TODO: 在此添加命令处理程序代码
-    TaskbarShowHideItem(TDI_GPU_TEMP);
-}
-
-
-void CTrafficMonitorDlg::OnShowHddTemperature()
-{
-    // TODO: 在此添加命令处理程序代码
-    TaskbarShowHideItem(TDI_HDD_TEMP);
-}
-
-
-void CTrafficMonitorDlg::OnShowMainBoardTemperature()
-{
-    // TODO: 在此添加命令处理程序代码
-    TaskbarShowHideItem(TDI_MAIN_BOARD_TEMP);
-}
-
-
-void CTrafficMonitorDlg::OnShowHddUsage()
-{
-    // TODO: 在此添加命令处理程序代码
-    TaskbarShowHideItem(TDI_HDD_USAGE);
-}
-
-
-void CTrafficMonitorDlg::OnShowTotalSpeed()
-{
-    TaskbarShowHideItem(TDI_TOTAL_SPEED);
-}
+//void CTrafficMonitorDlg::OnShowUpSpeed()
+//{
+//    // TODO: 在此添加命令处理程序代码
+//    TaskbarShowHideItem(TDI_UP);
+//}
+//
+//
+//void CTrafficMonitorDlg::OnShowDownSpeed()
+//{
+//    // TODO: 在此添加命令处理程序代码
+//    TaskbarShowHideItem(TDI_DOWN);
+//}
+//
+//
+//void CTrafficMonitorDlg::OnShowCpuUsage()
+//{
+//    // TODO: 在此添加命令处理程序代码
+//    TaskbarShowHideItem(TDI_CPU);
+//}
+//
+//
+//void CTrafficMonitorDlg::OnShowMemoryUsage()
+//{
+//    // TODO: 在此添加命令处理程序代码
+//    TaskbarShowHideItem(TDI_MEMORY);
+//}
+//
+//
+//void CTrafficMonitorDlg::OnShowCpuTemperature()
+//{
+//    // TODO: 在此添加命令处理程序代码
+//    TaskbarShowHideItem(TDI_CPU_TEMP);
+//}
+//
+//
+//void CTrafficMonitorDlg::OnShowGpuTemperature()
+//{
+//    // TODO: 在此添加命令处理程序代码
+//    TaskbarShowHideItem(TDI_GPU_TEMP);
+//}
+//
+//
+//void CTrafficMonitorDlg::OnShowHddTemperature()
+//{
+//    // TODO: 在此添加命令处理程序代码
+//    TaskbarShowHideItem(TDI_HDD_TEMP);
+//}
+//
+//
+//void CTrafficMonitorDlg::OnShowMainBoardTemperature()
+//{
+//    // TODO: 在此添加命令处理程序代码
+//    TaskbarShowHideItem(TDI_MAIN_BOARD_TEMP);
+//}
+//
+//
+//void CTrafficMonitorDlg::OnShowHddUsage()
+//{
+//    // TODO: 在此添加命令处理程序代码
+//    TaskbarShowHideItem(TDI_HDD_USAGE);
+//}
+//
+//
+//void CTrafficMonitorDlg::OnShowTotalSpeed()
+//{
+//    TaskbarShowHideItem(TDI_TOTAL_SPEED);
+//}
 
 void CTrafficMonitorDlg::OnPaint()
 {
@@ -2706,4 +2702,22 @@ afx_msg LRESULT CTrafficMonitorDlg::OnSettingsApplied(WPARAM wParam, LPARAM lPar
         ApplySettings(*pOptionsDlg);
     }
     return 0;
+}
+
+
+void CTrafficMonitorDlg::OnDisplaySettings()
+{
+    // TODO: 在此添加命令处理程序代码
+    CSetItemOrderDlg dlg;
+    dlg.SetItemOrder(theApp.m_taskbar_data.item_order.GetItemOrderConst());
+    dlg.SetDisplayItem(theApp.m_taskbar_data.m_tbar_display_item);
+    dlg.SetPluginDisplayItem(theApp.m_taskbar_data.plugin_display_item);
+    if (dlg.DoModal() == IDOK)
+    {
+        theApp.m_taskbar_data.item_order.SetOrder(dlg.GetItemOrder());
+        theApp.m_taskbar_data.m_tbar_display_item = dlg.GetDisplayItem();
+        theApp.m_taskbar_data.plugin_display_item = dlg.GetPluginDisplayItem();
+        CloseTaskBarWnd();
+        OpenTaskBarWnd();
+    }
 }

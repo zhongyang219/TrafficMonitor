@@ -1031,6 +1031,17 @@ void CTaskBarDlg::OnCancel()
 {
     // TODO: 在此添加专用代码和/或调用基类
     //SaveConfig();
+
+    //关闭所有以任务栏窗口为父窗口的窗口
+    for (const auto& item : CBaseDialog::AllUniqueHandels())
+    {
+        HWND parent = ::GetParent(item.second);
+        if (parent == GetSafeHwnd())
+        {
+            ::SendMessage(item.second, WM_COMMAND, IDCANCEL, 0);
+        }
+    }
+
     DestroyWindow();
     //程序关闭的时候，把最小化窗口的width恢复回去
     CheckTaskbarOnTopOrBottom();
@@ -1106,7 +1117,7 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
         {
             bool displayed{ theApp.m_taskbar_data.plugin_display_item.Contains(item->GetItemId()) };
             pMenu->CheckMenuItem(ID_SHOW_PLUGIN_ITEM_START + i, MF_BYCOMMAND | (displayed ? MF_CHECKED : MF_UNCHECKED));
-        }
+}
     }
 
     pMenu->EnableMenuItem(ID_SELECT_ALL_CONNECTION, MF_BYCOMMAND | (theApp.m_general_data.show_all_interface ? MF_GRAYED : MF_ENABLED));

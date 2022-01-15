@@ -600,13 +600,15 @@
 #define ID_PLUGIN_DISABLE               33401
 #define ID_SHOW_TOTAL_SPEED             33402
 #define ID_OPEN_TASK_MANAGER            33403
+#define ID_                             33404
+#define ID_DISPLAY_SETTINGS             33405
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        341
-#define _APS_NEXT_COMMAND_VALUE         33404
+#define _APS_NEXT_COMMAND_VALUE         33406
 #define _APS_NEXT_CONTROL_VALUE         1160
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

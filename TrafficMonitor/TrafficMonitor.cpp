@@ -273,7 +273,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_cfg_data.m_use_log_scale = ini.GetBool(_T("histroy_traffic"), _T("use_log_scale"), true);
     m_cfg_data.m_sunday_first = ini.GetBool(_T("histroy_traffic"), _T("sunday_first"), true);
     m_cfg_data.m_view_type = static_cast<HistoryTrafficViewType>(ini.GetInt(_T("histroy_traffic"), _T("view_type"), static_cast<int>(HistoryTrafficViewType::HV_DAY)));
-    
+
     m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), false);
     m_notify_interval = ini.GetInt(_T("other"), _T("notify_interval"), 60);
     m_exit_when_start_by_restart_manager = ini.GetBool(_T("other"), _T("exit_when_start_by_restart_manager"), true);
@@ -763,8 +763,8 @@ void CTrafficMonitorApp::InitMenuResourse()
         CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_MOUSE_PENETRATE, FALSE, GetMenuIcon(IDI_MOUSE));
     if (!m_win_version.IsWindows11OrLater())
         CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_LOCK_WINDOW_POS, FALSE, GetMenuIcon(IDI_LOCK));
-    if (!m_win_version.IsWindows11OrLater())
-        CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_SHOW_NOTIFY_ICON, FALSE, GetMenuIcon(IDI_NOTIFY));
+    //if (!m_win_version.IsWindows11OrLater())
+    //    CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_SHOW_NOTIFY_ICON, FALSE, GetMenuIcon(IDI_NOTIFY));
     if (!m_win_version.IsWindows11OrLater())
         CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_SHOW_CPU_MEMORY, FALSE, GetMenuIcon(IDI_MORE));
     if (!m_win_version.IsWindows11OrLater())
@@ -785,9 +785,9 @@ void CTrafficMonitorApp::InitMenuResourse()
     CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSubMenu(0)->GetSafeHmenu(), 0, TRUE, GetMenuIcon(IDI_CONNECTION));
     CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_NETWORK_INFO, FALSE, GetMenuIcon(IDI_INFO));
     CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_TRAFFIC_HISTORY, FALSE, GetMenuIcon(IDI_STATISTICS));
-    CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSubMenu(0)->GetSafeHmenu(), 5, TRUE, GetMenuIcon(IDI_ITEM));
-    if (!m_win_version.IsWindows11OrLater())
-        CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_SHOW_NOTIFY_ICON, FALSE, GetMenuIcon(IDI_NOTIFY));
+    CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_DISPLAY_SETTINGS, FALSE, GetMenuIcon(IDI_ITEM));
+    //if (!m_win_version.IsWindows11OrLater())
+    //    CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_SHOW_NOTIFY_ICON, FALSE, GetMenuIcon(IDI_NOTIFY));
     if (!m_win_version.IsWindows11OrLater())
         CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_SHOW_MAIN_WND, FALSE, GetMenuIcon(IDI_MAIN_WINDOW));
     CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_SHOW_TASK_BAR_WND, FALSE, GetMenuIcon(IDI_CLOSE));
@@ -1089,52 +1089,52 @@ void CTrafficMonitorApp::UpdateOpenHardwareMonitorEnableState()
 #endif
 }
 
-void CTrafficMonitorApp::UpdateTaskbarWndMenu()
-{
-    //获取“显示设置”子菜单
-    CMenu* pMenu = m_taskbar_menu.GetSubMenu(0)->GetSubMenu(5);
-    ASSERT(pMenu != nullptr);
-    if (pMenu != nullptr)
-    {
-        //将ID_SHOW_MEMORY_USAGE后面的所有菜单项删除
-        if (pMenu->GetMenuItemCount() > 4)
-        {
-            int start_pos = CCommon::GetMenuItemPosition(pMenu, ID_SHOW_MEMORY_USAGE) + 1;
-            while (pMenu->GetMenuItemCount() > start_pos)
-            {
-                pMenu->DeleteMenu(start_pos, MF_BYPOSITION);
-            }
-        }
-
-        //添加温度相关菜单项
-#ifndef WITHOUT_TEMPERATURE
-        if (m_general_data.IsHardwareEnable(HI_GPU))
-            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_GPU, CCommon::LoadText(IDS_GPU_USAGE));
-        if (m_general_data.IsHardwareEnable(HI_CPU))
-            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_CPU_TEMPERATURE, CCommon::LoadText(IDS_CPU_TEMPERATURE));
-        if (m_general_data.IsHardwareEnable(HI_GPU))
-            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_GPU_TEMPERATURE, CCommon::LoadText(IDS_GPU_TEMPERATURE));
-        if (m_general_data.IsHardwareEnable(HI_HDD))
-            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_HDD_TEMPERATURE, CCommon::LoadText(IDS_HDD_TEMPERATURE));
-        if (m_general_data.IsHardwareEnable(HI_MBD))
-            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_MAIN_BOARD_TEMPERATURE, CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE));
-        if (m_general_data.IsHardwareEnable(HI_HDD))
-            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_HDD, CCommon::LoadText(IDS_HDD_USAGE));
-#endif
-
-        pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_TOTAL_SPEED, CCommon::LoadText(IDS_TOTAL_NET_SPEED));
-
-        //添加插件菜单项
-        if (!m_plugins.GetPluginItems().empty())
-            pMenu->AppendMenu(MF_SEPARATOR);
-        int plugin_index = 0;
-        for (const auto& plugin_item : m_plugins.GetPluginItems())
-        {
-            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_PLUGIN_ITEM_START + plugin_index, plugin_item->GetItemName());
-            plugin_index++;
-        }
-    }
-}
+//void CTrafficMonitorApp::UpdateTaskbarWndMenu()
+//{
+//    //获取“显示设置”子菜单
+//    CMenu* pMenu = m_taskbar_menu.GetSubMenu(0)->GetSubMenu(5);
+//    ASSERT(pMenu != nullptr);
+//    if (pMenu != nullptr)
+//    {
+//        //将ID_SHOW_MEMORY_USAGE后面的所有菜单项删除
+//        if (pMenu->GetMenuItemCount() > 4)
+//        {
+//            int start_pos = CCommon::GetMenuItemPosition(pMenu, ID_SHOW_MEMORY_USAGE) + 1;
+//            while (pMenu->GetMenuItemCount() > start_pos)
+//            {
+//                pMenu->DeleteMenu(start_pos, MF_BYPOSITION);
+//            }
+//        }
+//
+//        //添加温度相关菜单项
+//#ifndef WITHOUT_TEMPERATURE
+//        if (m_general_data.IsHardwareEnable(HI_GPU))
+//            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_GPU, CCommon::LoadText(IDS_GPU_USAGE));
+//        if (m_general_data.IsHardwareEnable(HI_CPU))
+//            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_CPU_TEMPERATURE, CCommon::LoadText(IDS_CPU_TEMPERATURE));
+//        if (m_general_data.IsHardwareEnable(HI_GPU))
+//            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_GPU_TEMPERATURE, CCommon::LoadText(IDS_GPU_TEMPERATURE));
+//        if (m_general_data.IsHardwareEnable(HI_HDD))
+//            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_HDD_TEMPERATURE, CCommon::LoadText(IDS_HDD_TEMPERATURE));
+//        if (m_general_data.IsHardwareEnable(HI_MBD))
+//            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_MAIN_BOARD_TEMPERATURE, CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE));
+//        if (m_general_data.IsHardwareEnable(HI_HDD))
+//            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_HDD, CCommon::LoadText(IDS_HDD_USAGE));
+//#endif
+//
+//        pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_TOTAL_SPEED, CCommon::LoadText(IDS_TOTAL_NET_SPEED));
+//
+//        //添加插件菜单项
+//        if (!m_plugins.GetPluginItems().empty())
+//            pMenu->AppendMenu(MF_SEPARATOR);
+//        int plugin_index = 0;
+//        for (const auto& plugin_item : m_plugins.GetPluginItems())
+//        {
+//            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_PLUGIN_ITEM_START + plugin_index, plugin_item->GetItemName());
+//            plugin_index++;
+//        }
+//    }
+//}
 
 bool CTrafficMonitorApp::IsForceShowNotifyIcon()
 {

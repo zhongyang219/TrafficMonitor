@@ -139,7 +139,7 @@ public:
     void InitOpenHardwareLibInThread();     //开启一个后台线程初始化OpenHardwareMonitor
     void UpdateOpenHardwareMonitorEnableState();    //更新硬件监控的启用/禁用状态
 
-    void UpdateTaskbarWndMenu();      //更新任务栏窗口右键菜单
+    //void UpdateTaskbarWndMenu();      //更新任务栏窗口右键菜单
     bool IsForceShowNotifyIcon();       //是否需要强制显示通知区图标
 
     std::wstring GetPlauginTooltipInfo() const;

@@ -63,6 +63,7 @@ BEGIN_MESSAGE_MAP(CSetItemOrderDlg, CBaseDialog)
     ON_BN_CLICKED(IDC_MOVE_DOWN_BUTTON, &CSetItemOrderDlg::OnBnClickedMoveDownButton)
     ON_BN_CLICKED(IDC_RESTORE_DEFAULT_BUTTON, &CSetItemOrderDlg::OnBnClickedRestoreDefaultButton)
     ON_LBN_SELCHANGE(IDC_LIST1, &CSetItemOrderDlg::OnLbnSelchangeList1)
+    ON_CLBN_CHKCHANGE(IDC_LIST1, &CSetItemOrderDlg::OnCheckChanged)
 END_MESSAGE_MAP()
 
 
@@ -88,9 +89,8 @@ void CSetItemOrderDlg::ShowItem()
 {
     //向列表中添加项目
     m_list_ctrl.ResetContent();
-    auto item_list = m_item_order.GetAllDisplayItemsWithOrder();
-    m_item_coumt = static_cast<int>(item_list.size());
-    for (const auto& item : item_list)
+    m_all_displayed_item = m_item_order.GetAllDisplayItemsWithOrder();
+    for (const auto& item : m_all_displayed_item)
     {
         m_list_ctrl.AddString(CTaskbarItemOrderHelper::GetItemDisplayName(item));
         if (GetItemChecked(item))
@@ -102,8 +102,8 @@ void CSetItemOrderDlg::ShowItem()
 
 void CSetItemOrderDlg::EnableCtrl(int list_selected)
 {
-    EnableDlgCtrl(IDC_MOVE_UP_BUTTON, list_selected > 0 && list_selected < m_item_coumt);
-    EnableDlgCtrl(IDC_MOVE_DOWN_BUTTON, list_selected >= 0 && list_selected < m_item_coumt - 1);
+    EnableDlgCtrl(IDC_MOVE_UP_BUTTON, list_selected > 0 && list_selected < static_cast<int>(m_all_displayed_item.size()));
+    EnableDlgCtrl(IDC_MOVE_DOWN_BUTTON, list_selected >= 0 && list_selected < static_cast<int>(m_all_displayed_item.size()) - 1);
 }
 
 void CSetItemOrderDlg::EnableDlgCtrl(UINT id, bool enable)
@@ -199,19 +199,31 @@ void CSetItemOrderDlg::OnLbnSelchangeList1()
 }
 
 
+void CSetItemOrderDlg::OnCheckChanged()
+{
+    //当用户点击项目前面的复选框时保存该项目的勾选状态
+    int cur_index{ m_list_ctrl.GetCurSel() };
+    if (cur_index >= 0 && cur_index < static_cast<int>(m_all_displayed_item.size()))
+    {
+        bool is_checked = (m_list_ctrl.GetCheck(cur_index) != 0);
+        CommonDisplayItem item = m_all_displayed_item[cur_index];
+        SaveItemChecked(item, is_checked);
+    }
+}
+
 void CSetItemOrderDlg::OnOK()
 {
     // TODO: 在此添加专用代码和/或调用基类
 
     //保存每个项目的勾选状态
-    auto item_list = m_item_order.GetAllDisplayItemsWithOrder();
-    int i = 0;
-    for (; i < static_cast<int>(item_list.size()); i++)
-    {
-        bool is_checked = (m_list_ctrl.GetCheck(i) != 0);
-        CommonDisplayItem item = item_list[i];
-        SaveItemChecked(item, is_checked);
-    }
+    //auto item_list = m_item_order.GetAllDisplayItemsWithOrder();
+    //int i = 0;
+    //for (; i < static_cast<int>(item_list.size()); i++)
+    //{
+    //    bool is_checked = (m_list_ctrl.GetCheck(i) != 0);
+    //    CommonDisplayItem item = item_list[i];
+    //    SaveItemChecked(item, is_checked);
+    //}
 
     if (m_display_item == 0)
         m_display_item = TDI_UP;
