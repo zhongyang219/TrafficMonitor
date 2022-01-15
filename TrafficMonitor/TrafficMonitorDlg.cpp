@@ -53,7 +53,6 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_WM_LBUTTONDOWN()
     ON_COMMAND(ID_NETWORK_INFO, &CTrafficMonitorDlg::OnNetworkInfo)
     ON_COMMAND(ID_ALWAYS_ON_TOP, &CTrafficMonitorDlg::OnAlwaysOnTop)
-    ON_UPDATE_COMMAND_UI(ID_ALWAYS_ON_TOP, &CTrafficMonitorDlg::OnUpdateAlwaysOnTop)
     ON_WM_INITMENUPOPUP()
     ON_COMMAND(ID_TRANSPARENCY_100, &CTrafficMonitorDlg::OnTransparency100)
     ON_COMMAND(ID_TRANSPARENCY_80, &CTrafficMonitorDlg::OnTransparency80)
@@ -62,25 +61,17 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_WM_CLOSE()
     ON_WM_INITMENU()
     ON_COMMAND(ID_LOCK_WINDOW_POS, &CTrafficMonitorDlg::OnLockWindowPos)
-    ON_UPDATE_COMMAND_UI(ID_LOCK_WINDOW_POS, &CTrafficMonitorDlg::OnUpdateLockWindowPos)
     ON_WM_MOVE()
     ON_MESSAGE(MY_WM_NOTIFYICON, &CTrafficMonitorDlg::OnNotifyIcon)
     ON_COMMAND(ID_SHOW_NOTIFY_ICON, &CTrafficMonitorDlg::OnShowNotifyIcon)
-    ON_UPDATE_COMMAND_UI(ID_SHOW_NOTIFY_ICON, &CTrafficMonitorDlg::OnUpdateShowNotifyIcon)
     ON_WM_DESTROY()
     ON_COMMAND(ID_SHOW_CPU_MEMORY, &CTrafficMonitorDlg::OnShowCpuMemory)
-    ON_UPDATE_COMMAND_UI(ID_SHOW_CPU_MEMORY, &CTrafficMonitorDlg::OnUpdateShowCpuMemory)
     ON_COMMAND(ID_MOUSE_PENETRATE, &CTrafficMonitorDlg::OnMousePenetrate)
-    ON_UPDATE_COMMAND_UI(ID_MOUSE_PENETRATE, &CTrafficMonitorDlg::OnUpdateMousePenetrate)
     ON_COMMAND(ID_SHOW_TASK_BAR_WND, &CTrafficMonitorDlg::OnShowTaskBarWnd)
-    ON_UPDATE_COMMAND_UI(ID_SHOW_TASK_BAR_WND, &CTrafficMonitorDlg::OnUpdateShowTaskBarWnd)
     ON_COMMAND(ID_APP_ABOUT, &CTrafficMonitorDlg::OnAppAbout)
     ON_COMMAND(ID_SHOW_CPU_MEMORY2, &CTrafficMonitorDlg::OnShowCpuMemory2)
-    //ON_COMMAND(ID_AUTO_RUN_WHEN_START, &CTrafficMonitorDlg::OnAutoRunWhenStart)
     ON_COMMAND(ID_SHOW_MAIN_WND, &CTrafficMonitorDlg::OnShowMainWnd)
-    ON_UPDATE_COMMAND_UI(ID_SHOW_MAIN_WND, &CTrafficMonitorDlg::OnUpdateShowMainWnd)
     ON_COMMAND(ID_CHANGE_SKIN, &CTrafficMonitorDlg::OnChangeSkin)
-    //ON_UPDATE_COMMAND_UI(ID_AUTO_RUN_WHEN_START, &CTrafficMonitorDlg::OnUpdateAutoRunWhenStart)
     ON_REGISTERED_MESSAGE(m_WM_TASKBARCREATED, &CTrafficMonitorDlg::OnTaskBarCreated)
     ON_COMMAND(ID_TRAFFIC_HISTORY, &CTrafficMonitorDlg::OnTrafficHistory)
     ON_WM_MOUSEMOVE()
@@ -90,25 +81,13 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_MESSAGE(WM_EXITMENULOOP, &CTrafficMonitorDlg::OnExitmenuloop)
     ON_COMMAND(ID_CHANGE_NOTIFY_ICON, &CTrafficMonitorDlg::OnChangeNotifyIcon)
     ON_COMMAND(ID_ALOW_OUT_OF_BORDER, &CTrafficMonitorDlg::OnAlowOutOfBorder)
-    ON_UPDATE_COMMAND_UI(ID_ALOW_OUT_OF_BORDER, &CTrafficMonitorDlg::OnUpdateAlowOutOfBorder)
     ON_COMMAND(ID_CHECK_UPDATE, &CTrafficMonitorDlg::OnCheckUpdate)
     ON_MESSAGE(WM_TASKBAR_MENU_POPED_UP, &CTrafficMonitorDlg::OnTaskbarMenuPopedUp)
     ON_COMMAND(ID_SHOW_NET_SPEED, &CTrafficMonitorDlg::OnShowNetSpeed)
     ON_WM_QUERYENDSESSION()
-    //ON_COMMAND(ID_SHOW_UP_SPEED, &CTrafficMonitorDlg::OnShowUpSpeed)
-    //ON_COMMAND(ID_SHOW_DOWN_SPEED, &CTrafficMonitorDlg::OnShowDownSpeed)
-    //ON_COMMAND(ID_SHOW_CPU_USAGE, &CTrafficMonitorDlg::OnShowCpuUsage)
-    //ON_COMMAND(ID_SHOW_MEMORY_USAGE, &CTrafficMonitorDlg::OnShowMemoryUsage)
-    //ON_COMMAND(ID_SHOW_CPU_TEMPERATURE, &CTrafficMonitorDlg::OnShowCpuTemperature)
-    //ON_COMMAND(ID_SHOW_GPU_TEMPERATURE, &CTrafficMonitorDlg::OnShowGpuTemperature)
-    //ON_COMMAND(ID_SHOW_HDD_TEMPERATURE, &CTrafficMonitorDlg::OnShowHddTemperature)
-    //ON_COMMAND(ID_SHOW_MAIN_BOARD_TEMPERATURE, &CTrafficMonitorDlg::OnShowMainBoardTemperature)
-    //ON_COMMAND(ID_SHOW_HDD, &CTrafficMonitorDlg::OnShowHddUsage)
-    //ON_COMMAND(ID_SHOW_TOTAL_SPEED, &CTrafficMonitorDlg::OnShowTotalSpeed)
     ON_WM_PAINT()
     ON_MESSAGE(WM_DPICHANGED, &CTrafficMonitorDlg::OnDpichanged)
     ON_MESSAGE(WM_TASKBAR_WND_CLOSED, &CTrafficMonitorDlg::OnTaskbarWndClosed)
-    ON_COMMAND(ID_SHOW_GPU, &CTrafficMonitorDlg::OnShowGpuUsage)
     ON_MESSAGE(WM_MONITOR_INFO_UPDATED, &CTrafficMonitorDlg::OnMonitorInfoUpdated)
     ON_MESSAGE(WM_DISPLAYCHANGE, &CTrafficMonitorDlg::OnDisplaychange)
     ON_WM_EXITSIZEMOVE()
@@ -1711,99 +1690,6 @@ void CTrafficMonitorDlg::OnAlwaysOnTop()
 }
 
 
-void CTrafficMonitorDlg::OnUpdateAlwaysOnTop(CCmdUI* pCmdUI)
-{
-    // TODO: 在此添加命令更新用户界面处理程序代码
-    pCmdUI->SetCheck(theApp.m_main_wnd_data.m_always_on_top);
-}
-
-
-//此函数用于使得 OnUpdatexxxxx(CCmdUI *pCmdUI) 函数在基于对话框程序中有效
-void CTrafficMonitorDlg::OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu)
-{
-    CDialog::OnInitMenuPopup(pPopupMenu, nIndex, bSysMenu);
-
-    // TODO: 在此处添加消息处理程序代码
-    ASSERT(pPopupMenu != NULL);
-    // Check the enabled state of various menu items.
-
-    CCmdUI state;
-    state.m_pMenu = pPopupMenu;
-    ASSERT(state.m_pOther == NULL);
-    ASSERT(state.m_pParentMenu == NULL);
-
-    // Determine if menu is popup in top-level menu and set m_pOther to
-    // it if so (m_pParentMenu == NULL indicates that it is secondary popup).
-    HMENU hParentMenu;
-    if (AfxGetThreadState()->m_hTrackingMenu == pPopupMenu->m_hMenu)
-        state.m_pParentMenu = pPopupMenu;    // Parent == child for tracking popup.
-    else if ((hParentMenu = ::GetMenu(m_hWnd)) != NULL)
-    {
-        CWnd* pParent = this;
-        // Child Windows dont have menus--need to go to the top!
-        if (pParent != NULL &&
-            (hParentMenu = ::GetMenu(pParent->m_hWnd)) != NULL)
-        {
-            int nIndexMax = ::GetMenuItemCount(hParentMenu);
-            for (int nIndex = 0; nIndex < nIndexMax; nIndex++)
-            {
-                if (::GetSubMenu(hParentMenu, nIndex) == pPopupMenu->m_hMenu)
-                {
-                    // When popup is found, m_pParentMenu is containing menu.
-                    state.m_pParentMenu = CMenu::FromHandle(hParentMenu);
-                    break;
-                }
-            }
-        }
-    }
-
-    state.m_nIndexMax = pPopupMenu->GetMenuItemCount();
-    for (state.m_nIndex = 0; state.m_nIndex < state.m_nIndexMax;
-        state.m_nIndex++)
-    {
-        state.m_nID = pPopupMenu->GetMenuItemID(state.m_nIndex);
-        if (state.m_nID == 0)
-            continue; // Menu separator or invalid cmd - ignore it.
-
-        ASSERT(state.m_pOther == NULL);
-        ASSERT(state.m_pMenu != NULL);
-        if (state.m_nID == (UINT)-1)
-        {
-            // Possibly a popup menu, route to first item of that popup.
-            state.m_pSubMenu = pPopupMenu->GetSubMenu(state.m_nIndex);
-            if (state.m_pSubMenu == NULL ||
-                (state.m_nID = state.m_pSubMenu->GetMenuItemID(0)) == 0 ||
-                state.m_nID == (UINT)-1)
-            {
-                continue;       // First item of popup cant be routed to.
-            }
-            state.DoUpdate(this, TRUE);   // Popups are never auto disabled.
-        }
-        else
-        {
-            // Normal menu item.
-            // Auto enable/disable if frame window has m_bAutoMenuEnable
-            // set and command is _not_ a system command.
-            state.m_pSubMenu = NULL;
-            state.DoUpdate(this, FALSE);
-        }
-
-        // Adjust for menu deletions and additions.
-        UINT nCount = pPopupMenu->GetMenuItemCount();
-        if (nCount < state.m_nIndexMax)
-        {
-            state.m_nIndex -= (state.m_nIndexMax - nCount);
-            while (state.m_nIndex < nCount &&
-                pPopupMenu->GetMenuItemID(state.m_nIndex) == state.m_nID)
-            {
-                state.m_nIndex++;
-            }
-        }
-        state.m_nIndexMax = nCount;
-    }
-}
-
-
 void CTrafficMonitorDlg::OnTransparency100()
 {
     // TODO: 在此添加命令处理程序代码
@@ -1910,6 +1796,14 @@ void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
     // TODO: 在此处添加消息处理程序代码
     m_menu_popuped = true;
 
+    pMenu->CheckMenuItem(ID_ALWAYS_ON_TOP, MF_BYCOMMAND | (theApp.m_main_wnd_data.m_always_on_top ? MF_CHECKED : MF_UNCHECKED));
+    pMenu->CheckMenuItem(ID_LOCK_WINDOW_POS, MF_BYCOMMAND | (theApp.m_main_wnd_data.m_lock_window_pos ? MF_CHECKED : MF_UNCHECKED));
+    pMenu->CheckMenuItem(ID_SHOW_CPU_MEMORY, MF_BYCOMMAND | (theApp.m_cfg_data.m_show_more_info ? MF_CHECKED : MF_UNCHECKED));
+    pMenu->CheckMenuItem(ID_MOUSE_PENETRATE, MF_BYCOMMAND | (theApp.m_main_wnd_data.m_mouse_penetrate ? MF_CHECKED : MF_UNCHECKED));
+    pMenu->CheckMenuItem(ID_SHOW_TASK_BAR_WND, MF_BYCOMMAND | (theApp.m_cfg_data.m_show_task_bar_wnd ? MF_CHECKED : MF_UNCHECKED));
+    pMenu->CheckMenuItem(ID_SHOW_MAIN_WND, MF_BYCOMMAND | (!theApp.m_cfg_data.m_hide_main_window ? MF_CHECKED : MF_UNCHECKED));
+    pMenu->CheckMenuItem(ID_ALOW_OUT_OF_BORDER, MF_BYCOMMAND | (theApp.m_main_wnd_data.m_alow_out_of_border ? MF_CHECKED : MF_UNCHECKED));
+
     //设置“选择连接”子菜单项中各单选项的选择状态
     CMenu* select_connection_menu = theApp.m_main_menu.GetSubMenu(0)->GetSubMenu(0);
     SetConnectionMenuState(select_connection_menu);
@@ -1958,13 +1852,6 @@ void CTrafficMonitorDlg::OnLockWindowPos()
     // TODO: 在此添加命令处理程序代码
     theApp.m_main_wnd_data.m_lock_window_pos = !theApp.m_main_wnd_data.m_lock_window_pos;
     theApp.SaveConfig();
-}
-
-
-void CTrafficMonitorDlg::OnUpdateLockWindowPos(CCmdUI* pCmdUI)
-{
-    // TODO: 在此添加命令更新用户界面处理程序代码
-    pCmdUI->SetCheck(theApp.m_main_wnd_data.m_lock_window_pos);
 }
 
 
@@ -2073,13 +1960,6 @@ void CTrafficMonitorDlg::OnShowNotifyIcon()
 }
 
 
-void CTrafficMonitorDlg::OnUpdateShowNotifyIcon(CCmdUI* pCmdUI)
-{
-    // TODO: 在此添加命令更新用户界面处理程序代码
-    pCmdUI->SetCheck(theApp.m_general_data.show_notify_icon);
-}
-
-
 void CTrafficMonitorDlg::OnDestroy()
 {
     CDialog::OnDestroy();
@@ -2142,13 +2022,6 @@ void CTrafficMonitorDlg::OnShowCpuMemory2()
 }
 
 
-void CTrafficMonitorDlg::OnUpdateShowCpuMemory(CCmdUI* pCmdUI)
-{
-    // TODO: 在此添加命令更新用户界面处理程序代码
-    pCmdUI->SetCheck(theApp.m_cfg_data.m_show_more_info);
-}
-
-
 void CTrafficMonitorDlg::OnMousePenetrate()
 {
     // TODO: 在此添加命令处理程序代码
@@ -2171,13 +2044,6 @@ void CTrafficMonitorDlg::OnMousePenetrate()
     }
 
     theApp.SaveConfig();
-}
-
-
-void CTrafficMonitorDlg::OnUpdateMousePenetrate(CCmdUI* pCmdUI)
-{
-    // TODO: 在此添加命令更新用户界面处理程序代码
-    pCmdUI->SetCheck(theApp.m_main_wnd_data.m_mouse_penetrate);
 }
 
 
@@ -2204,13 +2070,6 @@ void CTrafficMonitorDlg::OnShowTaskBarWnd()
         }
     }
     theApp.SaveConfig();
-}
-
-
-void CTrafficMonitorDlg::OnUpdateShowTaskBarWnd(CCmdUI* pCmdUI)
-{
-    // TODO: 在此添加命令更新用户界面处理程序代码
-    pCmdUI->SetCheck(theApp.m_cfg_data.m_show_task_bar_wnd);
 }
 
 
@@ -2265,13 +2124,6 @@ void CTrafficMonitorDlg::OnShowMainWnd()
         theApp.m_cfg_data.m_hide_main_window = false;
     }
     theApp.SaveConfig();
-}
-
-
-void CTrafficMonitorDlg::OnUpdateShowMainWnd(CCmdUI* pCmdUI)
-{
-    // TODO: 在此添加命令更新用户界面处理程序代码
-    pCmdUI->SetCheck(!theApp.m_cfg_data.m_hide_main_window);
 }
 
 
@@ -2448,13 +2300,6 @@ void CTrafficMonitorDlg::OnAlowOutOfBorder()
 }
 
 
-void CTrafficMonitorDlg::OnUpdateAlowOutOfBorder(CCmdUI* pCmdUI)
-{
-    // TODO: 在此添加命令更新用户界面处理程序代码
-    pCmdUI->SetCheck(theApp.m_main_wnd_data.m_alow_out_of_border);
-}
-
-
 void CTrafficMonitorDlg::OnCheckUpdate()
 {
     // TODO: 在此添加命令处理程序代码
@@ -2514,74 +2359,6 @@ BOOL CTrafficMonitorDlg::OnQueryEndSession()
 }
 
 
-//void CTrafficMonitorDlg::OnShowUpSpeed()
-//{
-//    // TODO: 在此添加命令处理程序代码
-//    TaskbarShowHideItem(TDI_UP);
-//}
-//
-//
-//void CTrafficMonitorDlg::OnShowDownSpeed()
-//{
-//    // TODO: 在此添加命令处理程序代码
-//    TaskbarShowHideItem(TDI_DOWN);
-//}
-//
-//
-//void CTrafficMonitorDlg::OnShowCpuUsage()
-//{
-//    // TODO: 在此添加命令处理程序代码
-//    TaskbarShowHideItem(TDI_CPU);
-//}
-//
-//
-//void CTrafficMonitorDlg::OnShowMemoryUsage()
-//{
-//    // TODO: 在此添加命令处理程序代码
-//    TaskbarShowHideItem(TDI_MEMORY);
-//}
-//
-//
-//void CTrafficMonitorDlg::OnShowCpuTemperature()
-//{
-//    // TODO: 在此添加命令处理程序代码
-//    TaskbarShowHideItem(TDI_CPU_TEMP);
-//}
-//
-//
-//void CTrafficMonitorDlg::OnShowGpuTemperature()
-//{
-//    // TODO: 在此添加命令处理程序代码
-//    TaskbarShowHideItem(TDI_GPU_TEMP);
-//}
-//
-//
-//void CTrafficMonitorDlg::OnShowHddTemperature()
-//{
-//    // TODO: 在此添加命令处理程序代码
-//    TaskbarShowHideItem(TDI_HDD_TEMP);
-//}
-//
-//
-//void CTrafficMonitorDlg::OnShowMainBoardTemperature()
-//{
-//    // TODO: 在此添加命令处理程序代码
-//    TaskbarShowHideItem(TDI_MAIN_BOARD_TEMP);
-//}
-//
-//
-//void CTrafficMonitorDlg::OnShowHddUsage()
-//{
-//    // TODO: 在此添加命令处理程序代码
-//    TaskbarShowHideItem(TDI_HDD_USAGE);
-//}
-//
-//
-//void CTrafficMonitorDlg::OnShowTotalSpeed()
-//{
-//    TaskbarShowHideItem(TDI_TOTAL_SPEED);
-//}
-
 void CTrafficMonitorDlg::OnPaint()
 {
     CPaintDC dc(this); // device context for painting
@@ -2626,12 +2403,6 @@ afx_msg LRESULT CTrafficMonitorDlg::OnTaskbarWndClosed(WPARAM wParam, LPARAM lPa
     return 0;
 }
 
-
-void CTrafficMonitorDlg::OnShowGpuUsage()
-{
-    // TODO: 在此添加命令处理程序代码
-    TaskbarShowHideItem(TDI_GPU_USAGE);
-}
 
 
 afx_msg LRESULT CTrafficMonitorDlg::OnMonitorInfoUpdated(WPARAM wParam, LPARAM lParam)

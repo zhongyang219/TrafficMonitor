@@ -142,16 +142,6 @@ public:
     static bool IsItemShow(DisplayItem item);
     static bool IsShowCpuMemory();
     static bool IsShowNetSpeed();
-    static bool IsShowUp();
-    static bool IsShowDown();
-    static bool IsShowCpu();
-    static bool IsShowMemory();
-    static bool IsShowGpu();
-    static bool IsShowCpuTemperature();
-    static bool IsShowGpuTemperature();
-    static bool IsShowHddTemperature();
-    static bool IsShowMainboardTemperature();
-    static bool IsShowHddUsage();
 
     CommonDisplayItem GetClickedItem() const { return m_clicked_item; }
 

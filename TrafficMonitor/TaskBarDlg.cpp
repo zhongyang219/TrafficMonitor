@@ -582,19 +582,19 @@ CString CTaskBarDlg::GetMouseTipsInfo()
         CCommon::LoadText(IDS_DOWNLOAD), CCommon::KBytesToString(theApp.m_today_down_traffic / 1024u)
     );
     tip_info += temp;
-    if (!IsShowUp())
+    if (!IsItemShow(TDI_UP))
     {
         temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_UPLOAD),
             CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data));
         tip_info += temp;
     }
-    if (!IsShowDown())
+    if (!IsItemShow(TDI_DOWN))
     {
         temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_DOWNLOAD),
             CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data));
         tip_info += temp;
     }
-    if (!IsShowCpu())
+    if (!IsItemShow(TDI_CPU))
     {
         temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_CPU_USAGE), theApp.m_cpu_usage);
         tip_info += temp;
@@ -605,7 +605,7 @@ CString CTaskBarDlg::GetMouseTipsInfo()
             CCommon::LoadText(IDS_MEMORY_USAGE),
             CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory));
     }
-    if (!IsShowMemory())
+    if (!IsItemShow(TDI_MEMORY))
     {
         temp.Format(_T("\r\n%s: %s/%s (%d %%)"), CCommon::LoadText(IDS_MEMORY_USAGE),
             CCommon::KBytesToString(theApp.m_used_memory),
@@ -623,32 +623,32 @@ CString CTaskBarDlg::GetMouseTipsInfo()
     CTrafficMonitorDlg* pMainWnd = dynamic_cast<CTrafficMonitorDlg*>(theApp.m_pMainWnd);
     if (pMainWnd->IsTemperatureNeeded())
     {
-        if (!IsShowGpu() && theApp.m_gpu_usage >= 0)
+        if (!IsItemShow(TDI_GPU_USAGE) && theApp.m_gpu_usage >= 0)
         {
             temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
             tip_info += temp;
         }
-        if (!IsShowCpuTemperature() && theApp.m_cpu_temperature > 0)
+        if (!IsItemShow(TDI_CPU_TEMP) && theApp.m_cpu_temperature > 0)
         {
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_taskbar_data));
             tip_info += temp;
         }
-        if (!IsShowGpuTemperature() && theApp.m_gpu_temperature > 0)
+        if (!IsItemShow(TDI_GPU_TEMP) && theApp.m_gpu_temperature > 0)
         {
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_GPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_gpu_temperature, theApp.m_taskbar_data));
             tip_info += temp;
         }
-        if (!IsShowHddTemperature() && theApp.m_hdd_temperature > 0)
+        if (!IsItemShow(TDI_HDD_TEMP) && theApp.m_hdd_temperature > 0)
         {
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_HDD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_hdd_temperature, theApp.m_taskbar_data));
             tip_info += temp;
         }
-        if (!IsShowMainboardTemperature() && theApp.m_main_board_temperature > 0)
+        if (!IsItemShow(TDI_MAIN_BOARD_TEMP) && theApp.m_main_board_temperature > 0)
         {
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_main_board_temperature, theApp.m_taskbar_data));
             tip_info += temp;
         }
-        if (!IsShowHddUsage() && theApp.m_hdd_usage >= 0)
+        if (!IsItemShow(TDI_HDD_USAGE) && theApp.m_hdd_usage >= 0)
         {
             temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_HDD_USAGE), theApp.m_hdd_usage);
             tip_info += temp;
@@ -917,55 +917,6 @@ bool CTaskBarDlg::IsShowNetSpeed()
     return ((theApp.m_taskbar_data.m_tbar_display_item & TDI_UP) || (theApp.m_taskbar_data.m_tbar_display_item & TDI_DOWN));
 }
 
-bool CTaskBarDlg::IsShowUp()
-{
-    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_UP);
-}
-
-bool CTaskBarDlg::IsShowDown()
-{
-    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_DOWN);
-}
-
-bool CTaskBarDlg::IsShowCpu()
-{
-    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_CPU);
-}
-
-bool CTaskBarDlg::IsShowMemory()
-{
-    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_MEMORY);
-}
-
-bool CTaskBarDlg::IsShowGpu()
-{
-    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_GPU_USAGE);
-}
-
-bool CTaskBarDlg::IsShowCpuTemperature()
-{
-    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_CPU_TEMP);
-}
-
-bool CTaskBarDlg::IsShowGpuTemperature()
-{
-    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_GPU_TEMP);
-}
-
-bool CTaskBarDlg::IsShowHddTemperature()
-{
-    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_HDD_TEMP);
-}
-
-bool CTaskBarDlg::IsShowMainboardTemperature()
-{
-    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_MAIN_BOARD_TEMP);
-}
-
-bool CTaskBarDlg::IsShowHddUsage()
-{
-    return (theApp.m_taskbar_data.m_tbar_display_item & TDI_HDD_USAGE);
-}
 
 BOOL CTaskBarDlg::OnInitDialog()
 {
@@ -1074,54 +1025,9 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
     CDialogEx::OnInitMenu(pMenu);
 
     // TODO: 在此处添加消息处理程序代码
-    pMenu->CheckMenuItem(ID_SHOW_CPU_MEMORY2, MF_BYCOMMAND | (IsShowCpuMemory() ? MF_CHECKED : MF_UNCHECKED));
-    pMenu->CheckMenuItem(ID_SHOW_NET_SPEED, MF_BYCOMMAND | ((IsShowNetSpeed() || !IsShowMemory()) ? MF_CHECKED : MF_UNCHECKED));
     pMenu->CheckMenuItem(ID_SHOW_MAIN_WND, MF_BYCOMMAND | (!theApp.m_cfg_data.m_hide_main_window ? MF_CHECKED : MF_UNCHECKED));
-    pMenu->CheckMenuItem(ID_SHOW_NOTIFY_ICON, MF_BYCOMMAND | (theApp.m_general_data.show_notify_icon ? MF_CHECKED : MF_UNCHECKED));
-
-    pMenu->CheckMenuItem(ID_SHOW_UP_SPEED, MF_BYCOMMAND | ((IsShowUp()) ? MF_CHECKED : MF_UNCHECKED));
-    pMenu->CheckMenuItem(ID_SHOW_DOWN_SPEED, MF_BYCOMMAND | ((IsShowDown()) ? MF_CHECKED : MF_UNCHECKED));
-    pMenu->CheckMenuItem(ID_SHOW_CPU_USAGE, MF_BYCOMMAND | ((IsShowCpu()) ? MF_CHECKED : MF_UNCHECKED));
-    pMenu->CheckMenuItem(ID_SHOW_MEMORY_USAGE, MF_BYCOMMAND | ((IsShowMemory()) ? MF_CHECKED : MF_UNCHECKED));
-    pMenu->CheckMenuItem(ID_SHOW_GPU, MF_BYCOMMAND | ((IsShowGpu()) ? MF_CHECKED : MF_UNCHECKED));
-    pMenu->CheckMenuItem(ID_SHOW_CPU_TEMPERATURE, MF_BYCOMMAND | ((IsShowCpuTemperature()) ? MF_CHECKED : MF_UNCHECKED));
-    pMenu->CheckMenuItem(ID_SHOW_GPU_TEMPERATURE, MF_BYCOMMAND | ((IsShowGpuTemperature()) ? MF_CHECKED : MF_UNCHECKED));
-    pMenu->CheckMenuItem(ID_SHOW_HDD_TEMPERATURE, MF_BYCOMMAND | ((IsShowHddTemperature()) ? MF_CHECKED : MF_UNCHECKED));
-    pMenu->CheckMenuItem(ID_SHOW_MAIN_BOARD_TEMPERATURE, MF_BYCOMMAND | ((IsShowMainboardTemperature()) ? MF_CHECKED : MF_UNCHECKED));
-    pMenu->CheckMenuItem(ID_SHOW_HDD, MF_BYCOMMAND | ((IsShowHddUsage()) ? MF_CHECKED : MF_UNCHECKED));
-    pMenu->CheckMenuItem(ID_SHOW_TOTAL_SPEED, MF_BYCOMMAND | (IsItemShow(TDI_TOTAL_SPEED) ? MF_CHECKED : MF_UNCHECKED));
-
-    //不含温度监控的版本，禁用温度监控相关菜单项
-#ifdef WITHOUT_TEMPERATURE
-    pMenu->EnableMenuItem(ID_SHOW_GPU, MF_BYCOMMAND | MF_GRAYED);
-    pMenu->EnableMenuItem(ID_SHOW_CPU_TEMPERATURE, MF_BYCOMMAND | MF_GRAYED);
-    pMenu->EnableMenuItem(ID_SHOW_GPU_TEMPERATURE, MF_BYCOMMAND | MF_GRAYED);
-    pMenu->EnableMenuItem(ID_SHOW_HDD_TEMPERATURE, MF_BYCOMMAND | MF_GRAYED);
-    pMenu->EnableMenuItem(ID_SHOW_MAIN_BOARD_TEMPERATURE, MF_BYCOMMAND | MF_GRAYED);
-    pMenu->EnableMenuItem(ID_SHOW_HDD, MF_BYCOMMAND | MF_GRAYED);
-#else
-    //根据是否关闭硬件监控禁用对应的菜单项
-    pMenu->EnableMenuItem(ID_SHOW_GPU, MF_BYCOMMAND | (theApp.m_general_data.IsHardwareEnable(HI_GPU) ? MF_ENABLED : MF_GRAYED));
-    pMenu->EnableMenuItem(ID_SHOW_CPU_TEMPERATURE, MF_BYCOMMAND | (theApp.m_general_data.IsHardwareEnable(HI_CPU) ? MF_ENABLED : MF_GRAYED));
-    pMenu->EnableMenuItem(ID_SHOW_GPU_TEMPERATURE, MF_BYCOMMAND | (theApp.m_general_data.IsHardwareEnable(HI_GPU) ? MF_ENABLED : MF_GRAYED));
-    pMenu->EnableMenuItem(ID_SHOW_HDD_TEMPERATURE, MF_BYCOMMAND | (theApp.m_general_data.IsHardwareEnable(HI_HDD) ? MF_ENABLED : MF_GRAYED));
-    pMenu->EnableMenuItem(ID_SHOW_MAIN_BOARD_TEMPERATURE, MF_BYCOMMAND | (theApp.m_general_data.IsHardwareEnable(HI_MBD) ? MF_ENABLED : MF_GRAYED));
-    pMenu->EnableMenuItem(ID_SHOW_HDD, MF_BYCOMMAND | (theApp.m_general_data.IsHardwareEnable(HI_HDD) ? MF_ENABLED : MF_GRAYED));
-#endif
-
-    //设置“显示设置”子菜单中插件项目的勾选状态
-    for (int i{}; i < static_cast<int>(theApp.m_plugins.GetPluginItems().size()); i++)
-    {
-        IPluginItem* item = theApp.m_plugins.GetPluginItems()[i];
-        if (item != nullptr)
-        {
-            bool displayed{ theApp.m_taskbar_data.plugin_display_item.Contains(item->GetItemId()) };
-            pMenu->CheckMenuItem(ID_SHOW_PLUGIN_ITEM_START + i, MF_BYCOMMAND | (displayed ? MF_CHECKED : MF_UNCHECKED));
-}
-    }
 
     pMenu->EnableMenuItem(ID_SELECT_ALL_CONNECTION, MF_BYCOMMAND | (theApp.m_general_data.show_all_interface ? MF_GRAYED : MF_ENABLED));
-
     pMenu->EnableMenuItem(ID_CHECK_UPDATE, MF_BYCOMMAND | (theApp.IsCheckingForUpdate() ? MF_GRAYED : MF_ENABLED));
 
     //pMenu->SetDefaultItem(ID_NETWORK_INFO);

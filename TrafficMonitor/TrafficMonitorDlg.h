@@ -184,8 +184,6 @@ public:
     afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
     afx_msg void OnNetworkInfo();
     afx_msg void OnAlwaysOnTop();
-    afx_msg void OnUpdateAlwaysOnTop(CCmdUI* pCmdUI);
-    afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
     afx_msg void OnTransparency100();
     afx_msg void OnTransparency80();
     afx_msg void OnTransparency60();
@@ -195,28 +193,20 @@ public:
     afx_msg void OnInitMenu(CMenu* pMenu);
     virtual BOOL PreTranslateMessage(MSG* pMsg);
     afx_msg void OnLockWindowPos();
-    afx_msg void OnUpdateLockWindowPos(CCmdUI* pCmdUI);
     afx_msg void OnMove(int x, int y);
 protected:
     afx_msg LRESULT OnNotifyIcon(WPARAM wParam, LPARAM lParam);
 public:
     afx_msg void OnShowNotifyIcon();
-    afx_msg void OnUpdateShowNotifyIcon(CCmdUI* pCmdUI);
     afx_msg void OnDestroy();
     afx_msg void OnShowCpuMemory();
-    afx_msg void OnUpdateShowCpuMemory(CCmdUI* pCmdUI);
     afx_msg void OnMousePenetrate();
-    afx_msg void OnUpdateMousePenetrate(CCmdUI* pCmdUI);
     //afx_msg void OnTextColor();
     afx_msg void OnShowTaskBarWnd();
-    afx_msg void OnUpdateShowTaskBarWnd(CCmdUI* pCmdUI);
     afx_msg void OnAppAbout();
     afx_msg void OnShowCpuMemory2();
-    //  afx_msg void OnAutoRunWhenStart();
     afx_msg void OnShowMainWnd();
-    afx_msg void OnUpdateShowMainWnd(CCmdUI* pCmdUI);
     afx_msg void OnChangeSkin();
-    //  afx_msg void OnUpdateAutoRunWhenStart(CCmdUI *pCmdUI);
     afx_msg LRESULT OnTaskBarCreated(WPARAM wParam, LPARAM lParam);
     //afx_msg void OnSetFont();
     afx_msg void OnTrafficHistory();
@@ -229,30 +219,16 @@ protected:
 public:
     afx_msg void OnChangeNotifyIcon();
     afx_msg void OnAlowOutOfBorder();
-    afx_msg void OnUpdateAlowOutOfBorder(CCmdUI* pCmdUI);
     afx_msg void OnCheckUpdate();
 protected:
     afx_msg LRESULT OnTaskbarMenuPopedUp(WPARAM wParam, LPARAM lParam);
 public:
     afx_msg void OnShowNetSpeed();
     afx_msg BOOL OnQueryEndSession();
-    //afx_msg void OnShowUpSpeed();
-    //afx_msg void OnShowDownSpeed();
-    //afx_msg void OnShowCpuUsage();
-    //afx_msg void OnShowMemoryUsage();
-    //afx_msg void OnShowCpuTemperature();
-    //afx_msg void OnShowGpuTemperature();
-    //afx_msg void OnShowHddTemperature();
-    //afx_msg void OnShowMainBoardTemperature();
-    //afx_msg void OnShowHddUsage();
-    //afx_msg void OnShowTotalSpeed();
     afx_msg void OnPaint();
 protected:
     afx_msg LRESULT OnDpichanged(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnTaskbarWndClosed(WPARAM wParam, LPARAM lParam);
-public:
-    afx_msg void OnShowGpuUsage();
-protected:
     afx_msg LRESULT OnMonitorInfoUpdated(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnDisplaychange(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnReopenTaksbarWnd(WPARAM wParam, LPARAM lParam);
