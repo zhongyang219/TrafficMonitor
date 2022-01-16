@@ -524,11 +524,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
     //温度
     auto getTemperatureStr = [&](DisplayItem display_item, float temperature)
     {
-        CString str_val;
-        if (!m_layout_info.no_label)
-            str_val += theApp.m_main_wnd_data.disp_str.Get(display_item).c_str();
-        str_val += CCommon::TemperatureToString(temperature, theApp.m_main_wnd_data);
-        map_str[display_item].value = str_val;
+        map_str[display_item].value = CCommon::TemperatureToString(temperature, theApp.m_main_wnd_data);
     };
     getTemperatureStr(TDI_CPU_TEMP, theApp.m_cpu_temperature);
     getTemperatureStr(TDI_GPU_TEMP, theApp.m_gpu_temperature);
