@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "CommonData.h"
 #include "TinyXml2Helper.h"
+#include "DrawCommon.h"
 
 class CSkinFile
 {
@@ -92,11 +93,8 @@ public:
     //rect: 绘图区域
     void DrawPreview(CDC* pDC, CRect rect);
 
-    //绘制主界面（勾选“显示更多信息”）
-    void DrawInfoL(CDC* pDC, CFont& font);
-
-    //绘制主界面（不勾选“显示更多信息”）
-    void DrawInfoS(CDC* pDC, CFont& font);
+    //绘制主界面
+    void DrawInfo(CDC* pDC, bool show_more_info, CFont& font);
 
     static string GetDisplayItemXmlNodeName(DisplayItem display_item);
 
@@ -104,9 +102,19 @@ private:
     void LoadFromXml(const wstring& file_path);     //从xml文件读取皮肤数据
     void LoadFromIni(const wstring& file_path);     //从ini文件读取皮肤数据（用于兼容旧版皮肤）
 
-    void DrawInfo(CDC* pDC, bool show_more_info, CFont& font);
-
     CSkinFile::Layout LayoutFromXmlNode(tinyxml2::XMLElement* ele);
+
+    struct DrawStr
+    {
+        CString label;
+        CString value;
+        CString GetStr() const
+        {
+            return label + value;
+        }
+    };
+
+    static void DrawSkinText(CDrawCommon drawer, DrawStr draw_str, CRect rect, COLORREF color, Alignment align);
 
 private:
     SkinInfo m_skin_info;

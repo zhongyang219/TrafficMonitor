@@ -2364,10 +2364,7 @@ void CTrafficMonitorDlg::OnPaint()
     CPaintDC dc(this); // device context for painting
                        // TODO: 在此处添加消息处理程序代码
                        // 不为绘图消息调用 CDialog::OnPaint()
-    if (theApp.m_cfg_data.m_show_more_info)
-        m_skin.DrawInfoL(&dc, m_font);
-    else
-        m_skin.DrawInfoS(&dc, m_font);
+    m_skin.DrawInfo(&dc, theApp.m_cfg_data.m_show_more_info, m_font);
 }
 
 

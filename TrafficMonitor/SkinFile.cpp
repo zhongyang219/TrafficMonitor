@@ -59,6 +59,23 @@ CSkinFile::Layout CSkinFile::LayoutFromXmlNode(tinyxml2::XMLElement* ele)
     return layout;
 }
 
+void CSkinFile::DrawSkinText(CDrawCommon drawer, DrawStr draw_str, CRect rect, COLORREF color, Alignment align)
+{
+    int text_width = drawer.GetDC()->GetTextExtent(draw_str.GetStr()).cx;
+    //标签和数值两端对齐
+    if (align == Alignment::SIDE && text_width < rect.Width())      //只有文本宽度小于矩形的宽度时才使用两端对齐
+    {
+        //绘制标签
+        drawer.DrawWindowText(rect, draw_str.label, color, Alignment::LEFT);
+        //绘制数值
+        drawer.DrawWindowText(rect, draw_str.value, color, Alignment::RIGHT);
+    }
+    else
+    {
+        drawer.DrawWindowText(rect, draw_str.GetStr(), color, align);
+    }
+}
+
 void CSkinFile::Load(const wstring& file_path)
 {
     CFilePathHelper file_path_helper{ file_path };
@@ -316,42 +333,42 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
     draw.DrawBitmap(m_background_l, rect_l.TopLeft(), rect_l.Size());
 
     //获取每个项目显示的文本
-    std::map<DisplayItem, CString> map_str;
+    std::map<DisplayItem, DrawStr> map_str;
     for (auto iter = AllDisplayItems.begin(); iter != AllDisplayItems.end(); ++iter)
     {
-        wstring disp_text = m_skin_info.display_text.Get(*iter);
-        if (disp_text == NONE_STR)
-            disp_text = theApp.m_main_wnd_data.disp_str.Get(*iter);
-        CString format_str;
+        //wstring disp_text = m_skin_info.display_text.Get(*iter);
+        //if (disp_text == NONE_STR)
+        //    disp_text = theApp.m_main_wnd_data.disp_str.Get(*iter);
+        DrawStr draw_str;
         switch (*iter)
         {
         case TDI_UP:
-            format_str = _T("88.8 KB/s");
+            draw_str.value = _T("88.8 KB/s");
             break;
         case TDI_DOWN:
-            format_str = _T("88.9 KB/s");
+            draw_str.value = _T("88.9 KB/s");
             break;
         case TDI_TOTAL_SPEED:
-            format_str = _T("90 KB/s");
+            draw_str.value = _T("90 KB/s");
             break;
         case TDI_CPU:
-            format_str = _T("50 %%");
+            draw_str.value = _T("50 %");
             break;
         case TDI_MEMORY:
-            format_str = _T("51 %%");
+            draw_str.value = _T("51 %");
             break;
         case TDI_CPU_TEMP: case TDI_GPU_TEMP: case TDI_HDD_TEMP: case TDI_MAIN_BOARD_TEMP:
-            format_str = _T("40 °C");
+            draw_str.value = _T("40 °C");
             break;
         default:
-            format_str = _T("99");
+            draw_str.value = _T("99");
             break;
         }
         if (m_skin_info.display_text.Get(*iter) == NONE_STR)
             m_skin_info.display_text.Get(*iter) = theApp.m_main_wnd_data.disp_str.Get(*iter);
         if (!m_layout_info.no_label)
-            format_str = (m_skin_info.display_text.Get(*iter).c_str() + format_str);
-        map_str[*iter].Format(format_str, (m_layout_info.no_label ? _T("") : m_skin_info.display_text.Get(*iter).c_str()));
+            draw_str.label = m_skin_info.display_text.Get(*iter).c_str();
+        map_str[*iter] = draw_str;
     }
 
     //获取文本颜色
@@ -388,7 +405,7 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
                 CRect rect(point, CSize(layout.layout_items[iter->first].width, m_layout_info.text_height));
                 COLORREF text_color{};
                 text_color = text_colors[iter->first];
-                draw.DrawWindowText(rect, iter->second, text_color, layout.layout_items[iter->first].align);
+                DrawSkinText(draw, iter->second, rect, text_color, layout.layout_items[iter->first].align);
             }
         }
 
@@ -404,6 +421,11 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
                     cl = iter->second;
                 else if (!text_colors.empty())
                     cl = text_colors.begin()->second;
+                //矩形区域
+                CPoint point;
+                point.SetPoint(layout_item.x, layout_item.y);
+                point.Offset(pos.x, pos.y);
+                CRect rect(point, CSize(layout_item.width, m_layout_info.text_height));
                 if (plugin_item->IsCustomDraw())
                 {
                     int brightness{ (GetRValue(cl) + GetGValue(cl) + GetBValue(cl)) / 2 };
@@ -414,20 +436,15 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
                         plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_TASKBAR_WND, L"0");
                     }
                     draw.GetDC()->SetTextColor(cl);
-                    plugin_item->DrawItem(draw.GetDC()->GetSafeHdc(), layout_item.x, layout_item.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
+                    plugin_item->DrawItem(draw.GetDC()->GetSafeHdc(), point.x, point.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
                 }
                 else
                 {
-                    //矩形区域
-                    CRect rect(CPoint(layout_item.x, layout_item.y), CSize(layout_item.width, m_layout_info.text_height));
-
                     //绘制文本
-                    CString display_text;
-                    display_text += plugin_item->GetItemLableText();
-                    if (!display_text.IsEmpty())
-                        display_text += _T(" ");
-                    display_text += plugin_item->GetItemValueSampleText();
-                    draw.DrawWindowText(rect, display_text, cl, layout_item.align);
+                    DrawStr draw_str;
+                    draw_str.label = plugin_item->GetItemLableText();
+                    draw_str.value = plugin_item->GetItemValueSampleText();
+                    DrawSkinText(draw, draw_str, rect, cl, layout_item.align);
                 }
             }
         }
@@ -440,19 +457,8 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
     drawPreviewText(m_layout_info.layout_l, m_preview_info.l_pos);
 }
 
-void CSkinFile::DrawInfoL(CDC* pDC, CFont& font)
-{
-    DrawInfo(pDC, true, font);
-}
-
-void CSkinFile::DrawInfoS(CDC* pDC, CFont& font)
-{
-    DrawInfo(pDC, false, font);
-}
-
 void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
 {
-
     //绘制背景图
     CImage& background_image{ show_more_info ? m_background_l : m_background_s };
     Layout& layout{ show_more_info ? m_layout_info.layout_l : m_layout_info.layout_s };
@@ -465,27 +471,45 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
     draw.DrawBitmap(background_image, CPoint(0, 0), CSize(layout.width, layout.height));
 
     //获取每个项目显示的文本
+    std::map<DisplayItem, DrawStr> map_str;
+    if (!m_layout_info.no_label)
+    {
+        map_str[TDI_UP].label = theApp.m_main_wnd_data.disp_str.Get(TDI_UP).c_str();
+        map_str[TDI_DOWN].label = theApp.m_main_wnd_data.disp_str.Get(TDI_DOWN).c_str();
+        map_str[TDI_TOTAL_SPEED].label = theApp.m_main_wnd_data.disp_str.Get(TDI_TOTAL_SPEED).c_str();
+        map_str[TDI_CPU].label = theApp.m_main_wnd_data.disp_str.Get(TDI_CPU).c_str();
+        map_str[TDI_MEMORY].label = theApp.m_main_wnd_data.disp_str.Get(TDI_MEMORY).c_str();
+        map_str[TDI_GPU_USAGE].label = theApp.m_main_wnd_data.disp_str.Get(TDI_GPU_USAGE).c_str();
+        map_str[TDI_HDD_USAGE].label = theApp.m_main_wnd_data.disp_str.Get(TDI_HDD_USAGE).c_str();
+        map_str[TDI_CPU_TEMP].label = theApp.m_main_wnd_data.disp_str.Get(TDI_CPU_TEMP).c_str();
+        map_str[TDI_GPU_TEMP].label = theApp.m_main_wnd_data.disp_str.Get(TDI_GPU_TEMP).c_str();
+        map_str[TDI_HDD_TEMP].label = theApp.m_main_wnd_data.disp_str.Get(TDI_HDD_TEMP).c_str();
+        map_str[TDI_MAIN_BOARD_TEMP].label = theApp.m_main_wnd_data.disp_str.Get(TDI_MAIN_BOARD_TEMP).c_str();
+    }
+
     //上传/下载
     CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data);
     CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data);
     CString total_speed = CCommon::DataSizeToString(theApp.m_in_speed + theApp.m_out_speed, theApp.m_main_wnd_data);
 
-    std::map<DisplayItem, CString> map_str;
-    CString format_str;
-    if (theApp.m_main_wnd_data.hide_unit && theApp.m_main_wnd_data.speed_unit != SpeedUnit::AUTO)
-        format_str = _T("%s%s");
-    else
-        format_str = _T("%s%s/s");
-    map_str[TDI_UP].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_UP).c_str()), out_speed.GetString());
-    map_str[TDI_DOWN].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_DOWN).c_str()), in_speed.GetString());
+    //CString format_str;
+    //if (theApp.m_main_wnd_data.hide_unit && theApp.m_main_wnd_data.speed_unit != SpeedUnit::AUTO)
+    //    format_str = _T("%s%s");
+    //else
+    //    format_str = _T("%s%s/s");
+    //map_str[TDI_UP].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_UP).c_str()), out_speed.GetString());
+    //map_str[TDI_DOWN].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_DOWN).c_str()), in_speed.GetString());
+    map_str[TDI_UP].value = out_speed.GetString();
+    map_str[TDI_DOWN].value = in_speed.GetString();
+    map_str[TDI_TOTAL_SPEED].value = total_speed.GetString();
+
     if (theApp.m_main_wnd_data.swap_up_down) //交换上传和下载位置
     {
         std::swap(map_str[TDI_UP], map_str[TDI_DOWN]);
     }
-    map_str[TDI_TOTAL_SPEED].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_TOTAL_SPEED).c_str()), total_speed.GetString());
 
     //CPU/内存/显卡利用率
-    map_str[TDI_CPU] = (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_CPU).c_str()) + CCommon::UsageToString(theApp.m_cpu_usage, theApp.m_main_wnd_data);
+    map_str[TDI_CPU].value = CCommon::UsageToString(theApp.m_cpu_usage, theApp.m_main_wnd_data);
     CString str_memory_value;
     if (theApp.m_main_wnd_data.memory_display == MemoryDisplay::MEMORY_USED)
         str_memory_value = CCommon::DataSizeToString(static_cast<unsigned long long>(theApp.m_used_memory) * 1024, theApp.m_main_wnd_data.separate_value_unit_with_space);
@@ -493,9 +517,9 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
         str_memory_value = CCommon::DataSizeToString((static_cast<unsigned long long>(theApp.m_total_memory) - static_cast<unsigned long long>(theApp.m_used_memory)) * 1024, theApp.m_main_wnd_data.separate_value_unit_with_space);
     else
         str_memory_value = CCommon::UsageToString(theApp.m_memory_usage, theApp.m_main_wnd_data);
-    map_str[TDI_MEMORY] = (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_MEMORY).c_str()) + str_memory_value;
-    map_str[TDI_GPU_USAGE] = (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_GPU_USAGE).c_str()) + CCommon::UsageToString(theApp.m_gpu_usage, theApp.m_main_wnd_data);
-    map_str[TDI_HDD_USAGE] = (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_HDD_USAGE).c_str()) + CCommon::UsageToString(theApp.m_hdd_usage, theApp.m_main_wnd_data);
+    map_str[TDI_MEMORY].value = str_memory_value;
+    map_str[TDI_GPU_USAGE].value = CCommon::UsageToString(theApp.m_gpu_usage, theApp.m_main_wnd_data);
+    map_str[TDI_HDD_USAGE].value = CCommon::UsageToString(theApp.m_hdd_usage, theApp.m_main_wnd_data);
 
     //温度
     auto getTemperatureStr = [&](DisplayItem display_item, float temperature)
@@ -504,7 +528,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
         if (!m_layout_info.no_label)
             str_val += theApp.m_main_wnd_data.disp_str.Get(display_item).c_str();
         str_val += CCommon::TemperatureToString(temperature, theApp.m_main_wnd_data);
-        map_str[display_item] = str_val;
+        map_str[display_item].value = str_val;
     };
     getTemperatureStr(TDI_CPU_TEMP, theApp.m_cpu_temperature);
     getTemperatureStr(TDI_GPU_TEMP, theApp.m_gpu_temperature);
@@ -542,7 +566,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
             COLORREF text_color = text_colors[iter->first];
 
             //绘制文本
-            draw.DrawWindowText(rect, map_str[iter->first].GetString(), text_color, layout_item.align);
+            DrawSkinText(draw, map_str[iter->first], rect, text_color, layout_item.align);
         }
         index++;
     }
@@ -578,12 +602,10 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
                 CRect rect(CPoint(layout_item.x, layout_item.y), CSize(layout_item.width, m_layout_info.text_height));
 
                 //绘制文本
-                CString display_text;
-                display_text += theApp.m_main_wnd_data.disp_str.Get(plugin_item).c_str();
-                if (!display_text.IsEmpty())
-                    display_text += _T(" ");
-                display_text += plugin_item->GetItemValueText();
-                draw.DrawWindowText(rect, display_text, cl, layout_item.align);
+                DrawStr draw_str;
+                draw_str.label = theApp.m_main_wnd_data.disp_str.Get(plugin_item).c_str();
+                draw_str.value = plugin_item->GetItemValueText();
+                DrawSkinText(draw, draw_str, rect, cl, layout_item.align);
             }
         }
     }
