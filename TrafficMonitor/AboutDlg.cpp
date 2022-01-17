@@ -39,7 +39,7 @@ CString CAboutDlg::GetDonateList()
 
 CString CAboutDlg::GetDialogName() const
 {
-    return _T("");
+    return _T("AboutDlg");
 }
 
 BOOL CAboutDlg::OnInitDialog()

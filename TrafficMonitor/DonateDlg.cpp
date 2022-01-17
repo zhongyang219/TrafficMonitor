@@ -31,7 +31,7 @@ void CDonateDlg::DoDataExchange(CDataExchange* pDX)
 
 CString CDonateDlg::GetDialogName() const
 {
-    return _T("");
+    return _T("DonateDlg");
 }
 
 BEGIN_MESSAGE_MAP(CDonateDlg, CBaseDialog)

@@ -156,7 +156,7 @@ void CBaseDialog::OnSize(UINT nType, int cx, int cy)
 INT_PTR CBaseDialog::DoModal()
 {
     HWND unique_hwnd{ m_unique_hwnd[GetDialogName()] };
-    if (unique_hwnd != NULL)      ///如果对话框已存在，则显示已存在的对话框
+    if (unique_hwnd != NULL && !GetDialogName().IsEmpty())      ///如果对话框已存在，则显示已存在的对话框
     {
         ::ShowWindow(unique_hwnd, SW_RESTORE);
         ::SetForegroundWindow(unique_hwnd);
