@@ -670,6 +670,7 @@ void CTaskBarSettingsDlg::OnBnClickedBackgroundTransparentCheck()
     // TODO: 在此添加控件通知处理程序代码
     bool checked = (m_background_transparent_chk.GetCheck() != 0);
     SetTaskabrTransparent(checked);
+    m_style_modified = true;
 }
 
 
