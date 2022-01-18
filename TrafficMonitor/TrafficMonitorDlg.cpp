@@ -1909,19 +1909,26 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
             }
         }
     }
-    if (lParam == WM_RBUTTONUP/* && !dialog_exist*/)
+    if (lParam == WM_RBUTTONUP)
     {
-        //在通知区点击右键弹出右键菜单
-        if (IsTaskbarWndValid())        //如果显示了任务栏窗口，则在右击了通知区图标后将焦点设置到任务栏窗口
-            m_tBarDlg->SetForegroundWindow();
-        else                //否则将焦点设置到主窗口
-            SetForegroundWindow();
-        CPoint point1;  //定义一个用于确定光标位置的位置
-        GetCursorPos(&point1);  //获取当前光标的位置，以便使得菜单可以跟随光标
-        theApp.m_main_menu.GetSubMenu(0)->SetDefaultItem(-1);       //设置没有默认菜单项
-        theApp.m_main_menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
+        if (dialog_exist)       //有打开的对话框时，点击通知区图标后将焦点设置到对话框
+        {
+            ::SetForegroundWindow(handle);
+        }
+        else
+        {
+            //在通知区点击右键弹出右键菜单
+            if (IsTaskbarWndValid())        //如果显示了任务栏窗口，则在右击了通知区图标后将焦点设置到任务栏窗口
+                m_tBarDlg->SetForegroundWindow();
+            else                //否则将焦点设置到主窗口
+                SetForegroundWindow();
+            CPoint point1;  //定义一个用于确定光标位置的位置
+            GetCursorPos(&point1);  //获取当前光标的位置，以便使得菜单可以跟随光标
+            theApp.m_main_menu.GetSubMenu(0)->SetDefaultItem(-1);       //设置没有默认菜单项
+            theApp.m_main_menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
 
-        CheckWindowPos();
+            CheckWindowPos();
+        }
     }
     if (lParam == WM_LBUTTONDBLCLK)
     {
