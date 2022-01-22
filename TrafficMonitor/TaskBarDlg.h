@@ -162,4 +162,5 @@ public:
     virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
     afx_msg void OnPaint();
     afx_msg void OnClose();
+    afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 };

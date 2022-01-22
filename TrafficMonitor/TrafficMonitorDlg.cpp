@@ -96,6 +96,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_COMMAND(ID_OPEN_TASK_MANAGER, &CTrafficMonitorDlg::OnOpenTaskManager)
     ON_MESSAGE(WM_SETTINGS_APPLIED, &CTrafficMonitorDlg::OnSettingsApplied)
     ON_COMMAND(ID_DISPLAY_SETTINGS, &CTrafficMonitorDlg::OnDisplaySettings)
+    ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
 
@@ -821,6 +822,20 @@ void CTrafficMonitorDlg::TaskbarShowHideItem(DisplayItem type)
         }
         CloseTaskBarWnd();
         OpenTaskBarWnd();
+    }
+}
+
+void CTrafficMonitorDlg::CheckClickedItem(CPoint point)
+{
+    const CSkinFile::Layout& skin_layout{ theApp.m_cfg_data.m_show_more_info ? m_skin.GetLayoutInfo().layout_l : m_skin.GetLayoutInfo().layout_s }; //当前的皮肤布局
+    for (const auto& layout_item : skin_layout.layout_items)
+    {
+        CRect rect(CPoint(layout_item.second.x, layout_item.second.y), CSize(layout_item.second.width, m_skin.GetLayoutInfo().text_height));
+        if (rect.PtInRect(point))
+        {
+            m_clicked_item = layout_item.first;
+            break;
+        }
     }
 }
 
@@ -1623,6 +1638,16 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 void CTrafficMonitorDlg::OnRButtonUp(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
+    CheckClickedItem(point);
+    if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+    {
+        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+        if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
+        {
+            if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_RCLICKED, point.x, point.y, (void*)GetSafeHwnd(), 0) != 0)
+                return;
+        }
+    }
     //设置点击鼠标右键弹出菜单
     CMenu* pContextMenu = theApp.m_main_menu.GetSubMenu(0); //获取第一个弹出菜单，所以第一个菜单必须有子菜单
     CPoint point1;  //定义一个用于确定光标位置的位置
@@ -2206,6 +2231,17 @@ void CTrafficMonitorDlg::OnMouseMove(UINT nFlags, CPoint point)
 void CTrafficMonitorDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
+    CheckClickedItem(point);
+    if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+    {
+        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+        if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
+        {
+            if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_DBCLICKED, point.x, point.y, (void*)GetSafeHwnd(), 0) != 0)
+                return;
+        }
+    }
+
     switch (theApp.m_main_wnd_data.double_click_action)
     {
     case DoubleClickAction::CONNECTION_INFO:
@@ -2491,4 +2527,22 @@ void CTrafficMonitorDlg::OnDisplaySettings()
         CloseTaskBarWnd();
         OpenTaskBarWnd();
     }
+}
+
+
+void CTrafficMonitorDlg::OnLButtonUp(UINT nFlags, CPoint point)
+{
+    // TODO: 在此添加消息处理程序代码和/或调用默认值
+    CheckClickedItem(point);
+    if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+    {
+        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+        if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
+        {
+            if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_LCLICKED, point.x, point.y, (void*)GetSafeHwnd(), 0) != 0)
+                return;
+        }
+    }
+
+    CDialog::OnLButtonUp(nFlags, point);
 }

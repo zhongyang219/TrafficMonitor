@@ -74,6 +74,49 @@ public:
      * @return  void
      */
     virtual void DrawItem(void* hDC, int x, int y, int w, int h, bool dark_mode) {}
+
+    /**
+     * @brief   获取显示区域的宽度
+     * @detail
+     *  只有当CustomDraw()函数返回true时重写此函数才有效。
+     *  此函数和GetItemWidth不同，插件可以根据参数hDC来计算需要的宽度，
+     *  它返回的是实际的宽度，主程序不会根据当前系统的DPI对返回值进行放大。
+     *  需要注意的是，这里的返回值代表了自绘区域所需要的最小宽度，DrawItem函数中的参数w的值可能会大于这个值
+     * @param   void * hDC 绘图的上下文句柄
+     * @return  int
+     */
+    virtual int GetItemWidthEx(void* hDC) { return 0; }
+
+    /** 鼠标事件的类型 */
+    enum MouseEventType
+    {
+        MT_LCLICKED,    /**< 点击了鼠标左键 */
+        MT_RCLICKED,    /**< 点击了鼠标右键 */
+        MT_DBCLICKED,   /**< 双击了鼠标左键 */
+    };
+
+    enum MouseEventFlag
+    {
+        MF_TASKBAR_WND = 1 << 0,        /**< 是否为任务栏窗口的鼠标事件 */
+    };
+
+    /**
+     * @brief   当插件显示区域有鼠标事件时由主程序调用
+     * @param   MouseEventType type 鼠标事件的类型
+     * @param   int x 鼠标指针所在的x坐标
+     * @param   int y 鼠标指针所在的y坐标
+     * @param   void* hWnd 产生此鼠标事件的窗口的句柄（主窗口或任务栏窗口）
+     * @param   int flag 为若干MouseEventFlag枚举常量的组合
+     * @return  int 如果返回非0，则主程序认为插件已经对此鼠标事件作出了全部的响应，主程序将不会再对此鼠标事件做额外的响应。
+     *   例如当type为MT_RCLICKED时，如果程序返回0，则会弹出主程序提供的右键菜单；而返回非0时，主程序不会再做任何处理。
+     */
+    virtual int OnMouseEvent(MouseEventType type, int x, int y, void* hWnd, int flag) { return 0; }
+
+    enum ItemInfoType
+    {
+
+    };
+    virtual void* OnItemInfo(ItemInfoType, void* para1, void* para2) { return 0; }
 };
 
 
@@ -86,7 +129,7 @@ public:
      * @attention 插件开发者不应该修改这里的返回值，也不应该重写此虚函数。
      * @return  int
      */
-    virtual int GetAPIVersion() const { return 2; }
+    virtual int GetAPIVersion() const { return 3; }
 
     /**
      * @brief   获取插件显示项目的对象
@@ -213,5 +256,7 @@ public:
 *     1       | 第一个版本
 * -------------------------------------------------------------------------
 *     2       | 新增 ITMPlugin::GetTooltipInfo 函数
+* -------------------------------------------------------------------------
+*     3       | 新增 IPluginItem::GetItemWidthEx, IPluginItem::OnMouseEvent 函数
 * -------------------------------------------------------------------------
 */

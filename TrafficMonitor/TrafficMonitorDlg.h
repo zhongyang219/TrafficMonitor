@@ -87,6 +87,7 @@ protected:
     vector<CRect> m_last_screen_rects;       //上一次所有屏幕的范围（不包含任务栏）
     CSize m_screen_size;        //屏幕的大小（包含任务栏）
     CSkinFile m_skin;
+    CommonDisplayItem m_clicked_item;           //鼠标点击的项目
 
     CFont m_font;           //字体
 
@@ -166,6 +167,9 @@ protected:
 
     void TaskbarShowHideItem(DisplayItem type);
 
+    //判断一个点在哪个显示项目的区域内，并保存到m_clicked_item
+    void CheckClickedItem(CPoint point);
+
 public:
     //void ApplySettings();
     bool IsTemperatureNeeded() const;       //判断是否需要显示温度信息
@@ -240,4 +244,5 @@ protected:
     afx_msg LRESULT OnSettingsApplied(WPARAM wParam, LPARAM lParam);
 public:
     afx_msg void OnDisplaySettings();
+    afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 };

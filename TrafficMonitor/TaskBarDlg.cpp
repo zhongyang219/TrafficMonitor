@@ -40,6 +40,7 @@ BEGIN_MESSAGE_MAP(CTaskBarDlg, CDialogEx)
     ON_WM_TIMER()
     ON_WM_PAINT()
     ON_WM_CLOSE()
+    ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
 
@@ -1011,6 +1012,16 @@ void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
     // TODO: 在此添加消息处理程序代码和/或调用默认值
 
     CheckClickedItem(point);
+    if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+    {
+        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+        if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
+        {
+            if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_RCLICKED, point.x, point.y, (void*)GetSafeHwnd(), IPluginItem::MF_TASKBAR_WND) != 0)
+                return;
+        }
+    }
+
     CPoint point1;  //定义一个用于确定光标位置的位置
     GetCursorPos(&point1);  //获取当前光标的位置，以便使得菜单可以跟随光标
     CMenu* pMenu = theApp.m_taskbar_menu.GetSubMenu(0);
@@ -1087,6 +1098,15 @@ void CTaskBarDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     CheckClickedItem(point);
+    if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+    {
+        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+        if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
+        {
+            if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_DBCLICKED, point.x, point.y, (void*)GetSafeHwnd(), IPluginItem::MF_TASKBAR_WND) != 0)
+                return;
+        }
+    }
     switch (theApp.m_taskbar_data.double_click_action)
     {
     case DoubleClickAction::CONNECTION_INFO:
@@ -1242,4 +1262,22 @@ void CTaskBarDlg::OnClose()
     ::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_TASKBAR_WND_CLOSED, 0, 0);
 
     CDialogEx::OnClose();
+}
+
+
+void CTaskBarDlg::OnLButtonUp(UINT nFlags, CPoint point)
+{
+    // TODO: 在此添加消息处理程序代码和/或调用默认值
+    CheckClickedItem(point);
+    if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+    {
+        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+        if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
+        {
+            if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_LCLICKED, point.x, point.y, (void*)GetSafeHwnd(), IPluginItem::MF_TASKBAR_WND) != 0)
+                return;
+        }
+    }
+
+    CDialogEx::OnLButtonUp(nFlags, point);
 }
