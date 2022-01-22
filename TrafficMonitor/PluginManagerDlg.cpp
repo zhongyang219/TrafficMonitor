@@ -28,6 +28,7 @@ void CPluginManagerDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_LIST1, m_list_ctrl);
     DDX_Control(pDX, IDC_PLUGIN_DOWNLOAD_STATIC, m_plugin_download_lnk);
     DDX_Control(pDX, IDC_PLUGIN_DEV_GUID_STATIC, m_plugin_dev_guide_lnk);
+    DDX_Control(pDX, IDC_OPEN_PLUGIN_DIR_STATIC, m_open_plugin_dir_lnk);
 }
 
 void CPluginManagerDlg::EnableControl()
@@ -71,6 +72,7 @@ BEGIN_MESSAGE_MAP(CPluginManagerDlg, CBaseDialog)
     ON_COMMAND(ID_PLUGIN_DETAIL, &CPluginManagerDlg::OnPluginDetail)
     ON_COMMAND(ID_PLUGIN_OPTIONS, &CPluginManagerDlg::OnPluginOptions)
     ON_COMMAND(ID_PLUGIN_DISABLE, &CPluginManagerDlg::OnPluginDisable)
+    ON_MESSAGE(WM_LINK_CLICKED, &CPluginManagerDlg::OnLinkClicked)
 END_MESSAGE_MAP()
 
 
@@ -128,6 +130,7 @@ BOOL CPluginManagerDlg::OnInitDialog()
 
     m_plugin_download_lnk.SetURL(L"https://github.com/zhongyang219/TrafficMonitorPlugins/blob/main/download/plugin_download.md");
     m_plugin_dev_guide_lnk.SetURL(L"https://github.com/zhongyang219/TrafficMonitor/wiki/%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97");
+    m_open_plugin_dir_lnk.SetLinkIsURL(false);
 
     EnableControl();
 
@@ -248,4 +251,19 @@ void CPluginManagerDlg::OnPluginDisable()
         theApp.m_cfg_data.plugin_disabled.SetStrContained(file_name, !disabled);
         MessageBox(CCommon::LoadText(IDS_RESTART_TO_APPLY_CHANGE_INFO), nullptr, MB_OK | MB_ICONINFORMATION);
     }
+}
+
+
+afx_msg LRESULT CPluginManagerDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
+{
+    CWnd* pCtrl = (CWnd*)wParam;
+    //点击了“打开插件目录”
+    if (pCtrl == &m_open_plugin_dir_lnk)
+    {
+        wstring plugin_dir = CCommon::GetModuleDir() + L"plugins";
+        CreateDirectory(plugin_dir.c_str(), NULL);       //如果plugins不存在，则创建它
+        ShellExecute(NULL, _T("open"), _T("explorer"), plugin_dir.c_str(), NULL, SW_SHOWNORMAL);
+    }
+
+    return 0;
 }

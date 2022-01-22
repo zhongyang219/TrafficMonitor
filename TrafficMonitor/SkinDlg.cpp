@@ -34,6 +34,7 @@ void CSkinDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_SKIN_DOWNLOAD_STATIC, m_skin_download);
     DDX_Control(pDX, IDC_PREVIEW_GROUP_STATIC, m_preview_static);
     DDX_Control(pDX, IDC_NOTIFY_STATIC, m_notify_static);
+    DDX_Control(pDX, IDC_OPEN_SKIN_DIR_STATIC, m_open_skin_dir_lnk);
 }
 
 
@@ -82,6 +83,7 @@ CRect CSkinDlg::CalculateViewRect()
 BEGIN_MESSAGE_MAP(CSkinDlg, CBaseDialog)
     ON_CBN_SELCHANGE(IDC_COMBO1, &CSkinDlg::OnCbnSelchangeCombo1)
     ON_WM_SIZE()
+    ON_MESSAGE(WM_LINK_CLICKED, &CSkinDlg::OnLinkClicked)
 END_MESSAGE_MAP()
 
 
@@ -123,6 +125,7 @@ BOOL CSkinDlg::OnInitDialog()
     //设置超链接
     m_skin_course.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor/wiki/%E7%9A%AE%E8%82%A4%E5%88%B6%E4%BD%9C%E6%95%99%E7%A8%8B"));
     m_skin_download.SetURL(_T("https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md"));
+    m_open_skin_dir_lnk.SetLinkIsURL(false);
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE
@@ -144,4 +147,17 @@ void CSkinDlg::OnSize(UINT nType, int cx, int cy)
     // TODO: 在此处添加消息处理程序代码
     if (m_preview_static.m_hWnd != NULL && nType != SIZE_MINIMIZED && m_view != nullptr)
         m_view->MoveWindow(CalculateViewRect());
+}
+
+
+afx_msg LRESULT CSkinDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
+{
+    CWnd* pCtrl = (CWnd*)wParam;
+    //点击了“打开皮肤目录”
+    if (pCtrl == &m_open_skin_dir_lnk)
+    {
+        CreateDirectory(theApp.m_skin_path.c_str(), NULL);       //如果皮肤目录不存在，则创建它
+        ShellExecute(NULL, _T("open"), _T("explorer"), theApp.m_skin_path.c_str(), NULL, SW_SHOWNORMAL);
+    }
+    return 0;
 }

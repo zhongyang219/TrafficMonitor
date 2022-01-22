@@ -492,6 +492,8 @@
 #define IDC_SHOW_NET_SPEED_FIGURE_CHECK 1157
 #define IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT 1158
 #define IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO 1159
+#define IDC_OPEN_PLUGIN_DIR_STATIC      1160
+#define IDC_OPEN_SKIN_DIR_STATIC        1161
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -609,7 +611,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        341
 #define _APS_NEXT_COMMAND_VALUE         33406
-#define _APS_NEXT_CONTROL_VALUE         1160
+#define _APS_NEXT_CONTROL_VALUE         1162
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

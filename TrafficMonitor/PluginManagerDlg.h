@@ -23,6 +23,7 @@ private:
     CMenu m_menu;
     CLinkStatic m_plugin_download_lnk;
     CLinkStatic m_plugin_dev_guide_lnk;
+    CLinkStatic m_open_plugin_dir_lnk;
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
@@ -45,4 +46,6 @@ public:
     afx_msg void OnPluginDetail();
     afx_msg void OnPluginOptions();
     afx_msg void OnPluginDisable();
+protected:
+    afx_msg LRESULT OnLinkClicked(WPARAM wParam, LPARAM lParam);
 };
