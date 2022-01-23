@@ -228,6 +228,8 @@ public:
         EI_TASKBAR_WND_UNIT_SELECT,             //网速单位选择（0：自动，1：固定为KB/s，2：固定为MB/s）
         EI_TASKBAR_WND_NOT_SHOW_UNIT,           //不显示网速单位
         EI_TASKBAR_WND_NOT_SHOW_PERCENT,        //不显示百分号
+
+        EI_CONFIG_DIR,                      //配置文件的目录
     };
 
     /**

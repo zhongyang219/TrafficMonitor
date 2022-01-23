@@ -2,6 +2,7 @@
 #include "PluginInterface.h"
 #include <map>
 #include "TaskbarItemOrderHelper.h"
+#include <functional>
 
 typedef ITMPlugin* (*pfTMPluginGetInstance)();
 
@@ -42,6 +43,14 @@ public:
     IPluginItem* GetItemByIndex(int index);
     int GetItemIndex(IPluginItem* item) const;
     ITMPlugin* GetPluginByItem(IPluginItem* pItem);
+
+    //遍历所有插件
+    //func: 参数为遍历到的ITMPlugin对象
+    void EnumPlugin(std::function<void(ITMPlugin*)> func) const;
+
+    //遍历所有插件项目
+    //func: 参数为遍历到的IPluginItem对象
+    void EnumPluginItem(std::function<void(IPluginItem*)> func) const;
 
     const std::set<CommonDisplayItem>& AllDisplayItemsWithPlugins();
 

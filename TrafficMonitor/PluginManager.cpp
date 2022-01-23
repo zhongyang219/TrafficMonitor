@@ -151,6 +151,28 @@ ITMPlugin* CPluginManager::GetPluginByItem(IPluginItem* pItem)
     return m_plguin_item_map[pItem];
 }
 
+void CPluginManager::EnumPlugin(std::function<void(ITMPlugin*)> func) const
+{
+    for (const auto& item : m_modules)
+    {
+        if (item.plugin != nullptr)
+        {
+            func(item.plugin);
+        }
+    }
+}
+
+void CPluginManager::EnumPluginItem(std::function<void(IPluginItem*)> func) const
+{
+    for (const auto& item : m_plugins)
+    {
+        if (item != nullptr)
+        {
+            func(item);
+        }
+    }
+}
+
 const std::set<CommonDisplayItem>& CPluginManager::AllDisplayItemsWithPlugins()
 {
     return m_all_display_items_with_plugins;
