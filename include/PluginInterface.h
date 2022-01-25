@@ -85,7 +85,7 @@ public:
      * @param   void * hDC 绘图的上下文句柄
      * @return  int
      */
-    virtual int GetItemWidthEx(void* hDC) { return 0; }
+    virtual int GetItemWidthEx(void* hDC) const { return 0; }
 
     /** 鼠标事件的类型 */
     enum MouseEventType

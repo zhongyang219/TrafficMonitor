@@ -909,7 +909,13 @@ BOOL CTrafficMonitorApp::InitInstance()
     m_plugins.LoadPlugins();
 
     //向插件传递配置文件的路径
-    wstring plugin_dir = m_config_dir + L"plugins\\";
+    wstring plugin_dir;
+#ifdef _DEBUG
+    plugin_dir = m_module_dir;
+#else
+    plugin_dir = m_config_dir;
+#endif
+    plugin_dir += L"plugins\\";
     m_plugins.EnumPlugin([&](ITMPlugin* plugin)
         {
             if (plugin->GetAPIVersion() >= 2)
@@ -1076,7 +1082,7 @@ BOOL CTrafficMonitorApp::InitInstance()
     // 由于对话框已关闭，所以将返回 FALSE 以便退出应用程序，
     //  而不是启动应用程序的消息泵。
     return FALSE;
-    }
+}
 
 void CTrafficMonitorApp::InitOpenHardwareLibInThread()
 {

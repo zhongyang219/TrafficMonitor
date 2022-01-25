@@ -178,6 +178,22 @@ const std::set<CommonDisplayItem>& CPluginManager::AllDisplayItemsWithPlugins()
     return m_all_display_items_with_plugins;
 }
 
+
+int CPluginManager::GetItemWidth(IPluginItem* pItem, CDC* pDC)
+{
+    int width = 0;
+    ITMPlugin* plugin = GetPluginByItem(pItem);
+    if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
+    {
+        width = pItem->GetItemWidthEx(pDC->GetSafeHdc());       //优先使用GetItemWidthEx接口获取宽度
+    }
+    if (width == 0)
+    {
+        width = theApp.DPI(pItem->GetItemWidth());
+    }
+    return width;
+}
+
 std::wstring CPluginManager::PluginInfo::Property(ITMPlugin::PluginInfoIndex index) const
 {
     auto iter = properties.find(index);

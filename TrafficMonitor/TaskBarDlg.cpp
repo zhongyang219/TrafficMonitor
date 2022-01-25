@@ -800,7 +800,7 @@ void CTaskBarDlg::CalculateWindowSize()
         {
             if (plugin->IsCustomDraw())
             {
-                value_width = theApp.DPI(plugin->GetItemWidth());
+                value_width = theApp.m_plugins.GetItemWidth(plugin, m_pDC);
             }
             else
             {

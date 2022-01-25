@@ -54,6 +54,8 @@ public:
 
     const std::set<CommonDisplayItem>& AllDisplayItemsWithPlugins();
 
+    int GetItemWidth(IPluginItem* pItem, CDC* pDC);
+
 private:
     std::vector<IPluginItem*> m_plugins;
     std::vector<PluginInfo> m_modules;
