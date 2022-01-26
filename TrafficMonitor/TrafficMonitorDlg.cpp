@@ -325,7 +325,7 @@ void CTrafficMonitorDlg::AutoSelect()
             }
         }
     }
-    theApp.m_cfg_data.m_connection_name = m_connections[m_connection_selected].description_2;
+    theApp.m_cfg_data.m_connection_name = GetConnection(m_connection_selected).description_2;
     m_connection_change_flag = true;
 }
 
@@ -419,7 +419,7 @@ void CTrafficMonitorDlg::IniConnection()
     }
     if (m_connection_selected < 0 || m_connection_selected >= m_connections.size())
         m_connection_selected = 0;
-    theApp.m_cfg_data.m_connection_name = m_connections[m_connection_selected].description_2;
+    theApp.m_cfg_data.m_connection_name = GetConnection(m_connection_selected).description_2;
 
     //根据已获取到的连接在菜单中添加相应项目
     CMenu* select_connection_menu = theApp.m_main_menu.GetSubMenu(0)->GetSubMenu(0);        //设置“选择网络连接”子菜单项
@@ -440,6 +440,14 @@ MIB_IFROW CTrafficMonitorDlg::GetConnectIfTable(int connection_index)
             return m_pIfTable->table[index];
     }
     return MIB_IFROW();
+}
+
+NetWorkConection CTrafficMonitorDlg::GetConnection(int connection_index)
+{
+    if (connection_index >= 0 && connection_index < static_cast<int>(m_connections.size()))
+        return m_connections[connection_index];
+    else
+        return NetWorkConection();
 }
 
 void CTrafficMonitorDlg::IniConnectionMenu(CMenu* pMenu)
@@ -1796,7 +1804,7 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
     if (uMsg > ID_SELECT_ALL_CONNECTION && uMsg <= ID_SELECT_ALL_CONNECTION + m_connections.size()) //选择了一个网络连接
     {
         m_connection_selected = uMsg - ID_SELECT_ALL_CONNECTION - 1;
-        theApp.m_cfg_data.m_connection_name = m_connections[m_connection_selected].description_2;
+        theApp.m_cfg_data.m_connection_name = GetConnection(m_connection_selected).description_2;
         m_connection_name_preferd = theApp.m_cfg_data.m_connection_name;
         theApp.m_cfg_data.m_auto_select = false;
         theApp.m_cfg_data.m_select_all = false;

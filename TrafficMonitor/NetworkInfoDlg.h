@@ -1,63 +1,65 @@
-#pragma once
+ï»¿#pragma once
 #include"Common.h"
 #include "afxcmn.h"
 #include "AdapterCommon.h"
 #include "BaseDialog.h"
 
-// CNetworkInfoDlg ¶Ô»°¿ò
+// CNetworkInfoDlg å¯¹è¯æ¡†
 
 class CNetworkInfoDlg : public CBaseDialog
 {
-	DECLARE_DYNAMIC(CNetworkInfoDlg)
+    DECLARE_DYNAMIC(CNetworkInfoDlg)
 
 public:
-	CNetworkInfoDlg(vector<NetWorkConection>& adapters, MIB_IFROW* pIfRow, int connection_selected, CWnd* pParent = NULL);   // ±ê×¼¹¹Ôìº¯Êı
-	virtual ~CNetworkInfoDlg();
+    CNetworkInfoDlg(vector<NetWorkConection>& adapters, MIB_IFROW* pIfRow, int connection_selected, CWnd* pParent = NULL);   // æ ‡å‡†æ„é€ å‡½æ•°
+    virtual ~CNetworkInfoDlg();
 
-// ¶Ô»°¿òÊı¾İ
+    // å¯¹è¯æ¡†æ•°æ®
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_NETWORK_INFO_DIALOG };
+    enum { IDD = IDD_NETWORK_INFO_DIALOG };
 #endif
 
-	SYSTEMTIME m_start_time;		//³ÌĞòÆô¶¯µÄÊ±¼ä
+    SYSTEMTIME m_start_time;		//ç¨‹åºå¯åŠ¨çš„æ—¶é—´
 
 protected:
 
-	vector<NetWorkConection>& m_connections;
-	MIB_IFROW* m_pIfRow;
-	int m_connection_selected;		//µ±Ç°¶Ô»°¿òÏÔÊ¾µÄÁ¬½Ó
-	int m_current_connection;		//³õÊ¼Ñ¡ÔñµÄÁ¬½Ó
+    vector<NetWorkConection>& m_connections;
+    MIB_IFROW* m_pIfRow;
+    int m_connection_selected;		//å½“å‰å¯¹è¯æ¡†æ˜¾ç¤ºçš„è¿æ¥
+    int m_current_connection;		//åˆå§‹é€‰æ‹©çš„è¿æ¥
 
-	CListCtrl m_info_list;
-	CMenu m_menu;
-	CString m_selected_string;
-	CFont m_font_bold;		//Ä¬ÈÏ×ÖÌåµÄ´ÖÌå
+    CListCtrl m_info_list;
+    CMenu m_menu;
+    CString m_selected_string;
+    CFont m_font_bold;		//é»˜è®¤å­—ä½“çš„ç²—ä½“
 
-	CWinThread* m_pGetIPThread;			//»ñÈ¡ÍâÍøIPµÄÏß³Ì
-    bool m_ip_acquired{ false };        //Èç¹ûÒÑ»ñÈ¡ÍâÍøipµØÖ·£¬ÔòÎªtrue
+    CWinThread* m_pGetIPThread;			//è·å–å¤–ç½‘IPçš„çº¿ç¨‹
+    bool m_ip_acquired{ false };        //å¦‚æœå·²è·å–å¤–ç½‘ipåœ°å€ï¼Œåˆ™ä¸ºtrue
 
-	//void GetIPAddress();	//»ñÈ¡IPµØÖ·
-	void ShowInfo();
-	void GetProgramElapsedTime();
+    //void GetIPAddress();	//è·å–IPåœ°å€
+    void ShowInfo();
+    void GetProgramElapsedTime();
+    MIB_IFROW& GetConnectIfTable(int connection_index);    //è·å–å½“å‰é€‰æ‹©çš„ç½‘ç»œè¿æ¥çš„MIB_IFROWå¯¹è±¡ã€‚connection_indexä¸ºm_connectionsä¸­çš„ç´¢å¼•
+    NetWorkConection GetConnection(int connection_index); //è·å–å½“å‰é€‰æ‹©çš„ç½‘ç»œè¿æ¥çš„NetWorkConectionå¯¹è±¡ã€‚connection_indexä¸ºm_connectionsä¸­çš„ç´¢å¼•
 
-	//»ñÈ¡ÍâÍøIPµÄÏß³Ìº¯Êı
-	static UINT GetInternetIPThreadFunc(LPVOID lpParam);
+    //è·å–å¤–ç½‘IPçš„çº¿ç¨‹å‡½æ•°
+    static UINT GetInternetIPThreadFunc(LPVOID lpParam);
 
-	virtual CString GetDialogName() const override;
+    virtual CString GetDialogName() const override;
 
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV æ”¯æŒ
 
-	DECLARE_MESSAGE_MAP()
+    DECLARE_MESSAGE_MAP()
 
-	virtual BOOL OnInitDialog();
+    virtual BOOL OnInitDialog();
 public:
-	afx_msg void OnCopyText();
-	afx_msg void OnNMRClickInfoList1(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnClose();
-	afx_msg void OnBnClickedPreviousButton();
-	afx_msg void OnBnClickedNextButton();
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	afx_msg void OnTimer(UINT_PTR nIDEvent);
-	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-	afx_msg void OnNMDblclkInfoList1(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void OnCopyText();
+    afx_msg void OnNMRClickInfoList1(NMHDR* pNMHDR, LRESULT* pResult);
+    afx_msg void OnClose();
+    afx_msg void OnBnClickedPreviousButton();
+    afx_msg void OnBnClickedNextButton();
+    virtual BOOL PreTranslateMessage(MSG* pMsg);
+    afx_msg void OnTimer(UINT_PTR nIDEvent);
+    afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+    afx_msg void OnNMDblclkInfoList1(NMHDR* pNMHDR, LRESULT* pResult);
 };
