@@ -94,6 +94,7 @@ protected:
     bool m_connot_insert_to_task_bar{ false };	//如果窗口无法嵌入任务栏，则为true
     bool m_taskbar_on_top_or_bottom{ true };		//如果任务栏在屏幕顶部或底部，则为ture
     int m_error_code{};
+    bool m_menu_popuped{ false };               //指示当前是否有菜单处于弹出状态
 
     CFont m_font;			//字体
 
@@ -163,4 +164,6 @@ public:
     afx_msg void OnPaint();
     afx_msg void OnClose();
     afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+protected:
+    afx_msg LRESULT OnExitmenuloop(WPARAM wParam, LPARAM lParam);
 };

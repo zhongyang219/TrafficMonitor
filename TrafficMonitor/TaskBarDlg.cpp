@@ -41,6 +41,7 @@ BEGIN_MESSAGE_MAP(CTaskBarDlg, CDialogEx)
     ON_WM_PAINT()
     ON_WM_CLOSE()
     ON_WM_LBUTTONUP()
+    ON_MESSAGE(WM_EXITMENULOOP, &CTaskBarDlg::OnExitmenuloop)
 END_MESSAGE_MAP()
 
 
@@ -1010,7 +1011,8 @@ void CTaskBarDlg::OnCancel()
 void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
-
+    m_menu_popuped = true;
+    m_tool_tips.Pop();
     CheckClickedItem(point);
     if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
     {
@@ -1075,7 +1077,7 @@ BOOL CTaskBarDlg::PreTranslateMessage(MSG* pMsg)
     if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE) return TRUE;
     if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN) return TRUE;
 
-    if (theApp.m_taskbar_data.show_tool_tip && IsWindow(m_tool_tips.GetSafeHwnd()) && (pMsg->message == WM_LBUTTONDOWN ||
+    if (theApp.m_taskbar_data.show_tool_tip && !m_menu_popuped && IsWindow(m_tool_tips.GetSafeHwnd()) && (pMsg->message == WM_LBUTTONDOWN ||
         pMsg->message == WM_LBUTTONUP ||
         pMsg->message == WM_MOUSEMOVE))
     {
@@ -1280,4 +1282,11 @@ void CTaskBarDlg::OnLButtonUp(UINT nFlags, CPoint point)
     }
 
     CDialogEx::OnLButtonUp(nFlags, point);
+}
+
+
+afx_msg LRESULT CTaskBarDlg::OnExitmenuloop(WPARAM wParam, LPARAM lParam)
+{
+    m_menu_popuped = false;
+    return 0;
 }
