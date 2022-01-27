@@ -1,6 +1,6 @@
-Ôªø//{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ ÁîüÊàêÁöÑÂåÖÂê´Êñá‰ª∂„ÄÇ
-// ‰æõ TrafficMonitor.rc ‰ΩøÁî®
+//{{NO_DEPENDENCIES}}
+// Microsoft Visual C++ …˙≥…µƒ∞¸∫¨Œƒº˛°£
+// π© TrafficMonitor.rc  π”√
 //
 #define IDD_TRAFFICMONITOR_DIALOG       102
 #define IDR_MAINFRAME                   128
@@ -283,6 +283,7 @@
 #define IDS_TOTAL_NET_SPEED             375
 #define IDS_SHOW_RESOURCE_USAGE_GRAPH_TIP 376
 #define IDS_SHOW_NET_SPEED_GRAPH_TIP    377
+#define IDS_REFRESH_CONNECTION_LIST     378
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
 #define IDC_STATIC_DOWN                 1002
@@ -602,7 +603,7 @@
 #define ID_PLUGIN_DISABLE               33401
 #define ID_SHOW_TOTAL_SPEED             33402
 #define ID_OPEN_TASK_MANAGER            33403
-#define ID_                             33404
+#define ID_REFRESH_CONNECTION_LIST      33404
 #define ID_DISPLAY_SETTINGS             33405
 
 // Next default values for new objects

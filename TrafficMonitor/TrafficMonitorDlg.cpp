@@ -97,6 +97,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_MESSAGE(WM_SETTINGS_APPLIED, &CTrafficMonitorDlg::OnSettingsApplied)
     ON_COMMAND(ID_DISPLAY_SETTINGS, &CTrafficMonitorDlg::OnDisplaySettings)
     ON_WM_LBUTTONUP()
+    ON_COMMAND(ID_REFRESH_CONNECTION_LIST, &CTrafficMonitorDlg::OnRefreshConnectionList)
 END_MESSAGE_MAP()
 
 
@@ -468,6 +469,10 @@ void CTrafficMonitorDlg::IniConnectionMenu(CMenu* pMenu)
             connection_descr = CCommon::StrToUnicode(m_connections[i].description.c_str()).c_str();
             pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SELECT_ALL_CONNECTION + i + 1, connection_descr);
         }
+
+        //添加“刷新网络列表”命令
+        pMenu->AppendMenu(MF_SEPARATOR);
+        pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_REFRESH_CONNECTION_LIST, CCommon::LoadText(IDS_REFRESH_CONNECTION_LIST));
     }
 }
 
@@ -2553,4 +2558,11 @@ void CTrafficMonitorDlg::OnLButtonUp(UINT nFlags, CPoint point)
     }
 
     CDialog::OnLButtonUp(nFlags, point);
+}
+
+
+void CTrafficMonitorDlg::OnRefreshConnectionList()
+{
+    IniConnection();
+    
 }
