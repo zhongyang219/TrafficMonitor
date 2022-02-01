@@ -87,6 +87,20 @@ ITMPlugin::OptionReturn CPluginDemo::ShowOptionsDialog(void* hParent)
 }
 
 
+void CPluginDemo::OnExtenedInfo(ExtendedInfoIndex index, const wchar_t* data)
+{
+    switch (index)
+    {
+    case ITMPlugin::EI_CONFIG_DIR:
+        //从配置文件读取配置
+        g_data.LoadConfig(std::wstring(data));
+
+        break;
+    default:
+        break;
+    }
+}
+
 ITMPlugin* TMPluginGetInstance()
 {
     AFX_MANAGE_STATE(AfxGetStaticModuleState());

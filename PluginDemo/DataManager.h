@@ -2,6 +2,8 @@
 #include <string>
 #include <map>
 
+#define g_data CDataManager::Instance()
+
 struct SettingData
 {
     bool show_second{};
@@ -17,7 +19,7 @@ private:
 public:
     static CDataManager& Instance();
 
-    void LoadConfig();
+    void LoadConfig(const std::wstring& config_dir);
     void SaveConfig() const;
     const CString& StringRes(UINT id);      //根据资源id获取一个字符串资源
 
@@ -29,6 +31,6 @@ public:
 
 private:
     static CDataManager m_instance;
-    std::wstring m_module_path;
+    std::wstring m_config_path;
     std::map<UINT, CString> m_string_table;
 };

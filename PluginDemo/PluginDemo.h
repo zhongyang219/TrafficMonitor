@@ -17,6 +17,7 @@ public:
     virtual void DataRequired() override;
     virtual const wchar_t* GetInfo(PluginInfoIndex index) override;
     virtual OptionReturn ShowOptionsDialog(void* hParent) override;
+    virtual void OnExtenedInfo(ExtendedInfoIndex index, const wchar_t* data) override;
 
 private:
     CPluginSystemDate m_system_date;
