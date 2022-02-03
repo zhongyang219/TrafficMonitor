@@ -670,7 +670,10 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     }
 
     if (optionsDlg.m_tab3_dlg.IsAutoRunModified())
-        theApp.SetAutoRun(theApp.m_general_data.auto_run);
+    {
+        if (!theApp.SetAutoRun(theApp.m_general_data.auto_run))
+            MessageBox(CCommon::LoadText(IDS_SET_AUTO_RUN_FAILED_WARNING), NULL, MB_ICONWARNING | MB_OK);
+    }
 
     if (optionsDlg.m_tab3_dlg.IsShowAllInterfaceModified() || is_connections_hide_changed)
         IniConnection();

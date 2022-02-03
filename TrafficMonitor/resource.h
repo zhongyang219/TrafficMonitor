@@ -286,6 +286,10 @@
 #define IDS_REFRESH_CONNECTION_LIST     378
 #define IDS_HARDWARE_MONITOR_INIT_FAILED 379
 #define IDS_HARDWARE_INFO_ACQUIRE_FAILED_ERROR 380
+#define IDS_AUTO_RUN_METHOD_REGESTRY    381
+#define IDS_AUTO_RUN_METHOD_TASK_SCHEDULE 382
+#define IDS_PATH                        383
+#define IDS_SET_AUTO_RUN_FAILED_WARNING 384
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
 #define IDC_STATIC_DOWN                 1002
@@ -497,6 +501,7 @@
 #define IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO 1159
 #define IDC_OPEN_PLUGIN_DIR_STATIC      1160
 #define IDC_OPEN_SKIN_DIR_STATIC        1161
+#define IDC_RESET_AUTO_RUN_BUTTON       1162
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -614,7 +619,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        341
 #define _APS_NEXT_COMMAND_VALUE         33406
-#define _APS_NEXT_CONTROL_VALUE         1162
+#define _APS_NEXT_CONTROL_VALUE         1166
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

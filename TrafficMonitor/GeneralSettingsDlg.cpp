@@ -71,6 +71,27 @@ bool CGeneralSettingsDlg::ShowHardwareMonitorWarning()
     return false;
 }
 
+void CGeneralSettingsDlg::AddOrUpdateAutoRunTooltip(bool add)
+{
+    CString str_tool_tip;
+#ifdef WITHOUT_TEMPERATURE
+    str_tool_tip = CCommon::LoadText(IDS_AUTO_RUN_METHOD_REGESTRY);
+#else
+    str_tool_tip = CCommon::LoadText(IDS_AUTO_RUN_METHOD_TASK_SCHEDULE);
+#endif
+    if (!m_auto_run_path.empty())
+    {
+        str_tool_tip += _T("\r\n");
+        str_tool_tip += CCommon::LoadText(IDS_PATH, _T(": "));
+        str_tool_tip += m_auto_run_path.c_str();
+    }
+    if (add)
+        m_toolTip.AddTool(GetDlgItem(IDC_AUTO_RUN_CHECK), str_tool_tip);
+    else
+        m_toolTip.UpdateTipText(str_tool_tip, GetDlgItem(IDC_AUTO_RUN_CHECK));
+
+}
+
 bool CGeneralSettingsDlg::IsMonitorTimeSpanModified() const
 {
     return m_data.monitor_time_span != m_monitor_time_span_ori;
@@ -139,6 +160,7 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_PLUGIN_MANAGE_BUTTON, &CGeneralSettingsDlg::OnBnClickedPluginManageButton)
     ON_BN_CLICKED(IDC_SHOW_NOTIFY_ICON_CHECK, &CGeneralSettingsDlg::OnBnClickedShowNotifyIconCheck)
     ON_BN_CLICKED(IDC_SELECT_CONNECTIONS_BUTTON, &CGeneralSettingsDlg::OnBnClickedSelectConnectionsButton)
+    ON_BN_CLICKED(IDC_RESET_AUTO_RUN_BUTTON, &CGeneralSettingsDlg::OnBnClickedResetAutoRunButton)
 END_MESSAGE_MAP()
 
 
@@ -177,7 +199,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     }
     else
     {
-        m_data.auto_run = theApp.GetAutoRun();
+        m_data.auto_run = theApp.GetAutoRun(&m_auto_run_path);
     }
 
     ((CButton*)GetDlgItem(IDC_SAVE_TO_APPDATA_RADIO))->SetCheck(!m_data.portable_mode);
@@ -227,6 +249,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     m_toolTip.AddTool(GetDlgItem(IDC_SHOW_ALL_CONNECTION_CHECK), CCommon::LoadText(IDS_SHOW_ALL_INFO_TIP));
     m_toolTip.AddTool(GetDlgItem(IDC_SAVE_TO_APPDATA_RADIO), theApp.m_appdata_dir.c_str());
     m_toolTip.AddTool(GetDlgItem(IDC_SAVE_TO_PROGRAM_DIR_RADIO), theApp.m_module_dir.c_str());
+    AddOrUpdateAutoRunTooltip(true);
 
     ((CButton*)GetDlgItem(IDC_USE_CPU_TIME_RADIO))->SetCheck(m_data.m_get_cpu_usage_by_cpu_times);
     ((CButton*)GetDlgItem(IDC_USE_PDH_RADIO))->SetCheck(!m_data.m_get_cpu_usage_by_cpu_times);
@@ -657,4 +680,23 @@ void CGeneralSettingsDlg::OnBnClickedSelectConnectionsButton()
     {
         m_data.connections_hide = dlg.GetData();
     }
+}
+
+
+void CGeneralSettingsDlg::OnBnClickedResetAutoRunButton()
+{
+    //先删除开机自动运行
+    theApp.SetAutoRunByRegistry(false);
+    theApp.SetAutoRunByTaskScheduler(false);
+    if (!theApp.SetAutoRun(true))    //重新设置开机自动运行
+    {
+        MessageBox(CCommon::LoadText(IDS_SET_AUTO_RUN_FAILED_WARNING), NULL, MB_ICONWARNING | MB_OK);
+        return;
+    }
+    //获取开机自动运行的路径
+    bool auto_run = theApp.GetAutoRun(&m_auto_run_path);
+    //重新勾选“开机自动运行”复选框
+    CheckDlgButton(IDC_AUTO_RUN_CHECK, auto_run);
+    //更新鼠标提示
+    AddOrUpdateAutoRunTooltip(false);
 }

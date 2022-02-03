@@ -326,7 +326,7 @@ LExit:
     return (SUCCEEDED(hr));
 }
 
-bool is_auto_start_task_active_for_this_user()
+bool is_auto_start_task_active_for_this_user(std::wstring* path)
 {
     HRESULT hr = S_OK;
 
@@ -382,6 +382,8 @@ bool is_auto_start_task_active_for_this_user()
             CSimpleXML xml;
             xml.LoadXMLContentDirect(xml_buff);
             std::wstring command_path = xml.GetNode(L"Command", L"Exec");
+            if (path != nullptr)
+                *path = command_path;
             WCHAR wszExecutablePath[MAX_PATH];
             GetModuleFileName(NULL, wszExecutablePath, MAX_PATH);
             command_path_match = (command_path == wszExecutablePath);

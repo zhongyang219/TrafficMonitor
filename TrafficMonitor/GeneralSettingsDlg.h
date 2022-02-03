@@ -35,6 +35,7 @@ protected:
     int m_monitor_time_span_ori{};
     int m_update_source_ori{};
     //bool m_taskbar_item_modified{ false };
+    wstring m_auto_run_path;
 
     //控件变量
     CSpinEdit m_traffic_tip_edit;
@@ -62,6 +63,9 @@ protected:
     //显示开启硬件监控时的提示，如果用户选择了“是”则返回true，否则返回false
     //“以后不再显示该对话框”的标记保存在注册表“\HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\DontShowMeThisDialogAgain”
     bool ShowHardwareMonitorWarning();
+
+    //添加或更新开机自动运行的鼠标提示
+    void AddOrUpdateAutoRunTooltip(bool add);
 
     DECLARE_MESSAGE_MAP()
 public:
@@ -98,4 +102,5 @@ public:
     afx_msg void OnBnClickedPluginManageButton();
     afx_msg void OnBnClickedShowNotifyIconCheck();
     afx_msg void OnBnClickedSelectConnectionsButton();
+    afx_msg void OnBnClickedResetAutoRunButton();
 };
