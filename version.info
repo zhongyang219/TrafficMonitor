@@ -1,4 +1,4 @@
-<version>1.82</version>
-<link>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/910357/download/TrafficMonitor_V1.82_x86_Lite.zip</link>
-<link_x64>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/910358/download/TrafficMonitor_V1.82_x64_Lite.zip</link_x64>
-<contents>新增插件系统，可以通过插件在任务栏窗口和主窗口显示更多自定义内容。\n任务栏右键菜单中增加“任务管理器”命令。\n选项设置中新增“应用”按钮。\n历史流量统计中增加周视图。\n新增任务栏项目间距的设置。\n修正Windows11深色模式下任务栏右键菜单无法弹出的问题。\n修正Windows11下使用StartAllBack等软件将任务栏恢复为Windows10样式时，任务栏窗口无法显示的问题。</contents>
+<version>1.83</version>
+<link>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/958687/download/TrafficMonitor_V1.83_x86_Lite.zip</link>
+<link_x64>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/958688/download/TrafficMonitor_V1.83_x64_Lite.zip</link_x64>
+<contents>修正当已经存在一个开机自启动的任务计划时，无法设置开机自启动的问题，\n新增当已经存在TrafficMonitor进程时启动程序，弹出“程序已经在运行”对话框。\n鼠标提示中新增插件信息的显示。\n修正插件被禁用后仍然会被加载的问题。\n任务栏中的插件项目支持自由排序。\n选项设置中新增可以选择要在“网络连接列表”中显示的网络的功能。\n新增显示总网速的功能。\n新增在任务栏中显示网速占用图的功能。\n修正硬件监控中有多个名称相同的硬盘时只能显示一个硬盘的问题。\n优化任务栏窗口横向滚动图的显示效果。\n任务栏窗口右键菜单中的“显示设置”由菜单改为对话框形式。\n“选择网络连接”菜单中添加“刷新网络连接列表”命令。\n修正几处导致程序崩溃的问题。</contents>

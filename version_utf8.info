@@ -1,18 +1,18 @@
-﻿<version>1.82</version>
+﻿<version>1.83</version>
 <GitHub>
-	<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.82/TrafficMonitor_V1.82_x86.zip</link>
-	<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.82/TrafficMonitor_V1.82_x64.zip</link_x64>
-	<link_without_temperature>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.82/TrafficMonitor_V1.82_x86_Lite.zip</link_without_temperature>
-	<link_without_temperature_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.82/TrafficMonitor_V1.82_x64_Lite.zip</link_without_temperature_x64>
+	<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.83/TrafficMonitor_V1.83_x86.zip</link>
+	<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.83/TrafficMonitor_V1.83_x64.zip</link_x64>
+	<link_without_temperature>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.83/TrafficMonitor_V1.83_x86_Lite.zip</link_without_temperature>
+	<link_without_temperature_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.83/TrafficMonitor_V1.83_x64_Lite.zip</link_without_temperature_x64>
 </GitHub>
 <Gitee>
-	<link>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/910359/download/TrafficMonitor_V1.82_x86.zip</link>
-	<link_x64>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/910360/download/TrafficMonitor_V1.82_x64.zip</link_x64>
-	<link_without_temperature>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/910357/download/TrafficMonitor_V1.82_x86_Lite.zip</link_without_temperature>
-	<link_without_temperature_x64>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/910358/download/TrafficMonitor_V1.82_x64_Lite.zip</link_without_temperature_x64>
+	<link>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/958690/download/TrafficMonitor_V1.83_x86.zip</link>
+	<link_x64>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/958689/download/TrafficMonitor_V1.83_x64.zip</link_x64>
+	<link_without_temperature>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/958687/download/TrafficMonitor_V1.83_x86_Lite.zip</link_without_temperature>
+	<link_without_temperature_x64>https://gitee.com/zhongyang219/TrafficMonitor/attach_files/958688/download/TrafficMonitor_V1.83_x64_Lite.zip</link_without_temperature_x64>
 </Gitee>
 <update_contents>
-	<contents_zh_cn>新增插件系统，可以通过插件在任务栏窗口和主窗口显示更多自定义内容。\n任务栏右键菜单中增加“任务管理器”命令。\n选项设置中新增“应用”按钮。\n历史流量统计中增加周视图。\n新增任务栏项目间距的设置。\n修正Windows11深色模式下任务栏右键菜单无法弹出的问题。\n修正Windows11下使用StartAllBack等软件将任务栏恢复为Windows10样式时，任务栏窗口无法显示的问题。</contents_zh_cn>
-	<contents_en>Added a new plug-in system, you can display more customized content in the taskbar window and the main window through the plug-in.\nAdded the "Task Manager" command to the taskbar window context menu.\nAdded the "Apply" button to the option settings dialog.\nAdded weekly view in historical traffic statistics.\nAdded the setting of task bar item spacing.\nFixed the problem that the taskbar window context menu cannot pop up in the dark mode of Windows 11.\nFixed the problem that the taskbar window could not be displayed when the taskbar was restored to the Windows 10 style using software such as StartAllBack under Windows 11.</contents_en>
-	<contents_zh_tw>新增外掛系統，可以透過外掛在工作列視窗和主視窗顯示更多自定義內容。\n工作列右鍵選單中增加“工作管理員”命令。\n選項設定中新增“應用”按鈕。\n歷史流量統計中增加周檢視。\n新增工作列專案間距的設定。\n修正Windows11深色模式下工作列右鍵選單無法彈出的問題。\n修正Windows11下使用StartAllBack等軟體將工作列恢復為Windows10樣式時，工作列視窗無法顯示的問題。</contents_zh_tw>
+	<contents_zh_cn>修正当已经存在一个开机自启动的任务计划时，无法设置开机自启动的问题，\n新增当已经存在TrafficMonitor进程时启动程序，弹出“程序已经在运行”对话框。\n鼠标提示中新增插件信息的显示。\n修正插件被禁用后仍然会被加载的问题。\n任务栏中的插件项目支持自由排序。\n选项设置中新增可以选择要在“网络连接列表”中显示的网络的功能。\n新增显示总网速的功能。\n新增在任务栏中显示网速占用图的功能。\n修正硬件监控中有多个名称相同的硬盘时只能显示一个硬盘的问题。\n优化任务栏窗口横向滚动图的显示效果。\n任务栏窗口右键菜单中的“显示设置”由菜单改为对话框形式。\n“选择网络连接”菜单中添加“刷新网络连接列表”命令。\n修正几处导致程序崩溃的问题。</contents_zh_cn>
+	<contents_en>Fixed the problem that when there is already a task plan of auto-run, the auto-run at start up will be failed to set.\nAdded the "Program is already running" dialog box at the program is started when there is already a TrafficMonitor process running.\nAdded the plug-in information in the mouse tool tips.\nFixed an issue where plugins could still be loaded if they were disabled.\nAdded the support of free sorting of plugin items in the taskbar.\nAdded the function to select the network connections to be displayed in the "Network Connection List" in the option settings.\nAdded the function of displaying the total network speed.\nAdded the function of displaying the network speed graph in the taskbar.\nFixed the problem that only one hard disk can be displayed when there are multiple hard disks with the same name in the hardware monitor.\nOptimize the display effect of the resource usage graph in plot mode of the taskbar window.\nChange the "Display Settings" in the taskbar window context menu from menu to dialog box.\nAdded "Refresh connection list" command to "Select Network Connections" menu.\nFixed some crashes.\n</contents_en>
+	<contents_zh_tw>修正當已經存在一個開機自啟動的任務計劃時，無法設定開機自啟動的問題，\n新增當已經存在TrafficMonitor程序時啟動程式，彈出“程式已經在執行”對話方塊。\n滑鼠提示中新增外掛資訊的顯示。\n修正外掛被禁用後仍然會被載入的問題。\n工作列中的外掛專案支援自由排序。\n選項設定中新增可以選擇要在“網路連線列表”中顯示的網路的功能。\n新增顯示總網速的功能。\n新增在工作列中顯示網速佔用圖的功能。\n修正硬體監控中有多個名稱相同的硬碟時只能顯示一個硬碟的問題。\n最佳化工作列視窗橫向滾動圖的顯示效果。\n工作列視窗右鍵選單中的“顯示設定”由選單改為對話方塊形式。\n“選擇網路連線”選單中新增“重新整理網路連線列表”命令。\n修正幾處導致程式崩潰的問題。</contents_zh_tw>
 </update_contents>
