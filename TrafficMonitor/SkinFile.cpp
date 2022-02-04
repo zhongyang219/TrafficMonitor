@@ -491,14 +491,12 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
     CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data);
     CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data);
     CString total_speed = CCommon::DataSizeToString(theApp.m_in_speed + theApp.m_out_speed, theApp.m_main_wnd_data);
-
-    //CString format_str;
-    //if (theApp.m_main_wnd_data.hide_unit && theApp.m_main_wnd_data.speed_unit != SpeedUnit::AUTO)
-    //    format_str = _T("%s%s");
-    //else
-    //    format_str = _T("%s%s/s");
-    //map_str[TDI_UP].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_UP).c_str()), out_speed.GetString());
-    //map_str[TDI_DOWN].Format(format_str, (m_layout_info.no_label ? _T("") : theApp.m_main_wnd_data.disp_str.Get(TDI_DOWN).c_str()), in_speed.GetString());
+    if (!theApp.m_main_wnd_data.hide_unit || theApp.m_main_wnd_data.speed_unit == SpeedUnit::AUTO)
+    {
+        in_speed += _T("/s");
+        out_speed += _T("/s");
+        total_speed += _T("/s");
+    }
     map_str[TDI_UP].value = out_speed.GetString();
     map_str[TDI_DOWN].value = in_speed.GetString();
     map_str[TDI_TOTAL_SPEED].value = total_speed.GetString();
