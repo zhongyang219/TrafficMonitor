@@ -1030,7 +1030,29 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     CFlagLocker flag_locker(pThis->m_is_monitor_thread_runing);
 
     //获取网络连接速度
-    int rtn = GetIfTable(pThis->m_pIfTable, &pThis->m_dwSize, FALSE);
+    int rtn{};
+    auto getLfTable = [&]()
+    {
+        __try
+        {
+            rtn = GetIfTable(pThis->m_pIfTable, &pThis->m_dwSize, FALSE);
+        }
+        __except (EXCEPTION_EXECUTE_HANDLER)
+        {
+            free(pThis->m_pIfTable);
+            pThis->m_dwSize = sizeof(MIB_IFTABLE);
+            pThis->m_pIfTable = (MIB_IFTABLE*)malloc(pThis->m_dwSize);
+            rtn = GetIfTable(pThis->m_pIfTable, &pThis->m_dwSize, FALSE);
+            if (rtn == ERROR_INSUFFICIENT_BUFFER)	//如果函数返回值为ERROR_INSUFFICIENT_BUFFER，说明m_pIfTable的大小不够
+            {
+                free(pThis->m_pIfTable);
+                pThis->m_pIfTable = (MIB_IFTABLE*)malloc(pThis->m_dwSize);	//用新的大小重新开辟一块内存
+            }
+            GetIfTable(pThis->m_pIfTable, &pThis->m_dwSize, FALSE);
+        }
+    };
+
+    getLfTable();
 
     if (!theApp.m_cfg_data.m_select_all)        //获取当前选中连接的网速
     {
@@ -1840,7 +1862,7 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 #endif // DEBUG
 
     return CDialog::OnCommand(wParam, lParam);
-}
+    }
 
 
 void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
@@ -2580,5 +2602,5 @@ void CTrafficMonitorDlg::OnLButtonUp(UINT nFlags, CPoint point)
 void CTrafficMonitorDlg::OnRefreshConnectionList()
 {
     IniConnection();
-    
+
 }
