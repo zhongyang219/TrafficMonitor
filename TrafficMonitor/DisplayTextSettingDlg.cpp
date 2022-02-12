@@ -134,6 +134,9 @@ void CDisplayTextSettingDlg::OnBnClickedRestoreDefaultButton()
             case TDI_CPU:
                 default_text = _T("CPU: ");
                 break;
+            case TDI_CPU_FREQ:
+                default_text = CCommon::LoadText(IDS_CPU_FREQ, _T(": "));
+                break;
             case TDI_MEMORY:
                 default_text = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
                 break;

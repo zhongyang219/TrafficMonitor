@@ -47,6 +47,7 @@ public:
     int m_used_memory{};    //可用物理内存（单位为KB）
     int m_total_memory{};   //物理内存总量（单位为KB）
     float m_cpu_temperature{ -1 };  //CPU温度
+    float m_cpu_freq{ -1 };  //CPU 频率
     float m_gpu_temperature{ -1 };  //显卡温度
     float m_hdd_temperature{ -1 };  //硬盘温度
     float m_main_board_temperature{ -1 };    //主板温度
