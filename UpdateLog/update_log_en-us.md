@@ -3,8 +3,23 @@
 # TrafficMonitor Update log
 ## V1.82 (2021/12/12)
 
-* Added a new plug-in system, you can display more customized content in the taskbar window and the main window through the plug-in.
+* Fixed the problem that when there is already a task plan of auto-run, the auto-run at start up will be failed to set.
+* Added the "Program is already running" dialog box at the program is started when there is already a TrafficMonitor process running.
+* Added the plug-in information in the mouse tool tips.
+* Fixed an issue where plugins could still be loaded if they were disabled.
+* Added the support of free sorting of plugin items in the taskbar.
+* Added the function to select the network connections to be displayed in the "Network Connection List" in the option settings.
+* Added the function of displaying the total network speed.
+* Added the function of displaying the network speed graph in the taskbar.
+* Fixed the problem that only one hard disk can be displayed when there are multiple hard disks with the same name in the hardware monitor.
+* Optimize the display effect of the resource usage graph in plot mode of the taskbar window.
+* Change the "Display Settings" in the taskbar window context menu from menu to dialog box.
+* Added "Refresh connection list" command to "Select Network Connections" menu.
+* Fixed some crashes.
 
+## V1.82 (2021/12/12)
+
+* Added a new plug-in system, you can display more customized content in the taskbar window and the main window through the plug-in.
 * Added the "Task Manager" command to the taskbar window context menu.
 * Added the "Apply" button to the option settings dialog.
 * Added weekly view in historical traffic statistics.
