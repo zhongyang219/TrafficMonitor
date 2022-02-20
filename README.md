@@ -35,8 +35,8 @@ TrafficMonitor提供了普通版和Lite版两种版本可用。普通版包含�
 | 功能                          | 普通版 | Lite版 |
 | ----------------------------- | ------ | ------ |
 | 网速监控                      | ✔      | ✔      |
-| CPU、内存利用率监控           | ✔      | ✔      |
-| CPU、显卡、硬盘、主板温度监控 | ✔      | ❌      |
+| CPU、内存利用率          | ✔      | ✔      |
+| CPU、显卡、硬盘、主板温度监控、CPU频率监控  | ✔      | ❌      |
 | 显卡利用率监控                | ✔      | ❌      |
 | 硬盘利用率监控                | ✔      | ❌      |
 | 网络详细信息                  | ✔      | ✔      |
@@ -108,7 +108,7 @@ TrafficMonitor支持将信息显示到任务栏。但是TrafficMonitor默认只�
 
 # 关于硬件监控功能
 
-从1.80版本开始，TrafficMonitor加入了硬件监控功能（包括温度监控和显卡使用率监控），它使用了第三方开源库[LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)。如果你在使用温度监控功能时遇到了问题，请[点击这里](./Help.md#13-关于trafficmonitor温度监控的问题)。
+从1.80版本开始，TrafficMonitor加入了硬件监控功能（包括温度监控和显卡使用率监控、CPU频率监控），它使用了第三方开源库[LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)。如果你在使用温度监控功能时遇到了问题，请[点击这里](./Help.md#13-关于trafficmonitor温度监控的问题)。
 
 需要注意的是，温度监控功能默认是关闭的，如果你要使用TrafficMonitor的温度监控功能，请到[“选项设置”-“常规设置”-“硬件监控”](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#硬件监控)中开启。
 
