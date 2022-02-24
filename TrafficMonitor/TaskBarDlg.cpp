@@ -1013,8 +1013,7 @@ void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     m_menu_popuped = true;
     m_tool_tips.Pop();
-    CheckClickedItem(point);
-    if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+    if (CheckClickedItem(point) && m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
     {
         ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
         if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
@@ -1099,8 +1098,7 @@ void CTaskBarDlg::OnMouseMove(UINT nFlags, CPoint point)
 void CTaskBarDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
-    CheckClickedItem(point);
-    if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+    if (CheckClickedItem(point) && m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
     {
         ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
         if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
@@ -1225,16 +1223,17 @@ int CTaskBarDlg::CalculateNetspeedPercent(unsigned __int64 net_speed)
     return percet;
 }
 
-void CTaskBarDlg::CheckClickedItem(CPoint point)
+bool CTaskBarDlg::CheckClickedItem(CPoint point)
 {
     for (const auto& item : m_item_rects)
     {
         if (item.second.PtInRect(point))
         {
             m_clicked_item = item.first;
-            break;
+            return true;
         }
     }
+    return false;
 }
 
 void CTaskBarDlg::TryDrawGraph(CDrawCommon& drawer, const CRect& value_rect, DisplayItem item_type)
@@ -1270,8 +1269,7 @@ void CTaskBarDlg::OnClose()
 void CTaskBarDlg::OnLButtonUp(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
-    CheckClickedItem(point);
-    if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+    if (CheckClickedItem(point) && m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
     {
         ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
         if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
