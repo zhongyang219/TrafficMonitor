@@ -29,7 +29,10 @@ void CGeneralSettingsDlg::CheckTaskbarDisplayItem()
     //如果选项设置中关闭了某个硬件监控，则不显示对应的温度监控相关项目
     int taskbar_displat_item_ori = theApp.m_taskbar_data.m_tbar_display_item;
     if (!theApp.m_general_data.IsHardwareEnable(HI_CPU))
+    {
         theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_CPU_TEMP;
+        theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_CPU_FREQ;
+    }
     if (!theApp.m_general_data.IsHardwareEnable(HI_GPU))
     {
         theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_GPU_USAGE;
