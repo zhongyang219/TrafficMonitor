@@ -231,6 +231,15 @@ CString CCommon::UsageToString(int usage, const PublicSettingData& cfg)
     return str_val;
 }
 
+CString CCommon::FreqToString(float freq, const PublicSettingData& cfg)
+{
+    CString str_val;
+    if (freq < 0)
+        str_val = _T("--");
+    else
+        str_val.Format(_T("%.2f GHz"), freq);
+    return str_val;
+}
 //CString CCommon::KBytesToString(unsigned int kb_size)
 //{
 //  CString k_bytes_str;

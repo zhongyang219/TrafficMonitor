@@ -502,6 +502,8 @@
 #define IDC_OPEN_PLUGIN_DIR_STATIC      1160
 #define IDC_OPEN_SKIN_DIR_STATIC        1161
 #define IDC_RESET_AUTO_RUN_BUTTON       1162
+#define IDS_CPU_FREQ					1163
+
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773

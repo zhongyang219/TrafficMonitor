@@ -74,6 +74,9 @@ CString CommonDisplayItem::GetItemName() const
         case TDI_HDD_USAGE:
             item_name = CCommon::LoadText(IDS_HDD_USAGE);
             break;
+        case TDI_CPU_FREQ:
+            item_name = CCommon::LoadText(IDS_CPU_FREQ);
+            break;
 #endif
         default:
             break;
@@ -203,6 +206,8 @@ CString CTaskbarItemOrderHelper::GetItemDisplayName(CommonDisplayItem item)
             return CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
         case TDI_HDD_USAGE:
             return CCommon::LoadText(IDS_HDD_USAGE);
+        case TDI_CPU_FREQ:
+            return CCommon::LoadText(IDS_CPU_FREQ);
         default:
             break;
         }

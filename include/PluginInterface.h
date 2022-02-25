@@ -193,6 +193,7 @@ public:
         int gpu_temperature{};
         int hdd_temperature{};
         int main_board_temperature{};
+        int cpu_freq{};
     };
 
     /**

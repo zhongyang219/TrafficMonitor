@@ -178,7 +178,7 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
     // 绘制状态条
     if (type == TDI_CPU || type == TDI_MEMORY || type == TDI_GPU_USAGE || type == TDI_CPU_TEMP
         || type == TDI_GPU_TEMP || type == TDI_HDD_TEMP || type == TDI_MAIN_BOARD_TEMP || type == TDI_HDD_USAGE
-        || type == TDI_UP || type == TDI_DOWN || type == TDI_TOTAL_SPEED)
+        || type == TDI_UP || type == TDI_DOWN || type == TDI_TOTAL_SPEED ||type==TDI_CPU_FREQ)
     {
         int figure_value{};
         switch (type)
@@ -206,6 +206,9 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
             break;
         case TDI_HDD_USAGE:
             figure_value = theApp.m_hdd_usage;
+            break;
+        case TDI_CPU_FREQ:
+            figure_value = theApp.m_cpu_freq;
             break;
         case TDI_UP:
             figure_value = CalculateNetspeedPercent(theApp.m_out_speed);
@@ -340,6 +343,9 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
             break;
         }
         str_value = CCommon::TemperatureToString(temperature, theApp.m_taskbar_data);
+    }
+    else if (type == TDI_CPU_FREQ) {
+        str_value = CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_taskbar_data);
     }
 
     drawer.DrawWindowText(rect_value, str_value, text_color, value_alignment);

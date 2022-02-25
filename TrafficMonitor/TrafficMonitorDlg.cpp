@@ -1247,6 +1247,7 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         //theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
         theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
         theApp.m_gpu_usage = theApp.m_pMonitor->GpuUsage();
+        theApp.m_cpu_freq = theApp.m_pMonitor->CpuFreq();
         //获取CPU温度
         if (!theApp.m_pMonitor->AllCpuTemperature().empty())
         {
@@ -1327,6 +1328,7 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
             monitor_info.cpu_temperature = theApp.m_cpu_temperature;
             monitor_info.gpu_temperature = theApp.m_gpu_temperature;
             monitor_info.hdd_temperature = theApp.m_hdd_temperature;
+            monitor_info.cpu_freq = theApp.m_cpu_freq;
             monitor_info.main_board_temperature = theApp.m_main_board_temperature;
             plugin_info.plugin->OnMonitorInfo(monitor_info);
         }
