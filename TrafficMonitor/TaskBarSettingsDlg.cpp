@@ -109,7 +109,7 @@ void CTaskBarSettingsDlg::EnableControl()
     EnableDlgCtrl(IDC_CM_GRAPH_PLOT_RADIO, m_data.show_status_bar || m_data.show_netspeed_figure);
     EnableDlgCtrl(IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, m_data.show_netspeed_figure);
     EnableDlgCtrl(IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO, m_data.show_netspeed_figure);
-    EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, theApp.m_win_version.IsWindows11OrLater() && !m_data.tbar_wnd_on_left);
+    //EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, theApp.m_win_version.IsWindows11OrLater() && !m_data.tbar_wnd_on_left);
 }
 
 void CTaskBarSettingsDlg::SetTaskabrTransparent(bool transparent)

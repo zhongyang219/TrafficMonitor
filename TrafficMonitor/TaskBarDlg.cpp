@@ -476,10 +476,12 @@ bool CTaskBarDlg::AdjustWindowPos()
             {
                 if (theApp.m_is_windows11_taskbar)
                 {
-                    //if (!theApp.m_taskbar_data.tbar_wnd_snap)
-                    m_rect.MoveToX(2);
-                    //else
-                    //    m_rect.MoveToX(m_rcMin.left - m_rect.Width() - 2);
+                    if (!theApp.m_taskbar_data.tbar_wnd_snap)
+                        m_rect.MoveToX(2);
+                    else
+                        //目前无法获取Win11任务栏开始按钮的位置，也无法获取“运行中的程序”左侧有几个按钮，
+                        //因此这里默认Win11任务栏“运行中的程序”左侧还有4个按钮（开始、搜索、任务视图、聊天），每个按钮44像素，因此减去176像素
+                        m_rect.MoveToX(m_rcMin.left - m_rect.Width() - 2 - theApp.DPI(176));
                 }
                 else
                 {
