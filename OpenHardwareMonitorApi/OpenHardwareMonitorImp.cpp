@@ -122,7 +122,8 @@ namespace OpenHardwareMonitorApi
             if (hardware->Sensors[i]->SensorType == SensorType::Clock)
             {
                 String^ name = hardware->Sensors[i]->Name;
-                m_all_cpu_clock[ClrStringToStdWstring(name)] = Convert::ToDouble(hardware->Sensors[i]->Value);
+                if (name != L"Bus Speed")
+                    m_all_cpu_clock[ClrStringToStdWstring(name)] = Convert::ToDouble(hardware->Sensors[i]->Value);
             }
         }
         float sum{};
