@@ -1248,6 +1248,7 @@ bool CTaskBarDlg::CheckClickedItem(CPoint point)
             return true;
         }
     }
+    m_clicked_item = TDI_UP;
     return false;
 }
 
