@@ -119,6 +119,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_main_wnd_data.disp_str.Get(TDI_DOWN) = ini.GetString(L"config", L"down_string", CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": $")));
     m_main_wnd_data.disp_str.Get(TDI_TOTAL_SPEED) = ini.GetString(L"config", L"total_speed_string", _T("↑↓: $"));
     m_main_wnd_data.disp_str.Get(TDI_CPU) = ini.GetString(L"config", L"cpu_string", L"CPU: $");
+    m_main_wnd_data.disp_str.Get(TDI_CPU_FREQ) = ini.GetString(L"config", L"cpu_freq_string", CCommon::LoadText(IDS_CPU_FREQ, _T(": $")));
     m_main_wnd_data.disp_str.Get(TDI_MEMORY) = ini.GetString(L"config", L"memory_string", CCommon::LoadText(IDS_MEMORY_DISP, _T(": $")));
     m_main_wnd_data.disp_str.Get(TDI_GPU_USAGE) = ini.GetString(L"config", L"gpu_string", CCommon::LoadText(IDS_GPU_DISP, _T(": $")));
     m_main_wnd_data.disp_str.Get(TDI_CPU_TEMP) = ini.GetString(L"config", L"cpu_temp_string", L"CPU: $");
@@ -156,7 +157,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_general_data.hdd_temp_tip.tip_value = ini.GetInt(L"notify_tip", L"hdd_temperature_tip_value", 80);
     m_general_data.mainboard_temp_tip.enable = ini.GetBool(L"notify_tip", L"mainboard_temperature_tip_enable", false);
     m_general_data.mainboard_temp_tip.tip_value = ini.GetInt(L"notify_tip", L"mainboard_temperature_tip_value", 80);
-
+ 
     //任务栏窗口设置
     m_taskbar_data.back_color = ini.GetInt(_T("task_bar"), _T("task_bar_back_color"), m_taskbar_data.dft_back_color);
     m_taskbar_data.transparent_color = ini.GetInt(_T("task_bar"), _T("transparent_color"), m_taskbar_data.dft_transparent_color);
@@ -224,6 +225,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.disp_str.Get(TDI_HDD_TEMP) = ini.GetString(L"task_bar", L"hdd_temp_string", CCommon::LoadText(IDS_HDD_DISP, _T(": ")));
     m_taskbar_data.disp_str.Get(TDI_MAIN_BOARD_TEMP) = ini.GetString(L"task_bar", L"main_board_temp_string", CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": ")));
     m_taskbar_data.disp_str.Get(TDI_HDD_USAGE) = ini.GetString(L"task_bar", L"hdd_string", CCommon::LoadText(IDS_HDD_DISP, _T(": ")));
+    m_taskbar_data.disp_str.Get(TDI_CPU_FREQ) = ini.GetString(L"task_bar", L"cpu_freq_string", CCommon::LoadText(IDS_CPU_FREQ, _T(": $")));
     ini.LoadPluginDisplayStr(false);
 
     m_taskbar_data.tbar_wnd_on_left = ini.GetBool(_T("task_bar"), _T("task_bar_wnd_on_left"), false);
@@ -334,6 +336,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteString(_T("config"), _T("memory_string"), m_main_wnd_data.disp_str.Get(TDI_MEMORY));
     ini.WriteString(_T("config"), _T("gpu_string"), m_main_wnd_data.disp_str.Get(TDI_GPU_USAGE));
     ini.WriteString(_T("config"), _T("cpu_temp_string"), m_main_wnd_data.disp_str.Get(TDI_CPU_TEMP));
+    ini.WriteString(_T("config"), _T("cpu_freq_string"), m_main_wnd_data.disp_str.Get(TDI_CPU_FREQ));
     ini.WriteString(_T("config"), _T("gpu_temp_string"), m_main_wnd_data.disp_str.Get(TDI_GPU_TEMP));
     ini.WriteString(_T("config"), _T("hdd_temp_string"), m_main_wnd_data.disp_str.Get(TDI_HDD_TEMP));
     ini.WriteString(_T("config"), _T("main_board_temp_string"), m_main_wnd_data.disp_str.Get(TDI_MAIN_BOARD_TEMP));
@@ -385,6 +388,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteString(_T("task_bar"), _T("memory_string"), m_taskbar_data.disp_str.Get(TDI_MEMORY));
     ini.WriteString(_T("task_bar"), _T("gpu_string"), m_taskbar_data.disp_str.Get(TDI_GPU_USAGE));
     ini.WriteString(_T("task_bar"), _T("cpu_temp_string"), m_taskbar_data.disp_str.Get(TDI_CPU_TEMP));
+    ini.WriteString(_T("task_bar"), _T("cpu_freq_string"), m_taskbar_data.disp_str.Get(TDI_CPU_FREQ));
     ini.WriteString(_T("task_bar"), _T("gpu_temp_string"), m_taskbar_data.disp_str.Get(TDI_GPU_TEMP));
     ini.WriteString(_T("task_bar"), _T("hdd_temp_string"), m_taskbar_data.disp_str.Get(TDI_HDD_TEMP));
     ini.WriteString(_T("task_bar"), _T("main_board_temp_string"), m_taskbar_data.disp_str.Get(TDI_MAIN_BOARD_TEMP));

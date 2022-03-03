@@ -2,7 +2,7 @@ name: Release CI
 on: push
 jobs:
   x64_build:
-    runs-on: windows-latest
+    runs-on: windows-2019
 
     steps:
     - uses: actions/checkout@v2
@@ -35,7 +35,7 @@ jobs:
         path: Bin/x64/Release/*.pdb
 
   x86_build:
-    runs-on: windows-latest
+    runs-on: windows-2019
 
     steps:
     - uses: actions/checkout@v2

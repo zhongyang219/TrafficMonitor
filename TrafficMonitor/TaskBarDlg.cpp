@@ -178,7 +178,7 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
     // 绘制状态条
     if (type == TDI_CPU || type == TDI_MEMORY || type == TDI_GPU_USAGE || type == TDI_CPU_TEMP
         || type == TDI_GPU_TEMP || type == TDI_HDD_TEMP || type == TDI_MAIN_BOARD_TEMP || type == TDI_HDD_USAGE
-        || type == TDI_UP || type == TDI_DOWN || type == TDI_TOTAL_SPEED)
+        || type == TDI_UP || type == TDI_DOWN || type == TDI_TOTAL_SPEED/* ||type==TDI_CPU_FREQ*/)
     {
         int figure_value{};
         switch (type)
@@ -207,6 +207,9 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
         case TDI_HDD_USAGE:
             figure_value = theApp.m_hdd_usage;
             break;
+        //case TDI_CPU_FREQ:
+        //    figure_value = theApp.m_cpu_freq;
+        //    break;
         case TDI_UP:
             figure_value = CalculateNetspeedPercent(theApp.m_out_speed);
             break;
@@ -341,6 +344,9 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
         }
         str_value = CCommon::TemperatureToString(temperature, theApp.m_taskbar_data);
     }
+    else if (type == TDI_CPU_FREQ) {
+        str_value = CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_taskbar_data);
+    }
 
     drawer.DrawWindowText(rect_value, str_value, text_color, value_alignment);
 }
@@ -470,10 +476,12 @@ bool CTaskBarDlg::AdjustWindowPos()
             {
                 if (theApp.m_is_windows11_taskbar)
                 {
-                    //if (!theApp.m_taskbar_data.tbar_wnd_snap)
-                    m_rect.MoveToX(2);
-                    //else
-                    //    m_rect.MoveToX(m_rcMin.left - m_rect.Width() - 2);
+                    if (!theApp.m_taskbar_data.tbar_wnd_snap)
+                        m_rect.MoveToX(2);
+                    else
+                        //目前无法获取Win11任务栏开始按钮的位置，也无法获取“运行中的程序”左侧有几个按钮，
+                        //因此这里默认Win11任务栏“运行中的程序”左侧还有4个按钮（开始、搜索、任务视图、聊天），每个按钮44像素，因此减去176像素
+                        m_rect.MoveToX(m_rcMin.left - m_rect.Width() - 2 - theApp.DPI(176));
                 }
                 else
                 {
@@ -635,6 +643,11 @@ CString CTaskBarDlg::GetMouseTipsInfo()
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_taskbar_data));
             tip_info += temp;
         }
+        if (!IsItemShow(TDI_CPU_FREQ) && theApp.m_cpu_freq > 0)
+        {
+            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_FREQ), CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_taskbar_data));
+            tip_info += temp;
+        }
         if (!IsItemShow(TDI_GPU_TEMP) && theApp.m_gpu_temperature > 0)
         {
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_GPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_gpu_temperature, theApp.m_taskbar_data));
@@ -780,6 +793,8 @@ void CTaskBarDlg::CalculateWindowSize()
     item_widths[TDI_MEMORY].value_width = memory_width;
     item_widths[TDI_GPU_USAGE].value_width = value_width;
     item_widths[TDI_HDD_USAGE].value_width = value_width;
+
+    item_widths[TDI_CPU_FREQ].value_width = m_pDC->GetTextExtent(_T("1.00 GHz")).cx;
 
     //计算温度显示的宽度
     if (theApp.m_taskbar_data.separate_value_unit_with_space)
@@ -1013,8 +1028,7 @@ void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     m_menu_popuped = true;
     m_tool_tips.Pop();
-    CheckClickedItem(point);
-    if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+    if (CheckClickedItem(point) && m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
     {
         ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
         if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
@@ -1099,8 +1113,7 @@ void CTaskBarDlg::OnMouseMove(UINT nFlags, CPoint point)
 void CTaskBarDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
-    CheckClickedItem(point);
-    if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+    if (CheckClickedItem(point) && m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
     {
         ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
         if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
@@ -1225,16 +1238,17 @@ int CTaskBarDlg::CalculateNetspeedPercent(unsigned __int64 net_speed)
     return percet;
 }
 
-void CTaskBarDlg::CheckClickedItem(CPoint point)
+bool CTaskBarDlg::CheckClickedItem(CPoint point)
 {
     for (const auto& item : m_item_rects)
     {
         if (item.second.PtInRect(point))
         {
             m_clicked_item = item.first;
-            break;
+            return true;
         }
     }
+    return false;
 }
 
 void CTaskBarDlg::TryDrawGraph(CDrawCommon& drawer, const CRect& value_rect, DisplayItem item_type)
@@ -1270,8 +1284,7 @@ void CTaskBarDlg::OnClose()
 void CTaskBarDlg::OnLButtonUp(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
-    CheckClickedItem(point);
-    if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+    if (CheckClickedItem(point) && m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
     {
         ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
         if (plugin != nullptr && plugin->GetAPIVersion() >= 3)

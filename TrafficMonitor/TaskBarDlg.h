@@ -107,8 +107,8 @@ protected:
 
     int CalculateNetspeedPercent(unsigned __int64 net_speed);     //计算网速占网速占用图的最大值的百分比
 
-    //判断一个点在哪个显示项目的区域内，并保存到m_clicked_item
-    void CheckClickedItem(CPoint point);
+    //判断一个点在哪个显示项目的区域内，并保存到m_clicked_item。如果返回false，则该点不在任何一个项目的区域内，否则返回true
+    bool CheckClickedItem(CPoint point);
 
     //绘制任务栏窗口中的一个显示项目
     //  drawer: 绘图类的对象

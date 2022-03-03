@@ -151,6 +151,11 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
             temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
             tip_info += temp;
         }
+        if (theApp.m_general_data.IsHardwareEnable(HI_GPU) && !skin_layout.GetItem(TDI_CPU_FREQ).show && theApp.m_cpu_freq >= 0)
+        {
+            temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_CPU_FREQ), theApp.m_cpu_freq);
+            tip_info += temp;
+        }
         if (theApp.m_general_data.IsHardwareEnable(HI_CPU) && !skin_layout.GetItem(TDI_CPU_TEMP).show && theApp.m_cpu_temperature > 0)
         {
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_main_wnd_data));
@@ -1247,6 +1252,7 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         //theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
         theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
         theApp.m_gpu_usage = theApp.m_pMonitor->GpuUsage();
+        theApp.m_cpu_freq = theApp.m_pMonitor->CpuFreq();
         //获取CPU温度
         if (!theApp.m_pMonitor->AllCpuTemperature().empty())
         {
@@ -1327,6 +1333,7 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
             monitor_info.cpu_temperature = theApp.m_cpu_temperature;
             monitor_info.gpu_temperature = theApp.m_gpu_temperature;
             monitor_info.hdd_temperature = theApp.m_hdd_temperature;
+            monitor_info.cpu_freq = theApp.m_cpu_freq;
             monitor_info.main_board_temperature = theApp.m_main_board_temperature;
             plugin_info.plugin->OnMonitorInfo(monitor_info);
         }

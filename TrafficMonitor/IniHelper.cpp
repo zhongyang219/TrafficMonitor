@@ -326,12 +326,16 @@ void CIniHelper::_WriteString(const wchar_t * AppName, const wchar_t * KeyName, 
         key_pos = m_ini_str.find(wstring(L"\n") + KeyName + L'=', app_pos);
     if (key_pos >= app_end_pos)             //找不到KeyName，则插入一个
     {
-        wchar_t buff[256];
-        swprintf_s(buff, L"%s = %s\n", KeyName, str.c_str());
+        //wchar_t buff[256];
+        //swprintf_s(buff, L"%s = %s\n", KeyName, str.c_str());
+        std::wstring str_temp = KeyName;
+        str_temp += L" = ";
+        str_temp += str;
+        str_temp += L"\n";
         if (app_end_pos == wstring::npos)
-            m_ini_str += buff;
+            m_ini_str += str_temp;
         else
-            m_ini_str.insert(app_end_pos, buff);
+            m_ini_str.insert(app_end_pos, str_temp);
     }
     else    //找到了KeyName，将等号到换行符之间的文本替换
     {

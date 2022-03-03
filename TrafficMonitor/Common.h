@@ -133,7 +133,7 @@ public:
 
     //将使用率转换成字符串
     static CString UsageToString(int usage, const PublicSettingData& cfg);
-
+    static CString FreqToString(float usage, const PublicSettingData& cfg);
     //static CString KBytesToString(unsigned int kb_size);
     static CString KBytesToString(unsigned __int64 kb_size);
 

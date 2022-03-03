@@ -35,7 +35,7 @@ The functions comparison of the two versions is as the following.
 | ------------------------------------------------------ | ---------------- | ------------ |
 | Net speed monitoring                                   | ✔                | ✔            |
 | CPU and memory usage monitoring                        | ✔                | ✔            |
-| CPU, GPU, hard disk, main board temperature monitoring | ✔                | ❌            |
+| CPU, GPU, hard disk, main board temperature, CPU frequency monitoring | ✔                | ❌            |
 | GPU usage monitoring                                   | ✔                | ❌            |
 | Hard disk usage monitoring                             | ✔                | ❌            |
 | Network connection details                             | ✔                | ✔            |
@@ -93,7 +93,7 @@ To download the TrafficMonitor plug-in, please [click here](https://github.com/z
 
 # About the hardware monitoring function
 
-Starting from version 1.80, the hardware monitoring functions (including temperature monitoring and graphics card usage monitoring) has been added in TrafficMonitor. It relies on the open source library [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor). If you encounter problems during using the temperature monitoring function, please [click here](./Help_en-us.md#13-about-the-temperature-monitoring-of-trafficmonitor). 
+Starting from version 1.80, the hardware monitoring functions (including temperature monitoring, CPU frequency and graphics card usage monitoring) has been added in TrafficMonitor. It relies on the open source library [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor). If you encounter problems during using the temperature monitoring function, please [click here](./Help_en-us.md#13-about-the-temperature-monitoring-of-trafficmonitor). 
 
 It should be noted that the temperature monitoring function is turned off by default. If you want to use the temperature monitoring function of TrafficMonitor, please go to ["Option Settings"-"General Settings"-"Hardware Monitoring"](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#硬件监控) to enable it.
 

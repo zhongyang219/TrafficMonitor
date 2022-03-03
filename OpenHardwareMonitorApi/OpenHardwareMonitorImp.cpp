@@ -77,6 +77,11 @@ namespace OpenHardwareMonitorApi
             return m_gpu_ati_usage;
     }
 
+    float COpenHardwareMonitor::CpuFreq()
+    {
+            return m_cpu_freq;
+    }
+
     const std::map<std::wstring, float>& COpenHardwareMonitor::AllHDDTemperature()
     {
         return m_all_hdd_temperature;
@@ -111,7 +116,22 @@ namespace OpenHardwareMonitorApi
     {
         MonitorGlobal::Instance()->computer->IsMotherboardEnabled = enable;
     }
-
+    bool COpenHardwareMonitor::GetCPUFreq(IHardware^ hardware, float& freq) {
+        for (int i = 0; i < hardware->Sensors->Length; i++)
+        {
+            if (hardware->Sensors[i]->SensorType == SensorType::Clock)
+            {
+                String^ name = hardware->Sensors[i]->Name;
+                if (name != L"Bus Speed")
+                    m_all_cpu_clock[ClrStringToStdWstring(name)] = Convert::ToDouble(hardware->Sensors[i]->Value);
+            }
+        }
+        float sum{};
+        for (auto i : m_all_cpu_clock)
+            sum += i.second;
+        freq = sum / m_all_cpu_clock.size() / 1000.0;
+        return true;
+    }
     bool COpenHardwareMonitor::GetHardwareTemperature(IHardware^ hardware, float& temperature)
     {
         temperature = -1;
@@ -288,6 +308,7 @@ namespace OpenHardwareMonitorApi
                 case HardwareType::Cpu:
                     if (m_cpu_temperature < 0)
                         GetCpuTemperature(computer->Hardware[i], m_cpu_temperature);
+                    GetCPUFreq(computer->Hardware[i], m_cpu_freq);
                     break;
                 case HardwareType::GpuNvidia:
                     if (m_gpu_nvidia_temperature < 0)

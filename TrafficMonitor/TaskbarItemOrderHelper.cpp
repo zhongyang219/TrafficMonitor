@@ -74,6 +74,9 @@ CString CommonDisplayItem::GetItemName() const
         case TDI_HDD_USAGE:
             item_name = CCommon::LoadText(IDS_HDD_USAGE);
             break;
+        case TDI_CPU_FREQ:
+            item_name = CCommon::LoadText(IDS_CPU_FREQ);
+            break;
 #endif
         default:
             break;
@@ -203,6 +206,8 @@ CString CTaskbarItemOrderHelper::GetItemDisplayName(CommonDisplayItem item)
             return CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
         case TDI_HDD_USAGE:
             return CCommon::LoadText(IDS_HDD_USAGE);
+        case TDI_CPU_FREQ:
+            return CCommon::LoadText(IDS_CPU_FREQ);
         default:
             break;
         }
@@ -215,7 +220,7 @@ bool CTaskbarItemOrderHelper::IsItemDisplayed(CommonDisplayItem item)
     bool displayed = true;
     if (!item.is_plugin)
     {
-        if (item == TDI_CPU_TEMP && !theApp.m_general_data.IsHardwareEnable(HI_CPU))
+        if ((item == TDI_CPU_TEMP || item == TDI_CPU_FREQ) && !theApp.m_general_data.IsHardwareEnable(HI_CPU))
             displayed = false;
         if ((item == TDI_GPU_TEMP || item == TDI_GPU_USAGE) && !theApp.m_general_data.IsHardwareEnable(HI_GPU))
             displayed = false;

@@ -360,6 +360,9 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
         case TDI_CPU_TEMP: case TDI_GPU_TEMP: case TDI_HDD_TEMP: case TDI_MAIN_BOARD_TEMP:
             draw_str.value = _T("40 °C");
             break;
+        case TDI_CPU_FREQ:
+            draw_str.value = _T("1.0 GHz");
+            break;
         default:
             draw_str.value = _T("99");
             break;
@@ -482,6 +485,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
         map_str[TDI_GPU_USAGE].label = theApp.m_main_wnd_data.disp_str.Get(TDI_GPU_USAGE).c_str();
         map_str[TDI_HDD_USAGE].label = theApp.m_main_wnd_data.disp_str.Get(TDI_HDD_USAGE).c_str();
         map_str[TDI_CPU_TEMP].label = theApp.m_main_wnd_data.disp_str.Get(TDI_CPU_TEMP).c_str();
+        map_str[TDI_CPU_FREQ].label = theApp.m_main_wnd_data.disp_str.Get(TDI_CPU_FREQ).c_str();
         map_str[TDI_GPU_TEMP].label = theApp.m_main_wnd_data.disp_str.Get(TDI_GPU_TEMP).c_str();
         map_str[TDI_HDD_TEMP].label = theApp.m_main_wnd_data.disp_str.Get(TDI_HDD_TEMP).c_str();
         map_str[TDI_MAIN_BOARD_TEMP].label = theApp.m_main_wnd_data.disp_str.Get(TDI_MAIN_BOARD_TEMP).c_str();
@@ -508,6 +512,8 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
 
     //CPU/内存/显卡利用率
     map_str[TDI_CPU].value = CCommon::UsageToString(theApp.m_cpu_usage, theApp.m_main_wnd_data);
+ 
+    map_str[TDI_CPU_FREQ].value = CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_main_wnd_data);
     CString str_memory_value;
     if (theApp.m_main_wnd_data.memory_display == MemoryDisplay::MEMORY_USED)
         str_memory_value = CCommon::DataSizeToString(static_cast<unsigned long long>(theApp.m_used_memory) * 1024, theApp.m_main_wnd_data.separate_value_unit_with_space);
@@ -641,6 +647,9 @@ string CSkinFile::GetDisplayItemXmlNodeName(DisplayItem display_item)
         break;
     case TDI_HDD_USAGE:
         return "hdd";
+        break;
+    case TDI_CPU_FREQ:
+        return "cpu_freq";
         break;
     default:
         return string();
