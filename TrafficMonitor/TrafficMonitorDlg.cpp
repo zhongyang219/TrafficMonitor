@@ -1442,24 +1442,24 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             //每隔10秒钟检测一次是否可以嵌入任务栏
             if (IsTaskbarWndValid() && m_timer_cnt % 10 == 1)
             {
-                if (m_tBarDlg->GetCannotInsertToTaskBar() && m_insert_to_taskbar_cnt < MAX_INSERT_TO_TASKBAR_CNT)
+                if (m_tBarDlg->GetCannotInsertToTaskBar())
                 {
                     CloseTaskBarWnd();
                     OpenTaskBarWnd();
                     m_insert_to_taskbar_cnt++;
-                    if (m_insert_to_taskbar_cnt == MAX_INSERT_TO_TASKBAR_CNT)
+                    if (m_insert_to_taskbar_cnt >= MAX_INSERT_TO_TASKBAR_CNT)
                     {
-                        if (m_tBarDlg->GetCannotInsertToTaskBar() && m_cannot_intsert_to_task_bar_warning)      //确保提示信息只弹出一次
+                        //写入错误日志
+                        CString info;
+                        info.LoadString(IDS_CONNOT_INSERT_TO_TASKBAR_ERROR_LOG);
+                        info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_insert_to_taskbar_cnt));
+                        info.Replace(_T("<%error_code%>"), CCommon::IntToString(m_tBarDlg->GetErrorCode()));
+                        CCommon::WriteLog(info, theApp.m_log_path.c_str());
+                        if (m_tBarDlg->GetCannotInsertToTaskBar() && m_cannot_insert_to_task_bar_warning)      //确保提示信息只弹出一次
                         {
-                            //写入错误日志
-                            CString info;
-                            info.LoadString(IDS_CONNOT_INSERT_TO_TASKBAR_ERROR_LOG);
-                            info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_insert_to_taskbar_cnt));
-                            info.Replace(_T("<%error_code%>"), CCommon::IntToString(m_tBarDlg->GetErrorCode()));
-                            CCommon::WriteLog(info, theApp.m_log_path.c_str());
                             //弹出错误信息
                             MessageBox(CCommon::LoadText(IDS_CONNOT_INSERT_TO_TASKBAR, CCommon::IntToString(m_tBarDlg->GetErrorCode())), NULL, MB_ICONWARNING);
-                            m_cannot_intsert_to_task_bar_warning = false;
+                            m_cannot_insert_to_task_bar_warning = false;
                         }
                     }
                 }
