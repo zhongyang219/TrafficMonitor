@@ -1350,6 +1350,7 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
 
 void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 {
+
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     if (nIDEvent == MONITOR_TIMER)
     {
@@ -1359,6 +1360,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
     if (nIDEvent == MAIN_TIMER)
     {
+        m_timer_cnt++;
         if (m_first_start)      //这个if语句在程序启动后1秒执行
         {
             //将设置窗口置顶的处理放在这里是用于解决
@@ -1671,7 +1673,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
         UpdateNotifyIconTip();
 
-        m_timer_cnt++;
+
     }
 
     if (nIDEvent == DELAY_TIMER)
