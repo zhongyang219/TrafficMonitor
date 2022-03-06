@@ -1467,8 +1467,8 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                         if (m_cannot_insert_to_task_bar_warning)      //确保提示信息只弹出一次
                         {
                             //弹出错误信息
-                            MessageBox(CCommon::LoadText(IDS_CONNOT_INSERT_TO_TASKBAR, CCommon::IntToString(m_tBarDlg->GetErrorCode())), NULL, MB_ICONWARNING);
                             m_cannot_insert_to_task_bar_warning = false;
+                            MessageBox(CCommon::LoadText(IDS_CONNOT_INSERT_TO_TASKBAR, CCommon::IntToString(m_tBarDlg->GetErrorCode())), NULL, MB_ICONWARNING);
                         }
                     }
                 }
