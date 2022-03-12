@@ -190,6 +190,9 @@
     <Filter Include="源文件和头文件\对话框类\选项设置对话框\SelectConnectionsDlg">
       <UniqueIdentifier>{8a6deeaa-91ab-4c85-b293-ab1844f3ef82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\WindowsSettingHelper">
+      <UniqueIdentifier>{46dd548a-c66e-4a37-8767-6f9767125287}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -404,6 +407,9 @@
     <ClInclude Include="SelectConnectionsDlg.h">
       <Filter>源文件和头文件\对话框类\选项设置对话框\SelectConnectionsDlg</Filter>
     </ClInclude>
+    <ClInclude Include="WindowsSettingHelper.h">
+      <Filter>源文件和头文件\公共的类\WindowsSettingHelper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -597,6 +603,9 @@
     </ClCompile>
     <ClCompile Include="SelectConnectionsDlg.cpp">
       <Filter>源文件和头文件\对话框类\选项设置对话框\SelectConnectionsDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowsSettingHelper.cpp">
+      <Filter>源文件和头文件\公共的类\WindowsSettingHelper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

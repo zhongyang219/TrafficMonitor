@@ -9,6 +9,7 @@
 #include "Test.h"
 #include "PluginManagerDlg.h"
 #include "SetItemOrderDlg.h"
+#include "WindowsSettingHelper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1547,17 +1548,17 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             last_today_traffic = today_traffic;
         }
 
-        theApp.m_win_version.CheckWindows10LightTheme();        //每隔1秒钟检查一下当前系统是否为白色主题
+        CWindowsSettingHelper::CheckWindows10LightTheme();        //每隔1秒钟检查一下当前系统是否为白色主题
 
         //根据当前Win10颜色模式自动切换任务栏颜色
-        bool light_mode = theApp.m_win_version.IsWindows10LightTheme();
+        bool light_mode = CWindowsSettingHelper::IsWindows10LightTheme();
         if (theApp.m_last_light_mode != light_mode)
         {
             theApp.m_last_light_mode = light_mode;
             bool restart_taskbar_dlg{ false };
             if (theApp.m_taskbar_data.auto_adapt_light_theme)
             {
-                int style_index = theApp.m_win_version.IsWindows10LightTheme() ? theApp.m_taskbar_data.light_default_style : theApp.m_taskbar_data.dark_default_style;
+                int style_index = CWindowsSettingHelper::IsWindows10LightTheme() ? theApp.m_taskbar_data.light_default_style : theApp.m_taskbar_data.dark_default_style;
                 theApp.m_taskbar_default_style.ApplyDefaultStyle(style_index, theApp.m_taskbar_data);
                 theApp.SaveConfig();
                 restart_taskbar_dlg = true;
@@ -1641,7 +1642,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             if (pointy < 0) pointy = 0;
             if (pointy >= m_screen_size.cy) pointy = m_screen_size.cy - 1;
             COLORREF color = ::GetPixel(m_desktop_dc, pointx, pointy);        //取任务栏窗口左侧1像素处的颜色作为背景色
-            if (!CCommon::IsColorSimilar(color, theApp.m_taskbar_data.back_color) && (/*theApp.m_win_version.IsWindows10LightTheme() ||*/ color != 0))
+            if (!CCommon::IsColorSimilar(color, theApp.m_taskbar_data.back_color) && (/*CWindowsSettingHelper::IsWindows10LightTheme() ||*/ color != 0))
             {
                 bool is_taskbar_transparent{ CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data) };
                 theApp.m_taskbar_data.back_color = color;

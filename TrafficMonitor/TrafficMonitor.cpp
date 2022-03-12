@@ -11,6 +11,7 @@
 #include "WIC.h"
 #include "auto_start_helper.h"
 #include "AppAlreadyRuningDlg.h"
+#include "WindowsSettingHelper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -71,7 +72,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_general_data.connections_hide.FromVector(connections_hide);
 
     //Windows10颜色模式设置
-    bool is_windows10_light_theme = m_win_version.IsWindows10LightTheme();
+    bool is_windows10_light_theme = CWindowsSettingHelper::IsWindows10LightTheme();
     if (is_windows10_light_theme)
         CCommon::SetColorMode(ColorMode::Light);
     else
@@ -282,7 +283,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_debug_log = ini.GetBool(_T("other"), _T("debug_log"), false);
     //由于Win7系统中设置任务栏窗口透明色会导致任务栏窗口不可见，因此默认在Win7中禁用透明色的设定
     m_taksbar_transparent_color_enable = ini.GetBool(L"other", L"taksbar_transparent_color_enable", !m_win_version.IsWindows7());
-    m_last_light_mode = ini.GetBool(L"other", L"last_light_mode", m_win_version.IsWindows10LightTheme());
+    m_last_light_mode = ini.GetBool(L"other", L"last_light_mode", CWindowsSettingHelper::IsWindows10LightTheme());
     m_show_mouse_panetrate_tip = ini.GetBool(L"other", L"show_mouse_panetrate_tip", true);
     m_show_dot_net_notinstalled_tip = ini.GetBool(L"other", L"show_dot_net_notinstalled_tip", true);
 }
@@ -840,7 +841,7 @@ void CTrafficMonitorApp::AutoSelectNotifyIcon()
 {
     if (m_win_version.GetMajorVersion() >= 10)
     {
-        bool light_mode = m_win_version.IsWindows10LightTheme();
+        bool light_mode = CWindowsSettingHelper::IsWindows10LightTheme();
         if (light_mode)     //浅色模式下，如果图标是白色，则改成黑色
         {
             if (m_cfg_data.m_notify_icon_selected == 0)

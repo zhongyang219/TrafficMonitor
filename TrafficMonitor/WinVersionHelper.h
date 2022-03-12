@@ -11,14 +11,6 @@ public:
 	bool IsWindows8Or8point1() const;			//判断Windows版本是否为Windows8或Windows8.1
     bool IsWindows8OrLater() const;
     bool IsWindows10OrLater() const;
-	bool IsWindows10LightTheme() const;				//判断Windows是否为浅色主题
-
-	void CheckWindows10LightTheme();
-
-	static bool IsDotNetFramework4Point5Installed();	//判断是否安装了.Net Framework 4.5 (https://docs.microsoft.com/zh-cn/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed)
-
-	static LONG GetDWORDRegKeyData(HKEY hKey, const wstring& strValueName, DWORD& dwValueData);
-	static bool GetDWORDRegKeyData(HKEY keyParent, const wstring& strKeyName, const wstring& strValueName, DWORD& dwValueData);
 
 	int GetMajorVersion() const { return m_major_version; }
 	int GetMinorVersion() const { return m_minor_version; }
@@ -27,5 +19,4 @@ protected:
 	int m_major_version{};
 	int m_minor_version{};
 	int m_build_number{};
-	bool m_light_theme{};
 };

@@ -9,6 +9,7 @@
 #include "CAutoAdaptSettingsDlg.h"
 #include "DisplayTextSettingDlg.h"
 #include "SetItemOrderDlg.h"
+#include "WindowsSettingHelper.h"
 
 // CTaskBarSettingsDlg 对话框
 
@@ -456,7 +457,7 @@ void CTaskBarSettingsDlg::SaveColorSettingToDefaultStyle()
     //如果开启了自动适应Windows10深色/浅色模式功能时，自动将当前配置保存到对应预设
     if (theApp.m_taskbar_data.auto_save_taskbar_color_settings_to_preset && m_data.auto_adapt_light_theme && IsStyleModified())
     {
-        int default_style_saved{ theApp.m_win_version.IsWindows10LightTheme() ? m_data.light_default_style : m_data.dark_default_style };
+        int default_style_saved{ CWindowsSettingHelper::IsWindows10LightTheme() ? m_data.light_default_style : m_data.dark_default_style };
         ModifyDefaultStyle(default_style_saved);
     }
 }

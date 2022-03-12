@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "WinVersionHelper.h"
+#include "WindowsSettingHelper.h"
 
 
 CWinVersionHelper::CWinVersionHelper()
@@ -23,7 +24,7 @@ CWinVersionHelper::CWinVersionHelper()
 	m_minor_version = dwMinorVer;
 	m_build_number = dwBuildNumber;
 
-	CheckWindows10LightTheme();
+    CWindowsSettingHelper::CheckWindows10LightTheme();
 }
 
 
@@ -75,58 +76,4 @@ bool CWinVersionHelper::IsWindows8OrLater() const
 bool CWinVersionHelper::IsWindows10OrLater() const
 {
     return m_major_version >= 10;
-}
-
-bool CWinVersionHelper::IsWindows10LightTheme() const
-{
-	return m_light_theme;
-}
-
-void CWinVersionHelper::CheckWindows10LightTheme()
-{
-	if (m_major_version >= 10)
-	{
-		HKEY hKey;
-		DWORD dwThemeData(0);
-		LONG lRes = RegOpenKeyExW(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", 0, KEY_READ, &hKey);
-		if (lRes == ERROR_SUCCESS) {
-			GetDWORDRegKeyData(hKey, L"SystemUsesLightTheme", dwThemeData);
-			m_light_theme = (dwThemeData != 0);
-		}
-		else
-		{
-			m_light_theme = false;
-		}
-        RegCloseKey(hKey);
-	}
-	else
-	{
-		m_light_theme = false;
-	}
-}
-
-bool CWinVersionHelper::IsDotNetFramework4Point5Installed()
-{
-	DWORD netFramewordRelease{};
-	if (!GetDWORDRegKeyData(HKEY_LOCAL_MACHINE, L"Software\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full", L"Release", netFramewordRelease))
-		return false;
-	return netFramewordRelease >= 379893;
-}
-
-LONG CWinVersionHelper::GetDWORDRegKeyData(HKEY hKey, const wstring& strValueName, DWORD& dwValueData)
-{
-	DWORD dwBufferSize(sizeof(DWORD));
-	DWORD dwResult(0);
-	LONG lError = ::RegQueryValueExW(hKey, strValueName.c_str(), NULL, NULL, reinterpret_cast<LPBYTE>(&dwResult), &dwBufferSize);
-	if (lError == ERROR_SUCCESS)
-		dwValueData = dwResult;
-	return lError;
-}
-
-bool CWinVersionHelper::GetDWORDRegKeyData(HKEY keyParent, const wstring& strKeyName, const wstring& strValueName, DWORD& dwValueData)
-{
-    CRegKey key;
-	if (key.Open(keyParent, strKeyName.c_str(), KEY_READ) != ERROR_SUCCESS)
-		return false;
-	return (key.QueryDWORDValue(strValueName.c_str(), dwValueData) == ERROR_SUCCESS);
 }
