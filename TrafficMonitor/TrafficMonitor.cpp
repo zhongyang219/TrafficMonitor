@@ -1039,7 +1039,7 @@ BOOL CTrafficMonitorApp::InitInstance()
 
 #ifndef WITHOUT_TEMPERATURE
     //检测是否安装.net framework 4.5
-    if (!CWinVersionHelper::IsDotNetFramework4Point5Installed())
+    if (!CWindowsSettingHelper::IsDotNetFramework4Point5Installed())
     {
         if (theApp.m_show_dot_net_notinstalled_tip)
         {
