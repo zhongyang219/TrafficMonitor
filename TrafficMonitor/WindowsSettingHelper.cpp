@@ -39,6 +39,46 @@ bool CWindowsSettingHelper::IsDotNetFramework4Point5Installed()
     return netFramewordRelease >= 379893;
 }
 
+bool CWindowsSettingHelper::IsTsskbarSearchBtnShown()
+{
+    DWORD data{};
+    if (!GetDWORDRegKeyData(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Search", L"SearchboxTaskbarMode", data))
+        return false;
+    return data != 0;
+}
+
+bool CWindowsSettingHelper::IsTaskbarTaskViewBtnShown()
+{
+    DWORD data{};
+    if (!GetDWORDRegKeyData(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", L"ShowTaskViewButton", data))
+        return false;
+    return data != 0;
+}
+
+bool CWindowsSettingHelper::IsTaskbarWidgetsBtnShown()
+{
+    DWORD data{};
+    if (!GetDWORDRegKeyData(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", L"TaskbarDa", data))
+        return false;
+    return data != 0;
+}
+
+bool CWindowsSettingHelper::IsTaskbarChartBtnShown()
+{
+    DWORD data{};
+    if (!GetDWORDRegKeyData(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", L"TaskbarMn", data))
+        return false;
+    return data != 0;
+}
+
+bool CWindowsSettingHelper::IsTaskbarCenterAlign()
+{
+    DWORD data{};
+    if (!GetDWORDRegKeyData(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", L"TaskbarAl", data))
+        return false;
+    return data != 0;
+}
+
 LONG CWindowsSettingHelper::GetDWORDRegKeyData(HKEY hKey, const wstring& strValueName, DWORD& dwValueData)
 {
     DWORD dwBufferSize(sizeof(DWORD));

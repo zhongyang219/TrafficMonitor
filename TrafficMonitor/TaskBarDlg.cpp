@@ -6,6 +6,7 @@
 #include "TaskBarDlg.h"
 #include "afxdialogex.h"
 #include "TrafficMonitorDlg.h"
+#include "WindowsSettingHelper.h"
 
 
 // CTaskBarDlg 对话框
@@ -476,12 +477,32 @@ bool CTaskBarDlg::AdjustWindowPos()
             {
                 if (theApp.m_is_windows11_taskbar)
                 {
-                    if (!theApp.m_taskbar_data.tbar_wnd_snap)
-                        m_rect.MoveToX(2);
+                    if (CWindowsSettingHelper::IsTaskbarCenterAlign())
+                    {
+                        if (theApp.m_taskbar_data.tbar_wnd_snap)
+                        {
+                            int taskbar_btn_num{ 1 };      //Win11任务栏“运行中的程序”左侧4个按钮（开始、搜索、任务视图、聊天）有几个显示。（“开始”按钮总是显示）
+                            if (CWindowsSettingHelper::IsTsskbarSearchBtnShown())
+                                taskbar_btn_num++;
+                            if (CWindowsSettingHelper::IsTaskbarTaskViewBtnShown())
+                                taskbar_btn_num++;
+                            if (CWindowsSettingHelper::IsTaskbarChartBtnShown())
+                                taskbar_btn_num++;
+
+                            m_rect.MoveToX(m_rcMin.left - m_rect.Width() - 2 - theApp.DPI(44) * taskbar_btn_num);   //每个按钮44像素
+                        }
+                        else
+                        {
+                            if (CWindowsSettingHelper::IsTaskbarWidgetsBtnShown())
+                                m_rect.MoveToX(2 + theApp.DPI(160));
+                            else
+                                m_rect.MoveToX(2);
+                        }
+                    }
                     else
-                        //目前无法获取Win11任务栏开始按钮的位置，也无法获取“运行中的程序”左侧有几个按钮，
-                        //因此这里默认Win11任务栏“运行中的程序”左侧还有4个按钮（开始、搜索、任务视图、聊天），每个按钮44像素，因此减去176像素
-                        m_rect.MoveToX(m_rcMin.left - m_rect.Width() - 2 - theApp.DPI(176));
+                    {
+                        m_rect.MoveToX(2);
+                    }
                 }
                 else
                 {
