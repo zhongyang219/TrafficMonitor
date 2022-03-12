@@ -39,7 +39,7 @@ bool CWindowsSettingHelper::IsDotNetFramework4Point5Installed()
     return netFramewordRelease >= 379893;
 }
 
-bool CWindowsSettingHelper::IsTsskbarSearchBtnShown()
+bool CWindowsSettingHelper::IsTaskbarSearchBtnShown()
 {
     DWORD data{};
     if (!GetDWORDRegKeyData(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Search", L"SearchboxTaskbarMode", data))

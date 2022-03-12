@@ -482,7 +482,7 @@ bool CTaskBarDlg::AdjustWindowPos()
                         if (theApp.m_taskbar_data.tbar_wnd_snap)
                         {
                             int taskbar_btn_num{ 1 };      //Win11任务栏“运行中的程序”左侧4个按钮（开始、搜索、任务视图、聊天）有几个显示。（“开始”按钮总是显示）
-                            if (CWindowsSettingHelper::IsTsskbarSearchBtnShown())
+                            if (CWindowsSettingHelper::IsTaskbarSearchBtnShown())
                                 taskbar_btn_num++;
                             if (CWindowsSettingHelper::IsTaskbarTaskViewBtnShown())
                                 taskbar_btn_num++;
