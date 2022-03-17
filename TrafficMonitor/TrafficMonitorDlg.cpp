@@ -251,6 +251,11 @@ POINT CTrafficMonitorDlg::CalculateWindowMoveOffset(CRect rect, bool screen_chan
             if (rect.top < a.top)                   // 需要向下移动
                 y = a.top - rect.top;
 
+            //防止连接新屏幕时 m_last_screen_rects 的数量小于 m_screen_rects 的数量导致访问到过大的索引
+            if (i >= m_last_screen_rects.size())
+            {
+                break;
+            }
             CRect last_screen_rect = m_last_screen_rects[i];
             if (screen_changed && a != last_screen_rect)
             {
@@ -2476,8 +2481,8 @@ afx_msg LRESULT CTrafficMonitorDlg::OnDpichanged(WPARAM wParam, LPARAM lParam)
     theApp.SetDPI(dpi);
     if (IsTaskbarWndValid())
     {
-        //根据新的DPI重新设置任务栏窗口字体
-        m_tBarDlg->SetTextFont();
+            //根据新的DPI重新设置任务栏窗口字体
+            m_tBarDlg->SetTextFont();
     }
 
     LoadSkinLayout();   //根据当前选择的皮肤获取布局数据
