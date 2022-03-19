@@ -286,6 +286,8 @@ void CTrafficMonitorApp::LoadConfig()
     m_last_light_mode = ini.GetBool(L"other", L"last_light_mode", CWindowsSettingHelper::IsWindows10LightTheme());
     m_show_mouse_panetrate_tip = ini.GetBool(L"other", L"show_mouse_panetrate_tip", true);
     m_show_dot_net_notinstalled_tip = ini.GetBool(L"other", L"show_dot_net_notinstalled_tip", true);
+
+    m_cfg_data.taskbar_left_space_win11 = ini.GetInt(L"task_bar", L"taskbar_left_space_win11", 160);
 }
 
 void CTrafficMonitorApp::SaveConfig()
@@ -445,6 +447,8 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(_T("other"), _T("show_dot_net_notinstalled_tip"), m_show_dot_net_notinstalled_tip);
 
     ini.WriteString(L"config", L"plugin_disabled", m_cfg_data.plugin_disabled.ToString());
+
+    ini.WriteInt(L"task_bar", L"taskbar_left_space_win11", m_cfg_data.taskbar_left_space_win11);
 
     ini.WriteString(L"app", L"version", VERSION);
 

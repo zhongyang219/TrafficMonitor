@@ -494,7 +494,7 @@ bool CTaskBarDlg::AdjustWindowPos()
                         else
                         {
                             if (CWindowsSettingHelper::IsTaskbarWidgetsBtnShown())
-                                m_rect.MoveToX(2 + theApp.DPI(160));
+                                m_rect.MoveToX(2 + theApp.DPI(theApp.m_cfg_data.taskbar_left_space_win11));
                             else
                                 m_rect.MoveToX(2);
                         }
