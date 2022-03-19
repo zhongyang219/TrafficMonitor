@@ -82,6 +82,7 @@ void CTabDlg::ResetScroll()
 {
 	if (m_scroll_enable)
 	{
+		m_last_pos = 0;
 		SCROLLINFO scrollinfo;
 		GetScrollInfo(SB_VERT, &scrollinfo, SIF_ALL);
 		int step = scrollinfo.nPos - scrollinfo.nMin;
