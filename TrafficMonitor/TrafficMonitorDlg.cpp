@@ -2481,8 +2481,8 @@ afx_msg LRESULT CTrafficMonitorDlg::OnDpichanged(WPARAM wParam, LPARAM lParam)
     theApp.SetDPI(dpi);
     if (IsTaskbarWndValid())
     {
-            //根据新的DPI重新设置任务栏窗口字体
-            m_tBarDlg->SetTextFont();
+        //根据新的DPI重新设置任务栏窗口字体
+        m_tBarDlg->SetTextFont();
     }
 
     LoadSkinLayout();   //根据当前选择的皮肤获取布局数据
