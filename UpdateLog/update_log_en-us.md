@@ -1,7 +1,7 @@
 **[简体中文](./update_log.md) | [繁體中文](./update_log_zh-tw.md) | English**<br>
 
 # TrafficMonitor Update log
-## V1.82 (2021/12/12)
+## V1.83 (2022/02/03)
 
 * Fixed the problem that when there is already a task plan of auto-run, the auto-run at start up will be failed to set.
 * Added the "Program is already running" dialog box at the program is started when there is already a TrafficMonitor process running.
