@@ -789,15 +789,15 @@ void CTaskBarDlg::CalculateWindowSize()
     CString str;
     if (theApp.m_taskbar_data.hide_percent)
     {
-        str = _T("99");
+        str = _T("100");
     }
     else if (theApp.m_taskbar_data.separate_value_unit_with_space)
     {
-        str = _T("99 %");
+        str = _T("100 %");
     }
     else
     {
-        str = _T("99%");
+        str = _T("100%");
     }
     value_width = m_pDC->GetTextExtent(str).cx;
     //内存显示的宽度
