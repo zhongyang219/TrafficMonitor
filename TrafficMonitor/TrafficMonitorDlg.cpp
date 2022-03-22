@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include <shellscalingapi.h> //GetDpiForMonitor function
 #include "TrafficMonitor.h"
 #include "TrafficMonitorDlg.h"
 #include "afxdialogex.h"
@@ -15,7 +16,7 @@
 #define new DEBUG_NEW
 #endif
 
-
+#pragma comment(lib, "Shcore.lib")
 
 // CTrafficMonitorDlg 对话框
 
@@ -1690,6 +1691,31 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
     {
         if (IsTaskbarWndValid())
         {
+            ++m_taskbar_timer_cnt;
+
+            //启动时就隐藏主窗体的情况下，无法收到dpichange消息，故需要手动检查
+            //每次100ms*10执行一次屏幕DPI检查，并且尽可能少的检查操作系统版本
+            if (m_taskbar_timer_cnt % 10 == 0 && theApp.m_win_version.IsWindows8Point1OrLater())
+            {
+                HMONITOR h_current_monitor = ::MonitorFromRect(&(m_tBarDlg->GetSelfRect()), MONITOR_DEFAULTTONEAREST);
+                static UINT buffered_dpi_x, buffered_dpi_y;
+                static UINT dpi_x, dpi_y;
+                if (S_OK == ::GetDpiForMonitor(h_current_monitor, MDT_EFFECTIVE_DPI, &dpi_x, &dpi_y))
+                {
+                    //只取dpi_x作为程序dpi
+                    if (dpi_x != buffered_dpi_x)
+                    {
+                        auto s_dpi = std::to_string(dpi_x);
+                        s_dpi += '\n';
+                        TRACE(s_dpi.c_str());
+                        buffered_dpi_x = dpi_x;
+                        //考虑到任务栏窗口可能和主窗口不在同一个屏幕上，dpi可能不同
+                        m_tBarDlg->SetTextFontFromDPI(dpi_x);
+                        m_tBarDlg->CalculateWindowSize();
+                    }
+                }
+            }
+
             m_tBarDlg->AdjustWindowPos();
             m_tBarDlg->Invalidate(FALSE);
         }
@@ -2479,7 +2505,8 @@ afx_msg LRESULT CTrafficMonitorDlg::OnDpichanged(WPARAM wParam, LPARAM lParam)
 {
     int dpi = LOWORD(wParam);
     theApp.SetDPI(dpi);
-    if (IsTaskbarWndValid())
+    //当系统版本小于Windows 8.1时使用原来的行为
+    if (IsTaskbarWndValid() && !theApp.m_win_version.IsWindows8Point1OrLater())
     {
         //根据新的DPI重新设置任务栏窗口字体
         m_tBarDlg->SetTextFont();

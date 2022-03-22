@@ -31,6 +31,8 @@ public:
     bool AdjustWindowPos();	//设置窗口在任务栏中的位置
     void ApplyWindowTransparentColor();
 
+    const RECT& GetSelfRect() const;
+
     // 对话框数据
 #ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_TASK_BAR_DIALOG };
@@ -129,6 +131,7 @@ protected:
     void MoveWindow(CRect rect);
 
 public:
+    void SetTextFontFromDPI(UINT dpi);
     void SetTextFont();
     void ApplySettings();
     void CalculateWindowSize();		//计算窗口每部分的大小，及各个部分的宽度。窗口大小保存到m_window_width和m_window_height中，各部分宽度保存到m_item_widths中

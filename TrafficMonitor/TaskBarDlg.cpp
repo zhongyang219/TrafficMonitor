@@ -579,6 +579,10 @@ void CTaskBarDlg::ApplyWindowTransparentColor()
 #endif // !COMPILE_FOR_WINXP
 }
 
+const RECT& CTaskBarDlg::GetSelfRect() const
+{
+    return m_rect;
+}
 
 void CTaskBarDlg::CheckTaskbarOnTopOrBottom()
 {
@@ -698,7 +702,7 @@ CString CTaskBarDlg::GetMouseTipsInfo()
     return tip_info;
 }
 
-void CTaskBarDlg::SetTextFont()
+void CTaskBarDlg::SetTextFontFromDPI(UINT dpi)
 {
     //如果m_font已经关联了一个字体资源对象，则释放它
     if (m_font.m_hObject)
@@ -706,7 +710,12 @@ void CTaskBarDlg::SetTextFont()
         m_font.DeleteObject();
     }
     //创建新的字体
-    theApp.m_taskbar_data.font.Create(m_font, theApp.GetDpi());
+    theApp.m_taskbar_data.font.Create(m_font, dpi);
+}
+
+void CTaskBarDlg::SetTextFont()
+{
+    SetTextFontFromDPI(theApp.GetDpi());
 }
 
 void CTaskBarDlg::ApplySettings()
