@@ -2,14 +2,14 @@
 //
 
 #include "stdafx.h"
-#include <shellscalingapi.h> //GetDpiForMonitor function
+#include <shellscalingapi.h> // 包含::GetDpiForMonitor
 #include "TrafficMonitor.h"
 #include "TaskBarDlg.h"
 #include "afxdialogex.h"
 #include "TrafficMonitorDlg.h"
 #include "WindowsSettingHelper.h"
 
-#pragma comment(lib, "Shcore.lib")
+#pragma comment(lib, "Shcore.lib") // 函数::GetDpiForMonitor依赖此lib
 
 // CTaskBarDlg 对话框
 
