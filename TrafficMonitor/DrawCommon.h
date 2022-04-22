@@ -1,5 +1,6 @@
 ﻿//封装的绘图类
 #pragma once
+#include <wrl/client.h>
 #include "CommonData.h"
 class CDrawCommon
 {
@@ -96,4 +97,87 @@ private:
     CBitmap m_memBitmap;
     CBitmap* m_pOldBit;
     CRect m_rect;
+};
+
+namespace DrawCommonHelper
+{
+    constexpr static BYTE GDI_NO_MODIFIED_FLAG = 0x02;
+    constexpr static BYTE AVAILABLE_MINIMUM_ALPHA = 0x01;
+    constexpr static BYTE GDI_MODIFIED_FLAG = 0x00;
+
+    template <class Func>
+    void ForEachPixelInBitmapForDraw(BYTE* p_data,std::size_t x_start, std::size_t x_end, std::size_t y_start, std::size_t y_end, Func func)
+    {
+        for (std::size_t y = y_start; y < y_end; y++)
+        {
+            for (std::size_t x = x_start; x < x_end; x++)
+            {
+                func(p_data);
+                std::advance(p_data, 4);
+            }
+        }
+    }
+    UINT ProccessTextFormat(CRect rect, CSize text_length, Alignment align, bool multi_line) noexcept;
+    auto GetArgb32BitmapInfo(CRect rect) noexcept
+        -> ::BITMAPINFO;
+    auto GetArgb32BitmapInfo(LONG width, LONG height) noexcept
+        -> ::BITMAPINFO;
+};
+
+class SizeWrapper
+{
+private:
+    SIZE m_content;
+
+public:
+    SizeWrapper(LONG width = 0, LONG height = 0);
+    SizeWrapper(SIZE size);
+    ~SizeWrapper() = default;
+
+    SIZE* GetSizePointer();
+
+    LONG GetWidth() const noexcept;
+    LONG GetHeight() const noexcept;
+    void SetWidth(LONG width) noexcept;
+    void SetHeight(LONG height) noexcept;
+};
+
+class D2D1DrawCommon
+{
+private:
+    Microsoft::WRL::ComPtr<ID2D1DCRenderTarget> m_p_render_target;
+
+public:
+    //尝试加载D2d1.dll来确认D2D1是否存在
+    static bool CheckSupport();
+    D2D1DrawCommon(DrawCommonBuffer& ref_buffer);
+    ~D2D1DrawCommon();
+};
+
+class DrawCommonBuffer
+{
+public:
+    // reference from https://www.cnblogs.com/setoutsoft/p/4086051.html
+    DrawCommonBuffer(HWND hwnd, CRect rect);
+    // referce from https://www.cnblogs.com/strive-sun/p/13073015.html
+    ~DrawCommonBuffer();
+    DrawCommonBuffer(const DrawCommonBuffer&) = delete;
+    DrawCommonBuffer operator=(const DrawCommonBuffer&) = delete;
+
+    HDC GetDC();
+
+private:
+
+    BYTE* GetData() [[deprecated("Function too dangerous!")]];
+
+    static auto GetDefaultBlendFunctionPointer()
+        -> const ::PBLENDFUNCTION;
+
+    CDC m_mem_display_dc;
+    HBITMAP m_display_hbitmap;
+    BYTE* m_p_display_bitmap;
+    HGDIOBJ m_old_display_bitmap;
+    UPDATELAYEREDWINDOWINFO m_update_window_info;
+    HWND m_target_hwnd;
+    SizeWrapper m_size;
 };

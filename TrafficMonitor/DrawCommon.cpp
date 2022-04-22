@@ -1,6 +1,6 @@
 ﻿#include "stdafx.h"
 #include "DrawCommon.h"
-
+#pragma comment(lib, "d2d1.lib")
 
 CDrawCommon::CDrawCommon()
 {
@@ -29,6 +29,34 @@ void CDrawCommon::SetDC(CDC* pDC)
     m_pDC = pDC;
 }
 
+UINT DrawCommonHelper::ProccessTextFormat(CRect rect, CSize text_length, Alignment align, bool multi_line) noexcept
+{
+    UINT result; // CDC::DrawText()函数的文本格式
+    if (multi_line)
+        result = DT_EDITCONTROL | DT_WORDBREAK | DT_NOPREFIX;
+    else
+        result = DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX;
+
+    if (text_length.cx > rect.Width()) //如果文本宽度超过了矩形区域的宽度，设置了居中时左对齐
+    {
+        if (align == Alignment::RIGHT)
+            result |= DT_RIGHT;
+    }
+    else
+    {
+        switch (align)
+        {
+        case Alignment::RIGHT:
+            result |= DT_RIGHT;
+            break;
+        case Alignment::CENTER:
+            result |= DT_CENTER;
+            break;
+        }
+    }
+    return result;
+}
+
 void CDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align, bool draw_back_ground, bool multi_line)
 {
     m_pDC->SetTextColor(color);
@@ -37,25 +65,8 @@ void CDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color,
     m_pDC->SelectObject(m_pfont);
     CSize text_size = m_pDC->GetTextExtent(lpszString);
 
-    UINT format;        //CDC::DrawText()函数的文本格式
-    if (multi_line)
-        format = DT_EDITCONTROL | DT_WORDBREAK | DT_NOPREFIX;
-    else
-        format = DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX;
+    auto format = DrawCommonHelper::ProccessTextFormat(rect, text_size, align, multi_line);
 
-    if (text_size.cx > rect.Width())        //如果文本宽度超过了矩形区域的宽度，设置了居中时左对齐
-    {
-        if (align == Alignment::RIGHT)
-            format |= DT_RIGHT;
-    }
-    else
-    {
-        switch (align)
-        {
-        case Alignment::RIGHT: format |= DT_RIGHT; break;
-        case Alignment::CENTER: format |= DT_CENTER; break;
-        }
-    }
     if (draw_back_ground)
         m_pDC->FillSolidRect(rect, m_back_color);
     m_pDC->DrawText(lpszString, rect, format);
@@ -278,4 +289,155 @@ void CDrawCommon::DrawLine(CPoint start_point, int height, COLORREF color)
     m_pDC->SelectObject(pOldPen);
     m_pDC->SelectObject(pOldBrush);       // Restore the old brush
     aPen.DeleteObject();
+}
+
+UINT DrawCommonHelper::ProccessTextFormat(CRect rect, CSize text_length, Alignment align, bool multi_line) noexcept
+{
+    UINT result; // CDC::DrawText()函数的文本格式
+    if (multi_line)
+        result = DT_EDITCONTROL | DT_WORDBREAK | DT_NOPREFIX;
+    else
+        result = DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX;
+
+    if (text_length.cx > rect.Width()) //如果文本宽度超过了矩形区域的宽度，设置了居中时左对齐
+    {
+        if (align == Alignment::RIGHT)
+            result |= DT_RIGHT;
+    }
+    else
+    {
+        switch (align)
+        {
+        case Alignment::RIGHT:
+            result |= DT_RIGHT;
+            break;
+        case Alignment::CENTER:
+            result |= DT_CENTER;
+            break;
+        }
+    }
+    return result;
+}
+
+auto DrawCommonHelper::GetArgb32BitmapInfo(CRect rect) noexcept
+    -> ::BITMAPINFO
+{
+    LONG width = std::abs(rect.Width());
+    LONG height = std::abs(rect.Height());
+    return GetArgb32BitmapInfo(width, height);
+}
+
+auto DrawCommonHelper::GetArgb32BitmapInfo(LONG width, LONG height) noexcept
+    -> ::BITMAPINFO
+{
+    BITMAPINFO result;
+    memset(&result, 0, sizeof(BITMAPINFO));
+    result.bmiHeader.biSize = sizeof(result.bmiHeader);
+    //保证是自上而下
+    result.bmiHeader.biWidth = -static_cast<LONG>(width);
+    result.bmiHeader.biHeight = -static_cast<LONG>(height);
+    result.bmiHeader.biPlanes = 1;
+    result.bmiHeader.biBitCount = 32;
+    result.bmiHeader.biCompression = BI_RGB;
+    return result;
+}
+
+SizeWrapper::SizeWrapper(LONG width = 0, LONG height = 0)
+{
+    SetWidth(width);
+    SetHeight(height);
+}
+
+SizeWrapper::SizeWrapper(SIZE size)
+    : m_content{size} {}
+
+SIZE* SizeWrapper::GetSizePointer()
+{
+    return &m_content;
+}
+
+LONG SizeWrapper::GetWidth() const noexcept
+{
+    return m_content.cx;
+}
+LONG SizeWrapper::GetHeight() const noexcept
+{
+    return m_content.cy;
+}
+void SizeWrapper::SetWidth(LONG width) noexcept
+{
+    m_content.cx = width;
+}
+void SizeWrapper::SetHeight(LONG height) noexcept
+{
+    m_content.cy = height;
+}
+
+bool D2D1DrawCommon::CheckSupport()
+{
+    bool result = false;
+    auto d2d1_hmodule = ::LoadLibrary(_T("D2d1.dll"));
+    if (d2d1_hmodule)
+    {
+        ::FreeLibrary(d2d1_hmodule);
+    }
+    return result;
+}
+
+DrawCommonBuffer::DrawCommonBuffer(HWND hwnd, CRect rect)
+    : m_update_window_info{0}, m_target_hwnd{hwnd}
+{
+    m_size.SetWidth(std::abs(rect.Width()));
+    m_size.SetHeight(std::abs(rect.Height()));
+
+    BITMAPINFO bitmap_info = DrawCommonHelper::GetArgb32BitmapInfo(rect);
+    {
+        auto pp_bitmap_for_show_data = reinterpret_cast<void**>(&m_p_display_bitmap);
+        m_mem_display_dc.CreateCompatibleDC(NULL);
+        m_display_hbitmap = ::CreateDIBSection(m_mem_display_dc, &bitmap_info, DIB_RGB_COLORS, pp_bitmap_for_show_data, NULL, 0);
+        m_old_display_bitmap = m_mem_display_dc.SelectObject(m_display_hbitmap);
+    }
+
+    m_update_window_info.cbSize = sizeof(UPDATELAYEREDWINDOWINFO);
+    // m_update_window_info.hdcSrc = NULL;
+    // m_update_window_info.pptDst = NULL;
+    // m_update_window_info.psize = NULL;
+    m_update_window_info.hdcSrc = m_mem_display_dc;
+    // m_update_window_info.pptSrc = 在析构函数中填写;
+    // m_update_window_info.crKey = 0;
+    m_update_window_info.pblend = GetDefaultBlendFunctionPointer();
+    m_update_window_info.dwFlags = ULW_ALPHA;
+    // m_update_window_info.prcDirty = NULL;
+}
+
+DrawCommonBuffer::~DrawCommonBuffer()
+{
+    POINT start_location{0, 0};
+    m_update_window_info.pptSrc = &start_location;
+    ::UpdateLayeredWindowIndirect(m_target_hwnd, &m_update_window_info);
+
+    m_mem_display_dc.SelectObject(m_old_display_bitmap);
+    ::DeleteObject(m_display_hbitmap);
+    m_mem_display_dc.DeleteDC();
+}
+
+BYTE* DrawCommonBuffer::GetData()
+{
+    return m_p_display_bitmap;
+}
+
+auto DrawCommonBuffer::GetDefaultBlendFunctionPointer()
+    -> const ::PBLENDFUNCTION
+{
+    static ::BLENDFUNCTION result{
+        AC_SRC_OVER,
+        0,
+        0xFF,
+        AC_SRC_ALPHA};
+    return &result;
+}
+
+HDC DrawCommonBuffer::GetDC()
+{
+    return m_mem_display_dc;
 }
