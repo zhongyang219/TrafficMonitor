@@ -1451,12 +1451,12 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             //每隔10秒钟检测一次是否可以嵌入任务栏
             if (IsTaskbarWndValid() && m_timer_cnt % 10 == 1)
             {
-                if (m_tBarDlg->GetCannotInsertToTaskBar())
+                if (m_tBarDlg->GetCannotInsertToTaskBar() && m_insert_to_taskbar_cnt < MAX_INSERT_TO_TASKBAR_CNT)
                 {
                     CloseTaskBarWnd();
                     OpenTaskBarWnd();
                     m_insert_to_taskbar_cnt++;
-                    if (m_tBarDlg->GetCannotInsertToTaskBar() && m_insert_to_taskbar_cnt >= MAX_INSERT_TO_TASKBAR_CNT)
+                    if (m_tBarDlg->GetCannotInsertToTaskBar() && m_insert_to_taskbar_cnt >= WARN_INSERT_TO_TASKBAR_CNT)
                     {
                         //写入错误日志
                         CString info;
