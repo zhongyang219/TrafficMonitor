@@ -214,6 +214,15 @@
     <PreBuildEvent>
       <Command>print_compile_time.bat</Command>
     </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|Win32'">
     <ClCompile>
@@ -241,6 +250,15 @@
     <PreBuildEvent>
       <Command>print_compile_time.bat</Command>
     </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -268,6 +286,15 @@
     <PreBuildEvent>
       <Command>print_compile_time.bat</Command>
     </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|x64'">
     <ClCompile>
@@ -294,6 +321,15 @@
     <PreBuildEvent>
       <Command>print_compile_time.bat</Command>
     </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -326,6 +362,15 @@
     <PreBuildEvent>
       <Command>print_compile_time.bat</Command>
     </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release (lite)|Win32'">
     <ClCompile>
@@ -357,6 +402,15 @@
     <PreBuildEvent>
       <Command>print_compile_time.bat</Command>
     </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -388,6 +442,15 @@
     <PreBuildEvent>
       <Command>print_compile_time.bat</Command>
     </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release (lite)|x64'">
     <ClCompile>
@@ -418,6 +481,15 @@
     <PreBuildEvent>
       <Command>print_compile_time.bat</Command>
     </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="compile_time.txt" />
@@ -441,6 +513,7 @@
     <ClInclude Include="crashtool.h" />
     <ClInclude Include="CTabCtrlEx.h" />
     <ClInclude Include="CVariant.h" />
+    <ClInclude Include="D2D1Support.h" />
     <ClInclude Include="DisplayTextSettingDlg.h" />
     <ClInclude Include="DrawCommonEx.h" />
     <ClInclude Include="FilePathHelper.h" />
@@ -512,6 +585,7 @@
     <ClCompile Include="crashtool.cpp" />
     <ClCompile Include="CTabCtrlEx.cpp" />
     <ClCompile Include="CVariant.cpp" />
+    <ClCompile Include="D2D1Support.cpp" />
     <ClCompile Include="DisplayTextSettingDlg.cpp" />
     <ClCompile Include="DrawCommonEx.cpp" />
     <ClCompile Include="FilePathHelper.cpp" />

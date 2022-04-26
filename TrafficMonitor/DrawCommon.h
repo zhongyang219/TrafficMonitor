@@ -1,7 +1,16 @@
 ﻿//封装的绘图类
 #pragma once
-#include <wrl/client.h>
+#include "D2D1Support.h"
 #include "CommonData.h"
+
+class IDrawBuffer
+{
+public:
+    virtual CDC *GetMemDC() = 0;
+protected:
+    ~IDrawBuffer() = default;
+};
+
 class CDrawCommon
 {
 public:
@@ -61,7 +70,7 @@ private:
 
 
 //用于双缓冲绘图的类
-class CDrawDoubleBuffer
+class CDrawDoubleBuffer final : public IDrawBuffer
 {
 public:
     CDrawDoubleBuffer(CDC* pDC, CRect rect)
@@ -86,7 +95,7 @@ public:
         }
     }
 
-    CDC* GetMemDC()
+    CDC* GetMemDC() override
     {
         return &m_memDC;
     }
@@ -101,7 +110,8 @@ private:
 
 namespace DrawCommonHelper
 {
-    constexpr static BYTE GDI_NO_MODIFIED_FLAG = 0x02;
+    constexpr static BYTE GDI_NO_MODIFIED_FLAG = 0xFF;
+    constexpr static BYTE OPAQUE_ALPHA_VALUE = 0xFF;
     constexpr static BYTE AVAILABLE_MINIMUM_ALPHA = 0x01;
     constexpr static BYTE GDI_MODIFIED_FLAG = 0x00;
 
@@ -122,6 +132,21 @@ namespace DrawCommonHelper
         -> ::BITMAPINFO;
     auto GetArgb32BitmapInfo(LONG width, LONG height) noexcept
         -> ::BITMAPINFO;
+
+    enum class RenderType
+    {
+        //使用GDI
+        Default,
+        //如果支持，使用D2D1
+        Transparent
+    };
+    template<RenderType render_type>
+    struct RenderTypeTag
+    {
+        constexpr static RenderType type = render_type;
+    };
+    using RenderTypeDefaultTag = RenderTypeTag<RenderType::Default>;
+    using RenderTypeTransparentTag = RenderTypeTag<RenderType::Transparent>;
 };
 
 class SizeWrapper
@@ -142,19 +167,44 @@ public:
     void SetHeight(LONG height) noexcept;
 };
 
+class DrawCommonBuffer;
+
 class D2D1DrawCommon
 {
 private:
     Microsoft::WRL::ComPtr<ID2D1DCRenderTarget> m_p_render_target;
+    class GdiBitmap
+    {
+    private:
+        CDC m_cdc;
+        BYTE* m_p_bitmap;
+        ID2D1Bitmap* m_p_d2d1bitmap;
+        Microsoft::WRL::ComPtr<ID2D1DCRenderTarget> m_p_render_target;
+        HBITMAP m_hbitmap;
+        HGDIOBJ m_old_hbitmap;
+        UINT32 m_width;
+        UINT32 m_height;
+
+    public:
+      GdiBitmap(D2D1_SIZE_U size, Microsoft::WRL::ComPtr<ID2D1DCRenderTarget> p_render_target);
+      ~GdiBitmap();
+      HDC GetDC();
+    };
 
 public:
-    //尝试加载D2d1.dll来确认D2D1是否存在
-    static bool CheckSupport();
-    D2D1DrawCommon(DrawCommonBuffer& ref_buffer);
+    D2D1DrawCommon();
     ~D2D1DrawCommon();
+    void Create(D2D1DCSupport& ref_support, HDC target_dc, CRect rect);
+    template <class GdiOp>
+    void ExecuteGdiOperation(GdiOp gdi_op)
+    {
+        GdiBitmap gdi_wrapper{m_p_render_target->GetPixelSize(), m_p_render_target};
+        gdi_op(gdi_wrapper.GetDC());
+    }
+private:
 };
 
-class DrawCommonBuffer
+class DrawCommonBuffer final : public IDrawBuffer
 {
 public:
     // reference from https://www.cnblogs.com/setoutsoft/p/4086051.html
@@ -164,12 +214,10 @@ public:
     DrawCommonBuffer(const DrawCommonBuffer&) = delete;
     DrawCommonBuffer operator=(const DrawCommonBuffer&) = delete;
 
+    CDC* GetMemDC() override;
     HDC GetDC();
 
 private:
-
-    BYTE* GetData() [[deprecated("Function too dangerous!")]];
-
     static auto GetDefaultBlendFunctionPointer()
         -> const ::PBLENDFUNCTION;
 
@@ -177,7 +225,79 @@ private:
     HBITMAP m_display_hbitmap;
     BYTE* m_p_display_bitmap;
     HGDIOBJ m_old_display_bitmap;
-    UPDATELAYEREDWINDOWINFO m_update_window_info;
     HWND m_target_hwnd;
     SizeWrapper m_size;
+    UPDATELAYEREDWINDOWINFO m_update_window_info;
+};
+
+class DrawCommonBufferUnion
+{
+private:
+    const DrawCommonHelper::RenderType m_type;
+    union Content {
+      Content(){};  //手工管理构造
+      ~Content(){}; //手工管理析构
+      CDrawDoubleBuffer cdraw_double_buffer;
+      DrawCommonBuffer draw_common_buffer;
+    } m_content;
+
+public:
+    template<class... Args>
+    DrawCommonBufferUnion(DrawCommonHelper::RenderType type, Args&&... args)
+        :m_type{type}
+    {
+        switch (m_type)
+        {
+        case DrawCommonHelper::RenderType::Default:
+        {
+            ::new (&m_content.cdraw_double_buffer) CDrawDoubleBuffer(std::forward<Args>(args)...);
+            break;
+        }
+        case DrawCommonHelper::RenderType::Transparent:
+        {
+            ::new (&m_content.draw_common_buffer) DrawCommonBuffer(std::forward<Args>(args)...);
+            break;
+        }
+        };
+    }
+    ~DrawCommonBufferUnion();
+
+    IDrawBuffer& Get();
+};
+
+class DrawCommonUnion
+{
+private:
+    const DrawCommonHelper::RenderType m_type;
+    union Content
+    {
+        Content(){};  //手工管理构造
+        ~Content(){}; //手工管理析构
+        CDrawCommon cdraw_common;
+        D2D1DrawCommon d2d1_draw_common;
+    } m_content;
+
+public:
+    template <class... Args>
+    DrawCommonUnion(DrawCommonHelper::RenderType type, Args&&... args)
+        : m_type{type}
+    {
+        switch (m_type)
+        {
+        case DrawCommonHelper::RenderType::Default:
+        {
+            ::new (&m_content.cdraw_common) CDrawDoubleBuffer(std::forward<Args>(args)...);
+            break;
+        }
+        case DrawCommonHelper::RenderType::Transparent:
+        {
+            ::new (&m_content.d2d1_draw_common) DrawCommonBuffer(std::forward<Args>(args)...);
+            break;
+        }
+        };
+    }
+    ~DrawCommonUnion();
+
+    CDrawCommon& Get(DrawCommonHelper::RenderTypeDefaultTag)noexcept;
+    D2D1DrawCommon& Get(DrawCommonHelper::RenderTypeTransparentTag)noexcept;
 };

@@ -54,6 +54,9 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
     if (this->GetSafeHwnd() == NULL || pDC == nullptr || !IsWindow(this->GetSafeHwnd())) return;
 
     if (m_rect.IsRectEmpty() || m_rect.IsRectNull()) return;
+
+    //缓存是否使用透明背景
+    DrawCommonHelper::RenderType render_type = GetRenderType();
     CRect draw_rect{ m_rect };      //绘图的矩形区域
     draw_rect.MoveToXY(0, 0);
     //设置缓冲的DC
@@ -423,6 +426,23 @@ void CTaskBarDlg::MoveWindow(CRect rect)
     {
         ::MoveWindow(GetSafeHwnd(), rect.left, rect.top, rect.Width(), rect.Height(), TRUE);
     }
+}
+
+auto CTaskBarDlg::GetRenderType()
+    ->DrawCommonHelper::RenderType
+{
+    DrawCommonHelper::RenderType result;
+    bool is_transparent = CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data);
+    bool is_d2d1_support = D2D1Support::CheckSupport();
+    if (is_transparent && is_d2d1_support)
+    {
+        result = DrawCommonHelper::RenderType::Transparent;
+    }
+    else
+    {
+        result = DrawCommonHelper::RenderType::Default;
+    }
+    return result;
 }
 
 void CTaskBarDlg::TryDrawStatusBar(CDrawCommon& drawer, const CRect& rect_bar, int usage_percent)

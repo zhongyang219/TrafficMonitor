@@ -48,6 +48,7 @@ protected:
     CRect m_rect;		//当前窗口的矩形区域
     int m_window_width{};
     int m_window_height{};
+    D2D1DCSupport m_d2d1_support;//提供D2D1绘图支持
 
     //任务栏各个部分的宽度
     struct ItemWidth
@@ -127,6 +128,9 @@ protected:
     void DrawPluginItem(CDrawCommon& drawer, IPluginItem* item, CRect rect, int label_width, bool vertical = false);
 
     void MoveWindow(CRect rect);
+
+    static auto GetRenderType()
+        ->DrawCommonHelper::RenderType;
 
 public:
     void SetTextFont();

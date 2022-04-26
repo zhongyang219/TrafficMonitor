@@ -1,6 +1,5 @@
 ﻿#include "stdafx.h"
 #include "DrawCommon.h"
-#pragma comment(lib, "d2d1.lib")
 
 CDrawCommon::CDrawCommon()
 {
@@ -27,34 +26,6 @@ void CDrawCommon::SetFont(CFont* pfont)
 void CDrawCommon::SetDC(CDC* pDC)
 {
     m_pDC = pDC;
-}
-
-UINT DrawCommonHelper::ProccessTextFormat(CRect rect, CSize text_length, Alignment align, bool multi_line) noexcept
-{
-    UINT result; // CDC::DrawText()函数的文本格式
-    if (multi_line)
-        result = DT_EDITCONTROL | DT_WORDBREAK | DT_NOPREFIX;
-    else
-        result = DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX;
-
-    if (text_length.cx > rect.Width()) //如果文本宽度超过了矩形区域的宽度，设置了居中时左对齐
-    {
-        if (align == Alignment::RIGHT)
-            result |= DT_RIGHT;
-    }
-    else
-    {
-        switch (align)
-        {
-        case Alignment::RIGHT:
-            result |= DT_RIGHT;
-            break;
-        case Alignment::CENTER:
-            result |= DT_CENTER;
-            break;
-        }
-    }
-    return result;
 }
 
 void CDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align, bool draw_back_ground, bool multi_line)
@@ -342,7 +313,7 @@ auto DrawCommonHelper::GetArgb32BitmapInfo(LONG width, LONG height) noexcept
     return result;
 }
 
-SizeWrapper::SizeWrapper(LONG width = 0, LONG height = 0)
+SizeWrapper::SizeWrapper(LONG width, LONG height)
 {
     SetWidth(width);
     SetHeight(height);
@@ -373,15 +344,76 @@ void SizeWrapper::SetHeight(LONG height) noexcept
     m_content.cy = height;
 }
 
-bool D2D1DrawCommon::CheckSupport()
+D2D1DrawCommon::GdiBitmap::GdiBitmap(D2D1_SIZE_U size, Microsoft::WRL::ComPtr<ID2D1DCRenderTarget> p_render_target)
+    : m_p_d2d1bitmap{nullptr}, m_p_render_target{p_render_target}, m_width{size.width}, m_height{size.height}
 {
-    bool result = false;
-    auto d2d1_hmodule = ::LoadLibrary(_T("D2d1.dll"));
-    if (d2d1_hmodule)
+    BITMAPINFO bitmap_info = DrawCommonHelper::GetArgb32BitmapInfo(size.width, size.height);
+    m_cdc.CreateCompatibleDC(NULL);
+    auto pp_bitmap_data = reinterpret_cast<void**>(&m_p_bitmap);
+    m_hbitmap = ::CreateDIBSection(m_cdc, &bitmap_info, DIB_RGB_COLORS, pp_bitmap_data, NULL, 0);
+    m_old_hbitmap = m_cdc.SelectObject(m_hbitmap);
+    DrawCommonHelper::ForEachPixelInBitmapForDraw(
+        m_p_bitmap, m_width, m_width, 0, 0, [](BYTE *p_data) { p_data[3] = DrawCommonHelper::GDI_NO_MODIFIED_FLAG; });
+}
+
+D2D1DrawCommon::GdiBitmap::~GdiBitmap()
+{
+    //应用alpha通道修复
+    DrawCommonHelper::ForEachPixelInBitmapForDraw(m_p_bitmap, m_width, m_width, 0, 0, [](BYTE *p_data) {
+        if (p_data[3] == DrawCommonHelper::GDI_MODIFIED_FLAG)
+        {
+            p_data[3] = DrawCommonHelper::OPAQUE_ALPHA_VALUE;
+        }
+    });
+    //初始化ID2D1Bitmap
+    D2D1_BITMAP_PROPERTIES d2d1_bitmap_properties;
+    d2d1_bitmap_properties.pixelFormat = m_p_render_target->GetPixelFormat();
+    m_p_render_target->GetDpi(&d2d1_bitmap_properties.dpiX, &d2d1_bitmap_properties.dpiY);
+    ThrowIfFailed(
+        m_p_render_target->CreateBitmap(m_p_render_target->GetPixelSize(), d2d1_bitmap_properties, &m_p_d2d1bitmap),
+        "Create ID2D1Bitmap failed.");
+    //复制gdi bitmap到ID2D1Bitmap
+    D2D1_RECT_U range{0, 0, m_width, m_height};
+    ThrowIfFailed(m_p_d2d1bitmap->CopyFromMemory(&range, m_p_bitmap, 32), "Copy GDI bitmap from memory failed.");
+    //绘制图片到render target
+    m_p_render_target->DrawBitmap(m_p_d2d1bitmap, NULL, 1.f);
+    //释放ID2D1Bitmap资源
+    SAFE_RELEASE(m_p_d2d1bitmap);
+    //释放GDI资源
+    m_cdc.SelectObject(m_old_hbitmap);
+    ::DeleteObject(m_hbitmap);
+    m_cdc.DeleteDC();
+}
+
+HDC D2D1DrawCommon::GdiBitmap::GetDC()
+{
+    return m_cdc;
+}
+
+D2D1DrawCommon::D2D1DrawCommon()
+    : m_p_render_target{nullptr}
+{
+}
+
+D2D1DrawCommon::~D2D1DrawCommon()
+{
+    auto hr = m_p_render_target->EndDraw();
+    if (hr == D2DERR_RECREATE_TARGET)
     {
-        ::FreeLibrary(d2d1_hmodule);
+        //收到此错误时，需要重新创建render target（及其创建的任何资源）。
     }
-    return result;
+    else
+    {
+        ThrowIfFailed(hr, "Error occurred when end draw.");
+    }
+}
+
+void D2D1DrawCommon::Create(D2D1DCSupport& ref_support, HDC target_dc, CRect rect)
+{
+    m_p_render_target = ref_support.GetRenderTarget();
+    ThrowIfFailed(m_p_render_target->BindDC(target_dc, &rect), "Bind dc failed.");
+    m_p_render_target->BeginDraw();
+    m_p_render_target->SetTransform(D2D1::Matrix3x2F::Identity());
 }
 
 DrawCommonBuffer::DrawCommonBuffer(HWND hwnd, CRect rect)
@@ -421,11 +453,6 @@ DrawCommonBuffer::~DrawCommonBuffer()
     m_mem_display_dc.DeleteDC();
 }
 
-BYTE* DrawCommonBuffer::GetData()
-{
-    return m_p_display_bitmap;
-}
-
 auto DrawCommonBuffer::GetDefaultBlendFunctionPointer()
     -> const ::PBLENDFUNCTION
 {
@@ -437,7 +464,73 @@ auto DrawCommonBuffer::GetDefaultBlendFunctionPointer()
     return &result;
 }
 
+CDC* DrawCommonBuffer::GetMemDC()
+{
+    return &m_mem_display_dc;
+}
+
 HDC DrawCommonBuffer::GetDC()
 {
     return m_mem_display_dc;
+}
+
+DrawCommonBufferUnion::~DrawCommonBufferUnion()
+{
+    switch (m_type)
+    {
+    case DrawCommonHelper::RenderType::Default:
+    {
+        m_content.cdraw_double_buffer.~CDrawDoubleBuffer();
+        break;
+    }
+    case DrawCommonHelper::RenderType::Transparent:
+    {
+        m_content.draw_common_buffer.~DrawCommonBuffer();
+        break;
+    }
+    };
+}
+
+IDrawBuffer& DrawCommonBufferUnion::Get()
+{
+    switch (m_type)
+    {
+    case DrawCommonHelper::RenderType::Default:
+    {
+        return m_content.cdraw_double_buffer;
+        break;
+    }
+    case DrawCommonHelper::RenderType::Transparent:
+    {
+        return m_content.draw_common_buffer;
+        break;
+    }
+    };
+}
+
+DrawCommonUnion::~DrawCommonUnion()
+{
+    switch (m_type)
+    {
+    case DrawCommonHelper::RenderType::Default:
+    {
+        m_content.cdraw_common.~CDrawCommon();
+        break;
+    }
+    case DrawCommonHelper::RenderType::Transparent:
+    {
+        m_content.d2d1_draw_common.~D2D1DrawCommon();
+        break;
+    }
+    };
+}
+
+CDrawCommon& DrawCommonUnion::Get(DrawCommonHelper::RenderTypeDefaultTag) noexcept
+{
+    return m_content.cdraw_common;
+}
+
+D2D1DrawCommon& DrawCommonUnion::Get(DrawCommonHelper::RenderTypeTransparentTag) noexcept
+{
+    return m_content.d2d1_draw_common;
 }

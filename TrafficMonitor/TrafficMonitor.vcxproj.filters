@@ -193,6 +193,9 @@
     <Filter Include="源文件和头文件\公共的类\WindowsSettingHelper">
       <UniqueIdentifier>{46dd548a-c66e-4a37-8767-6f9767125287}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\D2D1Support">
+      <UniqueIdentifier>{9b93962c-26e9-41d5-a5e3-7dfd90bc5e96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -410,6 +413,9 @@
     <ClInclude Include="WindowsSettingHelper.h">
       <Filter>源文件和头文件\公共的类\WindowsSettingHelper</Filter>
     </ClInclude>
+    <ClInclude Include="D2D1Support.h">
+      <Filter>源文件和头文件\公共的类\D2D1Support</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -606,6 +612,9 @@
     </ClCompile>
     <ClCompile Include="WindowsSettingHelper.cpp">
       <Filter>源文件和头文件\公共的类\WindowsSettingHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="D2D1Support.cpp">
+      <Filter>源文件和头文件\公共的类\D2D1Support</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
