@@ -7,6 +7,7 @@
 #include "afxdialogex.h"
 #include "TrafficMonitorDlg.h"
 #include "WindowsSettingHelper.h"
+#include "Nullable.hpp"
 
 
 // CTaskBarDlg 对话框
@@ -43,35 +44,73 @@ BEGIN_MESSAGE_MAP(CTaskBarDlg, CDialogEx)
     ON_WM_CLOSE()
     ON_WM_LBUTTONUP()
     ON_MESSAGE(WM_EXITMENULOOP, &CTaskBarDlg::OnExitmenuloop)
-END_MESSAGE_MAP()
+    ON_MESSAGE(WM_DPICHANGED, &CTaskBarDlg::OnDpichanged)
+    END_MESSAGE_MAP()
 
-
-// CTaskBarDlg 消息处理程序
-
+    // CTaskBarDlg 消息处理程序
 
 void CTaskBarDlg::ShowInfo(CDC* pDC)
 {
-    if (this->GetSafeHwnd() == NULL || pDC == nullptr || !IsWindow(this->GetSafeHwnd())) return;
-
-    if (m_rect.IsRectEmpty() || m_rect.IsRectNull()) return;
-
-    //缓存是否使用透明背景
+    HWND current_hwnd = this->GetSafeHwnd();
+    if (current_hwnd == NULL || !IsWindow(this->GetSafeHwnd()))
+        return;
+    if (m_rect.IsRectEmpty() || m_rect.IsRectNull())
+        return;
+    //缓存渲染器类型（仅透明且支持D2D渲染时才会使用D2D渲染）
     DrawCommonHelper::RenderType render_type = GetRenderType();
-    CRect draw_rect{ m_rect };      //绘图的矩形区域
+    CRect draw_rect{m_rect}; //绘图的矩形区域
     draw_rect.MoveToXY(0, 0);
     //设置缓冲的DC
-    CDrawDoubleBuffer draw_double_buffer(pDC, draw_rect);
+    DrawCommonBufferUnion draw_buffer_union{render_type};
     //绘图
-    CDrawCommon draw;
-    draw.Create(draw_double_buffer.GetMemDC(), nullptr);
-    draw.FillRect(draw_rect, theApp.m_taskbar_data.back_color);       //填充背景色
-    draw.SetFont(&m_font);
-    draw.SetBackColor(theApp.m_taskbar_data.back_color);
-
+    DrawCommonUnion drawer_union{render_type};
+    IDrawCommon* p_drawer;
+    switch (render_type)
+    {
+    case DrawCommonHelper::RenderType::Default:
+    {
+        if (pDC == nullptr)
+        {
+            return;
+        }
+        //必须先于绘图对象构造
+        draw_buffer_union.CreateDefaultVerion(pDC, draw_rect);
+        IDrawBuffer& draw_buffer = draw_buffer_union.Get();
+        auto& draw = drawer_union.Get(DrawCommonHelper::RenderTypeDefaultTag{});
+        p_drawer = &draw;
+        //这里构造绘图对象
+        draw.Create(draw_buffer.GetMemDC(), nullptr);
+        draw.FillRect(draw_rect, theApp.m_taskbar_data.back_color); //填充背景色
+        draw.SetFont(&m_font);
+        draw.SetBackColor(theApp.m_taskbar_data.back_color);
+        break;
+    }
+    case DrawCommonHelper::RenderType::D2D1:
+    {
+        //必须先于绘图对象构造
+        draw_buffer_union.CreateD2D1Version(current_hwnd, draw_rect);
+        auto& draw = drawer_union.Get(DrawCommonHelper::RenderTypeD2D1Tag{});
+        IDrawBuffer& draw_buffer = draw_buffer_union.Get();
+        p_drawer = &draw;
+        //这里构造绘图对象
+        draw.Create(this->m_d2d1_dc_support, *draw_buffer.GetMemDC(), draw_rect);
+        //仅透明时启用此渲染器，则默认初始化为全黑alpha=0
+        draw.FillRect(draw_rect, 0x00000000, 0);
+        draw.SetFont(&m_font);
+        draw.SetBackColor(theApp.m_taskbar_data.back_color);
+        break;
+    }
+    default:
+    {
+        throw std::runtime_error{"no matching render."};
+        break;
+    }
+    }
+    IDrawCommon& draw = *p_drawer;
     //计算各部分的位置
     int index = 0;
     CRect item_rect{};
-    int item_count = static_cast<int>(m_item_widths.size());  //要显示的项目数量
+    int item_count = static_cast<int>(m_item_widths.size()); //要显示的项目数量
     auto last_iter = m_item_widths.begin();
     for (auto iter = m_item_widths.begin(); iter != m_item_widths.end(); ++iter)
     {
@@ -79,7 +118,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
         //任务栏在桌面顶部或底部
         if (IsTasksbarOnTopOrBottom())
         {
-            if (theApp.m_taskbar_data.horizontal_arrange)   //水平排列
+            if (theApp.m_taskbar_data.horizontal_arrange) //水平排列
             {
                 if (index > 0)
                     item_rect.MoveToX(item_rect.right + theApp.DPI(theApp.m_taskbar_data.item_space));
@@ -90,12 +129,12 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                 else
                     DrawDisplayItem(draw, iter->item_type, item_rect, iter->item_width.label_width);
             }
-            else        //非水平排列时，每两个一组显示
+            else //非水平排列时，每两个一组显示
             {
                 //在index为奇数时同时绘制两个项目
                 if (index % 2 == 1)
                 {
-                    CRect item_rect_up;     //上面一个项目的矩形区域
+                    CRect item_rect_up; //上面一个项目的矩形区域
                     if (index > 0)
                         item_rect_up.MoveToXY(item_rect.right + theApp.DPI(theApp.m_taskbar_data.item_space), 0);
                     item_rect.left = item_rect_up.left;
@@ -111,7 +150,6 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                         DrawPluginItem(draw, last_iter->plugin_item, item_rect_up, last_item_width.label_width);
                     else
                         DrawDisplayItem(draw, last_iter->item_type, item_rect_up, last_item_width.label_width);
-
                     if (iter->is_plugin)
                         DrawPluginItem(draw, iter->plugin_item, item_rect, iter->item_width.label_width);
                     else
@@ -142,13 +180,12 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
             else
                 DrawDisplayItem(draw, iter->item_type, item_rect, iter->item_width.label_width);
         }
-
         index++;
         last_iter = iter;
     }
 }
 
-void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical)
+void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical)
 {
     m_item_rects[type] = rect;
     //设置要绘制的文本颜色
@@ -355,7 +392,7 @@ void CTaskBarDlg::DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect r
     drawer.DrawWindowText(rect_value, str_value, text_color, value_alignment);
 }
 
-void CTaskBarDlg::DrawPluginItem(CDrawCommon& drawer, IPluginItem* item, CRect rect, int label_width, bool vertical)
+void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect rect, int label_width, bool vertical)
 {
     if (item == nullptr)
         return;
@@ -387,8 +424,19 @@ void CTaskBarDlg::DrawPluginItem(CDrawCommon& drawer, IPluginItem* item, CRect r
             plugin->OnExtenedInfo(ITMPlugin::EI_VALUE_TEXT_COLOR, std::to_wstring(value_text_color).c_str());
             plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_TASKBAR_WND, L"1");
         }
-        drawer.GetDC()->SetTextColor(value_text_color);
-        item->DrawItem(drawer.GetDC()->GetSafeHdc(), rect.left, rect.top, rect.Width(), rect.Height(), background_brightness < 128);
+        drawer.SetTextColor(value_text_color);
+        //需要rtti
+        if (typeid(drawer) == typeid(CDrawCommon))
+        {
+            auto* p_dc = static_cast<CDrawCommon&>(drawer).GetDC();
+            item->DrawItem(p_dc->GetSafeHdc(), rect.left, rect.top, rect.Width(), rect.Height(), background_brightness < 128);
+        }
+        else if (typeid(drawer) == typeid(D2D1DrawCommon))
+        {
+            auto& ref_d2d1_drawer = static_cast<D2D1DrawCommon&>(drawer);
+            ref_d2d1_drawer.ExecuteGdiOperation([item, rect, background_brightness](HDC gdi_dc)
+                                                { item->DrawItem(gdi_dc, rect.left, rect.top, rect.Width(), rect.Height(), background_brightness < 128); });
+        }
     }
     else
     {
@@ -436,7 +484,7 @@ auto CTaskBarDlg::GetRenderType()
     bool is_d2d1_support = D2D1Support::CheckSupport();
     if (is_transparent && is_d2d1_support)
     {
-        result = DrawCommonHelper::RenderType::Transparent;
+        result = DrawCommonHelper::RenderType::D2D1;
     }
     else
     {
@@ -445,7 +493,7 @@ auto CTaskBarDlg::GetRenderType()
     return result;
 }
 
-void CTaskBarDlg::TryDrawStatusBar(CDrawCommon& drawer, const CRect& rect_bar, int usage_percent)
+void CTaskBarDlg::TryDrawStatusBar(IDrawCommon& drawer, const CRect& rect_bar, int usage_percent)
 {
     CSize fill_size = CSize(rect_bar.Width() * usage_percent / 100, rect_bar.Height());
     CRect rect_fill(rect_bar.TopLeft(), fill_size);
@@ -1293,7 +1341,7 @@ bool CTaskBarDlg::CheckClickedItem(CPoint point)
     return false;
 }
 
-void CTaskBarDlg::TryDrawGraph(CDrawCommon& drawer, const CRect& value_rect, DisplayItem item_type)
+void CTaskBarDlg::TryDrawGraph(IDrawCommon& drawer, const CRect& value_rect, DisplayItem item_type)
 {
     std::list<int>& list = m_map_history_data[item_type];
     if (theApp.m_taskbar_data.show_graph_dashed_box)
@@ -1343,5 +1391,14 @@ void CTaskBarDlg::OnLButtonUp(UINT nFlags, CPoint point)
 afx_msg LRESULT CTaskBarDlg::OnExitmenuloop(WPARAM wParam, LPARAM lParam)
 {
     m_menu_popuped = false;
+    return 0;
+}
+
+afx_msg LRESULT CTaskBarDlg::OnDpichanged(WPARAM wParam, LPARAM lParam)
+{
+    // if(D2D1Support::CheckSupport())
+    // {
+    //     m_d2d1_dc_support.GetWeakRenderTarget()->SetDpi(96.f, 96.f);
+    // }
     return 0;
 }

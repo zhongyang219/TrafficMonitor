@@ -538,6 +538,7 @@
     <ClInclude Include="MainWndSettingsDlg.h" />
     <ClInclude Include="MessageDlg.h" />
     <ClInclude Include="NetworkInfoDlg.h" />
+    <ClInclude Include="Nullable.hpp" />
     <ClInclude Include="OptionsDlg.h" />
     <ClInclude Include="PictureStatic.h" />
     <ClInclude Include="PluginInfoDlg.h" />

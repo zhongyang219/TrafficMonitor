@@ -4,13 +4,13 @@
 #include <d2d1.h>
 #include <dwrite.h>
 
-#define SAFE_RELEASE(p)                                                                                                \
-    {                                                                                                                  \
-        if (p)                                                                                                         \
-        {                                                                                                              \
-            (p)->Release();                                                                                            \
-            (p) = (NULL);                                                                                              \
-        }                                                                                                              \
+#define SAFE_RELEASE(p)     \
+    {                       \
+        if (p)              \
+        {                   \
+            (p)->Release(); \
+            (p) = (NULL);   \
+        }                   \
     }
 
 namespace FunctionChecker
@@ -82,12 +82,26 @@ class D2D1DCSupport
 {
 public:
     D2D1DCSupport();
-    ~D2D1DCSupport() = default;
-    auto GetRenderTarget() const
+    ~D2D1DCSupport();
+    auto GetRenderTarget()
         -> Microsoft::WRL::ComPtr<ID2D1DCRenderTarget>;
+    auto GetWeakRenderTarget()
+        -> ID2D1DCRenderTarget*;
+    auto GetWeakSolidColorBrush()
+        -> ID2D1SolidColorBrush*;
+    auto GetWeakPsDotStyle()
+        -> ID2D1StrokeStyle*;
+    auto GetWeakDWriteGdiInterop()
+        -> IDWriteGdiInterop*;
+    auto GetWeakSoildBackColorBrush()
+        -> ID2D1SolidColorBrush*;
 
 private:
     Microsoft::WRL::ComPtr<ID2D1DCRenderTarget> m_p_render_target;
+    ID2D1SolidColorBrush* m_p_soild_color_brush;
+    ID2D1SolidColorBrush* m_p_soild_back_color_brush;
+    ID2D1StrokeStyle* m_p_ps_dot_style;
+    IDWriteGdiInterop* m_p_dwrite_gdi_interop;
 };
 
 class DWriteSupport

@@ -120,6 +120,12 @@ IDWriteFactory* DWriteSupport::GetFactory()
 
 D2D1DCSupport::D2D1DCSupport()
 {
+    //不支持D2D1或DWrite则直接返回
+    if (!D2D1Support::CheckSupport() || !DWriteSupport::CheckSupport())
+    {
+        return;
+    }
+
     D2D1_RENDER_TARGET_PROPERTIES d2d1_reder_target_properties{
         D2D1_RENDER_TARGET_TYPE_DEFAULT,
         D2D1::PixelFormat(
@@ -130,10 +136,65 @@ D2D1DCSupport::D2D1DCSupport()
         D2D1_FEATURE_LEVEL_DEFAULT};
     ThrowIfFailed(D2D1Support::GetFactory()->CreateDCRenderTarget(&d2d1_reder_target_properties, &m_p_render_target),
                   "Create d2d1 dc render target failed.");
+    ThrowIfFailed(m_p_render_target->CreateSolidColorBrush(D2D1_COLOR_F{D2D1::ColorF::Black, 0.0f}, &m_p_soild_color_brush),
+                  "Create ID2D1SolidColorBrush failed.");
+    ThrowIfFailed(m_p_render_target->CreateSolidColorBrush(D2D1_COLOR_F{D2D1::ColorF::Black, 0.0f}, &m_p_soild_back_color_brush),
+                  "Create ID2D1SolidColorBrush as back color failed.");
+    {
+        D2D1_STROKE_STYLE_PROPERTIES d2d1_stroke_style_properties{
+            D2D1_CAP_STYLE_FLAT,
+            D2D1_CAP_STYLE_FLAT,
+            D2D1_CAP_STYLE_FLAT,
+            D2D1_LINE_JOIN_MITER,
+            1.0f,
+            D2D1_DASH_STYLE_DOT,
+            0.0f};
+        ThrowIfFailed(D2D1Support::GetFactory()->CreateStrokeStyle(d2d1_stroke_style_properties, NULL, 0, &m_p_ps_dot_style),
+                      "Create GDI PS_DOT like stroke style failed.");
+    }
+    ThrowIfFailed(DWriteSupport::GetFactory()->GetGdiInterop(&m_p_dwrite_gdi_interop), "Create DWrite GDI interop interface failed.");
 };
 
-auto D2D1DCSupport::GetRenderTarget() const
+D2D1DCSupport::~D2D1DCSupport()
+{
+    SAFE_RELEASE(m_p_soild_color_brush);
+    SAFE_RELEASE(m_p_soild_back_color_brush);
+    SAFE_RELEASE(m_p_ps_dot_style);
+    SAFE_RELEASE(m_p_dwrite_gdi_interop);
+}
+
+auto D2D1DCSupport::GetRenderTarget()
     -> Microsoft::WRL::ComPtr<ID2D1DCRenderTarget>
 {
     return m_p_render_target;
+}
+
+auto D2D1DCSupport::GetWeakRenderTarget()
+    -> ID2D1DCRenderTarget*
+{
+    return m_p_render_target.Get();
+}
+
+auto D2D1DCSupport::GetWeakSolidColorBrush()
+    -> ID2D1SolidColorBrush*
+{
+    return m_p_soild_color_brush;
+}
+
+auto D2D1DCSupport::GetWeakPsDotStyle()
+    -> ID2D1StrokeStyle*
+{
+    return m_p_ps_dot_style;
+}
+
+auto D2D1DCSupport::GetWeakDWriteGdiInterop()
+    -> IDWriteGdiInterop*
+{
+    return m_p_dwrite_gdi_interop;
+}
+
+auto D2D1DCSupport::GetWeakSoildBackColorBrush()
+    -> ID2D1SolidColorBrush*
+{
+    return m_p_soild_back_color_brush;
 }

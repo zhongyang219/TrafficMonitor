@@ -24,9 +24,9 @@ public:
     CToolTipCtrl m_tool_tips;
 
     void ShowInfo(CDC* pDC); 	//将信息绘制到控件上
-    void TryDrawStatusBar(CDrawCommon& drawer, const CRect& rect_bar, int usage_percent); //绘制CPU/内存状态条
+    void TryDrawStatusBar(IDrawCommon& drawer, const CRect& rect_bar, int usage_percent); //绘制CPU/内存状态条
 
-    void TryDrawGraph(CDrawCommon& drawer, const CRect& value_rect, DisplayItem item_type);		// 绘制CPU/内存动态图
+    void TryDrawGraph(IDrawCommon& drawer, const CRect& value_rect, DisplayItem item_type);		// 绘制CPU/内存动态图
 
     bool AdjustWindowPos();	//设置窗口在任务栏中的位置
     void ApplyWindowTransparentColor();
@@ -48,7 +48,7 @@ protected:
     CRect m_rect;		//当前窗口的矩形区域
     int m_window_width{};
     int m_window_height{};
-    D2D1DCSupport m_d2d1_support;//提供D2D1绘图支持
+    D2D1DCSupport m_d2d1_dc_support;//提供D2D1绘图支持
 
     //任务栏各个部分的宽度
     struct ItemWidth
@@ -117,7 +117,7 @@ protected:
     //  rect: 绘制矩形区域
     //  label_width: 标签区域的宽度
     //  vertical: 如果为true，则标签和数值上下显示
-    void DrawDisplayItem(CDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical = false);
+    void DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical = false);
 
     //绘制任务栏窗口中的一个插件项目
    //  drawer: 绘图类的对象
@@ -125,7 +125,7 @@ protected:
    //  rect: 绘制矩形区域
    //  label_width: 标签区域的宽度
    //  vertical: 如果为true，则标签和数值上下显示
-    void DrawPluginItem(CDrawCommon& drawer, IPluginItem* item, CRect rect, int label_width, bool vertical = false);
+    void DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect rect, int label_width, bool vertical = false);
 
     void MoveWindow(CRect rect);
 
@@ -170,4 +170,6 @@ public:
     afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 protected:
     afx_msg LRESULT OnExitmenuloop(WPARAM wParam, LPARAM lParam);
+    //锁定D2D的dpi为96
+    afx_msg LRESULT OnDpichanged(WPARAM wParam, LPARAM lParam);
 };
