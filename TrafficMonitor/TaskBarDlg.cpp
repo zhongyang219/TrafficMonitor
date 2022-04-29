@@ -488,7 +488,7 @@ auto CTaskBarDlg::GetRenderType()
     DrawCommonHelper::RenderType result;
     bool is_transparent = CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data);
     bool is_d2d1_dc_support = D2D1DCSupport::CheckSupport();
-    if (is_transparent && !theApp.m_taskbar_data.auto_set_background_color && is_d2d1_dc_support)
+    if (is_transparent && !theApp.m_taskbar_data.auto_set_background_color && !theApp.m_taskbar_data.disable_d2d && is_d2d1_dc_support)
     {
         result = DrawCommonHelper::RenderType::D2D1;
     }

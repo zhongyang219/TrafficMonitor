@@ -297,6 +297,8 @@ struct TaskBarSettingData : public PublicSettingData
     int netspeed_figure_max_value_unit{};   //网速占用图最大值的单位（0: KB, 1: MB）
     unsigned __int64 GetNetspeedFigureMaxValueInBytes() const;  //获取网速占用图的最大值（以字节为单位）
 
+    bool disable_d2d{ false };//是否禁用d2d绘图
+
 };
 
 //选项设置中“常规设置”的数据

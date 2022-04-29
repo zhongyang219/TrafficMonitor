@@ -154,6 +154,7 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_ITEM_SPACE_EDIT, m_item_space_edit);
     DDX_Control(pDX, IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, m_net_speed_figure_max_val_edit);
     DDX_Control(pDX, IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO, m_net_speed_figure_max_val_unit_combo);
+    DDX_Control(pDX, IDC_DISABLE_D2D, m_disable_d2d_chk);
 }
 
 
@@ -192,6 +193,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_SHOW_NET_SPEED_FIGURE_CHECK, &CTaskBarSettingsDlg::OnBnClickedShowNetSpeedFigureCheck)
     ON_CBN_SELCHANGE(IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeNetSpeedFigureMaxValueUnitCombo)
     ON_EN_CHANGE(IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, &CTaskBarSettingsDlg::OnEnChangeNetSpeedFigureMaxValueEdit)
+    ON_BN_CLICKED(IDC_DISABLE_D2D, &CTaskBarSettingsDlg::OnBnClickedDisableD2D)
 END_MESSAGE_MAP()
 
 
@@ -335,6 +337,15 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     }
     m_default_style_menu.AppendMenu(MF_SEPARATOR);
     m_default_style_menu.AppendMenu(MF_POPUP | MF_STRING, (UINT)m_modify_default_style_menu.m_hMenu, CCommon::LoadText(IDS_MODIFY_PRESET));
+
+    //设置是否禁用D2D
+    if (!D2D1DCSupport::CheckSupport())
+    {
+        m_data.disable_d2d = true;
+        //不支持时禁用选项
+        m_disable_d2d_chk.EnableWindow(false);
+    }
+    m_disable_d2d_chk.SetCheck(m_data.disable_d2d);
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE
@@ -795,4 +806,9 @@ void CTaskBarSettingsDlg::OnCbnSelchangeNetSpeedFigureMaxValueUnitCombo()
 void CTaskBarSettingsDlg::OnEnChangeNetSpeedFigureMaxValueEdit()
 {
     m_data.netspeed_figure_max_value = m_net_speed_figure_max_val_edit.GetValue();
+}
+
+void CTaskBarSettingsDlg::OnBnClickedDisableD2D()
+{
+    m_data.disable_d2d = (m_disable_d2d_chk.GetCheck() != 0);
 }
