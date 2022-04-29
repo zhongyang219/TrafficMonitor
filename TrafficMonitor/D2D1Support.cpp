@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "D2D1Support.h"
 
 #pragma comment(lib, "D2d1.lib")
@@ -36,7 +36,7 @@ bool FunctionChecker::CheckFunctionExist(LPCTSTR p_library_name, LPCSTR p_functi
                                    [p_function_name](HMODULE h_library) -> bool
                                    {
                                        auto* p_test_function = ::GetProcAddress(h_library, p_function_name);
-                                       return p_test_function == NULL;
+                                       return p_test_function != NULL;
                                    });
 }
 
@@ -77,9 +77,13 @@ ID2D1Factory* D2D1Support::GetFactory()
         [](ID2D1Factory** pp_factory)
         {
             *pp_factory = nullptr;
-            D2D1_FACTORY_OPTIONS d2d1_factory_options{D2D1_DEBUG_LEVEL_ERROR};
+#ifdef DEBUG
+            D2D1_FACTORY_OPTIONS d2d1_factory_options{ D2D1_DEBUG_LEVEL_INFORMATION };
+#else
+            D2D1_FACTORY_OPTIONS d2d1_factory_options{ D2D1_DEBUG_LEVEL_NONE };
+#endif
             ThrowIfFailed(::D2D1CreateFactory(
-                              D2D1_FACTORY_TYPE_MULTI_THREADED,
+                              D2D1_FACTORY_TYPE_SINGLE_THREADED,
                               d2d1_factory_options,
                               pp_factory),
                           "Create D2D1 factory failed.");
@@ -121,7 +125,7 @@ IDWriteFactory* DWriteSupport::GetFactory()
 D2D1DCSupport::D2D1DCSupport()
 {
     //不支持D2D1或DWrite则直接返回
-    if (!D2D1Support::CheckSupport() || !DWriteSupport::CheckSupport())
+    if (!CheckSupport())
     {
         return;
     }
@@ -146,9 +150,9 @@ D2D1DCSupport::D2D1DCSupport()
             D2D1_CAP_STYLE_FLAT,
             D2D1_CAP_STYLE_FLAT,
             D2D1_LINE_JOIN_MITER,
-            1.0f,
-            D2D1_DASH_STYLE_DOT,
-            0.0f};
+            10.0f,
+            D2D1_DASH_STYLE_DASH,
+            1.0f};
         ThrowIfFailed(D2D1Support::GetFactory()->CreateStrokeStyle(d2d1_stroke_style_properties, NULL, 0, &m_p_ps_dot_style),
                       "Create GDI PS_DOT like stroke style failed.");
     }
@@ -161,6 +165,11 @@ D2D1DCSupport::~D2D1DCSupport()
     SAFE_RELEASE(m_p_soild_back_color_brush);
     SAFE_RELEASE(m_p_ps_dot_style);
     SAFE_RELEASE(m_p_dwrite_gdi_interop);
+}
+
+bool D2D1DCSupport::CheckSupport()
+{
+    return D2D1Support::CheckSupport() && DWriteSupport::CheckSupport();
 }
 
 auto D2D1DCSupport::GetRenderTarget()

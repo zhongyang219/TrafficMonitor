@@ -23,7 +23,7 @@ public:
     //用纯色填充矩形
     virtual void FillRect(CRect rect, COLORREF color, BYTE alpha = 255) = 0;
     //绘制矩形边框。如果dot_line为true，则为虚线
-    virtual void DrawRectOutLine(CRect rect, COLORREF color, BYTE alpha = 255, int width = 1, bool dot_line = false) = 0;
+    virtual void DrawRectOutLine(CRect rect, COLORREF color, int width = 1, bool dot_line = false, BYTE alpha = 255) = 0;
     //使用当前画笔画线
     virtual void DrawLine(CPoint start_point, int height, COLORREF color, BYTE alpha = 255) = 0;
     virtual void SetTextColor(const COLORREF color, BYTE alpha = 255) = 0;
@@ -75,7 +75,7 @@ public:
 
     void FillRect(CRect rect, COLORREF color, BYTE alpha = 255) override; //用纯色填充矩形
     void FillRectWithBackColor(CRect rect);			//使用背景色填充矩形
-    void DrawRectOutLine(CRect rect, COLORREF color, BYTE alpha = 255, int width = 1, bool dot_line = false) override; //绘制矩形边框。如果dot_line为true，则为虚线
+    void DrawRectOutLine(CRect rect, COLORREF color, int width = 1, bool dot_line = false, BYTE alpha = 255) override; //绘制矩形边框。如果dot_line为true，则为虚线
 
     //从图像创建区域，如果像素点的亮度小于threshold（取值为0~255，0为黑色，255为白色），则该像素点在区域外
     //https://blog.csdn.net/tajon1226/article/details/6589180
@@ -134,9 +134,10 @@ private:
 
 namespace DrawCommonHelper
 {
-    constexpr static BYTE GDI_NO_MODIFIED_FLAG = 0xFF;
+    constexpr static BYTE GDI_NO_MODIFIED_FLAG = 0x01;
     constexpr static BYTE OPAQUE_ALPHA_VALUE = 0xFF;
-    constexpr static BYTE AVAILABLE_MINIMUM_ALPHA = 0x01;
+    constexpr static BYTE TRANSPARENT_ALPHA_VALUE = 0x00;
+    constexpr static BYTE AVAILABLE_MINIMUM_ALPHA = 0x02;
     constexpr static BYTE GDI_MODIFIED_FLAG = 0x00;
 
     template <class Func>
@@ -197,6 +198,8 @@ private:
     D2D1DCSupport* m_p_support{NULL};
     IDWriteTextFormat* m_p_text_format{NULL};
     IDWriteFont* m_p_font{NULL};
+    CFont* m_p_cfont{NULL};
+    COLORREF m_gdi_color{};
 
     class GdiBitmap
     {
@@ -207,13 +210,21 @@ private:
         ID2D1DCRenderTarget* m_p_render_target;
         HBITMAP m_hbitmap;
         HGDIOBJ m_old_hbitmap;
-        UINT32 m_width;
-        UINT32 m_height;
+        HGDIOBJ m_old_font;
+        CRect m_rect;
+        float m_rgb_sum;
 
     public:
-      GdiBitmap(D2D1_SIZE_U size, ID2D1DCRenderTarget* p_render_target);
-      ~GdiBitmap();
-      HDC GetDC();
+        /**
+         * @brief 初始化 GdiBitmap，会自动根据render_traget创建一个RGB32的内存图片，但是只对draw_rect区域进行alpha通道处理，其它区域会被透明化
+         * @param ref_d2d1_draw_common 关联的D2D1DrawCommon对象，借助其中的信息初始化自身
+         * @param draw_rect 进行alpha通道处理的区域
+        */
+        GdiBitmap(D2D1DrawCommon& ref_d2d1_draw_common, CRect draw_rect);
+        ~GdiBitmap();
+        HDC GetDC();
+
+    private:
     };
 
 public:
@@ -221,10 +232,10 @@ public:
     ~D2D1DrawCommon();
     void Create(D2D1DCSupport& ref_support, HDC target_dc, CRect rect);
     template <class GdiOp>
-    void ExecuteGdiOperation(GdiOp gdi_op)
+    void ExecuteGdiOperation(CRect rect, GdiOp gdi_op)
     {
         auto* weak_render_target = m_p_support->GetWeakRenderTarget();
-        GdiBitmap gdi_wrapper{ weak_render_target->GetPixelSize(), weak_render_target };
+        GdiBitmap gdi_wrapper{*this, rect};
         gdi_op(gdi_wrapper.GetDC());
     }
 
@@ -235,7 +246,7 @@ public:
     //用纯色填充矩形
     void FillRect(CRect rect, COLORREF color, BYTE alpha = 255) override;
     //绘制矩形边框。如果dot_line为true，则为虚线
-    void DrawRectOutLine(CRect rect, COLORREF color, BYTE alpha = 255, int width = 1, bool dot_line = false) override;
+    void DrawRectOutLine(CRect rect, COLORREF color, int width = 1, bool dot_line = false, BYTE alpha = 255) override;
     //使用当前画笔画线
     void DrawLine(CPoint start_point, int height, COLORREF color, BYTE alpha = 255) override;
     void SetTextColor(const COLORREF color, BYTE alpha = 255) override;
@@ -290,11 +301,13 @@ public:
     template<class... Args>
     void CreateDefaultVerion(Args&&... args)
     {
+        ::new (&m_content.cdraw_double_buffer) Nullable<CDrawDoubleBuffer>();
         m_content.cdraw_double_buffer.Construct(std::forward<Args>(args)...);
     }
     template<class... Args>
     void CreateD2D1Version(Args&&... args)
     {
+        ::new (&m_content.draw_common_buffer) Nullable<DrawCommonBuffer>();
         m_content.draw_common_buffer.Construct(std::forward<Args>(args)...);
     }
     ~DrawCommonBufferUnion();

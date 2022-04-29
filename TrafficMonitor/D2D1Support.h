@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <stdexcept>
 #include <wrl/client.h> //ComPtr
 #include <d2d1.h>
@@ -83,6 +83,7 @@ class D2D1DCSupport
 public:
     D2D1DCSupport();
     ~D2D1DCSupport();
+    static bool CheckSupport();
     auto GetRenderTarget()
         -> Microsoft::WRL::ComPtr<ID2D1DCRenderTarget>;
     auto GetWeakRenderTarget()
@@ -97,11 +98,11 @@ public:
         -> ID2D1SolidColorBrush*;
 
 private:
-    Microsoft::WRL::ComPtr<ID2D1DCRenderTarget> m_p_render_target;
-    ID2D1SolidColorBrush* m_p_soild_color_brush;
-    ID2D1SolidColorBrush* m_p_soild_back_color_brush;
-    ID2D1StrokeStyle* m_p_ps_dot_style;
-    IDWriteGdiInterop* m_p_dwrite_gdi_interop;
+    Microsoft::WRL::ComPtr<ID2D1DCRenderTarget> m_p_render_target{NULL};
+    ID2D1SolidColorBrush* m_p_soild_color_brush{NULL};
+    ID2D1SolidColorBrush* m_p_soild_back_color_brush{NULL};
+    ID2D1StrokeStyle* m_p_ps_dot_style{NULL};
+    IDWriteGdiInterop* m_p_dwrite_gdi_interop{NULL};
 };
 
 class DWriteSupport

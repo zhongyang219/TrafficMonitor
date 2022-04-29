@@ -189,7 +189,7 @@ void CDrawCommon::FillRectWithBackColor(CRect rect)
     m_pDC->FillSolidRect(rect, m_back_color);
 }
 
-void CDrawCommon::DrawRectOutLine(CRect rect, COLORREF color, BYTE alpha, int width, bool dot_line)
+void CDrawCommon::DrawRectOutLine(CRect rect, COLORREF color, int width, bool dot_line, BYTE alpha)
 {
     CPen aPen, *pOldPen;
     aPen.CreatePen((dot_line ? PS_DOT : PS_SOLID), width, color);
@@ -301,11 +301,11 @@ auto DrawCommonHelper::GetArgb32BitmapInfo(CRect rect) noexcept
 auto DrawCommonHelper::GetArgb32BitmapInfo(LONG width, LONG height) noexcept
     -> ::BITMAPINFO
 {
-    BITMAPINFO result;
+    ::BITMAPINFO result;
     memset(&result, 0, sizeof(BITMAPINFO));
     result.bmiHeader.biSize = sizeof(result.bmiHeader);
     //保证是自上而下
-    result.bmiHeader.biWidth = -static_cast<LONG>(width);
+    result.bmiHeader.biWidth = static_cast<LONG>(width);
     result.bmiHeader.biHeight = -static_cast<LONG>(height);
     result.bmiHeader.biPlanes = 1;
     result.bmiHeader.biBitCount = 32;
@@ -344,44 +344,71 @@ void SizeWrapper::SetHeight(LONG height) noexcept
     m_content.cy = height;
 }
 
-D2D1DrawCommon::GdiBitmap::GdiBitmap(D2D1_SIZE_U size, ID2D1DCRenderTarget* p_render_target)
-    : m_p_d2d1bitmap{nullptr}, m_p_render_target{p_render_target}, m_width{size.width}, m_height{size.height}
+D2D1DrawCommon::GdiBitmap::GdiBitmap(D2D1DrawCommon& ref_d2d1_draw_common, CRect rect)
+    : m_p_d2d1bitmap{nullptr}, m_p_render_target{ref_d2d1_draw_common.m_p_support->GetWeakRenderTarget()},
+      m_rect{rect}
 {
+    auto color = ref_d2d1_draw_common.m_gdi_color;
+    m_rgb_sum = GetRValue(color) + GetGValue(color) + GetBValue(color);
+
+    auto size = m_p_render_target->GetPixelSize();
     BITMAPINFO bitmap_info = DrawCommonHelper::GetArgb32BitmapInfo(size.width, size.height);
     m_cdc.CreateCompatibleDC(NULL);
     auto pp_bitmap_data = reinterpret_cast<void**>(&m_p_bitmap);
     m_hbitmap = ::CreateDIBSection(m_cdc, &bitmap_info, DIB_RGB_COLORS, pp_bitmap_data, NULL, 0);
+
     m_old_hbitmap = m_cdc.SelectObject(m_hbitmap);
+    m_old_font = m_cdc.SelectObject(*ref_d2d1_draw_common.m_p_cfont);
+
+    m_cdc.SetBkMode(TRANSPARENT);
+    m_cdc.SetTextColor(ref_d2d1_draw_common.m_gdi_color);
+
     DrawCommonHelper::ForEachPixelInBitmapForDraw(
-        m_p_bitmap, m_width, m_width, 0, 0, [](BYTE* p_data)
+        m_p_bitmap, m_rect.left, m_rect.right, m_rect.top, m_rect.bottom, [](BYTE* p_data)
         { p_data[3] = DrawCommonHelper::GDI_NO_MODIFIED_FLAG; });
 }
 
 D2D1DrawCommon::GdiBitmap::~GdiBitmap()
 {
     //应用alpha通道修复
-    DrawCommonHelper::ForEachPixelInBitmapForDraw(m_p_bitmap, m_width, m_width, 0, 0, [](BYTE* p_data)
+    DrawCommonHelper::ForEachPixelInBitmapForDraw(m_p_bitmap, m_rect.left, m_rect.right, m_rect.top, m_rect.bottom,
+                                                  [rgb_sum = m_rgb_sum](BYTE* p_data)
                                                   {
-        if (p_data[3] == DrawCommonHelper::GDI_MODIFIED_FLAG)
-        {
-            p_data[3] = DrawCommonHelper::OPAQUE_ALPHA_VALUE;
-        } });
-    //初始化ID2D1Bitmap
+                                                      if (p_data[3] != DrawCommonHelper::GDI_MODIFIED_FLAG)
+                                                      {
+                                                          p_data[3] = DrawCommonHelper::TRANSPARENT_ALPHA_VALUE;
+                                                      }
+                                                      else
+                                                      {
+                                                          //假定插件只使用GDI绘图，则alpha非0区域只能是文字抗锯齿的结果。
+                                                          float combined_color = p_data[0] + p_data[1] + p_data[2];
+                                                          float alpha_f = combined_color / rgb_sum;
+                                                          //没有处理溢出的情况
+                                                          p_data[3] = static_cast<BYTE>(alpha_f * 0xFF);
+                                                      }
+                                                  });
+    //复制gdi bitmap到ID2D1Bitmap
     D2D1_BITMAP_PROPERTIES d2d1_bitmap_properties;
     d2d1_bitmap_properties.pixelFormat = m_p_render_target->GetPixelFormat();
-    m_p_render_target->GetDpi(&d2d1_bitmap_properties.dpiX, &d2d1_bitmap_properties.dpiY);
+    d2d1_bitmap_properties.dpiX = 0.f;
+    d2d1_bitmap_properties.dpiY = 0.f;
+    D2D1_SIZE_U bitmap_size = m_p_render_target->GetPixelSize();
     ThrowIfFailed(
-        m_p_render_target->CreateBitmap(m_p_render_target->GetPixelSize(), d2d1_bitmap_properties, &m_p_d2d1bitmap),
+        m_p_render_target->CreateBitmap(
+            bitmap_size,
+            m_p_bitmap,
+            bitmap_size.width * 4, // RGB32（实际上是ARGB32）
+            d2d1_bitmap_properties,
+            &m_p_d2d1bitmap),
         "Create ID2D1Bitmap failed.");
-    //复制gdi bitmap到ID2D1Bitmap
-    D2D1_RECT_U range{0, 0, m_width, m_height};
-    ThrowIfFailed(m_p_d2d1bitmap->CopyFromMemory(&range, m_p_bitmap, 32), "Copy GDI bitmap from memory failed.");
     //绘制图片到render target
     m_p_render_target->DrawBitmap(m_p_d2d1bitmap, NULL, 1.f);
+    ThrowIfFailed(m_p_render_target->Flush(), "Flush D2D1 dc render target failed when draw D2D bitmap from GDI.");
     //释放ID2D1Bitmap资源
     SAFE_RELEASE(m_p_d2d1bitmap);
     //释放GDI资源
     m_cdc.SelectObject(m_old_hbitmap);
+    m_cdc.SelectObject(m_old_font);
     ::DeleteObject(m_hbitmap);
     m_cdc.DeleteDC();
 }
@@ -409,6 +436,8 @@ D2D1DrawCommon::~D2D1DrawCommon()
     {
         ThrowIfFailed(hr, "Error occurred when end draw.");
     }
+    SAFE_RELEASE(m_p_text_format);
+    SAFE_RELEASE(m_p_font);
 }
 
 void D2D1DrawCommon::Create(D2D1DCSupport& ref_support, HDC target_dc, CRect rect)
@@ -416,7 +445,12 @@ void D2D1DrawCommon::Create(D2D1DCSupport& ref_support, HDC target_dc, CRect rec
     m_p_support = &ref_support;
     auto* p_render_target = ref_support.GetWeakRenderTarget();
     ThrowIfFailed(p_render_target->BindDC(target_dc, &rect), "Bind dc failed.");
-    ref_support.GetWeakSolidColorBrush()->SetColor({D2D1::ColorF::Black, 0.0f});
+    ref_support.GetWeakSolidColorBrush()->SetColor({ D2D1::ColorF::Black, 0.0f });
+    //此调用会导致调试控制台显示形如 
+    //0x00007FFAEB5E466C 处(位于 TrafficMonitor.exe 中)引发的异常: Microsoft C++ 异常: _com_error，位于内存位置 0x0000001B4A1BD8F8 处。
+    //的报错。这一现象在MS的D2D GDI互操作例子中也会出现，应该是D2D的bug，不必理会，但可能会在VMware的虚拟机环境中引发崩溃。
+    //此异常也无法被捕获，如果直接查看异常内存，会发现
+    //const HRESULT m_hresult=S_OK; IErrorInfo* m_perrinfo=0x0000000000000000 <NULL>; wchar_t* m_pszMs=0x000001d1832bfbd0 L"輨翺"
     p_render_target->BeginDraw();
     p_render_target->SetTransform(D2D1::Matrix3x2F::Identity());
 }
@@ -431,8 +465,9 @@ void D2D1DrawCommon::SetBackColor(COLORREF back_color, BYTE alpha)
 void D2D1DrawCommon::SetFont(CFont* pfont)
 {
     //修改m_p_font
+    LOGFONT logfont;
     {
-        LOGFONT logfont;
+        m_p_cfont = pfont;
         pfont->GetLogFont(&logfont);
         IDWriteFont* p_new_dwrite_font = NULL;
         m_p_support->GetWeakDWriteGdiInterop()->CreateFontFromLOGFONT(&logfont, &p_new_dwrite_font);
@@ -442,8 +477,8 @@ void D2D1DrawCommon::SetFont(CFont* pfont)
     //修改m_p_text_format
     {
         IDWriteTextFormat* p_new_text_format = NULL;
-        IDWriteFontFamily* p_font_fanmily = NULL;
-        ThrowIfFailed(m_p_font->GetFontFamily(&p_font_fanmily),
+        IDWriteFontFamily* p_font_family = NULL;
+        ThrowIfFailed(m_p_font->GetFontFamily(&p_font_family),
                       "Get font family failed.");
         ThrowIfFailed(DWriteSupport::GetFactory()->CreateTextFormat(
                           theApp.m_taskbar_data.font.name,
@@ -451,11 +486,12 @@ void D2D1DrawCommon::SetFont(CFont* pfont)
                           m_p_font->GetWeight(),
                           m_p_font->GetStyle(),
                           m_p_font->GetStretch(),
-                          theApp.m_taskbar_data.font.size, //未受DPI影响的字体大小
+                          std::abs(logfont.lfHeight), //未受DPI影响的字体大小
                           L"",
                           &p_new_text_format),
                       "Create D2D1 Text Format failed.");
         SAFE_RELEASE(m_p_text_format);
+        SAFE_RELEASE(p_font_family);
         m_p_text_format = p_new_text_format;
     }
 }
@@ -541,7 +577,7 @@ void D2D1DrawCommon::FillRect(CRect rect, COLORREF color, BYTE alpha)
     m_p_support->GetWeakRenderTarget()->FillRectangle(rect_f, m_p_support->GetWeakSolidColorBrush());
 }
 
-void D2D1DrawCommon::DrawRectOutLine(CRect rect, COLORREF color, BYTE alpha, int width, bool dot_line)
+void D2D1DrawCommon::DrawRectOutLine(CRect rect, COLORREF color, int width, bool dot_line, BYTE alpha)
 {
     rect.DeflateRect(width / 2, width / 2);
     auto rect_f = Convert(rect);
@@ -549,7 +585,7 @@ void D2D1DrawCommon::DrawRectOutLine(CRect rect, COLORREF color, BYTE alpha, int
     if (dot_line)
     {
         m_p_support->GetWeakRenderTarget()->DrawRectangle(
-            &rect_f,
+            rect_f,
             m_p_support->GetWeakSolidColorBrush(),
             width,
             m_p_support->GetWeakPsDotStyle());
@@ -557,7 +593,7 @@ void D2D1DrawCommon::DrawRectOutLine(CRect rect, COLORREF color, BYTE alpha, int
     else
     {
         m_p_support->GetWeakRenderTarget()->DrawRectangle(
-            &rect_f,
+            rect_f,
             m_p_support->GetWeakSolidColorBrush(),
             width);
     }
@@ -575,6 +611,7 @@ void D2D1DrawCommon::DrawLine(CPoint start_point, int height, COLORREF color, BY
 
 void D2D1DrawCommon::SetTextColor(const COLORREF color, BYTE alpha)
 {
+    m_gdi_color = color;
     SetSupporterColor(color, alpha);
 }
 
@@ -588,10 +625,10 @@ void D2D1DrawCommon::SetSupporterColor(const COLORREF color, BYTE alpha)
 D2D1_RECT_F D2D1DrawCommon::Convert(CRect rect)
 {
     D2D1_RECT_F result{
-        static_cast<float>(rect.left) / DEFAULT_DPI,
-        static_cast<float>(rect.top) / DEFAULT_DPI,
-        static_cast<float>(rect.right) / DEFAULT_DPI,
-        static_cast<float>(rect.bottom) / DEFAULT_DPI};
+        static_cast<float>(rect.left),
+        static_cast<float>(rect.top),
+        static_cast<float>(rect.right),
+        static_cast<float>(rect.bottom)};
 
     return result;
 }
@@ -599,43 +636,49 @@ D2D1_RECT_F D2D1DrawCommon::Convert(CRect rect)
 D2D1_POINT_2F D2D1DrawCommon::Convert(CPoint point)
 {
     D2D1_POINT_2F result{
-        static_cast<float>(point.x) / DEFAULT_DPI,
-        static_cast<float>(point.y) / DEFAULT_DPI};
+        static_cast<float>(point.x),
+        static_cast<float>(point.y)};
     return result;
 }
 
 DrawCommonBuffer::DrawCommonBuffer(HWND hwnd, CRect rect)
-    :
-            m_update_window_info{0}, m_target_hwnd{hwnd}
-            {
-                m_size.SetWidth(std::abs(rect.Width()));
-                m_size.SetHeight(std::abs(rect.Height()));
+    : m_update_window_info{ 0 }, m_target_hwnd{ hwnd }
+{
+    m_size.SetWidth(std::abs(rect.Width()));
+    m_size.SetHeight(std::abs(rect.Height()));
 
-                BITMAPINFO bitmap_info = DrawCommonHelper::GetArgb32BitmapInfo(rect);
-                {
-                    auto pp_bitmap_for_show_data = reinterpret_cast<void**>(&m_p_display_bitmap);
-                    m_mem_display_dc.CreateCompatibleDC(NULL);
-                    m_display_hbitmap = ::CreateDIBSection(m_mem_display_dc, &bitmap_info, DIB_RGB_COLORS, pp_bitmap_for_show_data, NULL, 0);
-                    m_old_display_bitmap = m_mem_display_dc.SelectObject(m_display_hbitmap);
-                }
+    BITMAPINFO bitmap_info = DrawCommonHelper::GetArgb32BitmapInfo(rect);
+    {
+        auto pp_bitmap_for_show_data = reinterpret_cast<void**>(&m_p_display_bitmap);
+        m_mem_display_dc.CreateCompatibleDC(NULL);
+        m_display_hbitmap = ::CreateDIBSection(m_mem_display_dc, &bitmap_info, DIB_RGB_COLORS, pp_bitmap_for_show_data, NULL, 0);
+        m_old_display_bitmap = m_mem_display_dc.SelectObject(m_display_hbitmap);
+    }
 
-                m_update_window_info.cbSize = sizeof(UPDATELAYEREDWINDOWINFO);
-                // m_update_window_info.hdcSrc = NULL;
-                // m_update_window_info.pptDst = NULL;
-                // m_update_window_info.psize = NULL;
-                m_update_window_info.hdcSrc = m_mem_display_dc;
-                // m_update_window_info.pptSrc = 在析构函数中填写;
-                // m_update_window_info.crKey = 0;
-                m_update_window_info.pblend = GetDefaultBlendFunctionPointer();
-                m_update_window_info.dwFlags = ULW_ALPHA;
-                // m_update_window_info.prcDirty = NULL;
+    m_update_window_info.cbSize = sizeof(UPDATELAYEREDWINDOWINFO);
+    // m_update_window_info.hdcSrc = NULL;
+    // m_update_window_info.pptDst = NULL;
+    m_update_window_info.psize = m_size.GetSizePointer();
+    m_update_window_info.hdcSrc = m_mem_display_dc;
+    // m_update_window_info.pptSrc = 在析构函数中填写;
+    // m_update_window_info.crKey = 0;
+    m_update_window_info.pblend = GetDefaultBlendFunctionPointer();
+    m_update_window_info.dwFlags = ULW_ALPHA;
+    // m_update_window_info.prcDirty = NULL;
 }
 
 DrawCommonBuffer::~DrawCommonBuffer()
 {
     POINT start_location{0, 0};
     m_update_window_info.pptSrc = &start_location;
-    ::UpdateLayeredWindowIndirect(m_target_hwnd, &m_update_window_info);
+    BOOL state = ::UpdateLayeredWindowIndirect(m_target_hwnd, &m_update_window_info);
+    if (state == 0)
+    {
+        auto error_code = ::GetLastError();
+        auto s = std::to_wstring(error_code);
+        s += L'\n';
+        TRACE(s.c_str());
+    }
 
     m_mem_display_dc.SelectObject(m_old_display_bitmap);
     ::DeleteObject(m_display_hbitmap);
@@ -694,6 +737,10 @@ IDrawBuffer& DrawCommonBufferUnion::Get()
         return m_content.draw_common_buffer.Get();
         break;
     }
+    default:
+    {
+        throw std::runtime_error{"No matching render buffer."};
+    }
     };
 }
 
@@ -703,13 +750,21 @@ DrawCommonUnion::DrawCommonUnion(DrawCommonHelper::RenderType type)
     switch (type)
     {
     case DrawCommonHelper::RenderType::Default:
+    {
+        ::new (&m_content.cdraw_common) Nullable<CDrawCommon>();
         m_content.cdraw_common.Construct();
         break;
+    }
     case DrawCommonHelper::RenderType::D2D1:
+    {
+        ::new (&m_content.cdraw_common) Nullable<D2D1DrawCommon>();
         m_content.d2d1_draw_common.Construct();
         break;
+    }
     default:
+    {
         break;
+    }
     }
 }
 

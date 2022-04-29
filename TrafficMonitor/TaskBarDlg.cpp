@@ -93,7 +93,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
         IDrawBuffer& draw_buffer = draw_buffer_union.Get();
         p_drawer = &draw;
         //这里构造绘图对象
-        draw.Create(this->m_d2d1_dc_support, *draw_buffer.GetMemDC(), draw_rect);
+        draw.Create(this->m_d2d1_dc_support.Get(), *draw_buffer.GetMemDC(), draw_rect);
         //仅透明时启用此渲染器，则默认初始化为全黑alpha=0
         draw.FillRect(draw_rect, 0x00000000, 0);
         draw.SetFont(&m_font);
@@ -434,8 +434,14 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
         else if (typeid(drawer) == typeid(D2D1DrawCommon))
         {
             auto& ref_d2d1_drawer = static_cast<D2D1DrawCommon&>(drawer);
-            ref_d2d1_drawer.ExecuteGdiOperation([item, rect, background_brightness](HDC gdi_dc)
-                                                { item->DrawItem(gdi_dc, rect.left, rect.top, rect.Width(), rect.Height(), background_brightness < 128); });
+            ref_d2d1_drawer.ExecuteGdiOperation(rect,
+                                                [item, rect, background_brightness](HDC gdi_dc)
+                                                { item->DrawItem(gdi_dc,
+                                                                 rect.left,
+                                                                 rect.top,
+                                                                 rect.Width(),
+                                                                 rect.Height(),
+                                                                 background_brightness < 128); });
         }
     }
     else
@@ -481,8 +487,8 @@ auto CTaskBarDlg::GetRenderType()
 {
     DrawCommonHelper::RenderType result;
     bool is_transparent = CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data);
-    bool is_d2d1_support = D2D1Support::CheckSupport();
-    if (is_transparent && is_d2d1_support)
+    bool is_d2d1_dc_support = D2D1DCSupport::CheckSupport();
+    if (is_transparent && !theApp.m_taskbar_data.auto_set_background_color && is_d2d1_dc_support)
     {
         result = DrawCommonHelper::RenderType::D2D1;
     }
@@ -638,7 +644,14 @@ void CTaskBarDlg::ApplyWindowTransparentColor()
     if ((theApp.m_taskbar_data.transparent_color != 0) && theApp.m_taksbar_transparent_color_enable)
     {
         SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
-        SetLayeredWindowAttributes(theApp.m_taskbar_data.transparent_color, 0, LWA_COLORKEY);
+        if (GetRenderType() == DrawCommonHelper::RenderType::Default)
+        {
+            //GDI绘图使用色键抠像
+            SetLayeredWindowAttributes(theApp.m_taskbar_data.transparent_color, 0, LWA_COLORKEY);
+            //仅在透明且不使用自动决定背景颜色时启动D2D渲染器
+            //D2D绘图直接使用alpha混合
+            //无需执行动作
+        }
     }
     else
     {
