@@ -212,11 +212,10 @@ private:
         HGDIOBJ m_old_hbitmap;
         HGDIOBJ m_old_font;
         CRect m_rect;
-        float m_rgb_sum;
 
     public:
         /**
-         * @brief 初始化 GdiBitmap，会自动根据render_traget创建一个RGB32的内存图片，但是只对draw_rect区域进行alpha通道处理，其它区域会被透明化
+         * @brief 初始化 GdiBitmap，会自动根据render_traget创建一个RGB32的内存图片，D2D可以处理alpha通道
          * @param ref_d2d1_draw_common 关联的D2D1DrawCommon对象，借助其中的信息初始化自身
          * @param draw_rect 进行alpha通道处理的区域
         */

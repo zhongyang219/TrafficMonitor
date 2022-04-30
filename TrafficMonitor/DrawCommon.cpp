@@ -345,12 +345,10 @@ void SizeWrapper::SetHeight(LONG height) noexcept
 }
 
 D2D1DrawCommon::GdiBitmap::GdiBitmap(D2D1DrawCommon& ref_d2d1_draw_common, CRect rect)
-    : m_p_d2d1bitmap{nullptr}, m_p_render_target{ref_d2d1_draw_common.m_p_support->GetWeakRenderTarget()},
+    : m_p_bitmap{nullptr}, m_p_d2d1bitmap{nullptr}, 
+      m_p_render_target{ref_d2d1_draw_common.m_p_support->GetWeakRenderTarget()},
       m_rect{rect}
 {
-    auto color = ref_d2d1_draw_common.m_gdi_color;
-    m_rgb_sum = GetRValue(color) + GetGValue(color) + GetBValue(color);
-
     auto size = m_p_render_target->GetPixelSize();
     BITMAPINFO bitmap_info = DrawCommonHelper::GetArgb32BitmapInfo(size.width, size.height);
     m_cdc.CreateCompatibleDC(NULL);
@@ -362,31 +360,10 @@ D2D1DrawCommon::GdiBitmap::GdiBitmap(D2D1DrawCommon& ref_d2d1_draw_common, CRect
 
     m_cdc.SetBkMode(TRANSPARENT);
     m_cdc.SetTextColor(ref_d2d1_draw_common.m_gdi_color);
-
-    DrawCommonHelper::ForEachPixelInBitmapForDraw(
-        m_p_bitmap, m_rect.left, m_rect.right, m_rect.top, m_rect.bottom, [](BYTE* p_data)
-        { p_data[3] = DrawCommonHelper::GDI_NO_MODIFIED_FLAG; });
 }
 
 D2D1DrawCommon::GdiBitmap::~GdiBitmap()
 {
-    //应用alpha通道修复
-    DrawCommonHelper::ForEachPixelInBitmapForDraw(m_p_bitmap, m_rect.left, m_rect.right, m_rect.top, m_rect.bottom,
-                                                  [rgb_sum = m_rgb_sum](BYTE* p_data)
-                                                  {
-                                                      if (p_data[3] != DrawCommonHelper::GDI_MODIFIED_FLAG)
-                                                      {
-                                                          p_data[3] = DrawCommonHelper::TRANSPARENT_ALPHA_VALUE;
-                                                      }
-                                                      else
-                                                      {
-                                                          //假定插件只使用GDI绘图，则alpha非0区域只能是文字抗锯齿的结果。
-                                                          float combined_color = p_data[0] + p_data[1] + p_data[2];
-                                                          float alpha_f = combined_color / rgb_sum;
-                                                          //没有处理溢出的情况
-                                                          p_data[3] = static_cast<BYTE>(alpha_f * 0xFF);
-                                                      }
-                                                  });
     //复制gdi bitmap到ID2D1Bitmap
     D2D1_BITMAP_PROPERTIES d2d1_bitmap_properties;
     d2d1_bitmap_properties.pixelFormat = m_p_render_target->GetPixelFormat();
