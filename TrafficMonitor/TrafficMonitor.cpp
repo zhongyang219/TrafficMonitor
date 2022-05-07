@@ -158,7 +158,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_general_data.hdd_temp_tip.tip_value = ini.GetInt(L"notify_tip", L"hdd_temperature_tip_value", 80);
     m_general_data.mainboard_temp_tip.enable = ini.GetBool(L"notify_tip", L"mainboard_temperature_tip_enable", false);
     m_general_data.mainboard_temp_tip.tip_value = ini.GetInt(L"notify_tip", L"mainboard_temperature_tip_value", 80);
- 
+
     //任务栏窗口设置
     m_taskbar_data.back_color = ini.GetInt(_T("task_bar"), _T("task_bar_back_color"), m_taskbar_data.dft_back_color);
     m_taskbar_data.transparent_color = ini.GetInt(_T("task_bar"), _T("transparent_color"), m_taskbar_data.dft_transparent_color);
@@ -272,7 +272,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.netspeed_figure_max_value_unit = ini.GetInt(L"task_bar", L"netspeed_figure_max_value_unit", 0);
 
     if (D2D1DCSupport::CheckSupport())
-        m_taskbar_data.disable_d2d = ini.GetBool(L"task_bar", L"disable_d2d", false);
+        m_taskbar_data.disable_d2d = ini.GetBool(L"task_bar", L"disable_d2d", true);
     else
         m_taskbar_data.disable_d2d = true;
 
