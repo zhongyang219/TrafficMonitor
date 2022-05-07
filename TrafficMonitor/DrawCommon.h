@@ -141,8 +141,10 @@ namespace DrawCommonHelper
     constexpr static BYTE GDI_MODIFIED_FLAG = 0x00;
 
     template <class Func>
-    void ForEachPixelInBitmapForDraw(BYTE* p_data,std::size_t x_start, std::size_t x_end, std::size_t y_start, std::size_t y_end, Func func)
+    void ForEachPixelInBitmapForDraw(BYTE* p_data, std::size_t x_width, std::size_t x_start, std::size_t x_end, std::size_t y_start, std::size_t y_end, Func func)
     {
+        auto distance = x_width * (y_end - y_start) + x_start;
+        std::advance(p_data, distance);
         for (std::size_t y = y_start; y < y_end; y++)
         {
             for (std::size_t x = x_start; x < x_end; x++)
@@ -280,7 +282,6 @@ private:
     HGDIOBJ m_old_display_bitmap;
     HWND m_target_hwnd;
     SizeWrapper m_size;
-    UPDATELAYEREDWINDOWINFO m_update_window_info;
 };
 
 class DrawCommonBufferUnion

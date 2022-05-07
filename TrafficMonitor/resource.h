@@ -290,6 +290,7 @@
 #define IDS_AUTO_RUN_METHOD_TASK_SCHEDULE 382
 #define IDS_PATH                        383
 #define IDS_SET_AUTO_RUN_FAILED_WARNING 384
+#define IDS_UPDATE_TASKBARDLG_FAILED_TIP 385
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
 #define IDC_STATIC_DOWN                 1002

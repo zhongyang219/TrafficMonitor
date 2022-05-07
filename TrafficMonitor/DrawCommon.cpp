@@ -345,7 +345,7 @@ void SizeWrapper::SetHeight(LONG height) noexcept
 }
 
 D2D1DrawCommon::GdiBitmap::GdiBitmap(D2D1DrawCommon& ref_d2d1_draw_common, CRect rect)
-    : m_p_bitmap{nullptr}, m_p_d2d1bitmap{nullptr}, 
+    : m_p_bitmap{nullptr}, m_p_d2d1bitmap{nullptr},
       m_p_render_target{ref_d2d1_draw_common.m_p_support->GetWeakRenderTarget()},
       m_rect{rect}
 {
@@ -423,7 +423,7 @@ void D2D1DrawCommon::Create(D2D1DCSupport& ref_support, HDC target_dc, CRect rec
     auto* p_render_target = ref_support.GetWeakRenderTarget();
     ThrowIfFailed(p_render_target->BindDC(target_dc, &rect), "Bind dc failed.");
     ref_support.GetWeakSolidColorBrush()->SetColor({ D2D1::ColorF::Black, 0.0f });
-    //此调用会导致调试控制台显示形如 
+    //此调用会导致调试控制台显示形如
     //0x00007FFAEB5E466C 处(位于 TrafficMonitor.exe 中)引发的异常: Microsoft C++ 异常: _com_error，位于内存位置 0x0000001B4A1BD8F8 处。
     //的报错。这一现象在MS的D2D GDI互操作例子中也会出现，应该是D2D的bug，不必理会，但可能会在VMware的虚拟机环境中引发崩溃。
     //此异常也无法被捕获，如果直接查看异常内存，会发现
@@ -619,42 +619,63 @@ D2D1_POINT_2F D2D1DrawCommon::Convert(CPoint point)
 }
 
 DrawCommonBuffer::DrawCommonBuffer(HWND hwnd, CRect rect)
-    : m_update_window_info{ 0 }, m_target_hwnd{ hwnd }
+    :m_p_display_bitmap{ nullptr }, m_target_hwnd{ hwnd }
 {
     m_size.SetWidth(std::abs(rect.Width()));
     m_size.SetHeight(std::abs(rect.Height()));
 
     BITMAPINFO bitmap_info = DrawCommonHelper::GetArgb32BitmapInfo(rect);
-    {
-        auto pp_bitmap_for_show_data = reinterpret_cast<void**>(&m_p_display_bitmap);
-        m_mem_display_dc.CreateCompatibleDC(NULL);
-        m_display_hbitmap = ::CreateDIBSection(m_mem_display_dc, &bitmap_info, DIB_RGB_COLORS, pp_bitmap_for_show_data, NULL, 0);
-        m_old_display_bitmap = m_mem_display_dc.SelectObject(m_display_hbitmap);
-    }
-
-    m_update_window_info.cbSize = sizeof(UPDATELAYEREDWINDOWINFO);
-    // m_update_window_info.hdcSrc = NULL;
-    // m_update_window_info.pptDst = NULL;
-    m_update_window_info.psize = m_size.GetSizePointer();
-    m_update_window_info.hdcSrc = m_mem_display_dc;
-    // m_update_window_info.pptSrc = 在析构函数中填写;
-    // m_update_window_info.crKey = 0;
-    m_update_window_info.pblend = GetDefaultBlendFunctionPointer();
-    m_update_window_info.dwFlags = ULW_ALPHA;
-    // m_update_window_info.prcDirty = NULL;
+    auto pp_bitmap_for_show_data = reinterpret_cast<void**>(&m_p_display_bitmap);
+    m_mem_display_dc.CreateCompatibleDC(NULL);
+    m_display_hbitmap = ::CreateDIBSection(m_mem_display_dc, &bitmap_info, DIB_RGB_COLORS, pp_bitmap_for_show_data, NULL, 0);
+    m_old_display_bitmap = m_mem_display_dc.SelectObject(m_display_hbitmap);
 }
 
 DrawCommonBuffer::~DrawCommonBuffer()
 {
     POINT start_location{0, 0};
-    m_update_window_info.pptSrc = &start_location;
-    BOOL state = ::UpdateLayeredWindowIndirect(m_target_hwnd, &m_update_window_info);
+    UPDATELAYEREDWINDOWINFO update_window_info;
+    ::memset(&update_window_info, 0, sizeof(UPDATELAYEREDWINDOWINFO));
+    update_window_info.cbSize = sizeof(UPDATELAYEREDWINDOWINFO);
+    // update_window_info.hdcDst = NULL;
+    // update_window_info.pptDst = NULL; 不更新窗口位置
+    update_window_info.psize = m_size.GetSizePointer();
+    update_window_info.hdcSrc = m_mem_display_dc;
+    update_window_info.pptSrc = &start_location;
+    // update_window_info.crKey = 0;
+    update_window_info.pblend = GetDefaultBlendFunctionPointer();
+    update_window_info.dwFlags = ULW_ALPHA;
+    // m_update_window_info.prcDirty = NULL;
+    BOOL state = ::UpdateLayeredWindowIndirect(m_target_hwnd, &update_window_info);
     if (state == 0)
     {
         auto error_code = ::GetLastError();
-        auto s = std::to_wstring(error_code);
-        s += L'\n';
-        TRACE(s.c_str());
+        //写入错误日志
+        CString error_info{};
+        error_info.Format(_T("Call UpdateLayeredWindowIndirect failed. Use GDI render instead. Error code = %ld."), error_code);
+        CCommon::WriteLog(error_info, theApp.m_log_path.c_str());
+        //写入系统格式化后的错误信息
+        if (error_code != 0)
+        {
+            LPTSTR fomat_error = nullptr;
+            ::FormatMessage(
+                FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS,
+                NULL,
+                error_code,
+                MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                reinterpret_cast<decltype(fomat_error)>(&fomat_error),
+                0,
+                NULL);
+            if (fomat_error != nullptr)
+            {
+                CCommon::WriteLog(fomat_error, theApp.m_log_path.c_str());
+                ::LocalFree(fomat_error);
+            }
+        }
+        //禁用D2D
+        theApp.m_taskbar_data.disable_d2d = true;
+        //展示错误信息
+        ::MessageBox(NULL, CCommon::LoadText(IDS_UPDATE_TASKBARDLG_FAILED_TIP), NULL, MB_OK | MB_ICONWARNING);
     }
 
     m_mem_display_dc.SelectObject(m_old_display_bitmap);
