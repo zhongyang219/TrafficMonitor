@@ -457,13 +457,14 @@ void D2D1DrawCommon::SetFont(CFont* pfont)
         IDWriteFontFamily* p_font_family = NULL;
         ThrowIfFailed(m_p_font->GetFontFamily(&p_font_family),
                       "Get font family failed.");
+        auto abs_font_height_f = static_cast<float>(std::abs(logfont.lfHeight));
         ThrowIfFailed(DWriteSupport::GetFactory()->CreateTextFormat(
                           theApp.m_taskbar_data.font.name,
                           NULL,
                           m_p_font->GetWeight(),
                           m_p_font->GetStyle(),
                           m_p_font->GetStretch(),
-                          std::abs(logfont.lfHeight), //未受DPI影响的字体大小
+                          abs_font_height_f,
                           L"",
                           &p_new_text_format),
                       "Create D2D1 Text Format failed.");
@@ -475,7 +476,8 @@ void D2D1DrawCommon::SetFont(CFont* pfont)
 
 void D2D1DrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align, bool draw_back_ground, bool multi_line, BYTE alpha)
 {
-    UINT length = ::wcslen(lpszString);
+    auto length = ::wcslen(lpszString);
+    auto length_u = static_cast<UINT>(length);
     //备份状态
     auto old_vertical_align = m_p_text_format->GetParagraphAlignment();
     auto old_horizontal_align = m_p_text_format->GetTextAlignment();
@@ -515,7 +517,7 @@ void D2D1DrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF col
     IDWriteTextLayout* p_text_layout{NULL};
     ThrowIfFailed(DWriteSupport::GetFactory()->CreateTextLayout(
                       lpszString,
-                      length,
+                      length_u,
                       m_p_text_format,
                       layout_rect.right - layout_rect.left,
                       layout_rect.bottom - layout_rect.top,
@@ -559,12 +561,13 @@ void D2D1DrawCommon::DrawRectOutLine(CRect rect, COLORREF color, int width, bool
     rect.DeflateRect(width / 2, width / 2);
     auto rect_f = Convert(rect);
     SetSupporterColor(color, alpha);
+    auto width_f = static_cast<float>(width);
     if (dot_line)
     {
         m_p_support->GetWeakRenderTarget()->DrawRectangle(
             rect_f,
             m_p_support->GetWeakSolidColorBrush(),
-            width,
+            width_f,
             m_p_support->GetWeakPsDotStyle());
     }
     else
@@ -572,7 +575,7 @@ void D2D1DrawCommon::DrawRectOutLine(CRect rect, COLORREF color, int width, bool
         m_p_support->GetWeakRenderTarget()->DrawRectangle(
             rect_f,
             m_p_support->GetWeakSolidColorBrush(),
-            width);
+            width_f);
     }
 }
 
