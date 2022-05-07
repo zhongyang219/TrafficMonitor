@@ -167,7 +167,7 @@ namespace DrawCommonHelper
         //如果支持，使用D2D1
         D2D1
     };
-    template<RenderType render_type>
+    template <RenderType render_type>
     struct RenderTypeTag
     {
         constexpr static RenderType type = render_type;
@@ -220,7 +220,7 @@ private:
          * @brief 初始化 GdiBitmap，会自动根据render_traget创建一个RGB32的内存图片，D2D可以处理alpha通道
          * @param ref_d2d1_draw_common 关联的D2D1DrawCommon对象，借助其中的信息初始化自身
          * @param draw_rect 进行alpha通道处理的区域
-        */
+         */
         GdiBitmap(D2D1DrawCommon& ref_d2d1_draw_common, CRect draw_rect);
         ~GdiBitmap();
         HDC GetDC();
@@ -288,23 +288,24 @@ class DrawCommonBufferUnion
 {
 private:
     const DrawCommonHelper::RenderType m_type;
-    union Content {
-      Content(){};  //手工管理构造
-      ~Content(){}; //手工管理析构
-      Nullable<CDrawDoubleBuffer> cdraw_double_buffer;
-      Nullable<DrawCommonBuffer> draw_common_buffer;
+    union Content
+    {
+        Content(){};  //手工管理构造
+        ~Content(){}; //手工管理析构
+        Nullable<CDrawDoubleBuffer> cdraw_double_buffer;
+        Nullable<DrawCommonBuffer> draw_common_buffer;
     } m_content;
 
 public:
     DrawCommonBufferUnion(DrawCommonHelper::RenderType type)
-        :m_type{ type } {};
-    template<class... Args>
+        : m_type{type} {};
+    template <class... Args>
     void CreateDefaultVerion(Args&&... args)
     {
         ::new (&m_content.cdraw_double_buffer) Nullable<CDrawDoubleBuffer>();
         m_content.cdraw_double_buffer.Construct(std::forward<Args>(args)...);
     }
-    template<class... Args>
+    template <class... Args>
     void CreateD2D1Version(Args&&... args)
     {
         ::new (&m_content.draw_common_buffer) Nullable<DrawCommonBuffer>();
@@ -321,8 +322,8 @@ private:
     const DrawCommonHelper::RenderType m_type;
     union Content
     {
-        Content() {};  //手工管理构造
-        ~Content() {}; //手工管理析构
+        Content(){};  //手工管理构造
+        ~Content(){}; //手工管理析构
         Nullable<CDrawCommon> cdraw_common;
         Nullable<D2D1DrawCommon> d2d1_draw_common;
     } m_content;
@@ -331,6 +332,6 @@ public:
     DrawCommonUnion(DrawCommonHelper::RenderType type);
     ~DrawCommonUnion();
 
-    CDrawCommon& Get(DrawCommonHelper::RenderTypeDefaultTag)noexcept;
-    D2D1DrawCommon& Get(DrawCommonHelper::RenderTypeD2D1Tag)noexcept;
+    CDrawCommon& Get(DrawCommonHelper::RenderTypeDefaultTag) noexcept;
+    D2D1DrawCommon& Get(DrawCommonHelper::RenderTypeD2D1Tag) noexcept;
 };

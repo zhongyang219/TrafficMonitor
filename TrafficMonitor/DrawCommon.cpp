@@ -422,12 +422,12 @@ void D2D1DrawCommon::Create(D2D1DCSupport& ref_support, HDC target_dc, CRect rec
     m_p_support = &ref_support;
     auto* p_render_target = ref_support.GetWeakRenderTarget();
     ThrowIfFailed(p_render_target->BindDC(target_dc, &rect), "Bind dc failed.");
-    ref_support.GetWeakSolidColorBrush()->SetColor({ D2D1::ColorF::Black, 0.0f });
+    ref_support.GetWeakSolidColorBrush()->SetColor({D2D1::ColorF::Black, 0.0f});
     //此调用会导致调试控制台显示形如
-    //0x00007FFAEB5E466C 处(位于 TrafficMonitor.exe 中)引发的异常: Microsoft C++ 异常: _com_error，位于内存位置 0x0000001B4A1BD8F8 处。
+    // 0x00007FFAEB5E466C 处(位于 TrafficMonitor.exe 中)引发的异常: Microsoft C++ 异常: _com_error，位于内存位置 0x0000001B4A1BD8F8 处。
     //的报错。这一现象在MS的D2D GDI互操作例子中也会出现，应该是D2D的bug，不必理会，但可能会在VMware的虚拟机环境中引发崩溃。
     //此异常也无法被捕获，如果直接查看异常内存，会发现
-    //const HRESULT m_hresult=S_OK; IErrorInfo* m_perrinfo=0x0000000000000000 <NULL>; wchar_t* m_pszMs=0x000001d1832bfbd0 L"輨翺"
+    // const HRESULT m_hresult=S_OK; IErrorInfo* m_perrinfo=0x0000000000000000 <NULL>; wchar_t* m_pszMs=0x000001d1832bfbd0 L"輨翺";
     p_render_target->BeginDraw();
     p_render_target->SetTransform(D2D1::Matrix3x2F::Identity());
 }
@@ -483,7 +483,7 @@ void D2D1DrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF col
     auto old_horizontal_align = m_p_text_format->GetTextAlignment();
     auto old_word_warpping = m_p_text_format->GetWordWrapping();
     // GDI版本的DrawWindowText文字对齐处理没看明白
-    if(multi_line)
+    if (multi_line)
     {
         // DT_EDITCONTROL | DT_WORDBREAK | DT_NOPREFIX
         m_p_text_format->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);
@@ -540,7 +540,7 @@ void D2D1DrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF col
         {layout_rect.left, layout_rect.top},
         p_text_layout,
         m_p_support->GetWeakSolidColorBrush(),
-        D2D1_DRAW_TEXT_OPTIONS_NO_SNAP | D2D1_DRAW_TEXT_OPTIONS_CLIP);//不允许文字超出边界
+        D2D1_DRAW_TEXT_OPTIONS_NO_SNAP | D2D1_DRAW_TEXT_OPTIONS_CLIP); //不允许文字超出边界
 
     SAFE_RELEASE(p_text_layout);
     //恢复状态
@@ -622,7 +622,7 @@ D2D1_POINT_2F D2D1DrawCommon::Convert(CPoint point)
 }
 
 DrawCommonBuffer::DrawCommonBuffer(HWND hwnd, CRect rect)
-    :m_p_display_bitmap{ nullptr }, m_target_hwnd{ hwnd }
+    : m_p_display_bitmap{nullptr}, m_target_hwnd{hwnd}
 {
     m_size.SetWidth(std::abs(rect.Width()));
     m_size.SetHeight(std::abs(rect.Height()));
