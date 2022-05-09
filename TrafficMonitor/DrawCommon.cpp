@@ -354,9 +354,14 @@ D2D1DrawCommon::GdiBitmap::GdiBitmap(D2D1DrawCommon& ref_d2d1_draw_common, CRect
     m_cdc.CreateCompatibleDC(NULL);
     auto pp_bitmap_data = reinterpret_cast<void**>(&m_p_bitmap);
     m_hbitmap = ::CreateDIBSection(m_cdc, &bitmap_info, DIB_RGB_COLORS, pp_bitmap_data, NULL, 0);
+    DrawCommonHelper::ForEachPixelInBitmapForDraw(m_p_bitmap, size.width, m_rect.left, m_rect.right, m_rect.top, m_rect.bottom,
+                                                  [](BYTE* p_data)
+                                                  {
+                                                      p_data[3] = DrawCommonHelper::GDI_NO_MODIFIED_FLAG;
+                                                  });
 
     m_old_hbitmap = m_cdc.SelectObject(m_hbitmap);
-    m_old_font = m_cdc.SelectObject(*ref_d2d1_draw_common.m_p_cfont);
+    m_old_font = m_cdc.SelectObject(ref_d2d1_draw_common.m_no_aa_font);
 
     m_cdc.SetBkMode(TRANSPARENT);
     m_cdc.SetTextColor(ref_d2d1_draw_common.m_gdi_color);
@@ -364,12 +369,17 @@ D2D1DrawCommon::GdiBitmap::GdiBitmap(D2D1DrawCommon& ref_d2d1_draw_common, CRect
 
 D2D1DrawCommon::GdiBitmap::~GdiBitmap()
 {
+    D2D1_SIZE_U bitmap_size = m_p_render_target->GetPixelSize();
+    DrawCommonHelper::ForEachPixelInBitmapForDraw(m_p_bitmap, bitmap_size.width, m_rect.left, m_rect.right, m_rect.top, m_rect.bottom,
+                                                  [](BYTE* p_data)
+                                                  {
+                                                      p_data[3] -= DrawCommonHelper::GDI_NO_MODIFIED_FLAG;
+                                                  });
     //复制gdi bitmap到ID2D1Bitmap
     D2D1_BITMAP_PROPERTIES d2d1_bitmap_properties;
     d2d1_bitmap_properties.pixelFormat = m_p_render_target->GetPixelFormat();
     d2d1_bitmap_properties.dpiX = 0.f;
     d2d1_bitmap_properties.dpiY = 0.f;
-    D2D1_SIZE_U bitmap_size = m_p_render_target->GetPixelSize();
     ThrowIfFailed(
         m_p_render_target->CreateBitmap(
             bitmap_size,
@@ -415,6 +425,11 @@ D2D1DrawCommon::~D2D1DrawCommon()
     }
     SAFE_RELEASE(m_p_text_format);
     SAFE_RELEASE(m_p_font);
+    if (m_no_aa_font != NULL)
+    {
+        ::DeleteObject(m_no_aa_font);
+    }
+
 }
 
 void D2D1DrawCommon::Create(D2D1DCSupport& ref_support, HDC target_dc, CRect rect)
@@ -444,12 +459,14 @@ void D2D1DrawCommon::SetFont(CFont* pfont)
     //修改m_p_font
     LOGFONT logfont;
     {
-        m_p_cfont = pfont;
         pfont->GetLogFont(&logfont);
         IDWriteFont* p_new_dwrite_font = NULL;
         m_p_support->GetWeakDWriteGdiInterop()->CreateFontFromLOGFONT(&logfont, &p_new_dwrite_font);
         SAFE_RELEASE(m_p_font);
         m_p_font = p_new_dwrite_font;
+
+        logfont.lfQuality = NONANTIALIASED_QUALITY;
+        m_no_aa_font = ::CreateFontIndirect(&logfont);
     }
     //修改m_p_text_format
     {

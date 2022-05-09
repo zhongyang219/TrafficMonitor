@@ -141,17 +141,24 @@ namespace DrawCommonHelper
     constexpr static BYTE GDI_MODIFIED_FLAG = 0x00;
 
     template <class Func>
-    void ForEachPixelInBitmapForDraw(BYTE* p_data, std::size_t x_width, std::size_t x_start, std::size_t x_end, std::size_t y_start, std::size_t y_end, Func func)
+    void ForEachPixelInBitmapForDraw(BYTE* p_data, std::size_t width, std::size_t x_start, std::size_t x_end, std::size_t y_start, std::size_t y_end, Func func)
     {
-        auto distance = x_width * (y_end - y_start) + x_start;
+        constexpr static std::size_t pixel_length = 4;
+
+        auto distance = (width * y_start) * pixel_length;
         std::advance(p_data, distance);
+
+        auto x_begin_offset = x_start * pixel_length;
+        auto next_line_offset = (width - x_end) * pixel_length;
         for (std::size_t y = y_start; y < y_end; y++)
         {
+            std::advance(p_data, x_begin_offset);
             for (std::size_t x = x_start; x < x_end; x++)
             {
                 func(p_data);
-                std::advance(p_data, 4);
+                std::advance(p_data, pixel_length);
             }
+            std::advance(p_data, next_line_offset);
         }
     }
     UINT ProccessTextFormat(CRect rect, CSize text_length, Alignment align, bool multi_line) noexcept;
@@ -200,7 +207,7 @@ private:
     D2D1DCSupport* m_p_support{NULL};
     IDWriteTextFormat* m_p_text_format{NULL};
     IDWriteFont* m_p_font{NULL};
-    CFont* m_p_cfont{NULL};
+    HFONT m_no_aa_font{NULL};
     COLORREF m_gdi_color{};
 
     class GdiBitmap
