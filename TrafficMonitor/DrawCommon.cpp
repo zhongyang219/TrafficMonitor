@@ -313,6 +313,19 @@ auto DrawCommonHelper::GetArgb32BitmapInfo(LONG width, LONG height) noexcept
     return result;
 }
 
+void DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(HResultException& ex)
+{
+    if (typeid(ex) != typeid(D2D1Exception) && typeid(ex) != typeid(DWriteException))
+    {
+        throw ex;
+    }
+
+    //禁用D2D绘图
+    theApp.m_taskbar_data.disable_d2d = true;
+    LogHResultException(ex);
+    ::MessageBox(NULL, CCommon::LoadText(IDS_D2DDRAWCOMMON_ERROR_TIP), NULL, MB_OK | MB_ICONWARNING);
+}
+
 SizeWrapper::SizeWrapper(LONG width, LONG height)
 {
     SetWidth(width);
@@ -345,7 +358,7 @@ void SizeWrapper::SetHeight(LONG height) noexcept
 }
 
 D2D1DrawCommon::GdiBitmap::GdiBitmap(D2D1DrawCommon& ref_d2d1_draw_common, CRect rect)
-    : m_p_bitmap{nullptr}, m_p_d2d1bitmap{nullptr},
+    : m_p_bitmap{nullptr},
       m_p_render_target{ref_d2d1_draw_common.m_p_support->GetWeakRenderTarget()},
       m_rect{rect}
 {
@@ -354,7 +367,10 @@ D2D1DrawCommon::GdiBitmap::GdiBitmap(D2D1DrawCommon& ref_d2d1_draw_common, CRect
     m_cdc.CreateCompatibleDC(NULL);
     auto pp_bitmap_data = reinterpret_cast<void**>(&m_p_bitmap);
     m_hbitmap = ::CreateDIBSection(m_cdc, &bitmap_info, DIB_RGB_COLORS, pp_bitmap_data, NULL, 0);
-    DrawCommonHelper::ForEachPixelInBitmapForDraw(m_p_bitmap, size.width, m_rect.left, m_rect.right, m_rect.top, m_rect.bottom,
+    DrawCommonHelper::ForEachPixelInBitmapForDraw(m_p_bitmap,
+                                                  size.width,
+                                                  m_rect.left, m_rect.right,
+                                                  m_rect.top, m_rect.bottom,
                                                   [](BYTE* p_data)
                                                   {
                                                       p_data[3] = DrawCommonHelper::GDI_NO_MODIFIED_FLAG;
@@ -370,7 +386,10 @@ D2D1DrawCommon::GdiBitmap::GdiBitmap(D2D1DrawCommon& ref_d2d1_draw_common, CRect
 D2D1DrawCommon::GdiBitmap::~GdiBitmap()
 {
     D2D1_SIZE_U bitmap_size = m_p_render_target->GetPixelSize();
-    DrawCommonHelper::ForEachPixelInBitmapForDraw(m_p_bitmap, bitmap_size.width, m_rect.left, m_rect.right, m_rect.top, m_rect.bottom,
+    DrawCommonHelper::ForEachPixelInBitmapForDraw(m_p_bitmap,
+                                                  bitmap_size.width,
+                                                  m_rect.left, m_rect.right,
+                                                  m_rect.top, m_rect.bottom,
                                                   [](BYTE* p_data)
                                                   {
                                                       p_data[3] -= DrawCommonHelper::GDI_NO_MODIFIED_FLAG;
@@ -380,29 +399,42 @@ D2D1DrawCommon::GdiBitmap::~GdiBitmap()
     d2d1_bitmap_properties.pixelFormat = m_p_render_target->GetPixelFormat();
     d2d1_bitmap_properties.dpiX = 0.f;
     d2d1_bitmap_properties.dpiY = 0.f;
-    ThrowIfFailed(
-        m_p_render_target->CreateBitmap(
-            bitmap_size,
-            m_p_bitmap,
-            bitmap_size.width * 4, // RGB32（实际上是ARGB32）
-            d2d1_bitmap_properties,
-            &m_p_d2d1bitmap),
-        "Create ID2D1Bitmap failed.");
-    //绘制图片到render target
-    m_p_render_target->DrawBitmap(m_p_d2d1bitmap, NULL, 1.f);
-    ThrowIfFailed(m_p_render_target->Flush(), "Flush D2D1 dc render target failed when draw D2D bitmap from GDI.");
-    //释放ID2D1Bitmap资源
-    SAFE_RELEASE(m_p_d2d1bitmap);
-    //释放GDI资源
-    m_cdc.SelectObject(m_old_hbitmap);
-    m_cdc.SelectObject(m_old_font);
-    ::DeleteObject(m_hbitmap);
-    m_cdc.DeleteDC();
+    Microsoft::WRL::ComPtr<ID2D1Bitmap> p_d2d1_bitmap;
+    try
+    {
+        ThrowIfFailed<D2D1Exception>(
+            m_p_render_target->CreateBitmap(
+                bitmap_size,
+                m_p_bitmap,
+                bitmap_size.width * 4, // RGB32（实际上是ARGB32）
+                d2d1_bitmap_properties,
+                &p_d2d1_bitmap),
+            "Create ID2D1Bitmap failed.");
+        //绘制图片到render target
+        m_p_render_target->DrawBitmap(p_d2d1_bitmap.Get(), NULL, 1.f);
+        ThrowIfFailed<D2D1Exception>(m_p_render_target->Flush(),
+                                     "Flush D2D1 dc render target failed when draw D2D bitmap from GDI.");
+    }
+    catch(D2D1Exception& ex)
+    {
+        ReleaseResources();
+        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(ex);
+    }
+    ReleaseResources();
 }
 
 HDC D2D1DrawCommon::GdiBitmap::GetDC()
 {
     return m_cdc;
+}
+
+void D2D1DrawCommon::GdiBitmap::ReleaseResources()
+{
+    //释放GDI资源
+    m_cdc.SelectObject(m_old_hbitmap);
+    m_cdc.SelectObject(m_old_font);
+    ::DeleteObject(m_hbitmap);
+    m_cdc.DeleteDC();
 }
 
 D2D1DrawCommon::D2D1DrawCommon()
@@ -412,6 +444,14 @@ D2D1DrawCommon::D2D1DrawCommon()
 D2D1DrawCommon::~D2D1DrawCommon()
 {
     auto hr = m_p_support->GetWeakRenderTarget()->EndDraw();
+    //释放DWrite资源
+    SAFE_RELEASE(m_p_text_format);
+    SAFE_RELEASE(m_p_font);
+    //释放GDI字体
+    if (m_no_aa_font != NULL)
+    {
+        ::DeleteObject(m_no_aa_font);
+    }
     if (hr == D2DERR_RECREATE_TARGET)
     {
         //收到此错误时，需要重新创建render target（及其创建的任何资源）。
@@ -421,22 +461,22 @@ D2D1DrawCommon::~D2D1DrawCommon()
     }
     else
     {
-        ThrowIfFailed(hr, "Error occurred when end draw.");
+        try
+        {
+            ThrowIfFailed<D2D1Exception>(hr, "Error occurred when end draw.");
+        }
+        catch (HResultException& ex)
+        {
+            DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(ex);
+        }
     }
-    SAFE_RELEASE(m_p_text_format);
-    SAFE_RELEASE(m_p_font);
-    if (m_no_aa_font != NULL)
-    {
-        ::DeleteObject(m_no_aa_font);
-    }
-
 }
 
 void D2D1DrawCommon::Create(D2D1DCSupport& ref_support, HDC target_dc, CRect rect)
 {
     m_p_support = &ref_support;
     auto* p_render_target = ref_support.GetWeakRenderTarget();
-    ThrowIfFailed(p_render_target->BindDC(target_dc, &rect), "Bind dc failed.");
+    ThrowIfFailed<D2D1Exception>(p_render_target->BindDC(target_dc, &rect), "Bind dc failed.");
     ref_support.GetWeakSolidColorBrush()->SetColor({D2D1::ColorF::Black, 0.0f});
     //此调用会导致调试控制台显示形如
     // 0x00007FFAEB5E466C 处(位于 TrafficMonitor.exe 中)引发的异常: Microsoft C++ 异常: _com_error，位于内存位置 0x0000001B4A1BD8F8 处。
@@ -461,7 +501,9 @@ void D2D1DrawCommon::SetFont(CFont* pfont)
     {
         pfont->GetLogFont(&logfont);
         IDWriteFont* p_new_dwrite_font = NULL;
-        m_p_support->GetWeakDWriteGdiInterop()->CreateFontFromLOGFONT(&logfont, &p_new_dwrite_font);
+        ThrowIfFailed<DWriteException>(
+            m_p_support->GetWeakDWriteGdiInterop()->CreateFontFromLOGFONT(&logfont, &p_new_dwrite_font),
+            "Create DWrite font from LOGFONT failed.");
         SAFE_RELEASE(m_p_font);
         m_p_font = p_new_dwrite_font;
 
@@ -472,19 +514,19 @@ void D2D1DrawCommon::SetFont(CFont* pfont)
     {
         IDWriteTextFormat* p_new_text_format = NULL;
         IDWriteFontFamily* p_font_family = NULL;
-        ThrowIfFailed(m_p_font->GetFontFamily(&p_font_family),
-                      "Get font family failed.");
+        ThrowIfFailed<DWriteException>(m_p_font->GetFontFamily(&p_font_family),
+                                       "Get font family failed.");
         auto abs_font_height_f = static_cast<float>(std::abs(logfont.lfHeight));
-        ThrowIfFailed(DWriteSupport::GetFactory()->CreateTextFormat(
-                          theApp.m_taskbar_data.font.name,
-                          NULL,
-                          m_p_font->GetWeight(),
-                          m_p_font->GetStyle(),
-                          m_p_font->GetStretch(),
-                          abs_font_height_f,
-                          L"",
-                          &p_new_text_format),
-                      "Create D2D1 Text Format failed.");
+        ThrowIfFailed<DWriteException>(DWriteSupport::GetFactory()->CreateTextFormat(
+                                           theApp.m_taskbar_data.font.name,
+                                           NULL,
+                                           m_p_font->GetWeight(),
+                                           m_p_font->GetStyle(),
+                                           m_p_font->GetStretch(),
+                                           abs_font_height_f,
+                                           L"",
+                                           &p_new_text_format),
+                                       "Create D2D1 Text Format failed.");
         SAFE_RELEASE(m_p_text_format);
         SAFE_RELEASE(p_font_family);
         m_p_text_format = p_new_text_format;
@@ -532,14 +574,14 @@ void D2D1DrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF col
 
     auto layout_rect = Convert(rect);
     IDWriteTextLayout* p_text_layout{NULL};
-    ThrowIfFailed(DWriteSupport::GetFactory()->CreateTextLayout(
-                      lpszString,
-                      length_u,
-                      m_p_text_format,
-                      layout_rect.right - layout_rect.left,
-                      layout_rect.bottom - layout_rect.top,
-                      &p_text_layout),
-                  "Function CreateTextLayout failed.");
+    ThrowIfFailed<DWriteException>(DWriteSupport::GetFactory()->CreateTextLayout(
+                                       lpszString,
+                                       length_u,
+                                       m_p_text_format,
+                                       layout_rect.right - layout_rect.left,
+                                       layout_rect.bottom - layout_rect.top,
+                                       &p_text_layout),
+                                   "Function CreateTextLayout failed.");
     DWRITE_OVERHANG_METRICS delta_size;
     p_text_layout->GetOverhangMetrics(&delta_size);
     D2D1_RECT_F rect_f{

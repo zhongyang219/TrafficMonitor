@@ -34,6 +34,30 @@ private:
     HRESULT m_hr;
 };
 
+class D2D1Exception final : public HResultException
+{
+    using HResultException::HResultException;
+};
+
+class DWriteException final : public HResultException
+{
+    using HResultException::HResultException;
+};
+
+#define D2D1_SUPPORT_DEFAULT_EXPECTION_TIP "Error occurred when call COM function."
+void ThrowIfFailed(HRESULT hr, const char* p_message = D2D1_SUPPORT_DEFAULT_EXPECTION_TIP);
+template <class Exception>
+void ThrowIfFailed(HRESULT hr, const char* p_message = D2D1_SUPPORT_DEFAULT_EXPECTION_TIP)
+{
+    if (FAILED(hr))
+    {
+        throw Exception{hr, p_message};
+    }
+}
+#undef D2D1_SUPPORT_DEFAULT_EXPECTION_TIP
+
+void LogHResultException(HResultException& ex);
+
 template <class T>
 class DefaultStaticVariableWrapperDtor
 {
@@ -68,8 +92,6 @@ auto MakeStaticVariableWrapper(CTOR ctor, DTOR dtor = {})
 {
     return {ctor, dtor};
 }
-
-void ThrowIfFailed(HRESULT hr, const char* p_message = "Error occurred when call COM function.");
 
 class D2D1Support
 {

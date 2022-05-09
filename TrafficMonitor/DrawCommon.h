@@ -181,6 +181,8 @@ namespace DrawCommonHelper
     };
     using RenderTypeDefaultTag = RenderTypeTag<RenderType::Default>;
     using RenderTypeD2D1Tag = RenderTypeTag<RenderType::D2D1>;
+
+    void DefaultD2DDrawCommonExceptionHandler(HResultException& ex);
 };
 
 class SizeWrapper
@@ -215,7 +217,6 @@ private:
     private:
         CDC m_cdc;
         BYTE* m_p_bitmap;
-        ID2D1Bitmap* m_p_d2d1bitmap;
         ID2D1DCRenderTarget* m_p_render_target;
         HBITMAP m_hbitmap;
         HGDIOBJ m_old_hbitmap;
@@ -233,6 +234,7 @@ private:
         HDC GetDC();
 
     private:
+        void ReleaseResources();
     };
 
 public:

@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "D2D1Support.h"
+#include "TrafficMonitor.h"
 
 #pragma comment(lib, "D2d1.lib")
 #pragma comment(lib, "Dwrite.lib")
@@ -42,10 +43,7 @@ bool FunctionChecker::CheckFunctionExist(LPCTSTR p_library_name, LPCSTR p_functi
 
 void ThrowIfFailed(HRESULT hr, const char* p_message)
 {
-    if (FAILED(hr))
-    {
-        throw HResultException{hr, p_message};
-    }
+    ThrowIfFailed<HResultException>(std::move(hr), std::move(p_message));
 }
 
 HResultException::HResultException(HRESULT hr, const char* p_message)
@@ -71,6 +69,22 @@ bool D2D1Support::CheckSupport()
     return result;
 }
 
+void LogHResultException(HResultException& ex)
+{
+    auto* log = ex.what();
+    //写入日志
+    CCommon::WriteLog(log, theApp.m_log_path.c_str());
+    auto* p_error = ex.GetError().Get();
+    if (p_error == NULL)
+    {
+        return;
+    }
+    BSTR p_description{NULL};
+    ThrowIfFailed(p_error->GetDescription(&p_description));
+    CCommon::WriteLog(p_description, theApp.m_log_path.c_str());
+    ::SysFreeString(p_description);
+}
+
 ID2D1Factory* D2D1Support::GetFactory()
 {
     static auto result = MakeStaticVariableWrapper<ID2D1Factory*>(
@@ -78,9 +92,9 @@ ID2D1Factory* D2D1Support::GetFactory()
         {
             *pp_factory = nullptr;
 #ifdef DEBUG
-            D2D1_FACTORY_OPTIONS d2d1_factory_options{ D2D1_DEBUG_LEVEL_INFORMATION };
+            D2D1_FACTORY_OPTIONS d2d1_factory_options{D2D1_DEBUG_LEVEL_INFORMATION};
 #else
-            D2D1_FACTORY_OPTIONS d2d1_factory_options{ D2D1_DEBUG_LEVEL_NONE };
+            D2D1_FACTORY_OPTIONS d2d1_factory_options{D2D1_DEBUG_LEVEL_NONE};
 #endif
             ThrowIfFailed(::D2D1CreateFactory(
                               D2D1_FACTORY_TYPE_SINGLE_THREADED,
@@ -138,12 +152,15 @@ D2D1DCSupport::D2D1DCSupport()
         0, 0,
         D2D1_RENDER_TARGET_USAGE_NONE,
         D2D1_FEATURE_LEVEL_DEFAULT};
-    ThrowIfFailed(D2D1Support::GetFactory()->CreateDCRenderTarget(&d2d1_reder_target_properties, &m_p_render_target),
-                  "Create d2d1 dc render target failed.");
-    ThrowIfFailed(m_p_render_target->CreateSolidColorBrush(D2D1_COLOR_F{D2D1::ColorF::Black, 0.0f}, &m_p_soild_color_brush),
-                  "Create ID2D1SolidColorBrush failed.");
-    ThrowIfFailed(m_p_render_target->CreateSolidColorBrush(D2D1_COLOR_F{D2D1::ColorF::Black, 0.0f}, &m_p_soild_back_color_brush),
-                  "Create ID2D1SolidColorBrush as back color failed.");
+    ThrowIfFailed<D2D1Exception>(
+        D2D1Support::GetFactory()->CreateDCRenderTarget(&d2d1_reder_target_properties, &m_p_render_target),
+        "Create d2d1 dc render target failed.");
+    ThrowIfFailed<D2D1Exception>(
+        m_p_render_target->CreateSolidColorBrush(D2D1_COLOR_F{D2D1::ColorF::Black, 0.0f}, &m_p_soild_color_brush),
+        "Create ID2D1SolidColorBrush failed.");
+    ThrowIfFailed<D2D1Exception>(
+        m_p_render_target->CreateSolidColorBrush(D2D1_COLOR_F{D2D1::ColorF::Black, 0.0f}, &m_p_soild_back_color_brush),
+        "Create ID2D1SolidColorBrush as back color failed.");
     {
         D2D1_STROKE_STYLE_PROPERTIES d2d1_stroke_style_properties{
             D2D1_CAP_STYLE_FLAT,
@@ -153,10 +170,13 @@ D2D1DCSupport::D2D1DCSupport()
             10.0f,
             D2D1_DASH_STYLE_DASH,
             1.0f};
-        ThrowIfFailed(D2D1Support::GetFactory()->CreateStrokeStyle(d2d1_stroke_style_properties, NULL, 0, &m_p_ps_dot_style),
-                      "Create GDI PS_DOT like stroke style failed.");
+        ThrowIfFailed<D2D1Exception>(
+            D2D1Support::GetFactory()->CreateStrokeStyle(d2d1_stroke_style_properties, NULL, 0, &m_p_ps_dot_style),
+            "Create GDI PS_DOT like stroke style failed.");
     }
-    ThrowIfFailed(DWriteSupport::GetFactory()->GetGdiInterop(&m_p_dwrite_gdi_interop), "Create DWrite GDI interop interface failed.");
+    ThrowIfFailed<D2D1Exception>(
+        DWriteSupport::GetFactory()->GetGdiInterop(&m_p_dwrite_gdi_interop),
+        "Create DWrite GDI interop interface failed.");
 };
 
 D2D1DCSupport::~D2D1DCSupport()
