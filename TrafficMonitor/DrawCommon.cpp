@@ -497,9 +497,9 @@ void D2D1DrawCommon::SetBackColor(COLORREF back_color, BYTE alpha)
 void D2D1DrawCommon::SetFont(CFont* pfont)
 {
     //修改m_p_font
-    LOGFONT logfont;
+    LOGFONTW logfont;
     {
-        pfont->GetLogFont(&logfont);
+        ::GetObject(*pfont, sizeof(logfont), &logfont);
         IDWriteFont* p_new_dwrite_font = NULL;
         ThrowIfFailed<DWriteException>(
             m_p_support->GetWeakDWriteGdiInterop()->CreateFontFromLOGFONT(&logfont, &p_new_dwrite_font),
@@ -508,7 +508,7 @@ void D2D1DrawCommon::SetFont(CFont* pfont)
         m_p_font = p_new_dwrite_font;
 
         logfont.lfQuality = NONANTIALIASED_QUALITY;
-        m_no_aa_font = ::CreateFontIndirect(&logfont);
+        m_no_aa_font = ::CreateFontIndirectW(&logfont);
     }
     //修改m_p_text_format
     {
