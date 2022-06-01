@@ -4,7 +4,7 @@
 #include <d2d1.h>
 #include <dwrite.h>
 
-#define SAFE_RELEASE(p)     \
+#define RELEASE_COM(p)     \
     {                       \
         if (p)              \
         {                   \

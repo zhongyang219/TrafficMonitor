@@ -105,7 +105,7 @@ ID2D1Factory* D2D1Support::GetFactory()
         [](ID2D1Factory** pp_factory)
         {
             auto* p_factory = *pp_factory;
-            SAFE_RELEASE(p_factory);
+            RELEASE_COM(p_factory);
         });
     return result.Get();
 }
@@ -131,7 +131,7 @@ IDWriteFactory* DWriteSupport::GetFactory()
         [](IDWriteFactory** pp_factory)
         {
             auto* p_factory = *pp_factory;
-            SAFE_RELEASE(p_factory);
+            RELEASE_COM(p_factory);
         });
     return result.Get();
 }
@@ -181,10 +181,10 @@ D2D1DCSupport::D2D1DCSupport()
 
 D2D1DCSupport::~D2D1DCSupport()
 {
-    SAFE_RELEASE(m_p_soild_color_brush);
-    SAFE_RELEASE(m_p_soild_back_color_brush);
-    SAFE_RELEASE(m_p_ps_dot_style);
-    SAFE_RELEASE(m_p_dwrite_gdi_interop);
+    RELEASE_COM(m_p_soild_color_brush);
+    RELEASE_COM(m_p_soild_back_color_brush);
+    RELEASE_COM(m_p_ps_dot_style);
+    RELEASE_COM(m_p_dwrite_gdi_interop);
 }
 
 bool D2D1DCSupport::CheckSupport()

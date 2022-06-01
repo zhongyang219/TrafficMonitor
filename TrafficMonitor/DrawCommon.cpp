@@ -445,8 +445,8 @@ D2D1DrawCommon::~D2D1DrawCommon()
 {
     auto hr = m_p_support->GetWeakRenderTarget()->EndDraw();
     //释放DWrite资源
-    SAFE_RELEASE(m_p_text_format);
-    SAFE_RELEASE(m_p_font);
+    RELEASE_COM(m_p_text_format);
+    RELEASE_COM(m_p_font);
     //释放GDI字体
     if (m_no_aa_font != NULL)
     {
@@ -504,7 +504,7 @@ void D2D1DrawCommon::SetFont(CFont* pfont)
         ThrowIfFailed<DWriteException>(
             m_p_support->GetWeakDWriteGdiInterop()->CreateFontFromLOGFONT(&logfont, &p_new_dwrite_font),
             "Create DWrite font from LOGFONT failed.");
-        SAFE_RELEASE(m_p_font);
+        RELEASE_COM(m_p_font);
         m_p_font = p_new_dwrite_font;
 
         logfont.lfQuality = NONANTIALIASED_QUALITY;
@@ -527,8 +527,8 @@ void D2D1DrawCommon::SetFont(CFont* pfont)
                                            L"",
                                            &p_new_text_format),
                                        "Create D2D1 Text Format failed.");
-        SAFE_RELEASE(m_p_text_format);
-        SAFE_RELEASE(p_font_family);
+        RELEASE_COM(m_p_text_format);
+        RELEASE_COM(p_font_family);
         m_p_text_format = p_new_text_format;
     }
 }
@@ -601,7 +601,7 @@ void D2D1DrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF col
         m_p_support->GetWeakSolidColorBrush(),
         D2D1_DRAW_TEXT_OPTIONS_NO_SNAP | D2D1_DRAW_TEXT_OPTIONS_CLIP); //不允许文字超出边界
 
-    SAFE_RELEASE(p_text_layout);
+    RELEASE_COM(p_text_layout);
     //恢复状态
     m_p_text_format->SetParagraphAlignment(old_vertical_align);
     m_p_text_format->SetTextAlignment(old_horizontal_align);
