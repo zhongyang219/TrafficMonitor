@@ -58,41 +58,6 @@ void ThrowIfFailed(HRESULT hr, const char* p_message = D2D1_SUPPORT_DEFAULT_EXPE
 
 void LogHResultException(HResultException& ex);
 
-template <class T>
-class DefaultStaticVariableWrapperDtor
-{
-public:
-    void operator()(T*){};
-};
-template <class T, class DTOR = DefaultStaticVariableWrapperDtor<T>>
-class StaticVariableWrapper : private DTOR
-{
-public:
-    template <class CTOR>
-    StaticVariableWrapper(CTOR ctor, DTOR dtor = {})
-        : DTOR{dtor}
-    {
-        ctor(std::addressof(m_content));
-    }
-    ~StaticVariableWrapper()
-    {
-        DTOR::operator()(std::addressof(m_content));
-    }
-    T& Get()
-    {
-        return m_content;
-    }
-
-private:
-    T m_content;
-};
-template <class T, class CTOR, class DTOR = DefaultStaticVariableWrapperDtor<T>>
-auto MakeStaticVariableWrapper(CTOR ctor, DTOR dtor = {})
-    -> StaticVariableWrapper<T, DTOR>
-{
-    return {ctor, dtor};
-}
-
 class D2D1Support
 {
 public:
