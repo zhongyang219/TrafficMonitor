@@ -370,7 +370,6 @@ public:
  * @tparam DTOR 自定义执行析构函数前的行为
  */
 template <class T, class DTOR = DefaultStaticVariableWrapperDtor<T>>
-
 class StaticVariableWrapper : private DTOR
 {
 private:
@@ -399,14 +398,6 @@ public:
         return m_content;
     }
     const T& Get() const noexcept
-    {
-        return m_content;
-    }
-    operator T&() noexcept
-    {
-        return m_content;
-    }
-    operator const T&() const noexcept
     {
         return m_content;
     }

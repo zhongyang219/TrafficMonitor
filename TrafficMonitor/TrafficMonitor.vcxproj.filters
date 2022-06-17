@@ -422,6 +422,9 @@
     <ClInclude Include="Nullable.hpp">
       <Filter>源文件和头文件\公共的类\Nullable</Filter>
     </ClInclude>
+    <ClInclude Include="DrawTextManager.h">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -621,6 +624,9 @@
     </ClCompile>
     <ClCompile Include="D2D1Support.cpp">
       <Filter>源文件和头文件\公共的类\D2D1Support</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawTextManager.cpp">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
