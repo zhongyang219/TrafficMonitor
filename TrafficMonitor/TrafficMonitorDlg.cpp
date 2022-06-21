@@ -908,6 +908,8 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     SetIcon(m_hIcon, TRUE);         // 设置大图标
     SetIcon(m_hIcon, FALSE);        // 设置小图标
 
+	m_pIfTable = NULL;
+
     // TODO: 在此添加额外的初始化代码
     SetWindowText(APP_NAME);
     //设置隐藏任务栏图标
