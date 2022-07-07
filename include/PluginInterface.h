@@ -112,6 +112,23 @@ public:
      */
     virtual int OnMouseEvent(MouseEventType type, int x, int y, void* hWnd, int flag) { return 0; }
 
+    enum KeyboardEventFlag
+    {
+        KF_TASKBAR_WND = 1 << 0,        /**< 是否为任务栏窗口的键盘事件 */
+    };
+
+    /**
+     * @brief   当插件显示区域有键盘事件时由主程序调用
+     * @param   int key 按下的键
+     * @param   bool ctrl 是否按下了Ctrl键
+     * @param   bool shift 是否按下了Shift键
+     * @param   bool alt 是否按下了Alt键
+     * @param   void* hWnd 产生此键盘事件的窗口的句柄（主窗口或任务栏窗口）
+     * @param   int flag 为若干KeyboardEventFlag枚举常量的组合
+     * @return  int 如果返回非0，则主程序认为插件已经对此键盘事件作出了全部的响应，主程序将不会再对此键盘事件做额外的响应。
+     */
+    virtual int OnKeboardEvent(int key, bool ctrl, bool shift, bool alt, void* hWnd, int flag) { return 0; }
+
     enum ItemInfoType
     {
 
@@ -129,7 +146,7 @@ public:
      * @attention 插件开发者不应该修改这里的返回值，也不应该重写此虚函数。
      * @return  int
      */
-    virtual int GetAPIVersion() const { return 3; }
+    virtual int GetAPIVersion() const { return 4; }
 
     /**
      * @brief   获取插件显示项目的对象
