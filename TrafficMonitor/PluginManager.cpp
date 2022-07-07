@@ -356,12 +356,12 @@ private:
 public:
     DllMap(std::initializer_list<DllName> dll_names)
     {
-        for (auto dll_name : dll_names)
+        for (auto&& dll_name : dll_names)
         {
             auto exist_dll_name = m_dll_name_map.find(dll_name.NameString());
             if (exist_dll_name == m_dll_name_map.end())
             {
-                m_dll_name_map.emplace(std::move(std::make_pair(dll_name.NameString(), dll_name)));
+                m_dll_name_map.emplace(std::make_pair(dll_name.NameString(), dll_name));
             }
         }
     }
