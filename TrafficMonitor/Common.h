@@ -347,7 +347,7 @@ public:
  * @return constexpr std::size_t 编译期推断的数组长度
  */
 template <typename T, std::size_t N>
-constexpr inline std::size_t GetArrayLength(const T (&)[N]) noexcept
+constexpr std::size_t GetArrayLength(const T (&)[N]) noexcept
 {
     return N;
 }
@@ -417,4 +417,22 @@ auto MakeStaticVariableWrapper(CTOR ctor, DTOR dtor = {})
     -> StaticVariableWrapper<T, DTOR>
 {
     return {ctor, dtor};
+}
+
+/**
+ * @brief 调用指针指向的对象的对应类型的析构函数
+ *
+ * @tparam T 传入的移除了指针后的类型
+ * @param p_memory 指向要执行析构函数的对象的指针
+ */
+template <class T>
+void Destroy(T* p_memory)
+{
+    p_memory->~T();
+}
+
+template <class T, class... Args>
+void EmplaceAt(T* p_memory, Args... args)
+{
+    ::new (p_memory) T(std::forward<Args>(args)...);
 }
