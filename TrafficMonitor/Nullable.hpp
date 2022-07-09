@@ -27,36 +27,85 @@ struct NullableDefaultDeleter
 template <class T, class Deleter = NullableDefaultDeleter<T>>
 class Nullable
 {
+    using StorageType = std_aligned_storage<T>;
+    template<class C, class... Args>
+    static void EmplaceAt(C* p_object, Args&&... args)
+    {
+        ::new (p_object) C(std::forward<Args>(args)...);
+    }
 public:
     Nullable(Deleter deleter = {})
-        : m_has_value_and_ebo_deleter{deleter} {}
+        : m_storage{deleter} {}
     ~Nullable()
     {
-        if (m_has_value_and_ebo_deleter)
+        if (m_has_value)
         {
             DestroySelf();
         }
     }
-    Nullable(const Nullable&) = delete;
-    Nullable operator=(const Nullable&) = delete;
+    Nullable(const Nullable& other)
+        :m_has_value{other.m_has_value}, m_storage{static_cast<Deleter>(other.m_storage)}
+    {
+        if (other)
+        {
+            EmplaceAt(&m_storage.GetUnsafe(), other.m_storage.GetUnsafe());
+        }
+    }
+    Nullable& operator=(const Nullable& other)
+    {
+        this->m_has_value = other.m_has_value;
+        Deleter& ref_deleter = m_storage;
+        ref_deleter = static_cast<Deleter>(other.m_storage);
+        if (other)
+        {
+            EmplaceAt(&m_storage.GetUnsafe(), other.m_storage.GetUnsafe());
+        }
+    }
+    Nullable(Nullable&& other) noexcept
+        :m_has_value{other.m_has_value}, m_storage{std::move(static_cast<Deleter>(other.m_storage))}
+    {
+        if (other)
+        {
+            EmplaceAt(&m_storage.GetUnsafe(), std::move(other.m_storage.GetUnsafe()));
+        }
+    }
+    Nullable& operator=(Nullable&& other) noexcept
+    {
+        this->m_has_value = other.m_has_value;
+        Deleter& ref_deleter = m_storage;
+        ref_deleter = std::move(static_cast<Deleter>(other.m_storage));
+        if (other)
+        {
+            EmplaceAt(&m_storage.GetUnsafe(), std::move(other.m_storage.GetUnsafe()));
+        }
+    }
+
     template <class... Args>
     void Construct(Args&&... args)
     {
-        if (m_has_value_and_ebo_deleter)
+        if (m_has_value)
         {
             DestroySelf();
-            m_has_value_and_ebo_deleter.SetHasValue(false);
+            m_has_value = false;
         }
-        ::new (&m_storage) T(std::forward<Args>(args)...);
-        m_has_value_and_ebo_deleter.SetHasValue(true);
+
+        try
+        {
+            EmplaceAt(&m_storage.GetUnsafe(), std::forward<Args>(args)...);
+        }
+        catch (...)
+        {
+            throw;
+        }
+        m_has_value = true;
     }
     const T& GetUnsafe() const noexcept
     {
-        return *static_cast<const T*>(static_cast<const void*>(std::addressof(m_storage)));
+        return m_storage.GetUnsafe();
     }
     T& GetUnsafe() noexcept
     {
-        return *static_cast<T*>(static_cast<void*>(std::addressof(m_storage)));
+        return m_storage.GetUnsafe();
     }
     const T& Get() const noexcept
     {
@@ -68,16 +117,28 @@ public:
         Check();
         return GetUnsafe();
     }
+    bool HasValue() const noexcept
+    {
+        return m_has_value;
+    }
     operator bool() const noexcept
     {
-        return m_has_value_and_ebo_deleter;
+        return HasValue();
     }
 
 private:
     void DestroySelf()
     {
-        static_cast<Deleter>(m_has_value_and_ebo_deleter).operator()(&Get());
+        static_cast<Deleter>(m_storage).operator()(&Get());
     }
+    void Check() const
+    {
+        if (!m_has_value)
+        {
+            throw CallNullObjectError{};
+        }
+    }
+
     class CallNullObjectError : public std::runtime_error
     {
     public:
@@ -85,32 +146,40 @@ private:
             : std::runtime_error{"Value is uninitialized!"} {}
         ~CallNullObjectError() override = default;
     };
-    void Check() const
-    {
-        if (!m_has_value_and_ebo_deleter)
-        {
-            throw CallNullObjectError{};
-        }
-    }
 
-    std_aligned_storage<T> m_storage{};
-    class HasValueAndEboDeleter : public Deleter
+    class StorageAndEboDeleter : public Deleter
     {
-    public:
-        HasValueAndEboDeleter(Deleter deleter) : Deleter(deleter) {}
-        ~HasValueAndEboDeleter() = default;
-        operator bool() const noexcept
-        {
-            return m_has_value;
-        }
-        void SetHasValue(bool value)
-        {
-            m_has_value = value;
-        }
-
     private:
-        bool m_has_value{false};
-    } m_has_value_and_ebo_deleter{};
+        StorageType m_storage;
+
+        auto GetStoragePointer() const noexcept
+            -> const StorageType*
+        {
+            return std::addressof(m_storage);
+        }
+        auto GetStoragePointer() noexcept
+            -> StorageType*
+        {
+            return std::addressof(m_storage);
+        }
+    public:
+        explicit StorageAndEboDeleter(Deleter deleter)
+            :Deleter{deleter} {}
+        ~StorageAndEboDeleter() = default;
+        StorageAndEboDeleter(const StorageAndEboDeleter&) = delete;
+        StorageAndEboDeleter& operator=(const StorageAndEboDeleter&) = delete;
+
+        const T& GetUnsafe() const noexcept
+        {
+            return *static_cast<const T*>(static_cast<const void*>(GetStoragePointer()));
+        }
+        T& GetUnsafe() noexcept
+        {
+            return *static_cast<T*>(static_cast<void*>(GetStoragePointer()));
+        }
+    };
+    bool m_has_value{false};
+    StorageAndEboDeleter m_storage;
 };
 template <class T, class Deleter = NullableDefaultDeleter<T>>
 auto MakeNullableObject(Deleter deleter)
@@ -146,6 +215,6 @@ public:
     }
 
 private:
-    Nullable<T, Deleter> m_content{};
     bool m_is_available{false};
+    Nullable<T, Deleter> m_content{};
 };
