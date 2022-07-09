@@ -182,7 +182,7 @@ namespace DrawCommonHelper
     using RenderTypeDefaultTag = RenderTypeTag<RenderType::Default>;
     using RenderTypeD2D1Tag = RenderTypeTag<RenderType::D2D1>;
 
-    void DefaultD2DDrawCommonExceptionHandler(HResultException& ex);
+    void DefaultD2DDrawCommonExceptionHandler(CHResultException& ex);
 };
 
 class SizeWrapper
@@ -206,7 +206,7 @@ public:
 class D2D1DrawCommon final : public IDrawCommon
 {
 private:
-    D2D1DCSupport* m_p_support{NULL};
+    CD2D1DCSupport* m_p_support{NULL};
     IDWriteTextFormat* m_p_text_format{NULL};
     IDWriteFont* m_p_font{NULL};
     HFONT m_no_aa_font{NULL};
@@ -240,7 +240,7 @@ private:
 public:
     D2D1DrawCommon();
     ~D2D1DrawCommon();
-    void Create(D2D1DCSupport& ref_support, HDC target_dc, CRect rect);
+    void Create(CD2D1DCSupport& ref_support, HDC target_dc, CRect rect);
     template <class GdiOp>
     void ExecuteGdiOperation(CRect rect, GdiOp gdi_op)
     {
@@ -301,8 +301,8 @@ private:
     {
         Content(){};  //手工管理构造
         ~Content(){}; //手工管理析构
-        Nullable<CDrawDoubleBuffer> cdraw_double_buffer;
-        Nullable<DrawCommonBuffer> draw_common_buffer;
+        CNullable<CDrawDoubleBuffer> cdraw_double_buffer;
+        CNullable<DrawCommonBuffer> draw_common_buffer;
     } m_content;
 
 public:
@@ -311,13 +311,13 @@ public:
     template <class... Args>
     void CreateDefaultVerion(Args&&... args)
     {
-        ::new (&m_content.cdraw_double_buffer) Nullable<CDrawDoubleBuffer>();
+        ::new (&m_content.cdraw_double_buffer) CNullable<CDrawDoubleBuffer>();
         m_content.cdraw_double_buffer.Construct(std::forward<Args>(args)...);
     }
     template <class... Args>
     void CreateD2D1Version(Args&&... args)
     {
-        ::new (&m_content.draw_common_buffer) Nullable<DrawCommonBuffer>();
+        ::new (&m_content.draw_common_buffer) CNullable<DrawCommonBuffer>();
         m_content.draw_common_buffer.Construct(std::forward<Args>(args)...);
     }
     ~DrawCommonBufferUnion();
@@ -333,8 +333,8 @@ private:
     {
         Content(){};  //手工管理构造
         ~Content(){}; //手工管理析构
-        Nullable<CDrawCommon> cdraw_common;
-        Nullable<D2D1DrawCommon> d2d1_draw_common;
+        CNullable<CDrawCommon> cdraw_common;
+        CNullable<D2D1DrawCommon> d2d1_draw_common;
     } m_content;
 
 public:

@@ -42,27 +42,27 @@ decltype(ERROR_WHEN_CALL_COM_FUNCTION) ERROR_WHEN_CALL_COM_FUNCTION = "Error occ
 
 void ThrowIfFailed(HRESULT hr, const char* p_message)
 {
-    ThrowIfFailed<HResultException>(hr, std::move(p_message));
+    ThrowIfFailed<CHResultException>(hr, std::move(p_message));
 }
 
-HResultException::HResultException(HRESULT hr, const char* p_message)
+CHResultException::CHResultException(HRESULT hr, const char* p_message)
     : std::runtime_error{ p_message }
 {
     m_hr = ::GetErrorInfo(0, &m_p_error);
 }
 
-auto HResultException::GetError()
+auto CHResultException::GetError()
 -> Microsoft::WRL::ComPtr<IErrorInfo>
 {
     return m_p_error;
 }
 
-bool HResultException::HasError() const noexcept
+bool CHResultException::HasError() const noexcept
 {
     return SUCCEEDED(m_hr);
 }
 
-void LogHResultException(HResultException& ex)
+void LogHResultException(CHResultException& ex)
 {
     auto* log = ex.what();
     //–¥»Î»’÷æ

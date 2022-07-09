@@ -6,7 +6,7 @@ using std_aligned_storage = typename std::aligned_storage<sizeof(T), alignof(T)>
 
 //皆不保证多线程操作安全
 /**
- * @brief Nullable<T>的默认删除器，注意重载operator()的参数为T*
+ * @brief CNullable<T>的默认删除器，注意重载operator()的参数为T*
  *
  * @tparam T 要删除的类型
  */
@@ -25,7 +25,7 @@ struct NullableDefaultDeleter
  * @tparam Deleter T的删除器
  */
 template <class T, class Deleter = NullableDefaultDeleter<T>>
-class Nullable
+class CNullable
 {
     using StorageType = std_aligned_storage<T>;
     template<class C, class... Args>
@@ -34,16 +34,16 @@ class Nullable
         ::new (p_object) C(std::forward<Args>(args)...);
     }
 public:
-    Nullable(Deleter deleter = {})
+    CNullable(Deleter deleter = {})
         : m_storage{deleter} {}
-    ~Nullable()
+    ~CNullable()
     {
         if (m_has_value)
         {
             DestroySelf();
         }
     }
-    Nullable(const Nullable& other)
+    CNullable(const CNullable& other)
         :m_has_value{other.m_has_value}, m_storage{static_cast<Deleter>(other.m_storage)}
     {
         if (other)
@@ -51,7 +51,7 @@ public:
             EmplaceAt(&m_storage.GetUnsafe(), other.m_storage.GetUnsafe());
         }
     }
-    Nullable& operator=(const Nullable& other)
+    CNullable& operator=(const CNullable& other)
     {
         this->m_has_value = other.m_has_value;
         Deleter& ref_deleter = m_storage;
@@ -61,7 +61,7 @@ public:
             EmplaceAt(&m_storage.GetUnsafe(), other.m_storage.GetUnsafe());
         }
     }
-    Nullable(Nullable&& other) noexcept
+    CNullable(CNullable&& other) noexcept
         :m_has_value{other.m_has_value}, m_storage{std::move(static_cast<Deleter>(other.m_storage))}
     {
         if (other)
@@ -69,7 +69,7 @@ public:
             EmplaceAt(&m_storage.GetUnsafe(), std::move(other.m_storage.GetUnsafe()));
         }
     }
-    Nullable& operator=(Nullable&& other) noexcept
+    CNullable& operator=(CNullable&& other) noexcept
     {
         this->m_has_value = other.m_has_value;
         Deleter& ref_deleter = m_storage;
@@ -183,7 +183,7 @@ private:
 };
 template <class T, class Deleter = NullableDefaultDeleter<T>>
 auto MakeNullableObject(Deleter deleter)
-    -> Nullable<T, Deleter>
+    -> CNullable<T, Deleter>
 {
     return {deleter};
 }
@@ -195,11 +195,11 @@ auto MakeNullableObject(Deleter deleter)
  * @tparam Deleter T的删除器，默认为NullableDefaultDeleter<T>
  */
 template <class T, class Deleter = NullableDefaultDeleter<T>>
-class LazyConstructable
+class CLazyConstructable
 {
 public:
-    LazyConstructable() = default;
-    ~LazyConstructable() = default;
+    CLazyConstructable() = default;
+    ~CLazyConstructable() = default;
     T& Get()
     {
         if (m_is_available)
@@ -216,5 +216,5 @@ public:
 
 private:
     bool m_is_available{false};
-    Nullable<T, Deleter> m_content{};
+    CNullable<T, Deleter> m_content{};
 };

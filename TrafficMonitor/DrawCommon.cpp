@@ -313,9 +313,9 @@ auto DrawCommonHelper::GetArgb32BitmapInfo(LONG width, LONG height) noexcept
     return result;
 }
 
-void DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(HResultException& ex)
+void DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(CHResultException& ex)
 {
-    if (typeid(ex) != typeid(D2D1Exception) && typeid(ex) != typeid(DWriteException))
+    if (typeid(ex) != typeid(CD2D1Exception) && typeid(ex) != typeid(CDWriteException))
     {
         throw ex;
     }
@@ -402,7 +402,7 @@ D2D1DrawCommon::GdiBitmap::~GdiBitmap()
     Microsoft::WRL::ComPtr<ID2D1Bitmap> p_d2d1_bitmap;
     try
     {
-        ThrowIfFailed<D2D1Exception>(
+        ThrowIfFailed<CD2D1Exception>(
             m_p_render_target->CreateBitmap(
                 bitmap_size,
                 m_p_bitmap,
@@ -412,10 +412,10 @@ D2D1DrawCommon::GdiBitmap::~GdiBitmap()
             "Create ID2D1Bitmap failed.");
         //绘制图片到render target
         m_p_render_target->DrawBitmap(p_d2d1_bitmap.Get(), NULL, 1.f);
-        ThrowIfFailed<D2D1Exception>(m_p_render_target->Flush(),
+        ThrowIfFailed<CD2D1Exception>(m_p_render_target->Flush(),
                                      "Flush D2D1 dc render target failed when draw D2D bitmap from GDI.");
     }
-    catch(D2D1Exception& ex)
+    catch(CD2D1Exception& ex)
     {
         ReleaseResources();
         DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(ex);
@@ -456,27 +456,27 @@ D2D1DrawCommon::~D2D1DrawCommon()
     {
         //收到此错误时，需要重新创建render target（及其创建的任何资源）。
         //此处直接重置TaskBarDlg中的m_d2d1_dc_support对象
-        m_p_support->~D2D1DCSupport();
-        ::new (m_p_support) D2D1DCSupport();
+        m_p_support->~CD2D1DCSupport();
+        ::new (m_p_support) CD2D1DCSupport();
     }
     else
     {
         try
         {
-            ThrowIfFailed<D2D1Exception>(hr, "Error occurred when end draw.");
+            ThrowIfFailed<CD2D1Exception>(hr, "Error occurred when end draw.");
         }
-        catch (HResultException& ex)
+        catch (CHResultException& ex)
         {
             DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(ex);
         }
     }
 }
 
-void D2D1DrawCommon::Create(D2D1DCSupport& ref_support, HDC target_dc, CRect rect)
+void D2D1DrawCommon::Create(CD2D1DCSupport& ref_support, HDC target_dc, CRect rect)
 {
     m_p_support = &ref_support;
     auto* p_render_target = ref_support.GetWeakRenderTarget();
-    ThrowIfFailed<D2D1Exception>(p_render_target->BindDC(target_dc, &rect), "Bind dc failed.");
+    ThrowIfFailed<CD2D1Exception>(p_render_target->BindDC(target_dc, &rect), "Bind dc failed.");
     ref_support.GetWeakSolidColorBrush()->SetColor({D2D1::ColorF::Black, 0.0f});
     //此调用会导致调试控制台显示形如
     // 0x00007FFAEB5E466C 处(位于 TrafficMonitor.exe 中)引发的异常: Microsoft C++ 异常: _com_error，位于内存位置 0x0000001B4A1BD8F8 处。
@@ -501,7 +501,7 @@ void D2D1DrawCommon::SetFont(CFont* pfont)
     {
         ::GetObject(*pfont, sizeof(logfont), &logfont);
         IDWriteFont* p_new_dwrite_font = NULL;
-        ThrowIfFailed<DWriteException>(
+        ThrowIfFailed<CDWriteException>(
             m_p_support->GetWeakDWriteGdiInterop()->CreateFontFromLOGFONT(&logfont, &p_new_dwrite_font),
             "Create DWrite font from LOGFONT failed.");
         RELEASE_COM(m_p_font);
@@ -514,10 +514,10 @@ void D2D1DrawCommon::SetFont(CFont* pfont)
     {
         IDWriteTextFormat* p_new_text_format = NULL;
         IDWriteFontFamily* p_font_family = NULL;
-        ThrowIfFailed<DWriteException>(m_p_font->GetFontFamily(&p_font_family),
+        ThrowIfFailed<CDWriteException>(m_p_font->GetFontFamily(&p_font_family),
                                        "Get font family failed.");
         auto abs_font_height_f = static_cast<float>(std::abs(logfont.lfHeight));
-        ThrowIfFailed<DWriteException>(DWriteSupport::GetFactory()->CreateTextFormat(
+        ThrowIfFailed<CDWriteException>(DWriteSupport::GetFactory()->CreateTextFormat(
                                            theApp.m_taskbar_data.font.name,
                                            NULL,
                                            m_p_font->GetWeight(),
@@ -574,7 +574,7 @@ void D2D1DrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF col
 
     auto layout_rect = Convert(rect);
     IDWriteTextLayout* p_text_layout{NULL};
-    ThrowIfFailed<DWriteException>(DWriteSupport::GetFactory()->CreateTextLayout(
+    ThrowIfFailed<CDWriteException>(DWriteSupport::GetFactory()->CreateTextLayout(
                                        lpszString,
                                        length_u,
                                        m_p_text_format,
@@ -772,12 +772,12 @@ DrawCommonBufferUnion::~DrawCommonBufferUnion()
     {
     case DrawCommonHelper::RenderType::Default:
     {
-        m_content.cdraw_double_buffer.~Nullable();
+        m_content.cdraw_double_buffer.~CNullable();
         break;
     }
     case DrawCommonHelper::RenderType::D2D1:
     {
-        m_content.draw_common_buffer.~Nullable();
+        m_content.draw_common_buffer.~CNullable();
         break;
     }
     };
@@ -811,13 +811,13 @@ DrawCommonUnion::DrawCommonUnion(DrawCommonHelper::RenderType type)
     {
     case DrawCommonHelper::RenderType::Default:
     {
-        ::new (&m_content.cdraw_common) Nullable<CDrawCommon>();
+        ::new (&m_content.cdraw_common) CNullable<CDrawCommon>();
         m_content.cdraw_common.Construct();
         break;
     }
     case DrawCommonHelper::RenderType::D2D1:
     {
-        ::new (&m_content.cdraw_common) Nullable<D2D1DrawCommon>();
+        ::new (&m_content.cdraw_common) CNullable<D2D1DrawCommon>();
         m_content.d2d1_draw_common.Construct();
         break;
     }
@@ -834,12 +834,12 @@ DrawCommonUnion::~DrawCommonUnion()
     {
     case DrawCommonHelper::RenderType::Default:
     {
-        m_content.cdraw_common.~Nullable();
+        m_content.cdraw_common.~CNullable();
         break;
     }
     case DrawCommonHelper::RenderType::D2D1:
     {
-        m_content.d2d1_draw_common.~Nullable();
+        m_content.d2d1_draw_common.~CNullable();
         break;
     }
     };

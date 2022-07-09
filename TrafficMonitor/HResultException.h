@@ -17,11 +17,11 @@ namespace FunctionChecker
     bool CheckFunctionExist(LPCTSTR p_library_name, LPCSTR p_function_name) noexcept;
 }
 
-class HResultException : public std::runtime_error
+class CHResultException : public std::runtime_error
 {
 public:
-    HResultException(HRESULT hr, const char* p_message);
-    ~HResultException() override = default;
+    CHResultException(HRESULT hr, const char* p_message);
+    ~CHResultException() override = default;
 
     auto GetError()
         ->Microsoft::WRL::ComPtr<IErrorInfo>;
@@ -43,4 +43,4 @@ void ThrowIfFailed(HRESULT hr, const char* p_message = ERROR_WHEN_CALL_COM_FUNCT
     }
 }
 
-void LogHResultException(HResultException& ex);
+void LogHResultException(CHResultException& ex);

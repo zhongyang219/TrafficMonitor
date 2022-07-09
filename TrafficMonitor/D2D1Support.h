@@ -4,28 +4,28 @@
 #include <dwrite.h>
 #include "HResultException.h"
 
-class D2D1Exception final : public HResultException
+class CD2D1Exception final : public CHResultException
 {
-    using HResultException::HResultException;
+    using CHResultException::CHResultException;
 };
 
-class DWriteException final : public HResultException
+class CDWriteException final : public CHResultException
 {
-    using HResultException::HResultException;
+    using CHResultException::CHResultException;
 };
 
-class D2D1Support
+class CD2D1Support
 {
 public:
     static bool CheckSupport();
     static ID2D1Factory* GetFactory();
 };
 
-class D2D1DCSupport
+class CD2D1DCSupport
 {
 public:
-    D2D1DCSupport();
-    ~D2D1DCSupport();
+    CD2D1DCSupport();
+    ~CD2D1DCSupport();
     static bool CheckSupport();
     auto GetRenderTarget()
         -> Microsoft::WRL::ComPtr<ID2D1DCRenderTarget>;

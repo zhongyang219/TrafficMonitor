@@ -358,7 +358,7 @@ constexpr std::size_t GetArrayLength(const T (&)[N]) noexcept
  * @tparam T
  */
 template <class T>
-class DefaultStaticVariableWrapperDtor
+class CDefaultStaticVariableWrapperDtor
 {
 public:
     void operator()(T*){};
@@ -369,8 +369,8 @@ public:
  * @tparam T 要被包装的类型
  * @tparam DTOR 自定义执行析构函数前的行为
  */
-template <class T, class DTOR = DefaultStaticVariableWrapperDtor<T>>
-class StaticVariableWrapper : private DTOR
+template <class T, class DTOR = CDefaultStaticVariableWrapperDtor<T>>
+class CStaticVariableWrapper : private DTOR
 {
 private:
     T m_content;
@@ -384,12 +384,12 @@ public:
      * @param dtor 自定义变量执行析构函数前的行为，传入变量的指针作为参数
      */
     template <class CTOR>
-    StaticVariableWrapper(CTOR ctor, DTOR dtor = {})
+    CStaticVariableWrapper(CTOR ctor, DTOR dtor = {})
         : DTOR{dtor}
     {
         ctor(std::addressof(m_content));
     }
-    ~StaticVariableWrapper()
+    ~CStaticVariableWrapper()
     {
         DTOR::operator()(std::addressof(m_content));
     }
@@ -410,11 +410,11 @@ public:
  * @tparam DTOR 自定义变量执行析构函数前的函数类型
  * @param ctor 自定义变量默认初始化后的行为，传入变量的指针作为参数
  * @param dtor 自定义变量执行析构函数前的行为，传入变量的指针作为参数
- * @return StaticVariableWrapper<T, DTOR> 包装后的变量，已经初始化
+ * @return CStaticVariableWrapper<T, DTOR> 包装后的变量，已经初始化
  */
-template <class T, class CTOR, class DTOR = DefaultStaticVariableWrapperDtor<T>>
+template <class T, class CTOR, class DTOR = CDefaultStaticVariableWrapperDtor<T>>
 auto MakeStaticVariableWrapper(CTOR ctor, DTOR dtor = {})
-    -> StaticVariableWrapper<T, DTOR>
+    -> CStaticVariableWrapper<T, DTOR>
 {
     return {ctor, dtor};
 }

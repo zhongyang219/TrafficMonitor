@@ -4,13 +4,13 @@
 #pragma comment(lib, "D2d1.lib")
 #pragma comment(lib, "Dwrite.lib")
 
-bool D2D1Support::CheckSupport()
+bool CD2D1Support::CheckSupport()
 {
     static bool result = FunctionChecker::CheckFunctionExist(_T("D2d1.dll"), "D2D1CreateFactory");
     return result;
 }
 
-ID2D1Factory* D2D1Support::GetFactory()
+ID2D1Factory* CD2D1Support::GetFactory()
 {
     static auto result = MakeStaticVariableWrapper<ID2D1Factory*>(
         [](ID2D1Factory** pp_factory)
@@ -61,7 +61,7 @@ IDWriteFactory* DWriteSupport::GetFactory()
     return result.Get();
 }
 
-D2D1DCSupport::D2D1DCSupport()
+CD2D1DCSupport::CD2D1DCSupport()
 {
     //不支持D2D1或DWrite则直接返回
     if (!CheckSupport())
@@ -77,13 +77,13 @@ D2D1DCSupport::D2D1DCSupport()
         0, 0,
         D2D1_RENDER_TARGET_USAGE_NONE,
         D2D1_FEATURE_LEVEL_DEFAULT};
-    ThrowIfFailed<D2D1Exception>(
-        D2D1Support::GetFactory()->CreateDCRenderTarget(&d2d1_reder_target_properties, &m_p_render_target),
+    ThrowIfFailed<CD2D1Exception>(
+        CD2D1Support::GetFactory()->CreateDCRenderTarget(&d2d1_reder_target_properties, &m_p_render_target),
         "Create d2d1 dc render target failed.");
-    ThrowIfFailed<D2D1Exception>(
+    ThrowIfFailed<CD2D1Exception>(
         m_p_render_target->CreateSolidColorBrush(D2D1_COLOR_F{D2D1::ColorF::Black, 0.0f}, &m_p_soild_color_brush),
         "Create ID2D1SolidColorBrush failed.");
-    ThrowIfFailed<D2D1Exception>(
+    ThrowIfFailed<CD2D1Exception>(
         m_p_render_target->CreateSolidColorBrush(D2D1_COLOR_F{D2D1::ColorF::Black, 0.0f}, &m_p_soild_back_color_brush),
         "Create ID2D1SolidColorBrush as back color failed.");
     {
@@ -95,16 +95,16 @@ D2D1DCSupport::D2D1DCSupport()
             10.0f,
             D2D1_DASH_STYLE_DASH,
             1.0f};
-        ThrowIfFailed<D2D1Exception>(
-            D2D1Support::GetFactory()->CreateStrokeStyle(d2d1_stroke_style_properties, NULL, 0, &m_p_ps_dot_style),
+        ThrowIfFailed<CD2D1Exception>(
+            CD2D1Support::GetFactory()->CreateStrokeStyle(d2d1_stroke_style_properties, NULL, 0, &m_p_ps_dot_style),
             "Create GDI PS_DOT like stroke style failed.");
     }
-    ThrowIfFailed<D2D1Exception>(
+    ThrowIfFailed<CD2D1Exception>(
         DWriteSupport::GetFactory()->GetGdiInterop(&m_p_dwrite_gdi_interop),
         "Create DWrite GDI interop interface failed.");
 };
 
-D2D1DCSupport::~D2D1DCSupport()
+CD2D1DCSupport::~CD2D1DCSupport()
 {
     RELEASE_COM(m_p_soild_color_brush);
     RELEASE_COM(m_p_soild_back_color_brush);
@@ -112,42 +112,42 @@ D2D1DCSupport::~D2D1DCSupport()
     RELEASE_COM(m_p_dwrite_gdi_interop);
 }
 
-bool D2D1DCSupport::CheckSupport()
+bool CD2D1DCSupport::CheckSupport()
 {
-    return D2D1Support::CheckSupport() && DWriteSupport::CheckSupport();
+    return CD2D1Support::CheckSupport() && DWriteSupport::CheckSupport();
 }
 
-auto D2D1DCSupport::GetRenderTarget()
+auto CD2D1DCSupport::GetRenderTarget()
     -> Microsoft::WRL::ComPtr<ID2D1DCRenderTarget>
 {
     return m_p_render_target;
 }
 
-auto D2D1DCSupport::GetWeakRenderTarget()
+auto CD2D1DCSupport::GetWeakRenderTarget()
     -> ID2D1DCRenderTarget*
 {
     return m_p_render_target.Get();
 }
 
-auto D2D1DCSupport::GetWeakSolidColorBrush()
+auto CD2D1DCSupport::GetWeakSolidColorBrush()
     -> ID2D1SolidColorBrush*
 {
     return m_p_soild_color_brush;
 }
 
-auto D2D1DCSupport::GetWeakPsDotStyle()
+auto CD2D1DCSupport::GetWeakPsDotStyle()
     -> ID2D1StrokeStyle*
 {
     return m_p_ps_dot_style;
 }
 
-auto D2D1DCSupport::GetWeakDWriteGdiInterop()
+auto CD2D1DCSupport::GetWeakDWriteGdiInterop()
     -> IDWriteGdiInterop*
 {
     return m_p_dwrite_gdi_interop;
 }
 
-auto D2D1DCSupport::GetWeakSoildBackColorBrush()
+auto CD2D1DCSupport::GetWeakSoildBackColorBrush()
     -> ID2D1SolidColorBrush*
 {
     return m_p_soild_back_color_brush;
