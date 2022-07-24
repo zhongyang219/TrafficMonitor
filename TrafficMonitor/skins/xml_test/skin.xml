@@ -19,6 +19,8 @@
 		<time>ra1YX2g1</time>
 		<cosutom_item>b4zc373y</cosutom_item>
 		<battery>b5R30ITQ</battery>
+		<weather>NdKZEf39</weather>
+		<text_reader>W5XuBvH0</text_reader>
 	</plugin_map>
 	<layout text_height="20" no_label="0">
 		<layout_l width="232" height="107">
@@ -28,9 +30,9 @@
 			<up x="14" y="27" width="106" align="0" show="1"/>
 			<down x="122" y="27" width="106" align="0" show="1"/>
 			<total_speed x="32" y="57" width="94" align="0" show="1"/>
-			<cpu_temperature x="32" y="83" width="94" align="0" show="1"/>
+      <weather x="32" y="83" width="94" align="0" show="1"/>
 			<time x="142" y="57" width="94" align="0" show="1"/>
-			<cosutom_item x="142" y="83" width="94" align="0" show="1"/>
+      <text_reader x="142" y="83" width="94" align="0" show="1"/>
 		</layout_l>
 		<layout_s width="232" height="50">
 			<cpu x="14" y="3" width="106" align="0" show="1"/>

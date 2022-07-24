@@ -1767,8 +1767,23 @@ void CTrafficMonitorDlg::OnRButtonUp(UINT nFlags, CPoint point)
 void CTrafficMonitorDlg::OnLButtonDown(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
+    CheckClickedItem(point);
+    bool plugin_item_clicked = false;   //是否响应了插件项目的左键点击事件
+    if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)      //点击的是否为插件项目
+    {
+        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+        if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
+        {
+            if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_LCLICKED, point.x, point.y, (void*)GetSafeHwnd(), 0) != 0)
+            {
+                plugin_item_clicked = true;
+                Invalidate();
+            }
+        }
+    }
+
     //在未锁定窗口位置时允许通过点击窗口内部来拖动窗口
-    if (!theApp.m_main_wnd_data.m_lock_window_pos)
+    if (!theApp.m_main_wnd_data.m_lock_window_pos && !plugin_item_clicked)
         PostMessage(WM_NCLBUTTONDOWN, HTCAPTION, MAKELPARAM(point.x, point.y));
     CDialog::OnLButtonDown(nFlags, point);
 }
@@ -1950,6 +1965,19 @@ BOOL CTrafficMonitorDlg::PreTranslateMessage(MSG* pMsg)
     if (theApp.m_main_wnd_data.show_tool_tip && m_tool_tips.GetSafeHwnd())
     {
         m_tool_tips.RelayEvent(pMsg);
+    }
+
+    if (pMsg->message == WM_KEYDOWN)
+    {
+        bool ctrl = (GetKeyState(VK_CONTROL) & 0x80);
+        bool shift = (GetKeyState(VK_SHIFT) & 0x8000);
+        bool alt = (GetKeyState(VK_MENU) & 0x8000);
+        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+        if (plugin != nullptr && plugin->GetAPIVersion() >= 4)
+        {
+            if (m_clicked_item.plugin_item->OnKeboardEvent(pMsg->wParam, ctrl, shift, alt, (void*)GetSafeHwnd(), IPluginItem::KF_TASKBAR_WND) != 0)
+                return TRUE;
+        }
     }
 
     return CDialog::PreTranslateMessage(pMsg);
@@ -2620,16 +2648,16 @@ void CTrafficMonitorDlg::OnDisplaySettings()
 void CTrafficMonitorDlg::OnLButtonUp(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
-    CheckClickedItem(point);
-    if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
-    {
-        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
-        if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
-        {
-            if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_LCLICKED, point.x, point.y, (void*)GetSafeHwnd(), 0) != 0)
-                return;
-        }
-    }
+    //CheckClickedItem(point);
+    //if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+    //{
+    //    ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+    //    if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
+    //    {
+    //        if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_LCLICKED, point.x, point.y, (void*)GetSafeHwnd(), 0) != 0)
+    //            return;
+    //    }
+    //}
 
     CDialog::OnLButtonUp(nFlags, point);
 }
