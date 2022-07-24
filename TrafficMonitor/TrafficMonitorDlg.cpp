@@ -1690,6 +1690,24 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
     {
         if (IsTaskbarWndValid())
         {
+            ++m_taskbar_timer_cnt;
+
+            //启动时就隐藏主窗体的情况下，无法收到dpichange消息，故需要手动检查
+            //每次100ms*10执行一次屏幕DPI检查，并且尽可能少的检查操作系统版本
+            if (m_taskbar_timer_cnt % 10 == 0 && theApp.m_win_version.IsWindows8Point1OrLater())
+            {
+                CTaskBarDlg::CheckWindowMonitorDPIAndHandle(*m_tBarDlg, [p_TaskBarDlg = m_tBarDlg](UINT new_dpi_x, UINT new_dpi_y)
+                                                            {
+                                                                // auto s_dpi = std::to_string(new_dpi_x);
+                                                                // s_dpi += '\n';
+                                                                // TRACE(s_dpi.c_str());
+                                                                //考虑到任务栏窗口可能和主窗口不在同一个屏幕上，dpi可能不同
+                                                                //设置DPI并刷新窗口
+                                                                p_TaskBarDlg->SetDPI(new_dpi_x);
+                                                                p_TaskBarDlg->SetTextFont();
+                                                                p_TaskBarDlg->CalculateWindowSize(); });
+            }
+
             m_tBarDlg->AdjustWindowPos();
             m_tBarDlg->Invalidate(FALSE);
         }
@@ -2479,8 +2497,11 @@ afx_msg LRESULT CTrafficMonitorDlg::OnDpichanged(WPARAM wParam, LPARAM lParam)
 {
     int dpi = LOWORD(wParam);
     theApp.SetDPI(dpi);
-    if (IsTaskbarWndValid())
+    //当系统版本小于Windows 8.1时使用原来的行为
+    if (IsTaskbarWndValid() && !theApp.m_win_version.IsWindows8Point1OrLater())
     {
+        //为任务栏窗口重新指定DPI
+        m_tBarDlg->SetDPI(dpi);
         //根据新的DPI重新设置任务栏窗口字体
         m_tBarDlg->SetTextFont();
     }
