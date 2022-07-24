@@ -231,7 +231,7 @@ void CPluginManagerDlg::OnInitMenu(CMenu* pMenu)
 
 void CPluginManagerDlg::OnPluginDetail()
 {
-    OnBnClickedOptinsButton();
+    OnBnClickedPluginInfoButton();
 }
 
 
