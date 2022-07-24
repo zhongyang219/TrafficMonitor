@@ -1356,6 +1356,7 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
 
 void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 {
+
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     if (nIDEvent == MONITOR_TIMER)
     {
@@ -1365,6 +1366,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
     if (nIDEvent == MAIN_TIMER)
     {
+        m_timer_cnt++;
         if (m_first_start)      //这个if语句在程序启动后1秒执行
         {
             //将设置窗口置顶的处理放在这里是用于解决
@@ -1460,19 +1462,19 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                     CloseTaskBarWnd();
                     OpenTaskBarWnd();
                     m_insert_to_taskbar_cnt++;
-                    if (m_insert_to_taskbar_cnt == MAX_INSERT_TO_TASKBAR_CNT)
+                    if (m_tBarDlg->GetCannotInsertToTaskBar() && m_insert_to_taskbar_cnt >= WARN_INSERT_TO_TASKBAR_CNT)
                     {
-                        if (m_tBarDlg->GetCannotInsertToTaskBar() && m_cannot_intsert_to_task_bar_warning)      //确保提示信息只弹出一次
+                        //写入错误日志
+                        CString info;
+                        info.LoadString(IDS_CONNOT_INSERT_TO_TASKBAR_ERROR_LOG);
+                        info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_insert_to_taskbar_cnt));
+                        info.Replace(_T("<%error_code%>"), CCommon::IntToString(m_tBarDlg->GetErrorCode()));
+                        CCommon::WriteLog(info, theApp.m_log_path.c_str());
+                        if (m_cannot_insert_to_task_bar_warning)      //确保提示信息只弹出一次
                         {
-                            //写入错误日志
-                            CString info;
-                            info.LoadString(IDS_CONNOT_INSERT_TO_TASKBAR_ERROR_LOG);
-                            info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_insert_to_taskbar_cnt));
-                            info.Replace(_T("<%error_code%>"), CCommon::IntToString(m_tBarDlg->GetErrorCode()));
-                            CCommon::WriteLog(info, theApp.m_log_path.c_str());
                             //弹出错误信息
+                            m_cannot_insert_to_task_bar_warning = false;
                             MessageBox(CCommon::LoadText(IDS_CONNOT_INSERT_TO_TASKBAR, CCommon::IntToString(m_tBarDlg->GetErrorCode())), NULL, MB_ICONWARNING);
-                            m_cannot_intsert_to_task_bar_warning = false;
                         }
                     }
                 }
@@ -1677,7 +1679,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
         UpdateNotifyIconTip();
 
-        m_timer_cnt++;
+
     }
 
     if (nIDEvent == DELAY_TIMER)
