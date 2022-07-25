@@ -93,10 +93,11 @@ protected:
 
     int m_restart_cnt{ -1 };    //重新初始化次数
     unsigned int m_timer_cnt{};     //定时器触发次数（自程序启动以来的秒数）
+    unsigned int m_taskbar_timer_cnt{0}; //适用于TaskBarDlg的定时器触发次数（自程序启动以来的秒数）
     unsigned int m_monitor_time_cnt{};
     int m_zero_speed_cnt{}; //如果检测不到网速，该变量就会自加
     int m_insert_to_taskbar_cnt{};  //用来统计尝试嵌入任务栏的次数
-    int m_cannot_intsert_to_task_bar_warning{ true };   //指示是否会在无法嵌入任务栏时弹出提示框
+    int m_cannot_insert_to_task_bar_warning{ true };   //指示是否会在无法嵌入任务栏时弹出提示框
 
     static unsigned int m_WM_TASKBARCREATED;    //任务栏重启消息
 

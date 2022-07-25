@@ -2,12 +2,14 @@
 //
 
 #include "stdafx.h"
+#include <shellscalingapi.h> // 包含::GetDpiForMonitor
 #include "TrafficMonitor.h"
 #include "TaskBarDlg.h"
 #include "afxdialogex.h"
 #include "TrafficMonitorDlg.h"
 #include "WindowsSettingHelper.h"
 
+#pragma comment(lib, "Shcore.lib") // 函数::GetDpiForMonitor依赖此lib
 
 // CTaskBarDlg 对话框
 
@@ -79,7 +81,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
             if (theApp.m_taskbar_data.horizontal_arrange)   //水平排列
             {
                 if (index > 0)
-                    item_rect.MoveToX(item_rect.right + theApp.DPI(theApp.m_taskbar_data.item_space));
+                    item_rect.MoveToX(item_rect.right + DPI(theApp.m_taskbar_data.item_space));
                 item_rect.right = item_rect.left + iter->item_width.TotalWidth();
                 item_rect.bottom = item_rect.top + m_window_height;
                 if (iter->is_plugin)
@@ -94,7 +96,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                 {
                     CRect item_rect_up;     //上面一个项目的矩形区域
                     if (index > 0)
-                        item_rect_up.MoveToXY(item_rect.right + theApp.DPI(theApp.m_taskbar_data.item_space), 0);
+                        item_rect_up.MoveToXY(item_rect.right + DPI(theApp.m_taskbar_data.item_space), 0);
                     item_rect.left = item_rect_up.left;
                     item_rect.top = (m_window_height - TASKBAR_WND_HEIGHT / 2);
                     //确定窗口大小
@@ -117,7 +119,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                 //要绘制的项目为奇数时绘制最后一个
                 else if (item_count % 2 == 1 && index == item_count - 1)
                 {
-                    item_rect.MoveToXY(item_rect.right + theApp.DPI(theApp.m_taskbar_data.item_space), 0);
+                    item_rect.MoveToXY(item_rect.right + DPI(theApp.m_taskbar_data.item_space), 0);
                     item_rect.bottom = TASKBAR_WND_HEIGHT;
                     item_rect.right = item_rect.left + iter->item_width.MaxWidth();
                     if (iter->is_plugin)
@@ -131,9 +133,9 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
         else
         {
             if (index > 0)
-                item_rect.MoveToXY(0, item_rect.bottom + theApp.DPI(theApp.m_taskbar_data.item_space));
+                item_rect.MoveToXY(0, item_rect.bottom + DPI(theApp.m_taskbar_data.item_space));
             item_rect.bottom = item_rect.top + TASKBAR_WND_HEIGHT / 2;
-            item_rect.right = item_rect.left + min(m_window_width, m_rcMin.Width() - theApp.DPI(theApp.m_taskbar_data.item_space));
+            item_rect.right = item_rect.left + min(m_window_width, m_rcMin.Width() - DPI(theApp.m_taskbar_data.item_space));
             if (iter->is_plugin)
                 DrawPluginItem(draw, iter->plugin_item, item_rect, iter->item_width.label_width);
             else
@@ -489,12 +491,12 @@ bool CTaskBarDlg::AdjustWindowPos()
                             if (CWindowsSettingHelper::IsTaskbarChartBtnShown())
                                 taskbar_btn_num++;
 
-                            m_rect.MoveToX(m_rcMin.left - m_rect.Width() - 2 - theApp.DPI(44) * taskbar_btn_num);   //每个按钮44像素
+                            m_rect.MoveToX(m_rcMin.left - m_rect.Width() - 2 - DPI(44) * taskbar_btn_num);   //每个按钮44像素
                         }
                         else
                         {
                             if (CWindowsSettingHelper::IsTaskbarWidgetsBtnShown())
-                                m_rect.MoveToX(2 + theApp.DPI(theApp.m_cfg_data.taskbar_left_space_win11));
+                                m_rect.MoveToX(2 + DPI(theApp.m_cfg_data.taskbar_left_space_win11));
                             else
                                 m_rect.MoveToX(2);
                         }
@@ -512,7 +514,7 @@ bool CTaskBarDlg::AdjustWindowPos()
             }
             m_rect.MoveToY((m_rcBar.Height() - m_rect.Height()) / 2);
             if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())
-                m_rect.MoveToY(m_rect.top + theApp.DPI(1));
+                m_rect.MoveToY(m_rect.top + DPI(1));
             MoveWindow(m_rect);
         }
     }
@@ -535,8 +537,8 @@ bool CTaskBarDlg::AdjustWindowPos()
                 m_rect.MoveToY(m_top_space);
             }
             m_rect.MoveToX((m_rcMin.Width() - m_window_width) / 2);
-            if (m_rect.left < theApp.DPI(2))
-                m_rect.MoveToX(theApp.DPI(2));
+            if (m_rect.left < DPI(2))
+                m_rect.MoveToX(DPI(2));
             MoveWindow(m_rect);
         }
     }
@@ -579,6 +581,46 @@ void CTaskBarDlg::ApplyWindowTransparentColor()
 #endif // !COMPILE_FOR_WINXP
 }
 
+const RECT& CTaskBarDlg::GetSelfRect() const
+{
+    return m_rect;
+}
+
+UINT CTaskBarDlg::GetDPI() const
+{
+    return m_taskbar_dpi;
+}
+
+void CTaskBarDlg::SetDPI(UINT dpi)
+{
+    m_taskbar_dpi = dpi;
+}
+
+UINT CTaskBarDlg::DPI(UINT pixel) const
+{
+    return m_taskbar_dpi * pixel / 96;
+}
+
+void CTaskBarDlg::DPI(CRect& rect) const
+{
+    rect.left = DPI(rect.left);
+    rect.right = DPI(rect.right);
+    rect.top = DPI(rect.top);
+    rect.bottom = DPI(rect.bottom);
+}
+
+void CTaskBarDlg::DPIFromRect(const RECT& rect, UINT* out_dpi_x, UINT* out_dpi_y)
+{
+    HMONITOR h_current_monitor = ::MonitorFromRect(&rect, MONITOR_DEFAULTTONEAREST);
+    ::GetDpiForMonitor(h_current_monitor, MDT_EFFECTIVE_DPI, out_dpi_x, out_dpi_y);
+}
+
+CTaskBarDlg::ClassCheckWindowMonitorDPIAndHandle CTaskBarDlg::CheckWindowMonitorDPIAndHandle{};
+
+UINT CTaskBarDlg::ClassCheckWindowMonitorDPIAndHandle::buffered_dpi_x{0};
+UINT CTaskBarDlg::ClassCheckWindowMonitorDPIAndHandle::buffered_dpi_y{0};
+UINT CTaskBarDlg::ClassCheckWindowMonitorDPIAndHandle::dpi_x{0};
+UINT CTaskBarDlg::ClassCheckWindowMonitorDPIAndHandle::dpi_y{0};
 
 void CTaskBarDlg::CheckTaskbarOnTopOrBottom()
 {
@@ -706,7 +748,7 @@ void CTaskBarDlg::SetTextFont()
         m_font.DeleteObject();
     }
     //创建新的字体
-    theApp.m_taskbar_data.font.Create(m_font, theApp.GetDpi());
+    theApp.m_taskbar_data.font.Create(m_font, GetDPI());
 }
 
 void CTaskBarDlg::ApplySettings()
@@ -823,7 +865,7 @@ void CTaskBarDlg::CalculateWindowSize()
     else
         str = _T("99°C");
     value_width = m_pDC->GetTextExtent(str).cx;
-    value_width += theApp.DPI(2);
+    value_width += DPI(2);
     item_widths[TDI_CPU_TEMP].value_width = value_width;
     item_widths[TDI_GPU_TEMP].value_width = value_width;
     item_widths[TDI_HDD_TEMP].value_width = value_width;
@@ -869,7 +911,7 @@ void CTaskBarDlg::CalculateWindowSize()
             {
                 m_window_width += iter->item_width.TotalWidth();
             }
-            m_window_width += theApp.DPI(theApp.m_taskbar_data.item_space) * item_count;   //加上每个标签间的空隙
+            m_window_width += DPI(theApp.m_taskbar_data.item_space) * item_count;   //加上每个标签间的空隙
         }
         else        //非水平排列时，每两个一组排列
         {
@@ -893,7 +935,7 @@ void CTaskBarDlg::CalculateWindowSize()
                 index++;
             }
 
-            m_window_width += theApp.DPI(theApp.m_taskbar_data.item_space) * ((item_count + 1) / 2 + 1);   //加上每个标签间的空隙
+            m_window_width += DPI(theApp.m_taskbar_data.item_space) * ((item_count + 1) / 2 + 1);   //加上每个标签间的空隙
         }
     }
     else        //任务栏在桌面两侧时
@@ -918,7 +960,7 @@ void CTaskBarDlg::CalculateWindowSize()
     else
     {
         m_window_height = TASKBAR_WND_HEIGHT / 2 * item_count;
-        m_window_height += (theApp.DPI(theApp.m_taskbar_data.item_space) * item_count);   //加上每个标签间的空隙
+        m_window_height += (DPI(theApp.m_taskbar_data.item_space) * item_count);   //加上每个标签间的空隙
     }
     m_rect.right = m_rect.left + m_window_width;
     m_rect.bottom = m_rect.top + m_window_height;
@@ -967,9 +1009,6 @@ BOOL CTaskBarDlg::OnInitDialog()
     m_pDC = GetDC();
 
 
-    //设置字体
-    SetTextFont();
-    m_pDC->SelectObject(&m_font);
 
 
     m_hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL);      //寻找类名是Shell_TrayWnd的窗口句柄
@@ -988,6 +1027,22 @@ BOOL CTaskBarDlg::OnInitDialog()
     ::GetWindowRect(m_hBar, m_rcBar);   //获得二级容器的区域
     m_left_space = m_rcMin.left - m_rcBar.left;
     m_top_space = m_rcMin.top - m_rcBar.top;
+
+    //根据已经确定的任务栏最小化窗口区域得到屏幕并获得所在屏幕的DPI（Windows 8.1及其以上）
+    if (theApp.m_win_version.IsWindows8Point1OrLater())
+    {
+        UINT dpi_x, dpi_y;
+        DPIFromRect(m_rcMin, &dpi_x, &dpi_y);
+        SetDPI(dpi_x);
+    }
+    else
+    {
+        SetDPI(theApp.GetDpi());
+    }
+
+    //设置字体
+    SetTextFont();
+    m_pDC->SelectObject(&m_font);
 
     CheckTaskbarOnTopOrBottom();
     CalculateWindowSize();
