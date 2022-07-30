@@ -2,14 +2,11 @@
 //
 
 #include "stdafx.h"
-#include <shellscalingapi.h> // 包含::GetDpiForMonitor
 #include "TrafficMonitor.h"
 #include "TaskBarDlg.h"
 #include "afxdialogex.h"
 #include "TrafficMonitorDlg.h"
 #include "WindowsSettingHelper.h"
-
-#pragma comment(lib, "Shcore.lib") // 函数::GetDpiForMonitor依赖此lib
 
 // CTaskBarDlg 对话框
 
@@ -612,7 +609,7 @@ void CTaskBarDlg::DPI(CRect& rect) const
 void CTaskBarDlg::DPIFromRect(const RECT& rect, UINT* out_dpi_x, UINT* out_dpi_y)
 {
     HMONITOR h_current_monitor = ::MonitorFromRect(&rect, MONITOR_DEFAULTTONEAREST);
-    ::GetDpiForMonitor(h_current_monitor, MDT_EFFECTIVE_DPI, out_dpi_x, out_dpi_y);
+    theApp.m_dll_functions.GetDpiForMonitor(h_current_monitor, MDT_EFFECTIVE_DPI, out_dpi_x, out_dpi_y);
 }
 
 CTaskBarDlg::ClassCheckWindowMonitorDPIAndHandle CTaskBarDlg::CheckWindowMonitorDPIAndHandle{};
