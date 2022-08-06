@@ -457,7 +457,9 @@ bool CTaskBarDlg::AdjustWindowPos()
             m_rcMinOri = m_rcMin;
             m_left_space = m_rcMin.left - m_rcBar.left;
             m_min_bar_width = m_rcMin.Width() - m_rect.Width(); //保存最小化窗口宽度
-            if (!theApp.m_taskbar_data.tbar_wnd_on_left)
+            //设置为任务窗口不显示在左侧时，或者Windows11下任务栏左对齐时
+            //（Windows11下，如果任务栏设置为左对齐，即使在“任务栏窗口设置”中设置了任务窗口显示在左边，窗口仍然显示在右边）
+            if (!theApp.m_taskbar_data.tbar_wnd_on_left || (theApp.m_is_windows11_taskbar && !CWindowsSettingHelper::IsTaskbarCenterAlign()))
             {
                 if (theApp.m_is_windows11_taskbar)
                 {
@@ -476,32 +478,32 @@ bool CTaskBarDlg::AdjustWindowPos()
             {
                 if (theApp.m_is_windows11_taskbar)
                 {
-                    if (CWindowsSettingHelper::IsTaskbarCenterAlign())
+                    //if (CWindowsSettingHelper::IsTaskbarCenterAlign())      //Windows11任务栏居中
+                    //{
+                    if (theApp.m_taskbar_data.tbar_wnd_snap)
                     {
-                        if (theApp.m_taskbar_data.tbar_wnd_snap)
-                        {
-                            int taskbar_btn_num{ 1 };      //Win11任务栏“运行中的程序”左侧4个按钮（开始、搜索、任务视图、聊天）有几个显示。（“开始”按钮总是显示）
-                            if (CWindowsSettingHelper::IsTaskbarSearchBtnShown())
-                                taskbar_btn_num++;
-                            if (CWindowsSettingHelper::IsTaskbarTaskViewBtnShown())
-                                taskbar_btn_num++;
-                            if (CWindowsSettingHelper::IsTaskbarChartBtnShown())
-                                taskbar_btn_num++;
+                        int taskbar_btn_num{ 1 };      //Win11任务栏“运行中的程序”左侧4个按钮（开始、搜索、任务视图、聊天）有几个显示。（“开始”按钮总是显示）
+                        if (CWindowsSettingHelper::IsTaskbarSearchBtnShown())
+                            taskbar_btn_num++;
+                        if (CWindowsSettingHelper::IsTaskbarTaskViewBtnShown())
+                            taskbar_btn_num++;
+                        if (CWindowsSettingHelper::IsTaskbarChartBtnShown())
+                            taskbar_btn_num++;
 
-                            m_rect.MoveToX(m_rcMin.left - m_rect.Width() - 2 - DPI(44) * taskbar_btn_num);   //每个按钮44像素
-                        }
-                        else
-                        {
-                            if (CWindowsSettingHelper::IsTaskbarWidgetsBtnShown())
-                                m_rect.MoveToX(2 + DPI(theApp.m_cfg_data.taskbar_left_space_win11));
-                            else
-                                m_rect.MoveToX(2);
-                        }
+                        m_rect.MoveToX(m_rcMin.left - m_rect.Width() - 2 - DPI(44) * taskbar_btn_num);   //每个按钮44像素
                     }
                     else
                     {
-                        m_rect.MoveToX(2);
+                        if (CWindowsSettingHelper::IsTaskbarWidgetsBtnShown())
+                            m_rect.MoveToX(2 + DPI(theApp.m_cfg_data.taskbar_left_space_win11));
+                        else
+                            m_rect.MoveToX(2);
                     }
+                    //}
+                    //else
+                    //{
+                    //    m_rect.MoveToX(2);
+                    //}
                 }
                 else
                 {
