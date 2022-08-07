@@ -410,6 +410,9 @@
     <ClInclude Include="WindowsSettingHelper.h">
       <Filter>源文件和头文件\公共的类\WindowsSettingHelper</Filter>
     </ClInclude>
+    <ClInclude Include="DllFunctions.h">
+      <Filter>源文件和头文件\头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -606,6 +609,9 @@
     </ClCompile>
     <ClCompile Include="WindowsSettingHelper.cpp">
       <Filter>源文件和头文件\公共的类\WindowsSettingHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="DllFunctions.cpp">
+      <Filter>源文件和头文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

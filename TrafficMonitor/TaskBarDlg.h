@@ -8,7 +8,7 @@
 #include <list>
 
 // CTaskBarDlg 对话框
-#define TASKBAR_WND_HEIGHT theApp.DPI(32)				//任务栏窗口的高度
+#define TASKBAR_WND_HEIGHT DPI(32)				//任务栏窗口的高度
 #define WM_TASKBAR_MENU_POPED_UP (WM_USER + 1004)		//定义任务栏窗口右键菜单弹出时发出的消息
 //#define TASKBAR_GRAPH_MAX_LEN 600						//历史数据存储最大长度
 #define TASKBAR_GRAPH_STEP 5							//几秒钟画一条线
@@ -30,6 +30,41 @@ public:
 
     bool AdjustWindowPos();	//设置窗口在任务栏中的位置
     void ApplyWindowTransparentColor();
+
+    const RECT& GetSelfRect() const;
+
+    UINT GetDPI() const;
+    void SetDPI(UINT dpi);
+    UINT DPI(UINT pixel) const;
+    void DPI(CRect& rect) const;
+
+    static void DPIFromRect(const RECT& rect, UINT* out_dpi_x, UINT* out_dpi_y);
+    //下面的类定义可以看做函数定义，避免模板函数不同实例化导致静态变量不同。
+    // 近似函数声明
+    // template <class HanlderFunc>
+    // CheckWindowMonitorDPIAndHandle(CTaskBarDlg& ref_taskbar_window, HanlderFunc handler)
+    static class ClassCheckWindowMonitorDPIAndHandle
+    {
+    public:
+        template <class HandlerFunc>
+        void operator()(CTaskBarDlg& ref_taskbar_window, HandlerFunc handler)
+        {
+            DPIFromRect(ref_taskbar_window.GetSelfRect(), &dpi_x, &dpi_y);
+            //只取dpi_x作为程序dpi
+            if (dpi_x != buffered_dpi_x || dpi_y != buffered_dpi_y)
+            {
+                //更新缓存的数据
+                buffered_dpi_x = dpi_x;
+                buffered_dpi_y = dpi_y;
+                //调用用户自定义处理方法
+                handler(dpi_x, dpi_y);
+            }
+        }
+
+    private:
+        static UINT buffered_dpi_x, buffered_dpi_y;
+        static UINT dpi_x, dpi_y;
+    } CheckWindowMonitorDPIAndHandle;
 
     // 对话框数据
 #ifdef AFX_DESIGN_TIME
@@ -98,6 +133,8 @@ protected:
     bool m_taskbar_on_top_or_bottom{ true };		//如果任务栏在屏幕顶部或底部，则为ture
     int m_error_code{};
     bool m_menu_popuped{ false };               //指示当前是否有菜单处于弹出状态
+
+    UINT m_taskbar_dpi{};//TaskBarDlg自身专用dpi
 
     CFont m_font;			//字体
 

@@ -1356,6 +1356,7 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
 
 void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 {
+
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     if (nIDEvent == MONITOR_TIMER)
     {
@@ -1365,6 +1366,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
     if (nIDEvent == MAIN_TIMER)
     {
+        m_timer_cnt++;
         if (m_first_start)      //这个if语句在程序启动后1秒执行
         {
             //将设置窗口置顶的处理放在这里是用于解决
@@ -1460,19 +1462,19 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                     CloseTaskBarWnd();
                     OpenTaskBarWnd();
                     m_insert_to_taskbar_cnt++;
-                    if (m_insert_to_taskbar_cnt == MAX_INSERT_TO_TASKBAR_CNT)
+                    if (m_tBarDlg->GetCannotInsertToTaskBar() && m_insert_to_taskbar_cnt >= WARN_INSERT_TO_TASKBAR_CNT)
                     {
-                        if (m_tBarDlg->GetCannotInsertToTaskBar() && m_cannot_intsert_to_task_bar_warning)      //确保提示信息只弹出一次
+                        //写入错误日志
+                        CString info;
+                        info.LoadString(IDS_CONNOT_INSERT_TO_TASKBAR_ERROR_LOG);
+                        info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_insert_to_taskbar_cnt));
+                        info.Replace(_T("<%error_code%>"), CCommon::IntToString(m_tBarDlg->GetErrorCode()));
+                        CCommon::WriteLog(info, theApp.m_log_path.c_str());
+                        if (m_cannot_insert_to_task_bar_warning)      //确保提示信息只弹出一次
                         {
-                            //写入错误日志
-                            CString info;
-                            info.LoadString(IDS_CONNOT_INSERT_TO_TASKBAR_ERROR_LOG);
-                            info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_insert_to_taskbar_cnt));
-                            info.Replace(_T("<%error_code%>"), CCommon::IntToString(m_tBarDlg->GetErrorCode()));
-                            CCommon::WriteLog(info, theApp.m_log_path.c_str());
                             //弹出错误信息
+                            m_cannot_insert_to_task_bar_warning = false;
                             MessageBox(CCommon::LoadText(IDS_CONNOT_INSERT_TO_TASKBAR, CCommon::IntToString(m_tBarDlg->GetErrorCode())), NULL, MB_ICONWARNING);
-                            m_cannot_intsert_to_task_bar_warning = false;
                         }
                     }
                 }
@@ -1677,7 +1679,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
         UpdateNotifyIconTip();
 
-        m_timer_cnt++;
+
     }
 
     if (nIDEvent == DELAY_TIMER)
@@ -1690,6 +1692,24 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
     {
         if (IsTaskbarWndValid())
         {
+            ++m_taskbar_timer_cnt;
+
+            //启动时就隐藏主窗体的情况下，无法收到dpichange消息，故需要手动检查
+            //每次100ms*10执行一次屏幕DPI检查，并且尽可能少的检查操作系统版本
+            if (m_taskbar_timer_cnt % 10 == 0 && theApp.m_win_version.IsWindows8Point1OrLater())
+            {
+                CTaskBarDlg::CheckWindowMonitorDPIAndHandle(*m_tBarDlg, [p_TaskBarDlg = m_tBarDlg](UINT new_dpi_x, UINT new_dpi_y)
+                                                            {
+                                                                // auto s_dpi = std::to_string(new_dpi_x);
+                                                                // s_dpi += '\n';
+                                                                // TRACE(s_dpi.c_str());
+                                                                //考虑到任务栏窗口可能和主窗口不在同一个屏幕上，dpi可能不同
+                                                                //设置DPI并刷新窗口
+                                                                p_TaskBarDlg->SetDPI(new_dpi_x);
+                                                                p_TaskBarDlg->SetTextFont();
+                                                                p_TaskBarDlg->CalculateWindowSize(); });
+            }
+
             m_tBarDlg->AdjustWindowPos();
             m_tBarDlg->Invalidate(FALSE);
         }
@@ -1747,8 +1767,23 @@ void CTrafficMonitorDlg::OnRButtonUp(UINT nFlags, CPoint point)
 void CTrafficMonitorDlg::OnLButtonDown(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
+    CheckClickedItem(point);
+    bool plugin_item_clicked = false;   //是否响应了插件项目的左键点击事件
+    if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)      //点击的是否为插件项目
+    {
+        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+        if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
+        {
+            if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_LCLICKED, point.x, point.y, (void*)GetSafeHwnd(), 0) != 0)
+            {
+                plugin_item_clicked = true;
+                Invalidate();
+            }
+        }
+    }
+
     //在未锁定窗口位置时允许通过点击窗口内部来拖动窗口
-    if (!theApp.m_main_wnd_data.m_lock_window_pos)
+    if (!theApp.m_main_wnd_data.m_lock_window_pos && !plugin_item_clicked)
         PostMessage(WM_NCLBUTTONDOWN, HTCAPTION, MAKELPARAM(point.x, point.y));
     CDialog::OnLButtonDown(nFlags, point);
 }
@@ -1930,6 +1965,19 @@ BOOL CTrafficMonitorDlg::PreTranslateMessage(MSG* pMsg)
     if (theApp.m_main_wnd_data.show_tool_tip && m_tool_tips.GetSafeHwnd())
     {
         m_tool_tips.RelayEvent(pMsg);
+    }
+
+    if (pMsg->message == WM_KEYDOWN)
+    {
+        bool ctrl = (GetKeyState(VK_CONTROL) & 0x80);
+        bool shift = (GetKeyState(VK_SHIFT) & 0x8000);
+        bool alt = (GetKeyState(VK_MENU) & 0x8000);
+        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+        if (plugin != nullptr && plugin->GetAPIVersion() >= 4)
+        {
+            if (m_clicked_item.plugin_item->OnKeboardEvent(pMsg->wParam, ctrl, shift, alt, (void*)GetSafeHwnd(), IPluginItem::KF_TASKBAR_WND) != 0)
+                return TRUE;
+        }
     }
 
     return CDialog::PreTranslateMessage(pMsg);
@@ -2479,8 +2527,11 @@ afx_msg LRESULT CTrafficMonitorDlg::OnDpichanged(WPARAM wParam, LPARAM lParam)
 {
     int dpi = LOWORD(wParam);
     theApp.SetDPI(dpi);
-    if (IsTaskbarWndValid())
+    //当系统版本小于Windows 8.1时使用原来的行为
+    if (IsTaskbarWndValid() && !theApp.m_win_version.IsWindows8Point1OrLater())
     {
+        //为任务栏窗口重新指定DPI
+        m_tBarDlg->SetDPI(dpi);
         //根据新的DPI重新设置任务栏窗口字体
         m_tBarDlg->SetTextFont();
     }
@@ -2597,16 +2648,16 @@ void CTrafficMonitorDlg::OnDisplaySettings()
 void CTrafficMonitorDlg::OnLButtonUp(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
-    CheckClickedItem(point);
-    if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
-    {
-        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
-        if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
-        {
-            if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_LCLICKED, point.x, point.y, (void*)GetSafeHwnd(), 0) != 0)
-                return;
-        }
-    }
+    //CheckClickedItem(point);
+    //if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+    //{
+    //    ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+    //    if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
+    //    {
+    //        if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_LCLICKED, point.x, point.y, (void*)GetSafeHwnd(), 0) != 0)
+    //            return;
+    //    }
+    //}
 
     CDialog::OnLButtonUp(nFlags, point);
 }
