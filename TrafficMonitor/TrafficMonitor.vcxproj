@@ -233,6 +233,7 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions);WITHOUT_TEMPERATURE</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>false</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -305,6 +306,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions);WITHOUT_TEMPERATURE</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -385,6 +387,7 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions);WITHOUT_TEMPERATURE</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>$(ExternalCompilerOptions) %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -465,6 +468,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions);WITHOUT_TEMPERATURE</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -528,6 +532,8 @@
     <ClInclude Include="HistoryTrafficFile.h" />
     <ClInclude Include="HistoryTrafficListDlg.h" />
     <ClInclude Include="HResultException.h" />
+    <ClInclude Include="IDrawCommon.h" />
+    <ClInclude Include="Image2DEffect.h" />
     <ClInclude Include="LinkStatic.h" />
     <ClInclude Include="ColorStatic.h" />
     <ClInclude Include="Common.h" />
@@ -565,6 +571,7 @@
     <ClInclude Include="TaskbarColorDlg.h" />
     <ClInclude Include="TaskbarDefaultStyle.h" />
     <ClInclude Include="TaskBarDlg.h" />
+    <ClInclude Include="TaskBarDlgDrawCommon.h" />
     <ClInclude Include="TaskbarItemOrderHelper.h" />
     <ClInclude Include="TaskBarSettingsDlg.h" />
     <ClInclude Include="Test.h" />
@@ -603,6 +610,7 @@
     <ClCompile Include="HistoryTrafficFile.cpp" />
     <ClCompile Include="HistoryTrafficListDlg.cpp" />
     <ClCompile Include="HResultException.cpp" />
+    <ClCompile Include="Image2DEffect.cpp" />
     <ClCompile Include="LinkStatic.cpp" />
     <ClCompile Include="ColorStatic.cpp" />
     <ClCompile Include="Common.cpp" />
@@ -645,6 +653,7 @@
     <ClCompile Include="TaskbarColorDlg.cpp" />
     <ClCompile Include="TaskbarDefaultStyle.cpp" />
     <ClCompile Include="TaskBarDlg.cpp" />
+    <ClCompile Include="TaskBarDlgDrawCommon.cpp" />
     <ClCompile Include="TaskbarItemOrderHelper.cpp" />
     <ClCompile Include="TaskBarSettingsDlg.cpp" />
     <ClCompile Include="Test.cpp" />

@@ -391,7 +391,7 @@ public:
     }
     ~CStaticVariableWrapper()
     {
-        DTOR::operator()(std::addressof(m_content));
+        (*static_cast<DTOR*>(this))(std::addressof(m_content));
     }
     T& Get() noexcept
     {

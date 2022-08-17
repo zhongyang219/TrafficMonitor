@@ -14,15 +14,8 @@ bool EnableWriteMemoryGuard::GetState()
 
 int WINAPI User32DrawTextManager::A::CustomDrawTextA(HDC hdc, LPCSTR lpchText, int cchText, LPRECT lprc, UINT format)
 {
-    if (BaseSettings::GetEnable() && BaseSettings::ConfirmDC(hdc))
-    {
-        return BaseSettings::m_replaced_function(hdc, lpchText, cchText, lprc, format);
-    }
-    else
-    {
-        //即调用系统的DrawTextA(hdc, lpchText, cchText, lprc, format);
-        return (*BaseSettings::m_old_function_pointer)(hdc, lpchText, cchText, lprc, format);
-    }
+
+    return BaseSettings::m_replaced_function(hdc, lpchText, cchText, lprc, format);
 }
 
 auto User32DrawTextManager::A::GetFunction() noexcept
@@ -33,15 +26,8 @@ auto User32DrawTextManager::A::GetFunction() noexcept
 
 int WINAPI User32DrawTextManager::W::CustomDrawTextW(HDC hdc, LPCWSTR lpchText, int cchText, LPRECT lprc, UINT format)
 {
-    if (BaseSettings::GetEnable() && BaseSettings::ConfirmDC(hdc))
-    {
-        return BaseSettings::m_replaced_function(hdc, lpchText, cchText, lprc, format);
-    }
-    else
-    {
-        //即调用系统的 ::DrawTextW(hdc, lpchText, cchText, lprc, format)
-        return (*BaseSettings::m_old_function_pointer)(hdc, lpchText, cchText, lprc, format);
-    }
+
+    return BaseSettings::m_replaced_function(hdc, lpchText, cchText, lprc, format);
 }
 
 auto User32DrawTextManager::W::GetFunction() noexcept
@@ -52,15 +38,8 @@ auto User32DrawTextManager::W::GetFunction() noexcept
 
 int WINAPI User32DrawTextManager::ExA::CustomDrawTextExA(HDC hdc, LPSTR lpchText, int cchText, LPRECT lprc, UINT format, LPDRAWTEXTPARAMS lpdtp)
 {
-    if (BaseSettings::GetEnable() && BaseSettings::ConfirmDC(hdc))
-    {
-        return BaseSettings::m_replaced_function(hdc, lpchText, cchText, lprc, format, lpdtp);
-    }
-    else
-    {
-        //即调用系统的 ::DrawTextExA(hdc, lpchText, cchText, lprc, format, lpdtp)
-        return (*BaseSettings::m_old_function_pointer)(hdc, lpchText, cchText, lprc, format, lpdtp);
-    }
+
+    return BaseSettings::m_replaced_function(hdc, lpchText, cchText, lprc, format, lpdtp);
 }
 
 auto User32DrawTextManager::ExA::GetFunction() noexcept
@@ -71,15 +50,8 @@ auto User32DrawTextManager::ExA::GetFunction() noexcept
 
 int WINAPI User32DrawTextManager::ExW::CustomDrawTextExW(HDC hdc, LPWSTR lpchText, int cchText, LPRECT lprc, UINT format, LPDRAWTEXTPARAMS lpdtp)
 {
-    if (BaseSettings::GetEnable() && BaseSettings::ConfirmDC(hdc))
-    {
-        return BaseSettings::m_replaced_function(hdc, lpchText, cchText, lprc, format, lpdtp);
-    }
-    else
-    {
-        //即调用系统的 ::DrawTextExW(hdc, lpchText, cchText, lprc, format, lpdtp)
-        return (*BaseSettings::m_old_function_pointer)(hdc, lpchText, cchText, lprc, format, lpdtp);
-    }
+
+    return BaseSettings::m_replaced_function(hdc, lpchText, cchText, lprc, format, lpdtp);
 }
 
 auto User32DrawTextManager::ExW::GetFunction() noexcept

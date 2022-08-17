@@ -17,6 +17,8 @@
 #include <map>
 #include "OpenHardwareMonitor/OpenHardwareMonitorApi.h"
 #include "PluginManager.h"
+#include "Nullable.hpp"
+#include "TaskBarDlgDrawCommon.h"
 
 // CTrafficMonitorApp:
 // 有关此类的实现，请参阅 TrafficMonitor.cpp
@@ -95,6 +97,7 @@ public:
 
     CCriticalSection m_minitor_lib_critical;        //用于访问OpenHardwareMonitor进行线程同步的临界区对象
     //CCriticalSection m_lftable_critical;            //用于访问LfTable2进行线程同步的临界区对象
+    CLazyConstructable<CTaskBarDlgDrawCommonSupport> m_d2d_taskbar_draw_common{}; // 当使用D2D渲染时自动初始化的全局依赖
 
 public:
     CTrafficMonitorApp();

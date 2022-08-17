@@ -1,36 +1,10 @@
 ﻿//封装的绘图类
 #pragma once
+#include "IDrawCommon.h"
 #include "D2D1Support.h"
 #include "CommonData.h"
 #include "Nullable.hpp"
 
-class IDrawBuffer
-{
-public:
-    virtual CDC *GetMemDC() = 0;
-protected:
-    ~IDrawBuffer() = default;
-};
-
-class IDrawCommon
-{
-public:
-    virtual void SetBackColor(COLORREF back_color, BYTE alpha = 255) = 0;
-    //设置绘制文本的字体
-    virtual void SetFont(CFont* pfont) = 0;
-    //在指定的矩形区域内绘制文本
-    virtual void DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align = Alignment::LEFT, bool draw_back_ground = false, bool multi_line = false, BYTE alpha = 255) = 0;
-    //用纯色填充矩形
-    virtual void FillRect(CRect rect, COLORREF color, BYTE alpha = 255) = 0;
-    //绘制矩形边框。如果dot_line为true，则为虚线
-    virtual void DrawRectOutLine(CRect rect, COLORREF color, int width = 1, bool dot_line = false, BYTE alpha = 255) = 0;
-    //使用当前画笔画线
-    virtual void DrawLine(CPoint start_point, int height, COLORREF color, BYTE alpha = 255) = 0;
-    virtual void SetTextColor(const COLORREF color, BYTE alpha = 255) = 0;
-
-protected:
-    ~IDrawCommon() = default;
-};
 class CDrawCommon final : public IDrawCommon
 {
 public:
@@ -167,180 +141,165 @@ namespace DrawCommonHelper
     auto GetArgb32BitmapInfo(LONG width, LONG height) noexcept
         -> ::BITMAPINFO;
 
-    enum class RenderType
-    {
-        //使用GDI
-        Default,
-        //如果支持，使用D2D1
-        D2D1
-    };
-    template <RenderType render_type>
-    struct RenderTypeTag
-    {
-        constexpr static RenderType type = render_type;
-    };
-    using RenderTypeDefaultTag = RenderTypeTag<RenderType::Default>;
-    using RenderTypeD2D1Tag = RenderTypeTag<RenderType::D2D1>;
-
     void DefaultD2DDrawCommonExceptionHandler(CHResultException& ex);
 };
 
-class SizeWrapper
-{
-private:
-    SIZE m_content;
+// class SizeWrapper
+// {
+// private:
+//     SIZE m_content;
 
-public:
-    SizeWrapper(LONG width = 0, LONG height = 0);
-    SizeWrapper(SIZE size);
-    ~SizeWrapper() = default;
+// public:
+//     SizeWrapper(LONG width = 0, LONG height = 0);
+//     SizeWrapper(SIZE size);
+//     ~SizeWrapper() = default;
 
-    SIZE* GetSizePointer();
+//     SIZE* GetSizePointer();
 
-    LONG GetWidth() const noexcept;
-    LONG GetHeight() const noexcept;
-    void SetWidth(LONG width) noexcept;
-    void SetHeight(LONG height) noexcept;
-};
+//     LONG GetWidth() const noexcept;
+//     LONG GetHeight() const noexcept;
+//     void SetWidth(LONG width) noexcept;
+//     void SetHeight(LONG height) noexcept;
+// };
 
-class D2D1DrawCommon final : public IDrawCommon
-{
-private:
-    CD2D1DCSupport* m_p_support{NULL};
-    IDWriteTextFormat* m_p_text_format{NULL};
-    IDWriteFont* m_p_font{NULL};
-    HFONT m_no_aa_font{NULL};
-    COLORREF m_gdi_color{};
+// class D2D1DrawCommon final : public IDrawCommon
+// {
+// private:
+//     CD2D1DCSupport* m_p_support{NULL};
+//     IDWriteTextFormat* m_p_text_format{NULL};
+//     IDWriteFont* m_p_font{NULL};
+//     HFONT m_no_aa_font{NULL};
+//     COLORREF m_gdi_color{};
 
-    class GdiBitmap
-    {
-    private:
-        CDC m_cdc;
-        BYTE* m_p_bitmap;
-        ID2D1DCRenderTarget* m_p_render_target;
-        HBITMAP m_hbitmap;
-        HGDIOBJ m_old_hbitmap;
-        HGDIOBJ m_old_font;
-        CRect m_rect;
+//     class GdiBitmap
+//     {
+//     private:
+//         CDC m_cdc;
+//         BYTE* m_p_bitmap;
+//         ID2D1DCRenderTarget* m_p_render_target;
+//         HBITMAP m_hbitmap;
+//         HGDIOBJ m_old_hbitmap;
+//         HGDIOBJ m_old_font;
+//         CRect m_rect;
 
-    public:
-        /**
-         * @brief 初始化 GdiBitmap，会自动根据render_traget创建一个RGB32的内存图片，D2D可以处理alpha通道
-         * @param ref_d2d1_draw_common 关联的D2D1DrawCommon对象，借助其中的信息初始化自身
-         * @param draw_rect 进行alpha通道处理的区域
-         */
-        GdiBitmap(D2D1DrawCommon& ref_d2d1_draw_common, CRect draw_rect);
-        ~GdiBitmap();
-        HDC GetDC();
+//     public:
+//         /**
+//          * @brief 初始化 GdiBitmap，会自动根据render_traget创建一个RGB32的内存图片，D2D可以处理alpha通道
+//          * @param ref_d2d1_draw_common 关联的D2D1DrawCommon对象，借助其中的信息初始化自身
+//          * @param draw_rect 进行alpha通道处理的区域
+//          */
+//         GdiBitmap(D2D1DrawCommon& ref_d2d1_draw_common, CRect draw_rect);
+//         ~GdiBitmap();
+//         HDC GetDC();
 
-    private:
-        void ReleaseResources();
-    };
+//     private:
+//         void ReleaseResources();
+//     };
 
-public:
-    D2D1DrawCommon();
-    ~D2D1DrawCommon();
-    void Create(CD2D1DCSupport& ref_support, HDC target_dc, CRect rect);
-    template <class GdiOp>
-    void ExecuteGdiOperation(CRect rect, GdiOp gdi_op)
-    {
-        auto* weak_render_target = m_p_support->GetWeakRenderTarget();
-        GdiBitmap gdi_wrapper{*this, rect};
-        gdi_op(gdi_wrapper.GetDC());
-    }
+// public:
+//     D2D1DrawCommon();
+//     ~D2D1DrawCommon();
+//     void Create(CD2D1DCSupport& ref_support, HDC target_dc, CRect rect);
+//     template <class GdiOp>
+//     void ExecuteGdiOperation(CRect rect, GdiOp gdi_op)
+//     {
+//         auto* weak_render_target = m_p_support->GetWeakRenderTarget();
+//         GdiBitmap gdi_wrapper{*this, rect};
+//         gdi_op(gdi_wrapper.GetDC());
+//     }
 
-    void SetBackColor(COLORREF back_color, BYTE apha = 255) override;
-    void SetFont(CFont* pfont) override;
-    //在指定的矩形区域内绘制文本
-    void DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align = Alignment::LEFT, bool draw_back_ground = false, bool multi_line = false, BYTE alpha = 255) override;
-    //用纯色填充矩形
-    void FillRect(CRect rect, COLORREF color, BYTE alpha = 255) override;
-    //绘制矩形边框。如果dot_line为true，则为虚线
-    void DrawRectOutLine(CRect rect, COLORREF color, int width = 1, bool dot_line = false, BYTE alpha = 255) override;
-    //使用当前画笔画线
-    void DrawLine(CPoint start_point, int height, COLORREF color, BYTE alpha = 255) override;
-    void SetTextColor(const COLORREF color, BYTE alpha = 255) override;
+//     void SetBackColor(COLORREF back_color, BYTE apha = 255) override;
+//     void SetFont(CFont* pfont) override;
+//     //在指定的矩形区域内绘制文本
+//     void DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align = Alignment::LEFT, bool draw_back_ground = false, bool multi_line = false, BYTE alpha = 255) override;
+//     //用纯色填充矩形
+//     void FillRect(CRect rect, COLORREF color, BYTE alpha = 255) override;
+//     //绘制矩形边框。如果dot_line为true，则为虚线
+//     void DrawRectOutLine(CRect rect, COLORREF color, int width = 1, bool dot_line = false, BYTE alpha = 255) override;
+//     //使用当前画笔画线
+//     void DrawLine(CPoint start_point, int height, COLORREF color, BYTE alpha = 255) override;
+//     void SetTextColor(const COLORREF color, BYTE alpha = 255) override;
 
-private:
-    void SetSupporterColor(const COLORREF color, BYTE alpha);
-    constexpr static float DEFAULT_DPI = 96.f;
-    static D2D1_RECT_F Convert(CRect rect);
-    static D2D1_POINT_2F Convert(CPoint point);
-};
+// private:
+//     void SetSupporterColor(const COLORREF color, BYTE alpha);
+//     constexpr static float DEFAULT_DPI = 96.f;
+//     static D2D1_RECT_F Convert(CRect rect);
+//     static D2D1_POINT_2F Convert(CPoint point);
+// };
 
-class DrawCommonBuffer final : public IDrawBuffer
-{
-public:
-    // reference from https://www.cnblogs.com/setoutsoft/p/4086051.html
-    DrawCommonBuffer(HWND hwnd, CRect rect);
-    // referce from https://www.cnblogs.com/strive-sun/p/13073015.html
-    ~DrawCommonBuffer();
-    DrawCommonBuffer(const DrawCommonBuffer&) = delete;
-    DrawCommonBuffer operator=(const DrawCommonBuffer&) = delete;
+// class DrawCommonBuffer final : public IDrawBuffer
+// {
+// public:
+//     // reference from https://www.cnblogs.com/setoutsoft/p/4086051.html
+//     DrawCommonBuffer(HWND hwnd, CRect rect);
+//     // referce from https://www.cnblogs.com/strive-sun/p/13073015.html
+//     ~DrawCommonBuffer();
+//     DrawCommonBuffer(const DrawCommonBuffer&) = delete;
+//     DrawCommonBuffer operator=(const DrawCommonBuffer&) = delete;
 
-    CDC* GetMemDC() override;
-    HDC GetDC();
+//     CDC* GetMemDC() override;
+//     HDC GetDC();
 
-private:
-    static auto GetDefaultBlendFunctionPointer()
-        -> const ::PBLENDFUNCTION;
+// private:
+//     static auto GetDefaultBlendFunctionPointer()
+//         -> const ::PBLENDFUNCTION;
 
-    CDC m_mem_display_dc;
-    HBITMAP m_display_hbitmap;
-    BYTE* m_p_display_bitmap;
-    HGDIOBJ m_old_display_bitmap;
-    HWND m_target_hwnd;
-    SizeWrapper m_size;
-};
+//     CDC m_mem_display_dc;
+//     HBITMAP m_display_hbitmap;
+//     BYTE* m_p_display_bitmap;
+//     HGDIOBJ m_old_display_bitmap;
+//     HWND m_target_hwnd;
+//     SizeWrapper m_size;
+// };
 
-class DrawCommonBufferUnion
-{
-private:
-    const DrawCommonHelper::RenderType m_type;
-    union Content
-    {
-        Content(){};  //手工管理构造
-        ~Content(){}; //手工管理析构
-        CNullable<CDrawDoubleBuffer> cdraw_double_buffer;
-        CNullable<DrawCommonBuffer> draw_common_buffer;
-    } m_content;
+// class DrawCommonBufferUnion
+// {
+// private:
+//     const DrawCommonHelper::RenderType m_type;
+//     union Content
+//     {
+//         Content(){};  //手工管理构造
+//         ~Content(){}; //手工管理析构
+//         CNullable<CDrawDoubleBuffer> cdraw_double_buffer;
+//         CNullable<DrawCommonBuffer> draw_common_buffer;
+//     } m_content;
 
-public:
-    DrawCommonBufferUnion(DrawCommonHelper::RenderType type)
-        : m_type{type} {};
-    template <class... Args>
-    void CreateDefaultVerion(Args&&... args)
-    {
-        ::new (&m_content.cdraw_double_buffer) CNullable<CDrawDoubleBuffer>();
-        m_content.cdraw_double_buffer.Construct(std::forward<Args>(args)...);
-    }
-    template <class... Args>
-    void CreateD2D1Version(Args&&... args)
-    {
-        ::new (&m_content.draw_common_buffer) CNullable<DrawCommonBuffer>();
-        m_content.draw_common_buffer.Construct(std::forward<Args>(args)...);
-    }
-    ~DrawCommonBufferUnion();
+// public:
+//     DrawCommonBufferUnion(DrawCommonHelper::RenderType type)
+//         : m_type{type} {};
+//     template <class... Args>
+//     void CreateDefaultVerion(Args&&... args)
+//     {
+//         ::new (&m_content.cdraw_double_buffer) CNullable<CDrawDoubleBuffer>();
+//         m_content.cdraw_double_buffer.Construct(std::forward<Args>(args)...);
+//     }
+//     template <class... Args>
+//     void CreateD2D1Version(Args&&... args)
+//     {
+//         ::new (&m_content.draw_common_buffer) CNullable<DrawCommonBuffer>();
+//         m_content.draw_common_buffer.Construct(std::forward<Args>(args)...);
+//     }
+//     ~DrawCommonBufferUnion();
 
-    IDrawBuffer& Get();
-};
+//     IDrawBuffer& Get();
+// };
 
-class DrawCommonUnion
-{
-private:
-    const DrawCommonHelper::RenderType m_type;
-    union Content
-    {
-        Content(){};  //手工管理构造
-        ~Content(){}; //手工管理析构
-        CNullable<CDrawCommon> cdraw_common;
-        CNullable<D2D1DrawCommon> d2d1_draw_common;
-    } m_content;
+// class DrawCommonUnion
+// {
+// private:
+//     const DrawCommonHelper::RenderType m_type;
+//     union Content
+//     {
+//         Content(){};  //手工管理构造
+//         ~Content(){}; //手工管理析构
+//         CNullable<CDrawCommon> cdraw_common;
+//         CNullable<D2D1DrawCommon> d2d1_draw_common;
+//     } m_content;
 
-public:
-    DrawCommonUnion(DrawCommonHelper::RenderType type);
-    ~DrawCommonUnion();
+// public:
+//     DrawCommonUnion(DrawCommonHelper::RenderType type);
+//     ~DrawCommonUnion();
 
-    CDrawCommon& Get(DrawCommonHelper::RenderTypeDefaultTag) noexcept;
-    D2D1DrawCommon& Get(DrawCommonHelper::RenderTypeD2D1Tag) noexcept;
-};
+//     CDrawCommon& Get(DrawCommonHelper::RenderTypeDefaultTag) noexcept;
+//     D2D1DrawCommon& Get(DrawCommonHelper::RenderTypeD2D1Tag) noexcept;
+// };

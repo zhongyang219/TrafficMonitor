@@ -1,5 +1,8 @@
 ﻿#pragma once
+#include <functional>
 #include <type_traits>
+#include <stdexcept>
+#include <tuple>
 
 template <class T>
 using std_aligned_storage = typename std::aligned_storage<sizeof(T), alignof(T)>::type;
@@ -28,11 +31,12 @@ template <class T, class Deleter = NullableDefaultDeleter<T>>
 class CNullable
 {
     using StorageType = std_aligned_storage<T>;
-    template<class C, class... Args>
+    template <class C, class... Args>
     static void EmplaceAt(C* p_object, Args&&... args)
     {
         ::new (p_object) C(std::forward<Args>(args)...);
     }
+
 public:
     CNullable(Deleter deleter = {})
         : m_storage{deleter} {}
@@ -44,7 +48,7 @@ public:
         }
     }
     CNullable(const CNullable& other)
-        :m_has_value{other.m_has_value}, m_storage{static_cast<Deleter>(other.m_storage)}
+        : m_has_value{other.m_has_value}, m_storage{static_cast<Deleter>(other.m_storage)}
     {
         if (other)
         {
@@ -62,7 +66,7 @@ public:
         }
     }
     CNullable(CNullable&& other) noexcept
-        :m_has_value{other.m_has_value}, m_storage{std::move(static_cast<Deleter>(other.m_storage))}
+        : m_has_value{other.m_has_value}, m_storage{std::move(static_cast<Deleter>(other.m_storage))}
     {
         if (other)
         {
@@ -89,14 +93,8 @@ public:
             m_has_value = false;
         }
 
-        try
-        {
-            EmplaceAt(&m_storage.GetUnsafe(), std::forward<Args>(args)...);
-        }
-        catch (...)
-        {
-            throw;
-        }
+        EmplaceAt(&m_storage.GetUnsafe(), std::forward<Args>(args)...);
+
         m_has_value = true;
     }
     const T& GetUnsafe() const noexcept
@@ -129,7 +127,8 @@ public:
 private:
     void DestroySelf()
     {
-        static_cast<Deleter>(m_storage).operator()(&Get());
+        auto&& ref_deleter = static_cast<Deleter&>(m_storage);
+        ref_deleter(&Get());
     }
     void Check() const
     {
@@ -162,9 +161,10 @@ private:
         {
             return std::addressof(m_storage);
         }
+
     public:
         explicit StorageAndEboDeleter(Deleter deleter)
-            :Deleter{deleter} {}
+            : Deleter{deleter} {}
         ~StorageAndEboDeleter() = default;
         StorageAndEboDeleter(const StorageAndEboDeleter&) = delete;
         StorageAndEboDeleter& operator=(const StorageAndEboDeleter&) = delete;
@@ -202,19 +202,64 @@ public:
     ~CLazyConstructable() = default;
     T& Get()
     {
-        if (m_is_available)
+        if (m_content)
         {
             return m_content.GetUnsafe();
         }
         else
         {
             m_content.Construct();
-            m_is_available = true;
             return m_content.GetUnsafe();
         }
     }
 
 private:
-    bool m_is_available{false};
     CNullable<T, Deleter> m_content{};
 };
+
+template <class T, class Deleter, class Tuple>
+class CLazyConstructableWithInitializer;
+
+template <class T, class Deleter, template <class...> class Container, class... InitArgs>
+class CLazyConstructableWithInitializer<T, Deleter, Container<InitArgs...>>
+{
+private:
+    using ArgsContainer = Container<InitArgs...>;
+    using ArgsInitFunction = std::function<ArgsContainer()>;
+    constexpr static std::size_t init_args_size = sizeof...(InitArgs);
+    template <class Tuple, std::size_t... Indexs>
+    void ConstructHelper(Tuple&& args, std::index_sequence<Indexs...>)
+    {
+        m_content.Construct(std::get<Indexs>(args)...);
+    }
+
+public:
+    CLazyConstructableWithInitializer(ArgsInitFunction init_function)
+        : m_init_function{init_function}
+    {
+    }
+    ~CLazyConstructableWithInitializer() = default;
+    T& Get()
+    {
+        if (m_content)
+        {
+            return m_content.GetUnsafe();
+        }
+        else
+        {
+            auto init_args{std::move(m_init_function())};
+            ConstructHelper(
+                init_args,
+                std::make_index_sequence<std::tuple_size<decltype(init_args)>{}>{});
+            return m_content.GetUnsafe();
+        }
+    }
+
+private:
+    CNullable<T, Deleter> m_content{};
+    ArgsInitFunction m_init_function{};
+};
+
+template <class T, class... Args>
+using DefaultCLazyConstructableWithInitializer =
+    CLazyConstructableWithInitializer<T, NullableDefaultDeleter<T>, std::tuple<Args...>>;

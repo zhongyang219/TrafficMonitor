@@ -19,7 +19,6 @@ IMPLEMENT_DYNAMIC(CTaskBarDlg, CDialogEx)
 CTaskBarDlg::CTaskBarDlg(CWnd* pParent /*=NULL*/)
     : CDialogEx(IDD_TASK_BAR_DIALOG, pParent)
 {
-
 }
 
 CTaskBarDlg::~CTaskBarDlg()
@@ -35,7 +34,6 @@ void CTaskBarDlg::DoDataExchange(CDataExchange* pDX)
     CDialogEx::DoDataExchange(pDX);
 }
 
-
 BEGIN_MESSAGE_MAP(CTaskBarDlg, CDialogEx)
     ON_WM_RBUTTONUP()
     ON_WM_INITMENU()
@@ -49,7 +47,7 @@ BEGIN_MESSAGE_MAP(CTaskBarDlg, CDialogEx)
     ON_MESSAGE(WM_DPICHANGED, &CTaskBarDlg::OnDpichanged)
     END_MESSAGE_MAP()
 
-    // CTaskBarDlg 消息处理程序
+// CTaskBarDlg 消息处理程序
 
 void CTaskBarDlg::ShowInfo(CDC* pDC)
 {
@@ -62,10 +60,70 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
     DrawCommonHelper::RenderType render_type = GetRenderType();
     CRect draw_rect{m_rect}; //绘图的矩形区域
     draw_rect.MoveToXY(0, 0);
-    //设置缓冲的DC
-    DrawCommonBufferUnion draw_buffer_union{render_type};
-    //绘图
-    DrawCommonUnion drawer_union{render_type};
+    //初始化栈内存
+    //初始化buffer区域
+    using DrawCommonBufferUnion = EzTaggedUnion<
+        DrawCommonHelper::RenderType,
+        CDrawDoubleBuffer, CTaskBarDlgDrawBuffer>;
+    auto draw_common_buffer_union_storage_wrapper =
+        MakeStaticVariableWrapper<DrawCommonBufferUnion>(
+            [render_type](auto* p_content)
+            {
+                std::get<TYPE_INDEX>(*p_content) = render_type;
+            },
+            [](auto* p_content)
+            {
+                auto type = std::get<TYPE_INDEX>(*p_content);
+                auto p_storage = &std::get<STORAGE_INDEX>(*p_content);
+
+                switch (type)
+                {
+                case DrawCommonHelper::RenderType::Default:
+                {
+                    auto p_draw_common_buffer = reinterpret_cast<CDrawDoubleBuffer*>(p_storage);
+                    Destroy(p_draw_common_buffer);
+                    break;
+                }
+                case DrawCommonHelper::RenderType::D2D1:
+                {
+                    auto p_draw_common_buffer = reinterpret_cast<CTaskBarDlgDrawBuffer*>(p_storage);
+                    Destroy(p_draw_common_buffer);
+                    break;
+                }
+                }
+            });
+    auto p_draw_common_buffer_union_storage = &std::get<STORAGE_INDEX>(draw_common_buffer_union_storage_wrapper.Get());
+    //初始化DrawCommon区域
+    using DrawCommonUnion = EzTaggedUnion<
+        DrawCommonHelper::RenderType,
+        CDrawCommon, CTaskBarDlgDrawCommon>;
+    auto draw_common_union_storage_wrapper = MakeStaticVariableWrapper<DrawCommonUnion>(
+        [render_type](auto* p_content)
+        {
+            std::get<TYPE_INDEX>(*p_content) = render_type;
+        },
+        [](auto* p_content)
+        {
+            auto type = std::get<TYPE_INDEX>(*p_content);
+            auto p_storage = &std::get<STORAGE_INDEX>(*p_content);
+            switch (type)
+            {
+            case DrawCommonHelper::RenderType::Default:
+            {
+                auto p_draw_common = reinterpret_cast<CDrawCommon*>(p_storage);
+                Destroy(p_draw_common);
+                break;
+            }
+            case DrawCommonHelper::RenderType::D2D1:
+            {
+                auto p_draw_common = reinterpret_cast<CTaskBarDlgDrawCommon*>(p_storage);
+                Destroy(p_draw_common);
+                break;
+            }
+            }
+        });
+    auto p_draw_common_union_storage = &std::get<STORAGE_INDEX>(draw_common_union_storage_wrapper.Get());
+
     IDrawCommon* p_drawer;
     switch (render_type)
     {
@@ -75,31 +133,40 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
         {
             return;
         }
+        auto p_draw_common_buffer = reinterpret_cast<CDrawDoubleBuffer*>(p_draw_common_buffer_union_storage);
         //必须先于绘图对象构造
-        draw_buffer_union.CreateDefaultVerion(pDC, draw_rect);
-        IDrawBuffer& draw_buffer = draw_buffer_union.Get();
-        auto& draw = drawer_union.Get(DrawCommonHelper::RenderTypeDefaultTag{});
-        p_drawer = &draw;
+        EmplaceAt(p_draw_common_buffer, pDC, draw_rect);
+        IDrawBuffer& draw_buffer = *p_draw_common_buffer;
+        auto p_draw_common = reinterpret_cast<CDrawCommon*>(p_draw_common_union_storage);
         //这里构造绘图对象
-        draw.Create(draw_buffer.GetMemDC(), nullptr);
-        draw.FillRect(draw_rect, theApp.m_taskbar_data.back_color); //填充背景色
-        draw.SetFont(&m_font);
-        draw.SetBackColor(theApp.m_taskbar_data.back_color);
+        EmplaceAt(p_draw_common);
+        p_draw_common->Create(draw_buffer.GetMemDC(), nullptr);
+        p_draw_common->FillRect(draw_rect, theApp.m_taskbar_data.back_color); //填充背景色
+        p_draw_common->SetFont(&m_font);
+        p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
+        p_drawer = p_draw_common;
         break;
     }
     case DrawCommonHelper::RenderType::D2D1:
     {
-        //必须先于绘图对象构造
-        draw_buffer_union.CreateD2D1Version(current_hwnd, draw_rect);
-        auto& draw = drawer_union.Get(DrawCommonHelper::RenderTypeD2D1Tag{});
-        IDrawBuffer& draw_buffer = draw_buffer_union.Get();
-        p_drawer = &draw;
+        //这里与上面相反，是先构造DrawCommon再构造Buffer
+        auto p_draw_common = reinterpret_cast<CTaskBarDlgDrawCommon*>(p_draw_common_union_storage);
         //这里构造绘图对象
-        draw.Create(this->m_d2d1_dc_support.Get(), *draw_buffer.GetMemDC(), draw_rect);
+        EmplaceAt(p_draw_common);
+        D2D1_SIZE_U d2d_size;
+        d2d_size.width = draw_rect.Width();
+        d2d_size.height = draw_rect.Height();
+        p_draw_common->Create(this->m_taskbar_draw_common_window_support.Get(), d2d_size);
         //仅透明时启用此渲染器，则默认初始化为全黑alpha=0
-        draw.FillRect(draw_rect, 0x00000000, 0);
-        draw.SetFont(&m_font);
-        draw.SetBackColor(theApp.m_taskbar_data.back_color);
+        p_draw_common->FillRect(draw_rect, 0x00000000, 0);
+        p_draw_common->SetFont(&m_font);
+        p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
+        p_drawer = p_draw_common;
+        //构造buffer
+        auto p_draw_common_buffer = reinterpret_cast<CTaskBarDlgDrawBuffer*>(p_draw_common_buffer_union_storage);
+        CSize draw_size{draw_rect.Width(), draw_rect.Height()};
+        EmplaceAt(p_draw_common_buffer, draw_size, current_hwnd);
+        p_draw_common_buffer->SetTargetSurface(this->m_taskbar_draw_common_window_support.Get().GetRenderTargetSurface());
         break;
     }
     default:
@@ -433,9 +500,9 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
             auto* p_dc = static_cast<CDrawCommon&>(drawer).GetDC();
             item->DrawItem(p_dc->GetSafeHdc(), rect.left, rect.top, rect.Width(), rect.Height(), background_brightness < 128);
         }
-        else if (typeid(drawer) == typeid(D2D1DrawCommon))
+        else if (typeid(drawer) == typeid(CTaskBarDlgDrawCommon))
         {
-            auto& ref_d2d1_drawer = static_cast<D2D1DrawCommon&>(drawer);
+            auto& ref_d2d1_drawer = static_cast<CTaskBarDlgDrawCommon&>(drawer);
             ref_d2d1_drawer.ExecuteGdiOperation(rect,
                                                 [item, rect, background_brightness](HDC gdi_dc)
                                                 { item->DrawItem(gdi_dc,
@@ -648,10 +715,10 @@ void CTaskBarDlg::ApplyWindowTransparentColor()
         SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
         if (GetRenderType() == DrawCommonHelper::RenderType::Default)
         {
-            //GDI绘图使用色键抠像
+            // GDI绘图使用色键抠像
             SetLayeredWindowAttributes(theApp.m_taskbar_data.transparent_color, 0, LWA_COLORKEY);
             //仅在透明且不使用自动决定背景颜色时启动D2D渲染器
-            //D2D绘图直接使用alpha混合
+            // D2D绘图直接使用alpha混合
             //无需执行动作
         }
     }
@@ -1078,7 +1145,6 @@ bool CTaskBarDlg::IsShowNetSpeed()
     return ((theApp.m_taskbar_data.m_tbar_display_item & TDI_UP) || (theApp.m_taskbar_data.m_tbar_display_item & TDI_DOWN));
 }
 
-
 BOOL CTaskBarDlg::OnInitDialog()
 {
     CDialogEx::OnInitDialog();
@@ -1151,7 +1217,6 @@ BOOL CTaskBarDlg::OnInitDialog()
                   // 异常: OCX 属性页应返回 FALSE
 }
 
-
 void CTaskBarDlg::OnCancel()
 {
     // TODO: 在此添加专用代码和/或调用基类
@@ -1179,7 +1244,6 @@ void CTaskBarDlg::OnCancel()
     //CDialogEx::OnCancel();
 }
 
-
 void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
@@ -1202,7 +1266,6 @@ void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
         pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
     CDialogEx::OnRButtonUp(nFlags, point1);
 }
-
 
 void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
 {
@@ -1237,9 +1300,8 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
         pMenu->SetDefaultItem(-1);
         break;
     }
-    ::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_TASKBAR_MENU_POPED_UP, 0, 0);        //通知主窗口菜单已弹出
+    ::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_TASKBAR_MENU_POPED_UP, 0, 0); //通知主窗口菜单已弹出
 }
-
 
 BOOL CTaskBarDlg::PreTranslateMessage(MSG* pMsg)
 {
@@ -1271,14 +1333,12 @@ BOOL CTaskBarDlg::PreTranslateMessage(MSG* pMsg)
     return CDialogEx::PreTranslateMessage(pMsg);
 }
 
-
 void CTaskBarDlg::OnMouseMove(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
 
     CDialogEx::OnMouseMove(nFlags, point);
 }
-
 
 void CTaskBarDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
@@ -1318,7 +1378,6 @@ void CTaskBarDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
     //CDialogEx::OnLButtonDblClk(nFlags, point);
 }
 
-
 void CTaskBarDlg::OnTimer(UINT_PTR nIDEvent)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
@@ -1331,7 +1390,6 @@ void CTaskBarDlg::OnTimer(UINT_PTR nIDEvent)
 
     CDialogEx::OnTimer(nIDEvent);
 }
-
 
 BOOL CTaskBarDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 {
@@ -1359,21 +1417,29 @@ BOOL CTaskBarDlg::OnCommand(WPARAM wParam, LPARAM lParam)
     return CDialogEx::OnCommand(wParam, lParam);
 }
 
-
 void CTaskBarDlg::OnPaint()
 {
     CPaintDC dc(this); // device context for painting
                        // TODO: 在此处添加消息处理程序代码
                        // 不为绘图消息调用 CDialogEx::OnPaint()
 
+#ifndef DEBUG
     try
     {
+#endif // DEBUG
+
         ShowInfo(&dc);
+
+#ifndef DEBUG
+    }
+    catch (CD3D10Exception1& ex)
+    {
     }
     catch (CHResultException& ex)
     {
         DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(ex);
     }
+#endif // DEBUG
 }
 
 void CTaskBarDlg::AddHisToList(DisplayItem item_type, int current_usage_percent)
@@ -1402,7 +1468,6 @@ void CTaskBarDlg::AddHisToList(DisplayItem item_type, int current_usage_percent)
     }
     data_count++;
 }
-
 
 int CTaskBarDlg::CalculateNetspeedPercent(unsigned __int64 net_speed)
 {
@@ -1450,7 +1515,6 @@ void CTaskBarDlg::TryDrawGraph(IDrawCommon& drawer, const CRect& value_rect, Dis
     }
 }
 
-
 void CTaskBarDlg::OnClose()
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
@@ -1458,7 +1522,6 @@ void CTaskBarDlg::OnClose()
 
     CDialogEx::OnClose();
 }
-
 
 void CTaskBarDlg::OnLButtonUp(UINT nFlags, CPoint point)
 {
@@ -1475,7 +1538,6 @@ void CTaskBarDlg::OnLButtonUp(UINT nFlags, CPoint point)
 
     CDialogEx::OnLButtonUp(nFlags, point);
 }
-
 
 afx_msg LRESULT CTaskBarDlg::OnExitmenuloop(WPARAM wParam, LPARAM lParam)
 {

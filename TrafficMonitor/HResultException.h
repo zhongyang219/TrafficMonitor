@@ -1,6 +1,6 @@
-#pragma once
+﻿#pragma once
+#include <stdexcept>
 #include <wrl/client.h>
-#include "Common.h"
 
 #define RELEASE_COM(p)      \
     {                       \
@@ -26,6 +26,8 @@ public:
     auto GetError()
         ->Microsoft::WRL::ComPtr<IErrorInfo>;
     bool HasError() const noexcept;
+    auto GetHResult() const noexcept
+        -> HRESULT;
 
 private:
     Microsoft::WRL::ComPtr<IErrorInfo> m_p_error;
@@ -34,12 +36,12 @@ private:
 
 extern const char* const ERROR_WHEN_CALL_COM_FUNCTION; /*The content should be "Error occurred when call COM function." */
 void ThrowIfFailed(HRESULT hr, const char* p_message = ERROR_WHEN_CALL_COM_FUNCTION);
-template <class Exception>
-void ThrowIfFailed(HRESULT hr, const char* p_message = ERROR_WHEN_CALL_COM_FUNCTION)
+template <class Exception, class... Args>
+void ThrowIfFailed(HRESULT hr, const char* p_message, Args... args)
 {
     if (FAILED(hr))
     {
-        throw Exception{ hr, p_message };
+        throw Exception{hr, p_message, std::forward<Args>(args)...};
     }
 }
 

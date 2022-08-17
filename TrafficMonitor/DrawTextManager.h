@@ -25,7 +25,7 @@ public:
 template <class FunctionPointer>
 struct to_std_function;
 template <class R, class... Parameters>
-struct to_std_function<R (*)(Parameters...)>
+struct to_std_function<R (WINAPI *)(Parameters...)>
 {
     using type = std::function<R(Parameters...)>;
 };
@@ -58,7 +58,6 @@ private:
     {
     private:
         static bool m_enabled;
-        static HDC m_target_dc;
 
     protected:
         using ReplacedFunction = to_std_function_t<Function>;
@@ -71,7 +70,6 @@ private:
         struct State
         {
             bool m_is_enabled;
-            HDC m_target_dc;
             ReplacedFunction m_replaced_function;
         };
 
@@ -82,18 +80,6 @@ private:
         static bool GetEnable() noexcept
         {
             return m_enabled;
-        }
-        static void SetTargetDC(HDC dc) noexcept
-        {
-            m_target_dc = dc;
-        }
-        static HDC GetTargetDC() noexcept
-        {
-            return m_target_dc;
-        }
-        static bool ConfirmDC(HDC hdc) noexcept
-        {
-            return m_target_dc == hdc;
         }
         static void SetReplacedFunction(ReplacedFunction replaced_function) noexcept
         {
@@ -107,15 +93,19 @@ private:
         static void SetState(const State& state) noexcept
         {
             m_enabled = state.m_is_enabled;
-            if (state.m_is_enabled) {
-                m_target_dc = state.m_target_dc;
+            if (state.m_is_enabled)
+            {
                 m_replaced_function = state.m_replaced_function;
             }
             else
             {
-                m_target_dc = NULL;
                 m_replaced_function = nullptr;
             }
+        }
+        static auto GetOriginalFunction() noexcept
+            -> Function
+        {
+            return m_old_function_pointer;
         }
     };
 
@@ -148,6 +138,7 @@ public:
     public:
         using BaseSettings = CommonSettings<A, decltype(&::DrawTextA)>;
         using Function = decltype(&CustomDrawTextA);
+        using ReplacedFunction = typename BaseSettings::ReplacedFunction;
 
         static auto GetFunction() noexcept
             -> Function;
@@ -169,6 +160,7 @@ public:
     public:
         using BaseSettings = CommonSettings<W, decltype(&::DrawTextW)>;
         using Function = decltype(&CustomDrawTextW);
+        using ReplacedFunction = typename BaseSettings::ReplacedFunction;
 
         static auto GetFunction() noexcept
             -> Function;
@@ -190,6 +182,7 @@ public:
     public:
         using BaseSettings = CommonSettings<ExA, decltype(&::DrawTextExA)>;
         using Function = decltype(&CustomDrawTextExA);
+        using ReplacedFunction = typename BaseSettings::ReplacedFunction;
 
         static auto GetFunction() noexcept
             -> Function;
@@ -211,6 +204,7 @@ public:
     public:
         using BaseSettings = CommonSettings<ExW, decltype(&::DrawTextExW)>;
         using Function = decltype(&CustomDrawTextExW);
+        using ReplacedFunction = typename BaseSettings::ReplacedFunction;
 
         static auto GetFunction() noexcept
             -> Function;
@@ -229,8 +223,6 @@ public:
 
 template <class Owner, class Function, class Checker>
 bool ::User32DrawTextManager::CommonSettings<Owner, Function, Checker>::m_enabled = false;
-template <class Owner, class Function, class Checker>
-HDC(::User32DrawTextManager::CommonSettings<Owner, Function, Checker>::m_target_dc) = {};
 template <class Owner, class Function, class Checker>
 Function(::User32DrawTextManager::CommonSettings<Owner, Function, Checker>::m_old_function_pointer) = nullptr;
 template <class Owner, class Function, class Checker>

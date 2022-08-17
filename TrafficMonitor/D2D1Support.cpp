@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "D2D1Support.h"
+#include "Common.h"
 
 #pragma comment(lib, "D2d1.lib")
 #pragma comment(lib, "Dwrite.lib")

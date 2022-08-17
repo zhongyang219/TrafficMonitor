@@ -208,6 +208,9 @@
     <Filter Include="源文件和头文件\公共的类\D3D10Support1">
       <UniqueIdentifier>{f6a75faf-64b5-4f3b-a382-7dfd4a17d61c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\Image2DEffect">
+      <UniqueIdentifier>{b6684af7-c43e-42f7-9094-9315af53951d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -440,6 +443,15 @@
     <ClInclude Include="D3D10Support1.h">
       <Filter>源文件和头文件\公共的类\D3D10Support1</Filter>
     </ClInclude>
+    <ClInclude Include="TaskBarDlgDrawCommon.h">
+      <Filter>源文件和头文件\TaskBarDlg</Filter>
+    </ClInclude>
+    <ClInclude Include="Image2DEffect.h">
+      <Filter>源文件和头文件\公共的类\Image2DEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="IDrawCommon.h">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -648,6 +660,12 @@
     </ClCompile>
     <ClCompile Include="D3D10Support1.cpp">
       <Filter>源文件和头文件\公共的类\D3D10Support1</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskBarDlgDrawCommon.cpp">
+      <Filter>源文件和头文件\TaskBarDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="Image2DEffect.cpp">
+      <Filter>源文件和头文件\公共的类\Image2DEffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
