@@ -428,6 +428,9 @@
     <ClInclude Include="WindowsSettingHelper.h">
       <Filter>源文件和头文件\公共的类\WindowsSettingHelper</Filter>
     </ClInclude>
+    <ClInclude Include="DllFunctions.h">
+      <Filter>源文件和头文件\头文件</Filter>
+    </ClInclude>
     <ClInclude Include="D2D1Support.h">
       <Filter>源文件和头文件\公共的类\D2D1Support</Filter>
     </ClInclude>
@@ -648,6 +651,9 @@
     </ClCompile>
     <ClCompile Include="WindowsSettingHelper.cpp">
       <Filter>源文件和头文件\公共的类\WindowsSettingHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="DllFunctions.cpp">
+      <Filter>源文件和头文件</Filter>
     </ClCompile>
     <ClCompile Include="D2D1Support.cpp">
       <Filter>源文件和头文件\公共的类\D2D1Support</Filter>

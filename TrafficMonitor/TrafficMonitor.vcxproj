@@ -524,6 +524,7 @@
     <ClInclude Include="D2D1Support.h" />
     <ClInclude Include="D3D10Support1.h" />
     <ClInclude Include="DisplayTextSettingDlg.h" />
+    <ClInclude Include="DllFunctions.h" />
     <ClInclude Include="DrawCommonEx.h" />
     <ClInclude Include="DrawTextManager.h" />
     <ClInclude Include="FilePathHelper.h" />
@@ -603,6 +604,7 @@
     <ClCompile Include="D2D1Support.cpp" />
     <ClCompile Include="D3D10Support1.cpp" />
     <ClCompile Include="DisplayTextSettingDlg.cpp" />
+    <ClCompile Include="DllFunctions.cpp" />
     <ClCompile Include="DrawCommonEx.cpp" />
     <ClCompile Include="DrawTextManager.cpp" />
     <ClCompile Include="FilePathHelper.cpp" />
