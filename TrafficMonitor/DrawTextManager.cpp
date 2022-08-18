@@ -14,8 +14,14 @@ bool EnableWriteMemoryGuard::GetState()
 
 int WINAPI User32DrawTextManager::A::CustomDrawTextA(HDC hdc, LPCSTR lpchText, int cchText, LPRECT lprc, UINT format)
 {
-
-    return BaseSettings::m_replaced_function(hdc, lpchText, cchText, lprc, format);
+    if (BaseSettings::GetEnable())
+    {
+        return BaseSettings::m_replaced_function(hdc, lpchText, cchText, lprc, format);
+    }
+    else
+    {
+        return (BaseSettings::GetOriginalFunction())(hdc, lpchText, cchText, lprc, format);
+    }
 }
 
 auto User32DrawTextManager::A::GetFunction() noexcept
@@ -26,8 +32,14 @@ auto User32DrawTextManager::A::GetFunction() noexcept
 
 int WINAPI User32DrawTextManager::W::CustomDrawTextW(HDC hdc, LPCWSTR lpchText, int cchText, LPRECT lprc, UINT format)
 {
-
-    return BaseSettings::m_replaced_function(hdc, lpchText, cchText, lprc, format);
+    if (BaseSettings::GetEnable())
+    {
+        return BaseSettings::m_replaced_function(hdc, lpchText, cchText, lprc, format);
+    }
+    else
+    {
+        return (BaseSettings::GetOriginalFunction())(hdc, lpchText, cchText, lprc, format);
+    }
 }
 
 auto User32DrawTextManager::W::GetFunction() noexcept
@@ -38,8 +50,14 @@ auto User32DrawTextManager::W::GetFunction() noexcept
 
 int WINAPI User32DrawTextManager::ExA::CustomDrawTextExA(HDC hdc, LPSTR lpchText, int cchText, LPRECT lprc, UINT format, LPDRAWTEXTPARAMS lpdtp)
 {
-
-    return BaseSettings::m_replaced_function(hdc, lpchText, cchText, lprc, format, lpdtp);
+    if (BaseSettings::GetEnable())
+    {
+        return BaseSettings::m_replaced_function(hdc, lpchText, cchText, lprc, format, lpdtp);
+    }
+    else
+    {
+        return (BaseSettings::GetOriginalFunction())(hdc, lpchText, cchText, lprc, format, lpdtp);
+    }
 }
 
 auto User32DrawTextManager::ExA::GetFunction() noexcept
@@ -50,8 +68,14 @@ auto User32DrawTextManager::ExA::GetFunction() noexcept
 
 int WINAPI User32DrawTextManager::ExW::CustomDrawTextExW(HDC hdc, LPWSTR lpchText, int cchText, LPRECT lprc, UINT format, LPDRAWTEXTPARAMS lpdtp)
 {
-
-    return BaseSettings::m_replaced_function(hdc, lpchText, cchText, lprc, format, lpdtp);
+    if (BaseSettings::GetEnable())
+    {
+        return BaseSettings::m_replaced_function(hdc, lpchText, cchText, lprc, format, lpdtp);
+    }
+    else
+    {
+        return (BaseSettings::GetOriginalFunction())(hdc, lpchText, cchText, lprc, format, lpdtp);
+    }
 }
 
 auto User32DrawTextManager::ExW::GetFunction() noexcept

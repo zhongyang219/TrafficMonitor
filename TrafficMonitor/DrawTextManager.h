@@ -127,7 +127,7 @@ private:
     }
 
 public:
-    constexpr static int CUSTOM_SUCCESS = 7777;
+    constexpr static int CUSTOM_SUCCESS = 0x7777;
 
     class A : public CommonSettings<A, decltype(&::DrawTextA)>
     {
