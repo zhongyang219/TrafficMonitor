@@ -1010,12 +1010,9 @@ BOOL CTaskBarDlg::OnInitDialog()
 
     m_pDC = GetDC();
 
-
-
-
-    m_hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL);      //寻找类名是Shell_TrayWnd的窗口句柄
     m_hBar = ::FindWindowEx(m_hTaskbar, 0, L"ReBarWindow32", NULL); //寻找二级容器的句柄
     m_hMin = ::FindWindowEx(m_hBar, 0, L"MSTaskSwWClass", NULL);    //寻找最小化窗口的句柄
+    m_hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL); //寻找类名是Shell_TrayWnd的窗口句柄
     
     m_hNotify = ::FindWindowEx(m_hTaskbar, 0, L"TrayNotifyWnd", NULL);
 
@@ -1023,7 +1020,13 @@ BOOL CTaskBarDlg::OnInitDialog()
     if (theApp.m_win_version.IsWindows11OrLater())
     {
         theApp.m_is_windows11_taskbar = (::FindWindowExW(m_hTaskbar, 0, L"Windows.UI.Composition.DesktopWindowContentBridge", NULL) != NULL);
+        m_connot_insert_to_task_bar = !(::SetParent(this->m_hWnd, m_hTaskbar)); //把程序窗口设置成任务栏的子窗口
     }
+    else
+    {
+        m_connot_insert_to_task_bar = !(::SetParent(this->m_hWnd, m_hBar)); //把程序窗口设置成任务栏的子窗口
+    }
+	
     //设置窗口透明色
     ApplyWindowTransparentColor();
 
@@ -1056,8 +1059,6 @@ BOOL CTaskBarDlg::OnInitDialog()
     m_rect.SetRectEmpty();
     m_rect.bottom = m_window_height;
     m_rect.right = m_rect.left + m_window_width;
-
-    m_connot_insert_to_task_bar = !(::SetParent(this->m_hWnd, m_hTaskbar)); //把程序窗口设置成任务栏的子窗口
     m_error_code = GetLastError();
     AdjustWindowPos();
 
