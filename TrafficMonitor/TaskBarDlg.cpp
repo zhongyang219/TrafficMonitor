@@ -1020,11 +1020,6 @@ BOOL CTaskBarDlg::OnInitDialog()
     if (theApp.m_win_version.IsWindows11OrLater())
     {
         theApp.m_is_windows11_taskbar = (::FindWindowExW(m_hTaskbar, 0, L"Windows.UI.Composition.DesktopWindowContentBridge", NULL) != NULL);
-        m_connot_insert_to_task_bar = !(::SetParent(this->m_hWnd, m_hTaskbar)); //把程序窗口设置成任务栏的子窗口
-    }
-    else
-    {
-        m_connot_insert_to_task_bar = !(::SetParent(this->m_hWnd, m_hBar)); //把程序窗口设置成任务栏的子窗口
     }
 	
     //设置窗口透明色
@@ -1037,6 +1032,8 @@ BOOL CTaskBarDlg::OnInitDialog()
 
     m_left_space = m_rcMin.left - m_rcBar.left;
     m_top_space = m_rcMin.top - m_rcBar.top;
+
+    m_connot_insert_to_task_bar = !(::SetParent(this->m_hWnd, theApp.m_is_windows11_taskbar ? m_hTaskbar : m_hBar)); //把程序窗口设置成任务栏的子窗口
 
     //根据已经确定的任务栏最小化窗口区域得到屏幕并获得所在屏幕的DPI（Windows 8.1及其以上）
     if (theApp.m_win_version.IsWindows8Point1OrLater())
