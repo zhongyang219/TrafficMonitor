@@ -51,6 +51,7 @@ namespace DrawCommonHelper
 template <class... Types>
 struct variant_storage
 {
+    ~variant_storage() = delete;
 };
 template <class First, class... Other>
 struct variant_storage<First, Other...>
@@ -60,6 +61,7 @@ struct variant_storage<First, Other...>
         First m_head;
         variant_storage<Other...> m_tail;
     };
+    ~variant_storage() = delete;
 };
 
 constexpr std::size_t STORAGE_INDEX = 0;

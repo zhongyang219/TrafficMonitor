@@ -432,7 +432,7 @@ void Destroy(T* p_memory)
 }
 
 template <class T, class... Args>
-void EmplaceAt(T* p_memory, Args... args)
+void EmplaceAt(T* p_memory, Args&&... args)
 {
     ::new (p_memory) T(std::forward<Args>(args)...);
 }
