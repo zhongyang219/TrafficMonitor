@@ -309,7 +309,7 @@ namespace TaskBarDlgUser32DrawTextHook
             static_assert(size >= N + nth_tuple_size, "N can NOT larger than size of parameters pack.");
             constexpr std::int64_t delta_size = size - nth_tuple_size - N;
 
-            ReplaceNthConsecutiveArgumentAndApplyDispatcher<N, delta_size>::template Dispatch(
+            return ReplaceNthConsecutiveArgumentAndApplyDispatcher<N, delta_size>::template Dispatch(
                 std::forward<NthTuple>(nth_tuple),
                 std::forward<Func>(func),
                 std::forward_as_tuple(args...));
@@ -378,7 +378,8 @@ public:
         // 仅在waiter有效时执行
         if (m_gdi_texture_initialization_waiter)
         {
-            auto hr = m_gdi_texture_initialization_waiter.GetUnsafe().Wait();
+            ThrowIfFailed<CD3D10Exception1>(m_gdi_texture_initialization_waiter.GetUnsafe().Wait(),
+                                            "Initialize gdi interop texture failed.");
             // 使waiter无效
             Destroy(&m_gdi_texture_initialization_waiter);
             EmplaceAt(&m_gdi_texture_initialization_waiter);

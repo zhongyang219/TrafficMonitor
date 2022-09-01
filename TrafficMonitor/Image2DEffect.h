@@ -5,7 +5,7 @@
 
 namespace D3DQuadrangle
 {
-    extern const std::array<UINT, 6> VERTEX_INDEX_LIST;
+    extern const std::array<std::uint16_t, 6> VERTEX_INDEX_LIST;
 
     const CShader& GetVsShader();
 
@@ -50,6 +50,10 @@ namespace D3DQuadrangle
         {
             return sizeof(vertexs);
         }
+        static constexpr std::size_t GetStride() noexcept
+        {
+            return sizeof(Vertex);
+        }
     };
 }
 
@@ -62,13 +66,13 @@ struct Image2DVertex
 /**
  * @brief 默认vertex shader的输入输出定义 \n
  struct VsInput{                          \n
-   float4 position : POSITION0;           \n
-   float2 texture0 : TEXCOORD0;           \n
+   float4 position : POSITION;            \n
+   float2 texcoord : TEXCOORD;            \n
 };                                        \n
                                           \n
 struct VsOutput{                          \n
-   float4 position : POSITION0;           \n
-   float2 texture0 : TEXCOORD0;           \n
+   float4 position : SV_POSITION;         \n
+   float2 texcoord : TEXCOORD;            \n
 };
  *
  */
@@ -90,7 +94,8 @@ private:
     Microsoft::WRL::ComPtr<ID3D10DepthStencilState> m_p_depth_stencil_state{};
     UINT m_output_width{};
     UINT m_output_height{};
-    Microsoft::WRL::ComPtr<ID3D10ShaderResourceView1> m_p_ps_tex0_resource_view1{};
+    Microsoft::WRL::ComPtr<ID3D10ShaderResourceView> m_p_ps_tex0_resource_view{};
+    Microsoft::WRL::ComPtr<ID3D10SamplerState> m_p_ps_tex0_sampler_state{};
     Microsoft::WRL::ComPtr<ID3D10PixelShader> m_p_ps{};
     Microsoft::WRL::ComPtr<ID3D10RenderTargetView> m_p_render_target_view{};
 
@@ -150,13 +155,13 @@ public:
 #define CIMAGE2DEFFECT_SHADER_VS_INPUT_DECLARATION \
     "struct VsInput"                               \
     "{"                                            \
-    "float4 position : POSITION0;"                 \
-    "float2 texture0 : TEXCOORD0;"                 \
+    "   float4 position : POSITION;"               \
+    "   float2 texcoord : TEXCOORD;"               \
     "};"
 
 #define CIMAGE2DEFFECT_SHADER_VS_OUTPUT_DECLARATION \
     "struct VsOutput"                               \
     "{"                                             \
-    "float4 position : SV_POSITION;"                \
-    "float2 texture0 : TEXCOORD0;"                  \
+    "   float4 position : SV_POSITION;"             \
+    "   float2 texcoord : TEXCOORD;"                \
     "};"

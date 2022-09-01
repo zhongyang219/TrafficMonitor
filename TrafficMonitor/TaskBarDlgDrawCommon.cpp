@@ -215,12 +215,12 @@ auto CTaskBarDlgDrawCommonWindowSupport::GpuHelper::GetPsAlphaValueReducer() noe
             p_content->SetCode(
                          CIMAGE2DEFFECT_SHADER_VS_OUTPUT_DECLARATION
                          R"(
-SamplerState input_sampler : register(ps_4_1, s0);
-Texture2D input_texture : register(ps_4_1, t0);
+SamplerState input_sampler : register(s0);
+Texture2D input_texture : register(t0);
 
 float4 PS(VsOutput ps_in) : SV_TARGET
 {
-    float4 color = input_texture.Sample(input_sampler, ps_in.texture0);
+    float4 color = input_texture.Sample(input_sampler, ps_in.texcoord);
     color.w -= )" TRAFFICMONITOR_ONE_IN_255 ";"
                          R"(
     color.w = max(0.0, color.w);
@@ -244,12 +244,12 @@ auto CTaskBarDlgDrawCommonWindowSupport::GpuHelper::GetPsAlphaValueIncreaser() n
             p_content->SetCode(
                          CIMAGE2DEFFECT_SHADER_VS_OUTPUT_DECLARATION
                          R"(
-SamplerState input_sampler : register(ps_4_1, s0);
-Texture2D input_texture : register(ps_4_1, t0);
+SamplerState input_sampler : register(s0);
+Texture2D input_texture : register(t0);
 
 float4 PS(VsOutput ps_in) : SV_TARGET
 {
-    float4 color = input_texture.Sample(input_sampler, ps_in.texture0);
+    float4 color = input_texture.Sample(input_sampler, ps_in.texcoord);
     color.w += )" TRAFFICMONITOR_ONE_IN_255 ";"
                          R"(
     color.w = min(1.0, color.w);
@@ -301,7 +301,6 @@ auto CTaskBarDlgDrawCommonWindowSupport::InitGdiInteropTexture()
     constexpr static std::array<FLOAT, 4> transparent_black{.0f, .0f, .0f, .0f};
     m_gpu_helper.m_alpha_value_effect
         .SetOutputTexture(m_gpu_helper.m_p_gdi_final_texture)
-        .ApplyPipelineConfig()
         .ClearOnly(transparent_black);
     m_gpu_helper.SwitchToAlphaValueIncreaseEffect();
     return m_gpu_helper.m_alpha_value_effect
@@ -365,8 +364,8 @@ auto CTaskBarDlgDrawCommonWindowSupport::GetFont() noexcept
     return m_dwrite_helper.GetFont();
 }
 
-#define TRAFFICMONITOR_ENUM_AND_EXPLANATION(enum, explanation) \
-    enum, "Handling device loss. HR = " #enum ": " explanation
+#define TRAFFICMONITOR_ENUM_AND_EXPLANATION(enumeration, explanation) \
+    enumeration, "Handling device loss. HR = " #enumeration ": " explanation
 
 void CTaskBarDlgDrawCommonWindowSupport::RecreateDevice()
 {
@@ -499,6 +498,43 @@ namespace TaskBarDlgUser32DrawTextHook
             return result;
         }
 
+        //其实可以把Verify方法作为构造函数
+        template <class T, T FAILED_VALUE>
+        struct ReturnValueVerifier
+        {
+            static bool Verify(T value) noexcept
+            {
+                if (value != FAILED_VALUE)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            template <class Cleaner>
+            static bool Verify(T value, Cleaner&& cleaner) noexcept(noexcept(cleaner))
+            {
+                if (value != FAILED_VALUE)
+                {
+                    return true;
+                }
+                else
+                {
+                    cleaner();
+                    return false;
+                }
+            }
+        };
+        using Win32BOOLVerifier = ReturnValueVerifier<BOOL, 0>;
+        using Win32IntVerifier = ReturnValueVerifier<int, 0>;
+        using Win32COLORREFVerifier = ReturnValueVerifier<COLORREF, CLR_INVALID>;
+        using Win32HBITMAPVerifier = ReturnValueVerifier<HBITMAP, nullptr>;
+        using Win32HDCVerifier = ReturnValueVerifier<HDC, nullptr>;
+        using Win32HFONTVerifier = ReturnValueVerifier<HFONT, nullptr>;
+        using Win32HGDIOBJVerifier = ReturnValueVerifier<HGDIOBJ, nullptr>;
+
         template <class DrawTextFunctionNamespace, class... DrawTextArgs>
         int ReplacedDrawTextCommon(const CDrawTextReplacedFunction<DrawTextFunctionNamespace>& ref_this, DrawTextArgs&&... draw_text_args)
         {
@@ -521,12 +557,26 @@ namespace TaskBarDlgUser32DrawTextHook
                 auto input_format = std::get<format_index>(args_tuple);
                 auto calculate_rect_format = input_format | DT_CALCRECT;
                 auto&& replaced_parameters = std::make_tuple(lp_text_area, calculate_rect_format);
-                ReplaceNthConsecutiveArgumentAndApply<lprc_index>(
-                    std::move(replaced_parameters), p_original_function,
-                    std::forward<DrawTextArgs>(draw_text_args)...);
 
-                CDC text_dc{};
-                text_dc.CreateCompatibleDC(NULL);
+                if (!Win32IntVerifier::Verify(
+                        ReplaceNthConsecutiveArgumentAndApply<lprc_index>(
+                            std::move(replaced_parameters), p_original_function,
+                            std::forward<DrawTextArgs>(draw_text_args)...)))
+                {
+                    return 0;
+                }
+
+                HDC text_dc{NULL};
+                text_dc = ::CreateCompatibleDC(NULL);
+                if (!Win32HDCVerifier::Verify(text_dc))
+                {
+                    return 0;
+                }
+                auto clean_after_creating_dc = [text_dc]() noexcept
+                {
+                    ::DeleteDC(text_dc);
+                };
+
                 auto bitmap_info = GetArgb32BitmapInfo(text_area);
                 void* p_data;
                 auto text_hbitmap = ::CreateDIBSection(
@@ -536,29 +586,83 @@ namespace TaskBarDlgUser32DrawTextHook
                     &p_data,
                     NULL,
                     0);
-                if (!text_hbitmap)
+                if (!Win32HBITMAPVerifier::Verify(text_hbitmap))
+                {
+                    clean_after_creating_dc();
+                    return 0;
+                }
+                auto clean_after_creating_text_hbitmap =
+                [&text_hbitmap, &clean_after_creating_dc]() noexcept
+                {
+                    ::DeleteObject(text_hbitmap);
+                    clean_after_creating_dc();
+                };
+
+                HGDIOBJ old_hbitmap = ::SelectObject(text_dc, text_hbitmap);
+                auto clean_after_selecting_text_hbitmap =
+                [&text_dc, &old_hbitmap, &clean_after_creating_text_hbitmap]() noexcept
+                {
+                    ::SelectObject(text_dc, old_hbitmap);
+                    clean_after_creating_text_hbitmap();
+                };
+
+                auto hfont = ::GetCurrentObject(input_hdc, OBJ_FONT);
+                if (!Win32HGDIOBJVerifier::Verify(hfont, clean_after_selecting_text_hbitmap))
                 {
                     return 0;
                 }
-                HGDIOBJ old_hbitmap = text_dc.SelectObject(text_hbitmap);
-                auto hfont = ::GetCurrentObject(input_hdc, OBJ_FONT);
-                HGDIOBJ old_hfont = text_dc.SelectObject(hfont);
-                SetTextColor(text_dc, 0x00FFFFFF);
-                SetBkColor(text_dc, 0x00000000);
-                SetBkMode(text_dc, OPAQUE);
+                HGDIOBJ old_hfont = ::SelectObject(text_dc, hfont);
+                auto clean_after_selecting_text_hfont =
+                [&text_dc, &old_hfont, &clean_after_selecting_text_hbitmap]() noexcept
+                {
+                    ::SelectObject(text_dc, old_hfont);
+                    clean_after_selecting_text_hbitmap();
+                };
+
+                COLORREF colorref_win32_api_return_value{0};
+                if (!Win32COLORREFVerifier::Verify(
+                        ::SetTextColor(text_dc, 0x00FFFFFF),
+                        clean_after_selecting_text_hfont))
+                {
+                    return 0;
+                }
+                if (!Win32COLORREFVerifier::Verify(
+                        ::SetBkColor(text_dc, 0x00000000),
+                        clean_after_selecting_text_hfont))
+                {
+                    return 0;
+                }
+                if (!Win32IntVerifier::Verify(
+                        ::SetBkMode(text_dc, OPAQUE),
+                        clean_after_selecting_text_hfont))
+                {
+                    return 0;
+                }
                 auto&& first_parameter = std::make_tuple(static_cast<HDC>(text_dc));
-                ReplaceNthConsecutiveArgumentAndApply<hdc_index>(
-                    std::move(first_parameter), p_original_function,
-                    std::forward<DrawTextArgs>(draw_text_args)...);
+                if (!Win32IntVerifier::Verify(
+                        ReplaceNthConsecutiveArgumentAndApply<hdc_index>(
+                            std::move(first_parameter), p_original_function,
+                            std::forward<DrawTextArgs>(draw_text_args)...),
+                        clean_after_selecting_text_hfont))
+                {
+                    return 0;
+                }
                 std::size_t width = std::abs(bitmap_info.bmiHeader.biWidth);
                 std::size_t height = std::abs(bitmap_info.bmiHeader.biHeight);
                 auto p_pixel_data = reinterpret_cast<BYTE*>(p_data);
                 auto color = ::GetTextColor(input_hdc);
+                if (!Win32COLORREFVerifier::Verify(color, clean_after_selecting_text_hfont))
+                {
+                    return 0;
+                }
                 BYTE r = GetRValue(color);
                 BYTE g = GetGValue(color);
                 BYTE b = GetBValue(color);
                 BYTE a;
-                ::GdiFlush();
+                if (!Win32BOOLVerifier::Verify(::GdiFlush(), clean_after_selecting_text_hfont))
+                {
+                    return 0;
+                }
                 // 切换显示器时可能引发越界访问（未证实）
                 // __try
                 for (std::size_t y = 0; y < height; ++y)
@@ -582,19 +686,21 @@ namespace TaskBarDlgUser32DrawTextHook
                     AC_SRC_ALPHA};
                 auto width_i32 = static_cast<std::int32_t>(width);
                 auto height_i32 = static_cast<std::int32_t>(height);
-                ::AlphaBlend(
-                    input_hdc,
-                    p_input_rect->left, p_input_rect->top,
-                    width_i32, height_i32,
-                    text_dc,
-                    0, 0,
-                    width_i32, height_i32,
-                    blend_function);
+                if (!Win32IntVerifier::Verify(
+                        ::AlphaBlend(
+                            input_hdc,
+                            p_input_rect->left, p_input_rect->top,
+                            width_i32, height_i32,
+                            text_dc,
+                            0, 0,
+                            width_i32, height_i32,
+                            blend_function),
+                        clean_after_selecting_text_hfont))
+                {
+                    return 0;
+                }
 
-                text_dc.SelectObject(old_hfont);
-                text_dc.SelectObject(old_hbitmap);
-                ::DeleteObject(text_hbitmap);
-                text_dc.DeleteDC();
+                clean_after_selecting_text_hfont();
                 return User32DrawTextManager::CUSTOM_SUCCESS;
             }
             return 0;
@@ -709,17 +815,11 @@ CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
             "Draw call failed.");
 
         D2D1_BITMAP_PROPERTIES d2d1_bitmap_properties{};
-        D2D1_PIXEL_FORMAT d2d1_pixel_format{};
-        d2d1_pixel_format.format = CTaskBarDlgDrawCommonWindowSupport::PIXEL_FORMAT;
-        d2d1_pixel_format.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
-        d2d1_bitmap_properties.pixelFormat = std::move(d2d1_pixel_format);
+        d2d1_bitmap_properties.pixelFormat.format = CTaskBarDlgDrawCommonWindowSupport::PIXEL_FORMAT;
+        d2d1_bitmap_properties.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
         d2d1_bitmap_properties.dpiX = CTaskBarDlgDrawCommonWindowSupport::DEFAULT_DPI;
         d2d1_bitmap_properties.dpiY = CTaskBarDlgDrawCommonWindowSupport::DEFAULT_DPI;
         auto p_gdi_interop_surface1 = m_p_window_support->GetGdiTextureSurface();
-        //ComPtr<IDXGISurface> p_gdi_interop_surface{};
-        //ThrowIfFailed<CD3D10Exception1>(
-        //    p_gdi_interop_surface1->QueryInterface(IID_PPV_ARGS(&p_gdi_interop_surface)),
-        //    "Failed to query GDI surface");
         ComPtr<ID2D1Bitmap> p_gdi_interop_bitmap{};
         ThrowIfFailed<CD2D1Exception>(
             p_render_target->CreateSharedBitmap(
@@ -728,17 +828,7 @@ CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
                 &d2d1_bitmap_properties,
                 &p_gdi_interop_bitmap),
             "Create ID2D1Bitmap from IDXGISurface1 failed.");
-        D2D1_RECT_F bitmap_rect{};
-        auto render_target_size = m_p_window_support->GetSize();
-        auto render_target_width_f = static_cast<FLOAT>(render_target_size.width);
-        auto render_target_height_f = static_cast<FLOAT>(render_target_size.height);
-        bitmap_rect.left = 0;
-        bitmap_rect.top = 0;
-        bitmap_rect.right = render_target_width_f;
-        bitmap_rect.bottom = render_target_height_f;
-        p_render_target->DrawBitmap(
-            p_gdi_interop_bitmap.Get(),
-            &bitmap_rect);
+        p_render_target->DrawBitmap(p_gdi_interop_bitmap.Get());
         auto hr = p_render_target->EndDraw();
     }
     catch (CD3D10Exception1& ex)
@@ -918,7 +1008,6 @@ auto CTaskBarDlgDrawBuffer::GetDefaultBlendFunctionPointer() noexcept
 CTaskBarDlgDrawBuffer::CTaskBarDlgDrawBuffer(CSize size, HWND hwnd)
     : m_size{size}, m_target_hwnd{hwnd}
 {
-
 }
 
 CTaskBarDlgDrawBuffer::~CTaskBarDlgDrawBuffer()

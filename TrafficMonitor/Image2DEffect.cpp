@@ -6,7 +6,7 @@
 
 namespace D3DQuadrangle
 {
-    const std::array<UINT, 6> VERTEX_INDEX_LIST{
+    const std::array<std::uint16_t, 6> VERTEX_INDEX_LIST{
         0, 1, 2,
         1, 3, 2};
 
@@ -22,7 +22,7 @@ namespace D3DQuadrangle
 VsOutput VS(VsInput input){
    VsOutput result;
    result.position = input.position;
-   result.texture0 = input.texture0;
+   result.texcoord = input.texcoord;
    return result;
 }
 )")
@@ -77,6 +77,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
     vertex_position = vertexes.GetLeftTopVertex().position;
     vertex_position[0] = -1.f; // x
     vertex_position[1] = 1.f;  // y
+    vertex_position[2] = .0f;  // z
     vertex_texture = vertexes.GetLeftTopVertex().texture0;
     vertex_texture[0] = 0.f; // u
     vertex_texture[1] = 0.f; // v
@@ -85,6 +86,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
     vertex_position = vertexes.GetRightTopVertex().position;
     vertex_position[0] = 1.f;
     vertex_position[1] = 1.f;
+    vertex_position[2] = .0f;
     vertex_texture = vertexes.GetRightTopVertex().texture0;
     vertex_texture[0] = 1.f;
     vertex_texture[1] = 0.f;
@@ -93,6 +95,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
     vertex_position = vertexes.GetRightBottomVertex().position;
     vertex_position[0] = 1.f;
     vertex_position[1] = -1.f;
+    vertex_position[2] = .0f;
     vertex_texture = vertexes.GetRightBottomVertex().texture0;
     vertex_texture[0] = 1.f;
     vertex_texture[1] = 1.f;
@@ -101,13 +104,14 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
     vertex_position = vertexes.GetLeftBottomVertex().position;
     vertex_position[0] = -1.f;
     vertex_position[1] = -1.f;
+    vertex_position[2] = .0f;
     vertex_texture = vertexes.GetLeftBottomVertex().texture0;
     vertex_texture[0] = 0;
     vertex_texture[1] = 1;
 
     D3D10_BUFFER_DESC vertex_buffer_desc{};
     vertex_buffer_desc.ByteWidth = static_cast<UINT>(vertexes.GetSize());
-    vertex_buffer_desc.Usage = D3D10_USAGE_DEFAULT;
+    vertex_buffer_desc.Usage = D3D10_USAGE_IMMUTABLE;
     vertex_buffer_desc.BindFlags = D3D10_BIND_VERTEX_BUFFER;
     D3D10_SUBRESOURCE_DATA vertex_data{};
     vertex_data.pSysMem = vertexes.GetData();
@@ -119,7 +123,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
         "CImage2DEffect create vertex buffer failed.");
 
     D3D10_BUFFER_DESC index_buffer_desc{};
-    index_buffer_desc.Usage = D3D10_USAGE_DEFAULT;
+    index_buffer_desc.Usage = D3D10_USAGE_IMMUTABLE;
     index_buffer_desc.ByteWidth = sizeof(D3DQuadrangle::VERTEX_INDEX_LIST);
     index_buffer_desc.BindFlags = D3D10_BIND_INDEX_BUFFER;
     D3D10_SUBRESOURCE_DATA index_data{};
@@ -133,7 +137,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
 
     D3D10_RASTERIZER_DESC rasterizer_desc{};
     rasterizer_desc.FillMode = D3D10_FILL_SOLID;
-    rasterizer_desc.CullMode = D3D10_CULL_BACK;
+    rasterizer_desc.CullMode = D3D10_CULL_NONE;
     rasterizer_desc.FrontCounterClockwise = FALSE;
     rasterizer_desc.DepthBias = 0;
     rasterizer_desc.DepthBiasClamp = 0.0f;
@@ -148,6 +152,22 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
             &m_p_rasterizer_state),
         "CImage2DEffect create rasterizer state failed.");
 
+    D3D10_SAMPLER_DESC tex0_sampler = {};
+    tex0_sampler.Filter = D3D10_FILTER_MIN_MAG_MIP_LINEAR;
+    tex0_sampler.AddressU = D3D10_TEXTURE_ADDRESS_CLAMP;
+    tex0_sampler.AddressV = D3D10_TEXTURE_ADDRESS_CLAMP;
+    tex0_sampler.AddressW = D3D10_TEXTURE_ADDRESS_CLAMP;
+    tex0_sampler.MipLODBias = 0.0f;
+    tex0_sampler.MaxAnisotropy = 1;
+    tex0_sampler.ComparisonFunc = D3D10_COMPARISON_NEVER;
+    tex0_sampler.MinLOD = -FLT_MAX;
+    tex0_sampler.MaxLOD = FLT_MAX;
+    ThrowIfFailed<CD3D10Exception1>(
+        p_device1->CreateSamplerState(
+            &tex0_sampler,
+            &m_p_ps_tex0_sampler_state),
+        "CImage2DEffect create default sampler state failed.");
+
     D3D10_BLEND_DESC1 blend_desc1{};
     blend_desc1.AlphaToCoverageEnable = FALSE;
     blend_desc1.IndependentBlendEnable = FALSE;
@@ -157,7 +177,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
     render_target_blend_desc0.DestBlend = D3D10_BLEND_INV_DEST_ALPHA;
     render_target_blend_desc0.BlendOp = D3D10_BLEND_OP_ADD;
     render_target_blend_desc0.SrcBlendAlpha = D3D10_BLEND_ONE;
-    render_target_blend_desc0.DestBlendAlpha = D3D10_BLEND_ZERO;
+    render_target_blend_desc0.DestBlendAlpha = D3D10_BLEND_INV_SRC_ALPHA;
     render_target_blend_desc0.BlendOpAlpha = D3D10_BLEND_OP_ADD;
     render_target_blend_desc0.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
     ThrowIfFailed<CD3D10Exception1>(
@@ -190,16 +210,16 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
 
 void CImage2DEffect::RecreateInputTextureRelatedResources(Microsoft::WRL::ComPtr<ID3D10Texture2D> p_input)
 {
-    D3D10_SHADER_RESOURCE_VIEW_DESC1 tex0_shader_resource_view_desc1 = {};
-    tex0_shader_resource_view_desc1.Format = PIXEL_FORMAT;
-    tex0_shader_resource_view_desc1.ViewDimension = D3D10_1_SRV_DIMENSION_TEXTURE2D;
-    tex0_shader_resource_view_desc1.Texture2D.MostDetailedMip = 0;
-    tex0_shader_resource_view_desc1.Texture2D.MipLevels = 1;
+    D3D10_SHADER_RESOURCE_VIEW_DESC tex0_shader_resource_view_desc = {};
+    tex0_shader_resource_view_desc.Format = PIXEL_FORMAT;
+    tex0_shader_resource_view_desc.ViewDimension = D3D10_1_SRV_DIMENSION_TEXTURE2D;
+    tex0_shader_resource_view_desc.Texture2D.MostDetailedMip = 0;
+    tex0_shader_resource_view_desc.Texture2D.MipLevels = 1;
     ThrowIfFailed<CD3D10Exception1>(
-        m_p_owner_device1->CreateShaderResourceView1(
+        m_p_owner_device1->CreateShaderResourceView(
             p_input.Get(),
-            &tex0_shader_resource_view_desc1,
-            &m_p_ps_tex0_resource_view1),
+            &tex0_shader_resource_view_desc,
+            &m_p_ps_tex0_resource_view),
         "CImage2DEffect create shader resource view1 failed.");
 }
 
@@ -234,12 +254,14 @@ void CImage2DEffect::RecreatePsByteCodeRelatedResources(Microsoft::WRL::ComPtr<I
 }
 
 auto CImage2DEffect::ApplyPipelineConfig() const
-    ->const CImage2DEffect&
+    -> const CImage2DEffect&
 {
-    m_p_owner_device1->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+    m_p_owner_device1->ClearState();
+
+    m_p_owner_device1->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     m_p_owner_device1->IASetInputLayout(m_p_input_layout.Get());
     auto raw_m_p_vertex_buffer = m_p_vertex_buffer.Get();
-    constexpr static std::array<UINT, 1> strides{static_cast<UINT>(QuadrangleVertexs::GetSize())};
+    constexpr static std::array<UINT, 1> strides{static_cast<UINT>(QuadrangleVertexs::GetStride())};
     constexpr static std::array<UINT, 1> offsets{0};
     m_p_owner_device1->IASetVertexBuffers(
         SLOT,
@@ -249,17 +271,10 @@ auto CImage2DEffect::ApplyPipelineConfig() const
         offsets.data());
     m_p_owner_device1->IASetIndexBuffer(
         m_p_index_buffer.Get(),
-        DXGI_FORMAT_R32_UINT,
+        DXGI_FORMAT_R16_UINT,
         0);
 
     m_p_owner_device1->VSSetShader(m_p_vs.Get());
-
-    m_p_owner_device1->GSSetShader(NULL);
-
-    ID3D10Buffer* null_buffer = nullptr;
-    UINT offset = 0;
-    //此API与D3D11行为不同
-    m_p_owner_device1->SOSetTargets(0, &null_buffer, &offset);
 
     D3D10_VIEWPORT viewport{};
     viewport.Width = m_output_width;
@@ -269,20 +284,19 @@ auto CImage2DEffect::ApplyPipelineConfig() const
     m_p_owner_device1->RSSetViewports(1, &viewport);
     m_p_owner_device1->RSSetState(m_p_rasterizer_state.Get());
 
-    ID3D10SamplerState* raw_m_ps_tex0_sampler_state = nullptr;
+    ID3D10SamplerState* raw_m_p_ps_tex0_sampler_state = m_p_ps_tex0_sampler_state.Get();
     m_p_owner_device1->PSSetSamplers(
         SLOT,
         1,
-        &raw_m_ps_tex0_sampler_state);
-    auto raw_m_p_ps_tex0_sampler_state =
-        static_cast<ID3D10ShaderResourceView*>(m_p_ps_tex0_resource_view1.Get());
+        &raw_m_p_ps_tex0_sampler_state);
+    auto raw_m_p_ps_tex0_resource_view = m_p_ps_tex0_resource_view.Get();
     m_p_owner_device1->PSSetShaderResources(
         SLOT,
         1,
-        &raw_m_p_ps_tex0_sampler_state);
+        &raw_m_p_ps_tex0_resource_view);
     m_p_owner_device1->PSSetShader(m_p_ps.Get());
 
-    m_p_owner_device1->OMSetBlendState(m_p_blend_state1.Get(), NULL, 0);
+    m_p_owner_device1->OMSetBlendState(m_p_blend_state1.Get(), NULL, 0xffffffff);
     m_p_owner_device1->OMSetDepthStencilState(m_p_depth_stencil_state.Get(), 0);
     auto p_render_target_view = m_p_render_target_view.Get();
     m_p_owner_device1->OMSetRenderTargets(1, &p_render_target_view, NULL);
