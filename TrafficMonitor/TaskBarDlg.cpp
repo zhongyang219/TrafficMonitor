@@ -154,8 +154,8 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
         d2d_size.width = draw_rect.Width();
         d2d_size.height = draw_rect.Height();
         p_draw_common->Create(this->m_taskbar_draw_common_window_support.Get(), d2d_size);
-        //仅透明时启用此渲染器，则默认初始化为全黑alpha=0
-        p_draw_common->FillRect(draw_rect, 0x00000000, 0);
+        //仅透明时启用此渲染器，则默认初始化为全黑，alpha=1
+        p_draw_common->FillRect(draw_rect, 0x00000000, 1);
         p_draw_common->SetFont(&m_font);
         p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
         p_drawer = p_draw_common;
