@@ -9,6 +9,8 @@
 #include "Nullable.hpp"
 #include "DrawTextManager.h"
 
+void LogWin32ApiErrorMessage() noexcept;
+
 namespace DrawCommonHelper
 {
     void DefaultD2DDrawCommonExceptionHandler(CHResultException& ex);
@@ -41,8 +43,15 @@ bool IsBitwiseEquality(T& lhs, T& rhs) noexcept
     return ::memcmp(p_lhs, p_rhs, size) == 0;
 }
 
-// 0.0039215686 + 0.0000000001
-#define TRAFFICMONITOR_ONE_IN_255 "0.0039215687"
+#define TRAFFICMONITOR_STR_IMPL(x) #x
+#define TRAFFICMONITOR_STR(x) TRAFFICMONITOR_STR_IMPL(x)
+// 0.0039215686 = 1 / 255
+#define TRAFFICMONITOR_ONE_IN_255_NUM 0.0039215686
+// 0.0039215686 + 0.0000784314
+#define TRAFFICMONITOR_ONE_IN_255_NUM_CEIL 0.004
+#define TRAFFICMONITOR_ONE_IN_255_NUM_FLOOR 0.0038431372
+#define TRAFFICMONITOR_ONE_IN_255_CEIL TRAFFICMONITOR_STR(TRAFFICMONITOR_ONE_IN_255_NUM_CEIL)
+#define TRAFFICMONITOR_ONE_IN_255_FLOOR TRAFFICMONITOR_STR(TRAFFICMONITOR_ONE_IN_255_NUM_FLOOR)
 
 /**
  * @brief 每次循环都会在最开始时调用Resize()。
@@ -63,10 +72,11 @@ private:
         Microsoft::WRL::ComPtr<IDXGISurface1> m_p_render_target_surface{};
         Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_p_foreground_color_brush{};
         Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_p_background_color_brush{};
-        // 此贴图会被用于GetDC
+        // 此贴图来自GDI部分操作后的结果
         Microsoft::WRL::ComPtr<ID3D10Texture2D> m_p_gdi_initial_texture{};
         Microsoft::WRL::ComPtr<ID3D10Texture2D> m_p_gdi_final_texture{};
         Microsoft::WRL::ComPtr<IDXGISurface1> m_p_gdi_initial_surface{};
+        Microsoft::WRL::ComPtr<IDXGISurface1> m_p_gdi_finial_surface{};
         CImage2DEffect m_alpha_value_effect;
         D2D1_COLOR_F m_foreground_color{D2D1::ColorF::Black};
         D2D1_COLOR_F m_background_color{D2D1::ColorF::Black};
@@ -78,20 +88,8 @@ private:
             -> Microsoft::WRL::ComPtr<ID3D10Texture2D>;
         static auto GetPsAlphaValueReducer() noexcept
             -> Microsoft::WRL::ComPtr<ID3D10Blob>;
-        static auto GetPsAlphaValueIncreaser() noexcept
-            -> Microsoft::WRL::ComPtr<ID3D10Blob>;
         void RecreateResource(Microsoft::WRL::ComPtr<ID3D10Device1> p_device1, const D2D1_SIZE_U size);
         static void SetSolidBrushColor(Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> p_brush, const D2D1_COLOR_F) noexcept;
-        /**
-         * @brief 用于侦测gdi写入过的区域，此时m_p_gdi_initial_texture为输入，m_p_gdi_final_texture为输出
-         *
-         */
-        void SwitchToAlphaValueReduceEffect();
-        /**
-         * @brief 用于初始化gdi互操作贴图，此时m_p_gdi_final_texture为输入，m_p_gdi_initial_texture为输出
-         *
-         */
-        void SwitchToAlphaValueIncreaseEffect();
 
     public:
         explicit GpuHelper(Microsoft::WRL::ComPtr<ID3D10Device1> p_device1);
@@ -143,13 +141,14 @@ public:
         -> ID2D1SolidColorBrush*;
     auto GetRenderTarget() noexcept
         -> Microsoft::WRL::ComPtr<ID2D1RenderTarget>;
-    auto InitGdiInteropTexture()
-        -> CD3D10DrawCallWaiter;
+    void InitGdiInteropTexture(void* p_data, std::size_t data_size);
     auto GetTextFormat() noexcept
         -> Microsoft::WRL::ComPtr<IDWriteTextFormat>;
     auto GetRawPsDotLikeStyle() noexcept
         -> ID2D1StrokeStyle*;
-    auto GetGdiTextureSurface() noexcept
+    auto GetGdiInitalTextureSurface() noexcept
+        -> Microsoft::WRL::ComPtr<IDXGISurface1>;
+    auto GetGdiFinalTextureSurface() noexcept
         -> Microsoft::WRL::ComPtr<IDXGISurface1>;
     auto DrawAlphaValueReduceEffect() noexcept
         -> CD3D10DrawCallWaiter;
@@ -351,7 +350,10 @@ private:
     constexpr static int DEFAULT_GDI_OP_TEXTURE_ALPHA = 2;
 
     CTaskBarDlgDrawCommonWindowSupport* m_p_window_support{nullptr};
-    CNullable<CD3D10DrawCallWaiter> m_gdi_texture_initialization_waiter{};
+    HDC m_gdi_interop_dc{};
+    HBITMAP m_gdi_interop_hbitmap{};
+    void* m_p_gdi_interop_hbitmap_data{};
+    HGDIOBJ m_gdi_interop_old_hbitmap{};
 
     void OnD3D10Exception1(CD3D10Exception1& ex);
 
@@ -375,34 +377,16 @@ public:
     template <class GdiOp>
     void ExecuteGdiOperation(CRect rect, GdiOp gdi_op)
     {
-        // 仅在waiter有效时执行
-        if (m_gdi_texture_initialization_waiter)
-        {
-            ThrowIfFailed<CD3D10Exception1>(m_gdi_texture_initialization_waiter.GetUnsafe().Wait(),
-                                            "Initialize gdi interop texture failed.");
-            // 使waiter无效
-            Destroy(&m_gdi_texture_initialization_waiter);
-            EmplaceAt(&m_gdi_texture_initialization_waiter);
-        }
-        auto p_gdi_interop_surface = m_p_window_support->GetGdiTextureSurface();
-        HDC texture_dc{NULL};
-        ThrowIfFailed<CD3D10Exception1>(
-            p_gdi_interop_surface->GetDC(FALSE, &texture_dc),
-            "Get DC from IDXGISurface1 failed.");
-        ::SetBkColor(texture_dc, TRANSPARENT);
-        auto old_hfont = ::SelectObject(texture_dc, m_p_window_support->GetFont());
-        TaskBarDlgUser32DrawTextHook::Details::DrawTextReplacedFunctionState state{texture_dc};
+        auto old_hfont = ::SelectObject(m_gdi_interop_dc, m_p_window_support->GetFont());
+        TaskBarDlgUser32DrawTextHook::Details::DrawTextReplacedFunctionState state{m_gdi_interop_dc};
 
         {
             auto enable_all_replaced_function_guard =
                 TaskBarDlgUser32DrawTextHook::EnableAllReplaceFunction(state);
-            gdi_op(texture_dc);
+            gdi_op(m_gdi_interop_dc);
         }
 
-        ::SelectObject(texture_dc, old_hfont);
-        ThrowIfFailed<CD3D10Exception1>(
-            p_gdi_interop_surface->ReleaseDC(&rect),
-            "Release DC from IDXGISurface1 failed.");
+        ::SelectObject(m_gdi_interop_dc, old_hfont);
     }
 
     static auto Convert(CPoint point) noexcept

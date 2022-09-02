@@ -7,6 +7,29 @@
 
 using Microsoft::WRL::ComPtr;
 
+void LogWin32ApiErrorMessage() noexcept
+{
+    auto error_code = ::GetLastError();
+    //写入系统格式化后的错误信息
+    if (error_code != 0)
+    {
+        LPTSTR fomat_error = nullptr;
+        ::FormatMessage(
+            FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS,
+            NULL,
+            error_code,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            reinterpret_cast<decltype(fomat_error)>(&fomat_error),
+            0,
+            NULL);
+        if (fomat_error != nullptr)
+        {
+            CCommon::WriteLog(fomat_error, theApp.m_log_path.c_str());
+            ::LocalFree(fomat_error);
+        }
+    }
+}
+
 void DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(CHResultException& ex)
 {
     //禁用D2D绘图
@@ -76,30 +99,33 @@ void CTaskBarDlgDrawCommonWindowSupport::GpuHelper::RecreateResource(Microsoft::
     constexpr static auto TIP_WHEN_CREATE_ID2D1RENDERTARGET_FAILED =
         "Create d2d1 render target from dxgi surface failed.";
 
-    m_p_gdi_initial_texture = CreateGdiCompatibleTexture(p_device1, size);
-    ThrowIfFailed<CD3D10Exception1>(
-        m_p_gdi_initial_texture->QueryInterface(IID_PPV_ARGS(&m_p_gdi_initial_surface)),
-        "Get IDXGISurface1 from GDI interop texture failed.");
-
     D3D10_TEXTURE2D_DESC description = {};
     description.ArraySize = 1;
-    description.BindFlags = D3D10_BIND_RENDER_TARGET | D3D10_BIND_SHADER_RESOURCE;
     description.Format = PIXEL_FORMAT;
     description.Width = size.width;
     description.Height = size.height;
     description.MipLevels = 1;
     description.SampleDesc.Count = 1;
+    description.BindFlags = D3D10_BIND_RENDER_TARGET | D3D10_BIND_SHADER_RESOURCE;
+    description.CPUAccessFlags = 0;
+    description.Usage = D3D10_USAGE_DEFAULT;
     ThrowIfFailed<CD3D10Exception1>(
         p_device1->CreateTexture2D(
             &description,
             NULL,
             &m_p_gdi_final_texture),
-        "Create m_p_gdi_final_texture(ID3D10Texture2D) failed.");
+        "Create m_p_gdi_final_texture(type = ID3D10Texture2D) failed.");
+    ThrowIfFailed<CD3D10Exception1>(
+        m_p_gdi_final_texture->QueryInterface(IID_PPV_ARGS(&m_p_gdi_finial_surface)),
+        "Get IDXGISurface1 from GDI interop result texture failed.");
 
     auto p_render_target_texture = CreateGdiCompatibleTexture(p_device1, size);
     ThrowIfFailed<CD3D10Exception1>(
         p_render_target_texture->QueryInterface(IID_PPV_ARGS(&m_p_render_target_surface)),
         "Get IDXGISurface1 from D2D render target texture failed.");
+    m_alpha_value_effect
+        .SetOutputSize(size.width, size.height)
+        .SetPsByteCode(GetPsAlphaValueReducer());
 
     ThrowIfFailed<CD2D1Exception>(
         CD2D1Support::GetFactory()->CreateDxgiSurfaceRenderTarget(
@@ -123,22 +149,6 @@ void CTaskBarDlgDrawCommonWindowSupport::GpuHelper::RecreateResource(Microsoft::
 void CTaskBarDlgDrawCommonWindowSupport::GpuHelper::SetSolidBrushColor(ComPtr<ID2D1SolidColorBrush> p_brush, D2D1_COLOR_F d2d1_color_f) noexcept
 {
     p_brush->SetColor(d2d1_color_f);
-}
-
-void CTaskBarDlgDrawCommonWindowSupport::GpuHelper::SwitchToAlphaValueReduceEffect()
-{
-    m_alpha_value_effect
-        .SetPsByteCode(GetPsAlphaValueReducer())
-        .SetInputTexture(m_p_gdi_initial_texture)
-        .SetOutputTexture(m_p_gdi_final_texture);
-}
-
-void CTaskBarDlgDrawCommonWindowSupport::GpuHelper::SwitchToAlphaValueIncreaseEffect()
-{
-    m_alpha_value_effect
-        .SetPsByteCode(GetPsAlphaValueIncreaser())
-        .SetInputTexture(m_p_gdi_final_texture)
-        .SetOutputTexture(m_p_gdi_initial_texture);
 }
 
 CTaskBarDlgDrawCommonWindowSupport::GpuHelper::GpuHelper(Microsoft::WRL::ComPtr<ID3D10Device1> p_device1)
@@ -220,44 +230,23 @@ Texture2D input_texture : register(t0);
 
 float4 PS(VsOutput ps_in) : SV_TARGET
 {
-    float4 color = input_texture.Sample(input_sampler, ps_in.texcoord);
-    color.w -= )" TRAFFICMONITOR_ONE_IN_255 ";"
-                         R"(
-    color.w = max(0.0, color.w);
+    float4 color = input_texture.Sample(input_sampler, ps_in.texcoord);)"
+    "[flatten] if (color.w > " TRAFFICMONITOR_ONE_IN_255_FLOOR " && color.w < " TRAFFICMONITOR_ONE_IN_255_CEIL ")"
+                R"(
+    {
+        color.w = 0.0;
+        return color;
+    }
+    [flatten] if (color.w == 0)
+    {
+        color.w = 1.0;
+        return color;
+    }
     return color;
 }
 )")
                 .SetEntryPoint("PS")
                 .SetName("PsGdiTexturePostprocessor")
-                .SetTarget("ps_4_1")
-                .SetFlags1(D3DCOMPILE_OPTIMIZATION_LEVEL3 | D3DCOMPILE_WARNINGS_ARE_ERRORS);
-        });
-    return result.Get().Compile();
-}
-
-auto CTaskBarDlgDrawCommonWindowSupport::GpuHelper::GetPsAlphaValueIncreaser() noexcept
-    -> Microsoft::WRL::ComPtr<ID3D10Blob>
-{
-    const static auto result = MakeStaticVariableWrapper<CShader>(
-        [](CShader* p_content)
-        {
-            p_content->SetCode(
-                         CIMAGE2DEFFECT_SHADER_VS_OUTPUT_DECLARATION
-                         R"(
-SamplerState input_sampler : register(s0);
-Texture2D input_texture : register(t0);
-
-float4 PS(VsOutput ps_in) : SV_TARGET
-{
-    float4 color = input_texture.Sample(input_sampler, ps_in.texcoord);
-    color.w += )" TRAFFICMONITOR_ONE_IN_255 ";"
-                         R"(
-    color.w = min(1.0, color.w);
-    return color;
-}
-)")
-                .SetEntryPoint("PS")
-                .SetName("PsGdiTexturePreprocessor")
                 .SetTarget("ps_4_1")
                 .SetFlags1(D3DCOMPILE_OPTIMIZATION_LEVEL3 | D3DCOMPILE_WARNINGS_ARE_ERRORS);
         });
@@ -295,17 +284,30 @@ auto CTaskBarDlgDrawCommonWindowSupport::GetRenderTarget() noexcept
     return m_gpu_helper.m_p_render_target;
 }
 
-auto CTaskBarDlgDrawCommonWindowSupport::InitGdiInteropTexture()
-    -> CD3D10DrawCallWaiter
+void CTaskBarDlgDrawCommonWindowSupport::InitGdiInteropTexture(void* p_data, std::size_t data_size)
 {
-    constexpr static std::array<FLOAT, 4> transparent_black{.0f, .0f, .0f, .0f};
-    m_gpu_helper.m_alpha_value_effect
-        .SetOutputTexture(m_gpu_helper.m_p_gdi_final_texture)
-        .ClearOnly(transparent_black);
-    m_gpu_helper.SwitchToAlphaValueIncreaseEffect();
-    return m_gpu_helper.m_alpha_value_effect
-        .ApplyPipelineConfig()
-        .Draw();
+    D3D10_TEXTURE2D_DESC description = {};
+    description.ArraySize = 1;
+    description.BindFlags = D3D10_BIND_SHADER_RESOURCE;
+    description.Format = PIXEL_FORMAT;
+    description.Width = m_gpu_helper.m_render_target_size.width;
+    description.Height = m_gpu_helper.m_render_target_size.height;
+    description.MipLevels = 1;
+    description.SampleDesc.Count = 1;
+    description.Usage = D3D10_USAGE_DEFAULT;
+    D3D10_SUBRESOURCE_DATA subresource_data{};
+    subresource_data.pSysMem = p_data;
+    subresource_data.SysMemPitch = m_gpu_helper.m_render_target_size.width * 4;
+    ThrowIfFailed<CD3D10Exception1>(
+        m_p_device1->CreateTexture2D(
+            &description,
+            &subresource_data,
+            &m_gpu_helper.m_p_gdi_initial_texture),
+        "Create m_p_gdi_initial_texture(type = ID3D10Texture2D) failed.");
+    ThrowIfFailed<CD3D10Exception1>(
+        m_gpu_helper.m_p_gdi_initial_texture->QueryInterface(
+            IID_PPV_ARGS(&m_gpu_helper.m_p_gdi_initial_surface)),
+        "Get IDXGISurface1 from GDI interop initial texture failed.");
 }
 
 void CTaskBarDlgDrawCommonWindowSupport::SetFont(HFONT h_font)
@@ -346,10 +348,16 @@ auto CTaskBarDlgDrawCommonWindowSupport::GetRawPsDotLikeStyle() noexcept -> ID2D
     return m_ref_taskbdlg_draw_common_support.GetPsDotLikeStyle().Get();
 }
 
-auto CTaskBarDlgDrawCommonWindowSupport::GetGdiTextureSurface() noexcept
+auto CTaskBarDlgDrawCommonWindowSupport::GetGdiInitalTextureSurface() noexcept
     -> Microsoft::WRL::ComPtr<IDXGISurface1>
 {
     return m_gpu_helper.m_p_gdi_initial_surface;
+}
+
+auto CTaskBarDlgDrawCommonWindowSupport::GetGdiFinalTextureSurface() noexcept
+    -> Microsoft::WRL::ComPtr<IDXGISurface1>
+{
+    return m_gpu_helper.m_p_gdi_finial_surface;
 }
 
 auto CTaskBarDlgDrawCommonWindowSupport::GetSize() const noexcept
@@ -413,8 +421,13 @@ auto CTaskBarDlgDrawCommonWindowSupport::GetRenderTargetSurface() noexcept
 auto CTaskBarDlgDrawCommonWindowSupport::DrawAlphaValueReduceEffect() noexcept
     -> CD3D10DrawCallWaiter
 {
-    m_gpu_helper.SwitchToAlphaValueReduceEffect();
+    constexpr std::array<FLOAT, 4> transparent_black{.0f, .0f, .0f, .0f};
+    
+    m_gpu_helper.m_alpha_value_effect
+        .SetOutputTexture(m_gpu_helper.m_p_gdi_final_texture)
+        .ClearOnly(transparent_black);
     return m_gpu_helper.m_alpha_value_effect
+        .SetInputTexture(m_gpu_helper.m_p_gdi_initial_texture)
         .ApplyPipelineConfig()
         .Draw();
 }
@@ -526,6 +539,20 @@ namespace TaskBarDlgUser32DrawTextHook
                     return false;
                 }
             }
+            template <class Cleaner, class Func>
+            static bool Verify(T value, Cleaner&& cleaner, Func&& do_before_clean)
+            {
+                if (value != FAILED_VALUE)
+                {
+                    return true;
+                }
+                else
+                {
+                    do_before_clean();
+                    cleaner();
+                    return false;
+                }
+            }
         };
         using Win32BOOLVerifier = ReturnValueVerifier<BOOL, 0>;
         using Win32IntVerifier = ReturnValueVerifier<int, 0>;
@@ -539,6 +566,8 @@ namespace TaskBarDlgUser32DrawTextHook
         int ReplacedDrawTextCommon(const CDrawTextReplacedFunction<DrawTextFunctionNamespace>& ref_this, DrawTextArgs&&... draw_text_args)
         {
             constexpr std::size_t hdc_index = 0;
+            constexpr std::size_t lpchText_index = 1;
+            constexpr std::size_t cchText_index = 2;
             constexpr std::size_t lprc_index = 3;
             constexpr std::size_t format_index = 4;
 
@@ -549,15 +578,19 @@ namespace TaskBarDlgUser32DrawTextHook
             {
                 return (*p_original_function)(std::forward<DrawTextArgs>(draw_text_args)...);
             }
+            if (std::get<cchText_index>(args_tuple) == 0)
+            {
+                return User32DrawTextManager::CUSTOM_SUCCESS;
+            }
             // https://stackoverflow.com/questions/42221322/how-to-draw-text-with-transparency-using-gdi
             if (p_original_function)
             {
+
                 RECT text_area{};
                 LPRECT lp_text_area = &text_area;
                 auto input_format = std::get<format_index>(args_tuple);
                 auto calculate_rect_format = input_format | DT_CALCRECT;
                 auto&& replaced_parameters = std::make_tuple(lp_text_area, calculate_rect_format);
-
                 if (!Win32IntVerifier::Verify(
                         ReplaceNthConsecutiveArgumentAndApply<lprc_index>(
                             std::move(replaced_parameters), p_original_function,
@@ -572,7 +605,7 @@ namespace TaskBarDlgUser32DrawTextHook
                 {
                     return 0;
                 }
-                auto clean_after_creating_dc = [text_dc]() noexcept
+                auto clean_after_creating_dc = [&text_dc]() noexcept
                 {
                     ::DeleteDC(text_dc);
                 };
@@ -592,7 +625,7 @@ namespace TaskBarDlgUser32DrawTextHook
                     return 0;
                 }
                 auto clean_after_creating_text_hbitmap =
-                [&text_hbitmap, &clean_after_creating_dc]() noexcept
+                    [&text_hbitmap, &clean_after_creating_dc]() noexcept
                 {
                     ::DeleteObject(text_hbitmap);
                     clean_after_creating_dc();
@@ -600,26 +633,27 @@ namespace TaskBarDlgUser32DrawTextHook
 
                 HGDIOBJ old_hbitmap = ::SelectObject(text_dc, text_hbitmap);
                 auto clean_after_selecting_text_hbitmap =
-                [&text_dc, &old_hbitmap, &clean_after_creating_text_hbitmap]() noexcept
+                    [&text_dc, &old_hbitmap, &clean_after_creating_text_hbitmap]() noexcept
                 {
                     ::SelectObject(text_dc, old_hbitmap);
                     clean_after_creating_text_hbitmap();
                 };
 
                 auto hfont = ::GetCurrentObject(input_hdc, OBJ_FONT);
-                if (!Win32HGDIOBJVerifier::Verify(hfont, clean_after_selecting_text_hbitmap))
+                if (!Win32HGDIOBJVerifier::Verify(
+                        hfont,
+                        clean_after_selecting_text_hbitmap))
                 {
                     return 0;
                 }
                 HGDIOBJ old_hfont = ::SelectObject(text_dc, hfont);
                 auto clean_after_selecting_text_hfont =
-                [&text_dc, &old_hfont, &clean_after_selecting_text_hbitmap]() noexcept
+                    [&text_dc, &old_hfont, &clean_after_selecting_text_hbitmap]() noexcept
                 {
                     ::SelectObject(text_dc, old_hfont);
                     clean_after_selecting_text_hbitmap();
                 };
 
-                COLORREF colorref_win32_api_return_value{0};
                 if (!Win32COLORREFVerifier::Verify(
                         ::SetTextColor(text_dc, 0x00FFFFFF),
                         clean_after_selecting_text_hfont))
@@ -638,10 +672,14 @@ namespace TaskBarDlgUser32DrawTextHook
                 {
                     return 0;
                 }
-                auto&& first_parameter = std::make_tuple(static_cast<HDC>(text_dc));
+                auto&& replaced_dc_and_text_rect = std::make_tuple(
+                    static_cast<HDC>(text_dc),
+                    std::get<lpchText_index>(args_tuple),
+                    std::get<cchText_index>(args_tuple),
+                    &text_area);
                 if (!Win32IntVerifier::Verify(
                         ReplaceNthConsecutiveArgumentAndApply<hdc_index>(
-                            std::move(first_parameter), p_original_function,
+                            std::move(replaced_dc_and_text_rect), p_original_function,
                             std::forward<DrawTextArgs>(draw_text_args)...),
                         clean_after_selecting_text_hfont))
                 {
@@ -651,7 +689,9 @@ namespace TaskBarDlgUser32DrawTextHook
                 std::size_t height = std::abs(bitmap_info.bmiHeader.biHeight);
                 auto p_pixel_data = reinterpret_cast<BYTE*>(p_data);
                 auto color = ::GetTextColor(input_hdc);
-                if (!Win32COLORREFVerifier::Verify(color, clean_after_selecting_text_hfont))
+                if (!Win32COLORREFVerifier::Verify(
+                        color,
+                        clean_after_selecting_text_hfont))
                 {
                     return 0;
                 }
@@ -659,7 +699,9 @@ namespace TaskBarDlgUser32DrawTextHook
                 BYTE g = GetGValue(color);
                 BYTE b = GetBValue(color);
                 BYTE a;
-                if (!Win32BOOLVerifier::Verify(::GdiFlush(), clean_after_selecting_text_hfont))
+                if (!Win32BOOLVerifier::Verify(
+                        ::GdiFlush(),
+                        clean_after_selecting_text_hfont))
                 {
                     return 0;
                 }
@@ -767,12 +809,34 @@ void CTaskBarDlgDrawCommon::Create(CTaskBarDlgDrawCommonWindowSupport& taskbar_d
 
     m_p_window_support = &taskbar_dlg_draw_common_window_support;
     m_p_window_support->Resize(size);
-    m_gdi_texture_initialization_waiter.Construct(std::move(m_p_window_support->InitGdiInteropTexture()));
 
     auto p_render_target = taskbar_dlg_draw_common_window_support.GetRenderTarget();
     p_render_target->BeginDraw();
     p_render_target->SetTransform(D2D1::Matrix3x2F::Identity());
     p_render_target->Clear(transparent_black);
+
+    auto bitmap_info = TaskBarDlgUser32DrawTextHook::Details::GetArgb32BitmapInfo(size.width, size.height);
+    m_gdi_interop_hbitmap = ::CreateDIBSection(
+        m_gdi_interop_dc,
+        &bitmap_info,
+        DIB_RGB_COLORS,
+        &m_p_gdi_interop_hbitmap_data,
+        NULL,
+        0);
+    m_gdi_interop_dc = ::CreateCompatibleDC(NULL);
+    ::SetBkColor(m_gdi_interop_dc, TRANSPARENT);
+    m_gdi_interop_old_hbitmap = ::SelectObject(m_gdi_interop_dc, m_gdi_interop_hbitmap);
+    std::size_t width = std::abs(bitmap_info.bmiHeader.biWidth);
+    std::size_t height = std::abs(bitmap_info.bmiHeader.biHeight);
+    auto p_pixel_data = reinterpret_cast<BYTE*>(m_p_gdi_interop_hbitmap_data);
+    for (std::size_t y = 0; y < height; ++y)
+    {
+        for (std::size_t x = 0; x < width; ++x)
+        {
+            std::advance(p_pixel_data, 3);
+            *p_pixel_data++ = DrawCommonHelper::GDI_NO_MODIFIED_FLAG;
+        }
+    }
 }
 
 auto CTaskBarDlgDrawCommon::Convert(CPoint point) noexcept
@@ -796,6 +860,142 @@ auto CTaskBarDlgDrawCommon::Convert(CRect rect) noexcept
     return result;
 }
 
+//PBITMAPINFO CreateBitmapInfoStruct(HBITMAP hBmp)
+//{ 
+//    BITMAP bmp; 
+//    PBITMAPINFO pbmi; 
+//    WORD    cClrBits; 
+//
+//    // Retrieve the bitmap color format, width, and height.  
+//    assert(GetObject(hBmp, sizeof(BITMAP), (LPSTR)&bmp)); 
+//
+//    // Convert the color format to a count of bits.  
+//    cClrBits = (WORD)(bmp.bmPlanes * bmp.bmBitsPixel); 
+//    if (cClrBits == 1) 
+//        cClrBits = 1; 
+//    else if (cClrBits <= 4) 
+//        cClrBits = 4; 
+//    else if (cClrBits <= 8) 
+//        cClrBits = 8; 
+//    else if (cClrBits <= 16) 
+//        cClrBits = 16; 
+//    else if (cClrBits <= 24) 
+//        cClrBits = 24; 
+//    else cClrBits = 32; 
+//
+//    // Allocate memory for the BITMAPINFO structure. (This structure  
+//    // contains a BITMAPINFOHEADER structure and an array of RGBQUAD  
+//    // data structures.)  
+//
+//     if (cClrBits < 24) 
+//         pbmi = (PBITMAPINFO) LocalAlloc(LPTR, 
+//                    sizeof(BITMAPINFOHEADER) + 
+//                    sizeof(RGBQUAD) * (1<< cClrBits)); 
+//
+//     // There is no RGBQUAD array for these formats: 24-bit-per-pixel or 32-bit-per-pixel 
+//
+//     else 
+//         pbmi = (PBITMAPINFO) LocalAlloc(LPTR, 
+//                    sizeof(BITMAPINFOHEADER)); 
+//
+//    // Initialize the fields in the BITMAPINFO structure.  
+//
+//    pbmi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER); 
+//    pbmi->bmiHeader.biWidth = bmp.bmWidth; 
+//    pbmi->bmiHeader.biHeight = bmp.bmHeight; 
+//    pbmi->bmiHeader.biPlanes = bmp.bmPlanes; 
+//    pbmi->bmiHeader.biBitCount = bmp.bmBitsPixel; 
+//    if (cClrBits < 24) 
+//        pbmi->bmiHeader.biClrUsed = (1<<cClrBits); 
+//
+//    // If the bitmap is not compressed, set the BI_RGB flag.  
+//    pbmi->bmiHeader.biCompression = BI_RGB; 
+//
+//    // Compute the number of bytes in the array of color  
+//    // indices and store the result in biSizeImage.  
+//    // The width must be DWORD aligned unless the bitmap is RLE 
+//    // compressed. 
+//    pbmi->bmiHeader.biSizeImage = ((pbmi->bmiHeader.biWidth * cClrBits +31) & ~31) /8
+//                                  * pbmi->bmiHeader.biHeight; 
+//    // Set biClrImportant to 0, indicating that all of the  
+//    // device colors are important.  
+//     pbmi->bmiHeader.biClrImportant = 0; 
+//     return pbmi; 
+// } 
+//
+//void CreateBMPFile(LPTSTR pszFile, HBITMAP hBMP) 
+// { 
+//     HANDLE hf;                 // file handle  
+//    BITMAPFILEHEADER hdr;       // bitmap file-header  
+//    PBITMAPINFOHEADER pbih;     // bitmap info-header  
+//    LPBYTE lpBits;              // memory pointer  
+//    DWORD dwTotal;              // total count of bytes  
+//    DWORD cb;                   // incremental count of bytes  
+//    BYTE *hp;                   // byte pointer  
+//    DWORD dwTmp;     
+//    PBITMAPINFO pbi;
+//    HDC hDC;
+//
+//    hDC = CreateCompatibleDC(GetWindowDC(GetDesktopWindow()));
+//    SelectObject(hDC, hBMP);
+//
+//    pbi = CreateBitmapInfoStruct(hBMP);
+//
+//    pbih = (PBITMAPINFOHEADER) pbi; 
+//    lpBits = (LPBYTE) GlobalAlloc(GMEM_FIXED, pbih->biSizeImage);
+//
+//    assert(lpBits) ;
+//
+//    // Retrieve the color table (RGBQUAD array) and the bits  
+//    // (array of palette indices) from the DIB.  
+//    assert(GetDIBits(hDC, hBMP, 0, (WORD) pbih->biHeight, lpBits, pbi, 
+//        DIB_RGB_COLORS));
+//
+//    // Create the .BMP file.  
+//    hf = CreateFile(pszFile, 
+//                   GENERIC_READ | GENERIC_WRITE, 
+//                   (DWORD) 0, 
+//                    NULL, 
+//                   CREATE_ALWAYS, 
+//                   FILE_ATTRIBUTE_NORMAL, 
+//                   (HANDLE) NULL); 
+//    assert(hf != INVALID_HANDLE_VALUE) ;
+//
+//    hdr.bfType = 0x4d42;        // 0x42 = "B" 0x4d = "M"  
+//    // Compute the size of the entire file.  
+//    hdr.bfSize = (DWORD) (sizeof(BITMAPFILEHEADER) + 
+//                 pbih->biSize + pbih->biClrUsed 
+//                 * sizeof(RGBQUAD) + pbih->biSizeImage); 
+//    hdr.bfReserved1 = 0; 
+//    hdr.bfReserved2 = 0; 
+//
+//    // Compute the offset to the array of color indices.  
+//    hdr.bfOffBits = (DWORD) sizeof(BITMAPFILEHEADER) + 
+//                    pbih->biSize + pbih->biClrUsed 
+//                    * sizeof (RGBQUAD); 
+//
+//    // Copy the BITMAPFILEHEADER into the .BMP file.  
+//    assert(WriteFile(hf, (LPVOID) &hdr, sizeof(BITMAPFILEHEADER), 
+//        (LPDWORD) &dwTmp,  NULL)); 
+//
+//    // Copy the BITMAPINFOHEADER and RGBQUAD array into the file.  
+//    assert(WriteFile(hf, (LPVOID) pbih, sizeof(BITMAPINFOHEADER) 
+//                  + pbih->biClrUsed * sizeof (RGBQUAD), 
+//                  (LPDWORD) &dwTmp, ( NULL)));
+//
+//    // Copy the array of color indices into the .BMP file.  
+//    dwTotal = cb = pbih->biSizeImage; 
+//    hp = lpBits; 
+//    assert(WriteFile(hf, (LPSTR) hp, (int) cb, (LPDWORD) &dwTmp,NULL)); 
+//
+//    // Close the .BMP file.  
+//     assert(CloseHandle(hf)); 
+//
+//    // Free memory.  
+//    GlobalFree((HGLOBAL)lpBits);
+//}
+
+
 CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
 {
     // Create的时候抛异常了
@@ -803,6 +1003,14 @@ CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
     {
         return;
     }
+
+    auto texture_size = m_p_window_support->GetSize();
+    auto data_size = texture_size.height * texture_size.width * 4;
+    ::GdiFlush();
+    m_p_window_support->InitGdiInteropTexture(m_p_gdi_interop_hbitmap_data, data_size);
+    ::SelectObject(m_gdi_interop_dc, m_gdi_interop_old_hbitmap);
+    ::DeleteObject(m_gdi_interop_hbitmap);
+    ::DeleteDC(m_gdi_interop_dc);
 
     auto p_render_target = m_p_window_support->GetRenderTarget();
     p_render_target->Flush();
@@ -819,7 +1027,7 @@ CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
         d2d1_bitmap_properties.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
         d2d1_bitmap_properties.dpiX = CTaskBarDlgDrawCommonWindowSupport::DEFAULT_DPI;
         d2d1_bitmap_properties.dpiY = CTaskBarDlgDrawCommonWindowSupport::DEFAULT_DPI;
-        auto p_gdi_interop_surface1 = m_p_window_support->GetGdiTextureSurface();
+        auto p_gdi_interop_surface1 = m_p_window_support->GetGdiFinalTextureSurface();
         ComPtr<ID2D1Bitmap> p_gdi_interop_bitmap{};
         ThrowIfFailed<CD2D1Exception>(
             p_render_target->CreateSharedBitmap(
@@ -1039,28 +1247,11 @@ CTaskBarDlgDrawBuffer::~CTaskBarDlgDrawBuffer()
     if (state == 0)
     {
         auto error_code = ::GetLastError();
-        //写入错误日志
+        LogWin32ApiErrorMessage();
         CString error_info{};
         error_info.Format(_T("Call UpdateLayeredWindowIndirect failed. Use GDI render instead. Error code = %ld."), error_code);
         CCommon::WriteLog(error_info, theApp.m_log_path.c_str());
-        //写入系统格式化后的错误信息
-        if (error_code != 0)
-        {
-            LPTSTR fomat_error = nullptr;
-            ::FormatMessage(
-                FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS,
-                NULL,
-                error_code,
-                MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                reinterpret_cast<decltype(fomat_error)>(&fomat_error),
-                0,
-                NULL);
-            if (fomat_error != nullptr)
-            {
-                CCommon::WriteLog(fomat_error, theApp.m_log_path.c_str());
-                ::LocalFree(fomat_error);
-            }
-        }
+
         //禁用D2D
         theApp.m_taskbar_data.disable_d2d = true;
         //展示错误信息

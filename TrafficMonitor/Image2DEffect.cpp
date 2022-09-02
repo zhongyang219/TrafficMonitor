@@ -8,7 +8,7 @@ namespace D3DQuadrangle
 {
     const std::array<std::uint16_t, 6> VERTEX_INDEX_LIST{
         0, 1, 2,
-        1, 3, 2};
+        2, 3, 0};
 
     const CShader& GetVsShader()
     {

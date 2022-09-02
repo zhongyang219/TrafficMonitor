@@ -9,6 +9,12 @@
 #include "WindowsSettingHelper.h"
 #include "Nullable.hpp"
 
+#ifdef DEBUG
+// DX调试信息捕获
+#include "dxgi1_3.h"
+#include "DXProgrammableCapture.h"
+#endif
+
 // CTaskBarDlg 对话框
 
 IMPLEMENT_DYNAMIC(CTaskBarDlg, CDialogEx)
@@ -121,6 +127,10 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
         });
     auto p_draw_common_union_storage = &std::get<STORAGE_INDEX>(draw_common_union_storage_wrapper.Get());
 
+#ifdef DEBUG
+    Microsoft::WRL::ComPtr<IDXGraphicsAnalysis> p_dxgi_analysis{};
+#endif
+
     IDrawCommon* p_drawer;
     switch (render_type)
     {
@@ -146,6 +156,13 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
     }
     case DrawCommonHelper::RenderType::D2D1:
     {
+#ifdef DEBUG
+        DXGIGetDebugInterface1(0, IID_PPV_ARGS(&p_dxgi_analysis));
+        if (p_dxgi_analysis)
+        {
+            p_dxgi_analysis->BeginCapture();
+        }
+#endif
         //这里与上面相反，是先构造DrawCommon再构造Buffer
         auto p_draw_common = reinterpret_cast<CTaskBarDlgDrawCommon*>(p_draw_common_union_storage);
         //这里构造绘图对象
@@ -249,6 +266,13 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
         index++;
         last_iter = iter;
     }
+
+#ifdef DEBUG
+    if (p_dxgi_analysis)
+    {
+        p_dxgi_analysis->EndCapture();
+    }
+#endif
 }
 
 void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical)
