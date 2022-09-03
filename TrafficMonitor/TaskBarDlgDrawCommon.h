@@ -14,6 +14,7 @@ void LogWin32ApiErrorMessage() noexcept;
 namespace DrawCommonHelper
 {
     void DefaultD2DDrawCommonExceptionHandler(CHResultException& ex);
+    HDC Get1x1AlphaEqual1DC();
 }
 
 class CTaskBarDlgDrawCommonSupport
@@ -350,10 +351,21 @@ private:
     constexpr static int DEFAULT_GDI_OP_TEXTURE_ALPHA = 2;
 
     CTaskBarDlgDrawCommonWindowSupport* m_p_window_support{nullptr};
-    HDC m_gdi_interop_dc{};
-    HBITMAP m_gdi_interop_hbitmap{};
-    void* m_p_gdi_interop_hbitmap_data{};
-    HGDIOBJ m_gdi_interop_old_hbitmap{};
+    class CGdiInteropObject
+    {
+    public:
+        HDC m_gdi_interop_dc{};
+        HBITMAP m_gdi_interop_hbitmap{};
+        void* m_p_gdi_interop_hbitmap_data{};
+        HGDIOBJ m_gdi_interop_old_hbitmap{};
+
+        CGdiInteropObject(D2D1_SIZE_U size);
+        ~CGdiInteropObject();
+    };
+    DefaultCLazyConstructableWithInitializer<CGdiInteropObject, D2D1_SIZE_U> m_gdi_interop_object{
+        [this]()
+        { return std::make_tuple(m_p_window_support->GetSize()); }};
+    COLORREF m_text_color{};
 
     void OnD3D10Exception1(CD3D10Exception1& ex);
 
@@ -377,16 +389,18 @@ public:
     template <class GdiOp>
     void ExecuteGdiOperation(CRect rect, GdiOp gdi_op)
     {
-        auto old_hfont = ::SelectObject(m_gdi_interop_dc, m_p_window_support->GetFont());
-        TaskBarDlgUser32DrawTextHook::Details::DrawTextReplacedFunctionState state{m_gdi_interop_dc};
+        auto& ref_gdi_interop_object = m_gdi_interop_object.Get();
+        auto old_hfont = ::SelectObject(ref_gdi_interop_object.m_gdi_interop_dc, m_p_window_support->GetFont());
+        ::SetTextColor(ref_gdi_interop_object.m_gdi_interop_dc, m_text_color);
+        TaskBarDlgUser32DrawTextHook::Details::DrawTextReplacedFunctionState state{ref_gdi_interop_object.m_gdi_interop_dc};
 
         {
             auto enable_all_replaced_function_guard =
                 TaskBarDlgUser32DrawTextHook::EnableAllReplaceFunction(state);
-            gdi_op(m_gdi_interop_dc);
+            gdi_op(ref_gdi_interop_object.m_gdi_interop_dc);
         }
 
-        ::SelectObject(m_gdi_interop_dc, old_hfont);
+        ::SelectObject(ref_gdi_interop_object.m_gdi_interop_dc, old_hfont);
     }
 
     static auto Convert(CPoint point) noexcept

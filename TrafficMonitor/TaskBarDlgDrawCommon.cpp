@@ -5,6 +5,8 @@
 #include "DrawCommon.h"
 #include "unordered_map"
 
+#undef min
+
 using Microsoft::WRL::ComPtr;
 
 //其实可以把Verify方法作为构造函数
@@ -89,12 +91,15 @@ void DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(CHResultException& e
     ::MessageBox(NULL, CCommon::LoadText(IDS_D2DDRAWCOMMON_ERROR_TIP), NULL, MB_OK | MB_ICONWARNING);
 }
 
-HDC DrawCommonHelper::Get1x1AlphaEqual1DC() noexcept {
+HDC DrawCommonHelper::Get1x1AlphaEqual1DC()
+{
     const static auto result = MakeStaticVariableWrapper<std::tuple<HDC, HGDIOBJ>>(
-        [](auto* p_content) {
+        [](auto* p_content)
+        {
             auto& ref_dc = std::get<0>(*p_content);
             auto& ref_old_hbitmap = std::get<1>(*p_content);
 
+            ref_dc = ::CreateCompatibleDC(NULL);
             auto bitmap_info = GetArgb32BitmapInfo(1, 1);
             void* p_data{};
             auto current_hbitmap = ::CreateDIBSection(
@@ -106,16 +111,16 @@ HDC DrawCommonHelper::Get1x1AlphaEqual1DC() noexcept {
                 0);
             if (!Win32HBITMAPVerifier::Verify(current_hbitmap))
             {
-                throw std::runtime_error{"Create 1x1 ARGB32 DIB failed."};
+                throw std::runtime_error{"Create ARGB32 DIB (size = 1x1, alpha = 1) failed."};
             }
-            ref_dc = ::CreateCompatibleDC(NULL);
             ref_old_hbitmap = ::SelectObject(ref_dc, current_hbitmap);
             ::GdiFlush();
             auto p_pixel_data = reinterpret_cast<BYTE*>(p_data);
             ::memset(p_data, 0, 3);
             p_pixel_data[3] = DrawCommonHelper::GDI_NO_MODIFIED_FLAG;
         },
-        [](auto* p_content){
+        [](auto* p_content)
+        {
             auto& ref_dc = std::get<0>(*p_content);
             auto& ref_old_hbitmap = std::get<1>(*p_content);
 
@@ -622,20 +627,6 @@ namespace TaskBarDlgUser32DrawTextHook
             // https://stackoverflow.com/questions/42221322/how-to-draw-text-with-transparency-using-gdi
             if (p_original_function)
             {
-
-                RECT text_area{};
-                LPRECT lp_text_area = &text_area;
-                auto input_format = std::get<format_index>(args_tuple);
-                auto calculate_rect_format = input_format | DT_CALCRECT;
-                auto&& replaced_parameters = std::make_tuple(lp_text_area, calculate_rect_format);
-                if (!Win32IntVerifier::Verify(
-                        ReplaceNthConsecutiveArgumentAndApply<lprc_index>(
-                            std::move(replaced_parameters), p_original_function,
-                            std::forward<DrawTextArgs>(draw_text_args)...)))
-                {
-                    return 0;
-                }
-
                 HDC text_dc{NULL};
                 text_dc = ::CreateCompatibleDC(NULL);
                 if (!Win32HDCVerifier::Verify(text_dc))
@@ -647,7 +638,8 @@ namespace TaskBarDlgUser32DrawTextHook
                     ::DeleteDC(text_dc);
                 };
 
-                auto bitmap_info = GetArgb32BitmapInfo(text_area);
+                auto& ref_input_rect = std::get<lprc_index>(args_tuple);
+                auto bitmap_info = GetArgb32BitmapInfo(ref_input_rect);
                 void* p_data;
                 auto text_hbitmap = ::CreateDIBSection(
                     text_dc,
@@ -709,11 +701,13 @@ namespace TaskBarDlgUser32DrawTextHook
                 {
                     return 0;
                 }
+                CRect modified_rect = ref_input_rect;
+                modified_rect.MoveToXY(0, 0);
                 auto&& replaced_dc_and_text_rect = std::make_tuple(
-                    static_cast<HDC>(text_dc),
+                    text_dc,
                     std::get<lpchText_index>(args_tuple),
                     std::get<cchText_index>(args_tuple),
-                    &text_area);
+                    modified_rect);
                 if (!Win32IntVerifier::Verify(
                         ReplaceNthConsecutiveArgumentAndApply<hdc_index>(
                             std::move(replaced_dc_and_text_rect), p_original_function,
@@ -722,8 +716,8 @@ namespace TaskBarDlgUser32DrawTextHook
                 {
                     return 0;
                 }
-                std::size_t width = std::abs(bitmap_info.bmiHeader.biWidth);
-                std::size_t height = std::abs(bitmap_info.bmiHeader.biHeight);
+                std::size_t width = modified_rect.right;
+                std::size_t height = modified_rect.bottom;
                 auto p_pixel_data = reinterpret_cast<BYTE*>(p_data);
                 auto color = ::GetTextColor(input_hdc);
                 if (!Win32COLORREFVerifier::Verify(
@@ -753,7 +747,7 @@ namespace TaskBarDlgUser32DrawTextHook
                         *p_pixel_data++ = (b * a) >> 8;
                         *p_pixel_data++ = (g * a) >> 8;
                         *p_pixel_data++ = (r * a) >> 8;
-                        *p_pixel_data++ = a;
+                        *p_pixel_data++ = std::min((2 * a), 0xFF);
                     }
                 }
                 // __except(EXCEPTION_EXECUTE_HANDLER)
@@ -851,29 +845,6 @@ void CTaskBarDlgDrawCommon::Create(CTaskBarDlgDrawCommonWindowSupport& taskbar_d
     p_render_target->BeginDraw();
     p_render_target->SetTransform(D2D1::Matrix3x2F::Identity());
     p_render_target->Clear(transparent_black);
-
-    auto bitmap_info = TaskBarDlgUser32DrawTextHook::Details::GetArgb32BitmapInfo(size.width, size.height);
-    m_gdi_interop_hbitmap = ::CreateDIBSection(
-        m_gdi_interop_dc,
-        &bitmap_info,
-        DIB_RGB_COLORS,
-        &m_p_gdi_interop_hbitmap_data,
-        NULL,
-        0);
-    m_gdi_interop_dc = ::CreateCompatibleDC(NULL);
-    ::SetBkColor(m_gdi_interop_dc, TRANSPARENT);
-    m_gdi_interop_old_hbitmap = ::SelectObject(m_gdi_interop_dc, m_gdi_interop_hbitmap);
-    std::size_t width = std::abs(bitmap_info.bmiHeader.biWidth);
-    std::size_t height = std::abs(bitmap_info.bmiHeader.biHeight);
-    auto p_pixel_data = reinterpret_cast<BYTE*>(m_p_gdi_interop_hbitmap_data);
-    for (std::size_t y = 0; y < height; ++y)
-    {
-        for (std::size_t x = 0; x < width; ++x)
-        {
-            std::advance(p_pixel_data, 3);
-            *p_pixel_data++ = DrawCommonHelper::GDI_NO_MODIFIED_FLAG;
-        }
-    }
 }
 
 auto CTaskBarDlgDrawCommon::Convert(CPoint point) noexcept
@@ -905,13 +876,15 @@ CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
         return;
     }
 
-    auto texture_size = m_p_window_support->GetSize();
-    auto data_size = texture_size.height * texture_size.width * 4;
-    ::GdiFlush();
-    m_p_window_support->InitGdiInteropTexture(m_p_gdi_interop_hbitmap_data, data_size);
-    ::SelectObject(m_gdi_interop_dc, m_gdi_interop_old_hbitmap);
-    ::DeleteObject(m_gdi_interop_hbitmap);
-    ::DeleteDC(m_gdi_interop_dc);
+    if (m_gdi_interop_object.HasValue())
+    {
+        auto texture_size = m_p_window_support->GetSize();
+        auto data_size = texture_size.height * texture_size.width * 4;
+        ::GdiFlush();
+        auto& ref_gdi_interop_object = m_gdi_interop_object.Get();
+        m_p_window_support->InitGdiInteropTexture(
+            ref_gdi_interop_object.m_p_gdi_interop_hbitmap_data, data_size);
+    }
 
     auto p_render_target = m_p_window_support->GetRenderTarget();
     p_render_target->Flush();
@@ -1161,4 +1134,40 @@ CTaskBarDlgDrawBuffer::~CTaskBarDlgDrawBuffer()
     }
     RECT empty_rect{};
     m_p_gdi_surface->ReleaseDC(&empty_rect);
+}
+
+CTaskBarDlgDrawCommon::CGdiInteropObject::CGdiInteropObject(D2D1_SIZE_U size)
+{
+    auto bitmap_info = TaskBarDlgUser32DrawTextHook::Details::GetArgb32BitmapInfo(size.width, size.height);
+    m_gdi_interop_hbitmap = ::CreateDIBSection(
+        m_gdi_interop_dc,
+        &bitmap_info,
+        DIB_RGB_COLORS,
+        &m_p_gdi_interop_hbitmap_data,
+        NULL,
+        0);
+    m_gdi_interop_dc = ::CreateCompatibleDC(NULL);
+    m_gdi_interop_old_hbitmap = ::SelectObject(m_gdi_interop_dc, m_gdi_interop_hbitmap);
+    ::SetBkColor(m_gdi_interop_dc, TRANSPARENT);
+    auto gdi_no_modified_alpha_dc = DrawCommonHelper::Get1x1AlphaEqual1DC();
+    ::BLENDFUNCTION blend_function{
+        AC_SRC_OVER,
+        0,
+        0xFF,
+        AC_SRC_ALPHA};
+    ::AlphaBlend(
+        m_gdi_interop_dc,
+        0, 0,
+        size.width, size.height,
+        gdi_no_modified_alpha_dc,
+        0, 0,
+        1, 1,
+        blend_function);
+}
+
+CTaskBarDlgDrawCommon::CGdiInteropObject::~CGdiInteropObject()
+{
+    ::SelectObject(m_gdi_interop_dc, m_gdi_interop_old_hbitmap);
+    ::DeleteObject(m_gdi_interop_hbitmap);
+    ::DeleteDC(m_gdi_interop_dc);
 }

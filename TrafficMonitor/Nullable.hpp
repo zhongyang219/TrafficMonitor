@@ -254,6 +254,14 @@ public:
             return m_content.GetUnsafe();
         }
     }
+    bool HasValue() const noexcept
+    {
+        return m_content.HasValue();
+    }
+    operator bool() const noexcept
+    {
+        return HasValue();
+    }
 
 private:
     CNullable<T, Deleter> m_content{};

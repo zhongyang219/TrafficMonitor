@@ -1462,6 +1462,11 @@ void CTaskBarDlg::OnPaint()
     {
         DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(ex);
     }
+    catch (std::runtime_error& ex)
+    {
+        auto* log = ex.what();
+        CCommon::WriteLog(log, theApp.m_log_path.c_str());
+    }
 #endif // DEBUG
 }
 
