@@ -7,6 +7,57 @@
 
 using Microsoft::WRL::ComPtr;
 
+//其实可以把Verify方法作为构造函数
+template <class T, T FAILED_VALUE>
+struct ReturnValueVerifier
+{
+    static bool Verify(T value) noexcept
+    {
+        if (value != FAILED_VALUE)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    template <class Cleaner>
+    static bool Verify(T value, Cleaner&& cleaner) noexcept(noexcept(cleaner))
+    {
+        if (value != FAILED_VALUE)
+        {
+            return true;
+        }
+        else
+        {
+            cleaner();
+            return false;
+        }
+    }
+    template <class Cleaner, class Func>
+    static bool Verify(T value, Cleaner&& cleaner, Func&& do_before_clean)
+    {
+        if (value != FAILED_VALUE)
+        {
+            return true;
+        }
+        else
+        {
+            do_before_clean();
+            cleaner();
+            return false;
+        }
+    }
+};
+using Win32BOOLVerifier = ReturnValueVerifier<BOOL, 0>;
+using Win32IntVerifier = ReturnValueVerifier<int, 0>;
+using Win32COLORREFVerifier = ReturnValueVerifier<COLORREF, CLR_INVALID>;
+using Win32HBITMAPVerifier = ReturnValueVerifier<HBITMAP, nullptr>;
+using Win32HDCVerifier = ReturnValueVerifier<HDC, nullptr>;
+using Win32HFONTVerifier = ReturnValueVerifier<HFONT, nullptr>;
+using Win32HGDIOBJVerifier = ReturnValueVerifier<HGDIOBJ, nullptr>;
+
 void LogWin32ApiErrorMessage() noexcept
 {
     auto error_code = ::GetLastError();
@@ -36,6 +87,43 @@ void DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(CHResultException& e
     theApp.m_taskbar_data.disable_d2d = true;
     LogHResultException(ex);
     ::MessageBox(NULL, CCommon::LoadText(IDS_D2DDRAWCOMMON_ERROR_TIP), NULL, MB_OK | MB_ICONWARNING);
+}
+
+HDC DrawCommonHelper::Get1x1AlphaEqual1DC() noexcept {
+    const static auto result = MakeStaticVariableWrapper<std::tuple<HDC, HGDIOBJ>>(
+        [](auto* p_content) {
+            auto& ref_dc = std::get<0>(*p_content);
+            auto& ref_old_hbitmap = std::get<1>(*p_content);
+
+            auto bitmap_info = GetArgb32BitmapInfo(1, 1);
+            void* p_data{};
+            auto current_hbitmap = ::CreateDIBSection(
+                ref_dc,
+                &bitmap_info,
+                DIB_RGB_COLORS,
+                &p_data,
+                NULL,
+                0);
+            if (!Win32HBITMAPVerifier::Verify(current_hbitmap))
+            {
+                throw std::runtime_error{"Create 1x1 ARGB32 DIB failed."};
+            }
+            ref_dc = ::CreateCompatibleDC(NULL);
+            ref_old_hbitmap = ::SelectObject(ref_dc, current_hbitmap);
+            ::GdiFlush();
+            auto p_pixel_data = reinterpret_cast<BYTE*>(p_data);
+            ::memset(p_data, 0, 3);
+            p_pixel_data[3] = DrawCommonHelper::GDI_NO_MODIFIED_FLAG;
+        },
+        [](auto* p_content){
+            auto& ref_dc = std::get<0>(*p_content);
+            auto& ref_old_hbitmap = std::get<1>(*p_content);
+
+            auto previously_used_hbitmap = ::SelectObject(ref_dc, ref_old_hbitmap);
+            ::DeleteObject(previously_used_hbitmap);
+            ::DeleteDC(ref_dc);
+        });
+    return std::get<0>(result.Get());
 }
 
 CTaskBarDlgDrawCommonSupport::CTaskBarDlgDrawCommonSupport()
@@ -422,7 +510,7 @@ auto CTaskBarDlgDrawCommonWindowSupport::DrawAlphaValueReduceEffect() noexcept
     -> CD3D10DrawCallWaiter
 {
     constexpr std::array<FLOAT, 4> transparent_black{.0f, .0f, .0f, .0f};
-    
+
     m_gpu_helper.m_alpha_value_effect
         .SetOutputTexture(m_gpu_helper.m_p_gdi_final_texture)
         .ClearOnly(transparent_black);
@@ -510,57 +598,6 @@ namespace TaskBarDlgUser32DrawTextHook
             result.bmiHeader.biCompression = BI_RGB;
             return result;
         }
-
-        //其实可以把Verify方法作为构造函数
-        template <class T, T FAILED_VALUE>
-        struct ReturnValueVerifier
-        {
-            static bool Verify(T value) noexcept
-            {
-                if (value != FAILED_VALUE)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            template <class Cleaner>
-            static bool Verify(T value, Cleaner&& cleaner) noexcept(noexcept(cleaner))
-            {
-                if (value != FAILED_VALUE)
-                {
-                    return true;
-                }
-                else
-                {
-                    cleaner();
-                    return false;
-                }
-            }
-            template <class Cleaner, class Func>
-            static bool Verify(T value, Cleaner&& cleaner, Func&& do_before_clean)
-            {
-                if (value != FAILED_VALUE)
-                {
-                    return true;
-                }
-                else
-                {
-                    do_before_clean();
-                    cleaner();
-                    return false;
-                }
-            }
-        };
-        using Win32BOOLVerifier = ReturnValueVerifier<BOOL, 0>;
-        using Win32IntVerifier = ReturnValueVerifier<int, 0>;
-        using Win32COLORREFVerifier = ReturnValueVerifier<COLORREF, CLR_INVALID>;
-        using Win32HBITMAPVerifier = ReturnValueVerifier<HBITMAP, nullptr>;
-        using Win32HDCVerifier = ReturnValueVerifier<HDC, nullptr>;
-        using Win32HFONTVerifier = ReturnValueVerifier<HFONT, nullptr>;
-        using Win32HGDIOBJVerifier = ReturnValueVerifier<HGDIOBJ, nullptr>;
 
         template <class DrawTextFunctionNamespace, class... DrawTextArgs>
         int ReplacedDrawTextCommon(const CDrawTextReplacedFunction<DrawTextFunctionNamespace>& ref_this, DrawTextArgs&&... draw_text_args)
@@ -860,142 +897,6 @@ auto CTaskBarDlgDrawCommon::Convert(CRect rect) noexcept
     return result;
 }
 
-//PBITMAPINFO CreateBitmapInfoStruct(HBITMAP hBmp)
-//{ 
-//    BITMAP bmp; 
-//    PBITMAPINFO pbmi; 
-//    WORD    cClrBits; 
-//
-//    // Retrieve the bitmap color format, width, and height.  
-//    assert(GetObject(hBmp, sizeof(BITMAP), (LPSTR)&bmp)); 
-//
-//    // Convert the color format to a count of bits.  
-//    cClrBits = (WORD)(bmp.bmPlanes * bmp.bmBitsPixel); 
-//    if (cClrBits == 1) 
-//        cClrBits = 1; 
-//    else if (cClrBits <= 4) 
-//        cClrBits = 4; 
-//    else if (cClrBits <= 8) 
-//        cClrBits = 8; 
-//    else if (cClrBits <= 16) 
-//        cClrBits = 16; 
-//    else if (cClrBits <= 24) 
-//        cClrBits = 24; 
-//    else cClrBits = 32; 
-//
-//    // Allocate memory for the BITMAPINFO structure. (This structure  
-//    // contains a BITMAPINFOHEADER structure and an array of RGBQUAD  
-//    // data structures.)  
-//
-//     if (cClrBits < 24) 
-//         pbmi = (PBITMAPINFO) LocalAlloc(LPTR, 
-//                    sizeof(BITMAPINFOHEADER) + 
-//                    sizeof(RGBQUAD) * (1<< cClrBits)); 
-//
-//     // There is no RGBQUAD array for these formats: 24-bit-per-pixel or 32-bit-per-pixel 
-//
-//     else 
-//         pbmi = (PBITMAPINFO) LocalAlloc(LPTR, 
-//                    sizeof(BITMAPINFOHEADER)); 
-//
-//    // Initialize the fields in the BITMAPINFO structure.  
-//
-//    pbmi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER); 
-//    pbmi->bmiHeader.biWidth = bmp.bmWidth; 
-//    pbmi->bmiHeader.biHeight = bmp.bmHeight; 
-//    pbmi->bmiHeader.biPlanes = bmp.bmPlanes; 
-//    pbmi->bmiHeader.biBitCount = bmp.bmBitsPixel; 
-//    if (cClrBits < 24) 
-//        pbmi->bmiHeader.biClrUsed = (1<<cClrBits); 
-//
-//    // If the bitmap is not compressed, set the BI_RGB flag.  
-//    pbmi->bmiHeader.biCompression = BI_RGB; 
-//
-//    // Compute the number of bytes in the array of color  
-//    // indices and store the result in biSizeImage.  
-//    // The width must be DWORD aligned unless the bitmap is RLE 
-//    // compressed. 
-//    pbmi->bmiHeader.biSizeImage = ((pbmi->bmiHeader.biWidth * cClrBits +31) & ~31) /8
-//                                  * pbmi->bmiHeader.biHeight; 
-//    // Set biClrImportant to 0, indicating that all of the  
-//    // device colors are important.  
-//     pbmi->bmiHeader.biClrImportant = 0; 
-//     return pbmi; 
-// } 
-//
-//void CreateBMPFile(LPTSTR pszFile, HBITMAP hBMP) 
-// { 
-//     HANDLE hf;                 // file handle  
-//    BITMAPFILEHEADER hdr;       // bitmap file-header  
-//    PBITMAPINFOHEADER pbih;     // bitmap info-header  
-//    LPBYTE lpBits;              // memory pointer  
-//    DWORD dwTotal;              // total count of bytes  
-//    DWORD cb;                   // incremental count of bytes  
-//    BYTE *hp;                   // byte pointer  
-//    DWORD dwTmp;     
-//    PBITMAPINFO pbi;
-//    HDC hDC;
-//
-//    hDC = CreateCompatibleDC(GetWindowDC(GetDesktopWindow()));
-//    SelectObject(hDC, hBMP);
-//
-//    pbi = CreateBitmapInfoStruct(hBMP);
-//
-//    pbih = (PBITMAPINFOHEADER) pbi; 
-//    lpBits = (LPBYTE) GlobalAlloc(GMEM_FIXED, pbih->biSizeImage);
-//
-//    assert(lpBits) ;
-//
-//    // Retrieve the color table (RGBQUAD array) and the bits  
-//    // (array of palette indices) from the DIB.  
-//    assert(GetDIBits(hDC, hBMP, 0, (WORD) pbih->biHeight, lpBits, pbi, 
-//        DIB_RGB_COLORS));
-//
-//    // Create the .BMP file.  
-//    hf = CreateFile(pszFile, 
-//                   GENERIC_READ | GENERIC_WRITE, 
-//                   (DWORD) 0, 
-//                    NULL, 
-//                   CREATE_ALWAYS, 
-//                   FILE_ATTRIBUTE_NORMAL, 
-//                   (HANDLE) NULL); 
-//    assert(hf != INVALID_HANDLE_VALUE) ;
-//
-//    hdr.bfType = 0x4d42;        // 0x42 = "B" 0x4d = "M"  
-//    // Compute the size of the entire file.  
-//    hdr.bfSize = (DWORD) (sizeof(BITMAPFILEHEADER) + 
-//                 pbih->biSize + pbih->biClrUsed 
-//                 * sizeof(RGBQUAD) + pbih->biSizeImage); 
-//    hdr.bfReserved1 = 0; 
-//    hdr.bfReserved2 = 0; 
-//
-//    // Compute the offset to the array of color indices.  
-//    hdr.bfOffBits = (DWORD) sizeof(BITMAPFILEHEADER) + 
-//                    pbih->biSize + pbih->biClrUsed 
-//                    * sizeof (RGBQUAD); 
-//
-//    // Copy the BITMAPFILEHEADER into the .BMP file.  
-//    assert(WriteFile(hf, (LPVOID) &hdr, sizeof(BITMAPFILEHEADER), 
-//        (LPDWORD) &dwTmp,  NULL)); 
-//
-//    // Copy the BITMAPINFOHEADER and RGBQUAD array into the file.  
-//    assert(WriteFile(hf, (LPVOID) pbih, sizeof(BITMAPINFOHEADER) 
-//                  + pbih->biClrUsed * sizeof (RGBQUAD), 
-//                  (LPDWORD) &dwTmp, ( NULL)));
-//
-//    // Copy the array of color indices into the .BMP file.  
-//    dwTotal = cb = pbih->biSizeImage; 
-//    hp = lpBits; 
-//    assert(WriteFile(hf, (LPSTR) hp, (int) cb, (LPDWORD) &dwTmp,NULL)); 
-//
-//    // Close the .BMP file.  
-//     assert(CloseHandle(hf)); 
-//
-//    // Free memory.  
-//    GlobalFree((HGLOBAL)lpBits);
-//}
-
-
 CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
 {
     // Create的时候抛异常了
@@ -1189,6 +1090,7 @@ void CTaskBarDlgDrawCommon::DrawLine(CPoint start_point, int height, COLORREF co
 
 void CTaskBarDlgDrawCommon::SetTextColor(const COLORREF color, BYTE alpha)
 {
+    m_text_color = color;
     m_p_window_support->SetForeColor(color, alpha);
 }
 
