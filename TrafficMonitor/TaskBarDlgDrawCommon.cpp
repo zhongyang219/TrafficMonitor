@@ -729,7 +729,6 @@ namespace TaskBarDlgUser32DrawTextHook
                 BYTE r = GetRValue(color);
                 BYTE g = GetGValue(color);
                 BYTE b = GetBValue(color);
-                BYTE a;
                 if (!Win32BOOLVerifier::Verify(
                         ::GdiFlush(),
                         clean_after_selecting_text_hfont))
@@ -742,12 +741,20 @@ namespace TaskBarDlgUser32DrawTextHook
                 {
                     for (std::size_t x = 0; x < width; ++x)
                     {
-                        a = *p_pixel_data;
-                        // 魔法
-                        *p_pixel_data++ = (b * a) >> 8;
-                        *p_pixel_data++ = (g * a) >> 8;
-                        *p_pixel_data++ = (r * a) >> 8;
-                        *p_pixel_data++ = std::min((2 * a), 0xFF);
+                        std::uint16_t rgb_sum;
+                        rgb_sum = p_pixel_data[0] + p_pixel_data[1] + p_pixel_data[2];
+                        if (rgb_sum == 0)
+                        {
+                            std::advance(p_pixel_data, 4);
+                        }
+                        else
+                        {
+                            *p_pixel_data++ = b;
+                            *p_pixel_data++ = g;
+                            *p_pixel_data++ = r;
+                            auto a = static_cast<BYTE>(rgb_sum * 0.334f);
+                            *p_pixel_data++ = a;
+                        }
                     }
                 }
                 // __except(EXCEPTION_EXECUTE_HANDLER)
