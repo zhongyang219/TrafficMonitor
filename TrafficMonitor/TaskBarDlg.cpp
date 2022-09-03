@@ -1457,6 +1457,15 @@ void CTaskBarDlg::OnPaint()
     }
     catch (CD3D10Exception1& ex)
     {
+        auto hr = ex.GetHResult();
+        if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
+        {
+            m_taskbar_draw_common_window_support.Get().RecreateDevice();
+        }
+        else
+        {
+            DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(ex);
+        }
     }
     catch (CHResultException& ex)
     {

@@ -883,41 +883,41 @@ CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
         return;
     }
 
-    if (m_gdi_interop_object.HasValue())
-    {
-        auto texture_size = m_p_window_support->GetSize();
-        auto data_size = texture_size.height * texture_size.width * 4;
-        ::GdiFlush();
-        auto& ref_gdi_interop_object = m_gdi_interop_object.Get();
-        m_p_window_support->InitGdiInteropTexture(
-            ref_gdi_interop_object.m_p_gdi_interop_hbitmap_data, data_size);
-    }
-
     auto p_render_target = m_p_window_support->GetRenderTarget();
-    p_render_target->Flush();
-
-    auto waiter = m_p_window_support->DrawAlphaValueReduceEffect();
     try
     {
-        ThrowIfFailed<CD3D10Exception1>(
-            waiter.Wait(),
-            "Draw call failed.");
+        if (m_gdi_interop_object.HasValue())
+        {
+            auto texture_size = m_p_window_support->GetSize();
+            auto data_size = texture_size.height * texture_size.width * 4;
+            ::GdiFlush();
+            auto& ref_gdi_interop_object = m_gdi_interop_object.Get();
+            m_p_window_support->InitGdiInteropTexture(
+                ref_gdi_interop_object.m_p_gdi_interop_hbitmap_data, data_size);
+            auto waiter = m_p_window_support->DrawAlphaValueReduceEffect();
 
-        D2D1_BITMAP_PROPERTIES d2d1_bitmap_properties{};
-        d2d1_bitmap_properties.pixelFormat.format = CTaskBarDlgDrawCommonWindowSupport::PIXEL_FORMAT;
-        d2d1_bitmap_properties.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
-        d2d1_bitmap_properties.dpiX = CTaskBarDlgDrawCommonWindowSupport::DEFAULT_DPI;
-        d2d1_bitmap_properties.dpiY = CTaskBarDlgDrawCommonWindowSupport::DEFAULT_DPI;
-        auto p_gdi_interop_surface1 = m_p_window_support->GetGdiFinalTextureSurface();
-        ComPtr<ID2D1Bitmap> p_gdi_interop_bitmap{};
-        ThrowIfFailed<CD2D1Exception>(
-            p_render_target->CreateSharedBitmap(
-                __uuidof(IDXGISurface1),
-                p_gdi_interop_surface1.Get(),
-                &d2d1_bitmap_properties,
-                &p_gdi_interop_bitmap),
-            "Create ID2D1Bitmap from IDXGISurface1 failed.");
-        p_render_target->DrawBitmap(p_gdi_interop_bitmap.Get());
+            p_render_target->Flush();
+
+            ThrowIfFailed<CD3D10Exception1>(
+                waiter.Wait(),
+                "Draw call failed.");
+
+            D2D1_BITMAP_PROPERTIES d2d1_bitmap_properties{};
+            d2d1_bitmap_properties.pixelFormat.format = CTaskBarDlgDrawCommonWindowSupport::PIXEL_FORMAT;
+            d2d1_bitmap_properties.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
+            d2d1_bitmap_properties.dpiX = CTaskBarDlgDrawCommonWindowSupport::DEFAULT_DPI;
+            d2d1_bitmap_properties.dpiY = CTaskBarDlgDrawCommonWindowSupport::DEFAULT_DPI;
+            auto p_gdi_interop_surface1 = m_p_window_support->GetGdiFinalTextureSurface();
+            ComPtr<ID2D1Bitmap> p_gdi_interop_bitmap{};
+            ThrowIfFailed<CD2D1Exception>(
+                p_render_target->CreateSharedBitmap(
+                    __uuidof(IDXGISurface1),
+                    p_gdi_interop_surface1.Get(),
+                    &d2d1_bitmap_properties,
+                    &p_gdi_interop_bitmap),
+                "Create ID2D1Bitmap from IDXGISurface1 failed.");
+            p_render_target->DrawBitmap(p_gdi_interop_bitmap.Get());
+        }
         auto hr = p_render_target->EndDraw();
     }
     catch (CD3D10Exception1& ex)
