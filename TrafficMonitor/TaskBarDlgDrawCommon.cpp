@@ -918,7 +918,9 @@ CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
                 "Create ID2D1Bitmap from IDXGISurface1 failed.");
             p_render_target->DrawBitmap(p_gdi_interop_bitmap.Get());
         }
-        auto hr = p_render_target->EndDraw();
+        ThrowIfFailed<CD2D1Exception>(
+            p_render_target->EndDraw(),
+            "Call ID2D1RenderTarget::EndDraw() failed.");
     }
     catch (CD3D10Exception1& ex)
     {
@@ -1145,17 +1147,17 @@ CTaskBarDlgDrawBuffer::~CTaskBarDlgDrawBuffer()
 
 CTaskBarDlgDrawCommon::CGdiInteropObject::CGdiInteropObject(D2D1_SIZE_U size)
 {
+    m_gdi_interop_cdc.CreateCompatibleDC(NULL);
     auto bitmap_info = TaskBarDlgUser32DrawTextHook::Details::GetArgb32BitmapInfo(size.width, size.height);
     m_gdi_interop_hbitmap = ::CreateDIBSection(
-        m_gdi_interop_dc,
+        m_gdi_interop_cdc,
         &bitmap_info,
         DIB_RGB_COLORS,
         &m_p_gdi_interop_hbitmap_data,
         NULL,
         0);
-    m_gdi_interop_dc = ::CreateCompatibleDC(NULL);
-    m_gdi_interop_old_hbitmap = ::SelectObject(m_gdi_interop_dc, m_gdi_interop_hbitmap);
-    ::SetBkColor(m_gdi_interop_dc, TRANSPARENT);
+    m_gdi_interop_old_hbitmap = m_gdi_interop_cdc.SelectObject(m_gdi_interop_hbitmap);
+    ::SetBkColor(m_gdi_interop_cdc, TRANSPARENT);
     auto gdi_no_modified_alpha_dc = DrawCommonHelper::Get1x1AlphaEqual1DC();
     ::BLENDFUNCTION blend_function{
         AC_SRC_OVER,
@@ -1163,7 +1165,7 @@ CTaskBarDlgDrawCommon::CGdiInteropObject::CGdiInteropObject(D2D1_SIZE_U size)
         0xFF,
         AC_SRC_ALPHA};
     ::AlphaBlend(
-        m_gdi_interop_dc,
+        m_gdi_interop_cdc,
         0, 0,
         size.width, size.height,
         gdi_no_modified_alpha_dc,
@@ -1174,7 +1176,6 @@ CTaskBarDlgDrawCommon::CGdiInteropObject::CGdiInteropObject(D2D1_SIZE_U size)
 
 CTaskBarDlgDrawCommon::CGdiInteropObject::~CGdiInteropObject()
 {
-    ::SelectObject(m_gdi_interop_dc, m_gdi_interop_old_hbitmap);
+    m_gdi_interop_cdc.SelectObject(m_gdi_interop_old_hbitmap);
     ::DeleteObject(m_gdi_interop_hbitmap);
-    ::DeleteDC(m_gdi_interop_dc);
 }

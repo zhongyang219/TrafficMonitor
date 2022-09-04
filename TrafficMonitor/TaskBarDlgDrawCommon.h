@@ -354,7 +354,7 @@ private:
     class CGdiInteropObject
     {
     public:
-        HDC m_gdi_interop_dc{};
+        CDC m_gdi_interop_cdc{};
         HBITMAP m_gdi_interop_hbitmap{};
         void* m_p_gdi_interop_hbitmap_data{};
         HGDIOBJ m_gdi_interop_old_hbitmap{};
@@ -390,17 +390,18 @@ public:
     void ExecuteGdiOperation(CRect rect, GdiOp gdi_op)
     {
         auto& ref_gdi_interop_object = m_gdi_interop_object.Get();
-        auto old_hfont = ::SelectObject(ref_gdi_interop_object.m_gdi_interop_dc, m_p_window_support->GetFont());
-        ::SetTextColor(ref_gdi_interop_object.m_gdi_interop_dc, m_text_color);
-        TaskBarDlgUser32DrawTextHook::Details::DrawTextReplacedFunctionState state{ref_gdi_interop_object.m_gdi_interop_dc};
+        auto old_hfont = ref_gdi_interop_object.m_gdi_interop_cdc.SelectObject(
+            m_p_window_support->GetFont());
+        ref_gdi_interop_object.m_gdi_interop_cdc.SetTextColor(m_text_color);
+        TaskBarDlgUser32DrawTextHook::Details::DrawTextReplacedFunctionState state{ref_gdi_interop_object.m_gdi_interop_cdc};
 
         {
             auto enable_all_replaced_function_guard =
                 TaskBarDlgUser32DrawTextHook::EnableAllReplaceFunction(state);
-            gdi_op(ref_gdi_interop_object.m_gdi_interop_dc);
+            gdi_op(ref_gdi_interop_object.m_gdi_interop_cdc);
         }
 
-        ::SelectObject(ref_gdi_interop_object.m_gdi_interop_dc, old_hfont);
+        ref_gdi_interop_object.m_gdi_interop_cdc.SelectObject(old_hfont);
     }
 
     static auto Convert(CPoint point) noexcept
