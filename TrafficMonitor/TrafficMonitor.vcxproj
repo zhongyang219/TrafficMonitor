@@ -442,6 +442,7 @@
     <ClInclude Include="CTabCtrlEx.h" />
     <ClInclude Include="CVariant.h" />
     <ClInclude Include="DisplayTextSettingDlg.h" />
+    <ClInclude Include="DllFunctions.h" />
     <ClInclude Include="DrawCommonEx.h" />
     <ClInclude Include="FilePathHelper.h" />
     <ClInclude Include="HighResolutionTimer.h" />
@@ -513,6 +514,7 @@
     <ClCompile Include="CTabCtrlEx.cpp" />
     <ClCompile Include="CVariant.cpp" />
     <ClCompile Include="DisplayTextSettingDlg.cpp" />
+    <ClCompile Include="DllFunctions.cpp" />
     <ClCompile Include="DrawCommonEx.cpp" />
     <ClCompile Include="FilePathHelper.cpp" />
     <ClCompile Include="HistoryTrafficCalendarDlg.cpp" />

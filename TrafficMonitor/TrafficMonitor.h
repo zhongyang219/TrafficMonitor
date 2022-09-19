@@ -17,6 +17,7 @@
 #include <map>
 #include "OpenHardwareMonitor/OpenHardwareMonitorApi.h"
 #include "PluginManager.h"
+#include "DllFunctions.h"
 
 // CTrafficMonitorApp:
 // 有关此类的实现，请参阅 TrafficMonitor.cpp
@@ -82,8 +83,8 @@ public:
     HICON m_notify_icons[MAX_NOTIFY_ICON];
 
     CTaskbarDefaultStyle m_taskbar_default_style;
-
     CPluginManager m_plugins;
+    CDllFunctions m_dll_functions;
 
     CMenu m_main_menu;
     CMenu m_taskbar_menu;
