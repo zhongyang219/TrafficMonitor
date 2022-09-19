@@ -55,10 +55,7 @@ project(OpenHardwareMonitorApi)
 add_definitions(-DOPENHARDWAREMONITOR_EXPORTS)
 
 ## sources
-file(GLOB harewaremonitor_SRC ${CMAKE_CURRENT_SOURCE_DIR}/OpenHardwareMonitorImp.cpp
-                              ${CMAKE_CURRENT_SOURCE_DIR}/OpenHardwareMonitorImp.h
-                              ${CMAKE_CURRENT_SOURCE_DIR}/UpdateVisitor.cpp
-                              ${CMAKE_CURRENT_SOURCE_DIR}/UpdateVisitor.h
+file(GLOB harewaremonitor_SRC ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.h
                               ${CMAKE_CURRENT_SOURCE_DIR}/app.rc)
 
 add_library(${PROJECT_NAME} SHARED ${harewaremonitor_SRC})
@@ -80,4 +77,4 @@ set_target_properties(${PROJECT_NAME}  PROPERTIES
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE _UNICODE UNICODE)
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${ROOT_DIR}/include)
