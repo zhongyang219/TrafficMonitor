@@ -85,7 +85,8 @@ using std::ofstream;
 #define CONNECTION_DETAIL_TIMER 1237
 #define MONITOR_TIMER 1238
 
-#define MAX_INSERT_TO_TASKBAR_CNT 5     //尝试嵌入任务栏的最大次数
+#define MAX_INSERT_TO_TASKBAR_CNT 200     //尝试嵌入任务栏的最大次数
+#define WARN_INSERT_TO_TASKBAR_CNT 20     //尝试嵌入任务栏的警告次数
 
 #define APP_NAME _T("TrafficMonitor")
 #define APP_CLASS_NAME _T("TrafficMonitor_r7XZaS4p") //程序主窗口的类名

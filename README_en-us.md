@@ -5,7 +5,7 @@
 [![GitHub release](https://img.shields.io/github/release/zhongyang219/TrafficMonitor.svg?style=flat-square)](https://github.com/zhongyang219/TrafficMonitor/releases/latest)
 
 # TrafficMonitor Introduction
-TrafficMonitor is a network monitoring suspension window software on Windows platform. It can display the current network speed, usage of CPU. It also has the function of displaying in the taskbar, skin changing and historical traffic statistics. 
+TrafficMonitor is a network monitoring software with floating window feature for Windows. It displays the current internet speed and CPU and RAM usage. There are also other capabilities like an embedded display in the taksbar, changeable display skins, and historical traffic statistics. 
 
 # Related Links
 
@@ -13,54 +13,57 @@ Please [click here](https://github.com/zhongyang219/TrafficMonitor/releases/late
 
 Alternate link: Download from [Baidu Netdisk](https://pan.baidu.com/s/15PMt7s-ASpyDwtS__4cUhg). Access code: `ou0m`  
 
+You can find the project page on Gitee by [clicking here](https://gitee.com/zhongyang219/TrafficMonitor)
+
 If you encounter any problems, please [click here](./Help_en-us.md).  
 
 You can also [click here](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI") to download the pre-release build version of TrafficMonitor.
 
-Starting from version 1.80, the temperature monitoring function has been added. If you do not need the temperature monitoring function and encounter problems with version 1.80 or higher, it is recommended to download the version which is without temperature monitoring (Lite version). (Find the version that contains `Lite` in the file name on Release page.)
+For version 1.80 and later, the temperature monitoring function has been added. If the user does not need the temperature monitoring function and encounters problems with version 1.80 or later, it is recommended to download the earlier version without the temperature monitor (Lite version). (You can find the `Lite` version on the Release page.)
 
-TrafficMonitor relies on the Microsoft Visual C++ runtime environment. If the program prompts "Cannot find MSVC*.dll" when the program starts, please click the link below to download and install the Microsoft Visual C++ runtime environment.
+TrafficMonitor relies on the Microsoft Visual C++ operrating environment. If an error prompts "Cannot find MSVC*.dll" when the program starts, please click the link below to download and install the Microsoft Visual C++ operating environment.
 
-[Latest supported Visual C++ Redistributable downloads | Microsoft Docs](https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)
+[Download the latest supported version of Visual C++ Redistributable Package | Microsoft Docs](https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)
 
 # Version description
 
-TrafficMonitor provides two versions, the standard version and the Lite version. The standard version includes all the functions, while the Lite version does not include hardware monitoring functions such as temperature monitoring, GPU usage, and hard disk usage. The standard version requires administrator to run, while the Lite version does not. 
+There are two versions of TrafficMonitor, the standard version and the Lite version. The standard version includes all the functions, while the Lite version does not include hardware monitoring functions such as temperature monitoring, GPU usage, and hard disk usage. The standard version requires administrator privilege to run, while the Lite version does not. 
 
 If there is no need to monitor the temperature and other hardware information, it is recommended to use the Lite version.
 
-The functions comparison of the two versions is as the following.
+See below for the functions comparison of the two versions.
 
 | Functions                                              | Standard Version | Lite Version |
 | ------------------------------------------------------ | ---------------- | ------------ |
-| Net speed monitoring                                   | ✔                | ✔            |
-| CPU and memory usage monitoring                        | ✔                | ✔            |
-| CPU, GPU, hard disk, main board temperature, CPU frequency monitoring | ✔                | ❌            |
+| Internet speed monitoring                                   | ✔                | ✔            |
+| CPU and RAM usage monitoring                        | ✔                | ✔            |
+| CPU, GPU, hard disk, mother
+ board temperature, CPU frequency monitoring | ✔                | ❌            |
 | GPU usage monitoring                                   | ✔                | ❌            |
 | Hard disk usage monitoring                             | ✔                | ❌            |
 | Network connection details                             | ✔                | ✔            |
 | Plug-in system                                         | ✔                | ✔            |
 | Change the skin of the main window                     | ✔                | ✔            |
-| Administrator rights required                          | Yes              | No           |
+| Administrator privilege required                          | Yes              | No           |
 
 # Main Features
 
-* Displays the current network transfer speed, usage of CPU and memory.
-* Support automatic or manual selection of network connections if there are multiple network adapters.
-* Display the network connection details.
-* Support the window displayed in the taskbar.
-* Support for changing skin and customizing skin.
-* Historical traffic statistics.
+* Displays current network transmission speed and CPU and RAM usage
+* If multiple network adapters are available, users can automatically or manually select networks to connect 
+* Display network connection details
+* Support embedded display in taskbar
+* Support skin change and customizable skins
+* Historical traffic statistics
 * Hardware information monitoring
 * Plug-in system
 
 # Instructions for use
 
-**[Click here](https://github.com/zhongyang219/TrafficMonitor/wiki) to go to the Wiki page to view detailed documentation on TrafficMonitor (Only Chinese Available).**
+**[Click here](https://github.com/zhongyang219/TrafficMonitor/wiki) to go to the Wiki page to view detailed documentation on TrafficMonitor (Only Available in Chinese).**
 
 # Screen Shots
 
-Main Suspension Window:  
+Main Floating Window:  
 ![](./Screenshots/en_us/main1.png)  
 Right-Click Menu:  
 ![](./Screenshots/en_us/main.png)  
@@ -75,29 +78,49 @@ Options:
 
 # How to Use
 
-After the program started, a floating window showing the network speed will be displayed on the screen. Click the right mouse button on the floating window to pop up the right-click menu.
+As the program starts, a floating window showing network speed will appear on the screen. Right click on the floating window to open up the pop-up menu.
 
-TrafficMonitor supports displaying information on the taskbar. But TrafficMonitor only displays the main window (floating window) by default. If you want to embed it into the taskbar, please select the "Show taskbar window" command in the right-click menu.
+TrafficMonitor can display information on the taskbar. However, the default setting for TrafficMonitor shows only the main window (floating window), in order to show embedded display on the taskbar, right click the window and select "Show Taskbar Window" in the pop-up menu.
 
-Taskbar window supports customization of display items. By default, only the network speed is displayed. If you need to display the CPU and memory usage, please check the items that need to be displayed under the "Display Settings" submenu in the taskbar right-click menu, as shown in the figure below:
+Users can customize displayed items on the embedded taskbar window. By default, only the network speed is displayed. In order to display both CPU and RAM usage, check the desirable items to be displayed under the "Display Settings" submenu in the taskbar pop-up menu, as shown below:
 
 <img src="./Screenshots/en_us/taskbar_item_settings.png" style="zoom:80%;" />
 
+# Customizable Skin
+<img src="./Screenshots/selecte_skin.png" style="zoom:80%;" /><br>
+In order to access the skin changing interface, choose "Other Functions" - “Change Skins" in the main window or the pop-up window. Users can download more skins and customize the skins [here](https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md) according to their own needs.<br>
+Skin files are stored under the 'skins' directory within the directory where the app is located. Each skin is stored in its individual folder and the name of the folder is the name of the skin. <br>
+Among the files, `background.bmp` and `background_l.bmp` are background pictures，`skin.ini` is the configuration document for the skin, users can customize text colors, fonts, skin creater, and the size and location of each items etc. <br>
+
+For version 1.80 and later, an xml format of skin configuration file `skin.xml` has been added. Without the xml skin congifuration document, TrafficMonitor will not be able to display temperature and GUP usage.
+
+Click the link below for detailed instruction on skin making: 
+
+[皮肤制作教程 · zhongyang219/TrafficMonitor Wiki (github.com)](https://github.com/zhongyang219/TrafficMonitor/wiki/皮肤制作教程)
+
+Its recommended to use [Skin Editor](https://github.com/zhongyang219/TrafficMonitorSkinEditor/releases) to create or edit skins. <br>
+
+# Configuring Options
+<img src="./Screenshots/option.jpg" style="zoom:80%;" /><br>
+Choosing "Options..." in the pop-up menu allows users to access the options configuration. In the dialog box of options configuration, the user can set the text color, text font, background color, net speed unit, and displayed text etc. for the main window and task window separately. <br>
+In "Regular Configurations", users can change the settings on whether the program conducts auto-update and whether the program runs automatically when the computer starts up. Users can also configure when notifications need to be sent. <br>
+For version 1.72 and later, users can configure text colors for each item individually. Check the option to "Designate Colors for Each Items", click the color box on the right of "text colors" to prompt a pop-up dialog box for detailed color configuration where users can designate colors for each items inidividually. <br>
+
 # Plug-in system
 
-The plug-in system has been added since version 1.82. The plug-in dll must be placed in the "plugins" directory of the same level directory of "TrafficMonitor.exe". After the program is started, the plug-in will be loaded automatically. You can view and manage the loaded plugins in the context menu "More Functions"-"Plugin Management".
+For version 1.82 and later, plug-in system has been added. The plug-in dll must be placed in the "plugins" directory, at the same level directory with "TrafficMonitor.exe". The plug-in should load automatically as the program starts up. Users can view and manage the loaded plugins in the pop-up menu "More Functions"-"Plugin Management".
 
-For instructions on how to develop the plugin-in of TrafficMonitor, please see [Plugin Development Guide · zhongyang219/TrafficMonitor Wiki (github.com)](https://github.com/zhongyang219/TrafficMonitor/wiki/Plugin-Development-Guide).
+For instructions on how to develop the plugins for TrafficMonitor, please see [Plugin Development Guide · zhongyang219/TrafficMonitor Wiki (github.com)](https://github.com/zhongyang219/TrafficMonitor/wiki/Plugin-Development-Guide).
 
-To download the TrafficMonitor plug-in, please [click here](https://github.com/zhongyang219/TrafficMonitorPlugins/blob/main/download/plugin_download.md).
+To download the TrafficMonitor plugins, please [click here](https://github.com/zhongyang219/TrafficMonitorPlugins/blob/main/download/plugin_download.md).
 
 # About the hardware monitoring function
 
-Starting from version 1.80, the hardware monitoring functions (including temperature monitoring, CPU frequency and graphics card usage monitoring) has been added in TrafficMonitor. It relies on the open source library [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor). If you encounter problems during using the temperature monitoring function, please [click here](./Help_en-us.md#13-about-the-temperature-monitoring-of-trafficmonitor). 
+For version 1.80 or later, the hardware monitoring functions (including temperature, CPU frequency, and GPU usage monitoring) have been added to TrafficMonitor. It relies on the open source library [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor). If you encounter issues using the temperature monitoring function, please [click here](./Help_en-us.md#13-about-the-temperature-monitoring-of-trafficmonitor). 
 
-It should be noted that the temperature monitoring function is turned off by default. If you want to use the temperature monitoring function of TrafficMonitor, please go to ["Option Settings"-"General Settings"-"Hardware Monitoring"](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#硬件监控) to enable it.
+It should also be noted that the temperature monitoring function is turned off by default. If users want to use the temperature monitoring function in TrafficMonitor, please go to ["Option Settings"-"General Settings"-"Hardware Monitoring"](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#硬件监控) to enable it.
 
-**Note: The hardware monitoring function (including temperature monitoring and GPU usage monitoring) may have some problems, which may cause more CPU and memory usage. According to feedback from some users, turning on the temperature function will cause problems such as program crashes and system crashes. Please decide to turn on the hardware monitoring function after you are aware of the above risks. Otherwise, please do not use the hardware monitoring function.**
+**Note: The hardware monitoring function (including temperature monitoring and GPU usage monitoring) may still have some issues, which might consume more CPU and RAM. According to the feedback from some users, turning on the temperature function causes issues such as program crashing and system crashing, etc. Please consider the above risks before turning on the hardware monitoring function. Otherwise, please do not use the hardware monitoring function.**
 
 # Update log
 
