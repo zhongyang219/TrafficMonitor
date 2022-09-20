@@ -65,6 +65,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 ## enable mfc
 ADD_DEFINITIONS(-D_AFXDLL)
+add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
 SET(CMAKE_MFC_FLAG 2)
 
 ## add hardwaremonitorapi plugin

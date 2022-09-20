@@ -61,10 +61,6 @@ file(GLOB harewaremonitor_SRC ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_
 add_library(${PROJECT_NAME} SHARED ${harewaremonitor_SRC})
 
 # c# library
-add_library(LibreHardwareMonitorLib SHARED IMPORTED)
-
-target_compile_options(${PROJECT_NAME} PRIVATE /clr)
-
 set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "4.7.2")
 LIST(APPEND VS_DOTNET_REFERENCES "mscorlib")
 LIST(APPEND VS_DOTNET_REFERENCES "System")
@@ -72,8 +68,9 @@ LIST(APPEND VS_DOTNET_REFERENCES "System.Xml")
 LIST(APPEND VS_DOTNET_REFERENCES "System.Data")
 
 set_target_properties(${PROJECT_NAME}  PROPERTIES
-    VS_DOTNET_REFERENCES "${VS_DOTNET_REFERENCES}"
-    VS_DOTNET_REFERENCE_LibreHardwareMonitorLib "${CMAKE_CURRENT_SOURCE_DIR}/LibreHardwareMonitorLib.dll")
+    VS_DOTNET_REFERENCES "${VS_DOTNET_REFERENCES}" 
+    VS_DOTNET_REFERENCE_LibreHardwareMonitorLib "${CMAKE_CURRENT_SOURCE_DIR}/LibreHardwareMonitorLib.dll"
+    COMMON_LANGUAGE_RUNTIME "")
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE _UNICODE UNICODE)
 
