@@ -37,8 +37,7 @@ See below for the functions comparison of the two versions.
 | ------------------------------------------------------ | ---------------- | ------------ |
 | Internet speed monitoring                                   | ✔                | ✔            |
 | CPU and RAM usage monitoring                        | ✔                | ✔            |
-| CPU, GPU, hard disk, mother
- board temperature, CPU frequency monitoring | ✔                | ❌            |
+| CPU, GPU, hard disk, mother board temperature, CPU frequency monitoring | ✔                | ❌            |
 | GPU usage monitoring                                   | ✔                | ❌            |
 | Hard disk usage monitoring                             | ✔                | ❌            |
 | Network connection details                             | ✔                | ✔            |
@@ -125,3 +124,4 @@ It should also be noted that the temperature monitoring function is turned off b
 # Update log
 
 **[Click here to view the update log.](./UpdateLog/update_log_en-us.md)**
+  
