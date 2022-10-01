@@ -439,6 +439,9 @@ bool CTaskBarDlg::AdjustWindowPos()
         return false;
     ::GetWindowRect(m_hMin, m_rcMin); //获得最小化窗口的区域
     ::GetWindowRect(m_hBar, m_rcBar); //获得二级容器的区域
+
+    ::GetWindowRect(m_hNotify, m_rcNotify);
+
     static bool last_taskbar_on_top_or_bottom;
     CheckTaskbarOnTopOrBottom();
     if (m_taskbar_on_top_or_bottom != last_taskbar_on_top_or_bottom)
@@ -464,7 +467,7 @@ bool CTaskBarDlg::AdjustWindowPos()
                 if (theApp.m_is_windows11_taskbar)
                 {
                     if (!theApp.m_taskbar_data.tbar_wnd_snap)
-                        m_rect.MoveToX(m_rcBar.Width() - m_rect.Width() + 2);
+                        m_rect.MoveToX(m_rcNotify.left - m_rect.Width() + 2);
                     else
                         m_rect.MoveToX(m_rcMin.right + 2);
                 }
@@ -1007,25 +1010,30 @@ BOOL CTaskBarDlg::OnInitDialog()
 
     m_pDC = GetDC();
 
-
-
-
-    m_hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL);      //寻找类名是Shell_TrayWnd的窗口句柄
+    m_hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL); //寻找类名是Shell_TrayWnd的窗口句柄
     m_hBar = ::FindWindowEx(m_hTaskbar, 0, L"ReBarWindow32", NULL); //寻找二级容器的句柄
     m_hMin = ::FindWindowEx(m_hBar, 0, L"MSTaskSwWClass", NULL);    //寻找最小化窗口的句柄
+    
+    m_hNotify = ::FindWindowEx(m_hTaskbar, 0, L"TrayNotifyWnd", NULL);
 
     //在“Shell_TrayWnd”的子窗口找到类名为“Windows.UI.Composition.DesktopWindowContentBridge”的窗口则认为是Windows11的任务栏
     if (theApp.m_win_version.IsWindows11OrLater())
     {
         theApp.m_is_windows11_taskbar = (::FindWindowExW(m_hTaskbar, 0, L"Windows.UI.Composition.DesktopWindowContentBridge", NULL) != NULL);
     }
+	
     //设置窗口透明色
     ApplyWindowTransparentColor();
 
     ::GetWindowRect(m_hMin, m_rcMin);   //获得最小化窗口的区域
     ::GetWindowRect(m_hBar, m_rcBar);   //获得二级容器的区域
+
+    ::GetWindowRect(m_hNotify, m_rcNotify);
+
     m_left_space = m_rcMin.left - m_rcBar.left;
     m_top_space = m_rcMin.top - m_rcBar.top;
+
+    m_connot_insert_to_task_bar = !(::SetParent(this->m_hWnd, theApp.m_is_windows11_taskbar ? m_hTaskbar : m_hBar)); //把程序窗口设置成任务栏的子窗口
 
     //根据已经确定的任务栏最小化窗口区域得到屏幕并获得所在屏幕的DPI（Windows 8.1及其以上）
     if (theApp.m_win_version.IsWindows8Point1OrLater())
@@ -1048,8 +1056,6 @@ BOOL CTaskBarDlg::OnInitDialog()
     m_rect.SetRectEmpty();
     m_rect.bottom = m_window_height;
     m_rect.right = m_rect.left + m_window_width;
-
-    m_connot_insert_to_task_bar = !(::SetParent(this->m_hWnd, m_hBar)); //把程序窗口设置成任务栏的子窗口
     m_error_code = GetLastError();
     AdjustWindowPos();
 
