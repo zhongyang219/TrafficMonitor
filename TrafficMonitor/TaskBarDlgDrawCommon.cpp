@@ -616,11 +616,14 @@ namespace TaskBarDlgUser32DrawTextHook
             auto p_original_function = DrawTextFunctionNamespace::GetOriginalFunction();
             auto args_tuple = std::forward_as_tuple(draw_text_args...);
             auto input_hdc = std::get<hdc_index>(args_tuple);
-            if (ref_this.m_state.m_on_draw_text_call_matched_hdc != input_hdc)
+            auto input_format = std::get<format_index>(args_tuple);
+            bool is_only_calculate_size = input_format & DT_CALCRECT;
+            if (ref_this.m_state.m_on_draw_text_call_matched_hdc != input_hdc || is_only_calculate_size)
             {
                 return (*p_original_function)(std::forward<DrawTextArgs>(draw_text_args)...);
             }
-            if (std::get<cchText_index>(args_tuple) == 0)
+            auto text_length = std::get<cchText_index>(args_tuple);
+            if (text_length == 0)
             {
                 return User32DrawTextManager::CUSTOM_SUCCESS;
             }
