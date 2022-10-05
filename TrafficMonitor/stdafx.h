@@ -90,7 +90,7 @@ using std::ofstream;
 
 #define APP_NAME _T("TrafficMonitor")
 #define APP_CLASS_NAME _T("TrafficMonitor_r7XZaS4p") //程序主窗口的类名
-#define VERSION L"1.83"
+#define VERSION L"1.84"
 
 #define MAX_NOTIFY_ICON 6       //可选的通知区图标数量
 
