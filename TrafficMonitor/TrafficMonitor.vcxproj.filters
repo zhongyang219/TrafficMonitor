@@ -193,14 +193,19 @@
     <Filter Include="源文件和头文件\公共的类\WindowsSettingHelper">
       <UniqueIdentifier>{46dd548a-c66e-4a37-8767-6f9767125287}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\DllFunctions">
+      <UniqueIdentifier>{a106d99c-80bb-4625-a64e-9d1ea24cad7c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
     <Text Include="res\Acknowledgement.txt">
       <Filter>资源文件</Filter>
     </Text>
-    <Text Include="res\Acknowledgement_en.txt" />
     <Text Include="compile_time.txt" />
+    <Text Include="res\Acknowledgement_en.txt">
+      <Filter>资源文件</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -411,7 +416,7 @@
       <Filter>源文件和头文件\公共的类\WindowsSettingHelper</Filter>
     </ClInclude>
     <ClInclude Include="DllFunctions.h">
-      <Filter>源文件和头文件\头文件</Filter>
+      <Filter>源文件和头文件\公共的类\DllFunctions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -611,7 +616,7 @@
       <Filter>源文件和头文件\公共的类\WindowsSettingHelper</Filter>
     </ClCompile>
     <ClCompile Include="DllFunctions.cpp">
-      <Filter>源文件和头文件</Filter>
+      <Filter>源文件和头文件\公共的类\DllFunctions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
