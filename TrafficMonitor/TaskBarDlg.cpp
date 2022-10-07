@@ -539,8 +539,9 @@ bool CTaskBarDlg::AdjustWindowPos()
                 m_rect.MoveToY(m_top_space);
             }
             m_rect.MoveToX((m_rcMin.Width() - m_window_width) / 2);
-            if (m_rect.left < DPI(2))
-                m_rect.MoveToX(DPI(2));
+            int left_space = DPI(2);
+            if (m_rect.left < left_space)
+                m_rect.MoveToX(left_space);
             MoveWindow(m_rect);
         }
     }
