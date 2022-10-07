@@ -1,6 +1,19 @@
 **[简体中文](./update_log.md) | [繁體中文](./update_log_zh-tw.md) | English**<br>
 
 # TrafficMonitor Update log
+## V1.84 (2022/10/05)
+
+* Fixed the problem that the position of the taskbar window is not correct in Windows 11 22H2.
+
+* Fixed the problem that the taskbar window overlapped with the system widgets when the taskbar window displayed on the left side in Windows 11.
+* Added display of CPU frequency.
+* Fixed the problem that the "/s" of the net speed is missing in the main window.
+* Fixed the problem that may cause insufficient string buffer when writing INI files.
+* Updated the plugin interface that allows plugin response keyboard events.
+* Fixed the problem that the taskbar window would not display properly after switching between different DPI monitors.
+* Fixed the problem where "Options" dialog box would pop up when selecting "Details" from the context menu in the "Plugin Management" dialog.
+* Update the HardwareMonitor lib to resolve the problem that the temperature of Intel 12th Gen processor cannot be obtained.
+
 ## V1.83 (2022/02/03)
 
 * Fixed the problem that when there is already a task plan of auto-run, the auto-run at start up will be failed to set.
