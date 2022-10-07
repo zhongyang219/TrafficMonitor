@@ -439,6 +439,7 @@ bool CTaskBarDlg::AdjustWindowPos()
         return false;
     ::GetWindowRect(m_hMin, m_rcMin); //获得最小化窗口的区域
     ::GetWindowRect(m_hBar, m_rcBar); //获得二级容器的区域
+    ::GetWindowRect(m_hTaskbar, m_rcTaskbar);   //获得任务栏的矩形区域
 
     ::GetWindowRect(m_hNotify, m_rcNotify);
 
@@ -514,7 +515,7 @@ bool CTaskBarDlg::AdjustWindowPos()
                     m_rect.MoveToX(m_left_space);
                 }
             }
-            m_rect.MoveToY((m_rcBar.Height() - m_rect.Height()) / 2);
+            m_rect.MoveToY((m_rcTaskbar.Height() - m_rect.Height()) / 2);
             if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())
                 m_rect.MoveToY(m_rect.top + DPI(1));
             MoveWindow(m_rect);
@@ -1028,6 +1029,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 
     ::GetWindowRect(m_hMin, m_rcMin);   //获得最小化窗口的区域
     ::GetWindowRect(m_hBar, m_rcBar);   //获得二级容器的区域
+    ::GetWindowRect(m_hTaskbar, m_rcTaskbar);   //获得任务栏的矩形区域
 
     ::GetWindowRect(m_hNotify, m_rcNotify);
 

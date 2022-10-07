@@ -79,6 +79,7 @@ protected:
     HWND m_hMin;		//最小化窗口的句柄
     HWND m_hNotify;     //任务栏通知区域的句柄
 
+    CRect m_rcTaskbar;  //任务栏的矩形区域
     CRect m_rcNotify;   //任务栏通知区域的矩形区域
     CRect m_rcBar;		//初始状态时任务栏窗口的矩形区域
     CRect m_rcMin;		//最小化窗口的矩形区域
