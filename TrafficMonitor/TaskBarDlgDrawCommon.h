@@ -1,5 +1,9 @@
 ﻿#pragma once
 #include <tuple>
+#include <unordered_map>
+#include <chrono>
+#include <mutex>
+#include <thread>
 #include <type_traits>
 #include "IDrawCommon.h"
 #include "Common.h"
@@ -78,6 +82,7 @@ private:
         Microsoft::WRL::ComPtr<ID3D10Texture2D> m_p_gdi_final_texture{};
         Microsoft::WRL::ComPtr<IDXGISurface1> m_p_gdi_initial_surface{};
         Microsoft::WRL::ComPtr<IDXGISurface1> m_p_gdi_finial_surface{};
+        std::weak_ptr<class CD2D1BitmapCache> m_wp_bitmap_cache{};
         CImage2DEffect m_alpha_value_effect;
         D2D1_COLOR_F m_foreground_color{D2D1::ColorF::Black};
         D2D1_COLOR_F m_background_color{D2D1::ColorF::Black};
@@ -160,6 +165,9 @@ public:
     void RecreateDevice();
     auto GetRenderTargetSurface() noexcept
         -> Microsoft::WRL::ComPtr<IDXGISurface1>;
+    void RebindD2D1BitmapCache(std::weak_ptr<class CD2D1BitmapCache> up_cache);
+    auto GetCachedBitmap(HBITMAP hbitmap) const
+        -> Microsoft::WRL::ComPtr<ID2D1Bitmap>;
 };
 
 namespace TaskBarDlgUser32DrawTextHook
@@ -345,6 +353,101 @@ namespace TaskBarDlgUser32DrawTextHook
     };
 };
 
+#define TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(sp_data) \
+    std::lock_guard<std::mutex> cache_and_expire_interval_lock_guard(sp_data->m_mutex)
+
+#define TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_GC_INTERVAL(sp_data) \
+    std::lock_guard<std::mutex> gc_lock_guard(sp_data->m_gc_mutex)
+
+class CD2D1BitmapCache
+{
+public:
+    using CacheInitializer =
+        std::function<Microsoft::WRL::ComPtr<ID2D1Bitmap>(Microsoft::WRL::ComPtr<ID2D1RenderTarget>, HBITMAP)>;
+
+private:
+    struct Cache
+    {
+        Microsoft::WRL::ComPtr<ID2D1Bitmap> m_cache{};
+        std::chrono::steady_clock::time_point m_init_timestamp{std::chrono::steady_clock::now()};
+        CacheInitializer m_cache_initializer{CD2D1BitmapCache::CreateD2D1BitmapFromHBitmap};
+        void Update(Microsoft::WRL::ComPtr<ID2D1RenderTarget> p_render_target, HBITMAP hbitmap);
+    };
+    struct HeapData
+    {
+        std::mutex m_mutex{};
+        std::unordered_map<HBITMAP, Cache> m_cache_map;
+        std::chrono::seconds m_cache_expire_interval{std::chrono::seconds(10)};
+        /**
+         * @brief 检查缓存是否过期 ！！此函数不加锁！！
+         *
+         * @param cache 输入的缓存
+         * @param now 输入的时间，默认为std::chrono::steady_clock::now()
+         * @return true 缓存已过期
+         * @return false 缓存未过期
+         */
+        bool IsCacheExpire(const Cache& cache, std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now());
+
+        std::mutex m_gc_mutex{};
+        std::chrono::seconds m_gc_interval{std::chrono::seconds(60)};
+    };
+
+    Microsoft::WRL::ComPtr<ID2D1RenderTarget> m_p_render_target;
+    std::shared_ptr<HeapData> m_sp_data{std::make_shared<HeapData>()};
+    std::thread m_gc_thread{
+        [wp_data = std::weak_ptr<HeapData>(m_sp_data)]()
+        {
+            do
+            {
+                auto sp_data = wp_data.lock();
+                if (!sp_data)
+                {
+                    break;
+                }
+
+                CD2D1BitmapCache::GCImpl(sp_data);
+
+                decltype(sp_data->m_gc_interval) gc_interval;
+                {
+                    TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_GC_INTERVAL(sp_data);
+                    gc_interval = sp_data->m_gc_interval;
+                }
+                std::this_thread::sleep_for(gc_interval);
+            } while (true);
+        }};
+
+public:
+    CD2D1BitmapCache(Microsoft::WRL::ComPtr<ID2D1RenderTarget> p_render_target);
+    ~CD2D1BitmapCache();
+    // 尚不支持复制或移动
+    CD2D1BitmapCache(const CD2D1BitmapCache&) = delete;
+    CD2D1BitmapCache& operator=(const CD2D1BitmapCache&) = delete;
+
+    void RebindRenderTarget(Microsoft::WRL::ComPtr<ID2D1RenderTarget> p_render_target);
+    void AddHBitmap(HBITMAP hbitmap, CacheInitializer initializer);
+    void AddHBitmap(HBITMAP hbitmap);
+    void RemoveHBitmap(HBITMAP hbitmap);
+    void RecreateAllHBitmaps();
+    static auto CreateD2D1BitmapFromHBitmap(Microsoft::WRL::ComPtr<ID2D1RenderTarget> p_render_target, HBITMAP hbitmap)
+        -> Microsoft::WRL::ComPtr<ID2D1Bitmap>;
+    void GC();
+    void SetGCInterval(const std::chrono::seconds interval);
+    void SetExpireInterval(const std::chrono::seconds interval);
+    auto GetCachedBitmap(HBITMAP hbitmap)
+        -> Microsoft::WRL::ComPtr<ID2D1Bitmap>;
+
+private:
+    /**
+     * @brief 检查BITMAP是否已经缓存 ！！此函数不加锁！！
+     *
+     * @param hbitmap 输入的HBITMAP
+     * @return true BITMAP已经被缓存
+     * @return false BITMAP尚未缓存
+     */
+    bool IsHBitmapExist(HBITMAP hbitmap) const;
+    static void GCImpl(std::shared_ptr<HeapData> sp_data);
+};
+
 class CTaskBarDlgDrawCommon final : public IDrawCommon
 {
 private:
@@ -366,8 +469,10 @@ private:
         [this]()
         { return std::make_tuple(m_p_window_support->GetSize()); }};
     COLORREF m_text_color{};
+    bool m_is_clipped{false};
 
     void OnD3D10Exception1(CD3D10Exception1& ex);
+    void ResetClippedStateIfSet();
 
 public:
     CTaskBarDlgDrawCommon() = default;
@@ -375,15 +480,21 @@ public:
 
     void SetBackColor(COLORREF back_color, BYTE apha = 255) override;
     void SetFont(CFont* pfont) override;
-    //在指定的矩形区域内绘制文本
+    // 在指定的矩形区域内绘制文本
     void DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align = Alignment::LEFT, bool draw_back_ground = false, bool multi_line = false, BYTE alpha = 255) override;
-    //用纯色填充矩形
+    // 设置绘图剪辑区域
+    void SetDrawRect(CRect rect) override;
+    // 用纯色填充矩形
     void FillRect(CRect rect, COLORREF color, BYTE alpha = 255) override;
-    //绘制矩形边框。如果dot_line为true，则为虚线
+    // 绘制矩形边框。如果dot_line为true，则为虚线
     void DrawRectOutLine(CRect rect, COLORREF color, int width = 1, bool dot_line = false, BYTE alpha = 255) override;
-    //使用当前画笔画线
+    // 使用当前画笔画线
     void DrawLine(CPoint start_point, int height, COLORREF color, BYTE alpha = 255) override;
     void SetTextColor(const COLORREF color, BYTE alpha = 255) override;
+    // 绘制一个位图
+    // （注意：当stretch_mode设置为StretchMode::FILL（填充）时，会设置绘图剪辑区域，如果之后需要绘制其他图形，
+    // 需要重新设置绘图剪辑区域，否则图片外的区域会无法绘制）
+    void DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode = StretchMode::STRETCH, BYTE alpha = 255) override;
 
     void Create(CTaskBarDlgDrawCommonWindowSupport& taskbar_dlg_draw_common_window_support, const D2D1_SIZE_U size);
     template <class GdiOp>

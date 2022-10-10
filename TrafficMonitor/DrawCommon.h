@@ -9,14 +9,6 @@ class CDrawCommon final : public IDrawCommon
 {
 public:
 
-    //拉伸模式
-    enum class StretchMode
-    {
-        STRETCH,		//拉伸，会改变比例
-        FILL,			//填充，不改变比例，会裁剪长边
-        FIT			//适应，不会改变比例，不裁剪
-    };
-
     CDrawCommon();
     ~CDrawCommon();
 
@@ -32,7 +24,7 @@ public:
 
     void DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align = Alignment::LEFT, bool draw_back_ground = false, bool multi_line = false, BYTE alpha = 255) override; //在指定的矩形区域内绘制文本
 
-    void SetDrawRect(CRect rect);		//设置绘图剪辑区域
+    void SetDrawRect(CRect rect) override;		//设置绘图剪辑区域
     static void SetDrawRect(CDC* pDC, CRect rect);
 
     //绘制一个位图
@@ -40,7 +32,7 @@ public:
     //需要重新设置绘图剪辑区域，否则图片外的区域会无法绘制）
     void DrawBitmap(CBitmap& bitmap, CPoint start_point, CSize size, StretchMode stretch_mode = StretchMode::STRETCH);
     void DrawBitmap(UINT bitmap_id, CPoint start_point, CSize size, StretchMode stretch_mode = StretchMode::STRETCH);
-    void DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode = StretchMode::STRETCH);
+    void DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode = StretchMode::STRETCH, BYTE alpha = 255) override;
 
     void DrawIcon(HICON hIcon, CPoint start_point, CSize size);
 

@@ -1,15 +1,16 @@
 ﻿#include "stdafx.h"
+#include <unordered_map>
 #include "TaskBarDlgDrawCommon.h"
 #include "D2D1Support.h"
 #include "TrafficMonitor.h"
 #include "DrawCommon.h"
-#include "unordered_map"
+#include "WIC.h"
 
 #undef min
 
 using Microsoft::WRL::ComPtr;
 
-//其实可以把Verify方法作为构造函数
+// 其实可以把Verify方法作为构造函数
 template <class T, T FAILED_VALUE>
 struct ReturnValueVerifier
 {
@@ -63,7 +64,7 @@ using Win32HGDIOBJVerifier = ReturnValueVerifier<HGDIOBJ, nullptr>;
 void LogWin32ApiErrorMessage() noexcept
 {
     auto error_code = ::GetLastError();
-    //写入系统格式化后的错误信息
+    // 写入系统格式化后的错误信息
     if (error_code != 0)
     {
         LPTSTR fomat_error = nullptr;
@@ -85,7 +86,7 @@ void LogWin32ApiErrorMessage() noexcept
 
 void DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(CHResultException& ex)
 {
-    //禁用D2D绘图
+    // 禁用D2D绘图
     theApp.m_taskbar_data.disable_d2d = true;
     LogHResultException(ex);
     ::MessageBox(NULL, CCommon::LoadText(IDS_D2DDRAWCOMMON_ERROR_TIP), NULL, MB_OK | MB_ICONWARNING);
@@ -226,6 +227,11 @@ void CTaskBarDlgDrawCommonWindowSupport::GpuHelper::RecreateResource(Microsoft::
             &properties,
             &m_p_render_target),
         TIP_WHEN_CREATE_ID2D1RENDERTARGET_FAILED);
+    auto sp_cache = m_wp_bitmap_cache.lock();
+    if (sp_cache)
+    {
+        sp_cache->RebindRenderTarget(m_p_render_target);
+    }
 
     ThrowIfFailed<CD2D1Exception>(
         m_p_render_target->CreateSolidColorBrush(
@@ -323,9 +329,9 @@ Texture2D input_texture : register(t0);
 
 float4 PS(VsOutput ps_in) : SV_TARGET
 {
-    float4 color = input_texture.Sample(input_sampler, ps_in.texcoord);)"
-    "[flatten] if (color.w > " TRAFFICMONITOR_ONE_IN_255_FLOOR " && color.w < " TRAFFICMONITOR_ONE_IN_255_CEIL ")"
-                R"(
+    float4 color = input_texture.Sample(input_sampler, ps_in.texcoord);
+    [flatten] if (color.w > )" TRAFFICMONITOR_ONE_IN_255_FLOOR " && color.w < " TRAFFICMONITOR_ONE_IN_255_CEIL ")"
+                         R"(
     {
         color.w = 0.0;
         return color;
@@ -537,6 +543,23 @@ auto CTaskBarDlgDrawCommonWindowSupport::GetRawBackSolidColorBruch() noexcept
     return m_gpu_helper.m_p_background_color_brush.Get();
 }
 
+void CTaskBarDlgDrawCommonWindowSupport::RebindD2D1BitmapCache(std::weak_ptr<CD2D1BitmapCache> wp_cache)
+{
+    m_gpu_helper.m_wp_bitmap_cache = wp_cache;
+}
+
+auto CTaskBarDlgDrawCommonWindowSupport::GetCachedBitmap(HBITMAP hbitmap) const
+    -> Microsoft::WRL::ComPtr<ID2D1Bitmap>
+{
+    auto sp_cache = m_gpu_helper.m_wp_bitmap_cache.lock();
+    if (sp_cache)
+    {
+        auto result = sp_cache->GetCachedBitmap(hbitmap);
+        return result;
+    }
+    return {};
+}
+
 void CTaskBarDlgDrawCommonWindowSupport::DWriteHelper::SetFont(HFONT h_font)
 {
     if (m_h_last_font != h_font)
@@ -595,7 +618,7 @@ namespace TaskBarDlgUser32DrawTextHook
             ::BITMAPINFO result;
             memset(&result, 0, sizeof(BITMAPINFO));
             result.bmiHeader.biSize = sizeof(result.bmiHeader);
-            //保证是自上而下
+            // 保证是自上而下
             result.bmiHeader.biWidth = static_cast<LONG>(width);
             result.bmiHeader.biHeight = -static_cast<LONG>(height);
             result.bmiHeader.biPlanes = 1;
@@ -828,6 +851,197 @@ namespace TaskBarDlgUser32DrawTextHook
     }
 }
 
+void CD2D1BitmapCache::Cache::Update(Microsoft::WRL::ComPtr<ID2D1RenderTarget> p_render_target, HBITMAP hbitmap)
+{
+    auto p_updated_cache = m_cache_initializer(p_render_target, hbitmap);
+    m_cache = p_updated_cache;
+    m_init_timestamp = std::chrono::steady_clock::now();
+}
+
+bool CD2D1BitmapCache::HeapData::IsCacheExpire(const Cache& cache, std::chrono::steady_clock::time_point now)
+{
+    auto survival_time = std::chrono::duration_cast<std::chrono::seconds>(
+        now - cache.m_init_timestamp);
+    if (survival_time > m_cache_expire_interval)
+    {
+        return true;
+    }
+    return false;
+}
+
+CD2D1BitmapCache::CD2D1BitmapCache(ComPtr<ID2D1RenderTarget> p_render_target)
+    : m_p_render_target{p_render_target}
+{
+}
+
+CD2D1BitmapCache::~CD2D1BitmapCache()
+{
+    m_gc_thread.detach();
+}
+
+void CD2D1BitmapCache::RebindRenderTarget(ComPtr<ID2D1RenderTarget> p_render_target)
+{
+    if (p_render_target == m_p_render_target)
+    {
+        return;
+    }
+    m_p_render_target = p_render_target;
+    RecreateAllHBitmaps();
+}
+
+void CD2D1BitmapCache::AddHBitmap(HBITMAP hbitmap, CacheInitializer initializer)
+{
+    TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(m_sp_data);
+    if (IsHBitmapExist(hbitmap))
+    {
+        return;
+    }
+    try
+    {
+        auto p_d2d1_bitmap = initializer(m_p_render_target, hbitmap);
+        m_sp_data->m_cache_map[hbitmap] = {
+            p_d2d1_bitmap,
+            std::chrono::steady_clock::now(),
+            initializer};
+    }
+    catch (CWICException& ex)
+    {
+        LogHResultException(ex);
+    }
+}
+
+void CD2D1BitmapCache::AddHBitmap(HBITMAP hbitmap)
+{
+    AddHBitmap(hbitmap, CD2D1BitmapCache::CreateD2D1BitmapFromHBitmap);
+}
+
+void CD2D1BitmapCache::RemoveHBitmap(HBITMAP hbitmap)
+{
+    TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(m_sp_data);
+    auto it = m_sp_data->m_cache_map.find(hbitmap);
+    if (it != m_sp_data->m_cache_map.end())
+    {
+        m_sp_data->m_cache_map.erase(it);
+    }
+}
+
+void CD2D1BitmapCache::RecreateAllHBitmaps()
+{
+    CNullable<CD2D1Exception> nullable_d2d1exception{};
+
+    TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(m_sp_data);
+    for (auto& cache : m_sp_data->m_cache_map)
+    {
+        auto hbitmap = cache.first;
+
+        try
+        {
+            cache.second.Update(m_p_render_target, cache.first);
+        }
+        catch (CWICException& ex)
+        {
+            // 一般是HBITMAP失效导致的问题，直接忽略
+            (void)ex;
+        }
+        catch (CD2D1Exception& ex)
+        {
+            // 只会保存最后一次异常
+            nullable_d2d1exception.Construct(std::move(ex));
+        }
+    }
+    if (nullable_d2d1exception)
+    {
+        throw nullable_d2d1exception.GetUnsafe();
+    }
+}
+
+auto CD2D1BitmapCache::CreateD2D1BitmapFromHBitmap(ComPtr<ID2D1RenderTarget> p_render_target, HBITMAP hbitmap)
+    -> ComPtr<ID2D1Bitmap>
+{
+    ComPtr<IWICBitmap> p_wic_bitmap{};
+    ThrowIfFailed<CWICException>(
+        CWICFactory::GetWIC()->CreateBitmapFromHBITMAP(
+            hbitmap,
+            NULL,
+            WICBitmapUsePremultipliedAlpha,
+            &p_wic_bitmap),
+        "Call IWICImagingFactory::CreateBitmapFromHBITMAP failed.");
+
+    ComPtr<ID2D1Bitmap> result{};
+    ThrowIfFailed<CD2D1Exception>(
+        p_render_target->CreateBitmapFromWicBitmap(
+            p_wic_bitmap.Get(),
+            &result),
+        "Call ID2D1RenderTarget::CreateBitmapFromWicBitmap failed.");
+
+    return result;
+}
+
+void CD2D1BitmapCache::GC()
+{
+    GCImpl(m_sp_data);
+}
+
+void CD2D1BitmapCache::SetGCInterval(const std::chrono::seconds interval)
+{
+    TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_GC_INTERVAL(m_sp_data);
+    m_sp_data->m_gc_interval = interval;
+}
+
+void CD2D1BitmapCache::SetExpireInterval(const std::chrono::seconds interval)
+{
+    TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(m_sp_data);
+    m_sp_data->m_cache_expire_interval = interval;
+}
+
+auto CD2D1BitmapCache::GetCachedBitmap(HBITMAP hbitmap)
+    -> ComPtr<ID2D1Bitmap>
+{
+    TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(m_sp_data);
+    auto it = m_sp_data->m_cache_map.find(hbitmap);
+    if (it != m_sp_data->m_cache_map.end())
+    {
+        if (m_sp_data->IsCacheExpire(it->second))
+        {
+            it->second.Update(m_p_render_target, it->first);
+        }
+        return it->second.m_cache;
+    }
+    else
+    {
+        AddHBitmap(hbitmap);
+        return m_sp_data->m_cache_map[hbitmap].m_cache;
+    }
+}
+
+bool CD2D1BitmapCache::IsHBitmapExist(HBITMAP hbitmap) const
+{
+    auto existing_it = m_sp_data->m_cache_map.find(hbitmap);
+    if (existing_it == m_sp_data->m_cache_map.end())
+    {
+        return true;
+    }
+    return false;
+}
+
+void CD2D1BitmapCache::GCImpl(std::shared_ptr<HeapData> sp_data)
+{
+    auto now = std::chrono::steady_clock::now();
+    TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(sp_data);
+    auto& ref_cache_map = sp_data->m_cache_map;
+    for (auto it = ref_cache_map.begin(); it != ref_cache_map.end();)
+    {
+        if (sp_data->IsCacheExpire(it->second, now))
+        {
+            it = ref_cache_map.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}
+
 void CTaskBarDlgDrawCommon::OnD3D10Exception1(CD3D10Exception1& ex)
 {
     auto hr = ex.GetHResult();
@@ -838,6 +1052,16 @@ void CTaskBarDlgDrawCommon::OnD3D10Exception1(CD3D10Exception1& ex)
     else
     {
         DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(ex);
+    }
+}
+
+void CTaskBarDlgDrawCommon::ResetClippedStateIfSet()
+{
+    if (m_is_clipped)
+    {
+        m_p_window_support
+            ->GetRenderTarget()
+            ->PopAxisAlignedClip();
     }
 }
 
@@ -886,6 +1110,7 @@ CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
         return;
     }
 
+    ResetClippedStateIfSet();
     auto p_render_target = m_p_window_support->GetRenderTarget();
     try
     {
@@ -950,7 +1175,7 @@ void CTaskBarDlgDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLOR
     auto length = ::wcslen(lpszString);
     auto length_u = static_cast<UINT>(length);
     auto p_text_format = m_p_window_support->GetTextFormat();
-    //备份状态
+    // 备份状态
     auto old_vertical_align = p_text_format->GetParagraphAlignment();
     auto old_horizontal_align = p_text_format->GetTextAlignment();
     auto old_word_warpping = p_text_format->GetWordWrapping();
@@ -1017,11 +1242,25 @@ void CTaskBarDlgDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLOR
             {layout_rect.left, layout_rect.top},
             p_text_layout.Get(),
             m_p_window_support->GetRawForeSolidColorBruch(),
-            D2D1_DRAW_TEXT_OPTIONS_NO_SNAP | D2D1_DRAW_TEXT_OPTIONS_CLIP); //不允许文字超出边界
-    //恢复状态
+            D2D1_DRAW_TEXT_OPTIONS_NO_SNAP | D2D1_DRAW_TEXT_OPTIONS_CLIP); // 不允许文字超出边界
+    // 恢复状态
     p_text_format->SetParagraphAlignment(old_vertical_align);
     p_text_format->SetTextAlignment(old_horizontal_align);
     p_text_format->SetWordWrapping(old_word_warpping);
+}
+
+void CTaskBarDlgDrawCommon::SetDrawRect(CRect rect)
+{
+    ResetClippedStateIfSet();
+    D2D1_RECT_F d2d1_clip_rect;
+    d2d1_clip_rect.left = rect.left;
+    d2d1_clip_rect.top = rect.top;
+    d2d1_clip_rect.right = rect.right;
+    d2d1_clip_rect.bottom = rect.bottom;
+    m_p_window_support
+        ->GetRenderTarget()
+        ->PushAxisAlignedClip(d2d1_clip_rect, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+    m_is_clipped = true;
 }
 
 void CTaskBarDlgDrawCommon::FillRect(CRect rect, COLORREF color, BYTE alpha)
@@ -1077,6 +1316,93 @@ void CTaskBarDlgDrawCommon::SetTextColor(const COLORREF color, BYTE alpha)
 {
     m_text_color = color;
     m_p_window_support->SetForeColor(color, alpha);
+}
+
+void CTaskBarDlgDrawCommon::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode, BYTE alpha)
+{
+    auto p_d2d1_bitmap = m_p_window_support->GetCachedBitmap(hbitmap);
+    if (!p_d2d1_bitmap)
+    {
+        CD2D1BitmapCache::CreateD2D1BitmapFromHBitmap(m_p_window_support->GetRenderTarget(), hbitmap);
+    }
+    auto p_render_target = m_p_window_support->GetRenderTarget();
+
+    float opacity = static_cast<float>(alpha) / 255.f;
+    D2D1_RECT_F draw_rect_f;
+    if (size.cx == 0 || size.cy == 0)
+    {
+        auto bitmap_size = p_d2d1_bitmap->GetSize();
+        draw_rect_f.left = start_point.x;
+        draw_rect_f.top = start_point.y;
+        draw_rect_f.right = static_cast<float>(start_point.x) + bitmap_size.width;
+        draw_rect_f.bottom = static_cast<float>(start_point.y) + bitmap_size.height;
+        p_render_target->DrawBitmap(p_d2d1_bitmap.Get(), draw_rect_f, opacity);
+        return;
+    }
+    switch (stretch_mode)
+    {
+    case StretchMode::STRETCH:
+    {
+        draw_rect_f.left = start_point.x;
+        draw_rect_f.top = start_point.y;
+        draw_rect_f.right = start_point.x + size.cx;
+        draw_rect_f.bottom = start_point.y + size.cy;
+        p_render_target->DrawBitmap(p_d2d1_bitmap.Get(), draw_rect_f, opacity);
+        return;
+    }
+    case StretchMode::FILL:
+    {
+        auto draw_size = size;
+        SetDrawRect(CRect(start_point, draw_size));
+
+        auto bitmap_size = p_d2d1_bitmap->GetPixelSize();
+        float bitmap_aspect_ratio, draw_rect_acpect_ratio; // 图像的宽高比、绘制大小的宽高比
+        bitmap_aspect_ratio = static_cast<float>(bitmap_size.width) / static_cast<float>(bitmap_size.height);
+        draw_rect_acpect_ratio = static_cast<float>(size.cx) / size.cy;
+        if (bitmap_aspect_ratio > draw_rect_acpect_ratio) // 如果图像的宽高比大于绘制区域的宽高比，则需要裁剪两边的图像
+        {
+            int image_width; // 按比例缩放后的宽度
+            image_width = bitmap_size.width * draw_size.cy / bitmap_size.height;
+            start_point.x -= ((image_width - draw_size.cx) / 2);
+            draw_size.cx = image_width;
+        }
+        else
+        {
+            int image_height; // 按比例缩放后的高度
+            image_height = bitmap_size.height * draw_size.cx / bitmap_size.width;
+            start_point.y -= ((image_height - draw_size.cy) / 2);
+            draw_size.cy = image_height;
+        }
+        break;
+    }
+    case StretchMode::FIT:
+    {
+        auto draw_size = p_d2d1_bitmap->GetPixelSize();
+        // 图像宽高比
+        float bitmap_aspect_ratio = static_cast<float>(draw_size.width) / static_cast<float>(draw_size.height);
+        float draw_rect_acpect_ratio = static_cast<float>(size.cx) / static_cast<float>(size.cy);
+        if (bitmap_aspect_ratio > draw_rect_acpect_ratio) // 如果图像的宽高比大于绘制区域的宽高比
+        {
+            draw_size.height = draw_size.height * size.cx / draw_size.width;
+            draw_size.width = size.cx;
+            start_point.y += ((size.cy - draw_size.height) / 2);
+        }
+        else
+        {
+            draw_size.width = draw_size.width * size.cy / draw_size.height;
+            draw_size.height = size.cy;
+            start_point.x += ((size.cx - draw_size.width) / 2);
+        }
+        break;
+    }
+    default:
+        break;
+    }
+    draw_rect_f.left = start_point.x;
+    draw_rect_f.top = start_point.y;
+    draw_rect_f.right = draw_rect_f.left + size.cx;
+    draw_rect_f.bottom = draw_rect_f.top + size.cy;
+    p_render_target->DrawBitmap(p_d2d1_bitmap.Get(), draw_rect_f, opacity);
 }
 
 CDC* CTaskBarDlgDrawBuffer::GetMemDC()
@@ -1139,9 +1465,9 @@ CTaskBarDlgDrawBuffer::~CTaskBarDlgDrawBuffer()
         error_info.Format(_T("Call UpdateLayeredWindowIndirect failed. Use GDI render instead. Error code = %ld."), error_code);
         CCommon::WriteLog(error_info, theApp.m_log_path.c_str());
 
-        //禁用D2D
+        // 禁用D2D
         theApp.m_taskbar_data.disable_d2d = true;
-        //展示错误信息
+        // 展示错误信息
         ::MessageBox(NULL, CCommon::LoadText(IDS_UPDATE_TASKBARDLG_FAILED_TIP), NULL, MB_OK | MB_ICONWARNING);
     }
     RECT empty_rect{};

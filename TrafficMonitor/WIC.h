@@ -2,6 +2,8 @@
 //https://docs.microsoft.com/en-us/previous-versions/bb757020(v=msdn.10)
 
 #pragma once
+#include "HResultException.h"
+
 class CWICFactory
 {
 public:
@@ -33,3 +35,7 @@ private:
     static HRESULT Create32BitHBITMAP(HDC hdc, const SIZE *psize, __deref_opt_out void **ppvBits, __out HBITMAP* phBmp);
 };
 
+class CWICException final : public CHResultException
+{
+    using CHResultException::CHResultException;
+};
