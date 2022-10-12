@@ -5,9 +5,7 @@ class IDrawBuffer
 {
 public:
     virtual CDC* GetMemDC() = 0;
-
-protected:
-    ~IDrawBuffer() = default;
+    virtual ~IDrawBuffer() = default;
 };
 
 class IDrawCommon
@@ -39,13 +37,15 @@ public:
     // （注意：当stretch_mode设置为StretchMode::FILL（填充）时，会设置绘图剪辑区域，如果之后需要绘制其他图形，
     // 需要重新设置绘图剪辑区域，否则图片外的区域会无法绘制）
     virtual void DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode = StretchMode::STRETCH, BYTE alpha = 255) = 0;
-
-protected:
-    ~IDrawCommon() = default;
+    virtual ~IDrawCommon() = default;
 };
 
 namespace DrawCommonHelper
 {
+    /**
+     * @brief 渲染器类型的枚举，新增渲染器类型时应当添加枚举到其中
+     *
+     */
     enum class RenderType
     {
         // 使用GDI
@@ -77,21 +77,3 @@ struct variant_storage<First, Other...>
     };
     ~variant_storage() = delete;
 };
-
-constexpr std::size_t STORAGE_INDEX = 0;
-constexpr std::size_t TYPE_INDEX = 1;
-
-template <class... T>
-struct ez_tagged_union;
-template <class TagEnum, class... T>
-struct ez_tagged_union<TagEnum, T...>
-{
-    using type = std::tuple<std::aligned_storage_t<sizeof(::variant_storage<T...>), alignof(::variant_storage<T...>)>, TagEnum>;
-};
-template <class T>
-struct ez_tagged_union<T>
-{
-    using type = void;
-};
-template <class TagEnum, class... T>
-using EzTaggedUnion = typename ez_tagged_union<TagEnum, T...>::type;

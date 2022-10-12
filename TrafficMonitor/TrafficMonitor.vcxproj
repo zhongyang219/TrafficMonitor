@@ -526,6 +526,7 @@
     <ClInclude Include="DisplayTextSettingDlg.h" />
     <ClInclude Include="DllFunctions.h" />
     <ClInclude Include="DrawCommonEx.h" />
+    <ClInclude Include="DrawCommonFactory.h" />
     <ClInclude Include="DrawTextManager.h" />
     <ClInclude Include="FilePathHelper.h" />
     <ClInclude Include="HighResolutionTimer.h" />
@@ -606,6 +607,7 @@
     <ClCompile Include="DisplayTextSettingDlg.cpp" />
     <ClCompile Include="DllFunctions.cpp" />
     <ClCompile Include="DrawCommonEx.cpp" />
+    <ClCompile Include="DrawCommonFactory.cpp" />
     <ClCompile Include="DrawTextManager.cpp" />
     <ClCompile Include="FilePathHelper.cpp" />
     <ClCompile Include="HistoryTrafficCalendarDlg.cpp" />

@@ -8,6 +8,7 @@
 #include "TrafficMonitorDlg.h"
 #include "WindowsSettingHelper.h"
 #include "Nullable.hpp"
+#include "DrawCommonFactory.h"
 
 #ifdef DEBUG
 // DX调试信息捕获
@@ -63,133 +64,63 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
     DrawCommonHelper::RenderType render_type = GetRenderType();
     CRect draw_rect{m_rect}; //绘图的矩形区域
     draw_rect.MoveToXY(0, 0);
-    //初始化栈内存
-    //初始化buffer区域
-    using DrawCommonBufferUnion = EzTaggedUnion<
-        DrawCommonHelper::RenderType,
-        CDrawDoubleBuffer, CTaskBarDlgDrawBuffer>;
-    auto draw_common_buffer_union_storage_wrapper =
-        MakeStaticVariableWrapper<DrawCommonBufferUnion>(
-            [render_type](auto* p_content)
-            {
-                std::get<TYPE_INDEX>(*p_content) = render_type;
-            },
-            [](auto* p_content)
-            {
-                auto type = std::get<TYPE_INDEX>(*p_content);
-                auto p_storage = &std::get<STORAGE_INDEX>(*p_content);
-
-                switch (type)
-                {
-                case DrawCommonHelper::RenderType::Default:
-                {
-                    auto p_draw_common_buffer = reinterpret_cast<CDrawDoubleBuffer*>(p_storage);
-                    Destroy(p_draw_common_buffer);
-                    break;
-                }
-                case DrawCommonHelper::RenderType::D2D1:
-                {
-                    auto p_draw_common_buffer = reinterpret_cast<CTaskBarDlgDrawBuffer*>(p_storage);
-                    Destroy(p_draw_common_buffer);
-                    break;
-                }
-                }
-            });
-    auto p_draw_common_buffer_union_storage = &std::get<STORAGE_INDEX>(draw_common_buffer_union_storage_wrapper.Get());
-    //初始化DrawCommon区域
-    using DrawCommonUnion = EzTaggedUnion<
-        DrawCommonHelper::RenderType,
-        CDrawCommon, CTaskBarDlgDrawCommon>;
-    auto draw_common_union_storage_wrapper = MakeStaticVariableWrapper<DrawCommonUnion>(
-        [render_type](auto* p_content)
-        {
-            std::get<TYPE_INDEX>(*p_content) = render_type;
-        },
-        [](auto* p_content)
-        {
-            auto type = std::get<TYPE_INDEX>(*p_content);
-            auto p_storage = &std::get<STORAGE_INDEX>(*p_content);
-            switch (type)
-            {
-            case DrawCommonHelper::RenderType::Default:
-            {
-                auto p_draw_common = reinterpret_cast<CDrawCommon*>(p_storage);
-                Destroy(p_draw_common);
-                break;
-            }
-            case DrawCommonHelper::RenderType::D2D1:
-            {
-                auto p_draw_common = reinterpret_cast<CTaskBarDlgDrawCommon*>(p_storage);
-                Destroy(p_draw_common);
-                break;
-            }
-            }
-        });
-    auto p_draw_common_union_storage = &std::get<STORAGE_INDEX>(draw_common_union_storage_wrapper.Get());
 
 #ifdef DEBUG
     Microsoft::WRL::ComPtr<IDXGraphicsAnalysis> p_dxgi_analysis{};
 #endif
+    // 初始化DrawBuffer和DrawCommon栈内存
+    AllInvolvedDrawCommonObjectsStorage all_involved_draw_common_objects{};
+    IDrawCommon* draw_common_interface;
+    std::tie(std::ignore, draw_common_interface) =
+        GetInterfaceFromAllInvolvedDrawCommonObjects(
+            all_involved_draw_common_objects,
+            render_type,
+            {{DrawCommonHelper::RenderType::Default,
+              [&](IDrawBuffer* p_draw_buffer_interface, IDrawCommon* p_draw_common_interface)
+              {
+                  auto p_draw_buffer = static_cast<CDrawDoubleBuffer*>(p_draw_buffer_interface);
+                  auto p_draw_common = static_cast<CDrawCommon*>(p_draw_common_interface);
 
-    IDrawCommon* p_drawer;
-    switch (render_type)
-    {
-    case DrawCommonHelper::RenderType::Default:
-    {
-        if (pDC == nullptr)
-        {
-            return;
-        }
-        auto p_draw_common_buffer = reinterpret_cast<CDrawDoubleBuffer*>(p_draw_common_buffer_union_storage);
-        //必须先于绘图对象构造
-        EmplaceAt(p_draw_common_buffer, pDC, draw_rect);
-        IDrawBuffer& draw_buffer = *p_draw_common_buffer;
-        auto p_draw_common = reinterpret_cast<CDrawCommon*>(p_draw_common_union_storage);
-        //这里构造绘图对象
-        EmplaceAt(p_draw_common);
-        p_draw_common->Create(draw_buffer.GetMemDC(), nullptr);
-        p_draw_common->FillRect(draw_rect, theApp.m_taskbar_data.back_color); //填充背景色
-        p_draw_common->SetFont(&m_font);
-        p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
-        p_drawer = p_draw_common;
-        break;
-    }
-    case DrawCommonHelper::RenderType::D2D1:
-    {
+                  // 必须先于绘图对象构造
+                  EmplaceAt(p_draw_buffer, pDC, draw_rect);
+                  // 这里构造绘图对象
+                  EmplaceAt(p_draw_common);
+                  p_draw_common->Create(p_draw_buffer->GetMemDC(), nullptr);
+                  p_draw_common->FillRect(draw_rect, theApp.m_taskbar_data.back_color); // 填充背景色
+                  p_draw_common->SetFont(&m_font);
+                  p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
+              }},
+             {DrawCommonHelper::RenderType::D2D1,
+              [&](IDrawBuffer* p_draw_buffer_interface, IDrawCommon* p_draw_common_interface)
+              {
+                  auto p_draw_buffer = static_cast<CTaskBarDlgDrawBuffer*>(p_draw_buffer_interface);
+                  auto p_draw_common = static_cast<CTaskBarDlgDrawCommon*>(p_draw_common_interface);
+
+                  // 这里与上面相反，是先构造DrawCommon再构造Buffer，并且需要注意析构顺序
+                  // 这里构造绘图对象
+                  EmplaceAt(p_draw_common);
+                  D2D1_SIZE_U d2d_size;
+                  d2d_size.width = draw_rect.Width();
+                  d2d_size.height = draw_rect.Height();
+                  p_draw_common->Create(this->m_taskbar_draw_common_window_support.Get(), d2d_size);
+                  // 仅透明时启用此渲染器，则默认初始化为全黑，alpha=1
+                  p_draw_common->FillRect(draw_rect, 0x00000000, 1);
+                  p_draw_common->SetFont(&m_font);
+                  p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
+                  // 构造buffer
+                  CSize draw_size{draw_rect.Width(), draw_rect.Height()};
+                  EmplaceAt(p_draw_buffer, draw_size, current_hwnd);
+                  p_draw_buffer->SetTargetSurface(this->m_taskbar_draw_common_window_support.Get().GetRenderTargetSurface());
+
 #ifdef DEBUG
-        DXGIGetDebugInterface1(0, IID_PPV_ARGS(&p_dxgi_analysis));
-        if (p_dxgi_analysis)
-        {
-            p_dxgi_analysis->BeginCapture();
-        }
+                  DXGIGetDebugInterface1(0, IID_PPV_ARGS(&p_dxgi_analysis));
+                  if (p_dxgi_analysis)
+                  {
+                      p_dxgi_analysis->BeginCapture();
+                  }
 #endif
-        //这里与上面相反，是先构造DrawCommon再构造Buffer
-        auto p_draw_common = reinterpret_cast<CTaskBarDlgDrawCommon*>(p_draw_common_union_storage);
-        //这里构造绘图对象
-        EmplaceAt(p_draw_common);
-        D2D1_SIZE_U d2d_size;
-        d2d_size.width = draw_rect.Width();
-        d2d_size.height = draw_rect.Height();
-        p_draw_common->Create(this->m_taskbar_draw_common_window_support.Get(), d2d_size);
-        //仅透明时启用此渲染器，则默认初始化为全黑，alpha=1
-        p_draw_common->FillRect(draw_rect, 0x00000000, 1);
-        p_draw_common->SetFont(&m_font);
-        p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
-        p_drawer = p_draw_common;
-        //构造buffer
-        auto p_draw_common_buffer = reinterpret_cast<CTaskBarDlgDrawBuffer*>(p_draw_common_buffer_union_storage);
-        CSize draw_size{draw_rect.Width(), draw_rect.Height()};
-        EmplaceAt(p_draw_common_buffer, draw_size, current_hwnd);
-        p_draw_common_buffer->SetTargetSurface(this->m_taskbar_draw_common_window_support.Get().GetRenderTargetSurface());
-        break;
-    }
-    default:
-    {
-        throw std::runtime_error{"no matching render."};
-        break;
-    }
-    }
-    IDrawCommon& draw = *p_drawer;
+              }}});
+    IDrawCommon& draw = *draw_common_interface;
     //计算各部分的位置
     int index = 0;
     CRect item_rect{};
@@ -1184,7 +1115,7 @@ BOOL CTaskBarDlg::OnInitDialog()
     m_hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL); //寻找类名是Shell_TrayWnd的窗口句柄
     m_hBar = ::FindWindowEx(m_hTaskbar, 0, L"ReBarWindow32", NULL); //寻找二级容器的句柄
     m_hMin = ::FindWindowEx(m_hBar, 0, L"MSTaskSwWClass", NULL);    //寻找最小化窗口的句柄
-    
+
     m_hNotify = ::FindWindowEx(m_hTaskbar, 0, L"TrayNotifyWnd", NULL);
 
     //在“Shell_TrayWnd”的子窗口找到类名为“Windows.UI.Composition.DesktopWindowContentBridge”的窗口则认为是Windows11的任务栏
@@ -1192,7 +1123,7 @@ BOOL CTaskBarDlg::OnInitDialog()
     {
         theApp.m_is_windows11_taskbar = (::FindWindowExW(m_hTaskbar, 0, L"Windows.UI.Composition.DesktopWindowContentBridge", NULL) != NULL);
     }
-	
+
     //设置窗口透明色
     ApplyWindowTransparentColor();
 
