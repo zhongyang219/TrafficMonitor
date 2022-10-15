@@ -289,26 +289,3 @@ UINT DrawCommonHelper::ProccessTextFormat(CRect rect, CSize text_length, Alignme
     }
     return result;
 }
-
-auto DrawCommonHelper::GetArgb32BitmapInfo(CRect rect) noexcept
-    -> ::BITMAPINFO
-{
-    LONG width = std::abs(rect.Width());
-    LONG height = std::abs(rect.Height());
-    return GetArgb32BitmapInfo(width, height);
-}
-
-auto DrawCommonHelper::GetArgb32BitmapInfo(LONG width, LONG height) noexcept
-    -> ::BITMAPINFO
-{
-    ::BITMAPINFO result;
-    memset(&result, 0, sizeof(BITMAPINFO));
-    result.bmiHeader.biSize = sizeof(result.bmiHeader);
-    //保证是自上而下
-    result.bmiHeader.biWidth = static_cast<LONG>(width);
-    result.bmiHeader.biHeight = -static_cast<LONG>(height);
-    result.bmiHeader.biPlanes = 1;
-    result.bmiHeader.biBitCount = 32;
-    result.bmiHeader.biCompression = BI_RGB;
-    return result;
-}

@@ -101,7 +101,7 @@ HDC DrawCommonHelper::Get1x1AlphaEqual1DC()
             auto& ref_old_hbitmap = std::get<1>(*p_content);
 
             ref_dc = ::CreateCompatibleDC(NULL);
-            auto bitmap_info = GetArgb32BitmapInfo(1, 1);
+            auto bitmap_info = TaskBarDlgUser32DrawTextHook::Details::GetArgb32BitmapInfo(1, 1);
             void* p_data{};
             auto current_hbitmap = ::CreateDIBSection(
                 ref_dc,
@@ -1253,10 +1253,10 @@ void CTaskBarDlgDrawCommon::SetDrawRect(CRect rect)
 {
     ResetClippedStateIfSet();
     D2D1_RECT_F d2d1_clip_rect;
-    d2d1_clip_rect.left = rect.left;
-    d2d1_clip_rect.top = rect.top;
-    d2d1_clip_rect.right = rect.right;
-    d2d1_clip_rect.bottom = rect.bottom;
+    d2d1_clip_rect.left = static_cast<float>(rect.left);
+    d2d1_clip_rect.top = static_cast<float>(rect.top);
+    d2d1_clip_rect.right = static_cast<float>(rect.right);
+    d2d1_clip_rect.bottom = static_cast<float>(rect.bottom);
     m_p_window_support
         ->GetRenderTarget()
         ->PushAxisAlignedClip(d2d1_clip_rect, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
@@ -1332,8 +1332,8 @@ void CTaskBarDlgDrawCommon::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSiz
     if (size.cx == 0 || size.cy == 0)
     {
         auto bitmap_size = p_d2d1_bitmap->GetSize();
-        draw_rect_f.left = start_point.x;
-        draw_rect_f.top = start_point.y;
+        draw_rect_f.left = static_cast<float>(start_point.x);
+        draw_rect_f.top = static_cast<float>(start_point.y);
         draw_rect_f.right = static_cast<float>(start_point.x) + bitmap_size.width;
         draw_rect_f.bottom = static_cast<float>(start_point.y) + bitmap_size.height;
         p_render_target->DrawBitmap(p_d2d1_bitmap.Get(), draw_rect_f, opacity);
@@ -1343,10 +1343,10 @@ void CTaskBarDlgDrawCommon::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSiz
     {
     case StretchMode::STRETCH:
     {
-        draw_rect_f.left = start_point.x;
-        draw_rect_f.top = start_point.y;
-        draw_rect_f.right = start_point.x + size.cx;
-        draw_rect_f.bottom = start_point.y + size.cy;
+        draw_rect_f.left = static_cast<float>(start_point.x);
+        draw_rect_f.top = static_cast<float>(start_point.y);
+        draw_rect_f.right = static_cast<float>(start_point.x + size.cx);
+        draw_rect_f.bottom = static_cast<float>(start_point.y + size.cy);
         p_render_target->DrawBitmap(p_d2d1_bitmap.Get(), draw_rect_f, opacity);
         return;
     }
@@ -1398,8 +1398,8 @@ void CTaskBarDlgDrawCommon::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSiz
     default:
         break;
     }
-    draw_rect_f.left = start_point.x;
-    draw_rect_f.top = start_point.y;
+    draw_rect_f.left = static_cast<float>(start_point.x);
+    draw_rect_f.top = static_cast<float>(start_point.y);
     draw_rect_f.right = draw_rect_f.left + size.cx;
     draw_rect_f.bottom = draw_rect_f.top + size.cy;
     p_render_target->DrawBitmap(p_d2d1_bitmap.Get(), draw_rect_f, opacity);

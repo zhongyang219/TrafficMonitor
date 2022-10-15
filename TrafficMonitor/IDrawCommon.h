@@ -53,13 +53,12 @@ namespace DrawCommonHelper
         // 如果支持，使用D2D1
         D2D1
     };
-    template <RenderType render_type>
-    struct RenderTypeTag
-    {
-        constexpr static RenderType type = render_type;
-    };
-    using RenderTypeDefaultTag = RenderTypeTag<RenderType::Default>;
-    using RenderTypeD2D1Tag = RenderTypeTag<RenderType::D2D1>;
+
+    constexpr BYTE GDI_NO_MODIFIED_FLAG = 0x01;
+    constexpr BYTE OPAQUE_ALPHA_VALUE = 0xFF;
+    constexpr BYTE TRANSPARENT_ALPHA_VALUE = 0x00;
+    constexpr BYTE AVAILABLE_MINIMUM_ALPHA = 0x02;
+    constexpr BYTE GDI_MODIFIED_FLAG = 0x00;
 }
 
 template <class... Types>
