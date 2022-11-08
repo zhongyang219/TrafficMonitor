@@ -208,7 +208,7 @@ CTaskBarDlgDrawCommonSupport::CTaskBarDlgDrawCommonSupport()
             NULL,
             0,
             &m_p_ps_dot_like_style),
-        "Create GDI PS_DOT like stroke style failed.");
+        TRAFFICMONITOR_ERROR_STR("Create GDI PS_DOT like stroke style failed."));
 
     UINT flag = D3D10_CREATE_DEVICE_BGRA_SUPPORT;
 #ifdef DEBUG
@@ -256,7 +256,7 @@ void CTaskBarDlgDrawCommonWindowSupport::GpuHelper::RecreateResource(Microsoft::
             DEFAULT_DPI,
             D2D1_RENDER_TARGET_USAGE_NONE);
     constexpr static auto TIP_WHEN_CREATE_ID2D1RENDERTARGET_FAILED =
-        "Create d2d1 render target from dxgi surface failed.";
+        TRAFFICMONITOR_ERROR_STR("Create d2d1 render target from dxgi surface failed.");
 
     D3D10_TEXTURE2D_DESC description = {};
     description.ArraySize = 1;
@@ -273,15 +273,15 @@ void CTaskBarDlgDrawCommonWindowSupport::GpuHelper::RecreateResource(Microsoft::
             &description,
             NULL,
             &m_p_gdi_final_texture),
-        "Create m_p_gdi_final_texture(type = ID3D10Texture2D) failed.");
+        TRAFFICMONITOR_ERROR_STR("Create m_p_gdi_final_texture(type = ID3D10Texture2D) failed."));
     ThrowIfFailed<CD3D10Exception1>(
         m_p_gdi_final_texture->QueryInterface(IID_PPV_ARGS(&m_p_gdi_finial_surface)),
-        "Get IDXGISurface1 from GDI interop result texture failed.");
+        TRAFFICMONITOR_ERROR_STR("Get IDXGISurface1 from GDI interop result texture failed."));
 
     auto p_render_target_texture = CreateGdiCompatibleTexture(p_device1, size);
     ThrowIfFailed<CD3D10Exception1>(
         p_render_target_texture->QueryInterface(IID_PPV_ARGS(&m_p_render_target_surface)),
-        "Get IDXGISurface1 from D2D render target texture failed.");
+        TRAFFICMONITOR_ERROR_STR("Get IDXGISurface1 from D2D render target texture failed."));
     m_alpha_value_effect
         .SetOutputSize(size.width, size.height)
         .SetPsByteCode(GetPsAlphaValueReducer());
@@ -302,12 +302,12 @@ void CTaskBarDlgDrawCommonWindowSupport::GpuHelper::RecreateResource(Microsoft::
         m_p_render_target->CreateSolidColorBrush(
             m_foreground_color,
             &m_p_foreground_color_brush),
-        "Call function CreateSolidColorBrush to cerate foreground solid color brush failed.");
+        TRAFFICMONITOR_ERROR_STR("Call function CreateSolidColorBrush to cerate foreground solid color brush failed."));
     ThrowIfFailed<CD2D1Exception>(
         m_p_render_target->CreateSolidColorBrush(
             m_background_color,
             &m_p_background_color_brush),
-        "Call function CreateSolidColorBrush to cerate background solid color brush failed.");
+        TRAFFICMONITOR_ERROR_STR("Call function CreateSolidColorBrush to cerate background solid color brush failed."));
 }
 
 void CTaskBarDlgDrawCommonWindowSupport::GpuHelper::SetSolidBrushColor(ComPtr<ID2D1SolidColorBrush> p_brush, D2D1_COLOR_F d2d1_color_f) noexcept
@@ -340,7 +340,7 @@ auto CTaskBarDlgDrawCommonWindowSupport::GpuHelper::CreateGdiCompatibleTexture(C
             &description,
             NULL,
             &p_texture2d),
-        "CTaskBarDlgDrawCommonWindowBuffer create texture2D failed.");
+        TRAFFICMONITOR_ERROR_STR("CTaskBarDlgDrawCommonWindowBuffer create texture2D failed."));
 
     return p_texture2d;
 }
@@ -366,7 +366,7 @@ auto CTaskBarDlgDrawCommonWindowSupport::GpuHelper::CreateGdiInteropTexture(ComP
             &description,
             NULL,
             &p_render_target_texture),
-        "CTaskBarDlgDrawCommonWindowBuffer create texture2D failed.");
+        TRAFFICMONITOR_ERROR_STR("CTaskBarDlgDrawCommonWindowBuffer create texture2D failed."));
 
     return p_render_target_texture;
 }
@@ -467,11 +467,11 @@ void CTaskBarDlgDrawCommonWindowSupport::InitGdiInteropTexture(void* p_data, std
             &description,
             &subresource_data,
             &m_gpu_helper.m_p_gdi_initial_texture),
-        "Create m_p_gdi_initial_texture(type = ID3D10Texture2D) failed.");
+        TRAFFICMONITOR_ERROR_STR("Create m_p_gdi_initial_texture(type = ID3D10Texture2D) failed."));
     ThrowIfFailed<CD3D10Exception1>(
         m_gpu_helper.m_p_gdi_initial_texture->QueryInterface(
             IID_PPV_ARGS(&m_gpu_helper.m_p_gdi_initial_surface)),
-        "Get IDXGISurface1 from GDI interop initial texture failed.");
+        TRAFFICMONITOR_ERROR_STR("Get IDXGISurface1 from GDI interop initial texture failed."));
 }
 
 void CTaskBarDlgDrawCommonWindowSupport::SetFont(HFONT h_font)
@@ -614,7 +614,7 @@ void CTaskBarDlgDrawCommonWindowSupport::DWriteHelper::SetFont(HFONT h_font)
                 abs_font_height_f,
                 L"",
                 &m_p_text_format),
-            "Create D2D1 Text Format failed.");
+            TRAFFICMONITOR_ERROR_STR("Create D2D1 Text Format failed."));
 
         m_h_last_font = h_font;
     }
@@ -1010,14 +1010,14 @@ auto CD2D1BitmapCache::CreateD2D1BitmapFromHBitmap(ComPtr<ID2D1RenderTarget> p_r
             NULL,
             WICBitmapUsePremultipliedAlpha,
             &p_wic_bitmap),
-        "Call IWICImagingFactory::CreateBitmapFromHBITMAP failed.");
+        TRAFFICMONITOR_ERROR_STR("Call IWICImagingFactory::CreateBitmapFromHBITMAP failed."));
 
     ComPtr<ID2D1Bitmap> result{};
     ThrowIfFailed<CD2D1Exception>(
         p_render_target->CreateBitmapFromWicBitmap(
             p_wic_bitmap.Get(),
             &result),
-        "Call ID2D1RenderTarget::CreateBitmapFromWicBitmap failed.");
+        TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::CreateBitmapFromWicBitmap failed."));
 
     return result;
 }
@@ -1158,11 +1158,11 @@ CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
 
             ThrowIfFailed<CD2D1Exception>(
                 p_render_target->Flush(),
-                "Call ID2D1RenderTarget::Flush() failed.");
+                TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::Flush() failed."));
 
             ThrowIfFailed<CD3D10Exception1>(
                 waiter.Wait(),
-                "Draw call failed.");
+                TRAFFICMONITOR_ERROR_STR("Draw call failed."));
 
             D2D1_BITMAP_PROPERTIES d2d1_bitmap_properties{};
             d2d1_bitmap_properties.pixelFormat.format = CTaskBarDlgDrawCommonWindowSupport::PIXEL_FORMAT;
@@ -1177,7 +1177,7 @@ CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
                     p_gdi_interop_surface1.Get(),
                     &d2d1_bitmap_properties,
                     &p_gdi_interop_bitmap),
-                "Create ID2D1Bitmap from IDXGISurface1 failed.");
+                TRAFFICMONITOR_ERROR_STR("Create ID2D1Bitmap from IDXGISurface1 failed."));
             p_render_target->DrawBitmap(p_gdi_interop_bitmap.Get());
         }
     }
@@ -1193,7 +1193,7 @@ CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
     {
         ThrowIfFailed<CD2D1Exception>(
             p_render_target->EndDraw(),
-            "Call ID2D1RenderTarget::EndDraw() failed.");
+            TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::EndDraw() failed."));
     }
     catch (CHResultException& ex)
     {
@@ -1261,7 +1261,7 @@ void CTaskBarDlgDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLOR
             layout_rect.right - layout_rect.left,
             layout_rect.bottom - layout_rect.top,
             &p_text_layout),
-        "Function CreateTextLayout failed.");
+        TRAFFICMONITOR_ERROR_STR("Function CreateTextLayout failed."));
     DWRITE_OVERHANG_METRICS delta_size;
     p_text_layout->GetOverhangMetrics(&delta_size);
     D2D1_RECT_F rect_f{
@@ -1466,7 +1466,7 @@ CTaskBarDlgDrawBuffer::~CTaskBarDlgDrawBuffer()
     {
         ThrowIfFailed<CD3D10Exception1>(
             m_p_gdi_surface->GetDC(FALSE, &gdi_dc),
-            "Get DC from IDXGISurface1 failed.");
+            TRAFFICMONITOR_ERROR_STR("Get DC from IDXGISurface1 failed."));
 
         UPDATELAYEREDWINDOWINFO update_window_info;
         ::memset(&update_window_info, 0, sizeof(update_window_info));

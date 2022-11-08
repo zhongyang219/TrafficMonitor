@@ -67,13 +67,13 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
             m_p_vs_byte_code->GetBufferPointer(),
             m_p_vs_byte_code->GetBufferSize(),
             &m_p_input_layout),
-        "CImage2DEffect call CreateInputLayout failed.");
+        TRAFFICMONITOR_ERROR_STR("CImage2DEffect call CreateInputLayout failed."));
 
     QuadrangleVertexs vertexes;
     float* vertex_position;
     float* vertex_texture;
 
-    //左上角
+    // 左上角
     vertex_position = vertexes.GetLeftTopVertex().position;
     vertex_position[0] = -1.f; // x
     vertex_position[1] = 1.f;  // y
@@ -82,7 +82,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
     vertex_texture[0] = 0.f; // u
     vertex_texture[1] = 0.f; // v
 
-    //右上角
+    // 右上角
     vertex_position = vertexes.GetRightTopVertex().position;
     vertex_position[0] = 1.f;
     vertex_position[1] = 1.f;
@@ -91,7 +91,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
     vertex_texture[0] = 1.f;
     vertex_texture[1] = 0.f;
 
-    //右下角
+    // 右下角
     vertex_position = vertexes.GetRightBottomVertex().position;
     vertex_position[0] = 1.f;
     vertex_position[1] = -1.f;
@@ -100,7 +100,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
     vertex_texture[0] = 1.f;
     vertex_texture[1] = 1.f;
 
-    //左下角
+    // 左下角
     vertex_position = vertexes.GetLeftBottomVertex().position;
     vertex_position[0] = -1.f;
     vertex_position[1] = -1.f;
@@ -120,7 +120,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
             &vertex_buffer_desc,
             &vertex_data,
             &m_p_vertex_buffer),
-        "CImage2DEffect create vertex buffer failed.");
+        TRAFFICMONITOR_ERROR_STR("CImage2DEffect create vertex buffer failed."));
 
     D3D10_BUFFER_DESC index_buffer_desc{};
     index_buffer_desc.Usage = D3D10_USAGE_IMMUTABLE;
@@ -133,7 +133,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
             &index_buffer_desc,
             &index_data,
             &m_p_index_buffer),
-        "CImage2DEffect create index buffer failed.");
+        TRAFFICMONITOR_ERROR_STR("CImage2DEffect create index buffer failed."));
 
     D3D10_RASTERIZER_DESC rasterizer_desc{};
     rasterizer_desc.FillMode = D3D10_FILL_SOLID;
@@ -150,7 +150,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
         p_device1->CreateRasterizerState(
             &rasterizer_desc,
             &m_p_rasterizer_state),
-        "CImage2DEffect create rasterizer state failed.");
+        TRAFFICMONITOR_ERROR_STR("CImage2DEffect create rasterizer state failed."));
 
     D3D10_SAMPLER_DESC tex0_sampler = {};
     tex0_sampler.Filter = D3D10_FILTER_MIN_MAG_MIP_LINEAR;
@@ -166,7 +166,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
         p_device1->CreateSamplerState(
             &tex0_sampler,
             &m_p_ps_tex0_sampler_state),
-        "CImage2DEffect create default sampler state failed.");
+        TRAFFICMONITOR_ERROR_STR("CImage2DEffect create default sampler state failed."));
 
     D3D10_BLEND_DESC1 blend_desc1{};
     blend_desc1.AlphaToCoverageEnable = FALSE;
@@ -184,7 +184,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
         p_device1->CreateBlendState1(
             &blend_desc1,
             &m_p_blend_state1),
-        "CImage2DEffect create D3D10.1 blend state for alpha blend failed.");
+        TRAFFICMONITOR_ERROR_STR("CImage2DEffect create D3D10.1 blend state for alpha blend failed."));
 
     D3D10_DEPTH_STENCIL_DESC depth_stencil_desc{};
     depth_stencil_desc.DepthEnable = FALSE;
@@ -205,7 +205,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
         p_device1->CreateDepthStencilState(
             &depth_stencil_desc,
             &m_p_depth_stencil_state),
-        "CImage2DEffect call CreateDepthStencilState failed.");
+        TRAFFICMONITOR_ERROR_STR("CImage2DEffect call CreateDepthStencilState failed."));
 }
 
 void CImage2DEffect::RecreateInputTextureRelatedResources(Microsoft::WRL::ComPtr<ID3D10Texture2D> p_input)
@@ -220,7 +220,7 @@ void CImage2DEffect::RecreateInputTextureRelatedResources(Microsoft::WRL::ComPtr
             p_input.Get(),
             &tex0_shader_resource_view_desc,
             &m_p_ps_tex0_resource_view),
-        "CImage2DEffect create shader resource view1 failed.");
+        TRAFFICMONITOR_ERROR_STR("CImage2DEffect create shader resource view1 failed."));
 }
 
 void CImage2DEffect::RecreateOutputTextureRelatedResources(Microsoft::WRL::ComPtr<ID3D10Texture2D> p_output)
@@ -230,7 +230,7 @@ void CImage2DEffect::RecreateOutputTextureRelatedResources(Microsoft::WRL::ComPt
             p_output.Get(),
             NULL,
             &m_p_render_target_view),
-        "CImage2DEffect create D3D10.1 render target view failed.");
+        TRAFFICMONITOR_ERROR_STR("CImage2DEffect create D3D10.1 render target view failed."));
 }
 
 void CImage2DEffect::RecreateVsByteCodeRelatedResources(Microsoft::WRL::ComPtr<ID3DBlob> p_vs_byte_code)
@@ -240,7 +240,7 @@ void CImage2DEffect::RecreateVsByteCodeRelatedResources(Microsoft::WRL::ComPtr<I
             p_vs_byte_code->GetBufferPointer(),
             p_vs_byte_code->GetBufferSize(),
             &m_p_vs),
-        "CImage2DEffect create vertex shader failed.");
+        TRAFFICMONITOR_ERROR_STR("CImage2DEffect create vertex shader failed."));
 }
 
 void CImage2DEffect::RecreatePsByteCodeRelatedResources(Microsoft::WRL::ComPtr<ID3DBlob> p_ps_byte_code)
@@ -250,7 +250,7 @@ void CImage2DEffect::RecreatePsByteCodeRelatedResources(Microsoft::WRL::ComPtr<I
             p_ps_byte_code->GetBufferPointer(),
             p_ps_byte_code->GetBufferSize(),
             &m_p_ps),
-        "CImage2DEffect create pixel shader failed.");
+        TRAFFICMONITOR_ERROR_STR("CImage2DEffect create pixel shader failed."));
 }
 
 auto CImage2DEffect::ApplyPipelineConfig() const

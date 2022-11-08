@@ -80,7 +80,8 @@ void LogHResultException(CHResultException& ex)
         return;
     }
     BSTR p_description{NULL};
-    ThrowIfFailed(p_error->GetDescription(&p_description));
+    ThrowIfFailed(p_error->GetDescription(&p_description),
+                  TRAFFICMONITOR_ERROR_STR("Get description from IErrorInfo failed."));
     CCommon::WriteLog(p_description, theApp.m_log_path.c_str());
     ::SysFreeString(p_description);
 }

@@ -22,7 +22,7 @@ ID2D1Factory* CD2D1Support::GetFactory()
                               D2D1_FACTORY_TYPE_SINGLE_THREADED,
                               CD2D1Support::CREATION_OPTIONS,
                               pp_factory),
-                          "Create D2D1 factory failed.");
+                          TRAFFICMONITOR_ERROR_STR("Create D2D1 factory failed."));
         },
         [](ID2D1Factory** pp_factory)
         {
@@ -43,7 +43,7 @@ ID2D1Factory1* CD2D1Support1::GetFactory()
                               D2D1_FACTORY_TYPE_SINGLE_THREADED,
                               CD2D1Support::CREATION_OPTIONS,
                               pp_factory),
-                          "Create D2D1 factory failed.");
+                          TRAFFICMONITOR_ERROR_STR("Create D2D1 factory failed."));
         },
         [](auto pp_factory)
         {
@@ -59,7 +59,7 @@ void CD2D1Device::Recreate(Microsoft::WRL::ComPtr<IDXGIDevice> p_dxgi_device)
         CD2D1Support1::GetFactory()->CreateDevice(
             p_dxgi_device.Get(),
             &m_p_device),
-        "CreateD2D1Device failed.");
+        TRAFFICMONITOR_ERROR_STR("CreateD2D1Device failed."));
 }
 
 auto CD2D1Device::GetStorage()
@@ -84,7 +84,7 @@ IDWriteFactory* CDWriteSupport::GetFactory()
                               DWRITE_FACTORY_TYPE_SHARED,
                               __uuidof(IDWriteFactory),
                               reinterpret_cast<IUnknown**>(pp_factory)),
-                          "Create DWrite factory failed.");
+                          TRAFFICMONITOR_ERROR_STR("Create DWrite factory failed."));
         },
         [](IDWriteFactory** pp_factory)
         {

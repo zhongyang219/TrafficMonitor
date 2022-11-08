@@ -23,7 +23,7 @@ void CD3D10Device1::Recreate(Microsoft::WRL::ComPtr<IDXGIAdapter1> p_adapter1)
             m_sp_storage->m_feature_level,
             m_sp_storage->m_sdk_version,
             &m_sp_storage->m_p_device1),
-        "Create D3D10Device1 failed.");
+        TRAFFICMONITOR_ERROR_STR("Create D3D10Device1 failed."));
 
     auto ref_track_set = m_resource_tracker.GetTrackerSet();
     for (auto&& it : ref_track_set)
@@ -159,7 +159,9 @@ auto CD3D10Support1::GetDeviceList(bool force_refresh)
                 }
                 else if (FAILED(hr))
                 {
-                    ThrowIfFailed(hr, "EnumAdapters1 failed. Maybe ppAdapter parameter is NULL.");
+                    ThrowIfFailed(
+                        hr,
+                    TRAFFICMONITOR_ERROR_STR("EnumAdapters1 failed. Maybe ppAdapter parameter is NULL."));
                 }
             } while (true); });
     }
@@ -212,7 +214,7 @@ auto CShader::Compile() const
                 m_flags2,
                 &m_p_cached_byte_code,
                 &p_error_message),
-            "Compile DX shader failed.",
+            TRAFFICMONITOR_ERROR_STR("Compile DX shader failed."),
             p_error_message);
         m_is_config_changed = false;
     }
@@ -346,7 +348,7 @@ CD3D10DrawCallWaiter::CD3D10DrawCallWaiter(Microsoft::WRL::ComPtr<ID3D10Device1>
     query_desc.Query = D3D10_QUERY_EVENT;
     ThrowIfFailed<CD3D10Exception1>(
         p_device->CreateQuery(&query_desc, &m_p_query),
-        "Create ID3D10Query failed.");
+        TRAFFICMONITOR_ERROR_STR("Create ID3D10Query failed."));
     m_p_query->End();
 }
 
