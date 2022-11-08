@@ -101,6 +101,4 @@ private:
 namespace DrawCommonHelper
 {
     UINT ProccessTextFormat(CRect rect, CSize text_length, Alignment align, bool multi_line) noexcept;
-
-    void DefaultD2DDrawCommonExceptionHandler(CHResultException& ex);
 };

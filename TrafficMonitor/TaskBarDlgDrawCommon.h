@@ -17,7 +17,24 @@ void LogWin32ApiErrorMessage() noexcept;
 
 namespace DrawCommonHelper
 {
-    void DefaultD2DDrawCommonExceptionHandler(CHResultException& ex);
+    void LogDeviceRecreateReason(HRESULT hr);
+
+    constexpr std::uint32_t MAX_D2D1_RENDER_ERROR_COUNT = 77;
+    class DefaultD2DDrawCommonExceptionHandler
+    {
+    private:
+        CHResultException& m_ref_ex;
+        static std::uint32_t m_error_count;
+
+    public:
+        DefaultD2DDrawCommonExceptionHandler(CHResultException& ex) noexcept;
+        DefaultD2DDrawCommonExceptionHandler(const DefaultD2DDrawCommonExceptionHandler&) = delete;
+        DefaultD2DDrawCommonExceptionHandler& operator=(const DefaultD2DDrawCommonExceptionHandler&) = delete;
+        DefaultD2DDrawCommonExceptionHandler* operator&() = delete;
+
+        static void ResetErrorCount();
+        void operator()();
+    };
     HDC Get1x1AlphaEqual1DC();
 }
 
@@ -36,6 +53,7 @@ public:
     auto GetPsDotLikeStyle() noexcept
         -> Microsoft::WRL::ComPtr<ID2D1StrokeStyle>;
     void RecreateDevice();
+    static bool CheckSupport() noexcept;
 };
 
 template <class T>
@@ -48,8 +66,6 @@ bool IsBitwiseEquality(T& lhs, T& rhs) noexcept
     return ::memcmp(p_lhs, p_rhs, size) == 0;
 }
 
-#define TRAFFICMONITOR_STR_IMPL(x) #x
-#define TRAFFICMONITOR_STR(x) TRAFFICMONITOR_STR_IMPL(x)
 // 0.0039215686 = 1 / 255
 #define TRAFFICMONITOR_ONE_IN_255_NUM 0.0039215686
 // 0.0039215686 + 0.0000784314
@@ -63,8 +79,9 @@ bool IsBitwiseEquality(T& lhs, T& rhs) noexcept
  * 此类在调用Resize前是部分初始化状态，此时调用其中的成员会发生未定义行为
  *
  */
-class CTaskBarDlgDrawCommonWindowSupport final : public CDX10DeviceResource1
+class CTaskBarDlgDrawCommonWindowSupport final : public CDeviceResource<CD3D10Device1>
 {
+    using Base = CDeviceResource<CD3D10Device1>;
 private:
     Microsoft::WRL::ComPtr<ID3D10Device1> m_p_device1;
     CD3D10Device1& m_ref_d3d10_device1;
@@ -105,7 +122,7 @@ private:
     };
     GpuHelper m_gpu_helper;
 
-    CTaskBarDlgDrawCommonSupport& m_ref_taskbdlg_draw_common_support;
+    CTaskBarDlgDrawCommonSupport& m_ref_taskbardlg_draw_common_support;
 
     class DWriteHelper
     {
@@ -170,6 +187,10 @@ public:
         -> Microsoft::WRL::ComPtr<ID2D1Bitmap>;
 };
 
+namespace DrawCommonHelper
+{
+    void DefaultD3D10Exception1Handler(CD3D10Exception1& ex, CTaskBarDlgDrawCommonWindowSupport& ref_taskbar_draw_common_window_support);
+}
 namespace TaskBarDlgUser32DrawTextHook
 {
     class EnableAllReplaceFunctionGuard;
@@ -471,7 +492,6 @@ private:
     COLORREF m_text_color{};
     bool m_is_clipped{false};
 
-    void OnD3D10Exception1(CD3D10Exception1& ex);
     void ResetClippedStateIfSet();
 
 public:
@@ -527,12 +547,12 @@ private:
     Microsoft::WRL::ComPtr<IDXGISurface1> m_p_gdi_surface{};
     CSize m_size;
     HWND m_target_hwnd;
+    CTaskBarDlgDrawCommonWindowSupport& m_ref_window_support;
 
 public:
-    CTaskBarDlgDrawBuffer(CSize size, HWND hwnd);
+    CTaskBarDlgDrawBuffer(CTaskBarDlgDrawCommonWindowSupport& taskbar_dlg_draw_common_window_support, CSize size, HWND hwnd);
     ~CTaskBarDlgDrawBuffer();
 
-    void SetTargetSurface(Microsoft::WRL::ComPtr<IDXGISurface1> p_surface) noexcept;
     static auto GetDefaultBlendFunctionPointer() noexcept
         -> const ::PBLENDFUNCTION;
 

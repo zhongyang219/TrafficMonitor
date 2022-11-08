@@ -4,11 +4,11 @@
 #include <vector>
 #include <memory>
 #include <mutex>
-#include <unordered_set>
 #include <d3d10_1.h>
 #include <dxgi.h>
 #include <d3dcompiler.h>
 #include "HResultException.h"
+#include "RenderAPISupport.h"
 
 class CD3D10Exception1 final : public CHResultException
 {
@@ -17,25 +17,11 @@ class CD3D10Exception1 final : public CHResultException
 
 class CD3D10Device1
 {
-    friend class CDX10DeviceResource1;
-
 public:
+    using Type = Microsoft::WRL::ComPtr<ID3D10Device1>;
     struct Data
     {
         Microsoft::WRL::ComPtr<ID3D10Device1> m_p_device1{};
-
-        class CResourceTracker
-        {
-        private:
-            std::unordered_set<class CDX10DeviceResource1*> m_resource_pointer_set{};
-
-        public:
-            void AddResource(class CDX10DeviceResource1* p_resource);
-            void RemoveResource(class CDX10DeviceResource1* p_resource);
-            auto GetTrackerSet() const noexcept
-                -> const std::unordered_set<class CDX10DeviceResource1*>&;
-        };
-        mutable CResourceTracker m_resource_tracker{};
 
         Microsoft::WRL::ComPtr<IDXGIAdapter1> m_p_adapter1{};
         D3D10_DRIVER_TYPE m_driver_type{D3D10_DRIVER_TYPE_HARDWARE};
@@ -44,9 +30,14 @@ public:
         D3D10_FEATURE_LEVEL1 m_feature_level{D3D10_FEATURE_LEVEL_10_1};
         UINT m_sdk_version{D3D10_1_SDK_VERSION};
     };
+    using Resource = CDeviceResource<CD3D10Device1>;
+    using Storage = MutipleStorage<Data,
+                                   storage_t<CTrackableDevice<CD3D10Device1>>,
+                                   storage_t<CResourceTracker<Resource>>>;
 
 private:
-    std::shared_ptr<Data> m_sp_data{std::make_unique<Data>()};
+    std::shared_ptr<Storage> m_sp_storage{std::make_shared<Storage>()};
+    CResourceTracker<Resource> m_resource_tracker{m_sp_storage};
 
 public:
     void Recreate(Microsoft::WRL::ComPtr<IDXGIAdapter1> p_adapter1);
@@ -81,29 +72,8 @@ public:
     auto SetSdkVersion(UINT sdk_version) noexcept
         -> CD3D10Device1&;
 
-    auto GetData() noexcept
-        -> std::shared_ptr<const Data>;
-};
-
-class CDX10DeviceResource1
-{
-private:
-    std::weak_ptr<const CD3D10Device1::Data> m_wp_data;
-
-    void StartTrack();
-    void EndTrack();
-    static void OnSelfMove(
-        CD3D10Device1::Data::CResourceTracker& ref_resource_tracker,
-        CDX10DeviceResource1* from, CDX10DeviceResource1* to);
-
-public:
-    CDX10DeviceResource1(CD3D10Device1& ref_cd3d10_device1) noexcept;
-    ~CDX10DeviceResource1() noexcept;
-    CDX10DeviceResource1(const CDX10DeviceResource1& other) noexcept;
-    CDX10DeviceResource1(CDX10DeviceResource1&& other) noexcept;
-
-    virtual void OnDeviceRecreate(Microsoft::WRL::ComPtr<ID3D10Device1> p_device1) noexcept = 0;
-    virtual bool CheckDeviceValid() const noexcept final;
+    auto GetStorage() noexcept
+        -> std::shared_ptr<Storage>;
 };
 
 class CD3D10Support1

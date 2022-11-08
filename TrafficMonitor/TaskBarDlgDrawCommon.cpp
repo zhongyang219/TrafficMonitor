@@ -84,12 +84,72 @@ void LogWin32ApiErrorMessage() noexcept
     }
 }
 
-void DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(CHResultException& ex)
+std::uint32_t DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler::m_error_count = 0;
+
+#define TRAFFICMONITOR_ENUM_AND_EXPLANATION(enumeration, explanation) \
+    enumeration, "Handling device loss. HR = " #enumeration ": " explanation
+
+void DrawCommonHelper::LogDeviceRecreateReason(HRESULT hr)
 {
-    // 禁用D2D绘图
-    theApp.m_taskbar_data.disable_d2d = true;
-    LogHResultException(ex);
-    ::MessageBox(NULL, CCommon::LoadText(IDS_D2DDRAWCOMMON_ERROR_TIP), NULL, MB_OK | MB_ICONWARNING);
+    const static std::unordered_map<HRESULT, const char*> removed_reason{
+        {TRAFFICMONITOR_ENUM_AND_EXPLANATION(
+            DXGI_ERROR_DEVICE_HUNG,
+            "The graphics driver stopped responding because of an invalid combination of graphics commands sent by the app. If you get this error repeatedly, it is a likely indication that your app caused the device to hang and needs to be debugged.")},
+        {TRAFFICMONITOR_ENUM_AND_EXPLANATION(
+            DXGI_ERROR_DEVICE_REMOVED,
+            "The graphics device has been physically removed, turned off, or a driver upgrade has occurred. ")},
+        {TRAFFICMONITOR_ENUM_AND_EXPLANATION(
+            DXGI_ERROR_DEVICE_RESET,
+            "The graphics device failed because of a badly formed command. If you get this error repeatedly, it may mean that your code is sending invalid drawing commands.")},
+        {TRAFFICMONITOR_ENUM_AND_EXPLANATION(
+            DXGI_ERROR_DRIVER_INTERNAL_ERROR,
+            "The graphics driver encountered an error and reset the device.")},
+        {TRAFFICMONITOR_ENUM_AND_EXPLANATION(
+            DXGI_ERROR_INVALID_CALL,
+            "The application provided invalid parameter data. If you get this error even once, it means that your code caused the device removed condition and must be debugged.")},
+        {TRAFFICMONITOR_ENUM_AND_EXPLANATION(
+            S_OK,
+            "Returned when a graphics device was enabled, disabled, or reset without invalidating the current graphics device. For example, this error code can be returned if an app is using WARP and a hardware adapter becomes available.")}};
+
+    auto it = removed_reason.find(hr);
+    if (it != removed_reason.end())
+    {
+        CCommon::WriteLog(it->second, theApp.m_log_path.c_str());
+    }
+    else
+    {
+        constexpr static auto unknown_reason{"Recreate the device for an unknown reason."};
+        CCommon::WriteLog(unknown_reason, theApp.m_log_path.c_str());
+    }
+}
+
+DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler::DefaultD2DDrawCommonExceptionHandler(CHResultException& ex) noexcept
+    : m_ref_ex(ex)
+{
+    ++m_error_count;
+}
+
+void DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler::ResetErrorCount()
+{
+    m_error_count = 0;
+}
+
+void DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler::operator()()
+{
+    LogHResultException(m_ref_ex);
+    auto hr = m_ref_ex.GetHResult();
+    if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
+    {
+
+        return;
+    }
+    if (m_error_count > DrawCommonHelper::MAX_D2D1_RENDER_ERROR_COUNT)
+    {
+        m_error_count = 0;
+        // 禁用D2D绘图
+        theApp.m_taskbar_data.disable_d2d = true;
+        ::MessageBox(NULL, CCommon::LoadText(IDS_D2DDRAWCOMMON_ERROR_TIP), NULL, MB_OK | MB_ICONWARNING);
+    }
 }
 
 HDC DrawCommonHelper::Get1x1AlphaEqual1DC()
@@ -172,9 +232,14 @@ auto CTaskBarDlgDrawCommonSupport::GetPsDotLikeStyle() noexcept
 
 void CTaskBarDlgDrawCommonSupport::RecreateDevice()
 {
-    auto default_adapter1 =
+    auto&& default_adapter1 =
         CD3D10Support1::GetDeviceList(true).front();
     m_device1.Recreate(default_adapter1);
+}
+
+bool CTaskBarDlgDrawCommonSupport::CheckSupport() noexcept
+{
+    return CD2D1Support::CheckSupport() && CDWriteSupport::CheckSupport();
 }
 
 void CTaskBarDlgDrawCommonWindowSupport::GpuHelper::RecreateResource(Microsoft::WRL::ComPtr<ID3D10Device1> p_device1, const D2D1_SIZE_U size)
@@ -353,10 +418,10 @@ float4 PS(VsOutput ps_in) : SV_TARGET
 }
 
 CTaskBarDlgDrawCommonWindowSupport::CTaskBarDlgDrawCommonWindowSupport(CTaskBarDlgDrawCommonSupport& ref_taskbdlg_draw_common_support)
-    : CDX10DeviceResource1{ref_taskbdlg_draw_common_support.GetDevice()},
+    : Base{ref_taskbdlg_draw_common_support.GetDevice().GetStorage()},
       m_p_device1{ref_taskbdlg_draw_common_support.GetDevice().Get()},
       m_ref_d3d10_device1{ref_taskbdlg_draw_common_support.GetDevice()},
-      m_gpu_helper{m_p_device1}, m_ref_taskbdlg_draw_common_support{ref_taskbdlg_draw_common_support}
+      m_gpu_helper{m_p_device1}, m_ref_taskbardlg_draw_common_support{ref_taskbdlg_draw_common_support}
 {
 }
 
@@ -444,7 +509,7 @@ auto CTaskBarDlgDrawCommonWindowSupport::GetTextFormat() noexcept
 
 auto CTaskBarDlgDrawCommonWindowSupport::GetRawPsDotLikeStyle() noexcept -> ID2D1StrokeStyle*
 {
-    return m_ref_taskbdlg_draw_common_support.GetPsDotLikeStyle().Get();
+    return m_ref_taskbardlg_draw_common_support.GetPsDotLikeStyle().Get();
 }
 
 auto CTaskBarDlgDrawCommonWindowSupport::GetGdiInitalTextureSurface() noexcept
@@ -471,44 +536,11 @@ auto CTaskBarDlgDrawCommonWindowSupport::GetFont() noexcept
     return m_dwrite_helper.GetFont();
 }
 
-#define TRAFFICMONITOR_ENUM_AND_EXPLANATION(enumeration, explanation) \
-    enumeration, "Handling device loss. HR = " #enumeration ": " explanation
-
 void CTaskBarDlgDrawCommonWindowSupport::RecreateDevice()
 {
-    const static std::unordered_map<HRESULT, const char*> removed_reason{
-        {TRAFFICMONITOR_ENUM_AND_EXPLANATION(
-            DXGI_ERROR_DEVICE_HUNG,
-            "The graphics driver stopped responding because of an invalid combination of graphics commands sent by the app. If you get this error repeatedly, it is a likely indication that your app caused the device to hang and needs to be debugged.")},
-        {TRAFFICMONITOR_ENUM_AND_EXPLANATION(
-            DXGI_ERROR_DEVICE_REMOVED,
-            "The graphics device has been physically removed, turned off, or a driver upgrade has occurred. ")},
-        {TRAFFICMONITOR_ENUM_AND_EXPLANATION(
-            DXGI_ERROR_DEVICE_RESET,
-            "The graphics device failed because of a badly formed command. If you get this error repeatedly, it may mean that your code is sending invalid drawing commands.")},
-        {TRAFFICMONITOR_ENUM_AND_EXPLANATION(
-            DXGI_ERROR_DRIVER_INTERNAL_ERROR,
-            "The graphics driver encountered an error and reset the device.")},
-        {TRAFFICMONITOR_ENUM_AND_EXPLANATION(
-            DXGI_ERROR_INVALID_CALL,
-            "The application provided invalid parameter data. If you get this error even once, it means that your code caused the device removed condition and must be debugged.")},
-        {TRAFFICMONITOR_ENUM_AND_EXPLANATION(
-            S_OK,
-            "Returned when a graphics device was enabled, disabled, or reset without invalidating the current graphics device. For example, this error code can be returned if an app is using WARP and a hardware adapter becomes available.")}};
-
     auto hr = m_p_device1->GetDeviceRemovedReason();
-    auto it = removed_reason.find(hr);
-    if (it != removed_reason.end())
-    {
-        CCommon::WriteLog(it->second, theApp.m_log_path.c_str());
-    }
-    else
-    {
-        constexpr static auto unknown_reason{"Recreate the device for an unknown reason."};
-        CCommon::WriteLog(unknown_reason, theApp.m_log_path.c_str());
-    }
-
-    m_ref_taskbdlg_draw_common_support.RecreateDevice();
+    DrawCommonHelper::LogDeviceRecreateReason(hr);
+    m_ref_taskbardlg_draw_common_support.RecreateDevice();
 }
 
 auto CTaskBarDlgDrawCommonWindowSupport::GetRenderTargetSurface() noexcept
@@ -573,7 +605,7 @@ void CTaskBarDlgDrawCommonWindowSupport::DWriteHelper::SetFont(HFONT h_font)
         auto dwrite_font_style =
             m_last_font.lfItalic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL;
         ThrowIfFailed<CDWriteException>(
-            DWriteSupport::GetFactory()->CreateTextFormat(
+            CDWriteSupport::GetFactory()->CreateTextFormat(
                 theApp.m_taskbar_data.font.name,
                 NULL,
                 dwrite_font_weight,
@@ -598,6 +630,19 @@ auto CTaskBarDlgDrawCommonWindowSupport::DWriteHelper::GetTextFormat() noexcept
     -> ComPtr<IDWriteTextFormat>
 {
     return m_p_text_format;
+}
+
+void DrawCommonHelper::DefaultD3D10Exception1Handler(CD3D10Exception1& ex, CTaskBarDlgDrawCommonWindowSupport& ref_taskbar_draw_common_window_support)
+{
+    auto hr = ex.GetHResult();
+    if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
+    {
+        ref_taskbar_draw_common_window_support.RecreateDevice();
+    }
+    else
+    {
+        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}();
+    }
 }
 
 namespace TaskBarDlgUser32DrawTextHook
@@ -1042,19 +1087,6 @@ void CD2D1BitmapCache::GCImpl(std::shared_ptr<HeapData> sp_data)
     }
 }
 
-void CTaskBarDlgDrawCommon::OnD3D10Exception1(CD3D10Exception1& ex)
-{
-    auto hr = ex.GetHResult();
-    if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
-    {
-        m_p_window_support->RecreateDevice();
-    }
-    else
-    {
-        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(ex);
-    }
-}
-
 void CTaskBarDlgDrawCommon::ResetClippedStateIfSet()
 {
     if (m_is_clipped)
@@ -1124,7 +1156,9 @@ CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
                 ref_gdi_interop_object.m_p_gdi_interop_hbitmap_data, data_size);
             auto waiter = m_p_window_support->DrawAlphaValueReduceEffect();
 
-            p_render_target->Flush();
+            ThrowIfFailed<CD2D1Exception>(
+                p_render_target->Flush(),
+                "Call ID2D1RenderTarget::Flush() failed.");
 
             ThrowIfFailed<CD3D10Exception1>(
                 waiter.Wait(),
@@ -1146,17 +1180,24 @@ CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
                 "Create ID2D1Bitmap from IDXGISurface1 failed.");
             p_render_target->DrawBitmap(p_gdi_interop_bitmap.Get());
         }
+    }
+    catch (CD3D10Exception1& ex)
+    {
+        DrawCommonHelper::DefaultD3D10Exception1Handler(ex, *m_p_window_support);
+    }
+    catch (CHResultException& ex)
+    {
+        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}();
+    }
+    try
+    {
         ThrowIfFailed<CD2D1Exception>(
             p_render_target->EndDraw(),
             "Call ID2D1RenderTarget::EndDraw() failed.");
     }
-    catch (CD3D10Exception1& ex)
-    {
-        OnD3D10Exception1(ex);
-    }
     catch (CHResultException& ex)
     {
-        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(ex);
+        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}();
     }
 }
 
@@ -1213,7 +1254,7 @@ void CTaskBarDlgDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLOR
     auto layout_rect = Convert(rect);
     ComPtr<IDWriteTextLayout> p_text_layout{};
     ThrowIfFailed<CDWriteException>(
-        DWriteSupport::GetFactory()->CreateTextLayout(
+        CDWriteSupport::GetFactory()->CreateTextLayout(
             lpszString,
             length_u,
             p_text_format.Get(),
@@ -1405,29 +1446,9 @@ void CTaskBarDlgDrawCommon::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSiz
     p_render_target->DrawBitmap(p_d2d1_bitmap.Get(), draw_rect_f, opacity);
 }
 
-CDC* CTaskBarDlgDrawBuffer::GetMemDC()
-{
-    return nullptr;
-}
-
-void CTaskBarDlgDrawBuffer::SetTargetSurface(Microsoft::WRL::ComPtr<IDXGISurface1> p_surface) noexcept
-{
-    m_p_gdi_surface = p_surface;
-}
-
-auto CTaskBarDlgDrawBuffer::GetDefaultBlendFunctionPointer() noexcept
-    -> const ::PBLENDFUNCTION
-{
-    static ::BLENDFUNCTION result{
-        AC_SRC_OVER,
-        0,
-        0xFF,
-        AC_SRC_ALPHA};
-    return &result;
-}
-
-CTaskBarDlgDrawBuffer::CTaskBarDlgDrawBuffer(CSize size, HWND hwnd)
-    : m_size{size}, m_target_hwnd{hwnd}
+CTaskBarDlgDrawBuffer::CTaskBarDlgDrawBuffer(CTaskBarDlgDrawCommonWindowSupport& taskbar_dlg_draw_common_window_support, CSize size, HWND hwnd)
+    : m_p_gdi_surface{taskbar_dlg_draw_common_window_support.GetRenderTargetSurface()},
+      m_size{size}, m_target_hwnd{hwnd}, m_ref_window_support{taskbar_dlg_draw_common_window_support}
 {
 }
 
@@ -1441,37 +1462,63 @@ CTaskBarDlgDrawBuffer::~CTaskBarDlgDrawBuffer()
 
     POINT start_location{0, 0};
     HDC gdi_dc{NULL};
-    ThrowIfFailed<CD3D10Exception1>(
-        m_p_gdi_surface->GetDC(FALSE, &gdi_dc),
-        "Get DC from IDXGISurface1 failed.");
-    UPDATELAYEREDWINDOWINFO update_window_info;
-    ::memset(&update_window_info, 0, sizeof(update_window_info));
-    update_window_info.cbSize = sizeof(update_window_info);
-    // update_window_info.hdcDst = NULL;
-    // update_window_info.pptDst = NULL; 不更新窗口位置
-    update_window_info.psize = &m_size;
-    update_window_info.hdcSrc = gdi_dc;
-    update_window_info.pptSrc = &start_location;
-    // update_window_info.crKey = 0;
-    update_window_info.pblend = GetDefaultBlendFunctionPointer();
-    update_window_info.dwFlags = ULW_ALPHA;
-    // m_update_window_info.prcDirty = NULL;
-    BOOL state = ::UpdateLayeredWindowIndirect(m_target_hwnd, &update_window_info);
-    if (state == 0)
+    try
     {
-        auto error_code = ::GetLastError();
-        LogWin32ApiErrorMessage();
-        CString error_info{};
-        error_info.Format(_T("Call UpdateLayeredWindowIndirect failed. Use GDI render instead. Error code = %ld."), error_code);
-        CCommon::WriteLog(error_info, theApp.m_log_path.c_str());
+        ThrowIfFailed<CD3D10Exception1>(
+            m_p_gdi_surface->GetDC(FALSE, &gdi_dc),
+            "Get DC from IDXGISurface1 failed.");
 
-        // 禁用D2D
-        theApp.m_taskbar_data.disable_d2d = true;
-        // 展示错误信息
-        ::MessageBox(NULL, CCommon::LoadText(IDS_UPDATE_TASKBARDLG_FAILED_TIP), NULL, MB_OK | MB_ICONWARNING);
+        UPDATELAYEREDWINDOWINFO update_window_info;
+        ::memset(&update_window_info, 0, sizeof(update_window_info));
+        update_window_info.cbSize = sizeof(update_window_info);
+        // update_window_info.hdcDst = NULL;
+        // update_window_info.pptDst = NULL; 不更新窗口位置
+        update_window_info.psize = &m_size;
+        update_window_info.hdcSrc = gdi_dc;
+        update_window_info.pptSrc = &start_location;
+        // update_window_info.crKey = 0;
+        update_window_info.pblend = GetDefaultBlendFunctionPointer();
+        update_window_info.dwFlags = ULW_ALPHA;
+        // m_update_window_info.prcDirty = NULL;
+        BOOL state = ::UpdateLayeredWindowIndirect(m_target_hwnd, &update_window_info);
+        state = 1;
+        if (state == 0)
+        {
+            auto error_code = ::GetLastError();
+            LogWin32ApiErrorMessage();
+            CString error_info{};
+            error_info.Format(_T("Call UpdateLayeredWindowIndirect failed. Use GDI render instead. Error code = %ld."), error_code);
+            CCommon::WriteLog(error_info, theApp.m_log_path.c_str());
+
+            // 禁用D2D
+            theApp.m_taskbar_data.disable_d2d = true;
+            // 展示错误信息
+            ::MessageBox(NULL, CCommon::LoadText(IDS_UPDATE_TASKBARDLG_FAILED_TIP), NULL, MB_OK | MB_ICONWARNING);
+        }
+        RECT empty_rect{};
+        m_p_gdi_surface->ReleaseDC(&empty_rect);
+        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler::ResetErrorCount();
     }
-    RECT empty_rect{};
-    m_p_gdi_surface->ReleaseDC(&empty_rect);
+    catch (CD3D10Exception1& ex)
+    {
+        DrawCommonHelper::DefaultD3D10Exception1Handler(ex, m_ref_window_support);
+    }
+}
+
+CDC* CTaskBarDlgDrawBuffer::GetMemDC()
+{
+    return nullptr;
+}
+
+auto CTaskBarDlgDrawBuffer::GetDefaultBlendFunctionPointer() noexcept
+    -> const ::PBLENDFUNCTION
+{
+    static ::BLENDFUNCTION result{
+        AC_SRC_OVER,
+        0,
+        0xFF,
+        AC_SRC_ALPHA};
+    return &result;
 }
 
 CTaskBarDlgDrawCommon::CGdiInteropObject::CGdiInteropObject(D2D1_SIZE_U size)

@@ -48,7 +48,6 @@ BEGIN_MESSAGE_MAP(CTaskBarDlg, CDialogEx)
     ON_WM_CLOSE()
     ON_WM_LBUTTONUP()
     ON_MESSAGE(WM_EXITMENULOOP, &CTaskBarDlg::OnExitmenuloop)
-    ON_MESSAGE(WM_DPICHANGED, &CTaskBarDlg::OnDpichanged)
     END_MESSAGE_MAP()
 
 // CTaskBarDlg 消息处理程序
@@ -109,8 +108,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                   p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
                   // 构造buffer
                   CSize draw_size{draw_rect.Width(), draw_rect.Height()};
-                  EmplaceAt(p_draw_buffer, draw_size, current_hwnd);
-                  p_draw_buffer->SetTargetSurface(this->m_taskbar_draw_common_window_support.Get().GetRenderTargetSurface());
+                  EmplaceAt(p_draw_buffer, this->m_taskbar_draw_common_window_support.Get(), draw_size, current_hwnd);
 
 #ifdef DEBUG
                   DXGIGetDebugInterface1(0, IID_PPV_ARGS(&p_dxgi_analysis));
@@ -508,7 +506,7 @@ auto CTaskBarDlg::GetRenderType()
 {
     DrawCommonHelper::RenderType result;
     bool is_transparent = CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data);
-    bool is_d2d1_dc_support = CD2D1DCSupport::CheckSupport();
+    bool is_d2d1_dc_support = CTaskBarDlgDrawCommonSupport::CheckSupport();
     if (is_transparent && !theApp.m_taskbar_data.auto_set_background_color && !theApp.m_taskbar_data.disable_d2d && is_d2d1_dc_support)
     {
         result = DrawCommonHelper::RenderType::D2D1;
@@ -1383,14 +1381,12 @@ void CTaskBarDlg::OnPaint()
                        // TODO: 在此处添加消息处理程序代码
                        // 不为绘图消息调用 CDialogEx::OnPaint()
 
-#ifndef DEBUG
     try
     {
-#endif // DEBUG
+
 
         ShowInfo(&dc);
 
-#ifndef DEBUG
     }
     catch (CD3D10Exception1& ex)
     {
@@ -1401,19 +1397,23 @@ void CTaskBarDlg::OnPaint()
         }
         else
         {
-            DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(ex);
+            DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}();
         }
+    }
+    catch (CD2D1Exception& ex)
+    {
+        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}();
     }
     catch (CHResultException& ex)
     {
-        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler(ex);
+       LogHResultException(ex);
     }
     catch (std::runtime_error& ex)
     {
         auto* log = ex.what();
         CCommon::WriteLog(log, theApp.m_log_path.c_str());
     }
-#endif // DEBUG
+
 }
 
 void CTaskBarDlg::AddHisToList(DisplayItem item_type, int current_usage_percent)
@@ -1516,14 +1516,5 @@ void CTaskBarDlg::OnLButtonUp(UINT nFlags, CPoint point)
 afx_msg LRESULT CTaskBarDlg::OnExitmenuloop(WPARAM wParam, LPARAM lParam)
 {
     m_menu_popuped = false;
-    return 0;
-}
-
-afx_msg LRESULT CTaskBarDlg::OnDpichanged(WPARAM wParam, LPARAM lParam)
-{
-    // if(D2D1Support::CheckSupport())
-    // {
-    //     m_d2d1_dc_support.GetWeakRenderTarget()->SetDpi(96.f, 96.f);
-    // }
     return 0;
 }

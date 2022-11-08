@@ -11,132 +11,108 @@
 
 using Microsoft::WRL::ComPtr;
 
-void CD3D10Device1::Data::CResourceTracker::AddResource(CDX10DeviceResource1* p_resource)
-{
-    auto existed_it = m_resource_pointer_set.find(p_resource);
-    if (existed_it == m_resource_pointer_set.end())
-    {
-        m_resource_pointer_set.emplace(p_resource);
-    }
-}
-
-void CD3D10Device1::Data::CResourceTracker::RemoveResource(CDX10DeviceResource1* p_resource)
-{
-    auto existed_it = m_resource_pointer_set.find(p_resource);
-    if (existed_it != m_resource_pointer_set.end())
-    {
-        m_resource_pointer_set.erase(existed_it);
-    }
-}
-
-auto CD3D10Device1::Data::CResourceTracker::GetTrackerSet() const noexcept
-    -> const std::unordered_set<class CDX10DeviceResource1*>&
-{
-    return m_resource_pointer_set;
-}
-
 void CD3D10Device1::Recreate(Microsoft::WRL::ComPtr<IDXGIAdapter1> p_adapter1)
 {
-    m_sp_data->m_p_adapter1 = p_adapter1;
+    m_sp_storage->m_p_adapter1 = p_adapter1;
     ThrowIfFailed(
         D3D10CreateDevice1(
-            m_sp_data->m_p_adapter1.Get(),
-            m_sp_data->m_driver_type,
-            m_sp_data->m_h_software,
-            m_sp_data->m_flags,
-            m_sp_data->m_feature_level,
-            m_sp_data->m_sdk_version,
-            &m_sp_data->m_p_device1),
+            m_sp_storage->m_p_adapter1.Get(),
+            m_sp_storage->m_driver_type,
+            m_sp_storage->m_h_software,
+            m_sp_storage->m_flags,
+            m_sp_storage->m_feature_level,
+            m_sp_storage->m_sdk_version,
+            &m_sp_storage->m_p_device1),
         "Create D3D10Device1 failed.");
 
-    auto ref_track_set = m_sp_data->m_resource_tracker.GetTrackerSet();
+    auto ref_track_set = m_resource_tracker.GetTrackerSet();
     for (auto&& it : ref_track_set)
     {
-        it->OnDeviceRecreate(m_sp_data->m_p_device1);
+        it->OnDeviceRecreate(m_sp_storage->m_p_device1);
     }
 }
 
 auto CD3D10Device1::Get() noexcept
     -> Microsoft::WRL::ComPtr<ID3D10Device1>
 {
-    return m_sp_data->m_p_device1;
+    return m_sp_storage->m_p_device1;
 }
 
 auto CD3D10Device1::GetAdapter() noexcept
     -> Microsoft::WRL::ComPtr<IDXGIAdapter1>
 {
-    return m_sp_data->m_p_adapter1;
+    return m_sp_storage->m_p_adapter1;
 }
 
 auto CD3D10Device1::GetDriverType() const noexcept
     -> D3D10_DRIVER_TYPE
 {
-    return m_sp_data->m_driver_type;
+    return m_sp_storage->m_driver_type;
 }
 
 auto CD3D10Device1::SetDriverType(D3D10_DRIVER_TYPE driver_type) noexcept
     -> CD3D10Device1&
 {
-    m_sp_data->m_driver_type = driver_type;
+    m_sp_storage->m_driver_type = driver_type;
     return *this;
 }
 
 auto CD3D10Device1::GetSoftwareHandle() const noexcept
     -> HMODULE
 {
-    return m_sp_data->m_h_software;
+    return m_sp_storage->m_h_software;
 }
 
 auto CD3D10Device1::SetSoftwareHandle(HMODULE h_software) noexcept
     -> CD3D10Device1&
 {
-    m_sp_data->m_h_software = h_software;
+    m_sp_storage->m_h_software = h_software;
     return *this;
 }
 
 auto CD3D10Device1::GetFlags() const noexcept
     -> UINT
 {
-    return m_sp_data->m_flags;
+    return m_sp_storage->m_flags;
 }
 
 auto CD3D10Device1::SetFlags(UINT flags) noexcept
     -> CD3D10Device1&
 {
-    m_sp_data->m_flags = flags;
+    m_sp_storage->m_flags = flags;
     return *this;
 }
 
 auto CD3D10Device1::GetFeaturelLevel() const noexcept
     -> D3D10_FEATURE_LEVEL1
 {
-    return m_sp_data->m_feature_level;
+    return m_sp_storage->m_feature_level;
 }
 
 auto CD3D10Device1::SetFeaturelLevel(D3D10_FEATURE_LEVEL1 featurel_level) noexcept
     -> CD3D10Device1&
 {
-    m_sp_data->m_feature_level = featurel_level;
+    m_sp_storage->m_feature_level = featurel_level;
     return *this;
 }
 
 auto CD3D10Device1::GetSdkVersion() const noexcept
     -> UINT
 {
-    return m_sp_data->m_sdk_version;
+    return m_sp_storage->m_sdk_version;
 }
 
 auto CD3D10Device1::SetSdkVersion(UINT sdk_version) noexcept
     -> CD3D10Device1&
 {
-    m_sp_data->m_sdk_version = sdk_version;
+    m_sp_storage->m_sdk_version = sdk_version;
     return *this;
 }
 
-auto CD3D10Device1::GetData() noexcept
-    -> std::shared_ptr<const Data>
+auto CD3D10Device1::GetStorage() noexcept
+    -> std::shared_ptr<Storage>
 {
-    return std::const_pointer_cast<const Data>(m_sp_data);
+    return m_sp_storage;
 }
 
 bool CD3D10Support1::CheckSupport()
@@ -383,67 +359,4 @@ HRESULT CD3D10DrawCallWaiter::Wait() const noexcept
     } while (result == S_FALSE);
 
     return result;
-}
-
-void CDX10DeviceResource1::StartTrack()
-{
-    auto sp_data = m_wp_data.lock();
-    if (sp_data)
-    {
-        sp_data->m_resource_tracker.AddResource(this);
-    }
-}
-
-void CDX10DeviceResource1::EndTrack()
-{
-    auto sp_data = m_wp_data.lock();
-    if (sp_data)
-    {
-        sp_data->m_resource_tracker.RemoveResource(this);
-    }
-}
-
-void CDX10DeviceResource1::OnSelfMove(
-    CD3D10Device1::Data::CResourceTracker& ref_resource_tracker,
-    CDX10DeviceResource1* from, CDX10DeviceResource1* to)
-{
-    if (from != to)
-    {
-        ref_resource_tracker.RemoveResource(from);
-        ref_resource_tracker.AddResource(to);
-    }
-}
-
-CDX10DeviceResource1::CDX10DeviceResource1(CD3D10Device1& ref_cd3d10_device1) noexcept
-    : m_wp_data{ref_cd3d10_device1.GetData()}
-{
-    StartTrack();
-}
-
-CDX10DeviceResource1::~CDX10DeviceResource1() noexcept
-{
-    EndTrack();
-}
-
-CDX10DeviceResource1::CDX10DeviceResource1(const CDX10DeviceResource1& other) noexcept
-    : m_wp_data{other.m_wp_data}
-{
-    StartTrack();
-}
-
-CDX10DeviceResource1::CDX10DeviceResource1(CDX10DeviceResource1&& other) noexcept
-    : m_wp_data{other.m_wp_data}
-{
-    auto from = std::addressof(other);
-    auto to = this;
-    auto sp_data = m_wp_data.lock();
-    if(sp_data)
-    {
-        OnSelfMove(sp_data->m_resource_tracker, from, to);
-    }
-}
-
-bool CDX10DeviceResource1::CheckDeviceValid() const noexcept
-{
-    return m_wp_data.expired();
 }
