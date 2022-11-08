@@ -85,7 +85,7 @@ public:
         }
     }
 
-    CDC* GetMemDC() override
+    CDC* GetMemDC()
     {
         return &m_memDC;
     }

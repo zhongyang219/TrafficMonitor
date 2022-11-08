@@ -555,6 +555,4 @@ public:
 
     static auto GetDefaultBlendFunctionPointer() noexcept
         -> const ::PBLENDFUNCTION;
-
-    CDC* GetMemDC() override;
 };

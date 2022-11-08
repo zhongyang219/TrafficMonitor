@@ -4,7 +4,6 @@
 class IDrawBuffer
 {
 public:
-    virtual CDC* GetMemDC() = 0;
     virtual ~IDrawBuffer() = default;
 };
 

@@ -1505,11 +1505,6 @@ CTaskBarDlgDrawBuffer::~CTaskBarDlgDrawBuffer()
     }
 }
 
-CDC* CTaskBarDlgDrawBuffer::GetMemDC()
-{
-    return nullptr;
-}
-
 auto CTaskBarDlgDrawBuffer::GetDefaultBlendFunctionPointer() noexcept
     -> const ::PBLENDFUNCTION
 {
