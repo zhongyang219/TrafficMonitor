@@ -17,14 +17,10 @@ ID2D1Factory* CD2D1Support::GetFactory()
         [](ID2D1Factory** pp_factory)
         {
             *pp_factory = nullptr;
-#ifdef DEBUG
-            D2D1_FACTORY_OPTIONS d2d1_factory_options{D2D1_DEBUG_LEVEL_INFORMATION};
-#else
-            D2D1_FACTORY_OPTIONS d2d1_factory_options{D2D1_DEBUG_LEVEL_NONE};
-#endif
+
             ThrowIfFailed(::D2D1CreateFactory(
                               D2D1_FACTORY_TYPE_SINGLE_THREADED,
-                              d2d1_factory_options,
+                              CD2D1Support::CREATION_OPTIONS,
                               pp_factory),
                           "Create D2D1 factory failed.");
         },
@@ -36,13 +32,49 @@ ID2D1Factory* CD2D1Support::GetFactory()
     return result.Get();
 }
 
-bool DWriteSupport::CheckSupport()
+ID2D1Factory1* CD2D1Support1::GetFactory()
+{
+    static auto result = MakeStaticVariableWrapper<ID2D1Factory1*>(
+        [](auto pp_factory)
+        {
+            *pp_factory = nullptr;
+
+            ThrowIfFailed(::D2D1CreateFactory(
+                              D2D1_FACTORY_TYPE_SINGLE_THREADED,
+                              CD2D1Support::CREATION_OPTIONS,
+                              pp_factory),
+                          "Create D2D1 factory failed.");
+        },
+        [](auto pp_factory)
+        {
+            auto* p_factory = *pp_factory;
+            RELEASE_COM(p_factory);
+        });
+    return result.Get();
+}
+
+void CD2D1Device::Recreate(Microsoft::WRL::ComPtr<IDXGIDevice> p_dxgi_device)
+{
+    ThrowIfFailed<CD2D1Exception>(
+        CD2D1Support1::GetFactory()->CreateDevice(
+            p_dxgi_device.Get(),
+            &m_p_device),
+        "CreateD2D1Device failed.");
+}
+
+auto CD2D1Device::GetStorage()
+    -> std::shared_ptr<Storage>
+{
+    return m_resource_tracker.GetSharedResourceTrackerStorage();
+}
+
+bool CDWriteSupport::CheckSupport()
 {
     static bool result = FunctionChecker::CheckFunctionExist(_T("Dwrite.dll"), "DWriteCreateFactory");
     return result;
 }
 
-IDWriteFactory* DWriteSupport::GetFactory()
+IDWriteFactory* CDWriteSupport::GetFactory()
 {
     static auto result = MakeStaticVariableWrapper<IDWriteFactory*>(
         [](IDWriteFactory** pp_factory)
@@ -60,96 +92,4 @@ IDWriteFactory* DWriteSupport::GetFactory()
             RELEASE_COM(p_factory);
         });
     return result.Get();
-}
-
-CD2D1DCSupport::CD2D1DCSupport()
-{
-    //不支持D2D1或DWrite则直接返回
-    if (!CheckSupport())
-    {
-        return;
-    }
-
-    D2D1_RENDER_TARGET_PROPERTIES d2d1_reder_target_properties{
-        D2D1_RENDER_TARGET_TYPE_DEFAULT,
-        D2D1::PixelFormat(
-            DXGI_FORMAT_B8G8R8A8_UNORM,
-            D2D1_ALPHA_MODE_PREMULTIPLIED),
-        0, 0,
-        D2D1_RENDER_TARGET_USAGE_NONE,
-        D2D1_FEATURE_LEVEL_DEFAULT};
-    ThrowIfFailed<CD2D1Exception>(
-        CD2D1Support::GetFactory()->CreateDCRenderTarget(&d2d1_reder_target_properties, &m_p_render_target),
-        "Create d2d1 dc render target failed.");
-    ThrowIfFailed<CD2D1Exception>(
-        m_p_render_target->CreateSolidColorBrush(D2D1_COLOR_F{D2D1::ColorF::Black, 0.0f}, &m_p_soild_color_brush),
-        "Create ID2D1SolidColorBrush failed.");
-    ThrowIfFailed<CD2D1Exception>(
-        m_p_render_target->CreateSolidColorBrush(D2D1_COLOR_F{D2D1::ColorF::Black, 0.0f}, &m_p_soild_back_color_brush),
-        "Create ID2D1SolidColorBrush as back color failed.");
-    {
-        D2D1_STROKE_STYLE_PROPERTIES d2d1_stroke_style_properties{
-            D2D1_CAP_STYLE_FLAT,
-            D2D1_CAP_STYLE_FLAT,
-            D2D1_CAP_STYLE_FLAT,
-            D2D1_LINE_JOIN_MITER,
-            10.0f,
-            D2D1_DASH_STYLE_DASH,
-            1.0f};
-        ThrowIfFailed<CD2D1Exception>(
-            CD2D1Support::GetFactory()->CreateStrokeStyle(d2d1_stroke_style_properties, NULL, 0, &m_p_ps_dot_style),
-            "Create GDI PS_DOT like stroke style failed.");
-    }
-    ThrowIfFailed<CD2D1Exception>(
-        DWriteSupport::GetFactory()->GetGdiInterop(&m_p_dwrite_gdi_interop),
-        "Create DWrite GDI interop interface failed.");
-};
-
-CD2D1DCSupport::~CD2D1DCSupport()
-{
-    RELEASE_COM(m_p_soild_color_brush);
-    RELEASE_COM(m_p_soild_back_color_brush);
-    RELEASE_COM(m_p_ps_dot_style);
-    RELEASE_COM(m_p_dwrite_gdi_interop);
-}
-
-bool CD2D1DCSupport::CheckSupport()
-{
-    return CD2D1Support::CheckSupport() && DWriteSupport::CheckSupport();
-}
-
-auto CD2D1DCSupport::GetRenderTarget()
-    -> Microsoft::WRL::ComPtr<ID2D1DCRenderTarget>
-{
-    return m_p_render_target;
-}
-
-auto CD2D1DCSupport::GetWeakRenderTarget()
-    -> ID2D1DCRenderTarget*
-{
-    return m_p_render_target.Get();
-}
-
-auto CD2D1DCSupport::GetWeakSolidColorBrush()
-    -> ID2D1SolidColorBrush*
-{
-    return m_p_soild_color_brush;
-}
-
-auto CD2D1DCSupport::GetWeakPsDotStyle()
-    -> ID2D1StrokeStyle*
-{
-    return m_p_ps_dot_style;
-}
-
-auto CD2D1DCSupport::GetWeakDWriteGdiInterop()
-    -> IDWriteGdiInterop*
-{
-    return m_p_dwrite_gdi_interop;
-}
-
-auto CD2D1DCSupport::GetWeakSoildBackColorBrush()
-    -> ID2D1SolidColorBrush*
-{
-    return m_p_soild_back_color_brush;
 }

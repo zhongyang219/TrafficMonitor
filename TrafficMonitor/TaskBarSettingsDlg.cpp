@@ -339,7 +339,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     m_default_style_menu.AppendMenu(MF_POPUP | MF_STRING, (UINT)m_modify_default_style_menu.m_hMenu, CCommon::LoadText(IDS_MODIFY_PRESET));
 
     //设置是否禁用D2D
-    if (!CD2D1DCSupport::CheckSupport())
+    if (!CTaskBarDlgDrawCommonSupport::CheckSupport())
     {
         m_data.disable_d2d = true;
         //不支持时禁用选项
