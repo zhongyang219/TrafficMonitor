@@ -48,6 +48,7 @@ public:
 class CD2D1Support1
 {
 public:
+    static bool CheckSupport();
     static ID2D1Factory1* GetFactory();
 };
 

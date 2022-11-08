@@ -32,6 +32,12 @@ ID2D1Factory* CD2D1Support::GetFactory()
     return result.Get();
 }
 
+bool CD2D1Support1::CheckSupport()
+{
+    static bool result = FunctionChecker::CheckFunctionExist(_T("D2D1.dll"), "D2D1CreateDevice");
+    return result;
+}
+
 ID2D1Factory1* CD2D1Support1::GetFactory()
 {
     static auto result = MakeStaticVariableWrapper<ID2D1Factory1*>(
@@ -59,7 +65,7 @@ void CD2D1Device::Recreate(Microsoft::WRL::ComPtr<IDXGIDevice> p_dxgi_device)
         CD2D1Support1::GetFactory()->CreateDevice(
             p_dxgi_device.Get(),
             &m_p_device),
-        TRAFFICMONITOR_ERROR_STR("CreateD2D1Device failed."));
+        TRAFFICMONITOR_ERROR_STR("Create ID2D1Device failed."));
 }
 
 auto CD2D1Device::GetStorage()
