@@ -2,6 +2,12 @@
 #include <stdexcept>
 #include <wrl/client.h>
 
+#define TRAFFICMONITOR_STR_IMPL(x) #x
+#define TRAFFICMONITOR_STR(x) TRAFFICMONITOR_STR_IMPL(x)
+
+#define TRAFFICMONITOR_ERROR_STR(x) \
+    "File: " TRAFFICMONITOR_STR(__FILE__) " | Line: " TRAFFICMONITOR_STR(__LINE__) "\n" x
+
 #define RELEASE_COM(p)      \
     {                       \
         if (p)              \
@@ -24,7 +30,7 @@ public:
     ~CHResultException() override = default;
 
     auto GetError()
-        ->Microsoft::WRL::ComPtr<IErrorInfo>;
+        -> Microsoft::WRL::ComPtr<IErrorInfo>;
     bool HasError() const noexcept;
     auto GetHResult() const noexcept
         -> HRESULT;
@@ -32,6 +38,7 @@ public:
 private:
     Microsoft::WRL::ComPtr<IErrorInfo> m_p_error;
     HRESULT m_hr;
+    HRESULT m_get_p_error_hr;
 };
 
 extern const char* const ERROR_WHEN_CALL_COM_FUNCTION; /*The content should be "Error occurred when call COM function." */

@@ -38,7 +38,7 @@ bool FunctionChecker::CheckFunctionExist(LPCTSTR p_library_name, LPCSTR p_functi
                                    });
 }
 
-decltype(ERROR_WHEN_CALL_COM_FUNCTION) ERROR_WHEN_CALL_COM_FUNCTION = "Error occurred when call COM function.";
+const char* const ERROR_WHEN_CALL_COM_FUNCTION = "Error occurred when call COM function.";
 
 void ThrowIfFailed(HRESULT hr, const char* p_message)
 {
@@ -46,9 +46,9 @@ void ThrowIfFailed(HRESULT hr, const char* p_message)
 }
 
 CHResultException::CHResultException(HRESULT hr, const char* p_message)
-    : std::runtime_error{p_message}
+    : std::runtime_error{p_message}, m_hr{hr},
+      m_get_p_error_hr{::GetErrorInfo(0, &m_p_error)}
 {
-    m_hr = ::GetErrorInfo(0, &m_p_error);
 }
 
 auto CHResultException::GetError()
@@ -70,6 +70,8 @@ auto CHResultException::GetHResult() const noexcept
 
 void LogHResultException(CHResultException& ex)
 {
+    auto str_hr = "HResult:" + std::to_string(ex.GetHResult());
+    CCommon::WriteLog(str_hr.c_str(), theApp.m_log_path.c_str());
     auto* log = ex.what();
     CCommon::WriteLog(log, theApp.m_log_path.c_str());
     auto* p_error = ex.GetError().Get();
