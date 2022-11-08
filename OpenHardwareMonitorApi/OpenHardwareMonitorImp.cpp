@@ -263,6 +263,7 @@ namespace OpenHardwareMonitorApi
         m_gpu_ati_usage = -1;
         m_all_hdd_temperature.clear();
         m_all_hdd_usage.clear();
+        m_cpu_freq = -1;
     }
 
     void COpenHardwareMonitor::InsertValueToMap(std::map<std::wstring, float>& value_map, const std::wstring& key, float value)
@@ -308,7 +309,8 @@ namespace OpenHardwareMonitorApi
                 case HardwareType::Cpu:
                     if (m_cpu_temperature < 0)
                         GetCpuTemperature(computer->Hardware[i], m_cpu_temperature);
-                    GetCPUFreq(computer->Hardware[i], m_cpu_freq);
+                    if (m_cpu_freq < 0)
+                        GetCPUFreq(computer->Hardware[i], m_cpu_freq);
                     break;
                 case HardwareType::GpuNvidia:
                     if (m_gpu_nvidia_temperature < 0)
