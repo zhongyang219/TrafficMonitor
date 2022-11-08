@@ -99,6 +99,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_COMMAND(ID_DISPLAY_SETTINGS, &CTrafficMonitorDlg::OnDisplaySettings)
     ON_WM_LBUTTONUP()
     ON_COMMAND(ID_REFRESH_CONNECTION_LIST, &CTrafficMonitorDlg::OnRefreshConnectionList)
+    ON_MESSAGE(WM_TABLET_QUERYSYSTEMGESTURESTATUS, &CTrafficMonitorDlg::OnTabletQuerysystemgesturestatus)
 END_MESSAGE_MAP()
 
 
@@ -2667,4 +2668,10 @@ void CTrafficMonitorDlg::OnRefreshConnectionList()
 {
     IniConnection();
 
+}
+
+
+afx_msg LRESULT CTrafficMonitorDlg::OnTabletQuerysystemgesturestatus(WPARAM wParam, LPARAM lParam)
+{
+    return 0;
 }

@@ -60,6 +60,7 @@ BEGIN_MESSAGE_MAP(CListCtrlEx, CListCtrl)
     ON_EN_KILLFOCUS(IDC_ITEM_EDITBOX, &CListCtrlEx::OnEnKillfocusEdit1)
     ON_NOTIFY_REFLECT(NM_DBLCLK, &CListCtrlEx::OnNMDblclk)
     ON_NOTIFY_REFLECT(LVN_BEGINSCROLL, &CListCtrlEx::OnLvnBeginScroll)
+    ON_MESSAGE(WM_TABLET_QUERYSYSTEMGESTURESTATUS, &CListCtrlEx::OnTabletQuerysystemgesturestatus)
 END_MESSAGE_MAP()
 
 
@@ -106,4 +107,10 @@ void CListCtrlEx::OnLvnBeginScroll(NMHDR *pNMHDR, LRESULT *pResult)
     EndEdit();
 
     *pResult = 0;
+}
+
+
+afx_msg LRESULT CListCtrlEx::OnTabletQuerysystemgesturestatus(WPARAM wParam, LPARAM lParam)
+{
+    return 0;
 }

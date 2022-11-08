@@ -42,6 +42,7 @@ BEGIN_MESSAGE_MAP(CTaskBarDlg, CDialogEx)
     ON_WM_CLOSE()
     ON_WM_LBUTTONUP()
     ON_MESSAGE(WM_EXITMENULOOP, &CTaskBarDlg::OnExitmenuloop)
+    ON_MESSAGE(WM_TABLET_QUERYSYSTEMGESTURESTATUS, &CTaskBarDlg::OnTabletQuerysystemgesturestatus)
 END_MESSAGE_MAP()
 
 
@@ -1399,5 +1400,11 @@ void CTaskBarDlg::OnLButtonUp(UINT nFlags, CPoint point)
 afx_msg LRESULT CTaskBarDlg::OnExitmenuloop(WPARAM wParam, LPARAM lParam)
 {
     m_menu_popuped = false;
+    return 0;
+}
+
+
+afx_msg LRESULT CTaskBarDlg::OnTabletQuerysystemgesturestatus(WPARAM wParam, LPARAM lParam)
+{
     return 0;
 }

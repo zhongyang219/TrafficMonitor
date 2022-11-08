@@ -40,5 +40,6 @@ protected:
     virtual void PreSubclassWindow();
     afx_msg void OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult);
     afx_msg void OnLvnBeginScroll(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg LRESULT OnTabletQuerysystemgesturestatus(WPARAM wParam, LPARAM lParam);
 };
 

@@ -207,4 +207,5 @@ public:
     afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 protected:
     afx_msg LRESULT OnExitmenuloop(WPARAM wParam, LPARAM lParam);
+    afx_msg LRESULT OnTabletQuerysystemgesturestatus(WPARAM wParam, LPARAM lParam);
 };

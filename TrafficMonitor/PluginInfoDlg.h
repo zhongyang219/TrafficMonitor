@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "BaseDialog.h"
+#include "ListCtrlEx.h"
 
 // CPluginInfoDlg 对话框
 
@@ -18,7 +19,7 @@ public:
 
 private:
     int m_cur_index;        //初始显示的插件索引
-    CListCtrl m_info_list;
+    CListCtrlEx m_info_list;
     CMenu m_menu;
     CString m_selected_string;
 
