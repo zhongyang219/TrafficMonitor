@@ -66,12 +66,24 @@ void CD2D1Device::Recreate(Microsoft::WRL::ComPtr<IDXGIDevice> p_dxgi_device)
             p_dxgi_device.Get(),
             &m_p_device),
         TRAFFICMONITOR_ERROR_STR("Create ID2D1Device failed."));
+
+    auto ref_track_set = m_resource_tracker.GetTrackerSet();
+    for (auto&& it : ref_track_set)
+    {
+        it->OnDeviceRecreate(m_p_device);
+    }
 }
 
 auto CD2D1Device::GetStorage()
     -> std::shared_ptr<Storage>
 {
     return m_resource_tracker.GetSharedResourceTrackerStorage();
+}
+
+auto CD2D1Device::Get()
+    -> Type
+{
+    return m_p_device;
 }
 
 bool CDWriteSupport::CheckSupport()

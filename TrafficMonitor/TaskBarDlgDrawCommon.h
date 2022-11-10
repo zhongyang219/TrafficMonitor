@@ -24,10 +24,11 @@ namespace DrawCommonHelper
     {
     private:
         CHResultException& m_ref_ex;
+        std::function<void()> m_device_recreate_handler;
         static std::uint32_t m_error_count;
 
     public:
-        DefaultD2DDrawCommonExceptionHandler(CHResultException& ex) noexcept;
+        DefaultD2DDrawCommonExceptionHandler(CHResultException& ex, std::function<void()> device_recreate_handler) noexcept;
         DefaultD2DDrawCommonExceptionHandler(const DefaultD2DDrawCommonExceptionHandler&) = delete;
         DefaultD2DDrawCommonExceptionHandler& operator=(const DefaultD2DDrawCommonExceptionHandler&) = delete;
         DefaultD2DDrawCommonExceptionHandler* operator&() = delete;
@@ -41,18 +42,22 @@ namespace DrawCommonHelper
 class CTaskBarDlgDrawCommonSupport
 {
 private:
-    CD3D10Device1 m_device1{};
+    CD3D10Device1 m_d3d10_device1{};
+    CD2D1Device m_d2d1_device{};
     Microsoft::WRL::ComPtr<ID2D1StrokeStyle> m_p_ps_dot_like_style{};
 
 public:
     CTaskBarDlgDrawCommonSupport();
     ~CTaskBarDlgDrawCommonSupport() = default;
 
-    auto GetDevice() noexcept
+    auto GetD3D10Device1() noexcept
         -> CD3D10Device1&;
+    auto GetD2D1Device() noexcept
+        -> CD2D1Device&;
     auto GetPsDotLikeStyle() noexcept
         -> Microsoft::WRL::ComPtr<ID2D1StrokeStyle>;
-    void RecreateDevice();
+    void RecreateAll();
+    void RecreateD2D1Device();
     static bool CheckSupport() noexcept;
 };
 
@@ -79,50 +84,84 @@ bool IsBitwiseEquality(T& lhs, T& rhs) noexcept
  * 此类在调用Resize前是部分初始化状态，此时调用其中的成员会发生未定义行为
  *
  */
-class CTaskBarDlgDrawCommonWindowSupport final : public CDeviceResource<CD3D10Device1>
+class CTaskBarDlgDrawCommonWindowSupport
 {
-    using Base = CDeviceResource<CD3D10Device1>;
 private:
-    Microsoft::WRL::ComPtr<ID3D10Device1> m_p_device1;
-    CD3D10Device1& m_ref_d3d10_device1;
-    class GpuHelper
+    class D3DPart final : public CDeviceResource<CD3D10Device1>
     {
         friend CTaskBarDlgDrawCommonWindowSupport;
 
-    private:
-        Microsoft::WRL::ComPtr<ID2D1RenderTarget> m_p_render_target{};
-        Microsoft::WRL::ComPtr<IDXGISurface1> m_p_render_target_surface{};
-        Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_p_foreground_color_brush{};
-        Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_p_background_color_brush{};
-        // 此贴图来自GDI部分操作后的结果
-        Microsoft::WRL::ComPtr<ID3D10Texture2D> m_p_gdi_initial_texture{};
-        Microsoft::WRL::ComPtr<ID3D10Texture2D> m_p_gdi_final_texture{};
-        Microsoft::WRL::ComPtr<IDXGISurface1> m_p_gdi_initial_surface{};
-        Microsoft::WRL::ComPtr<IDXGISurface1> m_p_gdi_finial_surface{};
-        std::weak_ptr<class CD2D1BitmapCache> m_wp_bitmap_cache{};
-        CImage2DEffect m_alpha_value_effect;
-        D2D1_COLOR_F m_foreground_color{D2D1::ColorF::Black};
-        D2D1_COLOR_F m_background_color{D2D1::ColorF::Black};
-        D2D1_SIZE_U m_render_target_size{};
+        using Base = CDeviceResource<CD3D10Device1>;
+        using Base::DeviceType;
 
-        static auto CreateGdiCompatibleTexture(Microsoft::WRL::ComPtr<ID3D10Device1> m_p_device1, const D2D1_SIZE_U size)
+    private:
+        DeviceType m_p_device1;
+        Microsoft::WRL::ComPtr<IDXGISurface1> m_p_render_target_surface{};
+
+        Microsoft::WRL::ComPtr<ID3D10Texture2D> m_p_gdi_initial_texture{};
+        Microsoft::WRL::ComPtr<IDXGISurface1> m_p_gdi_initial_surface{};
+        Microsoft::WRL::ComPtr<ID3D10Texture2D> m_p_gdi_final_texture{};
+        Microsoft::WRL::ComPtr<IDXGISurface1> m_p_gdi_final_surface{};
+        CImage2DEffect m_alpha_value_effect;
+        bool m_is_p_device1_recreated{false};
+
+        static auto CreateGdiCompatibleTexture(Microsoft::WRL::ComPtr<ID3D10Device1> p_device1, const D2D1_SIZE_U size)
             -> Microsoft::WRL::ComPtr<ID3D10Texture2D>;
-        static auto CreateGdiInteropTexture(Microsoft::WRL::ComPtr<ID3D10Device1> m_p_device1, const D2D1_SIZE_U size)
+        static auto CreateDefaultTexture(Microsoft::WRL::ComPtr<ID3D10Device1> p_device1, const D2D1_SIZE_U size)
+            -> Microsoft::WRL::ComPtr<ID3D10Texture2D>;
+        static auto CreateCpuWriteableTexture(Microsoft::WRL::ComPtr<ID3D10Device1> p_device1, const D2D1_SIZE_U size)
             -> Microsoft::WRL::ComPtr<ID3D10Texture2D>;
         static auto GetPsAlphaValueReducer() noexcept
             -> Microsoft::WRL::ComPtr<ID3D10Blob>;
-        void RecreateResource(Microsoft::WRL::ComPtr<ID3D10Device1> p_device1, const D2D1_SIZE_U size);
-        static void SetSolidBrushColor(Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> p_brush, const D2D1_COLOR_F) noexcept;
 
     public:
-        explicit GpuHelper(Microsoft::WRL::ComPtr<ID3D10Device1> p_device1);
-        ~GpuHelper() = default;
+        D3DPart(CD3D10Device1& ref_device);
+        ~D3DPart() = default;
 
-        void Resize(Microsoft::WRL::ComPtr<ID3D10Device1> p_device1, const D2D1_SIZE_U size);
+        void OnDeviceRecreate(DeviceType p_new_device) noexcept override;
+
+        bool HandleDeviceRecreationIfNecessary();
+        void ResizeRenderTarget(D2D1_SIZE_U size);
+        void ResizeGdiInteropPart(D2D1_SIZE_U size);
+        auto GetRenderTargetSurface()
+            -> Microsoft::WRL::ComPtr<IDXGISurface>;
     };
-    GpuHelper m_gpu_helper;
+    class D2DPart final : public CDeviceResource<CD2D1Device>
+    {
+        friend class D3DPart;
+        friend CTaskBarDlgDrawCommonWindowSupport;
 
-    CTaskBarDlgDrawCommonSupport& m_ref_taskbardlg_draw_common_support;
+        using Base = CDeviceResource<CD2D1Device>;
+        using Base::DeviceType;
+
+    private:
+        /**
+         * @brief 即ID2D1RenderTarget
+         *
+         */
+        DeviceType m_p_device;
+        Microsoft::WRL::ComPtr<ID2D1DeviceContext> m_p_device_context{};
+        Microsoft::WRL::ComPtr<ID2D1Bitmap> m_p_d2d_render_target_bitmap{};
+        Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_p_foreground_color_brush{};
+        Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_p_background_color_brush{};
+        std::weak_ptr<class CD2D1BitmapCache> m_wp_bitmap_cache{};
+        D2D1_COLOR_F m_foreground_color{D2D1::ColorF::Black};
+        D2D1_COLOR_F m_background_color{D2D1::ColorF::Black};
+        bool m_is_p_device_recreated{false};
+
+        void Reinitialize();
+
+    public:
+        D2DPart(CD2D1Device& ref_device);
+        ~D2DPart() = default;
+
+        void OnDeviceRecreate(DeviceType p_new_device) noexcept override;
+
+        bool HandleDeviceRecreationIfNecessary();
+        void RebindRenderTargetSurface(Microsoft::WRL::ComPtr<IDXGISurface> p_surface);
+        void SetForeColor(COLORREF color, BYTE alpha);
+        void SetBackColor(COLORREF color, BYTE alpha);
+    };
 
     class DWriteHelper
     {
@@ -141,10 +180,13 @@ private:
         auto GetTextFormat() noexcept
             -> Microsoft::WRL::ComPtr<IDWriteTextFormat>;
     };
-    DWriteHelper m_dwrite_helper{};
-    bool m_need_recreate{false};
 
-    void OnDeviceRecreate(Microsoft::WRL::ComPtr<ID3D10Device1> p_device1) noexcept override;
+    D2D1_SIZE_U m_size{0, 0};
+    D3DPart m_d3d_part;
+    D2DPart m_d2d_part;
+    DWriteHelper m_dwrite_helper{};
+    CTaskBarDlgDrawCommonSupport& m_ref_taskbardlg_draw_common_support;
+    bool m_is_size_updated{true};
 
 public:
     constexpr static float DEFAULT_DPI = 96.f;
@@ -154,6 +196,7 @@ public:
     ~CTaskBarDlgDrawCommonWindowSupport() = default;
 
     void Resize(const D2D1_SIZE_U size);
+    void ResizeGdiInteropPart();
     void SetFont(HFONT h_font);
     void SetBackColor(COLORREF color, BYTE alpha) noexcept;
     auto GetRawBackSolidColorBruch() noexcept
@@ -163,8 +206,14 @@ public:
     auto GetRawForeSolidColorBruch() noexcept
         -> ID2D1SolidColorBrush*;
     auto GetRenderTarget() noexcept
-        -> Microsoft::WRL::ComPtr<ID2D1RenderTarget>;
-    void InitGdiInteropTexture(void* p_data, std::size_t data_size);
+        -> Microsoft::WRL::ComPtr<ID2D1DeviceContext>;
+    /**
+     * @brief 从内存复制图片到显存中并作为D2D和GDI互操作时使用的临时缓存，并默认格式为BGRA
+     *
+     * @param p_data 内存图片的地址
+     * @param size 内存图片的大小
+     */
+    void SetGdiInteropTexture(void* p_data, D2D1_SIZE_U size);
     auto GetTextFormat() noexcept
         -> Microsoft::WRL::ComPtr<IDWriteTextFormat>;
     auto GetRawPsDotLikeStyle() noexcept
@@ -179,17 +228,18 @@ public:
         -> D2D1_SIZE_U;
     auto GetFont() noexcept
         -> HFONT;
-    void RecreateDevice();
     auto GetRenderTargetSurface() noexcept
         -> Microsoft::WRL::ComPtr<IDXGISurface1>;
     void RebindD2D1BitmapCache(std::weak_ptr<class CD2D1BitmapCache> up_cache);
     auto GetCachedBitmap(HBITMAP hbitmap) const
         -> Microsoft::WRL::ComPtr<ID2D1Bitmap>;
+    void RequestD3D10Device1Recreate();
+    void RequestD2D1DeviceRecreate();
 };
 
 namespace DrawCommonHelper
 {
-    void DefaultD3D10Exception1Handler(CD3D10Exception1& ex, CTaskBarDlgDrawCommonWindowSupport& ref_taskbar_draw_common_window_support);
+    void DefaultD3D10Exception1Handler(CD3D10Exception1& ex, std::function<void()> device_recreate_handler);
 }
 namespace TaskBarDlgUser32DrawTextHook
 {

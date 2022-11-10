@@ -309,21 +309,15 @@ auto CImage2DEffect::RebindDevice1(Microsoft::WRL::ComPtr<ID3D10Device1> p_devic
 {
     RecreateUnmodifiableResource(p_device1);
     m_p_owner_device1 = p_device1;
-    if (!m_p_input)
-    {
-        RecreateInputTextureRelatedResources(m_p_input);
-    }
-    if (!m_p_output)
-    {
-        RecreateOutputTextureRelatedResources(m_p_output);
-    }
-    if (!m_p_vs_byte_code)
+    m_p_input.Reset();
+    m_p_output.Reset();
+    if (m_p_vs_byte_code)
     {
         RecreateVsByteCodeRelatedResources(m_p_vs_byte_code);
     }
-    if (!m_p_ps_byte_code)
+    if (m_p_ps_byte_code)
     {
-        RecreatePsByteCodeRelatedResources(m_p_vs_byte_code);
+        RecreatePsByteCodeRelatedResources(m_p_ps_byte_code);
     }
     return *this;
 }

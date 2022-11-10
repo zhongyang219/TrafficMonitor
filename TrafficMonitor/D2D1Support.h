@@ -42,7 +42,7 @@ public:
     void Recreate(Microsoft::WRL::ComPtr<IDXGIDevice> p_dxgi_device);
     auto GetStorage()
         -> std::shared_ptr<Storage>;
-
+    Type Get();
 };
 
 class CD2D1Support1

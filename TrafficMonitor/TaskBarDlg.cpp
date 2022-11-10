@@ -1383,26 +1383,21 @@ void CTaskBarDlg::OnPaint()
 
     try
     {
-
-
         ShowInfo(&dc);
-
     }
     catch (CD3D10Exception1& ex)
     {
-        auto hr = ex.GetHResult();
-        if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
-        {
-            m_taskbar_draw_common_window_support.Get().RecreateDevice();
-        }
-        else
-        {
-            DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}();
-        }
+        DrawCommonHelper::DefaultD3D10Exception1Handler(
+            ex,
+            [this]()
+            { m_taskbar_draw_common_window_support.Get().RequestD3D10Device1Recreate(); });
     }
     catch (CD2D1Exception& ex)
     {
-        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}();
+        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{
+            ex,
+            [this]()
+            { m_taskbar_draw_common_window_support.Get().RequestD2D1DeviceRecreate(); }}();
     }
     catch (CHResultException& ex)
     {

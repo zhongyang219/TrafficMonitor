@@ -32,7 +32,6 @@ public:
     };
     using Resource = CDeviceResource<CD3D10Device1>;
     using Storage = MutipleStorage<Data,
-                                   storage_t<CTrackableDevice<CD3D10Device1>>,
                                    storage_t<CResourceTracker<Resource>>>;
 
 private:

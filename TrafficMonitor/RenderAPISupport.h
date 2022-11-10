@@ -160,8 +160,11 @@ public:
 template <class Device>
 class CDeviceResource
 {
+public:
     using DeviceType = typename Device::Type;
     using Storage = typename Device::Storage;
+
+private:
     static_assert(TRAFFICMONITOR_HAS_FUNCTION_CALL(AddResource, Storage), "Function Storage::AddResource not found.");
     static_assert(TRAFFICMONITOR_HAS_FUNCTION_CALL(RemoveResource, Storage), "Function Storage::RemoveResource not found.");
 
@@ -221,7 +224,12 @@ public:
     }
 
     virtual void OnDeviceRecreate(DeviceType new_device) noexcept = 0;
-    template <class = std::enable_if_t<std::is_convertible_v<Storage, storage_t<CTrackableDevice<Device>>>>>
+
+    /**
+     * @brief 当Device不是继承自CTrackableDevice<Device>时
+     （即Device::Storage不能转换为CTrackableDevice<Device>::Storage时），不能在代码中调用此函数
+     *
+     */
     void RequestDeviceRecreate()
     {
         auto sp_device_storage = m_wp_device_storage.lock();
