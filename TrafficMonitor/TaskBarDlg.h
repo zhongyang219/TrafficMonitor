@@ -216,6 +216,4 @@ public:
     afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 protected:
     afx_msg LRESULT OnExitmenuloop(WPARAM wParam, LPARAM lParam);
-    //锁定D2D的dpi为96
-    afx_msg LRESULT OnDpichanged(WPARAM wParam, LPARAM lParam);
 };
