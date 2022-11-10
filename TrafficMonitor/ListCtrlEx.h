@@ -38,7 +38,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
     afx_msg void OnEnKillfocusEdit1();
     virtual void PreSubclassWindow();
-    afx_msg void OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg BOOL OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult);
     afx_msg void OnLvnBeginScroll(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg LRESULT OnTabletQuerysystemgesturestatus(WPARAM wParam, LPARAM lParam);
 };
 

@@ -99,6 +99,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_COMMAND(ID_DISPLAY_SETTINGS, &CTrafficMonitorDlg::OnDisplaySettings)
     ON_WM_LBUTTONUP()
     ON_COMMAND(ID_REFRESH_CONNECTION_LIST, &CTrafficMonitorDlg::OnRefreshConnectionList)
+    ON_MESSAGE(WM_TABLET_QUERYSYSTEMGESTURESTATUS, &CTrafficMonitorDlg::OnTabletQuerysystemgesturestatus)
 END_MESSAGE_MAP()
 
 
@@ -1433,6 +1434,10 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                 SetAlwaysOnTop();       //每5分钟执行一次设置窗口置顶
             }
         }
+        else
+        {
+            m_tool_tips.Pop();          //显示了右键菜单时，不显示鼠标提示
+        }
 
         if (m_timer_cnt % 30 == 26)     //每隔30秒钟检测一次窗口位置，当窗口位置发生变化时保存设置
         {
@@ -2667,4 +2672,10 @@ void CTrafficMonitorDlg::OnRefreshConnectionList()
 {
     IniConnection();
 
+}
+
+
+afx_msg LRESULT CTrafficMonitorDlg::OnTabletQuerysystemgesturestatus(WPARAM wParam, LPARAM lParam)
+{
+    return 0;
 }

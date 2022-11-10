@@ -58,8 +58,9 @@ void CListCtrlEx::EndEdit()
 
 BEGIN_MESSAGE_MAP(CListCtrlEx, CListCtrl)
     ON_EN_KILLFOCUS(IDC_ITEM_EDITBOX, &CListCtrlEx::OnEnKillfocusEdit1)
-    ON_NOTIFY_REFLECT(NM_DBLCLK, &CListCtrlEx::OnNMDblclk)
+    ON_NOTIFY_REFLECT_EX(NM_DBLCLK, &CListCtrlEx::OnNMDblclk)
     ON_NOTIFY_REFLECT(LVN_BEGINSCROLL, &CListCtrlEx::OnLvnBeginScroll)
+    ON_MESSAGE(WM_TABLET_QUERYSYSTEMGESTURESTATUS, &CListCtrlEx::OnTabletQuerysystemgesturestatus)
 END_MESSAGE_MAP()
 
 
@@ -81,7 +82,7 @@ void CListCtrlEx::PreSubclassWindow()
 }
 
 
-void CListCtrlEx::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
+BOOL CListCtrlEx::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
 {
     LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
     // TODO: 在此添加控件通知处理程序代码
@@ -91,9 +92,13 @@ void CListCtrlEx::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
         || (m_edit_col_method == EC_SPECIFIED && m_edit_cols.find(pNMItemActivate->iSubItem) != m_edit_cols.end()))
     {
         Edit(pNMItemActivate->iItem, pNMItemActivate->iSubItem);
+        *pResult = 0;
+        return TRUE;
     }
-
-    *pResult = 0;
+    else
+    {
+        return FALSE;
+    }
 }
 
 
@@ -106,4 +111,10 @@ void CListCtrlEx::OnLvnBeginScroll(NMHDR *pNMHDR, LRESULT *pResult)
     EndEdit();
 
     *pResult = 0;
+}
+
+
+afx_msg LRESULT CListCtrlEx::OnTabletQuerysystemgesturestatus(WPARAM wParam, LPARAM lParam)
+{
+    return 0;
 }

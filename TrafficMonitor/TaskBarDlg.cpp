@@ -48,7 +48,8 @@ BEGIN_MESSAGE_MAP(CTaskBarDlg, CDialogEx)
     ON_WM_CLOSE()
     ON_WM_LBUTTONUP()
     ON_MESSAGE(WM_EXITMENULOOP, &CTaskBarDlg::OnExitmenuloop)
-    END_MESSAGE_MAP()
+    ON_MESSAGE(WM_TABLET_QUERYSYSTEMGESTURESTATUS, &CTaskBarDlg::OnTabletQuerysystemgesturestatus)
+END_MESSAGE_MAP()
 
 // CTaskBarDlg 消息处理程序
 
@@ -533,6 +534,7 @@ bool CTaskBarDlg::AdjustWindowPos()
         return false;
     ::GetWindowRect(m_hMin, m_rcMin); //获得最小化窗口的区域
     ::GetWindowRect(m_hBar, m_rcBar); //获得二级容器的区域
+    ::GetWindowRect(m_hTaskbar, m_rcTaskbar);   //获得任务栏的矩形区域
 
     ::GetWindowRect(m_hNotify, m_rcNotify);
 
@@ -608,7 +610,7 @@ bool CTaskBarDlg::AdjustWindowPos()
                     m_rect.MoveToX(m_left_space);
                 }
             }
-            m_rect.MoveToY((m_rcBar.Height() - m_rect.Height()) / 2);
+            m_rect.MoveToY((m_rcTaskbar.Height() - m_rect.Height()) / 2);
             if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())
                 m_rect.MoveToY(m_rect.top + DPI(1));
             MoveWindow(m_rect);
@@ -633,8 +635,9 @@ bool CTaskBarDlg::AdjustWindowPos()
                 m_rect.MoveToY(m_top_space);
             }
             m_rect.MoveToX((m_rcMin.Width() - m_window_width) / 2);
-            if (m_rect.left < DPI(2))
-                m_rect.MoveToX(DPI(2));
+            int left_space = DPI(2);
+            if (m_rect.left < left_space)
+                m_rect.MoveToX(left_space);
             MoveWindow(m_rect);
         }
     }
@@ -1121,12 +1124,13 @@ BOOL CTaskBarDlg::OnInitDialog()
     {
         theApp.m_is_windows11_taskbar = (::FindWindowExW(m_hTaskbar, 0, L"Windows.UI.Composition.DesktopWindowContentBridge", NULL) != NULL);
     }
-
+ 
     //设置窗口透明色
     ApplyWindowTransparentColor();
 
     ::GetWindowRect(m_hMin, m_rcMin);   //获得最小化窗口的区域
     ::GetWindowRect(m_hBar, m_rcBar);   //获得二级容器的区域
+    ::GetWindowRect(m_hTaskbar, m_rcTaskbar);   //获得任务栏的矩形区域
 
     ::GetWindowRect(m_hNotify, m_rcNotify);
 
@@ -1169,7 +1173,7 @@ BOOL CTaskBarDlg::OnInitDialog()
         SetToolTipsTopMost();       //设置提示信息总是置顶
     }
 
-    //SetTimer(TASKBAR_TIMER, 100, NULL);
+    SetTimer(TASKBAR_TIMER, 1000, NULL);
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE
@@ -1339,12 +1343,14 @@ void CTaskBarDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 void CTaskBarDlg::OnTimer(UINT_PTR nIDEvent)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
-    //if (nIDEvent == TASKBAR_TIMER)
-    //{
-    //  AdjustWindowPos();
-    //  //ShowInfo();
-    //  Invalidate(FALSE);
-    //}
+    if (nIDEvent == TASKBAR_TIMER)
+    {
+        if (m_menu_popuped)     //显示了右键菜单时，不显示鼠标提示
+        {
+            m_tool_tips.Pop();
+        }
+
+    }
 
     CDialogEx::OnTimer(nIDEvent);
 }
@@ -1511,5 +1517,11 @@ void CTaskBarDlg::OnLButtonUp(UINT nFlags, CPoint point)
 afx_msg LRESULT CTaskBarDlg::OnExitmenuloop(WPARAM wParam, LPARAM lParam)
 {
     m_menu_popuped = false;
+    return 0;
+}
+
+
+afx_msg LRESULT CTaskBarDlg::OnTabletQuerysystemgesturestatus(WPARAM wParam, LPARAM lParam)
+{
     return 0;
 }

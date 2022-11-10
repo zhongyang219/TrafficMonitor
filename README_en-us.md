@@ -15,7 +15,7 @@ Alternate link: Download from [Baidu Netdisk](https://pan.baidu.com/s/15PMt7s-AS
 
 You can find the project page on Gitee by [clicking here](https://gitee.com/zhongyang219/TrafficMonitor)
 
-If you encounter any problems, please [click here](./Help_en-us.md).  
+If you encounter any problems, please [click here](./Help_en-us.md) for frequently asked questions.  
 
 You can also [click here](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI") to download the pre-release build version of TrafficMonitor.
 
@@ -33,17 +33,18 @@ If there is no need to monitor the temperature and other hardware information, i
 
 See below for the functions comparison of the two versions.
 
-| Functions                                              | Standard Version | Lite Version |
-| ------------------------------------------------------ | ---------------- | ------------ |
-| Internet speed monitoring                                   | ✔                | ✔            |
-| CPU and RAM usage monitoring                        | ✔                | ✔            |
-| CPU, GPU, hard disk, mother board temperature, CPU frequency monitoring | ✔                | ❌            |
-| GPU usage monitoring                                   | ✔                | ❌            |
-| Hard disk usage monitoring                             | ✔                | ❌            |
-| Network connection details                             | ✔                | ✔            |
-| Plug-in system                                         | ✔                | ✔            |
-| Change the skin of the main window                     | ✔                | ✔            |
-| Administrator privilege required                          | Yes              | No           |
+| Functions                                     | Standard Version | Lite Version |
+| --------------------------------------------- | ---------------- | ------------ |
+| Internet speed monitoring                     | ✔                | ✔            |
+| CPU and RAM usage monitoring                  | ✔                | ✔            |
+| CPU, GPU, hard disk, mother board temperature | ✔                | ❌            |
+| CPU frequency monitoring                      | ✔                | ❌            |
+| GPU usage monitoring                          | ✔                | ❌            |
+| Hard disk usage monitoring                    | ✔                | ❌            |
+| Network connection details                    | ✔                | ✔            |
+| Plug-in system                                | ✔                | ✔            |
+| Change the skin of the main window            | ✔                | ✔            |
+| Administrator privilege required              | Yes              | No           |
 
 # Main Features
 
@@ -89,15 +90,13 @@ Users can customize displayed items on the embedded taskbar window. By default, 
 <img src="./Screenshots/selecte_skin.png" style="zoom:80%;" /><br>
 In order to access the skin changing interface, choose "Other Functions" - “Change Skins" in the main window or the pop-up window. Users can download more skins and customize the skins [here](https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md) according to their own needs.<br>
 Skin files are stored under the 'skins' directory within the directory where the app is located. Each skin is stored in its individual folder and the name of the folder is the name of the skin. <br>
-Among the files, `background.bmp` and `background_l.bmp` are background pictures，`skin.ini` is the configuration document for the skin, users can customize text colors, fonts, skin creater, and the size and location of each items etc. <br>
+Among the files, `background.bmp` and `background_l.bmp` are background pictures，`skin.ini` is the configuration document for the skin, users can customize text colors, fonts, skin creator, and the size and location of each items etc. <br>
 
-For version 1.80 and later, an xml format of skin configuration file `skin.xml` has been added. Without the xml skin congifuration document, TrafficMonitor will not be able to display temperature and GUP usage.
+For version 1.80 and later, an xml format of skin configuration file `skin.xml` has been added. Without the xml skin configuration document, TrafficMonitor will not be able to display temperature and GUP usage.
 
 Click the link below for detailed instruction on skin making: 
 
 [皮肤制作教程 · zhongyang219/TrafficMonitor Wiki (github.com)](https://github.com/zhongyang219/TrafficMonitor/wiki/皮肤制作教程)
-
-Its recommended to use [Skin Editor](https://github.com/zhongyang219/TrafficMonitorSkinEditor/releases) to create or edit skins. <br>
 
 # Configuring Options
 <img src="./Screenshots/option.jpg" style="zoom:80%;" /><br>
@@ -124,4 +123,4 @@ It should also be noted that the temperature monitoring function is turned off b
 # Update log
 
 **[Click here to view the update log.](./UpdateLog/update_log_en-us.md)**
-  
+

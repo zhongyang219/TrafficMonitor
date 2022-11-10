@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "BaseDialog.h"
 #include "LinkStatic.h"
+#include "ListCtrlEx.h"
 
 // CPluginManagerDlg 对话框
 
@@ -18,7 +19,7 @@ public:
 #endif
 
 private:
-    CListCtrl m_list_ctrl;
+    CListCtrlEx m_list_ctrl;
     int m_item_selected{ -1 };
     CMenu m_menu;
     CLinkStatic m_plugin_download_lnk;

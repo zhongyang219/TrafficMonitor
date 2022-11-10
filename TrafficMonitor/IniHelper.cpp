@@ -70,16 +70,12 @@ wstring CIniHelper::GetString(const wchar_t * AppName, const wchar_t * KeyName, 
 
 void CIniHelper::WriteInt(const wchar_t * AppName, const wchar_t * KeyName, int value)
 {
-    wchar_t buff[16]{};
-    _itow_s(value, buff, 10);
-    _WriteString(AppName, KeyName, wstring(buff));
+    _WriteString(AppName, KeyName, std::to_wstring(value));
 }
 
 int CIniHelper::GetInt(const wchar_t * AppName, const wchar_t * KeyName, int default_value) const
 {
-    wchar_t default_str_buff[16]{};
-    _itow_s(default_value, default_str_buff, 10);
-    wstring rtn{ _GetString(AppName, KeyName, default_str_buff) };
+    wstring rtn{ _GetString(AppName, KeyName, std::to_wstring(default_value).c_str()) };
     return _ttoi(rtn.c_str());
 }
 

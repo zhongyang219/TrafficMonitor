@@ -75,7 +75,7 @@ bool CWindowsSettingHelper::IsTaskbarCenterAlign()
 {
     DWORD data{};
     if (!GetDWORDRegKeyData(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", L"TaskbarAl", data))
-        return false;
+        return true;
     return data != 0;
 }
 

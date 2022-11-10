@@ -3,6 +3,7 @@
 #include "afxcmn.h"
 #include "AdapterCommon.h"
 #include "BaseDialog.h"
+#include "ListCtrlEx.h"
 
 // CNetworkInfoDlg 对话框
 
@@ -28,7 +29,7 @@ protected:
     int m_connection_selected;		//当前对话框显示的连接
     int m_current_connection;		//初始选择的连接
 
-    CListCtrl m_info_list;
+    CListCtrlEx m_info_list;
     CMenu m_menu;
     CString m_selected_string;
     CFont m_font_bold;		//默认字体的粗体
