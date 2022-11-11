@@ -25,11 +25,9 @@ void CD3D10Device1::Recreate(Microsoft::WRL::ComPtr<IDXGIAdapter1> p_adapter1)
             &m_sp_storage->m_p_device1),
         TRAFFICMONITOR_ERROR_STR("Create D3D10Device1 failed."));
 
-    auto ref_track_set = m_resource_tracker.GetTrackerSet();
-    for (auto&& it : ref_track_set)
-    {
-        it->OnDeviceRecreate(m_sp_storage->m_p_device1);
-    }
+    NotifyAllResourceWhenDeviceRecreate(
+        m_resource_tracker,
+        m_sp_storage->m_p_device1);
 }
 
 auto CD3D10Device1::Get() noexcept

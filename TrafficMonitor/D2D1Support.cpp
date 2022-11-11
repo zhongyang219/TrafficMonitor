@@ -67,11 +67,9 @@ void CD2D1Device::Recreate(Microsoft::WRL::ComPtr<IDXGIDevice> p_dxgi_device)
             &m_p_device),
         TRAFFICMONITOR_ERROR_STR("Create ID2D1Device failed."));
 
-    auto ref_track_set = m_resource_tracker.GetTrackerSet();
-    for (auto&& it : ref_track_set)
-    {
-        it->OnDeviceRecreate(m_p_device);
-    }
+    NotifyAllResourceWhenDeviceRecreate(
+        m_resource_tracker,
+        m_p_device);
 }
 
 auto CD2D1Device::GetStorage()

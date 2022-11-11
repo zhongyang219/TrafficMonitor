@@ -36,6 +36,16 @@ struct MutipleStorage : public Ts...
 template <class T>
 using storage_t = typename T::Storage;
 
+template <class ResourceTracker, class Device>
+void NotifyAllResourceWhenDeviceRecreate(ResourceTracker& tracker, Device& device)
+{
+    auto ref_track_set = tracker.GetTrackerSet();
+    for (auto&& it : ref_track_set)
+    {
+        it->OnDeviceRecreate(device);
+    }
+}
+
 /**
  * @brief CRTP 基类
  *
