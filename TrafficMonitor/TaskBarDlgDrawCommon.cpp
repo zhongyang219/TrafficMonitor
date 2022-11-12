@@ -259,7 +259,7 @@ bool CTaskBarDlgDrawCommonSupport::CheckSupport() noexcept
     return CD2D1Support1::CheckSupport() && CDWriteSupport::CheckSupport();
 }
 
-auto CTaskBarDlgDrawCommonWindowSupport::D3DPart::CreateGdiCompatibleTexture(ComPtr<ID3D10Device1> p_device1, const D2D1_SIZE_U size)
+auto CTaskBarDlgDrawCommonWindowSupport::CD3DHelper::CreateGdiCompatibleTexture(ComPtr<ID3D10Device1> p_device1, const D2D1_SIZE_U size)
     -> Microsoft::WRL::ComPtr<ID3D10Texture2D>
 {
     D3D10_TEXTURE2D_DESC description = {};
@@ -283,7 +283,7 @@ auto CTaskBarDlgDrawCommonWindowSupport::D3DPart::CreateGdiCompatibleTexture(Com
     return result;
 }
 
-auto CTaskBarDlgDrawCommonWindowSupport::D3DPart::CreateDefaultTexture(ComPtr<ID3D10Device1> p_device1, D2D1_SIZE_U size)
+auto CTaskBarDlgDrawCommonWindowSupport::CD3DHelper::CreateDefaultTexture(ComPtr<ID3D10Device1> p_device1, D2D1_SIZE_U size)
     -> Microsoft::WRL::ComPtr<ID3D10Texture2D>
 {
     D3D10_TEXTURE2D_DESC description = {};
@@ -308,7 +308,7 @@ auto CTaskBarDlgDrawCommonWindowSupport::D3DPart::CreateDefaultTexture(ComPtr<ID
     return result;
 }
 
-auto CTaskBarDlgDrawCommonWindowSupport::D3DPart::CreateCpuWriteableTexture(Microsoft::WRL::ComPtr<ID3D10Device1> p_device1, const D2D1_SIZE_U size)
+auto CTaskBarDlgDrawCommonWindowSupport::CD3DHelper::CreateCpuWriteableTexture(Microsoft::WRL::ComPtr<ID3D10Device1> p_device1, const D2D1_SIZE_U size)
     -> Microsoft::WRL::ComPtr<ID3D10Texture2D>
 {
     D3D10_TEXTURE2D_DESC description = {};
@@ -333,7 +333,7 @@ auto CTaskBarDlgDrawCommonWindowSupport::D3DPart::CreateCpuWriteableTexture(Micr
     return result;
 }
 
-auto CTaskBarDlgDrawCommonWindowSupport::D3DPart::GetPsAlphaValueReducer() noexcept
+auto CTaskBarDlgDrawCommonWindowSupport::CD3DHelper::GetPsAlphaValueReducer() noexcept
     -> Microsoft::WRL::ComPtr<ID3D10Blob>
 {
     const static auto result = MakeStaticVariableWrapper<CShader>(
@@ -370,19 +370,19 @@ float4 PS(VsOutput ps_in) : SV_TARGET
     return result.Get().Compile();
 }
 
-CTaskBarDlgDrawCommonWindowSupport::D3DPart::D3DPart(CD3D10Device1& ref_device)
+CTaskBarDlgDrawCommonWindowSupport::CD3DHelper::CD3DHelper(CD3D10Device1& ref_device)
     : Base{ref_device.GetStorage()}, m_p_device1{ref_device.Get()},
       m_alpha_value_effect{ref_device.Get()}
 {
 }
 
-void CTaskBarDlgDrawCommonWindowSupport::D3DPart::OnDeviceRecreate(DeviceType p_new_device) noexcept
+void CTaskBarDlgDrawCommonWindowSupport::CD3DHelper::OnDeviceRecreate(DeviceType p_new_device) noexcept
 {
     m_p_device1 = p_new_device;
     m_is_p_device1_recreated = true;
 }
 
-bool CTaskBarDlgDrawCommonWindowSupport::D3DPart::HandleDeviceRecreationIfNecessary()
+bool CTaskBarDlgDrawCommonWindowSupport::CD3DHelper::HandleDeviceRecreationIfNecessary()
 {
     if (m_is_p_device1_recreated)
     {
@@ -392,7 +392,7 @@ bool CTaskBarDlgDrawCommonWindowSupport::D3DPart::HandleDeviceRecreationIfNecess
     return false;
 }
 
-void CTaskBarDlgDrawCommonWindowSupport::D3DPart::ResizeRenderTarget(D2D1_SIZE_U size)
+void CTaskBarDlgDrawCommonWindowSupport::CD3DHelper::ResizeRenderTarget(D2D1_SIZE_U size)
 {
     auto p_render_target_texture = CreateGdiCompatibleTexture(m_p_device1, size);
     ThrowIfFailed<CD3D10Exception1>(
@@ -404,7 +404,7 @@ void CTaskBarDlgDrawCommonWindowSupport::D3DPart::ResizeRenderTarget(D2D1_SIZE_U
         .SetPsByteCode(GetPsAlphaValueReducer());
 }
 
-void CTaskBarDlgDrawCommonWindowSupport::D3DPart::ResizeGdiInteropPart(D2D1_SIZE_U size)
+void CTaskBarDlgDrawCommonWindowSupport::CD3DHelper::ResizeGdiInteropPart(D2D1_SIZE_U size)
 {
     m_p_gdi_initial_texture = CreateCpuWriteableTexture(m_p_device1, size);
     ThrowIfFailed<CD3D10Exception1>(
@@ -417,13 +417,13 @@ void CTaskBarDlgDrawCommonWindowSupport::D3DPart::ResizeGdiInteropPart(D2D1_SIZE
         TRAFFICMONITOR_ERROR_STR("Get IDXGISurface1 from D2D gdi_final_texture failed."));
 }
 
-auto CTaskBarDlgDrawCommonWindowSupport::D3DPart::GetRenderTargetSurface()
+auto CTaskBarDlgDrawCommonWindowSupport::CD3DHelper::GetRenderTargetSurface()
     -> Microsoft::WRL::ComPtr<IDXGISurface>
 {
     return m_p_render_target_surface;
 }
 
-void CTaskBarDlgDrawCommonWindowSupport::D2DPart::Reinitialize()
+void CTaskBarDlgDrawCommonWindowSupport::CD2DHelper::Reinitialize()
 {
     constexpr static D2D1_DEVICE_CONTEXT_OPTIONS options = D2D1_DEVICE_CONTEXT_OPTIONS_NONE;
 
@@ -451,19 +451,19 @@ void CTaskBarDlgDrawCommonWindowSupport::D2DPart::Reinitialize()
         TRAFFICMONITOR_ERROR_STR("Create background solid color brush failed."));
 }
 
-CTaskBarDlgDrawCommonWindowSupport::D2DPart::D2DPart(CD2D1Device& ref_device)
+CTaskBarDlgDrawCommonWindowSupport::CD2DHelper::CD2DHelper(CD2D1Device& ref_device)
     : Base{ref_device.GetStorage()}, m_p_device{ref_device.Get()}
 {
     Reinitialize();
 }
 
-void CTaskBarDlgDrawCommonWindowSupport::D2DPart::OnDeviceRecreate(DeviceType p_new_device) noexcept
+void CTaskBarDlgDrawCommonWindowSupport::CD2DHelper::OnDeviceRecreate(DeviceType p_new_device) noexcept
 {
     m_p_device = p_new_device;
     m_is_p_device_recreated = true;
 }
 
-bool CTaskBarDlgDrawCommonWindowSupport::D2DPart::HandleDeviceRecreationIfNecessary()
+bool CTaskBarDlgDrawCommonWindowSupport::CD2DHelper::HandleDeviceRecreationIfNecessary()
 {
     if (m_is_p_device_recreated)
     {
@@ -473,7 +473,7 @@ bool CTaskBarDlgDrawCommonWindowSupport::D2DPart::HandleDeviceRecreationIfNecess
     return false;
 }
 
-void CTaskBarDlgDrawCommonWindowSupport::D2DPart::RebindRenderTargetSurface(Microsoft::WRL::ComPtr<IDXGISurface> p_surface)
+void CTaskBarDlgDrawCommonWindowSupport::CD2DHelper::RebindRenderTargetSurface(Microsoft::WRL::ComPtr<IDXGISurface> p_surface)
 {
     const D2D1_BITMAP_PROPERTIES1 bitmap_properties = D2D1::BitmapProperties1(
         D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
@@ -491,7 +491,7 @@ void CTaskBarDlgDrawCommonWindowSupport::D2DPart::RebindRenderTargetSurface(Micr
     m_p_device_context->SetTarget(p_render_target_bitmap1.Get());
 }
 
-void CTaskBarDlgDrawCommonWindowSupport::D2DPart::SetForeColor(COLORREF color, BYTE alpha)
+void CTaskBarDlgDrawCommonWindowSupport::CD2DHelper::SetForeColor(COLORREF color, BYTE alpha)
 {
     auto new_d2d1_color = CRenderTarget::COLORREF_TO_D2DCOLOR(color, alpha);
     if (!IsBitwiseEquality(new_d2d1_color, m_foreground_color))
@@ -501,7 +501,7 @@ void CTaskBarDlgDrawCommonWindowSupport::D2DPart::SetForeColor(COLORREF color, B
     };
 }
 
-void CTaskBarDlgDrawCommonWindowSupport::D2DPart::SetBackColor(COLORREF color, BYTE alpha)
+void CTaskBarDlgDrawCommonWindowSupport::CD2DHelper::SetBackColor(COLORREF color, BYTE alpha)
 {
     auto new_d2d1_color = CRenderTarget::COLORREF_TO_D2DCOLOR(color, alpha);
     if (!IsBitwiseEquality(new_d2d1_color, m_background_color))
@@ -704,7 +704,7 @@ void CTaskBarDlgDrawCommonWindowSupport::RequestD2D1DeviceRecreate()
     m_ref_taskbardlg_draw_common_support.RecreateD2D1Device();
 }
 
-void CTaskBarDlgDrawCommonWindowSupport::DWriteHelper::SetFont(HFONT h_font)
+void CTaskBarDlgDrawCommonWindowSupport::CDWriteHelper::SetFont(HFONT h_font)
 {
     if (m_h_last_font != h_font)
     {
@@ -732,13 +732,13 @@ void CTaskBarDlgDrawCommonWindowSupport::DWriteHelper::SetFont(HFONT h_font)
     }
 }
 
-auto CTaskBarDlgDrawCommonWindowSupport::DWriteHelper::GetFont() noexcept
+auto CTaskBarDlgDrawCommonWindowSupport::CDWriteHelper::GetFont() noexcept
     -> HFONT
 {
     return m_h_last_font;
 }
 
-auto CTaskBarDlgDrawCommonWindowSupport::DWriteHelper::GetTextFormat() noexcept
+auto CTaskBarDlgDrawCommonWindowSupport::CDWriteHelper::GetTextFormat() noexcept
     -> ComPtr<IDWriteTextFormat>
 {
     return m_p_text_format;

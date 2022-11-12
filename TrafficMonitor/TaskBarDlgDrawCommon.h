@@ -87,7 +87,7 @@ bool IsBitwiseEquality(T& lhs, T& rhs) noexcept
 class CTaskBarDlgDrawCommonWindowSupport
 {
 private:
-    class D3DPart final : public CDeviceResource<CD3D10Device1>
+    class CD3DHelper final : public CDeviceResource<CD3D10Device1>
     {
         friend CTaskBarDlgDrawCommonWindowSupport;
 
@@ -115,8 +115,8 @@ private:
             -> Microsoft::WRL::ComPtr<ID3D10Blob>;
 
     public:
-        D3DPart(CD3D10Device1& ref_device);
-        ~D3DPart() = default;
+        CD3DHelper(CD3D10Device1& ref_device);
+        ~CD3DHelper() = default;
 
         void OnDeviceRecreate(DeviceType p_new_device) noexcept override;
 
@@ -126,9 +126,9 @@ private:
         auto GetRenderTargetSurface()
             -> Microsoft::WRL::ComPtr<IDXGISurface>;
     };
-    class D2DPart final : public CDeviceResource<CD2D1Device>
+    class CD2DHelper final : public CDeviceResource<CD2D1Device>
     {
-        friend class D3DPart;
+        friend class CD3DHelper;
         friend CTaskBarDlgDrawCommonWindowSupport;
 
         using Base = CDeviceResource<CD2D1Device>;
@@ -152,8 +152,8 @@ private:
         void Reinitialize();
 
     public:
-        D2DPart(CD2D1Device& ref_device);
-        ~D2DPart() = default;
+        CD2DHelper(CD2D1Device& ref_device);
+        ~CD2DHelper() = default;
 
         void OnDeviceRecreate(DeviceType p_new_device) noexcept override;
 
@@ -162,8 +162,7 @@ private:
         void SetForeColor(COLORREF color, BYTE alpha);
         void SetBackColor(COLORREF color, BYTE alpha);
     };
-
-    class DWriteHelper
+    class CDWriteHelper
     {
     private:
         Microsoft::WRL::ComPtr<IDWriteTextFormat> m_p_text_format{};
@@ -171,8 +170,8 @@ private:
         LOGFONTW m_last_font{};
 
     public:
-        DWriteHelper() = default;
-        ~DWriteHelper() = default;
+        CDWriteHelper() = default;
+        ~CDWriteHelper() = default;
 
         void SetFont(HFONT h_font);
         auto GetFont() noexcept
@@ -182,9 +181,9 @@ private:
     };
 
     D2D1_SIZE_U m_size{0, 0};
-    D3DPart m_d3d_part;
-    D2DPart m_d2d_part;
-    DWriteHelper m_dwrite_helper{};
+    CD3DHelper m_d3d_part;
+    CD2DHelper m_d2d_part;
+    CDWriteHelper m_dwrite_helper{};
     CTaskBarDlgDrawCommonSupport& m_ref_taskbardlg_draw_common_support;
     bool m_is_size_updated{true};
 
