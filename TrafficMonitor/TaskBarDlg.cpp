@@ -487,15 +487,24 @@ bool CTaskBarDlg::AdjustWindowPos()
                     //{
                     if (theApp.m_taskbar_data.tbar_wnd_snap)
                     {
-                        int taskbar_btn_num{ 1 };      //Win11任务栏“运行中的程序”左侧4个按钮（开始、搜索、任务视图、聊天）有几个显示。（“开始”按钮总是显示）
+                        int taskbar_btn_width = DPI(44);      //Win11任务栏“运行中的程序”左侧4个按钮（开始、搜索、任务视图、聊天）的宽度，每个按钮44像素。（“开始”按钮总是显示）
                         if (CWindowsSettingHelper::IsTaskbarSearchBtnShown())
-                            taskbar_btn_num++;
+                        {
+                            if (theApp.m_win_version.IsWindows11BigSearchButton())
+                                taskbar_btn_width += DPI(107);      //最新版本的Windows11的搜索按钮比其他按钮宽
+                            else
+                                taskbar_btn_width += DPI(44);
+                        }
                         if (CWindowsSettingHelper::IsTaskbarTaskViewBtnShown())
-                            taskbar_btn_num++;
+                        {
+                            taskbar_btn_width += DPI(44);
+                        }
                         if (CWindowsSettingHelper::IsTaskbarChartBtnShown())
-                            taskbar_btn_num++;
+                        {
+                            taskbar_btn_width += DPI(44);
+                        }
 
-                        m_rect.MoveToX(m_rcMin.left - m_rect.Width() - 2 - DPI(44) * taskbar_btn_num);   //每个按钮44像素
+                        m_rect.MoveToX(m_rcMin.left - m_rect.Width() - 2 - taskbar_btn_width);
                     }
                     else
                     {
