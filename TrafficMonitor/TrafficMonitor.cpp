@@ -931,23 +931,6 @@ BOOL CTrafficMonitorApp::InitInstance()
     LoadPluginDisabledSettings();
     m_plugins.LoadPlugins();
 
-    //向插件传递配置文件的路径
-    wstring plugin_dir;
-#ifdef _DEBUG
-    plugin_dir = m_module_dir;
-#else
-    plugin_dir = m_config_dir;
-#endif
-    plugin_dir += L"plugins\\";
-    m_plugins.EnumPlugin([&](ITMPlugin* plugin)
-        {
-            if (plugin->GetAPIVersion() >= 2)
-            {
-                CreateDirectory(plugin_dir.c_str(), NULL);       //如果plugins不存在，则创建它
-                plugin->OnExtenedInfo(ITMPlugin::EI_CONFIG_DIR, plugin_dir.c_str());
-            }
-        });
-
     //从ini文件载入设置
     LoadConfig();
 
