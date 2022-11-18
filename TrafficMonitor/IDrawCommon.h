@@ -50,7 +50,9 @@ namespace DrawCommonHelper
         // 使用GDI
         Default,
         // 如果支持，使用D2D1
-        D2D1
+        D2D1,
+        // 如果系统大于win8.1，则在使用D2D1时利用DirectComposition呈现结果
+        D2D1_WITH_DCOMPOSITION
     };
 
     constexpr BYTE GDI_NO_MODIFIED_FLAG = 0x01;

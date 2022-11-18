@@ -523,11 +523,13 @@
     <ClInclude Include="CVariant.h" />
     <ClInclude Include="D2D1Support.h" />
     <ClInclude Include="D3D10Support1.h" />
+    <ClInclude Include="DCompositionSupport.h" />
     <ClInclude Include="DisplayTextSettingDlg.h" />
     <ClInclude Include="DllFunctions.h" />
     <ClInclude Include="DrawCommonEx.h" />
     <ClInclude Include="DrawCommonFactory.h" />
     <ClInclude Include="DrawTextManager.h" />
+    <ClInclude Include="Dxgi1Support2.h" />
     <ClInclude Include="FilePathHelper.h" />
     <ClInclude Include="HighResolutionTimer.h" />
     <ClInclude Include="HistoryTrafficCalendarDlg.h" />
@@ -605,11 +607,13 @@
     <ClCompile Include="CVariant.cpp" />
     <ClCompile Include="D2D1Support.cpp" />
     <ClCompile Include="D3D10Support1.cpp" />
+    <ClCompile Include="DCompositionSupport.cpp" />
     <ClCompile Include="DisplayTextSettingDlg.cpp" />
     <ClCompile Include="DllFunctions.cpp" />
     <ClCompile Include="DrawCommonEx.cpp" />
     <ClCompile Include="DrawCommonFactory.cpp" />
     <ClCompile Include="DrawTextManager.cpp" />
+    <ClCompile Include="Dxgi1Support2.cpp" />
     <ClCompile Include="FilePathHelper.cpp" />
     <ClCompile Include="HistoryTrafficCalendarDlg.cpp" />
     <ClCompile Include="HistoryTrafficFile.cpp" />

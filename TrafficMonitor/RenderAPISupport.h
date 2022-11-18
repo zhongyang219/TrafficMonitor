@@ -36,15 +36,31 @@ struct MutipleStorage : public Ts...
 template <class T>
 using storage_t = typename T::Storage;
 
-template <class ResourceTracker, class Device>
-void NotifyAllResourceWhenDeviceRecreate(ResourceTracker& tracker, Device& device)
+template <class T>
+using resource_t = typename T::Resource;
+
+template <class T>
+struct get_first_template_argument;
+template <template <class> class T1, class T2>
+struct get_first_template_argument<T1<T2>>
 {
-    auto ref_track_set = tracker.GetTrackerSet();
-    for (auto&& it : ref_track_set)
-    {
-        it->OnDeviceRecreate(device);
-    }
-}
+    using type = T2;
+};
+template <class T>
+using get_first_template_argument_t = typename get_first_template_argument<T>::type;
+
+template <class T>
+struct resolve_member_function;
+template <class R, class C>
+struct resolve_member_function<R C::*>
+{
+    using member_type = R;
+    using class_type = C;
+};
+template<class T>
+using get_member_class_t = typename resolve_member_function<T>::class_type;
+template <class T>
+using get_member_t = typename resolve_member_function<T>::member_type;
 
 /**
  * @brief CRTP 基类
@@ -114,10 +130,20 @@ public:
     }
 };
 
+template <class Device>
+class CDeviceResourceBase;
+
 template <class Resource>
 class CResourceTracker
 {
-    using ResourcePointer = std::add_pointer_t<Resource>;
+    /**
+     * @brief 将CDeviceResource<Device>变换为CDeviceResourceBase<Device>*
+     *
+     */
+    using ResourcePointer =
+        std::add_pointer_t<
+            CDeviceResourceBase<
+                get_first_template_argument_t<Resource>>>;
 
 public:
     struct Storage
@@ -167,8 +193,30 @@ public:
     }
 };
 
+#define TRAFFICMONITOR_DV_V(v) decltype(v), v
+
+template <class T, T PClassFunction, class Resource, class... Args>
+void CallFunctionForEachResource(CResourceTracker<Resource>& tracker, Args&&... args)
+{
+    static_assert(!std::is_base_of<decltype(*tracker.GetTrackerSet().begin()), Resource>{},
+                  "Type Resource is not derived from std::remove_pointer_t<CResourceTracker<Resource>::ResourcePointer>");
+
+    auto ref_track_set = tracker.GetTrackerSet();
+    for (auto&& it : ref_track_set)
+    {
+        auto* it_impl = static_cast<Resource*>(it);
+        (it_impl->*PClassFunction)(std::forward<Args>(args)...);
+    }
+}
+
+template <class Resource, class Device>
+void NotifyAllResourceWhenDeviceRecreate(CResourceTracker<Resource>& tracker, Device& device)
+{
+    CallFunctionForEachResource<TRAFFICMONITOR_DV_V(&Resource::OnDeviceRecreate)>(tracker, device);
+}
+
 template <class Device>
-class CDeviceResource
+class CDeviceResourceBase
 {
 public:
     using DeviceType = typename Device::Type;
@@ -180,7 +228,7 @@ private:
 
     std::weak_ptr<Storage> m_wp_device_storage;
 
-    static void BeginTrack(CDeviceResource& device_resource)
+    static void BeginTrack(CDeviceResourceBase& device_resource)
     {
         auto sp_device_storage = device_resource.m_wp_device_storage.lock();
         if (sp_device_storage)
@@ -188,7 +236,7 @@ private:
             sp_device_storage->AddResource(std::addressof(device_resource));
         }
     }
-    static void EndTrack(CDeviceResource& device_resource)
+    static void EndTrack(CDeviceResourceBase& device_resource)
     {
         auto sp_device_storage = device_resource.m_wp_device_storage.lock();
         if (sp_device_storage)
@@ -198,56 +246,55 @@ private:
     }
 
 public:
-    CDeviceResource(const std::shared_ptr<Storage> sp_device_storage)
+    CDeviceResourceBase(const std::shared_ptr<Storage> sp_device_storage)
         : m_wp_device_storage{sp_device_storage}
     {
         BeginTrack(*this);
     }
-    ~CDeviceResource()
+
+protected:
+    ~CDeviceResourceBase()
     {
         EndTrack(*this);
     }
-    CDeviceResource(const CDeviceResource& other)
+
+public:
+    CDeviceResourceBase(const CDeviceResourceBase& other)
         : m_wp_device_storage{other.m_wp_device_storage}
     {
         BeginTrack(*this);
     }
-    CDeviceResource& operator=(CDeviceResource& other)
+    CDeviceResourceBase& operator=(CDeviceResourceBase& other)
     {
         this->m_wp_device_storage = other.m_wp_device;
         BeginTrack(*this);
         return *this;
     }
-    CDeviceResource(CDeviceResource&& other)
+    CDeviceResourceBase(CDeviceResourceBase&& other)
         : m_wp_device_storage{}
     {
         EndTrack(other);
         m_wp_device_storage = std::exchange(other.m_wp_device_storage, nullptr);
         BeginTrack(*this);
     }
-    CDeviceResource& operator=(CDeviceResource&& other)
+    CDeviceResourceBase& operator=(CDeviceResourceBase&& other)
     {
         EndTrack(other);
         this->m_wp_device_storage = std::exchange(other.m_wp_device_storage, nullptr);
         BeginTrack(*this);
         return *this;
     }
+};
+
+template <class Device>
+class CDeviceResource : public CDeviceResourceBase<Device>
+{
+private:
+    using Base = CDeviceResourceBase<Device>;
+
+public:
+    using Base::Base;
+    using typename Base::DeviceType;
 
     virtual void OnDeviceRecreate(DeviceType new_device) noexcept = 0;
-
-    /**
-     * @brief 当Device不是继承自CTrackableDevice<Device>时
-     （即Device::Storage不能转换为CTrackableDevice<Device>::Storage时），不能在代码中调用此函数
-     *
-     */
-    void RequestDeviceRecreate()
-    {
-        auto sp_device_storage = m_wp_device_storage.lock();
-        if (sp_device_storage)
-        {
-            auto sp_trackable_device = std::static_pointer_cast<typename CTrackableDevice<Device>::Storage>(sp_device_storage);
-            auto p_device = sp_trackable_device->GetDevicePointer();
-            p_device->Recreate();
-        }
-    }
 };
