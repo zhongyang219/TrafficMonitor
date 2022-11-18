@@ -343,6 +343,11 @@ UINT CImage2DEffect::GetOutputHeight() const noexcept
 auto CImage2DEffect::SetInputTexture(Microsoft::WRL::ComPtr<ID3D10Texture2D> p_input)
     -> CImage2DEffect&
 {
+    if(m_p_input == p_input)
+    {
+        return *this;
+    }
+
     RecreateInputTextureRelatedResources(p_input);
     m_p_input = p_input;
     return *this;
@@ -357,6 +362,11 @@ auto CImage2DEffect::GetInputTexture() noexcept
 auto CImage2DEffect::SetOutputTexture(Microsoft::WRL::ComPtr<ID3D10Texture2D> p_output)
     -> CImage2DEffect&
 {
+    if (m_p_output == p_output)
+    {
+        return *this;
+    }
+
     RecreateOutputTextureRelatedResources(p_output);
     m_p_output = p_output;
     return *this;
