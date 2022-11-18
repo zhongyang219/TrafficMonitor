@@ -1,18 +1,18 @@
-﻿<version>1.84</version>
+﻿<version>1.84.1</version>
 <GitHub>
-	<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84/TrafficMonitor_V1.84_x86.zip</link>
-	<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84/TrafficMonitor_V1.84_x64.zip</link_x64>
-	<link_without_temperature>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84/TrafficMonitor_V1.84_x86_Lite.zip</link_without_temperature>
-	<link_without_temperature_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84/TrafficMonitor_V1.84_x64_Lite.zip</link_without_temperature_x64>
+	<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x86.zip</link>
+	<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x64.zip</link_x64>
+	<link_without_temperature>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x86_Lite.zip</link_without_temperature>
+	<link_without_temperature_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x64_Lite.zip</link_without_temperature_x64>
 </GitHub>
 <Gitee>
-	<link>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84/TrafficMonitor_V1.84_x86.zip</link>
-	<link_x64>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84/TrafficMonitor_V1.84_x64.zip</link_x64>
-	<link_without_temperature>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84/TrafficMonitor_V1.84_x86_Lite.zip</link_without_temperature>
-	<link_without_temperature_x64>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84/TrafficMonitor_V1.84_x64_Lite.zip</link_without_temperature_x64>
+	<link>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x86.zip</link>
+	<link_x64>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x64.zip</link_x64>
+	<link_without_temperature>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x86_Lite.zip</link_without_temperature>
+	<link_without_temperature_x64>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x64_Lite.zip</link_without_temperature_x64>
 </Gitee>
 <update_contents>
-	<contents_zh_cn>修正Windows11 22H2版本中任务栏窗口位置不正确的问题。\n修正Windows11下任务栏窗口显示在左侧时会和系统自带的小组件重叠的问题。\n新增CPU频率的显示。\n修正主窗口网速单位缺少“/s”的问题。\n修正写入ini文件时可能导致字符串缓冲区不足的问题。\n插件接口更新，允许插件响应键盘事件。\n修正任务栏窗口在不同DPI显示器切换后显示不正常的问题。\n修正简体中文语言下历史流量统计中的“转到今天”命令无效的问题。\n修正“插件管理”界面中在右键菜单中选择“详细信息”会弹出“选项”对话框的问题。\n更新HardwareMonitor lib 以解决无法获取 Intel 12 代处理器温度的问题。</contents_zh_cn>
-	<contents_en>Fixed the problem that the position of the taskbar window is not correct in Windows 11 22H2.\nFixed the problem that the taskbar window overlapped with the system widgets when the taskbar window displayed on the left side in Windows 11.\nAdded display of CPU frequency.\nFixed the problem that the "/s" of the net speed is missing in the main window.\nFixed the problem that may cause insufficient string buffer when writing INI files.\nUpdated the plugin interface that allows plugin response keyboard events.\nFixed the problem that the taskbar window would not display properly after switching between different DPI monitors.\nFixed the problem where "Options" dialog box would pop up when selecting "Details" from the context menu in the "Plugin Management" dialog.\nUpdate the HardwareMonitor lib to resolve the problem that the temperature of Intel 12th Gen processor cannot be obtained.</contents_en>
-	<contents_zh_tw>修正Windows11 22H2版本中工作列視窗位置不正確的問題。\n修正Windows11下工作列視窗顯示在左側時會和系統自帶的小元件重疊的問題。\n新增CPU頻率的顯示。\n修正主視窗網速單位缺少“/s”的問題。\n修正寫入ini檔時可能導致字串緩衝區不足的問題。\n外掛程式介面更新，允許外掛程式回應鍵盤事件。\n修正工作列視窗在不同DPI顯示器切換後顯示不正常的問題。\n修正“外掛管理”介面中在右鍵功能表中選擇“詳細資訊”會彈出“選項”對話方塊的問題。\n更新HardwareMonitor lib 以解決無法獲取 Intel 12 代處理器溫度的問題。</contents_zh_tw>
+	<contents_zh_cn>修正Windows11下任务栏窗口无法显示到左边的问题\n修正任务栏显示在桌面两侧时任务栏窗口会显示不全的问题\n修正Windows11 22H2中，关闭了所有窗口且任务栏上没有固定任何图标时，任务栏窗口位置不正确的问题\n为触屏设备添加长按右键菜单的支持\n修正由于最新版本Windows11中搜索按钮比较宽导致任务栏窗口的位置不正确的问题\n修正“关于”对话框的大小有时不正确的问题</contents_zh_cn>
+	<contents_en>Fixed the issue that the taskbar window cannot be displayed on the left side in Window 11.\nFixed the issue that the information in the taskbar window could not be fully displayed when the taskbar on the left or right side of the desktop.\nFixed the issue in Windows 11 22H2, when all the windows are closed and no icons are fixed on the taskbar, the position of the taskbar window is not correct.\nAdded the support of long press to show context menu in touchscreen devices.\nFixed the issue that the position of the taskbar window is not correct due to the wide search button in the latest version of Windows 11.\nFixed the issue that the size of "About" dialog box is not correct.</contents_en>
+	<contents_zh_tw>修正Windows11下工作列視窗無法顯示到左邊的問題\n修正工作列顯示在桌面兩側時工作列視窗會顯示不全的問題\n修正Windows11 22H2中，關閉了所有視窗且工作列上沒有固定任何圖示時，工作列視窗位置不正確的問題\n為觸屏裝置新增長按右鍵選單的支援\n修正由於最新版本Windows11中搜索按鈕比較寬導致工作列視窗的位置不正確的問題\n修正“關於”對話方塊的大小有時不正確的問題</contents_zh_tw>
 </update_contents>

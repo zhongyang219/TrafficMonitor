@@ -1,4 +1,4 @@
-<version>1.84</version>
-<link>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84/TrafficMonitor_V1.84_x86_Lite.zip</link>
-<link_x64>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84/TrafficMonitor_V1.84_x64_Lite.zip</link_x64>
-<contents>修正Windows11 22H2版本中任务栏窗口位置不正确的问题。\n修正Windows11下任务栏窗口显示在左侧时会和系统自带的小组件重叠的问题。\n新增CPU频率的显示。\n修正主窗口网速单位缺少“/s”的问题。\n修正写入ini文件时可能导致字符串缓冲区不足的问题。\n插件接口更新，允许插件响应键盘事件。\n修正任务栏窗口在不同DPI显示器切换后显示不正常的问题。\n修正简体中文语言下历史流量统计中的“转到今天”命令无效的问题。\n修正“插件管理”界面中在右键菜单中选择“详细信息”会弹出“选项”对话框的问题。\n更新HardwareMonitor lib 以解决无法获取 Intel 12 代处理器温度的问题。</contents>
+<version>1.84.1</version>
+<link>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x86_Lite.zip</link>
+<link_x64>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x64_Lite.zip</link_x64>
+<contents>修正Windows11下任务栏窗口无法显示到左边的问题\n修正任务栏显示在桌面两侧时任务栏窗口会显示不全的问题\n修正Windows11 22H2中，关闭了所有窗口且任务栏上没有固定任何图标时，任务栏窗口位置不正确的问题\n为触屏设备添加长按右键菜单的支持\n修正由于最新版本Windows11中搜索按钮比较宽导致任务栏窗口的位置不正确的问题\n修正“关于”对话框的大小有时不正确的问题</contents>
