@@ -47,10 +47,12 @@ namespace OpenHardwareMonitorApi {
         float m_cpu_temperature{};
         float m_gpu_nvidia_temperature{};
         float m_gpu_ati_temperature{};
+        float m_gpu_intel_temperature{};
         float m_hdd_temperature{};
         float m_main_board_temperature{};
         float m_gpu_nvidia_usage{};
         float m_gpu_ati_usage{};
+        float m_gpu_intel_usage{};
         float m_cpu_freq{};
         std::map<std::wstring, float> m_all_hdd_temperature;
         std::map<std::wstring, float> m_all_cpu_temperature;
