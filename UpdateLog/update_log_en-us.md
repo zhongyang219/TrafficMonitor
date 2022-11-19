@@ -1,10 +1,18 @@
-**[简体中文](./update_log.md) | [繁體中文](./update_log_zh-tw.md) | English**<br>
+**[简体中文](./update_log.md) | [繁體中文](./update_log_zh-tw.md) | English**
 
 # TrafficMonitor Update log
+## V1.84.1 (2022/11/18)
+
+* Fixed the issue that the taskbar window cannot be displayed on the left side in Window 11.
+* Fixed the issue that the information in the taskbar window could not be fully displayed when the taskbar on the left or right side of the desktop.
+* Fixed the issue in Windows 11 22H2, when all the windows are closed and no icons are fixed on the taskbar, the position of the taskbar window is not correct.
+* Added the support of long press to show context menu in touchscreen devices.
+* Fixed the issue that the position of the taskbar window is not correct due to the wide search button in the latest version of Windows 11.
+* Fixed the issue that the size of "About" dialog box is not correct.
+
 ## V1.84 (2022/10/05)
 
 * Fixed the problem that the position of the taskbar window is not correct in Windows 11 22H2.
-
 * Fixed the problem that the taskbar window overlapped with the system widgets when the taskbar window displayed on the left side in Windows 11.
 * Added display of CPU frequency.
 * Fixed the problem that the "/s" of the net speed is missing in the main window.
