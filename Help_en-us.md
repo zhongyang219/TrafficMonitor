@@ -1,4 +1,5 @@
-**[简体中文](./Help.md) | English**<br>
+**[简体中文](./Help.md) | English**
+
 # TrafficMonitor Frequently Asked Questions
 This is the page about the Frequently Asked Questions of TrafficMonitor. If you want to view the detailed introduction of the functions and usage of TrafficMonitor, please [click here](https://github.com/zhongyang219/TrafficMonitor/wiki) to go the the TraffinMonitor Wiki page (Only Chinese Available).
 
@@ -11,9 +12,35 @@ Click the right mouse button in the taskbar, select Taskbar Settings, and change
 ### How to show the CPU and memory usage?
 
 Right click the main window and check "Show More Info". If you also need to display the CPU and memory usage in the taskbar window, right click the taskbar window and check "CPU and Memory Usage" in the "Display Settings<img src="./Screenshots/images/item.png" style="zoom: 80%;" />" sub menu.
+
+### How do I change the text such as "CPU" and "MEM" in the taskbar
+
+The label text in the taskbar window can be customized. Right click on the taskbar window, select "Options", click "Taskbar Windows Settings", click "Display Text settings" button, the text on the right side of the item can be modified by double click. After modified, click "OK" button twice.
+
+<img src="Screenshots/images/image-20221119093547649.png" alt="image-20221119093547649" style="zoom:80%;" />
+
+Because the text is customizable, it does not automatically change when you switch the language. After you swatch the language, you can click "Restore default" button in the "Display Text settings" dialog box.
+
+### The net speed is always displayed as 0KB
+
+This may caused by the switch of the network you are using on your computer.
+
+Click "Refresh connection list" under "Select network connections" in the context menu may solve this problem.
+
+<img src="Screenshots/images/image-20221119094324759.png" alt="image-20221119094324759" style="zoom:80%;" />
+
+If this problem still exists, please try to select the network connection you want to monitored in the "Select network connections" submenu instead of select "Auto select".
+
+If this problem still exists, please try to click the "Select the connection to monitor" button in "Options Settings" > "General Settings" > "Advanced", check the network you want to monitored, uncheck other items, and click "OK" button twice.
+
+<img src="Screenshots/images/image-20221119094501312.png" alt="image-20221119094501312" style="zoom:80%;" />
+
 ### How do I set the color of each item in the taskbar window individually?
-Select "Options" In the right-click menu, switch to "Taskbar Window Settings" tab, check "Specify colors for each item", and then click the color block on the right side of "Text Color " to pop up the dialog box for taskbar window color settings. <br>
+
+Select "Options" In the right-click menu, switch to "Taskbar Window Settings" tab, check "Specify colors for each item", and then click the color block on the right side of "Text Color " to pop up the dialog box for taskbar window color settings. 
+
 If you do not check "Specify colors for each item", you can only set the uniform color for the text.
+
 ### "Auto run when Windows start" dose not work
 Starting from version 1.80, the version with temperature monitoring and the version without temperature monitoring have adopted different methods to realize "auto run when Windows start".
 
@@ -42,7 +69,7 @@ It should be noted that if you use the version without temperature monitoring to
 If you encountered this problem, that means the program does not have permission to write data to its directory, causing the settings data cannot be saved. Try to move the program to another folder that has write permissions will save this problem. <br>
 You can also change the save path of the configuration and data file to the C:\Users\\<username\>\AppData\Roaming\TrafficMonitor directory by the following steps. <br>
 * Exit TrafficMonitor and restart TrafficMonitor as an administrator.
-* Select "Options" in the right-click menu, switch to the "General Settings" tab, and select "Save to Appdata Directory" in "Configuration and data files".
+* Select "Options" in the right-click menu, switch to the "General Settings" tab, and select "Save to AppData Directory" in "Configuration and data files".
 
 If it still pops up the "Unable to Save Settings" message box, open the directory where the application is located, open the `global_cfg.ini` file. If it doesn't exist, create a new one, adding the following:
 
@@ -61,9 +88,22 @@ After these steps, this problem should not theoretically occur. If this problem 
 
 In version 1.79 and later, if the directory where the program located is not writable, the configuration and data files will be automatically saved to the "C:\Users\\<username\>\AppData\Roaming\TrafficMonitor" directory. At this time, "Options" -“General Settings”-“Save to the program directory” in “Configuration and data files” will not be available.
 
+### The configuration is lost after next start up
+
+If you do not see the "Unable to Save Settings" message box, that means the configuration file can be saved normally. The cause of this problem may be that you have multiple TrafficMonitor application files on your computer and the configuration files are saved in the application directory.
+
+For example, you have open "D:\software\TrafficMonitor\TrafficMonitor.exe", and modified the configuration, but next time you start your computer, "D:\software1\TrafficMonitor\TrafficMonitor.exe" is started, while the configuration files you modified before is saved in "D:\software\TrafficMonitor\\".
+
+The method to solve this problem is:
+
+1. Change the save location of the configuration files to AppData directory in "Option Settings" > "General Settings" > "Configuration and data file".
+2. Delete the TrafficMonitor application files you don't need on your computer, start TrafficMonitor, open "Option Settings" > "General Settings", click "Reset autorun" button. 
+
 ### The suspension window can only be displayed on the main monitor when multiple monitors are present.
-By default, the suspension window cannot be moved out of the screen boundaries. If you need to move the suspension window to other monitors, please right click the suspension window, select "Other Functions", check "Allow Out of Screen Boundaries". At this time the suspension window is no longer limited to the screen, it can be also move to any monitors. <br>
-If you remove the extra monitor, then the suspension window may appear outside the screen area to cause the invisible. At this time, you only need to right click the the icon in the notification area, select "Other function", uncheck "Allow Out of Screen Boundaries", the suspension window will appear in the screen area again.
+By default, the suspension window cannot be moved out of the screen boundaries. If you need to move the suspension window to other monitors, please open "Options" > "Main Window Settings" by right click the suspension window, check "Allow Out of Screen Boundaries", and click "OK" button. At this time the suspension window is no longer limited to the screen, it can be also move to any monitors. 
+
+If you remove the extra monitor, then the suspension window may appear outside the screen area to cause the invisible. At this time, you only need to right click the the icon in the notification area, select "Options", uncheck "Allow Out of Screen Boundaries" in "Main Window Settings", the suspension window will appear in the screen area again.
+
 ### The net speed value is not fully displayed.
 Because the width of each character in different fonts is not the same, in some cases, it does appear the problem of the net speed value is not fully displayed. If this problem occurs, open "Options"-"Taskbar Window Settings", and select a larger value in the "Number of digits" drop down list.
 ### How to cancel after setting the mouse penetrate?
