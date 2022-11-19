@@ -1173,6 +1173,7 @@ std::wstring CTrafficMonitorApp::GetPlauginTooltipInfo() const
         if (item.plugin != nullptr && item.plugin->GetAPIVersion() >= 2)
         {
             std::wstring plugin_tooltip = item.plugin->GetTooltipInfo();
+            CCommon::StringNormalize(plugin_tooltip);
             if (!plugin_tooltip.empty())
             {
                 tip_info += L"\r\n";
