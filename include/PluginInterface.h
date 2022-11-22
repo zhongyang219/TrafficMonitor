@@ -5,6 +5,8 @@
 **********************************************************/
 #pragma once
 
+#define MAX_PLUGIN_COMMAND_NUM 256
+
 //插件显示项目的接口
 class IPluginItem
 {
@@ -146,7 +148,7 @@ public:
      * @attention 插件开发者不应该修改这里的返回值，也不应该重写此虚函数。
      * @return  int
      */
-    virtual int GetAPIVersion() const { return 4; }
+    virtual int GetAPIVersion() const { return 5; }
 
     /**
      * @brief   获取插件显示项目的对象
@@ -258,6 +260,31 @@ public:
      */
     virtual void OnExtenedInfo(ExtendedInfoIndex index, const wchar_t* data) {}
 
+    /**
+     * @brief   获取插件的图标，HICON格式
+     */
+    virtual void* GetPluginIcon() { return nullptr; }
+
+    /**
+     * @brief   获取插件的命令名称
+     * @param   int command_index 插件命令的索引（不超过256）
+     * @return  wchar_t* 插件命令的名称
+     */
+    virtual const wchar_t* GetCommandName(int command_index) { return nullptr; }
+
+    /**
+     * @brief   获取插件的命令图标
+     * @param   int command_index 插件命令的索引（不超过256）
+     * @return  void* 插件命令的图标，HICON格式
+     */
+    virtual void* GetCommandIcon(int command_index) { return nullptr; }
+
+    /**
+     * @brief   执行一个插件命令时由框架调用
+     * @param   int command_index 插件命令的索引（不超过256）
+     */
+    virtual void OnPluginCommand(int command_index) {}
+
 };
 
 /*
@@ -278,5 +305,9 @@ public:
 *     2       | 新增 ITMPlugin::GetTooltipInfo 函数
 * -------------------------------------------------------------------------
 *     3       | 新增 IPluginItem::GetItemWidthEx, IPluginItem::OnMouseEvent 函数
+* -------------------------------------------------------------------------
+*     4       | 新增 IPluginItem::OnKeboardEvent IPluginItem::OnItemInfo 函数
+* -------------------------------------------------------------------------
+*     5       | 新增 ITMPlugin::GetCommandName ITMPlugin::GetCommandIcon ITMPlugin::OnPluginCommand 函数
 * -------------------------------------------------------------------------
 */

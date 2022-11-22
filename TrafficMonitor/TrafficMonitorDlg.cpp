@@ -11,6 +11,7 @@
 #include "SetItemOrderDlg.h"
 #include "WindowsSettingHelper.h"
 #include "PluginInfoDlg.h"
+#include "WIC.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1734,9 +1735,10 @@ void CTrafficMonitorDlg::OnRButtonUp(UINT nFlags, CPoint point)
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     CheckClickedItem(point);
     bool is_plugin_item_clicked = (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr);
+    ITMPlugin* plugin{};
     if (is_plugin_item_clicked)
     {
-        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+        plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
         if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
         {
             if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_RCLICKED, point.x, point.y, (void*)GetSafeHwnd(), 0) != 0)
@@ -1769,6 +1771,22 @@ void CTrafficMonitorDlg::OnRButtonUp(UINT nFlags, CPoint point)
         pContextMenu->SetDefaultItem(-1);
         break;
     }
+
+    if (plugin != nullptr)
+    {
+        //将右键菜单中插件菜单的显示文本改为插件名
+        pContextMenu->ModifyMenu(17, MF_BYPOSITION, 17, plugin->GetInfo(ITMPlugin::TMI_NAME));
+        //获取插件图标
+        HICON plugin_icon{};
+        if (plugin->GetAPIVersion() >= 5)
+            plugin_icon = (HICON)plugin->GetPluginIcon();
+        //设置插件图标
+        if (plugin_icon != nullptr)
+            CMenuIcon::AddIconToMenuItem(pContextMenu->GetSafeHmenu(), 17, TRUE, plugin_icon);
+    }
+    //更新插件子菜单
+    theApp.UpdatePluginMenu(&theApp.m_main_menu_plugin_sub_menu, plugin);
+
     pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
 
     CDialog::OnRButtonUp(nFlags, point1);

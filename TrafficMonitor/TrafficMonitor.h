@@ -88,8 +88,10 @@ public:
 
     CMenu m_main_menu;          //主窗口右键菜单
     CMenu m_main_menu_plugin;   //右击主窗口插件区域的右键菜单
+    CMenu m_main_menu_plugin_sub_menu;
     CMenu m_taskbar_menu;       //任务栏窗口右键菜单
     CMenu m_taskbar_menu_plugin;    //右击任务栏窗口插件区域的右键菜单
+    CMenu m_taskbar_menu_plugin_sub_menu;
 
 #ifndef WITHOUT_TEMPERATURE
     //OpenHardwareMonitor 接口的指针
@@ -150,6 +152,9 @@ public:
     bool IsTaksbarItemDisplayed(CommonDisplayItem item) const;
 
     void SendSettingsToPlugin();    //向所有插件发送当前的选项设置
+
+    //更新插件子菜单
+    static void UpdatePluginMenu(CMenu* pMenu, ITMPlugin* plugin);
 
 private:
     //int m_no_multistart_warning_time{};       //用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示

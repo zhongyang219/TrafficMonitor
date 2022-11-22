@@ -778,15 +778,23 @@ void CTrafficMonitorApp::InitMenuResourse()
     m_taskbar_menu_plugin.LoadMenu(IDR_TASK_BAR_MENU);
 
     //为插件菜单添加额外项目
+    m_main_menu_plugin_sub_menu.CreatePopupMenu();
+    m_main_menu_plugin_sub_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_OPTIONS, CCommon::LoadText(IDS_PLUGIN_OPTIONS, _T("...")));
+    m_main_menu_plugin_sub_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_DETAIL, CCommon::LoadText(IDS_PLUGIN_INFO, _T("...")));
+    CMenuIcon::AddIconToMenuItem(m_main_menu_plugin_sub_menu.GetSafeHmenu(), ID_PLUGIN_OPTIONS, FALSE, GetMenuIcon(IDI_SETTINGS));
+    CMenuIcon::AddIconToMenuItem(m_main_menu_plugin_sub_menu.GetSafeHmenu(), ID_PLUGIN_DETAIL, FALSE, GetMenuIcon(IDI_ITEM));
     CMenu* main_menu_plugin = m_main_menu_plugin.GetSubMenu(0);
     main_menu_plugin->AppendMenu(MF_SEPARATOR);
-    main_menu_plugin->AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_OPTIONS, CCommon::LoadText(IDS_PLUGIN_OPTIONS, _T("...")));
-    main_menu_plugin->AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_DETAIL, CCommon::LoadText(IDS_PLUGIN_INFO, _T("...")));
-  
+    main_menu_plugin->AppendMenu(MF_POPUP | MF_STRING, (UINT)m_main_menu_plugin_sub_menu.m_hMenu, _T("<plugin name>"));
+
+    m_taskbar_menu_plugin_sub_menu.CreatePopupMenu();
+    m_taskbar_menu_plugin_sub_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_OPTIONS_TASKBAR, CCommon::LoadText(IDS_PLUGIN_OPTIONS, _T("...")));
+    m_taskbar_menu_plugin_sub_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_DETAIL_TASKBAR, CCommon::LoadText(IDS_PLUGIN_INFO, _T("...")));
+    CMenuIcon::AddIconToMenuItem(m_taskbar_menu_plugin_sub_menu.GetSafeHmenu(), ID_PLUGIN_OPTIONS_TASKBAR, FALSE, GetMenuIcon(IDI_SETTINGS));
+    CMenuIcon::AddIconToMenuItem(m_taskbar_menu_plugin_sub_menu.GetSafeHmenu(), ID_PLUGIN_DETAIL_TASKBAR, FALSE, GetMenuIcon(IDI_ITEM));
     CMenu* taskbar_menu_plugin = m_taskbar_menu_plugin.GetSubMenu(0);
     taskbar_menu_plugin->AppendMenu(MF_SEPARATOR);
-    taskbar_menu_plugin->AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_OPTIONS_TASKBAR, CCommon::LoadText(IDS_PLUGIN_OPTIONS, _T("...")));
-    taskbar_menu_plugin->AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_DETAIL_TASKBAR, CCommon::LoadText(IDS_PLUGIN_INFO, _T("...")));
+    taskbar_menu_plugin->AppendMenu(MF_POPUP | MF_STRING, (UINT)m_taskbar_menu_plugin_sub_menu.m_hMenu, _T("<plugin name>"));
 
     //为菜单项添加图标
     auto addIconsForMainWindowMenu = [&](const CMenu& menu)
@@ -1243,6 +1251,35 @@ void CTrafficMonitorApp::SendSettingsToPlugin()
             plugin_info.plugin->OnExtenedInfo(ITMPlugin::EI_TASKBAR_WND_NOT_SHOW_UNIT, std::to_wstring(m_taskbar_data.hide_unit).c_str());
             plugin_info.plugin->OnExtenedInfo(ITMPlugin::EI_TASKBAR_WND_NOT_SHOW_PERCENT, std::to_wstring(m_taskbar_data.hide_percent).c_str());
         }
+    }
+}
+
+void CTrafficMonitorApp::UpdatePluginMenu(CMenu* pMenu, ITMPlugin* plugin)
+{
+    if (pMenu != nullptr && plugin != nullptr && plugin->GetAPIVersion() >= 5)
+    {
+        //删除菜单已经存在的插件命令
+        while (pMenu->GetMenuItemCount() > 2)
+        {
+            if (!pMenu->DeleteMenu(pMenu->GetMenuItemCount() - 1, MF_BYPOSITION))
+                break;
+        }
+        //添加分隔符
+        pMenu->AppendMenu(MF_SEPARATOR);
+        //添加插件命令
+        int plugin_cmd_count = 0;
+        for (int i = 0; i < MAX_PLUGIN_COMMAND_NUM; i++)
+        {
+            const wchar_t* cmd_name = plugin->GetCommandName(i);
+            if (cmd_name != nullptr)
+            {
+                pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_COMMAND_START + i, cmd_name);
+                plugin_cmd_count++;
+            }
+        }
+        //如果没有添加任何插件命令，删除分隔符
+        if (plugin_cmd_count == 0)
+            pMenu->DeleteMenu(pMenu->GetMenuItemCount() - 1, MF_BYPOSITION);
     }
 }
 

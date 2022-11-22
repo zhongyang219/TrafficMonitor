@@ -7,6 +7,7 @@
 #include "afxdialogex.h"
 #include "TrafficMonitorDlg.h"
 #include "WindowsSettingHelper.h"
+#include "WIC.h"
 
 // CTaskBarDlg 对话框
 
@@ -1122,10 +1123,11 @@ void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     m_menu_popuped = true;
     m_tool_tips.Pop();
+    ITMPlugin* plugin{};
     bool is_plugin_item_clicked = (CheckClickedItem(point) && m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr);
     if (is_plugin_item_clicked)
     {
-        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+        plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
         if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
         {
             if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_RCLICKED, point.x, point.y, (void*)GetSafeHwnd(), IPluginItem::MF_TASKBAR_WND) != 0)
@@ -1137,7 +1139,24 @@ void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
     GetCursorPos(&point1);  //获取当前光标的位置，以便使得菜单可以跟随光标
     CMenu* pMenu = (is_plugin_item_clicked ? theApp.m_taskbar_menu_plugin.GetSubMenu(0) : theApp.m_taskbar_menu.GetSubMenu(0));
     if (pMenu != nullptr)
-        pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
+    {
+        if (plugin != nullptr)
+        {
+            //将右键菜单中插件菜单的显示文本改为插件名
+            pMenu->ModifyMenu(15, MF_BYPOSITION, 15, plugin->GetInfo(ITMPlugin::TMI_NAME));
+            //获取插件图标
+            HICON plugin_icon{};
+            if (plugin->GetAPIVersion() >= 5)
+                plugin_icon = (HICON)plugin->GetPluginIcon();
+            //设置插件图标
+            if (plugin_icon != nullptr)
+                CMenuIcon::AddIconToMenuItem(pMenu->GetSafeHmenu(), 15, TRUE, plugin_icon);
+        }
+        //更新插件子菜单
+        theApp.UpdatePluginMenu(&theApp.m_taskbar_menu_plugin_sub_menu, plugin);
+        //弹出菜单
+        pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this);
+    }
     CDialogEx::OnRButtonUp(nFlags, point1);
 }
 

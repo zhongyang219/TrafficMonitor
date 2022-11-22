@@ -617,13 +617,15 @@
 #define ID_DISPLAY_SETTINGS             33405
 #define ID_PLUGIN_DETAIL_TASKBAR        33406
 #define ID_PLUGIN_OPTIONS_TASKBAR       33407
+#define ID_PLUGIN_COMMAND_START         33408
+#define ID_PLUGIN_COMMAND_MAX           33664
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        341
-#define _APS_NEXT_COMMAND_VALUE         33408
+#define _APS_NEXT_COMMAND_VALUE         33665
 #define _APS_NEXT_CONTROL_VALUE         1166
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

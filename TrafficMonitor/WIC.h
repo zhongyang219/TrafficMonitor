@@ -31,5 +31,8 @@ private:
     static HRESULT AddBitmapToMenuItem(HMENU hmenu, int iItem, BOOL fByPosition, HBITMAP hbmp);
     static void InitBitmapInfo(__out_bcount(cbInfo) BITMAPINFO *pbmi, ULONG cbInfo, LONG cx, LONG cy, WORD bpp);
     static HRESULT Create32BitHBITMAP(HDC hdc, const SIZE *psize, __deref_opt_out void **ppvBits, __out HBITMAP* phBmp);
+    static HRESULT GetBitmapByIcon(HICON hicon, HBITMAP& hbmp);
+
+    static std::map<HICON, HBITMAP> m_icon_map;
 };
 
