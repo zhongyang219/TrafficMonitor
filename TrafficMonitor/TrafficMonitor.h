@@ -86,8 +86,10 @@ public:
     CPluginManager m_plugins;
     CDllFunctions m_dll_functions;
 
-    CMenu m_main_menu;
-    CMenu m_taskbar_menu;
+    CMenu m_main_menu;          //主窗口右键菜单
+    CMenu m_main_menu_plugin;   //右击主窗口插件区域的右键菜单
+    CMenu m_taskbar_menu;       //任务栏窗口右键菜单
+    CMenu m_taskbar_menu_plugin;    //右击任务栏窗口插件区域的右键菜单
 
 #ifndef WITHOUT_TEMPERATURE
     //OpenHardwareMonitor 接口的指针

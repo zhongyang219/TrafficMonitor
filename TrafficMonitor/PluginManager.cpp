@@ -160,6 +160,16 @@ ITMPlugin* CPluginManager::GetPluginByItem(IPluginItem* pItem)
     return m_plguin_item_map[pItem];
 }
 
+int CPluginManager::GetPluginIndex(ITMPlugin* plugin) const
+{
+    for (auto iter = m_modules.begin(); iter != m_modules.end(); ++iter)
+    {
+        if (iter->plugin == plugin)
+            return iter - m_modules.begin();
+    }
+    return -1;
+}
+
 void CPluginManager::EnumPlugin(std::function<void(ITMPlugin*)> func) const
 {
     for (const auto& item : m_modules)

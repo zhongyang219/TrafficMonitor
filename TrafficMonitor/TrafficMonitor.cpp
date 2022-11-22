@@ -773,7 +773,20 @@ void CTrafficMonitorApp::InitMenuResourse()
 {
     //载入菜单
     m_main_menu.LoadMenu(IDR_MENU1);
+    m_main_menu_plugin.LoadMenu(IDR_MENU1);
     m_taskbar_menu.LoadMenu(IDR_TASK_BAR_MENU);
+    m_taskbar_menu_plugin.LoadMenu(IDR_TASK_BAR_MENU);
+
+    //为插件菜单添加额外项目
+    CMenu* main_menu_plugin = m_main_menu_plugin.GetSubMenu(0);
+    main_menu_plugin->AppendMenu(MF_SEPARATOR);
+    main_menu_plugin->AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_OPTIONS, CCommon::LoadText(IDS_PLUGIN_OPTIONS, _T("...")));
+    main_menu_plugin->AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_DETAIL, CCommon::LoadText(IDS_PLUGIN_INFO, _T("...")));
+  
+    CMenu* taskbar_menu_plugin = m_taskbar_menu_plugin.GetSubMenu(0);
+    taskbar_menu_plugin->AppendMenu(MF_SEPARATOR);
+    taskbar_menu_plugin->AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_OPTIONS_TASKBAR, CCommon::LoadText(IDS_PLUGIN_OPTIONS, _T("...")));
+    taskbar_menu_plugin->AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_DETAIL_TASKBAR, CCommon::LoadText(IDS_PLUGIN_INFO, _T("...")));
 
     //为菜单项添加图标
     //主窗口右键菜单
