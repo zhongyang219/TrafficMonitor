@@ -1256,7 +1256,7 @@ void CTrafficMonitorApp::SendSettingsToPlugin()
 
 void CTrafficMonitorApp::UpdatePluginMenu(CMenu* pMenu, ITMPlugin* plugin)
 {
-    if (pMenu != nullptr && plugin != nullptr && plugin->GetAPIVersion() >= 5)
+    if (pMenu != nullptr && plugin != nullptr)
     {
         //删除菜单已经存在的插件命令
         while (pMenu->GetMenuItemCount() > 2)
@@ -1264,22 +1264,25 @@ void CTrafficMonitorApp::UpdatePluginMenu(CMenu* pMenu, ITMPlugin* plugin)
             if (!pMenu->DeleteMenu(pMenu->GetMenuItemCount() - 1, MF_BYPOSITION))
                 break;
         }
-        //添加分隔符
-        pMenu->AppendMenu(MF_SEPARATOR);
         //添加插件命令
-        int plugin_cmd_count = 0;
-        for (int i = 0; i < MAX_PLUGIN_COMMAND_NUM; i++)
+        if (plugin->GetAPIVersion() >= 5)
         {
-            const wchar_t* cmd_name = plugin->GetCommandName(i);
-            if (cmd_name != nullptr)
+            int plugin_cmd_count = plugin->GetCommandCount();
+            //添加分隔符
+            if (plugin_cmd_count > 0)
+                pMenu->AppendMenu(MF_SEPARATOR);
+            for (int i = 0; i < plugin_cmd_count; i++)
             {
-                pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_COMMAND_START + i, cmd_name);
-                plugin_cmd_count++;
+                const wchar_t* cmd_name = plugin->GetCommandName(i);
+                if (cmd_name != nullptr)
+                {
+                    pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_COMMAND_START + i, cmd_name);
+                    //添加命令图标
+                    HICON cmd_icon = (HICON)plugin->GetCommandIcon(i);
+                    CMenuIcon::AddIconToMenuItem(pMenu->GetSafeHmenu(), ID_PLUGIN_COMMAND_START + i, FALSE, cmd_icon);
+                }
             }
         }
-        //如果没有添加任何插件命令，删除分隔符
-        if (plugin_cmd_count == 0)
-            pMenu->DeleteMenu(pMenu->GetMenuItemCount() - 1, MF_BYPOSITION);
     }
 }
 

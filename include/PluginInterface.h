@@ -5,8 +5,6 @@
 **********************************************************/
 #pragma once
 
-#define MAX_PLUGIN_COMMAND_NUM 256
-
 //插件显示项目的接口
 class IPluginItem
 {
@@ -266,22 +264,28 @@ public:
     virtual void* GetPluginIcon() { return nullptr; }
 
     /**
+     * @brief   获取插件的命令的数量
+     * @return  int 插件的命令的数量
+     */
+    virtual int GetCommandCount() { return 0; }
+
+    /**
      * @brief   获取插件的命令名称
-     * @param   int command_index 插件命令的索引（不超过256）
+     * @param   int command_index 插件命令的索引（从0开始，小于GetCommandCount()的返回值）
      * @return  wchar_t* 插件命令的名称
      */
     virtual const wchar_t* GetCommandName(int command_index) { return nullptr; }
 
     /**
      * @brief   获取插件的命令图标
-     * @param   int command_index 插件命令的索引（不超过256）
+     * @param   int command_index 插件命令的索引（从0开始，小于GetCommandCount()的返回值）
      * @return  void* 插件命令的图标，HICON格式
      */
     virtual void* GetCommandIcon(int command_index) { return nullptr; }
 
     /**
      * @brief   执行一个插件命令时由框架调用
-     * @param   int command_index 插件命令的索引（不超过256）
+     * @param   int command_index 插件命令的索引（从0开始，小于GetCommandCount()的返回值）
      */
     virtual void OnPluginCommand(int command_index) {}
 
