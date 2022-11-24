@@ -1194,6 +1194,18 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
         pMenu->SetDefaultItem(-1);
         break;
     }
+
+    //设置插件命令的勾选状态
+    ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+    if (plugin != nullptr && plugin->GetAPIVersion() >= 5)
+    {
+        for (int i = ID_PLUGIN_COMMAND_START; i <= ID_PLUGIN_COMMAND_MAX; i++)
+        {
+            bool checked = (plugin->IsCommandChecked(i - ID_PLUGIN_COMMAND_START) != 0);
+            pMenu->CheckMenuItem(i, MF_BYCOMMAND | (checked ? MF_CHECKED : MF_UNCHECKED));
+        }
+    }
+
     ::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_TASKBAR_MENU_POPED_UP, 0, 0);        //通知主窗口菜单已弹出
 }
 
@@ -1323,7 +1335,7 @@ BOOL CTaskBarDlg::OnCommand(WPARAM wParam, LPARAM lParam)
             ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
             if (plugin != nullptr && plugin->GetAPIVersion() >= 5)
             {
-                plugin->OnPluginCommand(index);
+                plugin->OnPluginCommand(index, (void*)GetSafeHwnd(), nullptr);
             }
         }
     }

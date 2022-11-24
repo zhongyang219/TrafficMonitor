@@ -1946,7 +1946,7 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
             ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
             if (plugin != nullptr && plugin->GetAPIVersion() >= 5)
             {
-                plugin->OnPluginCommand(index);
+                plugin->OnPluginCommand(index, (void*)GetSafeHwnd(), nullptr);
             }
         }
     }
@@ -1993,6 +1993,17 @@ void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
     pMenu->EnableMenuItem(ID_SELECT_ALL_CONNECTION, MF_BYCOMMAND | (theApp.m_general_data.show_all_interface ? MF_GRAYED : MF_ENABLED));
 
     pMenu->EnableMenuItem(ID_CHECK_UPDATE, MF_BYCOMMAND | (theApp.IsCheckingForUpdate() ? MF_GRAYED : MF_ENABLED));
+
+    //设置插件命令的勾选状态
+    ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+    if (plugin != nullptr && plugin->GetAPIVersion() >= 5)
+    {
+        for (int i = ID_PLUGIN_COMMAND_START; i <= ID_PLUGIN_COMMAND_MAX; i++)
+        {
+            bool checked = (plugin->IsCommandChecked(i) != 0);
+            pMenu->CheckMenuItem(i, MF_BYCOMMAND | (checked ? MF_CHECKED : MF_UNCHECKED));
+        }
+    }
 
     //pMenu->SetDefaultItem(ID_NETWORK_INFO);
 }

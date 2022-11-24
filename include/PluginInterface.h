@@ -286,8 +286,17 @@ public:
     /**
      * @brief   执行一个插件命令时由框架调用
      * @param   int command_index 插件命令的索引（从0开始，小于GetCommandCount()的返回值）
+     * @param   void* hWnd 发送此命令的窗口句柄
+     * @param   void* para 预留参数
      */
-    virtual void OnPluginCommand(int command_index) {}
+    virtual void OnPluginCommand(int command_index, void* hWnd, void* para) {}
+
+    /**
+    * @brief   获取插件命令是否处于勾选状态
+    * @param   int command_index 插件命令的索引（从0开始，小于GetCommandCount()的返回值）
+    * @return  1：已勾选；0：未勾选
+    */
+    virtual int IsCommandChecked(int command_index) { return false; }
 
 };
 
