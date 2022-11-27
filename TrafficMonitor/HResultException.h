@@ -6,7 +6,7 @@
 #define TRAFFICMONITOR_STR(x) TRAFFICMONITOR_STR_IMPL(x)
 
 #define TRAFFICMONITOR_ERROR_STR(x) \
-    "At file: " TRAFFICMONITOR_STR(__FILE__) " | line: " TRAFFICMONITOR_STR(__LINE__) "\n" x
+    "At file: " TRAFFICMONITOR_STR(__FILE__) " | line: " TRAFFICMONITOR_STR(__LINE__) ".\nError: " x
 
 #define RELEASE_COM(p)      \
     {                       \

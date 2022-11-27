@@ -29,5 +29,5 @@ auto GetInterfaceFromAllInvolvedDrawCommonObjects(
             return {p_draw_buffer, p_draw_common};
         }
     }
-    throw std::runtime_error{"No matching render type for initializer"};
+    throw std::runtime_error{TRAFFICMONITOR_ERROR_STR("No matching render type for initializer")};
 }

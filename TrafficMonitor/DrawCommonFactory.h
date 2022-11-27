@@ -29,20 +29,25 @@ using DrawCommonUnionStorage = variant_storage<CDrawCommon, CTaskBarDlgDrawCommo
  * @brief 新增缓冲器（即析构时提交窗口绘制内容到系统的对象）类型后，将新类型写入到下面类型的模板参数中
  *
  */
-using DrawBufferUnionStorage = variant_storage<CDrawCommon, CTaskBarDlgDrawCommon>;
+using DrawBufferUnionStorage = variant_storage<CDrawDoubleBuffer, CTaskBarDlgDrawBuffer, CTaskBarDlgDrawBufferUseDComposition>;
 struct InvolvedDrawCommonStorages
 {
     DrawBufferUnionStorage m_draw_buffer_union_storage;
     DrawCommonUnionStorage m_draw_common_union_storage;
     ~InvolvedDrawCommonStorages() = delete;
 };
+/**
+ * @brief 具有DrawCommon和DrawBuffer栈内存以及它们对应独占指针的栈内存块，
+ 注意：它会先析构DrawCommon再析构DrawBuffer
+ *
+ */
 struct AllInvolvedDrawCommonObjectsStorage
 {
     std_aligned_storage<InvolvedDrawCommonStorages> m_storage;
     // 先析构DrawCommon再析构DrawBuffer
     UniqueIDrawBuffer m_unique_draw_buffer{};
     UniqueIDrawCommon m_unique_draw_common{};
-    //禁用复制移动
+    // 禁用复制移动
     AllInvolvedDrawCommonObjectsStorage(const AllInvolvedDrawCommonObjectsStorage&) = delete;
     AllInvolvedDrawCommonObjectsStorage& operator=(const AllInvolvedDrawCommonObjectsStorage&) = delete;
 };
@@ -56,7 +61,7 @@ using TaggedAllInvolvedDrawCommonObjectsInitializer =
  * @param ref_object_storage 栈内存对象，其中包含具有该内存独占所有权的指针
  * @param render_type 渲染器类型枚举
  * @param initializer_list 渲染器类型枚举和对应的初始化函数的总的集合
- * @return std::tuple<UniqueIDrawBuffer, UniqueIDrawCommon> 不具有所有权的裸指针
+ * @return std::tuple<IDrawBuffer*, IDrawCommon*> 不具有所有权的裸指针
  */
 auto GetInterfaceFromAllInvolvedDrawCommonObjects(
     AllInvolvedDrawCommonObjectsStorage& ref_object_storage,
