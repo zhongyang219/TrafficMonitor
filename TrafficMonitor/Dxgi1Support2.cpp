@@ -4,7 +4,7 @@
 
 void CDxgiSwapChain1::Recreate(Microsoft::WRL::ComPtr<IUnknown> p_device, const DXGI_SWAP_CHAIN_DESC1& ref_desc1, IDXGIOutput* p_output)
 {
-    CallFunctionForEachResource<TRAFFICMONITOR_DV_V(&Resource::OnSwapChainResizeBegin)>(m_resource_tracker);
+    CallFunctionForEachResource<TRAFFICMONITOR_DV_V_ARGS(&Resource::OnSwapChainResizeBegin)>(m_resource_tracker);
 
     ThrowIfFailed<CDxgiException>(
         CDxgi1Support2::GetFactory()->CreateSwapChainForComposition(
@@ -14,7 +14,7 @@ void CDxgiSwapChain1::Recreate(Microsoft::WRL::ComPtr<IUnknown> p_device, const 
             &m_p_swap_chain1),
         TRAFFICMONITOR_ERROR_STR("Create swap chain for composition failed."));
 
-    CallFunctionForEachResource<TRAFFICMONITOR_DV_V(&Resource::OnSwapChainResizeEnd)>(m_resource_tracker, m_p_swap_chain1);
+    CallFunctionForEachResource<TRAFFICMONITOR_DV_V_ARGS(&Resource::OnSwapChainResizeEnd)>(m_resource_tracker, m_p_swap_chain1);
 }
 
 auto CDxgiSwapChain1::GetStorage()
@@ -25,7 +25,7 @@ auto CDxgiSwapChain1::GetStorage()
 
 void CDxgiSwapChain1::Resize(std::uint32_t width, std::uint32_t height)
 {
-    CallFunctionForEachResource<TRAFFICMONITOR_DV_V(&Resource::OnSwapChainResizeBegin)>(m_resource_tracker);
+    CallFunctionForEachResource<TRAFFICMONITOR_DV_V_ARGS(&Resource::OnSwapChainResizeBegin)>(m_resource_tracker);
 
     ThrowIfFailed<CDxgiException>(
         m_p_swap_chain1->ResizeBuffers(
@@ -36,7 +36,7 @@ void CDxgiSwapChain1::Resize(std::uint32_t width, std::uint32_t height)
             0),
         TRAFFICMONITOR_ERROR_STR("Resize swap chain failed."));
 
-    CallFunctionForEachResource<TRAFFICMONITOR_DV_V(&Resource::OnSwapChainResizeEnd)>(m_resource_tracker, m_p_swap_chain1);
+    CallFunctionForEachResource<TRAFFICMONITOR_DV_V_ARGS(&Resource::OnSwapChainResizeEnd)>(m_resource_tracker, m_p_swap_chain1);
 }
 
 IDXGIFactory2* CDxgi1Support2::GetFactory()

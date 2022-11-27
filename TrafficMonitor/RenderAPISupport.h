@@ -193,7 +193,7 @@ public:
     }
 };
 
-#define TRAFFICMONITOR_DV_V(v) decltype(v), v
+#define TRAFFICMONITOR_DV_V_ARGS(v) decltype(v), v
 
 template <class T, T PClassFunction, class Resource, class... Args>
 void CallFunctionForEachResource(CResourceTracker<Resource>& tracker, Args&&... args)
@@ -212,7 +212,7 @@ void CallFunctionForEachResource(CResourceTracker<Resource>& tracker, Args&&... 
 template <class Resource, class Device>
 void NotifyAllResourceWhenDeviceRecreate(CResourceTracker<Resource>& tracker, Device& device)
 {
-    CallFunctionForEachResource<TRAFFICMONITOR_DV_V(&Resource::OnDeviceRecreate)>(tracker, device);
+    CallFunctionForEachResource<TRAFFICMONITOR_DV_V_ARGS(&Resource::OnDeviceRecreate)>(tracker, device);
 }
 
 template <class Device>
