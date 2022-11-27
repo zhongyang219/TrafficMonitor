@@ -780,53 +780,84 @@ void CTrafficMonitorApp::InitMenuResourse()
 {
     //载入菜单
     m_main_menu.LoadMenu(IDR_MENU1);
+    m_main_menu_plugin.LoadMenu(IDR_MENU1);
     m_taskbar_menu.LoadMenu(IDR_TASK_BAR_MENU);
+    m_taskbar_menu_plugin.LoadMenu(IDR_TASK_BAR_MENU);
+
+    //为插件菜单添加额外项目
+    m_main_menu_plugin_sub_menu.CreatePopupMenu();
+    m_main_menu_plugin_sub_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_OPTIONS, CCommon::LoadText(IDS_PLUGIN_OPTIONS, _T("...")));
+    m_main_menu_plugin_sub_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_DETAIL, CCommon::LoadText(IDS_PLUGIN_INFO, _T("...")));
+    CMenuIcon::AddIconToMenuItem(m_main_menu_plugin_sub_menu.GetSafeHmenu(), ID_PLUGIN_OPTIONS, FALSE, GetMenuIcon(IDI_SETTINGS));
+    CMenuIcon::AddIconToMenuItem(m_main_menu_plugin_sub_menu.GetSafeHmenu(), ID_PLUGIN_DETAIL, FALSE, GetMenuIcon(IDI_ITEM));
+    CMenu* main_menu_plugin = m_main_menu_plugin.GetSubMenu(0);
+    main_menu_plugin->AppendMenu(MF_SEPARATOR);
+    main_menu_plugin->AppendMenu(MF_POPUP | MF_STRING, (UINT)m_main_menu_plugin_sub_menu.m_hMenu, _T("<plugin name>"));
+
+    m_taskbar_menu_plugin_sub_menu.CreatePopupMenu();
+    m_taskbar_menu_plugin_sub_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_OPTIONS_TASKBAR, CCommon::LoadText(IDS_PLUGIN_OPTIONS, _T("...")));
+    m_taskbar_menu_plugin_sub_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_DETAIL_TASKBAR, CCommon::LoadText(IDS_PLUGIN_INFO, _T("...")));
+    CMenuIcon::AddIconToMenuItem(m_taskbar_menu_plugin_sub_menu.GetSafeHmenu(), ID_PLUGIN_OPTIONS_TASKBAR, FALSE, GetMenuIcon(IDI_SETTINGS));
+    CMenuIcon::AddIconToMenuItem(m_taskbar_menu_plugin_sub_menu.GetSafeHmenu(), ID_PLUGIN_DETAIL_TASKBAR, FALSE, GetMenuIcon(IDI_ITEM));
+    CMenu* taskbar_menu_plugin = m_taskbar_menu_plugin.GetSubMenu(0);
+    taskbar_menu_plugin->AppendMenu(MF_SEPARATOR);
+    taskbar_menu_plugin->AppendMenu(MF_POPUP | MF_STRING, (UINT)m_taskbar_menu_plugin_sub_menu.m_hMenu, _T("<plugin name>"));
 
     //为菜单项添加图标
+    auto addIconsForMainWindowMenu = [&](const CMenu& menu)
+    {
+        CMenuIcon::AddIconToMenuItem(menu.GetSubMenu(0)->GetSafeHmenu(), 0, TRUE, GetMenuIcon(IDI_CONNECTION));
+        CMenuIcon::AddIconToMenuItem(menu.GetSubMenu(0)->GetSafeHmenu(), 11, TRUE, GetMenuIcon(IDI_FUNCTION));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_NETWORK_INFO, FALSE, GetMenuIcon(IDI_INFO));
+        if (!m_win_version.IsWindows11OrLater())
+            CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_ALWAYS_ON_TOP, FALSE, GetMenuIcon(IDI_PIN));
+        if (!m_win_version.IsWindows11OrLater())
+            CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_MOUSE_PENETRATE, FALSE, GetMenuIcon(IDI_MOUSE));
+        if (!m_win_version.IsWindows11OrLater())
+            CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_LOCK_WINDOW_POS, FALSE, GetMenuIcon(IDI_LOCK));
+        //if (!m_win_version.IsWindows11OrLater())
+        //    CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_SHOW_NOTIFY_ICON, FALSE, GetMenuIcon(IDI_NOTIFY));
+        if (!m_win_version.IsWindows11OrLater())
+            CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_SHOW_CPU_MEMORY, FALSE, GetMenuIcon(IDI_MORE));
+        if (!m_win_version.IsWindows11OrLater())
+            CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_SHOW_TASK_BAR_WND, FALSE, GetMenuIcon(IDI_TASKBAR_WINDOW));
+        if (!m_win_version.IsWindows11OrLater())
+            CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_SHOW_MAIN_WND, FALSE, GetMenuIcon(IDI_MAIN_WINDOW));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_CHANGE_SKIN, FALSE, GetMenuIcon(IDI_SKIN));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_CHANGE_NOTIFY_ICON, FALSE, GetMenuIcon(IDI_NOTIFY));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_TRAFFIC_HISTORY, FALSE, GetMenuIcon(IDI_STATISTICS));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_PLUGIN_MANAGE, FALSE, GetMenuIcon(IDI_PLUGINS));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_OPTIONS, FALSE, GetMenuIcon(IDI_SETTINGS));
+        CMenuIcon::AddIconToMenuItem(menu.GetSubMenu(0)->GetSafeHmenu(), 14, TRUE, GetMenuIcon(IDI_HELP));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_HELP, FALSE, GetMenuIcon(IDI_HELP));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_APP_ABOUT, FALSE, GetMenuIcon(IDR_MAINFRAME));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_APP_EXIT, FALSE, GetMenuIcon(IDI_EXIT));
+    };
     //主窗口右键菜单
-    CMenuIcon::AddIconToMenuItem(m_main_menu.GetSubMenu(0)->GetSafeHmenu(), 0, TRUE, GetMenuIcon(IDI_CONNECTION));
-    CMenuIcon::AddIconToMenuItem(m_main_menu.GetSubMenu(0)->GetSafeHmenu(), 11, TRUE, GetMenuIcon(IDI_FUNCTION));
-    CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_NETWORK_INFO, FALSE, GetMenuIcon(IDI_INFO));
-    if (!m_win_version.IsWindows11OrLater())
-        CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_ALWAYS_ON_TOP, FALSE, GetMenuIcon(IDI_PIN));
-    if (!m_win_version.IsWindows11OrLater())
-        CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_MOUSE_PENETRATE, FALSE, GetMenuIcon(IDI_MOUSE));
-    if (!m_win_version.IsWindows11OrLater())
-        CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_LOCK_WINDOW_POS, FALSE, GetMenuIcon(IDI_LOCK));
-    //if (!m_win_version.IsWindows11OrLater())
-    //    CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_SHOW_NOTIFY_ICON, FALSE, GetMenuIcon(IDI_NOTIFY));
-    if (!m_win_version.IsWindows11OrLater())
-        CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_SHOW_CPU_MEMORY, FALSE, GetMenuIcon(IDI_MORE));
-    if (!m_win_version.IsWindows11OrLater())
-        CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_SHOW_TASK_BAR_WND, FALSE, GetMenuIcon(IDI_TASKBAR_WINDOW));
-    if (!m_win_version.IsWindows11OrLater())
-        CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_SHOW_MAIN_WND, FALSE, GetMenuIcon(IDI_MAIN_WINDOW));
-    CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_CHANGE_SKIN, FALSE, GetMenuIcon(IDI_SKIN));
-    CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_CHANGE_NOTIFY_ICON, FALSE, GetMenuIcon(IDI_NOTIFY));
-    CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_TRAFFIC_HISTORY, FALSE, GetMenuIcon(IDI_STATISTICS));
-    CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_PLUGIN_MANAGE, FALSE, GetMenuIcon(IDI_PLUGINS));
-    CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_OPTIONS, FALSE, GetMenuIcon(IDI_SETTINGS));
-    CMenuIcon::AddIconToMenuItem(m_main_menu.GetSubMenu(0)->GetSafeHmenu(), 14, TRUE, GetMenuIcon(IDI_HELP));
-    CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_HELP, FALSE, GetMenuIcon(IDI_HELP));
-    CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_APP_ABOUT, FALSE, GetMenuIcon(IDR_MAINFRAME));
-    CMenuIcon::AddIconToMenuItem(m_main_menu.GetSafeHmenu(), ID_APP_EXIT, FALSE, GetMenuIcon(IDI_EXIT));
+    addIconsForMainWindowMenu(m_main_menu);
+    addIconsForMainWindowMenu(m_main_menu_plugin);
 
     //任务栏窗口右键菜单
-    CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSubMenu(0)->GetSafeHmenu(), 0, TRUE, GetMenuIcon(IDI_CONNECTION));
-    CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_NETWORK_INFO, FALSE, GetMenuIcon(IDI_INFO));
-    CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_TRAFFIC_HISTORY, FALSE, GetMenuIcon(IDI_STATISTICS));
-    CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_DISPLAY_SETTINGS, FALSE, GetMenuIcon(IDI_ITEM));
-    //if (!m_win_version.IsWindows11OrLater())
-    //    CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_SHOW_NOTIFY_ICON, FALSE, GetMenuIcon(IDI_NOTIFY));
-    if (!m_win_version.IsWindows11OrLater())
-        CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_SHOW_MAIN_WND, FALSE, GetMenuIcon(IDI_MAIN_WINDOW));
-    CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_SHOW_TASK_BAR_WND, FALSE, GetMenuIcon(IDI_CLOSE));
-    CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_OPEN_TASK_MANAGER, FALSE, GetMenuIcon(IDI_TASK_MANAGER));
-    CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_OPTIONS2, FALSE, GetMenuIcon(IDI_SETTINGS));
-    CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSubMenu(0)->GetSafeHmenu(), 12, TRUE, GetMenuIcon(IDI_HELP));
-    CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_HELP, FALSE, GetMenuIcon(IDI_HELP));
-    CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_APP_ABOUT, FALSE, GetMenuIcon(IDR_MAINFRAME));
-    CMenuIcon::AddIconToMenuItem(m_taskbar_menu.GetSafeHmenu(), ID_APP_EXIT, FALSE, GetMenuIcon(IDI_EXIT));
+    auto addIconsForTaksbarWindowMenu = [&](const CMenu& menu)
+    {
+        CMenuIcon::AddIconToMenuItem(menu.GetSubMenu(0)->GetSafeHmenu(), 0, TRUE, GetMenuIcon(IDI_CONNECTION));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_NETWORK_INFO, FALSE, GetMenuIcon(IDI_INFO));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_TRAFFIC_HISTORY, FALSE, GetMenuIcon(IDI_STATISTICS));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_DISPLAY_SETTINGS, FALSE, GetMenuIcon(IDI_ITEM));
+        //if (!m_win_version.IsWindows11OrLater())
+        //    CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_SHOW_NOTIFY_ICON, FALSE, GetMenuIcon(IDI_NOTIFY));
+        if (!m_win_version.IsWindows11OrLater())
+            CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_SHOW_MAIN_WND, FALSE, GetMenuIcon(IDI_MAIN_WINDOW));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_SHOW_TASK_BAR_WND, FALSE, GetMenuIcon(IDI_CLOSE));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_OPEN_TASK_MANAGER, FALSE, GetMenuIcon(IDI_TASK_MANAGER));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_OPTIONS2, FALSE, GetMenuIcon(IDI_SETTINGS));
+        CMenuIcon::AddIconToMenuItem(menu.GetSubMenu(0)->GetSafeHmenu(), 12, TRUE, GetMenuIcon(IDI_HELP));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_HELP, FALSE, GetMenuIcon(IDI_HELP));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_APP_ABOUT, FALSE, GetMenuIcon(IDR_MAINFRAME));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_APP_EXIT, FALSE, GetMenuIcon(IDI_EXIT));
+    };
+    addIconsForTaksbarWindowMenu(m_taskbar_menu);
+    addIconsForTaksbarWindowMenu(m_taskbar_menu_plugin);
 
 #ifdef _DEBUG
     m_main_menu.GetSubMenu(0)->AppendMenu(MF_BYCOMMAND, ID_CMD_TEST, _T("Test Command"));
@@ -937,23 +968,6 @@ BOOL CTrafficMonitorApp::InitInstance()
     //载入插件
     LoadPluginDisabledSettings();
     m_plugins.LoadPlugins();
-
-    //向插件传递配置文件的路径
-    wstring plugin_dir;
-#ifdef _DEBUG
-    plugin_dir = m_module_dir;
-#else
-    plugin_dir = m_config_dir;
-#endif
-    plugin_dir += L"plugins\\";
-    m_plugins.EnumPlugin([&](ITMPlugin* plugin)
-        {
-            if (plugin->GetAPIVersion() >= 2)
-            {
-                CreateDirectory(plugin_dir.c_str(), NULL);       //如果plugins不存在，则创建它
-                plugin->OnExtenedInfo(ITMPlugin::EI_CONFIG_DIR, plugin_dir.c_str());
-            }
-        });
 
     //从ini文件载入设置
     LoadConfig();
@@ -1197,6 +1211,7 @@ std::wstring CTrafficMonitorApp::GetPlauginTooltipInfo() const
         if (item.plugin != nullptr && item.plugin->GetAPIVersion() >= 2)
         {
             std::wstring plugin_tooltip = item.plugin->GetTooltipInfo();
+            CCommon::StringNormalize(plugin_tooltip);
             if (!plugin_tooltip.empty())
             {
                 tip_info += L"\r\n";
@@ -1242,6 +1257,38 @@ void CTrafficMonitorApp::SendSettingsToPlugin()
             plugin_info.plugin->OnExtenedInfo(ITMPlugin::EI_TASKBAR_WND_UNIT_SELECT, std::to_wstring(static_cast<int>(m_taskbar_data.speed_unit)).c_str());
             plugin_info.plugin->OnExtenedInfo(ITMPlugin::EI_TASKBAR_WND_NOT_SHOW_UNIT, std::to_wstring(m_taskbar_data.hide_unit).c_str());
             plugin_info.plugin->OnExtenedInfo(ITMPlugin::EI_TASKBAR_WND_NOT_SHOW_PERCENT, std::to_wstring(m_taskbar_data.hide_percent).c_str());
+        }
+    }
+}
+
+void CTrafficMonitorApp::UpdatePluginMenu(CMenu* pMenu, ITMPlugin* plugin)
+{
+    if (pMenu != nullptr && plugin != nullptr)
+    {
+        //删除菜单已经存在的插件命令
+        while (pMenu->GetMenuItemCount() > 2)
+        {
+            if (!pMenu->DeleteMenu(pMenu->GetMenuItemCount() - 1, MF_BYPOSITION))
+                break;
+        }
+        //添加插件命令
+        if (plugin->GetAPIVersion() >= 5)
+        {
+            int plugin_cmd_count = plugin->GetCommandCount();
+            //添加分隔符
+            if (plugin_cmd_count > 0)
+                pMenu->AppendMenu(MF_SEPARATOR);
+            for (int i = 0; i < plugin_cmd_count; i++)
+            {
+                const wchar_t* cmd_name = plugin->GetCommandName(i);
+                if (cmd_name != nullptr)
+                {
+                    pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_COMMAND_START + i, cmd_name);
+                    //添加命令图标
+                    HICON cmd_icon = (HICON)plugin->GetCommandIcon(i);
+                    CMenuIcon::AddIconToMenuItem(pMenu->GetSafeHmenu(), ID_PLUGIN_COMMAND_START + i, FALSE, cmd_icon);
+                }
+            }
         }
     }
 }

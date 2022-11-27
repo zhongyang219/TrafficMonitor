@@ -97,6 +97,22 @@ BOOL CPluginManagerDlg::OnInitDialog()
     m_list_ctrl.InsertColumn(1, CCommon::LoadText(IDS_PLUGIN_NAME), LVCFMT_LEFT, width1);
     m_list_ctrl.InsertColumn(2, CCommon::LoadText(IDS_STATUS), LVCFMT_LEFT, width2);
 
+    //添加图标
+    int item_num = theApp.m_plugins.GetPlugins().size();
+    m_plugin_icon_list.Create(theApp.DPI(16), theApp.DPI(16), ILC_COLOR32, item_num, item_num);
+    for (const auto& plugin : theApp.m_plugins.GetPlugins())
+    {
+        HICON hIcon{};
+        if (plugin.plugin != nullptr && plugin.plugin->GetAPIVersion() >= 5)
+        {
+            hIcon = (HICON)plugin.plugin->GetPluginIcon();
+        }
+        if (hIcon == nullptr)
+            hIcon = theApp.GetMenuIcon(IDI_PLUGINS);
+        m_plugin_icon_list.Add(hIcon);
+    }
+    m_list_ctrl.SetImageList(&m_plugin_icon_list, LVSIL_SMALL);
+
     //向列表中插入行
     for (const auto& plugin : theApp.m_plugins.GetPlugins())
     {
@@ -123,7 +139,7 @@ BOOL CPluginManagerDlg::OnInitDialog()
             break;
         }
         int index = m_list_ctrl.GetItemCount();
-        m_list_ctrl.InsertItem(index, file_name.c_str());
+        m_list_ctrl.InsertItem(index, file_name.c_str(), m_list_ctrl.GetItemCount());
         m_list_ctrl.SetItemText(index, 1, plugin.Property(ITMPlugin::TMI_NAME).c_str());
         m_list_ctrl.SetItemText(index, 2, status);
     }

@@ -293,6 +293,8 @@
 #define IDS_SET_AUTO_RUN_FAILED_WARNING 384
 #define IDS_UPDATE_TASKBARDLG_FAILED_TIP 385
 #define IDS_D2DDRAWCOMMON_ERROR_TIP     386
+#define IDS_PLUGIN_OPTIONS              387
+#define IDS_PLUGIN_DETAILS              388
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
 #define IDC_STATIC_DOWN                 1002
@@ -507,6 +509,7 @@
 #define IDC_RESET_AUTO_RUN_BUTTON       1162
 #define IDS_CPU_FREQ                    1163
 #define IDC_DISABLE_D2D                 1166
+#define IDS_CPU_FREQ                    1163
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -617,6 +620,10 @@
 #define ID_OPEN_TASK_MANAGER            33403
 #define ID_REFRESH_CONNECTION_LIST      33404
 #define ID_DISPLAY_SETTINGS             33405
+#define ID_PLUGIN_DETAIL_TASKBAR        33406
+#define ID_PLUGIN_OPTIONS_TASKBAR       33407
+#define ID_PLUGIN_COMMAND_START         33408
+#define ID_PLUGIN_COMMAND_MAX           33664
 
 // Next default values for new objects
 //
@@ -625,6 +632,8 @@
 #define _APS_NEXT_RESOURCE_VALUE        341
 #define _APS_NEXT_COMMAND_VALUE         33406
 #define _APS_NEXT_CONTROL_VALUE         1167
+#define _APS_NEXT_COMMAND_VALUE         33665
+#define _APS_NEXT_CONTROL_VALUE         1166
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -25,6 +25,7 @@ private:
     CLinkStatic m_plugin_download_lnk;
     CLinkStatic m_plugin_dev_guide_lnk;
     CLinkStatic m_open_plugin_dir_lnk;
+    CImageList m_plugin_icon_list;
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持

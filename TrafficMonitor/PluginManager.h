@@ -43,6 +43,7 @@ public:
     IPluginItem* GetItemByIndex(int index);
     int GetItemIndex(IPluginItem* item) const;
     ITMPlugin* GetPluginByItem(IPluginItem* pItem);
+    int GetPluginIndex(ITMPlugin* plugin) const;
 
     //遍历所有插件
     //func: 参数为遍历到的ITMPlugin对象

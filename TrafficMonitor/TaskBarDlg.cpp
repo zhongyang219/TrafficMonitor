@@ -7,6 +7,7 @@
 #include "afxdialogex.h"
 #include "TrafficMonitorDlg.h"
 #include "WindowsSettingHelper.h"
+#include "WIC.h"
 #include "Nullable.hpp"
 #include "DrawCommonFactory.h"
 
@@ -624,15 +625,24 @@ bool CTaskBarDlg::AdjustWindowPos()
                     //{
                     if (theApp.m_taskbar_data.tbar_wnd_snap)
                     {
-                        int taskbar_btn_num{ 1 };      //Win11任务栏“运行中的程序”左侧4个按钮（开始、搜索、任务视图、聊天）有几个显示。（“开始”按钮总是显示）
+                        int taskbar_btn_width = DPI(44);      //Win11任务栏“运行中的程序”左侧4个按钮（开始、搜索、任务视图、聊天）的宽度，每个按钮44像素。（“开始”按钮总是显示）
                         if (CWindowsSettingHelper::IsTaskbarSearchBtnShown())
-                            taskbar_btn_num++;
+                        {
+                            if (theApp.m_win_version.IsWindows11BigSearchButton())
+                                taskbar_btn_width += DPI(107);      //最新版本的Windows11的搜索按钮比其他按钮宽
+                            else
+                                taskbar_btn_width += DPI(44);
+                        }
                         if (CWindowsSettingHelper::IsTaskbarTaskViewBtnShown())
-                            taskbar_btn_num++;
+                        {
+                            taskbar_btn_width += DPI(44);
+                        }
                         if (CWindowsSettingHelper::IsTaskbarChartBtnShown())
-                            taskbar_btn_num++;
+                        {
+                            taskbar_btn_width += DPI(44);
+                        }
 
-                        m_rect.MoveToX(m_rcMin.left - m_rect.Width() - 2 - DPI(44) * taskbar_btn_num);   //每个按钮44像素
+                        m_rect.MoveToX(m_rcMin.left - m_rect.Width() - 2 - taskbar_btn_width);
                     }
                     else
                     {
@@ -1262,9 +1272,11 @@ void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     m_menu_popuped = true;
     m_tool_tips.Pop();
-    if (CheckClickedItem(point) && m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+    ITMPlugin* plugin{};
+    bool is_plugin_item_clicked = (CheckClickedItem(point) && m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr);
+    if (is_plugin_item_clicked)
     {
-        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+        plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
         if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
         {
             if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_RCLICKED, point.x, point.y, (void*)GetSafeHwnd(), IPluginItem::MF_TASKBAR_WND) != 0)
@@ -1274,9 +1286,26 @@ void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
 
     CPoint point1;  //定义一个用于确定光标位置的位置
     GetCursorPos(&point1);  //获取当前光标的位置，以便使得菜单可以跟随光标
-    CMenu* pMenu = theApp.m_taskbar_menu.GetSubMenu(0);
+    CMenu* pMenu = (is_plugin_item_clicked ? theApp.m_taskbar_menu_plugin.GetSubMenu(0) : theApp.m_taskbar_menu.GetSubMenu(0));
     if (pMenu != nullptr)
-        pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
+    {
+        if (plugin != nullptr)
+        {
+            //将右键菜单中插件菜单的显示文本改为插件名
+            pMenu->ModifyMenu(15, MF_BYPOSITION, 15, plugin->GetInfo(ITMPlugin::TMI_NAME));
+            //获取插件图标
+            HICON plugin_icon{};
+            if (plugin->GetAPIVersion() >= 5)
+                plugin_icon = (HICON)plugin->GetPluginIcon();
+            //设置插件图标
+            if (plugin_icon != nullptr)
+                CMenuIcon::AddIconToMenuItem(pMenu->GetSafeHmenu(), 15, TRUE, plugin_icon);
+        }
+        //更新插件子菜单
+        theApp.UpdatePluginMenu(&theApp.m_taskbar_menu_plugin_sub_menu, plugin);
+        //弹出菜单
+        pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this);
+    }
     CDialogEx::OnRButtonUp(nFlags, point1);
 }
 
@@ -1313,6 +1342,19 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
         pMenu->SetDefaultItem(-1);
         break;
     }
+
+    //设置插件命令的勾选状态
+    ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+    if (plugin != nullptr && plugin->GetAPIVersion() >= 5)
+    {
+        for (int i = ID_PLUGIN_COMMAND_START; i <= ID_PLUGIN_COMMAND_MAX; i++)
+        {
+            bool checked = (plugin->IsCommandChecked(i - ID_PLUGIN_COMMAND_START) != 0);
+            pMenu->CheckMenuItem(i, MF_BYCOMMAND | (checked ? MF_CHECKED : MF_UNCHECKED));
+        }
+    }
+
+    ::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_TASKBAR_MENU_POPED_UP, 0, 0);        //通知主窗口菜单已弹出
     ::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_TASKBAR_MENU_POPED_UP, 0, 0); //通知主窗口菜单已弹出
 }
 
@@ -1426,6 +1468,19 @@ BOOL CTaskBarDlg::OnCommand(WPARAM wParam, LPARAM lParam)
             bool displayed = theApp.m_taskbar_data.plugin_display_item.Contains(item->GetItemId());
             theApp.m_taskbar_data.plugin_display_item.SetStrContained(item->GetItemId(), !displayed);
             ::PostMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_REOPEN_TASKBAR_WND, 0, 0);
+        }
+    }
+    //选择了插件命令
+    if (uMsg >= ID_PLUGIN_COMMAND_START && uMsg <= ID_PLUGIN_COMMAND_MAX)
+    {
+        int index = uMsg - ID_PLUGIN_COMMAND_START;
+        if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+        {
+            ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+            if (plugin != nullptr && plugin->GetAPIVersion() >= 5)
+            {
+                plugin->OnPluginCommand(index, (void*)GetSafeHwnd(), nullptr);
+            }
         }
     }
 
