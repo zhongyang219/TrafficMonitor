@@ -31,10 +31,11 @@ template <class T, class Deleter = NullableDefaultDeleter<T>>
 class CNullable
 {
     using StorageType = std_aligned_storage<T>;
-    template <class C, class... Args>
-    static void EmplaceAt(C* p_object, Args&&... args)
+    using RawType = std::decay_t<T>;
+    template <class... Args>
+    static void EmplaceAt(RawType* p_object, Args&&... args)
     {
-        ::new (p_object) C(std::forward<Args>(args)...);
+        ::new (p_object) RawType(std::forward<Args>(args)...);
     }
 
 public:
@@ -52,7 +53,7 @@ public:
     {
         if (other)
         {
-            EmplaceAt(&m_storage.GetUnsafe(), other.m_storage.GetUnsafe());
+            EmplaceAt(m_storage.GetPointerUnsafe(), other.m_storage.GetUnsafe());
         }
     }
     CNullable& operator=(const CNullable& other)
@@ -62,7 +63,7 @@ public:
         ref_deleter = static_cast<Deleter>(other.m_storage);
         if (other)
         {
-            EmplaceAt(&m_storage.GetUnsafe(), other.m_storage.GetUnsafe());
+            EmplaceAt(m_storage.GetPointerUnsafe(), other.m_storage.GetUnsafe());
         }
     }
     CNullable(CNullable&& other) noexcept
@@ -70,7 +71,7 @@ public:
     {
         if (other)
         {
-            EmplaceAt(&m_storage.GetUnsafe(), std::move(other.m_storage.GetUnsafe()));
+            EmplaceAt(m_storage.GetPointerUnsafe(), std::move(other.m_storage.GetUnsafe()));
         }
     }
     CNullable& operator=(CNullable&& other) noexcept
@@ -80,7 +81,7 @@ public:
         ref_deleter = std::move(static_cast<Deleter>(other.m_storage));
         if (other)
         {
-            EmplaceAt(&m_storage.GetUnsafe(), std::move(other.m_storage.GetUnsafe()));
+            EmplaceAt(m_storage.GetPointerUnsafe(), std::move(other.m_storage.GetUnsafe()));
         }
     }
 
@@ -93,7 +94,7 @@ public:
             m_has_value = false;
         }
 
-        EmplaceAt(&m_storage.GetUnsafe(), std::forward<Args>(args)...);
+        EmplaceAt(m_storage.GetPointerUnsafe(), std::forward<Args>(args)...);
 
         m_has_value = true;
     }
@@ -128,7 +129,7 @@ private:
     void DestroySelf()
     {
         auto&& ref_deleter = static_cast<Deleter&>(m_storage);
-        ref_deleter(&Get());
+        ref_deleter(m_storage.GetPointerUnsafe());
     }
     void Check() const
     {
@@ -176,6 +177,14 @@ private:
         T& GetUnsafe() noexcept
         {
             return *static_cast<T*>(static_cast<void*>(GetStoragePointer()));
+        }
+        const T* GetPointerUnsafe() const noexcept
+        {
+            return static_cast<const T*>(static_cast<const void*>(GetStoragePointer()));
+        }
+        T* GetPointerUnsafe() noexcept
+        {
+            return static_cast<T*>(static_cast<void*>(GetStoragePointer()));
         }
     };
     bool m_has_value{false};
