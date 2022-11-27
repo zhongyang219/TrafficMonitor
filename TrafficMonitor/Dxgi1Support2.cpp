@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "Dxgi1Support2.h"
 #include "Common.h"
+#include "DllFunctions.h"
 
 void CDxgiSwapChain1::Recreate(Microsoft::WRL::ComPtr<IUnknown> p_device, const DXGI_SWAP_CHAIN_DESC1& ref_desc1, IDXGIOutput* p_output)
 {
@@ -39,6 +40,13 @@ void CDxgiSwapChain1::Resize(std::uint32_t width, std::uint32_t height)
     CallFunctionForEachResource<TRAFFICMONITOR_DV_V_ARGS(&Resource::OnSwapChainResizeEnd)>(m_resource_tracker, m_p_swap_chain1);
 }
 
+bool CDxgi1Support2::CheckSupport()
+{
+    const static auto result =
+        FunctionChecker::CheckFunctionExist(_T("dxgi.dll"), "CreateDXGIFactory2");
+    return result;
+}
+
 IDXGIFactory2* CDxgi1Support2::GetFactory()
 {
     static auto result = MakeStaticVariableWrapper<IDXGIFactory2*>(
@@ -50,7 +58,7 @@ IDXGIFactory2* CDxgi1Support2::GetFactory()
             flags |= DXGI_CREATE_FACTORY_DEBUG;
 #endif
             ThrowIfFailed<CDxgiException>(
-                CreateDXGIFactory2(
+                CDllFunctions::CreateDXGIFactory2(
                     flags,
                     IID_PPV_ARGS(pp_factory)),
                 TRAFFICMONITOR_ERROR_STR("Create dxgi factory2 failed."));

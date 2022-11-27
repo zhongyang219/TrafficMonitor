@@ -1,13 +1,12 @@
 ﻿#include "stdafx.h"
 #include "DCompositionSupport.h"
 #include "Common.h"
-
-#pragma comment(lib, "Dcomp.lib")
+#include "DllFunctions.h"
 
 void CDCompositionDevice::Recreate(Microsoft::WRL::ComPtr<IDXGIDevice> p_dxgi_device)
 {
     ThrowIfFailed<CDCompositionException>(
-        DCompositionCreateDevice(
+        CDllFunctions::DCompositionCreateDevice(
             p_dxgi_device.Get(),
             IID_PPV_ARGS(&m_p_device)),
         TRAFFICMONITOR_ERROR_STR("Recreate DComposition device failed."));
@@ -23,6 +22,13 @@ auto CDCompositionDevice::GetStorage()
 
 bool CDCompositionSupport::CheckSupport()
 {
-    static auto result = FunctionChecker::CheckFunctionExist(_T("dxgi.dll"), "CreateDXGIFactory2 ");
+    static auto result =
+        FunctionChecker::CheckFunctionExist(_T("dcomp.dll"), "DCompositionCreateDevice");
     return result;
+}
+
+auto CDCompositionDevice::Get()
+    -> Microsoft::WRL::ComPtr<IDCompositionDevice>
+{
+    return m_p_device;
 }

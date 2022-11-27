@@ -24,6 +24,8 @@ public:
     void Recreate(Microsoft::WRL::ComPtr<IDXGIDevice> p_dxgi_device);
     auto GetStorage()
         -> std::shared_ptr<Storage>;
+    auto Get()
+        -> Microsoft::WRL::ComPtr<IDCompositionDevice>;
 };
 
 class CDCompositionSupport

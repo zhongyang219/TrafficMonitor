@@ -57,5 +57,6 @@ public:
 class CDxgi1Support2
 {
 public:
+    static bool CheckSupport();
     static IDXGIFactory2* GetFactory();
 };

@@ -2,8 +2,6 @@
 #include "Image2DEffect.h"
 #include "Common.h"
 
-#pragma comment(lib, "D3DCompiler.lib")
-
 namespace D3DQuadrangle
 {
     const std::array<std::uint16_t, 6> VERTEX_INDEX_LIST{

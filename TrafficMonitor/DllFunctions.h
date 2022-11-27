@@ -1,24 +1,10 @@
 ﻿#pragma once
 #include <shellscalingapi.h> // 包含::GetDpiForMonitor
+#include <d3dcompiler.h> // 包含D3DCompile
+#include <dcomp.h> // 包含DCompositionCreateDevice
+#include <dxgi1_3.h> // 包含CreateDXGIFactory2
+#include <tchar.h>
 #include <utility>
-
-typedef HRESULT(WINAPI* _GetDpiForMonitor)(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT* dpiX, UINT* dpiY);
-
-class CDllFunctions
-{
-public:
-    CDllFunctions();
-    ~CDllFunctions();
-
-public:
-    HRESULT GetDpiForMonitor(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT* dpiX, UINT* dpiY);
-
-private:
-    _GetDpiForMonitor m_getDpiForMonitor{};
-
-private:
-    HMODULE m_shcore_module{};
-};
 
 template <class FunctionPointer>
 class CDllFunction
@@ -115,28 +101,23 @@ public:
     }
 };
 
-template <class FunctionPointer>
-auto MakeDllFunction(FunctionPointer, LPCTSTR dll_name, LPCSTR function_name) noexcept
-    -> CDllFunction<FunctionPointer>
-{
-    return CDllFunction<FunctionPointer>(dll_name, function_name);
-}
+typedef HRESULT(WINAPI* _GetDpiForMonitor)(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT* dpiX, UINT* dpiY);
 
-template <class FunctionPointer, LPCTSTR DllName, LPCSTR FunctionName>
-class CLazyInitializeDllFunction
+class CDllFunctions
 {
-    static auto Get()
-        -> CDllFunction<FunctionPointer>&
-    {
-        static const CDllFunction<FunctionPointer> result{DllName, FunctionName};
-        return result;
-    }
+public:
+    CDllFunctions();
+    ~CDllFunctions();
+
+public:
+    HRESULT GetDpiForMonitor(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT* dpiX, UINT* dpiY);
+    static const CDllFunction<decltype(&::D3DCompile)> D3DCompile;
+    static const CDllFunction<decltype(&::DCompositionCreateDevice)> DCompositionCreateDevice;
+    static const CDllFunction<decltype(&::CreateDXGIFactory2)> CreateDXGIFactory2;
+
+private:
+    _GetDpiForMonitor m_getDpiForMonitor{};
+
+private:
+    HMODULE m_shcore_module{};
 };
-
-#define TRAFFICMONITOR_DEFINE_LAZY_INITIALIZE_DLL_FUNCTION(function_name_to_used, function_pointer, dll_name_literals, function_name_literals) \
-    LPCTSTR dll_name##__LINE__##TRAFFICMONITOR_DEFINE_LAZY_INITIALIZE_DLL_FUNCTION##__internal{dll_name_literals};                             \
-    LPCSTR function_name##__LINE__##TRAFFICMONITOR_DEFINE_LAZY_INITIALIZE_DLL_FUNCTION##__internal{function_name_literals};                    \
-    using function_name_to_used = CLazyInitializeDllFunction<                                                                                  \
-        decltype(&function_pointer),                                                                                                           \
-        dll_name##__LINE__##TRAFFICMONITOR_DEFINE_LAZY_INITIALIZE_DLL_FUNCTION##__internal,                                                    \
-        function_name##__LINE__##TRAFFICMONITOR_DEFINE_LAZY_INITIALIZE_DLL_FUNCTION##__internal>;
