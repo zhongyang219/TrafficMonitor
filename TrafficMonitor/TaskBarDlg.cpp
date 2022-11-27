@@ -60,9 +60,9 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
         return;
     if (m_rect.IsRectEmpty() || m_rect.IsRectNull())
         return;
-    //缓存渲染器类型（仅透明且支持D2D渲染时才会使用D2D渲染）
+    // 缓存渲染器类型（仅透明且支持D2D渲染时才会使用D2D渲染）
     DrawCommonHelper::RenderType render_type = GetRenderType();
-    CRect draw_rect{m_rect}; //绘图的矩形区域
+    CRect draw_rect{m_rect}; // 绘图的矩形区域
     draw_rect.MoveToXY(0, 0);
 
 #ifdef DEBUG
@@ -90,26 +90,62 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                   p_draw_common->SetFont(&m_font);
                   p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
               }},
+             {DrawCommonHelper::RenderType::D2D1_WITH_DCOMPOSITION,
+              [&](IDrawBuffer* p_draw_buffer_interface, IDrawCommon* p_draw_common_interface)
+              {
+                  auto p_draw_buffer = static_cast<CTaskBarDlgDrawBufferUseDComposition*>(p_draw_buffer_interface);
+                  auto p_draw_common = static_cast<CTaskBarDlgDrawCommon*>(p_draw_common_interface);
+
+                  auto& ref_d2d1_app_support = theApp.m_d2d_taskbar_draw_common_support.Get();
+                  m_d2d1_device_context_support.Get().SetWorkingDevice(
+                      ref_d2d1_app_support.GetDCompositionDevice(),
+                      ref_d2d1_app_support.GetD3D10Device1(),
+                      m_hWnd);
+                  // 这里与上面相反，是先构造DrawCommon再构造Buffer
+                  // 这里构造绘图对象
+                  EmplaceAt(p_draw_common);
+                  D2D1_SIZE_U d2d_size;
+                  d2d_size.width = draw_rect.Width();
+                  d2d_size.height = draw_rect.Height();
+                  p_draw_common->Create(
+                      this->m_taskbar_draw_common_window_support.Get(),
+                      this->m_d2d1_device_context_support.Get(),
+                      d2d_size);
+                  // 仅透明时启用此渲染器，则默认初始化为全黑，alpha=1
+                  p_draw_common->FillRect(draw_rect, 0x00000000, 1);
+                  p_draw_common->SetFont(&m_font);
+                  p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
+                  // 构造buffer
+                  EmplaceAt(p_draw_buffer, this->m_d2d1_device_context_support.Get());
+              }},
              {DrawCommonHelper::RenderType::D2D1,
               [&](IDrawBuffer* p_draw_buffer_interface, IDrawCommon* p_draw_common_interface)
               {
                   auto p_draw_buffer = static_cast<CTaskBarDlgDrawBuffer*>(p_draw_buffer_interface);
                   auto p_draw_common = static_cast<CTaskBarDlgDrawCommon*>(p_draw_common_interface);
 
-                  // 这里与上面相反，是先构造DrawCommon再构造Buffer，并且需要注意析构顺序
+                  auto& ref_d2d1_app_support = theApp.m_d2d_taskbar_draw_common_support.Get();
+                  m_d2d1_device_context_support.Get().SetWorkingDevice(ref_d2d1_app_support.GetD3D10Device1());
+                  // 这里与上面相反，是先构造DrawCommon再构造Buffer
                   // 这里构造绘图对象
                   EmplaceAt(p_draw_common);
                   D2D1_SIZE_U d2d_size;
                   d2d_size.width = draw_rect.Width();
                   d2d_size.height = draw_rect.Height();
-                  p_draw_common->Create(this->m_taskbar_draw_common_window_support.Get(), d2d_size);
-                  // 仅透明时启用此渲染器，则默认初始化为全黑，alpha=1
+                  p_draw_common->Create(
+                      this->m_taskbar_draw_common_window_support.Get(),
+                      this->m_d2d1_device_context_support.Get(),
+                      d2d_size); // 仅透明时启用此渲染器，则默认初始化为全黑，alpha=1
                   p_draw_common->FillRect(draw_rect, 0x00000000, 1);
                   p_draw_common->SetFont(&m_font);
                   p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
                   // 构造buffer
                   CSize draw_size{draw_rect.Width(), draw_rect.Height()};
-                  EmplaceAt(p_draw_buffer, this->m_taskbar_draw_common_window_support.Get(), draw_size, current_hwnd);
+                  EmplaceAt(p_draw_buffer,
+                            this->m_taskbar_draw_common_window_support.Get(),
+                            this->m_d2d1_device_context_support.Get(),
+                            draw_size,
+                            current_hwnd);
 
 #ifdef DEBUG
                   DXGIGetDebugInterface1(0, IID_PPV_ARGS(&p_dxgi_analysis));
@@ -120,7 +156,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 #endif
               }}});
     IDrawCommon& draw = *draw_common_interface;
-    //计算各部分的位置
+    // 计算各部分的位置
     int index = 0;
     CRect item_rect{};
     int item_count = static_cast<int>(m_item_widths.size()); //要显示的项目数量
@@ -510,7 +546,14 @@ auto CTaskBarDlg::GetRenderType()
     bool is_d2d1_dc_support = CTaskBarDlgDrawCommonSupport::CheckSupport();
     if (is_transparent && !theApp.m_taskbar_data.auto_set_background_color && !theApp.m_taskbar_data.disable_d2d && is_d2d1_dc_support)
     {
-        result = DrawCommonHelper::RenderType::D2D1;
+        if (CDCompositionSupport::CheckSupport() || CDxgi1Support2::CheckSupport())
+        {
+            result = DrawCommonHelper::RenderType::D2D1_WITH_DCOMPOSITION;
+        }
+        else
+        {
+            result = DrawCommonHelper::RenderType::D2D1;
+        }
     }
     else
     {
@@ -670,14 +713,22 @@ void CTaskBarDlg::ApplyWindowTransparentColor()
     }
     if ((theApp.m_taskbar_data.transparent_color != 0) && theApp.m_taksbar_transparent_color_enable)
     {
-        SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
-        if (GetRenderType() == DrawCommonHelper::RenderType::Default)
+        auto render_type = GetRenderType();
+        switch (render_type)
         {
+            using namespace DrawCommonHelper;
+        case RenderType::D2D1_WITH_DCOMPOSITION:
+            // D2D绘图并使用DComposition混合，不设置任何属性
+            break;
+        case RenderType::D2D1:
+            // D2D绘图直接使用alpha混合，只设置 WS_EX_LAYERED
+            SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
+            break;
+        case RenderType::Default:;
             // GDI绘图使用色键抠像
+            // 仅在透明且不使用自动决定背景颜色时启动D2D渲染器
+            SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
             SetLayeredWindowAttributes(theApp.m_taskbar_data.transparent_color, 0, LWA_COLORKEY);
-            //仅在透明且不使用自动决定背景颜色时启动D2D渲染器
-            // D2D绘图直接使用alpha混合
-            //无需执行动作
         }
     }
     else
@@ -1111,6 +1162,12 @@ BOOL CTaskBarDlg::OnInitDialog()
     //设置隐藏任务栏图标
     ModifyStyleEx(0, WS_EX_TOOLWINDOW);
 
+    auto style = GetWindowLong(m_hWnd, GWL_EXSTYLE);
+    bool a = style & WS_EX_NOREDIRECTIONBITMAP;
+    OutputDebugStringA(std::to_string(style).c_str());
+    OutputDebugStringA("\n");
+    OutputDebugStringA(std::to_string(a).c_str());
+
     m_pDC = GetDC();
 
     m_hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL); //寻找类名是Shell_TrayWnd的窗口句柄
@@ -1124,7 +1181,7 @@ BOOL CTaskBarDlg::OnInitDialog()
     {
         theApp.m_is_windows11_taskbar = (::FindWindowExW(m_hTaskbar, 0, L"Windows.UI.Composition.DesktopWindowContentBridge", NULL) != NULL);
     }
- 
+
     //设置窗口透明色
     ApplyWindowTransparentColor();
 
@@ -1393,26 +1450,37 @@ void CTaskBarDlg::OnPaint()
     }
     catch (CD3D10Exception1& ex)
     {
-        DrawCommonHelper::DefaultD3D10Exception1Handler(
-            ex,
-            [this]()
-            { m_taskbar_draw_common_window_support.Get().RequestD3D10Device1Recreate(); });
+        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}(
+            [p_window_support_wrapper = &this->m_taskbar_draw_common_window_support](CHResultException& ex)
+            {
+                return DrawCommonHelper::HandleIfNeedRecreate(
+                    ex,
+                    [p_window_support_wrapper]()
+                    { p_window_support_wrapper->Get().RequestD3D10Device1Recreate(); });
+            });
     }
     catch (CD2D1Exception& ex)
     {
-        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{
-            ex,
-            [this]()
-            { m_taskbar_draw_common_window_support.Get().RequestD2D1DeviceRecreate(); }}();
+        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}(
+            [p_device_context_support_wrapper = &this->m_d2d1_device_context_support](CHResultException& ex)
+            {
+                return DrawCommonHelper::HandleIfD2D1DeviceNeedRecreate(
+                    ex,
+                    [&]()
+                    { p_device_context_support_wrapper->Get().RequestD2D1DeviceRecreate(ex.GetHResult()); });
+            });
     }
     catch (CHResultException& ex)
     {
-       LogHResultException(ex);
+        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}();
     }
     catch (std::runtime_error& ex)
     {
         auto* log = ex.what();
         CCommon::WriteLog(log, theApp.m_log_path.c_str());
+        // 目前只有它会主动抛异常，所有异常全部算它头上
+        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler::IncreaseErrorCountManually();
+        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler::HandleErrorCountIncrement();
     }
 
 }

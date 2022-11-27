@@ -246,6 +246,7 @@
 #define IDS_USAGE_PERCENTAGE            339
 #define IDD_SELECT_CONNECTIONS_DIALOG   339
 #define IDS_MEMORY_USED                 340
+#define IDD_TASK_BAR_DIALOG_NOREDIRECTIONBITMAP 340
 #define IDS_MEMORY_AVAILABLE            341
 #define IDS_DOTNET_NOT_INSTALLED_TIP    342
 #define IDS_VERSION_UPDATE              343
@@ -618,7 +619,7 @@
 #define ID_DISPLAY_SETTINGS             33405
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        341

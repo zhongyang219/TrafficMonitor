@@ -93,7 +93,12 @@ protected:
         CTaskBarDlgDrawCommonWindowSupport,
         CTaskBarDlgDrawCommonSupport&>
         m_taskbar_draw_common_window_support{[]() -> std::tuple<CTaskBarDlgDrawCommonSupport&>
-                                             { return {theApp.m_d2d_taskbar_draw_common.Get()}; }}; //提供D2D1绘图支持
+                                             { return {theApp.m_d2d_taskbar_draw_common_support.Get()}; }}; //提供D2D1绘图支持
+    DefaultCLazyConstructableWithInitializer<
+        CD2D1DeviceContextWindowSupport,
+        CTaskBarDlgDrawCommonSupport&>
+        m_d2d1_device_context_support{[]() -> std::tuple<CTaskBarDlgDrawCommonSupport&>
+                                      { return {theApp.m_d2d_taskbar_draw_common_support.Get()}; }};
 
     //任务栏各个部分的宽度
     struct ItemWidth
@@ -176,10 +181,9 @@ protected:
 
     void MoveWindow(CRect rect);
 
-    static auto GetRenderType()
-        ->DrawCommonHelper::RenderType;
-
 public:
+    static auto GetRenderType()
+        -> DrawCommonHelper::RenderType;
     void SetTextFont();
     void ApplySettings();
     void CalculateWindowSize();		//计算窗口每部分的大小，及各个部分的宽度。窗口大小保存到m_window_width和m_window_height中，各部分宽度保存到m_item_widths中

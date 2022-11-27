@@ -518,7 +518,18 @@ void CTrafficMonitorDlg::CloseTaskBarWnd()
 void CTrafficMonitorDlg::OpenTaskBarWnd()
 {
     m_tBarDlg = new CTaskBarDlg;
-    m_tBarDlg->Create(IDD_TASK_BAR_DIALOG, this);
+    auto render_type = CTaskBarDlg::GetRenderType();
+    switch (render_type)
+    {
+        using namespace DrawCommonHelper;
+    case RenderType::D2D1_WITH_DCOMPOSITION:
+        m_tBarDlg->Create(IDD_TASK_BAR_DIALOG_NOREDIRECTIONBITMAP, this);
+        break;
+    // 包括RenderType::D2D1在内的其他值
+    default:
+        m_tBarDlg->Create(IDD_TASK_BAR_DIALOG, this);
+        break;
+    }
     m_tBarDlg->ShowWindow(SW_SHOW);
     //m_tBarDlg->ShowInfo();
     //IniTaskBarConnectionMenu();
