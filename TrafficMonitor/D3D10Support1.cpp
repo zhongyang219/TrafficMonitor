@@ -5,6 +5,7 @@
 #include "D3D10Support1.h"
 #include "Common.h"
 #include "Nullable.hpp"
+#include "DllFunctions.h"
 
 #pragma comment(lib, "DXGI.lib")
 #pragma comment(lib, "D3D10_1.lib")
@@ -181,6 +182,12 @@ const char* CDXShaderException::what() const noexcept
     return m_error.c_str();
 }
 
+namespace Details
+{
+    // TODO: 未来将此对象移动到DllFunctions中
+    const CDllFunction<decltype(&::D3DCompile)> D3DCompile{_T("d3dcompiler_47.dll"), "D3DCompile"};
+}
+
 auto CShader::Compile() const
     -> Microsoft::WRL::ComPtr<ID3DBlob>
 {
@@ -198,9 +205,14 @@ auto CShader::Compile() const
 
     if (m_is_config_changed)
     {
+        if (!Details::D3DCompile.HasValue())
+        {
+            throw std::runtime_error{
+                TRAFFICMONITOR_ERROR_STR("Can not find function D3DCompile in d3dcompiler_47.dll or d3dcompiler_47.dll is not exist.")};
+        }
         ComPtr<ID3DBlob> p_error_message{};
         ThrowIfFailed<CDXShaderException>(
-            D3DCompile(
+            Details::D3DCompile(
                 m_code.c_str(),
                 m_code.size(),
                 m_name.c_str(),
@@ -280,7 +292,7 @@ auto CShader::AddMacro(const ShaderMacro& macro)
     -> CShader&
 {
     m_is_config_changed = true;
-    m_macros.push_back(std::move(macro));
+    m_macros.push_back(macro);
     return *this;
 }
 
