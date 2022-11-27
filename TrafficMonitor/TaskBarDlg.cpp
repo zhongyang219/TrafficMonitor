@@ -1162,12 +1162,6 @@ BOOL CTaskBarDlg::OnInitDialog()
     //设置隐藏任务栏图标
     ModifyStyleEx(0, WS_EX_TOOLWINDOW);
 
-    auto style = GetWindowLong(m_hWnd, GWL_EXSTYLE);
-    bool a = style & WS_EX_NOREDIRECTIONBITMAP;
-    OutputDebugStringA(std::to_string(style).c_str());
-    OutputDebugStringA("\n");
-    OutputDebugStringA(std::to_string(a).c_str());
-
     m_pDC = GetDC();
 
     m_hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL); //寻找类名是Shell_TrayWnd的窗口句柄
