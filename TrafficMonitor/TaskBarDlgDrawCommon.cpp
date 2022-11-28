@@ -193,6 +193,19 @@ HDC DrawCommonHelper::Get1x1AlphaEqual1DC()
     return std::get<0>(result.Get());
 }
 
+void CTaskBarDlgDrawCommonSupport::SecureD3D10Device1Valid()
+{
+    auto p_d3d10_device1 = m_d3d10_device1.Get();
+    auto hr = p_d3d10_device1->GetDeviceRemovedReason();
+    if (hr != S_OK)
+    {
+        CCommon::WriteLog(
+            "CTaskBarDlgDrawCommonSupport::SecureD3D10Device1Valid() is requesting to recreate D3D10Device1.",
+            theApp.m_log_path.c_str());
+        RecreateD3D10Device1(hr);
+    }
+}
+
 CTaskBarDlgDrawCommonSupport::CTaskBarDlgDrawCommonSupport()
 {
     D2D1_STROKE_STYLE_PROPERTIES d2d1_stroke_style_properties{
@@ -255,6 +268,7 @@ void CTaskBarDlgDrawCommonSupport::RecreateD3D10Device1(const HRESULT recreate_r
     if (recreate_reason != S_OK)
     {
         DrawCommonHelper::LogDeviceRecreateReason(recreate_reason);
+        CCommon::WriteLog("Notice: The device is a D3D10.1 device.", theApp.m_log_path.c_str());
     }
     auto&& default_adapter1 =
         CD3D10Support1::GetDeviceList(true).front();
@@ -266,12 +280,14 @@ void CTaskBarDlgDrawCommonSupport::RecreateD2D1Device(const HRESULT recreate_rea
     if (recreate_reason != S_OK)
     {
         DrawCommonHelper::LogDeviceRecreateReason(recreate_reason);
+        CCommon::WriteLog("Notice: The device is a D2D1 device.", theApp.m_log_path.c_str());
     }
-    Microsoft::WRL::ComPtr<IDXGIDevice> p_d3d10_device1{};
+    SecureD3D10Device1Valid();
+    Microsoft::WRL::ComPtr<IDXGIDevice> p_dxgi_device{};
     ThrowIfFailed<CD3D10Exception1>(
-        m_d3d10_device1.Get()->QueryInterface(IID_PPV_ARGS(&p_d3d10_device1)),
+        m_d3d10_device1.Get()->QueryInterface(IID_PPV_ARGS(&p_dxgi_device)),
         "Get IDXGIDevice form ID3D10Device1 failed.");
-    m_d2d1_device.Recreate(p_d3d10_device1);
+    m_d2d1_device.Recreate(p_dxgi_device);
 }
 
 void CTaskBarDlgDrawCommonSupport::RecreateDCompositionDevice(const HRESULT recreate_reason)
@@ -279,7 +295,9 @@ void CTaskBarDlgDrawCommonSupport::RecreateDCompositionDevice(const HRESULT recr
     if (recreate_reason != S_OK)
     {
         DrawCommonHelper::LogDeviceRecreateReason(recreate_reason);
+        CCommon::WriteLog("Notice: The device is a DirectComposition device.", theApp.m_log_path.c_str());
     }
+    SecureD3D10Device1Valid();
     auto p_d3d10_device1 = m_d3d10_device1.Get();
     if (p_d3d10_device1)
     {
@@ -728,7 +746,7 @@ void CD2D1DeviceContextWindowSupport::CDCompositionHelper::InitializeSwapChain(c
     dxgi_swap_chain_desc1.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
     dxgi_swap_chain_desc1.AlphaMode = DXGI_ALPHA_MODE_PREMULTIPLIED;
 
-    ThrowIfFailed(
+    ThrowIfFailed<CDxgiException>(
         CDxgi1Support2::GetFactory()->CreateSwapChainForComposition(
             m_p_d3d10_device1.Get(),
             &dxgi_swap_chain_desc1,

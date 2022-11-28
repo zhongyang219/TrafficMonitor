@@ -131,6 +131,8 @@ private:
     CDCompositionDevice m_dcomposition_device{};
     Microsoft::WRL::ComPtr<ID2D1StrokeStyle> m_p_ps_dot_like_style{};
 
+    void SecureD3D10Device1Valid();
+
 public:
     CTaskBarDlgDrawCommonSupport();
     ~CTaskBarDlgDrawCommonSupport() = default;
@@ -147,7 +149,6 @@ public:
     void RecreateD3D10Device1(const HRESULT recreate_reason = S_OK);
     void RecreateD2D1Device(const HRESULT recreate_reason = S_OK);
     void RecreateDCompositionDevice(const HRESULT recreate_reason = S_OK);
-    void ConfirmDeviceRecreation();
     static bool CheckSupport() noexcept;
 };
 
