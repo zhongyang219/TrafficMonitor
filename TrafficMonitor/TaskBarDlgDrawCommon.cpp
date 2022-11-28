@@ -881,9 +881,9 @@ CD2D1DeviceContextWindowSupport::CD3DHelper::CD3DHelper(CD3D10Device1& ref_devic
 auto CD2D1DeviceContextWindowSupport::CD3DHelper::Resize(const D2D1_SIZE_U size)
     -> Microsoft::WRL::ComPtr<IDXGISurface>
 {
-    auto p_render_target_texture = CreateGdiCompatibleTexture(m_p_device1, size);
+    m_p_render_target_texture = CreateGdiCompatibleTexture(m_p_device1, size);
     ThrowIfFailed<CD3D10Exception1>(
-        p_render_target_texture.As(&m_p_render_target_surface),
+        m_p_render_target_texture.As(&m_p_render_target_surface),
         TRAFFICMONITOR_ERROR_STR("Get IDXGISurface1 from D2D render target texture failed."));
     return m_p_render_target_surface;
 }
@@ -899,6 +899,7 @@ bool CD2D1DeviceContextWindowSupport::CD3DHelper::HandleDeviceRecreationIfNecess
 
 void CD2D1DeviceContextWindowSupport::CD3DHelper::OnDeviceRecreate(DeviceType p_new_device) noexcept
 {
+    m_p_device1 = p_new_device;
     m_need_recreate = true;
 }
 

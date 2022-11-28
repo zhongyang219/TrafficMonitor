@@ -364,6 +364,7 @@ public:
 
     private:
         Microsoft::WRL::ComPtr<ID3D10Device1> m_p_device1{};
+        Microsoft::WRL::ComPtr<ID3D10Texture2D> m_p_render_target_texture{};
         Microsoft::WRL::ComPtr<IDXGISurface1> m_p_render_target_surface{};
         bool m_need_recreate{false};
 
