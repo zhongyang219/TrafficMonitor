@@ -441,8 +441,8 @@ void CTrafficMonitorDlg::IniConnection()
     theApp.m_cfg_data.m_connection_name = GetConnection(m_connection_selected).description_2;
 
     //根据已获取到的连接在菜单中添加相应项目
-    CMenu* select_connection_menu = theApp.m_main_menu.GetSubMenu(0)->GetSubMenu(0);        //设置“选择网络连接”子菜单项
-    IniConnectionMenu(select_connection_menu);      //向“选择网卡”子菜单项添加项目
+    IniConnectionMenu(theApp.m_main_menu.GetSubMenu(0)->GetSubMenu(0));      //向“选择网络连接”子菜单项添加项目
+    IniConnectionMenu(theApp.m_main_menu_plugin.GetSubMenu(0)->GetSubMenu(0));      //向“选择网络连接”子菜单项添加项目
 
     IniTaskBarConnectionMenu();     //初始化任务栏窗口中的“选择网络连接”子菜单项
 
@@ -496,8 +496,9 @@ void CTrafficMonitorDlg::IniConnectionMenu(CMenu* pMenu)
 
 void CTrafficMonitorDlg::IniTaskBarConnectionMenu()
 {
-    CMenu* select_connection_menu = theApp.m_taskbar_menu.GetSubMenu(0)->GetSubMenu(0);     //设置“选择网络连接”子菜单项
-    IniConnectionMenu(select_connection_menu);      //向“选择网卡”子菜单项添加项目
+    //向“选择网络连接”子菜单项添加项目
+    IniConnectionMenu(theApp.m_taskbar_menu.GetSubMenu(0)->GetSubMenu(0));
+    IniConnectionMenu(theApp.m_taskbar_menu_plugin.GetSubMenu(0)->GetSubMenu(0));
 }
 
 void CTrafficMonitorDlg::SetConnectionMenuState(CMenu* pMenu)
@@ -1972,8 +1973,8 @@ void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
     pMenu->CheckMenuItem(ID_ALOW_OUT_OF_BORDER, MF_BYCOMMAND | (theApp.m_main_wnd_data.m_alow_out_of_border ? MF_CHECKED : MF_UNCHECKED));
 
     //设置“选择连接”子菜单项中各单选项的选择状态
-    CMenu* select_connection_menu = theApp.m_main_menu.GetSubMenu(0)->GetSubMenu(0);
-    SetConnectionMenuState(select_connection_menu);
+    SetConnectionMenuState(theApp.m_main_menu.GetSubMenu(0)->GetSubMenu(0));
+    SetConnectionMenuState(theApp.m_main_menu_plugin.GetSubMenu(0)->GetSubMenu(0));
 
     //设置“窗口不透明度”子菜单下各单选项的选择状态
     switch (theApp.m_cfg_data.m_transparency)
@@ -2498,8 +2499,8 @@ void CTrafficMonitorDlg::OnCheckUpdate()
 afx_msg LRESULT CTrafficMonitorDlg::OnTaskbarMenuPopedUp(WPARAM wParam, LPARAM lParam)
 {
     //设置“选择连接”子菜单项中各单选项的选择状态
-    CMenu* select_connection_menu = theApp.m_taskbar_menu.GetSubMenu(0)->GetSubMenu(0);
-    SetConnectionMenuState(select_connection_menu);
+    SetConnectionMenuState(theApp.m_taskbar_menu.GetSubMenu(0)->GetSubMenu(0));
+    SetConnectionMenuState(theApp.m_taskbar_menu_plugin.GetSubMenu(0)->GetSubMenu(0));
     return 0;
 }
 
