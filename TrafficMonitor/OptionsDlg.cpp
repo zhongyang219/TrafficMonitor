@@ -73,6 +73,18 @@ BOOL COptionsDlg::OnInitDialog()
     m_tab.AddWindow(&m_tab2_dlg, CCommon::LoadText(IDS_TASKBAR_WINDOW_SETTINGS));
     m_tab.AddWindow(&m_tab3_dlg, CCommon::LoadText(IDS_GENERAL_SETTINGS));
 
+    //为每个标签添加图标
+    CImageList ImageList;
+    ImageList.Create(theApp.DPI(16), theApp.DPI(16), ILC_COLOR32 | ILC_MASK, 2, 2);
+    ImageList.Add(theApp.GetMenuIcon(IDI_MAIN_WINDOW));
+    ImageList.Add(theApp.GetMenuIcon(IDI_TASKBAR_WINDOW));
+    ImageList.Add(theApp.GetMenuIcon(IDI_SETTINGS));
+    m_tab.SetImageList(&ImageList);
+    ImageList.Detach();
+
+    m_tab.SetItemSize(CSize(theApp.DPI(60), theApp.DPI(24)));
+    m_tab.AdjustTabWindowSize();
+
     //为每个子窗口设置滚动信息
     for (size_t i = 0; i < m_tab_vect.size(); i++)
     {
