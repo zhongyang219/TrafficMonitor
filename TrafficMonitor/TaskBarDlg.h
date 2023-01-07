@@ -7,6 +7,7 @@
 #include "IniHelper.h"
 #include "CommonData.h"
 #include "TaskbarItemOrderHelper.h"
+#include "SupportedRenderEnums.h"
 #include <list>
 
 // CTaskBarDlg 对话框
@@ -89,6 +90,7 @@ protected:
     CRect m_rect;		//当前窗口的矩形区域
     int m_window_width{};
     int m_window_height{};
+    CSupportedRenderEnums m_supported_render_enums{};
     DefaultCLazyConstructableWithInitializer<
         CTaskBarDlgDrawCommonWindowSupport,
         CTaskBarDlgDrawCommonSupport&>
@@ -182,8 +184,7 @@ protected:
     void MoveWindow(CRect rect);
 
 public:
-    static auto GetRenderType()
-        -> DrawCommonHelper::RenderType;
+    static void DisableRenderFeatureIfNecessary(CSupportedRenderEnums& ref_supported_render_enums);
     void SetTextFont();
     void ApplySettings();
     void CalculateWindowSize();		//计算窗口每部分的大小，及各个部分的宽度。窗口大小保存到m_window_width和m_window_height中，各部分宽度保存到m_item_widths中

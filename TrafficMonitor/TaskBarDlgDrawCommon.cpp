@@ -61,9 +61,8 @@ using Win32HDCVerifier = ReturnValueVerifier<HDC, nullptr>;
 using Win32HFONTVerifier = ReturnValueVerifier<HFONT, nullptr>;
 using Win32HGDIOBJVerifier = ReturnValueVerifier<HGDIOBJ, nullptr>;
 
-void LogWin32ApiErrorMessage() noexcept
+void LogWin32ApiErrorMessage(DWORD error_code) noexcept
 {
-    auto error_code = ::GetLastError();
     // 写入系统格式化后的错误信息
     if (error_code != 0)
     {
@@ -559,6 +558,16 @@ void CTaskBarDlgDrawCommonWindowSupport::RequestD3D10Device1Recreate()
 {
     auto hr = m_d3d_gdi_interop_helper.m_p_device1->GetDeviceRemovedReason();
     m_ref_taskbardlg_draw_common_support.RecreateD3D10Device1(hr);
+}
+
+void CTaskBarDlgDrawCommonWindowSupport::SetLastUpdateLayeredWindowError(DWORD result) noexcept
+{
+    m_update_layered_window_error_code = result;
+}
+
+DWORD CTaskBarDlgDrawCommonWindowSupport::GetLastUpdateLayeredWindowError() const noexcept
+{
+    return m_update_layered_window_error_code;
 }
 
 void CTaskBarDlgDrawCommonWindowSupport::CDWriteHelper::SetFont(HFONT h_font)
@@ -1973,19 +1982,11 @@ CTaskBarDlgDrawBuffer::~CTaskBarDlgDrawBuffer()
         update_window_info.pblend = GetDefaultBlendFunctionPointer();
         update_window_info.dwFlags = ULW_ALPHA;
         // m_update_window_info.prcDirty = NULL;
-        BOOL state = ::UpdateLayeredWindowIndirect(m_target_hwnd, &update_window_info);
+        auto state = ::UpdateLayeredWindowIndirect(m_target_hwnd, &update_window_info);
         if (state == 0)
         {
             auto error_code = ::GetLastError();
-            LogWin32ApiErrorMessage();
-            CString error_info{};
-            error_info.Format(_T("Call UpdateLayeredWindowIndirect failed. Use GDI render instead. Error code = %ld."), error_code);
-            CCommon::WriteLog(error_info, theApp.m_log_path.c_str());
-
-            // 禁用D2D
-            theApp.m_taskbar_data.disable_d2d = true;
-            // 展示错误信息
-            ::MessageBox(NULL, CCommon::LoadText(IDS_UPDATE_TASKBARDLG_FAILED_TIP), NULL, MB_OK | MB_ICONWARNING);
+            m_ref_window_support.SetLastUpdateLayeredWindowError(error_code);
         }
         RECT empty_rect{};
         m_p_gdi_surface->ReleaseDC(&empty_rect);

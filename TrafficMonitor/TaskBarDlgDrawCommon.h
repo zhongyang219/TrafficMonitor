@@ -16,7 +16,7 @@
 #include "Nullable.hpp"
 #include "DrawTextManager.h"
 
-void LogWin32ApiErrorMessage() noexcept;
+void LogWin32ApiErrorMessage(DWORD error_code) noexcept;
 
 namespace DrawCommonHelper
 {
@@ -234,6 +234,7 @@ private:
     CD3DGdiInteropHelper m_d3d_gdi_interop_helper;
     CDWriteHelper m_dwrite_helper{};
     CTaskBarDlgDrawCommonSupport& m_ref_taskbardlg_draw_common_support;
+    DWORD m_update_layered_window_error_code{0};
     bool m_is_size_updated{true};
 
 public:
@@ -268,6 +269,8 @@ public:
     auto GetFont() noexcept
         -> HFONT;
     void RequestD3D10Device1Recreate();
+    void SetLastUpdateLayeredWindowError(DWORD result) noexcept;
+    DWORD GetLastUpdateLayeredWindowError() const noexcept;
 };
 
 /**

@@ -460,9 +460,6 @@
     <ClInclude Include="D3D10Support1.h">
       <Filter>源文件和头文件\公共的类\RenderAPISupport\D3D10Support1</Filter>
     </ClInclude>
-    <ClInclude Include="TaskBarDlgDrawCommon.h">
-      <Filter>源文件和头文件\TaskBarDlg</Filter>
-    </ClInclude>
     <ClInclude Include="Image2DEffect.h">
       <Filter>源文件和头文件\公共的类\Image2DEffect</Filter>
     </ClInclude>
@@ -480,6 +477,12 @@
     </ClInclude>
     <ClInclude Include="Dxgi1Support2.h">
       <Filter>源文件和头文件\公共的类\RenderAPISupport\DxgiSupport2</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskBarDlgDrawCommon.h">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="SupportedRenderEnums.h">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -693,9 +696,6 @@
     <ClCompile Include="D3D10Support1.cpp">
       <Filter>源文件和头文件\公共的类\RenderAPISupport\D3D10Support1</Filter>
     </ClCompile>
-    <ClCompile Include="TaskBarDlgDrawCommon.cpp">
-      <Filter>源文件和头文件\TaskBarDlg</Filter>
-    </ClCompile>
     <ClCompile Include="Image2DEffect.cpp">
       <Filter>源文件和头文件\公共的类\Image2DEffect</Filter>
     </ClCompile>
@@ -707,6 +707,12 @@
     </ClCompile>
     <ClCompile Include="Dxgi1Support2.cpp">
       <Filter>源文件和头文件\公共的类\RenderAPISupport\DxgiSupport2</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskBarDlgDrawCommon.cpp">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="SupportedRenderEnums.cpp">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -61,8 +61,27 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
         return;
     if (m_rect.IsRectEmpty() || m_rect.IsRectNull())
         return;
-    // 缓存渲染器类型（仅透明且支持D2D渲染时才会使用D2D渲染）
-    DrawCommonHelper::RenderType render_type = GetRenderType();
+    auto last_update_layered_window_error =
+        m_taskbar_draw_common_window_support.Get().GetLastUpdateLayeredWindowError();
+    if (last_update_layered_window_error)
+    {
+        m_supported_render_enums.DisableD2D1();
+        if (!m_supported_render_enums.IsD2D1WithDCompositionEnabled())
+        {
+            m_supported_render_enums.EnableDefaultOnly();
+            LogWin32ApiErrorMessage(last_update_layered_window_error);
+            CString error_info{};
+            error_info.Format(
+                _T("Call UpdateLayeredWindowIndirect failed. Use GDI render instead. Error code = %ld."),
+                last_update_layered_window_error);
+            CCommon::WriteLog(error_info, theApp.m_log_path.c_str());
+            // 禁用D2D
+            theApp.m_taskbar_data.disable_d2d = true;
+            // 展示错误信息
+            ::MessageBox(NULL, CCommon::LoadText(IDS_UPDATE_TASKBARDLG_FAILED_TIP), NULL, MB_OK | MB_ICONWARNING);
+        }
+    }
+    auto render_type = m_supported_render_enums.GetAutoFitEnum();
     CRect draw_rect{m_rect}; // 绘图的矩形区域
     draw_rect.MoveToXY(0, 0);
 
@@ -76,7 +95,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
         GetInterfaceFromAllInvolvedDrawCommonObjects(
             all_involved_draw_common_objects,
             render_type,
-            {{DrawCommonHelper::RenderType::Default,
+            {{DrawCommonHelper::RenderType::DEFAULT,
               [&](IDrawBuffer* p_draw_buffer_interface, IDrawCommon* p_draw_common_interface)
               {
                   auto p_draw_buffer = static_cast<CDrawDoubleBuffer*>(p_draw_buffer_interface);
@@ -539,28 +558,13 @@ void CTaskBarDlg::MoveWindow(CRect rect)
     }
 }
 
-auto CTaskBarDlg::GetRenderType()
-    ->DrawCommonHelper::RenderType
+void CTaskBarDlg::DisableRenderFeatureIfNecessary(CSupportedRenderEnums& ref_supported_render_enums)
 {
-    DrawCommonHelper::RenderType result;
     bool is_transparent = CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data);
-    bool is_d2d1_dc_support = CTaskBarDlgDrawCommonSupport::CheckSupport();
-    if (is_transparent && !theApp.m_taskbar_data.auto_set_background_color && !theApp.m_taskbar_data.disable_d2d && is_d2d1_dc_support)
+    if (!is_transparent || theApp.m_taskbar_data.auto_set_background_color || theApp.m_taskbar_data.disable_d2d)
     {
-        if (CDCompositionSupport::CheckSupport() || CDxgi1Support2::CheckSupport())
-        {
-            result = DrawCommonHelper::RenderType::D2D1_WITH_DCOMPOSITION;
-        }
-        else
-        {
-            result = DrawCommonHelper::RenderType::D2D1;
-        }
+        ref_supported_render_enums.EnableDefaultOnly();
     }
-    else
-    {
-        result = DrawCommonHelper::RenderType::Default;
-    }
-    return result;
 }
 
 void CTaskBarDlg::TryDrawStatusBar(IDrawCommon& drawer, const CRect& rect_bar, int usage_percent)
@@ -723,7 +727,7 @@ void CTaskBarDlg::ApplyWindowTransparentColor()
     }
     if ((theApp.m_taskbar_data.transparent_color != 0) && theApp.m_taksbar_transparent_color_enable)
     {
-        auto render_type = GetRenderType();
+        auto render_type = CSupportedRenderEnums{}.GetMaxSupportedRenderEnum();
         switch (render_type)
         {
             using namespace DrawCommonHelper;
@@ -734,7 +738,7 @@ void CTaskBarDlg::ApplyWindowTransparentColor()
             // D2D绘图直接使用alpha混合，只设置 WS_EX_LAYERED
             SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
             break;
-        case RenderType::Default:;
+        case RenderType::DEFAULT:
             // GDI绘图使用色键抠像
             // 仅在透明且不使用自动决定背景颜色时启动D2D渲染器
             SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
@@ -1169,6 +1173,8 @@ BOOL CTaskBarDlg::OnInitDialog()
     CDialogEx::OnInitDialog();
 
     // TODO:  在此添加额外的初始化
+    // 根据任务栏窗口的设置禁用必要的渲染选项，仅透明且支持D2D渲染时才会使用D2D渲染
+    DisableRenderFeatureIfNecessary(m_supported_render_enums);
     //设置隐藏任务栏图标
     ModifyStyleEx(0, WS_EX_TOOLWINDOW);
 

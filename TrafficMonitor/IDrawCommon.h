@@ -48,7 +48,7 @@ namespace DrawCommonHelper
     enum class RenderType
     {
         // 使用GDI
-        Default,
+        DEFAULT,
         // 如果支持，使用D2D1
         D2D1,
         // 如果系统大于win8.1，则在使用D2D1时利用DirectComposition呈现结果

@@ -12,6 +12,7 @@
 #include "WindowsSettingHelper.h"
 #include "PluginInfoDlg.h"
 #include "WIC.h"
+#include "SupportedRenderEnums.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -524,7 +525,13 @@ void CTrafficMonitorDlg::CloseTaskBarWnd()
 void CTrafficMonitorDlg::OpenTaskBarWnd()
 {
     m_tBarDlg = new CTaskBarDlg;
-    auto render_type = CTaskBarDlg::GetRenderType();
+
+    CSupportedRenderEnums supported_render_enums{};
+    CTaskBarDlg::DisableRenderFeatureIfNecessary(supported_render_enums);
+    auto render_type = supported_render_enums.GetMaxSupportedRenderEnum();
+
+    // WS_EX_LAYERED 和 WS_EX_NOREDIRECTIONBITMAP 可以共存，见微软示例代码
+    // https://github.com/microsoft/Windows-classic-samples/blob/7cbd99ac1d2b4a0beffbaba29ea63d024ceff700/Samples/DynamicDPI/cpp/SampleDesktopWindow.cpp#L179
     switch (render_type)
     {
         using namespace DrawCommonHelper;
