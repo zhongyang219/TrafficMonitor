@@ -5,7 +5,7 @@
 class CSupportedRenderEnums
 {
 private:
-    std::bitset<3> m_enums;
+    std::bitset<3> m_enums{1};
 
 public:
     constexpr static std::size_t DEFAULT_INDEX = 0;

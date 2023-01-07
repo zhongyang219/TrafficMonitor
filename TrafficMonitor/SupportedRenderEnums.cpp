@@ -3,13 +3,12 @@
 #include "TaskBarDlgDrawCommon.h"
 
 CSupportedRenderEnums::CSupportedRenderEnums()
-    : m_enums{1}
 {
-    if (CTaskBarDlgDrawCommonSupport::CheckSupport())
+    if (CDCompositionSupport::CheckSupport() && CDxgi1Support2::CheckSupport())
     {
         m_enums[D2D1_WITH_DCOMPOSITION_INDEX] = true;
     }
-    if (CD2D1Support1::CheckSupport() && CDWriteSupport::CheckSupport())
+    if (CTaskBarDlgDrawCommonSupport::CheckSupport())
     {
         m_enums[D2D1_INDEX] = true;
     }
