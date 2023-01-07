@@ -61,24 +61,27 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
         return;
     if (m_rect.IsRectEmpty() || m_rect.IsRectNull())
         return;
-    auto last_update_layered_window_error =
-        m_taskbar_draw_common_window_support.Get().GetLastUpdateLayeredWindowError();
-    if (last_update_layered_window_error)
+    if (m_supported_render_enums.IsD2D1Enabled())
     {
-        m_supported_render_enums.DisableD2D1();
-        if (!m_supported_render_enums.IsD2D1WithDCompositionEnabled())
+        auto last_update_layered_window_error =
+            m_taskbar_draw_common_window_support.Get().GetLastUpdateLayeredWindowError();
+        if (last_update_layered_window_error)
         {
-            m_supported_render_enums.EnableDefaultOnly();
-            LogWin32ApiErrorMessage(last_update_layered_window_error);
-            CString error_info{};
-            error_info.Format(
-                _T("Call UpdateLayeredWindowIndirect failed. Use GDI render instead. Error code = %ld."),
-                last_update_layered_window_error);
-            CCommon::WriteLog(error_info, theApp.m_log_path.c_str());
-            // 禁用D2D
-            theApp.m_taskbar_data.disable_d2d = true;
-            // 展示错误信息
-            ::MessageBox(NULL, CCommon::LoadText(IDS_UPDATE_TASKBARDLG_FAILED_TIP), NULL, MB_OK | MB_ICONWARNING);
+            m_supported_render_enums.DisableD2D1();
+            if (!m_supported_render_enums.IsD2D1WithDCompositionEnabled())
+            {
+                m_supported_render_enums.EnableDefaultOnly();
+                LogWin32ApiErrorMessage(last_update_layered_window_error);
+                CString error_info{};
+                error_info.Format(
+                    _T("Call UpdateLayeredWindowIndirect failed. Use GDI render instead. Error code = %ld."),
+                    last_update_layered_window_error);
+                CCommon::WriteLog(error_info, theApp.m_log_path.c_str());
+                // 禁用D2D
+                theApp.m_taskbar_data.disable_d2d = true;
+                // 展示错误信息
+                ::MessageBox(NULL, CCommon::LoadText(IDS_UPDATE_TASKBARDLG_FAILED_TIP), NULL, MB_OK | MB_ICONWARNING);
+            }
         }
     }
     auto render_type = m_supported_render_enums.GetAutoFitEnum();

@@ -31,4 +31,5 @@ public:
     auto GetMaxSupportedRenderEnum() const noexcept
         -> DrawCommonHelper::RenderType;
     bool IsD2D1WithDCompositionEnabled() const noexcept;
+    bool IsD2D1Enabled() const noexcept;
 };

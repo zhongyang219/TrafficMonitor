@@ -71,3 +71,8 @@ bool CSupportedRenderEnums::IsD2D1WithDCompositionEnabled() const noexcept
 {
     return m_enums[D2D1_WITH_DCOMPOSITION_INDEX];
 }
+
+bool CSupportedRenderEnums::IsD2D1Enabled() const noexcept
+{
+    return m_enums[D2D1_INDEX];
+}
