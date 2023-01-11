@@ -560,16 +560,6 @@ void CTaskBarDlgDrawCommonWindowSupport::RequestD3D10Device1Recreate()
     m_ref_taskbardlg_draw_common_support.RecreateD3D10Device1(hr);
 }
 
-void CTaskBarDlgDrawCommonWindowSupport::SetLastUpdateLayeredWindowError(DWORD result) noexcept
-{
-    m_update_layered_window_error_code = result;
-}
-
-DWORD CTaskBarDlgDrawCommonWindowSupport::GetLastUpdateLayeredWindowError() const noexcept
-{
-    return m_update_layered_window_error_code;
-}
-
 void CTaskBarDlgDrawCommonWindowSupport::CDWriteHelper::SetFont(HFONT h_font)
 {
     if (m_h_last_font != h_font)
@@ -1986,7 +1976,7 @@ CTaskBarDlgDrawBuffer::~CTaskBarDlgDrawBuffer()
         if (state == 0)
         {
             auto error_code = ::GetLastError();
-            m_ref_window_support.SetLastUpdateLayeredWindowError(error_code);
+            theApp.m_taskbar_data.update_layered_window_error_code = error_code;
         }
         RECT empty_rect{};
         m_p_gdi_surface->ReleaseDC(&empty_rect);

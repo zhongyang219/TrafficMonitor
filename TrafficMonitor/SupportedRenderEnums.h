@@ -24,10 +24,12 @@ public:
     auto GetAutoFitEnum() const noexcept
         -> DrawCommonHelper::RenderType;
     /**
-     * @brief 根据D2D1_WITH_DCOMPOSITION > D2D1 > DEFAULT的顺序返回枚举
+     * @brief （已弃用）
+        根据D2D1_WITH_DCOMPOSITION > D2D1 > DEFAULT的顺序返回枚举
      *
      * @return DrawCommonHelper::RenderType
      */
+    [[deprecated("May no longer be needed.")]]
     auto GetMaxSupportedRenderEnum() const noexcept
         -> DrawCommonHelper::RenderType;
     bool IsD2D1WithDCompositionEnabled() const noexcept;

@@ -519,6 +519,7 @@ void CTrafficMonitorDlg::CloseTaskBarWnd()
             m_tBarDlg->OnCancel();
         delete m_tBarDlg;
         m_tBarDlg = nullptr;
+        theApp.m_taskbar_data.update_layered_window_error_code = 0;
     }
 }
 
@@ -528,10 +529,10 @@ void CTrafficMonitorDlg::OpenTaskBarWnd()
 
     CSupportedRenderEnums supported_render_enums{};
     CTaskBarDlg::DisableRenderFeatureIfNecessary(supported_render_enums);
-    auto render_type = supported_render_enums.GetMaxSupportedRenderEnum();
-
+    auto render_type = supported_render_enums.GetAutoFitEnum();
     // WS_EX_LAYERED 和 WS_EX_NOREDIRECTIONBITMAP 可以共存，见微软示例代码
     // https://github.com/microsoft/Windows-classic-samples/blob/7cbd99ac1d2b4a0beffbaba29ea63d024ceff700/Samples/DynamicDPI/cpp/SampleDesktopWindow.cpp#L179
+    // 但是WS_EX_NOREDIRECTIONBITMAP似乎会导致UpdateLayeredWindowIndirect失败
     switch (render_type)
     {
         using namespace DrawCommonHelper;

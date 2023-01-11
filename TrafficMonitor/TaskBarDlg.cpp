@@ -64,7 +64,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
     if (m_supported_render_enums.IsD2D1Enabled())
     {
         auto last_update_layered_window_error =
-            m_taskbar_draw_common_window_support.Get().GetLastUpdateLayeredWindowError();
+            theApp.m_taskbar_data.update_layered_window_error_code;
         if (last_update_layered_window_error)
         {
             m_supported_render_enums.DisableD2D1();
@@ -564,6 +564,12 @@ void CTaskBarDlg::MoveWindow(CRect rect)
 void CTaskBarDlg::DisableRenderFeatureIfNecessary(CSupportedRenderEnums& ref_supported_render_enums)
 {
     bool is_transparent = CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data);
+    // UpdateLayeredWindowIndirect失败则禁用D2D
+    if (theApp.m_taskbar_data.update_layered_window_error_code)
+    {
+        ref_supported_render_enums.DisableD2D1();
+    }
+    // 不符合条件则启用Default（MFC）
     if (!is_transparent || theApp.m_taskbar_data.auto_set_background_color || theApp.m_taskbar_data.disable_d2d)
     {
         ref_supported_render_enums.EnableDefaultOnly();
@@ -730,7 +736,7 @@ void CTaskBarDlg::ApplyWindowTransparentColor()
     }
     if ((theApp.m_taskbar_data.transparent_color != 0) && theApp.m_taksbar_transparent_color_enable)
     {
-        auto render_type = CSupportedRenderEnums{}.GetMaxSupportedRenderEnum();
+        auto render_type = m_supported_render_enums.GetAutoFitEnum();
         switch (render_type)
         {
             using namespace DrawCommonHelper;

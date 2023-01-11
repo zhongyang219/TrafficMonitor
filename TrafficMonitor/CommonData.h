@@ -298,7 +298,7 @@ struct TaskBarSettingData : public PublicSettingData
     unsigned __int64 GetNetspeedFigureMaxValueInBytes() const;  //获取网速占用图的最大值（以字节为单位）
 
     bool disable_d2d{ false };//是否禁用d2d绘图
-
+    DWORD update_layered_window_error_code{0}; // 使用D2D1渲染时，UpdateLayeredWindowIndirect失败的错误代码，会在关闭任务栏窗口时被重置为0
 };
 
 //选项设置中“常规设置”的数据

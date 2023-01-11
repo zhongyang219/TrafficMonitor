@@ -269,8 +269,6 @@ public:
     auto GetFont() noexcept
         -> HFONT;
     void RequestD3D10Device1Recreate();
-    void SetLastUpdateLayeredWindowError(DWORD result) noexcept;
-    DWORD GetLastUpdateLayeredWindowError() const noexcept;
 };
 
 /**
