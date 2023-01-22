@@ -131,6 +131,7 @@ void CTaskBarSettingsDlg::SetControlMouseWheelEnable(bool enable)
     m_font_size_edit.SetMouseWheelEnable(enable);
     m_memory_display_combo.SetMouseWheelEnable(enable);
     m_item_space_edit.SetMouseWheelEnable(enable);
+    m_window_offset_top_edit.SetMouseWheelEnable(enable);
     m_net_speed_figure_max_val_edit.SetMouseWheelEnable(enable);
     m_net_speed_figure_max_val_unit_combo.SetMouseWheelEnable(enable);
 }
@@ -152,6 +153,7 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_AUTO_SET_BACK_COLOR_CHECK, m_auto_set_back_color_chk);
     DDX_Control(pDX, IDC_MEMORY_DISPLAY_COMBO, m_memory_display_combo);
     DDX_Control(pDX, IDC_ITEM_SPACE_EDIT, m_item_space_edit);
+    DDX_Control(pDX, IDC_WINDOW_OFFSET_TOP_EDIT, m_window_offset_top_edit);
     DDX_Control(pDX, IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, m_net_speed_figure_max_val_edit);
     DDX_Control(pDX, IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO, m_net_speed_figure_max_val_unit_combo);
 }
@@ -189,6 +191,8 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_SET_ORDER_BUTTON, &CTaskBarSettingsDlg::OnBnClickedSetOrderButton)
     ON_BN_CLICKED(IDC_TASKBAR_WND_SNAP_CHECK, &CTaskBarSettingsDlg::OnBnClickedTaskbarWndSnapCheck)
     ON_EN_CHANGE(IDC_ITEM_SPACE_EDIT, &CTaskBarSettingsDlg::OnEnChangeItemSpaceEdit)
+    ON_BN_CLICKED(IDC_WINDOW_OFFSET_TOP_NEGATIVE_CHECK, &CTaskBarSettingsDlg::OnBnClickedWindowOffsetTopNegativeCheck)
+    ON_EN_CHANGE(IDC_WINDOW_OFFSET_TOP_EDIT, &CTaskBarSettingsDlg::OnEnChangeWindowOffsetTopEdit)
     ON_BN_CLICKED(IDC_SHOW_NET_SPEED_FIGURE_CHECK, &CTaskBarSettingsDlg::OnBnClickedShowNetSpeedFigureCheck)
     ON_CBN_SELCHANGE(IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeNetSpeedFigureMaxValueUnitCombo)
     ON_EN_CHANGE(IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, &CTaskBarSettingsDlg::OnEnChangeNetSpeedFigureMaxValueEdit)
@@ -307,6 +311,8 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     CheckDlgButton(IDC_SHOW_DASHED_BOX, m_data.show_graph_dashed_box);
     m_item_space_edit.SetRange(0, 32);
     m_item_space_edit.SetValue(m_data.item_space);
+    m_window_offset_top_edit.SetRange(0, 5);
+    m_window_offset_top_edit.SetValue(m_data.window_offset_top);
 
     //初始化内存显示方式下拉列表
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_USAGE_PERCENTAGE));
@@ -466,6 +472,12 @@ void CTaskBarSettingsDlg::OnBnClickedValueRightAlignCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.value_right_align = (((CButton*)GetDlgItem(IDC_VALUE_RIGHT_ALIGN_CHECK))->GetCheck() != 0);
+}
+
+void CTaskBarSettingsDlg::OnBnClickedWindowOffsetTopNegativeCheck()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    m_data.window_offset_top_negative = (((CButton*)GetDlgItem(IDC_WINDOW_OFFSET_TOP_NEGATIVE_CHECK))->GetCheck() != 0);
 }
 
 
@@ -755,6 +767,11 @@ void CTaskBarSettingsDlg::OnEnChangeItemSpaceEdit()
     m_data.ValidItemSpace();
 }
 
+void CTaskBarSettingsDlg::OnEnChangeWindowOffsetTopEdit()
+{
+    m_data.window_offset_top = m_window_offset_top_edit.GetValue();
+    m_data.ValidWindowOffsetTop();
+}
 
 BOOL CTaskBarSettingsDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 {

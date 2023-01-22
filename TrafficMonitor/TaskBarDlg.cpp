@@ -526,7 +526,9 @@ bool CTaskBarDlg::AdjustWindowPos()
                     m_rect.MoveToX(m_left_space);
                 }
             }
-            m_rect.MoveToY((m_rcTaskbar.Height() - m_rect.Height()) / 2);
+            int offset_sign = 1;
+            if (theApp.m_taskbar_data.window_offset_top_negative) offset_sign = -1;
+            m_rect.MoveToY((m_rcTaskbar.Height() - m_rect.Height()) / 2 + offset_sign * DPI(theApp.m_taskbar_data.window_offset_top));
             if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())
                 m_rect.MoveToY(m_rect.top + DPI(1));
             MoveWindow(m_rect);
