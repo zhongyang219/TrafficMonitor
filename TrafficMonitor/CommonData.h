@@ -291,9 +291,12 @@ struct TaskBarSettingData : public PublicSettingData
     bool show_graph_dashed_box{ true }; //显示占用图虚线框
     int item_space{};                   
     int window_offset_top{};                   
+    int vertical_margin{};                   
     bool window_offset_top_negative{ false };    //数值是否右对齐
+    bool vertical_margin_negative{ false };    //数值是否右对齐
     void ValidItemSpace();
     void ValidWindowOffsetTop();
+    void ValidVerticalMargin();
 
     bool show_netspeed_figure{ false };     //是否显示网速占用图
     int netspeed_figure_max_value;          //网速占用图的最大值
