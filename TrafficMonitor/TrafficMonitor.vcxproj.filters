@@ -196,6 +196,33 @@
     <Filter Include="源文件和头文件\公共的类\DllFunctions">
       <UniqueIdentifier>{a106d99c-80bb-4625-a64e-9d1ea24cad7c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\Nullable">
+      <UniqueIdentifier>{f51d70bc-ec1d-45e9-9c57-777da2b6e51d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\DrawTextManager">
+      <UniqueIdentifier>{af0ec00c-027f-4003-890e-7122d0b8df0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\HResultException">
+      <UniqueIdentifier>{48a72bdd-aca1-4367-9907-4bbb92dea212}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\Image2DEffect">
+      <UniqueIdentifier>{b6684af7-c43e-42f7-9094-9315af53951d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\RenderAPISupport">
+      <UniqueIdentifier>{9e68f549-1373-437f-89f9-0b976150aa99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\RenderAPISupport\D2D1Support">
+      <UniqueIdentifier>{9b93962c-26e9-41d5-a5e3-7dfd90bc5e96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\RenderAPISupport\D3D10Support1">
+      <UniqueIdentifier>{f6a75faf-64b5-4f3b-a382-7dfd4a17d61c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\RenderAPISupport\DCompositionSupport">
+      <UniqueIdentifier>{9d71c24a-4df2-4df5-a536-741d890ada1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\RenderAPISupport\DxgiSupport2">
+      <UniqueIdentifier>{059ab3fb-f8b3-4cae-b5d3-72bd857e5197}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -418,6 +445,45 @@
     <ClInclude Include="DllFunctions.h">
       <Filter>源文件和头文件\公共的类\DllFunctions</Filter>
     </ClInclude>
+    <ClInclude Include="D2D1Support.h">
+      <Filter>源文件和头文件\公共的类\RenderAPISupport\D2D1Support</Filter>
+    </ClInclude>
+    <ClInclude Include="Nullable.hpp">
+      <Filter>源文件和头文件\公共的类\Nullable</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawTextManager.h">
+      <Filter>源文件和头文件\公共的类\DrawTextManager</Filter>
+    </ClInclude>
+    <ClInclude Include="HResultException.h">
+      <Filter>源文件和头文件\公共的类\HResultException</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D10Support1.h">
+      <Filter>源文件和头文件\公共的类\RenderAPISupport\D3D10Support1</Filter>
+    </ClInclude>
+    <ClInclude Include="Image2DEffect.h">
+      <Filter>源文件和头文件\公共的类\Image2DEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="IDrawCommon.h">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawCommonFactory.h">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderAPISupport.h">
+      <Filter>源文件和头文件\公共的类\RenderAPISupport</Filter>
+    </ClInclude>
+    <ClInclude Include="DCompositionSupport.h">
+      <Filter>源文件和头文件\公共的类\RenderAPISupport\DCompositionSupport</Filter>
+    </ClInclude>
+    <ClInclude Include="Dxgi1Support2.h">
+      <Filter>源文件和头文件\公共的类\RenderAPISupport\DxgiSupport2</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskBarDlgDrawCommon.h">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="SupportedRenderEnums.h">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -617,6 +683,36 @@
     </ClCompile>
     <ClCompile Include="DllFunctions.cpp">
       <Filter>源文件和头文件\公共的类\DllFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="D2D1Support.cpp">
+      <Filter>源文件和头文件\公共的类\RenderAPISupport\D2D1Support</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawTextManager.cpp">
+      <Filter>源文件和头文件\公共的类\DrawTextManager</Filter>
+    </ClCompile>
+    <ClCompile Include="HResultException.cpp">
+      <Filter>源文件和头文件\公共的类\HResultException</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D10Support1.cpp">
+      <Filter>源文件和头文件\公共的类\RenderAPISupport\D3D10Support1</Filter>
+    </ClCompile>
+    <ClCompile Include="Image2DEffect.cpp">
+      <Filter>源文件和头文件\公共的类\Image2DEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawCommonFactory.cpp">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="DCompositionSupport.cpp">
+      <Filter>源文件和头文件\公共的类\RenderAPISupport\DCompositionSupport</Filter>
+    </ClCompile>
+    <ClCompile Include="Dxgi1Support2.cpp">
+      <Filter>源文件和头文件\公共的类\RenderAPISupport\DxgiSupport2</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskBarDlgDrawCommon.cpp">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="SupportedRenderEnums.cpp">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,8 @@
 //https://docs.microsoft.com/en-us/previous-versions/bb757020(v=msdn.10)
 
 #pragma once
+#include "HResultException.h"
+
 class CWICFactory
 {
 public:
@@ -36,3 +38,7 @@ private:
     static std::map<HICON, HBITMAP> m_icon_map;
 };
 
+class CWICException final : public CHResultException
+{
+    using CHResultException::CHResultException;
+};

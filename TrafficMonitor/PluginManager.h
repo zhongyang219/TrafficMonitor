@@ -58,6 +58,10 @@ public:
     int GetItemWidth(IPluginItem* pItem, CDC* pDC);
 
 private:
+    static void ReplacePluginDrawTextFunction(HMODULE plgin_dll_module) noexcept;
+    static void ReplaceMfcDrawTextFunction() noexcept;
+
+private:
     std::vector<IPluginItem*> m_plugins;
     std::vector<PluginInfo> m_modules;
     std::set<CommonDisplayItem> m_all_display_items_with_plugins;   //包含插件在内的所有任务栏显示项目

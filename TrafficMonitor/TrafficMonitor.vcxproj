@@ -195,6 +195,7 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>false</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -214,6 +215,15 @@
     <PreBuildEvent>
       <Command>print_compile_time.bat</Command>
     </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|Win32'">
     <ClCompile>
@@ -223,6 +233,7 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions);WITHOUT_TEMPERATURE</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>false</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -241,6 +252,15 @@
     <PreBuildEvent>
       <Command>print_compile_time.bat</Command>
     </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -249,6 +269,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -268,6 +289,15 @@
     <PreBuildEvent>
       <Command>print_compile_time.bat</Command>
     </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|x64'">
     <ClCompile>
@@ -276,6 +306,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions);WITHOUT_TEMPERATURE</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -294,6 +325,15 @@
     <PreBuildEvent>
       <Command>print_compile_time.bat</Command>
     </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -305,6 +345,7 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>$(ExternalCompilerOptions) %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -326,6 +367,15 @@
     <PreBuildEvent>
       <Command>print_compile_time.bat</Command>
     </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release (lite)|Win32'">
     <ClCompile>
@@ -337,6 +387,7 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions);WITHOUT_TEMPERATURE</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>$(ExternalCompilerOptions) %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -357,6 +408,15 @@
     <PreBuildEvent>
       <Command>print_compile_time.bat</Command>
     </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -367,6 +427,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -388,6 +449,15 @@
     <PreBuildEvent>
       <Command>print_compile_time.bat</Command>
     </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release (lite)|x64'">
     <ClCompile>
@@ -398,6 +468,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions);WITHOUT_TEMPERATURE</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -418,6 +489,15 @@
     <PreBuildEvent>
       <Command>print_compile_time.bat</Command>
     </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="compile_time.txt" />
@@ -441,14 +521,23 @@
     <ClInclude Include="crashtool.h" />
     <ClInclude Include="CTabCtrlEx.h" />
     <ClInclude Include="CVariant.h" />
+    <ClInclude Include="D2D1Support.h" />
+    <ClInclude Include="D3D10Support1.h" />
+    <ClInclude Include="DCompositionSupport.h" />
     <ClInclude Include="DisplayTextSettingDlg.h" />
     <ClInclude Include="DllFunctions.h" />
     <ClInclude Include="DrawCommonEx.h" />
+    <ClInclude Include="DrawCommonFactory.h" />
+    <ClInclude Include="DrawTextManager.h" />
+    <ClInclude Include="Dxgi1Support2.h" />
     <ClInclude Include="FilePathHelper.h" />
     <ClInclude Include="HighResolutionTimer.h" />
     <ClInclude Include="HistoryTrafficCalendarDlg.h" />
     <ClInclude Include="HistoryTrafficFile.h" />
     <ClInclude Include="HistoryTrafficListDlg.h" />
+    <ClInclude Include="HResultException.h" />
+    <ClInclude Include="IDrawCommon.h" />
+    <ClInclude Include="Image2DEffect.h" />
     <ClInclude Include="LinkStatic.h" />
     <ClInclude Include="ColorStatic.h" />
     <ClInclude Include="Common.h" />
@@ -466,11 +555,13 @@
     <ClInclude Include="MainWndSettingsDlg.h" />
     <ClInclude Include="MessageDlg.h" />
     <ClInclude Include="NetworkInfoDlg.h" />
+    <ClInclude Include="Nullable.hpp" />
     <ClInclude Include="OptionsDlg.h" />
     <ClInclude Include="PictureStatic.h" />
     <ClInclude Include="PluginInfoDlg.h" />
     <ClInclude Include="PluginManager.h" />
     <ClInclude Include="PluginManagerDlg.h" />
+    <ClInclude Include="RenderAPISupport.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SelectConnectionsDlg.h" />
     <ClInclude Include="SetItemOrderDlg.h" />
@@ -480,11 +571,13 @@
     <ClInclude Include="SpinEdit.h" />
     <ClInclude Include="StaticEx.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SupportedRenderEnums.h" />
     <ClInclude Include="TabDlg.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TaskbarColorDlg.h" />
     <ClInclude Include="TaskbarDefaultStyle.h" />
     <ClInclude Include="TaskBarDlg.h" />
+    <ClInclude Include="TaskBarDlgDrawCommon.h" />
     <ClInclude Include="TaskbarItemOrderHelper.h" />
     <ClInclude Include="TaskBarSettingsDlg.h" />
     <ClInclude Include="Test.h" />
@@ -513,13 +606,21 @@
     <ClCompile Include="crashtool.cpp" />
     <ClCompile Include="CTabCtrlEx.cpp" />
     <ClCompile Include="CVariant.cpp" />
+    <ClCompile Include="D2D1Support.cpp" />
+    <ClCompile Include="D3D10Support1.cpp" />
+    <ClCompile Include="DCompositionSupport.cpp" />
     <ClCompile Include="DisplayTextSettingDlg.cpp" />
     <ClCompile Include="DllFunctions.cpp" />
     <ClCompile Include="DrawCommonEx.cpp" />
+    <ClCompile Include="DrawCommonFactory.cpp" />
+    <ClCompile Include="DrawTextManager.cpp" />
+    <ClCompile Include="Dxgi1Support2.cpp" />
     <ClCompile Include="FilePathHelper.cpp" />
     <ClCompile Include="HistoryTrafficCalendarDlg.cpp" />
     <ClCompile Include="HistoryTrafficFile.cpp" />
     <ClCompile Include="HistoryTrafficListDlg.cpp" />
+    <ClCompile Include="HResultException.cpp" />
+    <ClCompile Include="Image2DEffect.cpp" />
     <ClCompile Include="LinkStatic.cpp" />
     <ClCompile Include="ColorStatic.cpp" />
     <ClCompile Include="Common.cpp" />
@@ -558,10 +659,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release (lite)|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SupportedRenderEnums.cpp" />
     <ClCompile Include="TabDlg.cpp" />
     <ClCompile Include="TaskbarColorDlg.cpp" />
     <ClCompile Include="TaskbarDefaultStyle.cpp" />
     <ClCompile Include="TaskBarDlg.cpp" />
+    <ClCompile Include="TaskBarDlgDrawCommon.cpp" />
     <ClCompile Include="TaskbarItemOrderHelper.cpp" />
     <ClCompile Include="TaskBarSettingsDlg.cpp" />
     <ClCompile Include="Test.cpp" />
