@@ -576,6 +576,22 @@ void CTaskBarDlg::DisableRenderFeatureIfNecessary(CSupportedRenderEnums& ref_sup
     }
 }
 
+HWND CTaskBarDlg::GetShellTrayWndHandleAndSaveWindows11TaskBarExistenceInfoToTheApp() noexcept
+{
+    auto result = ::FindWindow(L"Shell_TrayWnd", NULL);
+    // 在“Shell_TrayWnd”的子窗口找到类名为“Windows.UI.Composition.DesktopWindowContentBridge”的窗口则认为是Windows11的任务栏
+    if (theApp.m_win_version.IsWindows11OrLater())
+    {
+        theApp.m_is_windows11_taskbar =
+            (::FindWindowExW(result, 0, L"Windows.UI.Composition.DesktopWindowContentBridge", NULL) != NULL);
+    }
+    else
+    {
+        theApp.m_is_windows11_taskbar = false;
+    }
+    return result;
+}
+
 void CTaskBarDlg::TryDrawStatusBar(IDrawCommon& drawer, const CRect& rect_bar, int usage_percent)
 {
     CSize fill_size = CSize(rect_bar.Width() * usage_percent / 100, rect_bar.Height());
@@ -1189,17 +1205,11 @@ BOOL CTaskBarDlg::OnInitDialog()
 
     m_pDC = GetDC();
 
-    m_hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL); //寻找类名是Shell_TrayWnd的窗口句柄
+    m_hTaskbar = GetShellTrayWndHandleAndSaveWindows11TaskBarExistenceInfoToTheApp(); //寻找类名是Shell_TrayWnd的窗口句柄，同时记录Windows11任务栏是否存在
     m_hBar = ::FindWindowEx(m_hTaskbar, 0, L"ReBarWindow32", NULL); //寻找二级容器的句柄
     m_hMin = ::FindWindowEx(m_hBar, 0, L"MSTaskSwWClass", NULL);    //寻找最小化窗口的句柄
 
     m_hNotify = ::FindWindowEx(m_hTaskbar, 0, L"TrayNotifyWnd", NULL);
-
-    //在“Shell_TrayWnd”的子窗口找到类名为“Windows.UI.Composition.DesktopWindowContentBridge”的窗口则认为是Windows11的任务栏
-    if (theApp.m_win_version.IsWindows11OrLater())
-    {
-        theApp.m_is_windows11_taskbar = (::FindWindowExW(m_hTaskbar, 0, L"Windows.UI.Composition.DesktopWindowContentBridge", NULL) != NULL);
-    }
 
     //设置窗口透明色
     ApplyWindowTransparentColor();

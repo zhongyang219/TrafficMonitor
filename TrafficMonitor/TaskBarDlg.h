@@ -185,6 +185,7 @@ protected:
 
 public:
     static void DisableRenderFeatureIfNecessary(CSupportedRenderEnums& ref_supported_render_enums);
+    static HWND GetShellTrayWndHandleAndSaveWindows11TaskBarExistenceInfoToTheApp() noexcept;
     void SetTextFont();
     void ApplySettings();
     void CalculateWindowSize();		//计算窗口每部分的大小，及各个部分的宽度。窗口大小保存到m_window_width和m_window_height中，各部分宽度保存到m_item_widths中
