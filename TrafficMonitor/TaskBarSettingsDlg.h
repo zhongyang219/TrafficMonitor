@@ -52,7 +52,6 @@ protected:
     CSpinEdit m_item_space_edit;
     CSpinEdit m_net_speed_figure_max_val_edit;
     CComboBox2 m_net_speed_figure_max_val_unit_combo;
-    CButton m_disable_d2d_chk;
 
     bool m_style_modified{};
 
@@ -116,5 +115,6 @@ public:
     afx_msg void OnBnClickedShowNetSpeedFigureCheck();
     afx_msg void OnCbnSelchangeNetSpeedFigureMaxValueUnitCombo();
     afx_msg void OnEnChangeNetSpeedFigureMaxValueEdit();
-    afx_msg void OnBnClickedDisableD2D();
+    afx_msg void OnBnClickedGdiRadio();
+    afx_msg void OnBnClickedD2dRadio();
 };

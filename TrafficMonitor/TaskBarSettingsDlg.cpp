@@ -154,7 +154,6 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_ITEM_SPACE_EDIT, m_item_space_edit);
     DDX_Control(pDX, IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, m_net_speed_figure_max_val_edit);
     DDX_Control(pDX, IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO, m_net_speed_figure_max_val_unit_combo);
-    DDX_Control(pDX, IDC_DISABLE_D2D, m_disable_d2d_chk);
 }
 
 
@@ -193,7 +192,8 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_SHOW_NET_SPEED_FIGURE_CHECK, &CTaskBarSettingsDlg::OnBnClickedShowNetSpeedFigureCheck)
     ON_CBN_SELCHANGE(IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeNetSpeedFigureMaxValueUnitCombo)
     ON_EN_CHANGE(IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, &CTaskBarSettingsDlg::OnEnChangeNetSpeedFigureMaxValueEdit)
-    ON_BN_CLICKED(IDC_DISABLE_D2D, &CTaskBarSettingsDlg::OnBnClickedDisableD2D)
+    ON_BN_CLICKED(IDC_GDI_RADIO, &CTaskBarSettingsDlg::OnBnClickedGdiRadio)
+    ON_BN_CLICKED(IDC_D2D_RADIO, &CTaskBarSettingsDlg::OnBnClickedD2dRadio)
 END_MESSAGE_MAP()
 
 
@@ -343,9 +343,13 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     {
         m_data.disable_d2d = true;
         //不支持时禁用选项
-        m_disable_d2d_chk.EnableWindow(false);
+        EnableDlgCtrl(IDC_D2D_RADIO, false);
     }
-    m_disable_d2d_chk.SetCheck(m_data.disable_d2d);
+
+    if (m_data.disable_d2d)
+        CheckDlgButton(IDC_GDI_RADIO, true);
+    else
+        CheckDlgButton(IDC_D2D_RADIO, true);
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE
@@ -808,7 +812,14 @@ void CTaskBarSettingsDlg::OnEnChangeNetSpeedFigureMaxValueEdit()
     m_data.netspeed_figure_max_value = m_net_speed_figure_max_val_edit.GetValue();
 }
 
-void CTaskBarSettingsDlg::OnBnClickedDisableD2D()
+
+void CTaskBarSettingsDlg::OnBnClickedGdiRadio()
 {
-    m_data.disable_d2d = (m_disable_d2d_chk.GetCheck() != 0);
+    m_data.disable_d2d = true;
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedD2dRadio()
+{
+    m_data.disable_d2d = false;
 }
