@@ -27,7 +27,7 @@ void CSupportedRenderEnums::DisableD2D1() noexcept
 auto CSupportedRenderEnums::GetAutoFitEnum() const noexcept
     -> DrawCommonHelper::RenderType
 {
-    std::int32_t i;
+    std::size_t i;
     for (i = m_enums.size() - 1; i > 0; --i)
     {
         if (m_enums[i])

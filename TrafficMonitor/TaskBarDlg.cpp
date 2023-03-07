@@ -134,7 +134,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                       this->m_taskbar_draw_common_window_support.Get(),
                       this->m_d2d1_device_context_support.Get(),
                       d2d_size);
-                  // 仅透明时启用此渲染器，则默认初始化为全黑，alpha=1
+                  // 仅透明时，且UpdateLayeredWindowIndirect失败时，启用此渲染器，默认初始化为全黑，alpha=1
                   p_draw_common->FillRect(draw_rect, 0x00000000, 1);
                   p_draw_common->SetFont(&m_font);
                   p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
@@ -158,7 +158,8 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                   p_draw_common->Create(
                       this->m_taskbar_draw_common_window_support.Get(),
                       this->m_d2d1_device_context_support.Get(),
-                      d2d_size); // 仅透明时启用此渲染器，则默认初始化为全黑，alpha=1
+                      d2d_size);
+                  // 仅透明时启用此渲染器，默认初始化为全黑，alpha=1
                   p_draw_common->FillRect(draw_rect, 0x00000000, 1);
                   p_draw_common->SetFont(&m_font);
                   p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
@@ -1542,6 +1543,15 @@ void CTaskBarDlg::OnPaint()
                     ex,
                     [&]()
                     { p_device_context_support_wrapper->Get().RequestD2D1DeviceRecreate(ex.GetHResult()); });
+            });
+    }
+    catch (CDCompositionException& ex)
+    {
+        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}(
+            [p_device_context_support_wrapper = &this->m_d2d1_device_context_support](CHResultException& ex)
+            {
+                p_device_context_support_wrapper->Get().RequestDCompositionDeviceRecreate(ex.GetHResult());
+                return true;
             });
     }
     catch (CHResultException& ex)
