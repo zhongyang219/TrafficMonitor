@@ -43,11 +43,6 @@ bool CWinVersionHelper::IsWindows11OrLater() const
 	else return false;
 }
 
-bool CWinVersionHelper::IsWindows11BigSearchButton() const
-{
-    return (IsWindows11OrLater() && GetBuildNumber() >= 22621);
-}
-
 bool CWinVersionHelper::IsWindows10FallCreatorOrLater() const
 {
 	if (m_major_version > 10)
