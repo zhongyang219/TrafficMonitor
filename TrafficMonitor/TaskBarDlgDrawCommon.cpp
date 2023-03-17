@@ -192,17 +192,19 @@ HDC DrawCommonHelper::Get1x1AlphaEqual1DC()
     return std::get<0>(result.Get());
 }
 
-void CTaskBarDlgDrawCommonSupport::SecureD3D10Device1Valid()
+bool CTaskBarDlgDrawCommonSupport::IsAllDevicesRecreatedByThisFunction()
 {
     auto p_d3d10_device1 = m_d3d10_device1.Get();
     auto hr = p_d3d10_device1->GetDeviceRemovedReason();
     if (hr != S_OK)
     {
         CCommon::WriteLog(
-            "CTaskBarDlgDrawCommonSupport::SecureD3D10Device1Valid() is requesting to recreate D3D10Device1.",
+            "D3D10.1 device is invalid. All devices will be recreated.",
             theApp.m_log_path.c_str());
-        RecreateD3D10Device1(hr);
+        RecreateAll();
+        return true;
     }
+    return false;
 }
 
 CTaskBarDlgDrawCommonSupport::CTaskBarDlgDrawCommonSupport()
@@ -267,7 +269,7 @@ void CTaskBarDlgDrawCommonSupport::RecreateD3D10Device1(const HRESULT recreate_r
     if (recreate_reason != S_OK)
     {
         DrawCommonHelper::LogDeviceRecreateReason(recreate_reason);
-        CCommon::WriteLog("Notice: The device is a D3D10.1 device.", theApp.m_log_path.c_str());
+        CCommon::WriteLog("Notice: The D3D10.1 device will be recreated.", theApp.m_log_path.c_str());
     }
     auto&& default_adapter1 =
         CD3D10Support1::GetDeviceList(true).front();
@@ -279,9 +281,12 @@ void CTaskBarDlgDrawCommonSupport::RecreateD2D1Device(const HRESULT recreate_rea
     if (recreate_reason != S_OK)
     {
         DrawCommonHelper::LogDeviceRecreateReason(recreate_reason);
-        CCommon::WriteLog("Notice: The device is a D2D1 device.", theApp.m_log_path.c_str());
+        CCommon::WriteLog("Notice: The D2D1 device will be recreated.", theApp.m_log_path.c_str());
     }
-    SecureD3D10Device1Valid();
+    if (IsAllDevicesRecreatedByThisFunction())
+    {
+        return;
+    }
     Microsoft::WRL::ComPtr<IDXGIDevice> p_dxgi_device{};
     ThrowIfFailed<CD3D10Exception1>(
         m_d3d10_device1.Get()->QueryInterface(IID_PPV_ARGS(&p_dxgi_device)),
@@ -294,9 +299,12 @@ void CTaskBarDlgDrawCommonSupport::RecreateDCompositionDevice(const HRESULT recr
     if (recreate_reason != S_OK)
     {
         DrawCommonHelper::LogDeviceRecreateReason(recreate_reason);
-        CCommon::WriteLog("Notice: The device is a DirectComposition device.", theApp.m_log_path.c_str());
+        CCommon::WriteLog("Notice: The DirectComposition device will be recreated.", theApp.m_log_path.c_str());
     }
-    SecureD3D10Device1Valid();
+    if (IsAllDevicesRecreatedByThisFunction())
+    {
+        return;
+    }
     auto p_d3d10_device1 = m_d3d10_device1.Get();
     if (p_d3d10_device1)
     {
@@ -866,6 +874,15 @@ auto CD2D1DeviceContextWindowSupport::CDCompositionHelper::GetD3D10Device1()
     return m_p_d3d10_device1;
 }
 
+bool CD2D1DeviceContextWindowSupport::CDCompositionHelper::IsInvalid() const
+{
+    BOOL result{FALSE};
+    ThrowIfFailed<CDCompositionException>(
+        m_p_composition_device->CheckDeviceState(&result),
+        TRAFFICMONITOR_ERROR_STR("Check dcomposition device state failed."));
+    return result == FALSE;
+}
+
 auto CD2D1DeviceContextWindowSupport::CD3DHelper::CreateGdiCompatibleTexture(ComPtr<ID3D10Device1> p_device1, const D2D1_SIZE_U size)
     -> Microsoft::WRL::ComPtr<ID3D10Texture2D>
 {
@@ -974,7 +991,14 @@ auto CD2D1DeviceContextWindowSupport::SetWorkingDevice(CDCompositionDevice& ref_
     auto& ref_nullable_dcomposition_helper = GetNullableDCompositionHelper();
     if (m_render_type == DrawCommonHelper::RenderType::D2D1_WITH_DCOMPOSITION && m_is_initialized)
     {
-        return ref_nullable_dcomposition_helper.GetUnsafe();
+        auto& result = ref_nullable_dcomposition_helper.GetUnsafe();
+        if (result.IsInvalid())
+        {
+            throw CDCompositionException(
+                S_FALSE,
+                TRAFFICMONITOR_ERROR_STR("DComposition device is invalid.\nNote: The HRESULT value is not set by Direct Composition API. Please ignore it."));
+        }
+        return result;
     }
     DestroyStorage();
     EmplaceAt(&ref_nullable_dcomposition_helper);
@@ -1675,30 +1699,15 @@ CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
                     &p_gdi_interop_bitmap),
                 TRAFFICMONITOR_ERROR_STR("Create ID2D1Bitmap from IDXGISurface1 failed."));
             m_p_device_context->DrawBitmap(p_gdi_interop_bitmap.Get());
+
+            ThrowIfFailed<CD2D1Exception>(
+                m_p_device_context->EndDraw(),
+                TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::EndDraw() failed."));
         }
-    }
-    catch (CD3D10Exception1& ex)
-    {
-        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}(GetD3D10Device1RecreateRequester());
-    }
-    catch (CD2D1Exception& ex)
-    {
-        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}(GetD2D1DeviceRecreateRequester());
     }
     catch (CHResultException& ex)
     {
-        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}(GetD2D1DeviceRecreateRequester());
-    }
-
-    try
-    {
-        ThrowIfFailed<CD2D1Exception>(
-            m_p_device_context->EndDraw(),
-            TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::EndDraw() failed."));
-    }
-    catch (CD2D1Exception& ex)
-    {
-        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}(GetD2D1DeviceRecreateRequester());
+        LogHResultException(ex);
     }
 }
 
@@ -1984,14 +1993,7 @@ CTaskBarDlgDrawBuffer::~CTaskBarDlgDrawBuffer()
     }
     catch (CD3D10Exception1& ex)
     {
-        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}(
-            [p_window_support = &m_ref_window_support](CHResultException& ex)
-            {
-                return DrawCommonHelper::HandleIfNeedRecreate(
-                    ex,
-                    [p_window_support]()
-                    { p_window_support->RequestD3D10Device1Recreate(); });
-            });
+        LogHResultException(ex);
     }
 }
 
@@ -2057,26 +2059,8 @@ CTaskBarDlgDrawBufferUseDComposition::~CTaskBarDlgDrawBufferUseDComposition()
         m_p_d2d1_device_context_support->PresentWhenUseDComposition();
         DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler::ResetErrorCount();
     }
-    catch (CDxgiException& ex)
+    catch (CHResultException& ex)
     {
-        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}(
-            [p_d2d1_device_context_support = m_p_d2d1_device_context_support](CHResultException& ex)
-            {
-                return DrawCommonHelper::HandleIfNeedRecreate(
-                    ex,
-                    [p_d2d1_device_context_support]()
-                    { p_d2d1_device_context_support->RequestD3D10Device1Recreate(); });
-            });
-    }
-    catch (CDCompositionException& ex)
-    {
-        DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler{ex}(
-            [p_d2d1_device_context_support = m_p_d2d1_device_context_support](CHResultException& ex)
-            {
-                return DrawCommonHelper::HandleIfNeedRecreate(
-                    ex,
-                    [&]()
-                    { p_d2d1_device_context_support->RequestDCompositionDeviceRecreate(ex.GetHResult()); });
-            });
+        LogHResultException(ex);
     }
 }

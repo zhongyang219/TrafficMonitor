@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <memory>
 #include <tuple>
+#include <chrono>
 #include "D3D10Support1.h"
 #include "Common.h"
 #include "Nullable.hpp"
@@ -358,11 +359,21 @@ CD3D10DrawCallWaiter::CD3D10DrawCallWaiter(Microsoft::WRL::ComPtr<ID3D10Device1>
 
 HRESULT CD3D10DrawCallWaiter::Wait() const noexcept
 {
-    HRESULT result;
+    HRESULT result{S_FALSE};
+    constexpr std::uint32_t MAX_QUERY_TIME = 20;
+    for (std::uint32_t i = 0; i < MAX_QUERY_TIME; ++i)
+    {
+        result = m_p_query->GetData(NULL, 0, 0);
+        if (result != S_FALSE)
+        {
+            return result;
+        }
+    }
+    const auto start_time = std::chrono::system_clock::now();
+    using namespace std::chrono_literals;
     do
     {
         result = m_p_query->GetData(NULL, 0, 0);
-    } while (result == S_FALSE);
-
+    } while (result != S_FALSE && std::chrono::system_clock::now() - start_time < 1500ms);
     return result;
 }

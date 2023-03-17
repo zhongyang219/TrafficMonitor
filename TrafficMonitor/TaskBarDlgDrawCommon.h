@@ -131,7 +131,7 @@ private:
     CDCompositionDevice m_dcomposition_device{};
     Microsoft::WRL::ComPtr<ID2D1StrokeStyle> m_p_ps_dot_like_style{};
 
-    void SecureD3D10Device1Valid();
+    bool IsAllDevicesRecreatedByThisFunction();
 
 public:
     CTaskBarDlgDrawCommonSupport();
@@ -358,6 +358,7 @@ public:
         void Present();
         auto GetD3D10Device1()
             -> Microsoft::WRL::ComPtr<ID3D10Device1>;
+        bool IsInvalid() const;
     };
     class CD3DHelper : public CDeviceResource<CD3D10Device1>
     {

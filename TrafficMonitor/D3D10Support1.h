@@ -177,6 +177,7 @@ public:
      * @brief
      *
      * @return HRESULT 若成功，返回S_OK，否则可能为DXGI_ERROR_DEVICE_REMOVED或DXGI_ERROR_INVALID_CALL
+     * 若返回S_FALSE，此为函数本身的返回值，不能参考MS的文档，这代表等待超时（超过1.5s的等待时间）
      */
     HRESULT Wait() const noexcept;
 };

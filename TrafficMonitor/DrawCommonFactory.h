@@ -43,7 +43,7 @@ struct InvolvedDrawCommonStorages
  */
 struct AllInvolvedDrawCommonObjectsStorage
 {
-    std_aligned_storage<InvolvedDrawCommonStorages> m_storage;
+    std_aligned_storage<InvolvedDrawCommonStorages> m_storage{};
     // 先析构DrawCommon再析构DrawBuffer
     UniqueIDrawBuffer m_unique_draw_buffer{};
     UniqueIDrawCommon m_unique_draw_common{};
