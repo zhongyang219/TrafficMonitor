@@ -1060,7 +1060,9 @@ HCURSOR CTrafficMonitorDlg::OnQueryDragIcon()
 //计算指定秒数的时间内Monitor定时器会触发的次数
 static int GetMonitorTimerCount(int second)
 {
-    return second * 1000 / theApp.m_general_data.monitor_time_span;
+    int count = second * 1000 / theApp.m_general_data.monitor_time_span;
+    if (count <= 0) count = 1;
+    return count;
 }
 
 
@@ -1197,7 +1199,6 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         info.Replace(_T("<%cnt%>"), CCommon::IntToString(pThis->m_restart_cnt));
         CCommon::WriteLog(info, theApp.m_log_path.c_str());
     }
-
 
     if (pThis->m_monitor_time_cnt % GetMonitorTimerCount(3) == GetMonitorTimerCount(3) - 1)
     {
