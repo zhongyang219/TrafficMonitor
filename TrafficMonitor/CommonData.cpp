@@ -163,16 +163,16 @@ void TaskBarSettingData::ValidItemSpace()
 
 void TaskBarSettingData::ValidWindowOffsetTop()
 {
-    if (window_offset_top < 0)
-        window_offset_top = 0;
+    if (window_offset_top < -5)
+        window_offset_top = -5;
     if (window_offset_top > 5)
         window_offset_top = 5;
 }
 
 void TaskBarSettingData::ValidVerticalMargin()
 {
-    if (vertical_margin < 0)
-        vertical_margin = 0;
+    if (vertical_margin < -10)
+        vertical_margin = -10;
     if (vertical_margin > 10)
         vertical_margin = 10;
 }

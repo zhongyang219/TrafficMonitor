@@ -10,6 +10,7 @@
 #include "DisplayTextSettingDlg.h"
 #include "SetItemOrderDlg.h"
 #include "WindowsSettingHelper.h"
+#include "TrafficMonitorDlg.h"
 
 // CTaskBarSettingsDlg 对话框
 
@@ -193,9 +194,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_SET_ORDER_BUTTON, &CTaskBarSettingsDlg::OnBnClickedSetOrderButton)
     ON_BN_CLICKED(IDC_TASKBAR_WND_SNAP_CHECK, &CTaskBarSettingsDlg::OnBnClickedTaskbarWndSnapCheck)
     ON_EN_CHANGE(IDC_ITEM_SPACE_EDIT, &CTaskBarSettingsDlg::OnEnChangeItemSpaceEdit)
-    ON_BN_CLICKED(IDC_WINDOW_OFFSET_TOP_NEGATIVE_CHECK, &CTaskBarSettingsDlg::OnBnClickedWindowOffsetTopNegativeCheck)
     ON_EN_CHANGE(IDC_WINDOW_OFFSET_TOP_EDIT, &CTaskBarSettingsDlg::OnEnChangeWindowOffsetTopEdit)
-    ON_BN_CLICKED(IDC_VERTICAL_MARGIN_NEGATIVE_CHECK, &CTaskBarSettingsDlg::OnBnClickedVerticalMarginNegativeCheck)
     ON_EN_CHANGE(IDC_VERTICAL_MARGIN_EDIT, &CTaskBarSettingsDlg::OnEnChangeVerticalMarginEdit)
     ON_BN_CLICKED(IDC_SHOW_NET_SPEED_FIGURE_CHECK, &CTaskBarSettingsDlg::OnBnClickedShowNetSpeedFigureCheck)
     ON_CBN_SELCHANGE(IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeNetSpeedFigureMaxValueUnitCombo)
@@ -317,10 +316,15 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     CheckDlgButton(IDC_SHOW_DASHED_BOX, m_data.show_graph_dashed_box);
     m_item_space_edit.SetRange(0, 32);
     m_item_space_edit.SetValue(m_data.item_space);
-    m_window_offset_top_edit.SetRange(0, 5);
+    CTaskBarDlg* taskbar_dlg{ CTrafficMonitorDlg::Instance()->GetTaskbarWindow() };
+    m_window_offset_top_edit.SetRange(-5, 5);
     m_window_offset_top_edit.SetValue(m_data.window_offset_top);
-    m_vertical_margin_edit.SetRange(0, 10);
+    if (taskbar_dlg != nullptr)
+        m_window_offset_top_edit.EnableWindow(taskbar_dlg->IsTasksbarOnTopOrBottom());
+    m_vertical_margin_edit.SetRange(-10, 10);
     m_vertical_margin_edit.SetValue(m_data.vertical_margin);
+    if (taskbar_dlg != nullptr)
+        m_vertical_margin_edit.EnableWindow(taskbar_dlg->IsTasksbarOnTopOrBottom());
 
     //初始化内存显示方式下拉列表
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_USAGE_PERCENTAGE));
@@ -493,17 +497,6 @@ void CTaskBarSettingsDlg::OnBnClickedValueRightAlignCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.value_right_align = (((CButton*)GetDlgItem(IDC_VALUE_RIGHT_ALIGN_CHECK))->GetCheck() != 0);
-}
-
-void CTaskBarSettingsDlg::OnBnClickedWindowOffsetTopNegativeCheck()
-{
-    // TODO: 在此添加控件通知处理程序代码
-    m_data.window_offset_top_negative = (((CButton*)GetDlgItem(IDC_WINDOW_OFFSET_TOP_NEGATIVE_CHECK))->GetCheck() != 0);
-}
-void CTaskBarSettingsDlg::OnBnClickedVerticalMarginNegativeCheck()
-{
-    // TODO: 在此添加控件通知处理程序代码
-    m_data.vertical_margin_negative = (((CButton*)GetDlgItem(IDC_VERTICAL_MARGIN_NEGATIVE_CHECK))->GetCheck() != 0);
 }
 
 

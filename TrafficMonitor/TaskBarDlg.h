@@ -39,6 +39,7 @@ public:
     UINT GetDPI() const;
     void SetDPI(UINT dpi);
     UINT DPI(UINT pixel) const;
+    int DPI(int pixel) const;
     void DPI(CRect& rect) const;
 
     static void DPIFromRect(const RECT& rect, UINT* out_dpi_x, UINT* out_dpi_y);
@@ -195,7 +196,7 @@ public:
 
     bool GetCannotInsertToTaskBar() const { return m_connot_insert_to_task_bar; }
     int GetErrorCode() const { return m_error_code; }
-    bool IsTasksbarOnTopOrBottom() { return m_taskbar_on_top_or_bottom; }
+    bool IsTasksbarOnTopOrBottom() const { return m_taskbar_on_top_or_bottom; }
 
     static bool IsItemShow(DisplayItem item);
     static bool IsShowCpuMemory();

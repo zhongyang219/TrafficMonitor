@@ -113,9 +113,7 @@ public:
     afx_msg void OnBnClickedSetOrderButton();
     afx_msg void OnBnClickedTaskbarWndSnapCheck();
     afx_msg void OnEnChangeItemSpaceEdit();
-    afx_msg void OnBnClickedWindowOffsetTopNegativeCheck();
     afx_msg void OnEnChangeWindowOffsetTopEdit();
-    afx_msg void OnBnClickedVerticalMarginNegativeCheck();
     afx_msg void OnEnChangeVerticalMarginEdit();
     virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
     afx_msg void OnBnClickedShowNetSpeedFigureCheck();

@@ -45,6 +45,19 @@ CTrafficMonitorDlg::~CTrafficMonitorDlg()
     ::ReleaseDC(NULL, m_desktop_dc);
 }
 
+CTaskBarDlg* CTrafficMonitorDlg::GetTaskbarWindow() const
+{
+    if (IsTaskbarWndValid())
+        return m_tBarDlg;
+    else
+        return nullptr;
+}
+
+CTrafficMonitorDlg* CTrafficMonitorDlg::Instance()
+{
+    return dynamic_cast<CTrafficMonitorDlg*>(theApp.m_pMainWnd);
+}
+
 void CTrafficMonitorDlg::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);

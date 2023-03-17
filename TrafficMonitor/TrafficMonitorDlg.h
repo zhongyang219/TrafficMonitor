@@ -31,6 +31,9 @@ class CTrafficMonitorDlg : public CDialog
 public:
     CTrafficMonitorDlg(CWnd* pParent = NULL);   // 标准构造函数
     ~CTrafficMonitorDlg();
+    CTaskBarDlg* GetTaskbarWindow() const;
+
+    static CTrafficMonitorDlg* Instance();
 
     // 对话框数据
 #ifdef AFX_DESIGN_TIME
