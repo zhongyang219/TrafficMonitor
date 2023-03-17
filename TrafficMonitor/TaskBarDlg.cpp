@@ -207,14 +207,16 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                 //在index为奇数时同时绘制两个项目
                 if (index % 2 == 1)
                 {
-                    CRect item_rect_up; //上面一个项目的矩形区域
+                    int offset_sign = 1;
+                    if (theApp.m_taskbar_data.vertical_margin_negative) offset_sign = -1;
+                    CRect item_rect_up;     //上面一个项目的矩形区域
                     if (index > 0)
-                        item_rect_up.MoveToXY(item_rect.right + DPI(theApp.m_taskbar_data.item_space), 0);
+                        item_rect_up.MoveToXY(item_rect.right + DPI(theApp.m_taskbar_data.item_space), - offset_sign * DPI(theApp.m_taskbar_data.vertical_margin));
                     item_rect.left = item_rect_up.left;
                     item_rect.top = (m_window_height - TASKBAR_WND_HEIGHT / 2);
                     //确定窗口大小
                     item_rect_up.bottom = item_rect.top - 1;
-                    item_rect.bottom = m_window_height;
+                    item_rect.bottom = m_window_height + offset_sign * DPI(theApp.m_taskbar_data.vertical_margin);
                     int width = max(iter->item_width.TotalWidth(), last_item_width.TotalWidth());
                     item_rect.right = item_rect.left + width;
                     item_rect_up.right = item_rect_up.left + width;
@@ -680,7 +682,9 @@ bool CTaskBarDlg::AdjustWindowPos()
                     m_rect.MoveToX(m_left_space);
                 }
             }
-            m_rect.MoveToY((m_rcTaskbar.Height() - m_rect.Height()) / 2);
+            int offset_sign = 1;
+            if (theApp.m_taskbar_data.window_offset_top_negative) offset_sign = -1;
+            m_rect.MoveToY((m_rcTaskbar.Height() - m_rect.Height()) / 2 + offset_sign * DPI(theApp.m_taskbar_data.window_offset_top));
             if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())
                 m_rect.MoveToY(m_rect.top + DPI(1));
             MoveWindow(m_rect);

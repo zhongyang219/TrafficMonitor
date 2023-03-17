@@ -508,9 +508,14 @@
 #define IDC_OPEN_SKIN_DIR_STATIC        1161
 #define IDC_RESET_AUTO_RUN_BUTTON       1162
 #define IDS_CPU_FREQ                    1163
-#define IDC_DISABLE_D2D                 1166
-#define IDC_GDI_RADIO                   1167
-#define IDC_D2D_RADIO                   1168
+#define IDC_WINDOW_OFFSET_TOP_NEGATIVE_CHECK      1166
+#define IDC_WINDOW_OFFSET_TOP_EDIT      1167
+#define IDC_VERTICAL_MARGIN_EDIT      1168
+#define IDC_VERTICAL_MARGIN_NEGATIVE_CHECK      1169
+#define ID_32771                        32771
+#define IDC_DISABLE_D2D                 1170
+#define IDC_GDI_RADIO                   1171
+#define IDC_D2D_RADIO                   1172
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -632,7 +637,8 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        341
 #define _APS_NEXT_COMMAND_VALUE         33665
-#define _APS_NEXT_CONTROL_VALUE         1168
+
+#define _APS_NEXT_CONTROL_VALUE         1173
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -289,8 +289,14 @@ struct TaskBarSettingData : public PublicSettingData
     bool tbar_wnd_snap{ false };     	//如果为true，则在Win11中任务栏窗口贴靠中间任务栏，否则靠近边缘
     bool cm_graph_type{ false };        //如果为false，默认原样式，柱状图显示占用率，如为true，滚动显示占用率
     bool show_graph_dashed_box{ true }; //显示占用图虚线框
-    int item_space{};                   //任务栏项目间距
+    int item_space{};                   
+    int window_offset_top{};                   
+    int vertical_margin{};                   
+    bool window_offset_top_negative{ false };    //数值是否右对齐
+    bool vertical_margin_negative{ false };    //数值是否右对齐
     void ValidItemSpace();
+    void ValidWindowOffsetTop();
+    void ValidVerticalMargin();
 
     bool show_netspeed_figure{ false };     //是否显示网速占用图
     int netspeed_figure_max_value;          //网速占用图的最大值

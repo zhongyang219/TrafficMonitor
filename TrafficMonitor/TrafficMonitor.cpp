@@ -248,7 +248,12 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.cm_graph_type = ini.GetBool(_T("task_bar"), _T("cm_graph_type"), true);
     m_taskbar_data.show_graph_dashed_box = ini.GetBool(L"task_bar", L"show_graph_dashed_box", false);
     m_taskbar_data.item_space = ini.GetInt(L"task_bar", L"item_space", 4);
+    m_taskbar_data.window_offset_top = ini.GetInt(L"task_bar", L"window_offset_top", 0);
+    m_taskbar_data.window_offset_top_negative = ini.GetBool(_T("task_bar"), _T("window_offset_top_negative"), false);
+    m_taskbar_data.vertical_margin = ini.GetInt(L"task_bar", L"vertical_margin", 0);
+    m_taskbar_data.vertical_margin_negative = ini.GetBool(_T("task_bar"), _T("vertical_margin_negative"), false);
     m_taskbar_data.ValidItemSpace();
+    m_taskbar_data.ValidWindowOffsetTop();
 
     if (m_win_version.IsWindows10OrLater())     //只有Win10才支持自动适应系统深色/浅色主题
         m_taskbar_data.auto_adapt_light_theme = ini.GetBool(L"task_bar", L"auto_adapt_light_theme", false);
@@ -422,6 +427,10 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(L"task_bar", L"cm_graph_type", m_taskbar_data.cm_graph_type);
     ini.WriteBool(L"task_bar", L"show_graph_dashed_box", m_taskbar_data.show_graph_dashed_box);
     ini.WriteInt(L"task_bar", L"item_space", m_taskbar_data.item_space);
+    ini.WriteBool(L"task_bar", L"window_offset_top_negative", m_taskbar_data.window_offset_top_negative);
+    ini.WriteInt(L"task_bar", L"window_offset_top", m_taskbar_data.window_offset_top);
+    ini.WriteBool(L"task_bar", L"vertical_margin_negative", m_taskbar_data.vertical_margin_negative);
+    ini.WriteInt(L"task_bar", L"vertical_margin", m_taskbar_data.vertical_margin);
 
     ini.WriteBool(L"task_bar", L"auto_adapt_light_theme", m_taskbar_data.auto_adapt_light_theme);
     ini.WriteInt(L"task_bar", L"dark_default_style", m_taskbar_data.dark_default_style);
