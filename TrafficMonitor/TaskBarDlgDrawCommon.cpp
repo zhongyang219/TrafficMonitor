@@ -1699,11 +1699,11 @@ CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
                     &p_gdi_interop_bitmap),
                 TRAFFICMONITOR_ERROR_STR("Create ID2D1Bitmap from IDXGISurface1 failed."));
             m_p_device_context->DrawBitmap(p_gdi_interop_bitmap.Get());
-
-            ThrowIfFailed<CD2D1Exception>(
-                m_p_device_context->EndDraw(),
-                TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::EndDraw() failed."));
         }
+        // ! 注意：保证正常时EndDraw在不起用插件时仍然可以被调用，否则会导致D2D Begin/End调用不匹配，已经是第二次出错了。
+        ThrowIfFailed<CD2D1Exception>(
+            m_p_device_context->EndDraw(),
+            TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::EndDraw() failed."));
     }
     catch (CHResultException& ex)
     {
