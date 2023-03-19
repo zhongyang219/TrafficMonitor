@@ -317,7 +317,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     m_item_space_edit.SetRange(0, 32);
     m_item_space_edit.SetValue(m_data.item_space);
     CTaskBarDlg* taskbar_dlg{ CTrafficMonitorDlg::Instance()->GetTaskbarWindow() };
-    m_window_offset_top_edit.SetRange(-5, 5);
+    m_window_offset_top_edit.SetRange(-5, 20);
     m_window_offset_top_edit.SetValue(m_data.window_offset_top);
     if (taskbar_dlg != nullptr)
         m_window_offset_top_edit.EnableWindow(taskbar_dlg->IsTasksbarOnTopOrBottom());
