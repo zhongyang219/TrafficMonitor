@@ -680,7 +680,9 @@ bool CTaskBarDlg::AdjustWindowPos()
                     m_rect.MoveToX(m_left_space);
                 }
             }
-            m_rect.MoveToY((m_rcTaskbar.Height() - m_rect.Height()) / 2 + DPI(theApp.m_taskbar_data.window_offset_top));
+            //注：这里加上(m_rcTaskbar.Height() - m_rcBar.Height())用于修正Windows11 build 22621版本后触屏设备任务栏窗口位置不正确的问题。
+            //在这种情况下m_rcTaskbar的高度要大于m_rcBar的高度，正常情况下，它们的高度相同
+            m_rect.MoveToY((m_rcBar.Height() - m_rect.Height()) / 2 + (m_rcTaskbar.Height() - m_rcBar.Height()) + DPI(theApp.m_taskbar_data.window_offset_top));
             if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())
                 m_rect.MoveToY(m_rect.top + DPI(1));
             MoveWindow(m_rect);
