@@ -281,9 +281,18 @@ void CTrafficMonitorApp::LoadConfig()
 
     //其他设置
     //m_cfg_data.m_show_internet_ip = ini.GetBool(L"connection_details", L"show_internet_ip", false);
-    m_cfg_data.m_use_log_scale = ini.GetBool(_T("histroy_traffic"), _T("use_log_scale"), true);
-    m_cfg_data.m_sunday_first = ini.GetBool(_T("histroy_traffic"), _T("sunday_first"), true);
-    m_cfg_data.m_view_type = static_cast<HistoryTrafficViewType>(ini.GetInt(_T("histroy_traffic"), _T("view_type"), static_cast<int>(HistoryTrafficViewType::HV_DAY)));
+    m_cfg_data.m_use_log_scale = ini.GetBool(_T("history_traffic"), _T("use_log_scale"), true);
+    wstring first_day_of_week = ini.GetString(_T("history_traffic"), _T("first_day_of_week"), L"sunday");
+    if (first_day_of_week == L"saturday")
+        m_cfg_data.m_first_day_of_week = FirstDayOfWeek::SATURDAY;
+    else if (first_day_of_week == L"sunday")
+        m_cfg_data.m_first_day_of_week = FirstDayOfWeek::SUNDAY;
+    else if (first_day_of_week == L"monday")
+        m_cfg_data.m_first_day_of_week = FirstDayOfWeek::MONDAY;
+    else
+        m_cfg_data.m_first_day_of_week = FirstDayOfWeek::SUNDAY;
+
+    m_cfg_data.m_view_type = static_cast<HistoryTrafficViewType>(ini.GetInt(_T("history_traffic"), _T("view_type"), static_cast<int>(HistoryTrafficViewType::HV_DAY)));
 
     m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), false);
     m_notify_interval = ini.GetInt(_T("other"), _T("notify_interval"), 60);
@@ -445,9 +454,23 @@ void CTrafficMonitorApp::SaveConfig()
 
     //其他设置
     //ini.WriteBool(L"connection_details", L"show_internet_ip", m_cfg_data.m_show_internet_ip);
-    ini.WriteBool(L"histroy_traffic", L"use_log_scale", m_cfg_data.m_use_log_scale);
-    ini.WriteBool(L"histroy_traffic", L"sunday_first", m_cfg_data.m_sunday_first);
-    ini.WriteInt(L"histroy_traffic", L"view_type", static_cast<int>(m_cfg_data.m_view_type));
+    ini.WriteBool(L"history_traffic", L"use_log_scale", m_cfg_data.m_use_log_scale);
+    switch (m_cfg_data.m_first_day_of_week)
+    {
+        case FirstDayOfWeek::SATURDAY:
+            ini.WriteString(L"history_traffic", L"first_day_of_week", L"saturday");
+            break;
+        case FirstDayOfWeek::SUNDAY:
+            ini.WriteString(L"history_traffic", L"first_day_of_week", L"sunday");
+            break;
+        case FirstDayOfWeek::MONDAY:
+            ini.WriteString(L"history_traffic", L"first_day_of_week", L"monday");
+            break;
+        default:
+            ini.WriteString(L"history_traffic", L"first_day_of_week", L"sunday");
+            break;
+    }
+    ini.WriteInt(L"history_traffic", L"view_type", static_cast<int>(m_cfg_data.m_view_type));
 
     ini.WriteBool(_T("other"), _T("no_multistart_warning"), m_no_multistart_warning);
     ini.WriteBool(_T("other"), _T("exit_when_start_by_restart_manager"), m_exit_when_start_by_restart_manager);

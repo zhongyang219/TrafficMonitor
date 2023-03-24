@@ -161,6 +161,13 @@ enum class HistoryTrafficViewType
     HV_YEAR            //年视图
 };
 
+enum class FirstDayOfWeek
+{
+    SATURDAY,
+    SUNDAY,
+    MONDAY
+};
+
 struct StringSet
 {
 public:
@@ -199,7 +206,7 @@ struct MainConfigData
     //bool m_show_internet_ip{ false };     //是否在“连接详情”对话框中显示外网IP地址
     bool m_use_log_scale{ false };          //“历史流量统计”对话框中绘制表示历史流量数值的矩形时是否使用对数比例
     HistoryTrafficViewType m_view_type{};
-    bool m_sunday_first{ true };            //是否将周日作为一周的第一天
+    FirstDayOfWeek m_first_day_of_week{ FirstDayOfWeek::SUNDAY };            //是否将周日作为一周的第一天
     StringSet plugin_disabled;      //已禁用的插件
 
     int taskbar_left_space_win11{};         //Windows11下，任务栏窗口显示在左侧时的边距

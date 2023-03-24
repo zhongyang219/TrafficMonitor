@@ -16,13 +16,19 @@ int Date::week() const
     days += day;
     //计算这一年的1月1日是星期几
     int week_day = CCalendarHelper::CaculateWeekDay(year, 1, 1);
-    if (theApp.m_cfg_data.m_sunday_first)
+    switch (theApp.m_cfg_data.m_first_day_of_week)
     {
-        days += (week_day - 1);
-    }
-    else
-    {
-        days += (week_day - 2);
+        case FirstDayOfWeek::SATURDAY:
+            days += week_day;
+            break;
+        case FirstDayOfWeek::SUNDAY:
+            days += (week_day - 1);
+            break;
+        case FirstDayOfWeek::MONDAY:
+            days += (week_day - 2);
+            break;
+        default:
+            break;
     }
     return days / 7 + 1;
 }

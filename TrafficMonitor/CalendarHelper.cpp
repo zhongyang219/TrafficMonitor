@@ -41,27 +41,40 @@ int CCalendarHelper::DaysInMonth(int year, int month)
 	}
 }
 
-void CCalendarHelper::GetCalendar(int year, int month, DayTraffic calendar[CALENDAR_HEIGHT][CALENDAR_WIDTH], bool sunday_first)
+void CCalendarHelper::GetCalendar(int year, int month, DayTraffic calendar[CALENDAR_HEIGHT][CALENDAR_WIDTH], FirstDayOfWeek firstDayOfWeek)
 {
 	memset(calendar, 0, sizeof(DayTraffic)*CALENDAR_HEIGHT*CALENDAR_WIDTH);
 	int days{ DaysInMonth(year, month) };
-	int first_weak_day{ CaculateWeekDay(year, month, 1) };
-	if(!sunday_first)
+	int first_week_day{ CaculateWeekDay(year, month, 1) };
+	switch (firstDayOfWeek)
 	{
-		first_weak_day--;
-		if (first_weak_day < 0)
-			first_weak_day = 6;
+		case FirstDayOfWeek::SATURDAY:
+		{
+			first_week_day++;
+			if (first_week_day > 6)
+				first_week_day = 0;
+			break;
+		}
+		case FirstDayOfWeek::MONDAY:
+		{
+			first_week_day --;
+			if (first_week_day < 0)
+				first_week_day = 6;
+			break;
+		}
+		default:
+			break;
 	}
 	int i{}, j{};
 	for (int n{}; n < 37; n++)
 	{
-		if (n < first_weak_day)
+		if (n < first_week_day)
 		{
 			calendar[i][j].day = 0;
 		}
 		else
 		{
-			int day = n - first_weak_day + 1;
+			int day = n - first_week_day + 1;
 			if (day <= days)
 				calendar[i][j].day = day;
 		}

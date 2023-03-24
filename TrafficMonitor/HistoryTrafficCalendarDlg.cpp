@@ -52,7 +52,7 @@ void CHistoryTrafficCalendarDlg::SetDayTraffic()
 
 void CHistoryTrafficCalendarDlg::MonthSelectChanged()
 {
-    CCalendarHelper::GetCalendar(m_year, m_month, m_calendar, theApp.m_cfg_data.m_sunday_first);
+    CCalendarHelper::GetCalendar(m_year, m_month, m_calendar, theApp.m_cfg_data.m_first_day_of_week);
     SetDayTraffic();
     CalculateMonthTotalTraffic();
     InvalidateRect(m_draw_rect);
@@ -96,21 +96,43 @@ void CHistoryTrafficCalendarDlg::DoDataExchange(CDataExchange* pDX)
 
 bool CHistoryTrafficCalendarDlg::IsWeekend(int index)
 {
-    if (theApp.m_cfg_data.m_sunday_first)
-        return (index == 0 || index == 6);
-    else
-        return (index == 5 || index == 6);
+    switch (theApp.m_cfg_data.m_first_day_of_week)
+    {
+        case FirstDayOfWeek::SATURDAY:
+            return (index == 6);
+        case FirstDayOfWeek::SUNDAY:
+            return (index == 0 || index == 6);
+        case FirstDayOfWeek::MONDAY:
+            return (index == 5 || index == 6);
+        default:
+            break;
+    }
 }
 
 CString CHistoryTrafficCalendarDlg::GetWeekdayString(int index)
 {
     CString str;
-    if (!theApp.m_cfg_data.m_sunday_first)
+    
+    switch (theApp.m_cfg_data.m_first_day_of_week)
     {
-        index++;
-        if (index > 6)
-            index = 0;
+        case FirstDayOfWeek::SATURDAY:
+        {
+            index--;
+            if (index < 0)
+                index = 6;
+            break;
+        }
+        case FirstDayOfWeek::MONDAY:
+        {
+            index ++;
+            if (index > 6)
+                index = 0;
+            break;
+        }
+        default:
+            break;
     }
+
     switch (index)
     {
     case 0:
@@ -148,6 +170,7 @@ BEGIN_MESSAGE_MAP(CHistoryTrafficCalendarDlg, CTabDlg)
     ON_WM_MOUSEWHEEL()
     ON_BN_CLICKED(IDC_MENU_BUTTON, &CHistoryTrafficCalendarDlg::OnBnClickedMenuButton)
     ON_WM_INITMENU()
+    ON_COMMAND(ID_FIRST_DAY_OF_WEEK_SATURDAY, &CHistoryTrafficCalendarDlg::OnFirstDayOfWeekSaturday)
     ON_COMMAND(ID_FIRST_DAY_OF_WEEK_SUNDAY, &CHistoryTrafficCalendarDlg::OnFirstDayOfWeekSunday)
     ON_COMMAND(ID_FIRST_DAY_OF_WEEK_MONDAY, &CHistoryTrafficCalendarDlg::OnFirstDayOfWeekMonday)
     ON_COMMAND(ID_CALENDAR_JUMP_TO_TODAY, &CHistoryTrafficCalendarDlg::OnCalendarJumpToToday)
@@ -164,7 +187,7 @@ BOOL CHistoryTrafficCalendarDlg::OnInitDialog()
     // TODO:  在此添加额外的初始化
     m_year = m_history_traffics[0].year;
     m_month = m_history_traffics[0].month;
-    CCalendarHelper::GetCalendar(m_year, m_month, m_calendar, theApp.m_cfg_data.m_sunday_first);
+    CCalendarHelper::GetCalendar(m_year, m_month, m_calendar, theApp.m_cfg_data.m_first_day_of_week);
     SetDayTraffic();
     CalculateMonthTotalTraffic();
 
@@ -531,18 +554,36 @@ void CHistoryTrafficCalendarDlg::OnInitMenu(CMenu* pMenu)
     CTabDlg::OnInitMenu(pMenu);
 
     // TODO: 在此处添加消息处理程序代码
-    if (theApp.m_cfg_data.m_sunday_first)
-        pMenu->CheckMenuRadioItem(ID_FIRST_DAY_OF_WEEK_SUNDAY, ID_FIRST_DAY_OF_WEEK_MONDAY, ID_FIRST_DAY_OF_WEEK_SUNDAY, MF_BYCOMMAND | MF_CHECKED);
-    else
-        pMenu->CheckMenuRadioItem(ID_FIRST_DAY_OF_WEEK_SUNDAY, ID_FIRST_DAY_OF_WEEK_MONDAY, ID_FIRST_DAY_OF_WEEK_MONDAY, MF_BYCOMMAND | MF_CHECKED);
+    switch (theApp.m_cfg_data.m_first_day_of_week)
+    {
+        case FirstDayOfWeek::SATURDAY:
+            pMenu->CheckMenuRadioItem(ID_FIRST_DAY_OF_WEEK_SATURDAY, ID_FIRST_DAY_OF_WEEK_MONDAY, ID_FIRST_DAY_OF_WEEK_SATURDAY, MF_BYCOMMAND | MF_CHECKED);
+            break;
+        case FirstDayOfWeek::SUNDAY:
+            pMenu->CheckMenuRadioItem(ID_FIRST_DAY_OF_WEEK_SATURDAY, ID_FIRST_DAY_OF_WEEK_MONDAY, ID_FIRST_DAY_OF_WEEK_SUNDAY, MF_BYCOMMAND | MF_CHECKED);
+            break;
+        case FirstDayOfWeek::MONDAY:
+            pMenu->CheckMenuRadioItem(ID_FIRST_DAY_OF_WEEK_SATURDAY, ID_FIRST_DAY_OF_WEEK_MONDAY, ID_FIRST_DAY_OF_WEEK_MONDAY, MF_BYCOMMAND | MF_CHECKED);
+            break;
+        default:
+            break;
+    }
 
+}
+
+
+void CHistoryTrafficCalendarDlg::OnFirstDayOfWeekSaturday()
+{
+    // TODO: 在此添加命令处理程序代码
+    theApp.m_cfg_data.m_first_day_of_week = FirstDayOfWeek::SATURDAY;
+    MonthSelectChanged();
 }
 
 
 void CHistoryTrafficCalendarDlg::OnFirstDayOfWeekSunday()
 {
     // TODO: 在此添加命令处理程序代码
-    theApp.m_cfg_data.m_sunday_first = true;
+    theApp.m_cfg_data.m_first_day_of_week = FirstDayOfWeek::SUNDAY;
     MonthSelectChanged();
 }
 
@@ -550,7 +591,7 @@ void CHistoryTrafficCalendarDlg::OnFirstDayOfWeekSunday()
 void CHistoryTrafficCalendarDlg::OnFirstDayOfWeekMonday()
 {
     // TODO: 在此添加命令处理程序代码
-    theApp.m_cfg_data.m_sunday_first = false;
+    theApp.m_cfg_data.m_first_day_of_week = FirstDayOfWeek::MONDAY;
     MonthSelectChanged();
 }
 
