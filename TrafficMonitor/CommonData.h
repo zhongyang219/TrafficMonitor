@@ -276,6 +276,8 @@ struct TaskBarSettingData : public PublicSettingData
     int light_default_style{ -1 };                  //浅色主题时使用的预设方案
     bool auto_set_background_color{ false };        //根据任务栏颜色自动设置背景色
     bool auto_save_taskbar_color_settings_to_preset{};    //当启用“自动适应Windows10深色/浅色主题”时，是否在颜色设置有更改时自动将当前颜色设置保存到对应的预设
+    bool IsTaskbarTransparent() const;
+    void SetTaskabrTransparent(bool transparent);
 
     CTaskbarItemOrderHelper item_order;
     unsigned int m_tbar_display_item{ TDI_UP | TDI_DOWN };      //任务栏窗口显示的项目

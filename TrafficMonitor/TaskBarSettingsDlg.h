@@ -68,9 +68,6 @@ public:
 
 protected:
     void EnableControl();
-
-    void SetTaskabrTransparent(bool transparent);
-    bool IsTaskbarTransparent();
     virtual void SetControlMouseWheelEnable(bool enable) override;
 
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持

@@ -26,9 +26,6 @@ public:
 	//static void ApplyDefaultLightStyle(TaskBarSettingData& data);		//应用默认的浅色模式预设
 	void ModifyDefaultStyle(int index, TaskBarSettingData& data);     //将当前颜色设置保存到一个预设方案
 
-	static bool IsTaskbarTransparent(const TaskBarSettingData& data);
-	static void SetTaskabrTransparent(bool transparent, TaskBarSettingData& data);
-
     static bool IsTaskBarStyleDataValid(const TaskBarStyleData& data);     //判断一个颜色模式是否有效
 
 private:

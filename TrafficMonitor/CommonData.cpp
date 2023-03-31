@@ -3,6 +3,7 @@
 #include "Common.h"
 #include "CalendarHelper.h"
 #include "TrafficMonitor.h"
+#include "WindowsSettingHelper.h"
 
 ///////////////////////////////////////////////////////////////////////////////////
 int Date::week() const
@@ -151,6 +152,40 @@ std::vector<std::wstring> StringSet::ToVector() const
 std::set<std::wstring>& StringSet::data()
 {
     return string_set;
+}
+
+bool TaskBarSettingData::IsTaskbarTransparent() const
+{
+    if (CWindowsSettingHelper::IsWindows10LightTheme() || theApp.m_win_version.IsWindows8Or8point1() || theApp.m_is_windows11_taskbar)
+        return (transparent_color == back_color);
+    else
+        return transparent_color == 0;
+}
+
+void TaskBarSettingData::SetTaskabrTransparent(bool transparent)
+{
+    if (transparent)
+    {
+        if (CWindowsSettingHelper::IsWindows10LightTheme() || theApp.m_win_version.IsWindows8Or8point1() || theApp.m_is_windows11_taskbar)
+        {
+            //浅色模式下要设置任务栏窗口透明，只需将透明色设置成和背景色一样即可
+            CCommon::TransparentColorConvert(back_color);
+            transparent_color = back_color;
+        }
+        else
+        {
+            //深色模式下，背景色透明将透明色设置成黑色
+            transparent_color = 0;
+        }
+    }
+    else
+    {
+        //要设置任务栏窗口不透明，只需将透明色设置成和背景色不一样即可
+        if (back_color != TASKBAR_TRANSPARENT_COLOR1)
+            transparent_color = TASKBAR_TRANSPARENT_COLOR1;
+        else
+            transparent_color = TASKBAR_TRANSPARENT_COLOR2;
+    }
 }
 
 void TaskBarSettingData::ValidItemSpace()

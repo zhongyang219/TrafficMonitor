@@ -90,7 +90,7 @@ void CTaskBarSettingsDlg::ApplyDefaultStyle(int index)
     theApp.m_taskbar_default_style.ApplyDefaultStyle(index, m_data);
     DrawStaticColor();
     ((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->SetCheck(m_data.specify_each_item_color);
-    m_background_transparent_chk.SetCheck(IsTaskbarTransparent());
+    m_background_transparent_chk.SetCheck(m_data.IsTaskbarTransparent());
 }
 
 void CTaskBarSettingsDlg::ModifyDefaultStyle(int index)
@@ -114,15 +114,6 @@ void CTaskBarSettingsDlg::EnableControl()
     //EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, theApp.m_win_version.IsWindows11OrLater() && !m_data.tbar_wnd_on_left);
 }
 
-void CTaskBarSettingsDlg::SetTaskabrTransparent(bool transparent)
-{
-    CTaskbarDefaultStyle::SetTaskabrTransparent(transparent, m_data);
-}
-
-bool CTaskBarSettingsDlg::IsTaskbarTransparent()
-{
-    return CTaskbarDefaultStyle::IsTaskbarTransparent(m_data);
-}
 
 void CTaskBarSettingsDlg::SetControlMouseWheelEnable(bool enable)
 {
@@ -277,7 +268,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     }
     ((CButton*)GetDlgItem(IDC_HIDE_PERCENTAGE_CHECK))->SetCheck(m_data.hide_percent);
     ((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->SetCheck(m_data.specify_each_item_color);
-    m_background_transparent_chk.SetCheck(IsTaskbarTransparent());
+    m_background_transparent_chk.SetCheck(m_data.IsTaskbarTransparent());
     m_atuo_adapt_light_theme_chk.SetCheck(m_data.auto_adapt_light_theme);
     m_auto_set_back_color_chk.SetCheck(m_data.auto_set_background_color);
     m_auto_set_back_color_chk.EnableWindow(theApp.m_win_version.IsWindows8OrLater());
@@ -475,7 +466,7 @@ void CTaskBarSettingsDlg::OnOK()
     m_data.digits_number = m_digit_number_combo.GetCurSel() + 3;
 
     bool is_taskbar_transparent_checked = (m_background_transparent_chk.GetCheck() != 0);
-    SetTaskabrTransparent(is_taskbar_transparent_checked);
+    m_data.SetTaskabrTransparent(is_taskbar_transparent_checked);
 
     SaveColorSettingToDefaultStyle();
 
@@ -544,7 +535,7 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
         CMFCColorDialogEx colorDlg(m_data.back_color, 0, this);
         if (colorDlg.DoModal() == IDOK)
         {
-            bool background_transparent = IsTaskbarTransparent();
+            bool background_transparent = m_data.IsTaskbarTransparent();
             m_data.back_color = colorDlg.GetColor();
             if (m_data.back_color == m_data.text_colors.begin()->second.label)
                 MessageBox(CCommon::LoadText(IDS_SAME_BACK_TEXT_COLOR_WARNING), NULL, MB_ICONWARNING);
@@ -701,7 +692,7 @@ void CTaskBarSettingsDlg::OnBnClickedBackgroundTransparentCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
     bool checked = (m_background_transparent_chk.GetCheck() != 0);
-    SetTaskabrTransparent(checked);
+    m_data.SetTaskabrTransparent(checked);
     m_style_modified = true;
 }
 

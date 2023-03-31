@@ -564,7 +564,7 @@ void CTaskBarDlg::MoveWindow(CRect rect)
 
 void CTaskBarDlg::DisableRenderFeatureIfNecessary(CSupportedRenderEnums& ref_supported_render_enums)
 {
-    bool is_transparent = CTaskbarDefaultStyle::IsTaskbarTransparent(theApp.m_taskbar_data);
+    bool is_transparent = theApp.m_taskbar_data.IsTaskbarTransparent();
     // UpdateLayeredWindowIndirect失败则禁用D2D
     if (theApp.m_taskbar_data.update_layered_window_error_code)
     {
