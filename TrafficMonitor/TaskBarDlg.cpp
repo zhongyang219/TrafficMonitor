@@ -93,7 +93,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 #endif
     // 初始化DrawBuffer和DrawCommon栈内存
     AllInvolvedDrawCommonObjectsStorage all_involved_draw_common_objects{};
-    IDrawCommon* draw_common_interface;
+    IDrawCommon* draw_common_interface{nullptr};
     std::tie(std::ignore, draw_common_interface) =
         GetInterfaceFromAllInvolvedDrawCommonObjects(
             all_involved_draw_common_objects,
@@ -790,6 +790,11 @@ UINT CTaskBarDlg::DPI(UINT pixel) const
 int CTaskBarDlg::DPI(int pixel) const
 {
     return static_cast<int>(m_taskbar_dpi) * pixel / 96;
+}
+
+LONG CTaskBarDlg::DPI(LONG pixel) const
+{
+    return static_cast<LONG>(m_taskbar_dpi) * pixel / 96;
 }
 
 void CTaskBarDlg::DPI(CRect& rect) const

@@ -69,7 +69,7 @@ void DispStrings::operator=(const DispStrings& disp_str)
 {
     map_str = disp_str.map_str;
     //如果赋值的字符串是定义的无效字符串，则不赋值
-    for (auto& iter = map_str.begin(); iter != map_str.end(); ++iter)
+    for (auto iter = map_str.begin(); iter != map_str.end(); ++iter)
     {
         if (iter->second == NONE_STR)
             iter->second.clear();
@@ -78,7 +78,7 @@ void DispStrings::operator=(const DispStrings& disp_str)
 
 bool DispStrings::IsInvalid() const
 {
-    for (auto& iter = map_str.begin(); iter != map_str.end(); ++iter)
+    for (auto iter = map_str.begin(); iter != map_str.end(); ++iter)
     {
         if (iter->second == NONE_STR)
             return true;
