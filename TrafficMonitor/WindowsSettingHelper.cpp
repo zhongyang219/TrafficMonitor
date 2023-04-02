@@ -41,6 +41,8 @@ bool CWindowsSettingHelper::IsDotNetFramework4Point5Installed()
 
 bool CWindowsSettingHelper::IsTaskbarWidgetsBtnShown()
 {
+    if (!theApp.m_taskbar_data.is_windows_web_experience_detected)
+        return false;
     DWORD data{};
     if (!GetDWORDRegKeyData(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", L"TaskbarDa", data))
         return true;

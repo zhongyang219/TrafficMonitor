@@ -1,13 +1,34 @@
 ﻿#pragma once
+#include <cstddef>
 #include <functional>
 #include <type_traits>
 #include <stdexcept>
 #include <tuple>
 
 template <class T>
-using std_aligned_storage = typename std::aligned_storage<sizeof(T), alignof(T)>::type;
+class AlignedStorage
+{
+private:
+    alignas(T) std::byte m_buffer[sizeof(T)]{};
 
-//皆不保证多线程操作安全
+public:
+    AlignedStorage() = default;
+    ~AlignedStorage() = default;
+    T& Get() noexcept
+    {
+        return *reinterpret_cast<T*>(m_buffer);
+    };
+    const T& Get() const noexcept
+    {
+        return *reinterpret_cast<T*>(m_buffer);
+    };
+    std::byte* operator&() noexcept
+    {
+        return m_buffer;
+    };
+};
+
+// 皆不保证多线程操作安全
 /**
  * @brief CNullable<T>的默认删除器，注意重载operator()的参数为T*
  *
@@ -30,7 +51,7 @@ struct NullableDefaultDeleter
 template <class T, class Deleter = NullableDefaultDeleter<T>>
 class CNullable
 {
-    using StorageType = std_aligned_storage<T>;
+    using StorageType = AlignedStorage<T>;
     using RawType = std::decay_t<T>;
     template <class... Args>
     static void EmplaceAt(RawType* p_object, Args&&... args)
@@ -152,17 +173,6 @@ private:
     private:
         StorageType m_storage;
 
-        auto GetStoragePointer() const noexcept
-            -> const StorageType*
-        {
-            return std::addressof(m_storage);
-        }
-        auto GetStoragePointer() noexcept
-            -> StorageType*
-        {
-            return std::addressof(m_storage);
-        }
-
     public:
         explicit StorageAndEboDeleter(Deleter deleter)
             : Deleter{deleter} {}
@@ -172,19 +182,19 @@ private:
 
         const T& GetUnsafe() const noexcept
         {
-            return *static_cast<const T*>(static_cast<const void*>(GetStoragePointer()));
+            return *static_cast<const T*>(static_cast<const void*>(&m_storage));
         }
         T& GetUnsafe() noexcept
         {
-            return *static_cast<T*>(static_cast<void*>(GetStoragePointer()));
+            return *static_cast<T*>(static_cast<void*>(&m_storage));
         }
         const T* GetPointerUnsafe() const noexcept
         {
-            return static_cast<const T*>(static_cast<const void*>(GetStoragePointer()));
+            return static_cast<const T*>(static_cast<const void*>(&m_storage));
         }
         T* GetPointerUnsafe() noexcept
         {
-            return static_cast<T*>(static_cast<void*>(GetStoragePointer()));
+            return static_cast<T*>(static_cast<void*>(&m_storage));
         }
     };
     bool m_has_value{false};

@@ -10,6 +10,7 @@
 #include "WIC.h"
 #include "Nullable.hpp"
 #include "DrawCommonFactory.h"
+#include "WindowsWebExperienceDetector.h"
 
 #ifdef DEBUG
 // DX调试信息捕获
@@ -93,7 +94,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 #endif
     // 初始化DrawBuffer和DrawCommon栈内存
     AllInvolvedDrawCommonObjectsStorage all_involved_draw_common_objects{};
-    IDrawCommon* draw_common_interface;
+    IDrawCommon* draw_common_interface{nullptr};
     std::tie(std::ignore, draw_common_interface) =
         GetInterfaceFromAllInvolvedDrawCommonObjects(
             all_involved_draw_common_objects,
@@ -792,6 +793,11 @@ int CTaskBarDlg::DPI(int pixel) const
     return static_cast<int>(m_taskbar_dpi) * pixel / 96;
 }
 
+LONG CTaskBarDlg::DPI(LONG pixel) const
+{
+    return static_cast<LONG>(m_taskbar_dpi) * pixel / 96;
+}
+
 void CTaskBarDlg::DPI(CRect& rect) const
 {
     rect.left = DPI(rect.left);
@@ -1193,6 +1199,9 @@ BOOL CTaskBarDlg::OnInitDialog()
     CDialogEx::OnInitDialog();
 
     // TODO:  在此添加额外的初始化
+    // 检测系统是否安装了 MicrosoftWindows.Client.WebExperience (aka Windows Web Experience Pack)
+    theApp.m_taskbar_data.is_windows_web_experience_detected =
+        WindowsWebExperienceDetector::IsDetected();
     // 根据任务栏窗口的设置禁用必要的渲染选项，仅透明且支持D2D渲染时才会使用D2D渲染
     DisableRenderFeatureIfNecessary(m_supported_render_enums);
     //设置隐藏任务栏图标

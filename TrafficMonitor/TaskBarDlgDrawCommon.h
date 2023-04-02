@@ -385,9 +385,9 @@ public:
         auto GetD3D10Device1()
             -> Microsoft::WRL::ComPtr<ID3D10Device1>;
     };
-    using VariantStorage = std_aligned_storage<variant_storage<
+    using VariantStorage = AlignedUnionStorage<
         CNullable<CDCompositionHelper>,
-        CNullable<CD3DHelper>>>;
+        CNullable<CD3DHelper>>;
 
     CTaskBarDlgDrawCommonSupport& m_ref_task_bar_dlg_draw_common_support;
     D2D1_SIZE_U m_size{0, 0};

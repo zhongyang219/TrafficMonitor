@@ -336,6 +336,8 @@ bool is_auto_start_task_active_for_this_user(std::wstring* path)
     ITaskService* pService = NULL;
     ITaskFolder* pTaskFolder = NULL;
 
+    bool command_path_match{};
+
     // ------------------------------------------------------
     // Get the Username for the task.
     if (!GetEnvironmentVariable(L"USERNAME", username, USERNAME_LEN))
@@ -365,7 +367,6 @@ bool is_auto_start_task_active_for_this_user(std::wstring* path)
     hr = pService->GetFolder(_bstr_t(L"\\TrafficMonitor"), &pTaskFolder);
     ExitOnFailure(hr, "ITaskFolder doesn't exist: %x", hr);
 
-    bool command_path_match{};
     // ------------------------------------------------------
     // If the task exists, disable.
     {

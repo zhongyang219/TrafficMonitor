@@ -62,18 +62,17 @@ namespace DrawCommonHelper
     constexpr BYTE GDI_MODIFIED_FLAG = 0x00;
 }
 
-template <class... Types>
-struct variant_storage
+template <class... Ts>
+class AlignedUnionStorage
 {
-    ~variant_storage() = delete;
-};
-template <class First, class... Other>
-struct variant_storage<First, Other...>
-{
-    union
+private:
+    alignas(Ts...) std::byte m_buffer[(std::max)({sizeof(Ts)...})]{};
+
+public:
+    AlignedUnionStorage() = default;
+    ~AlignedUnionStorage() = default;
+    std::byte* operator&() noexcept
     {
-        First m_head;
-        variant_storage<Other...> m_tail;
-    };
-    ~variant_storage() = delete;
+        return m_buffer;
+    }
 };

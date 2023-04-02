@@ -223,6 +223,9 @@
     <Filter Include="源文件和头文件\公共的类\RenderAPISupport\DxgiSupport2">
       <UniqueIdentifier>{059ab3fb-f8b3-4cae-b5d3-72bd857e5197}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\WindowsWebExperienceDetector">
+      <UniqueIdentifier>{4f233c31-4fef-48c1-8176-845ddd21debb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -484,6 +487,9 @@
     <ClInclude Include="SupportedRenderEnums.h">
       <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
     </ClInclude>
+    <ClInclude Include="WindowsWebExperienceDetector.h">
+      <Filter>源文件和头文件\公共的类\WindowsWebExperienceDetector</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -713,6 +719,9 @@
     </ClCompile>
     <ClCompile Include="SupportedRenderEnums.cpp">
       <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowsWebExperienceDetector.cpp">
+      <Filter>源文件和头文件\公共的类\WindowsWebExperienceDetector</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
