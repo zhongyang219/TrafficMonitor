@@ -596,6 +596,7 @@
     <ClInclude Include="UpdateHelper.h" />
     <ClInclude Include="WIC.h" />
     <ClInclude Include="WindowsSettingHelper.h" />
+    <ClInclude Include="WindowsWebExperienceDetector.h" />
     <ClInclude Include="WinVersionHelper.h" />
   </ItemGroup>
   <ItemGroup>
@@ -692,6 +693,7 @@
     <ClCompile Include="UpdateHelper.cpp" />
     <ClCompile Include="WIC.cpp" />
     <ClCompile Include="WindowsSettingHelper.cpp" />
+    <ClCompile Include="WindowsWebExperienceDetector.cpp" />
     <ClCompile Include="WinVersionHelper.cpp" />
   </ItemGroup>
   <ItemGroup>

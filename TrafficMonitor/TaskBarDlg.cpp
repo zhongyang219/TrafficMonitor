@@ -10,6 +10,7 @@
 #include "WIC.h"
 #include "Nullable.hpp"
 #include "DrawCommonFactory.h"
+#include "WindowsWebExperienceDetector.h"
 
 #ifdef DEBUG
 // DX调试信息捕获
@@ -1198,6 +1199,9 @@ BOOL CTaskBarDlg::OnInitDialog()
     CDialogEx::OnInitDialog();
 
     // TODO:  在此添加额外的初始化
+    // 检测系统是否安装了 MicrosoftWindows.Client.WebExperience (aka Windows Web Experience Pack)
+    theApp.m_taskbar_data.is_windows_web_experience_detected =
+        WindowsWebExperienceDetector::IsDetected();
     // 根据任务栏窗口的设置禁用必要的渲染选项，仅透明且支持D2D渲染时才会使用D2D渲染
     DisableRenderFeatureIfNecessary(m_supported_render_enums);
     //设置隐藏任务栏图标
