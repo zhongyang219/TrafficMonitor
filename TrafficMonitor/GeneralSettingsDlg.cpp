@@ -78,7 +78,7 @@ void CGeneralSettingsDlg::AddOrUpdateAutoRunTooltip(bool add)
 {
     CString str_tool_tip;
 #ifdef WITHOUT_TEMPERATURE
-    str_tool_tip = CCommon::LoadText(IDS_AUTO_RUN_METHOD_REGESTRY);
+    str_tool_tip = CCommon::LoadText(IDS_AUTO_RUN_METHOD_REGISTRY);
 #else
     str_tool_tip = CCommon::LoadText(IDS_AUTO_RUN_METHOD_TASK_SCHEDULE);
 #endif
@@ -214,8 +214,8 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     ((CButton*)GetDlgItem(IDC_TODAY_TRAFFIC_TIP_CHECK))->SetCheck(m_data.traffic_tip_enable);
     m_traffic_tip_edit.SetRange(1, 32767);
     m_traffic_tip_edit.SetValue(m_data.traffic_tip_value);
-    m_traffic_tip_combo.AddString(_T("MB"));
-    m_traffic_tip_combo.AddString(_T("GB"));
+    m_traffic_tip_combo.AddString(UNIT_TEXT_MB);
+    m_traffic_tip_combo.AddString(UNIT_TEXT_GB);
     m_traffic_tip_combo.SetCurSel(m_data.traffic_tip_unit);
     CheckDlgButton(IDC_MEMORY_USAGE_TIP_CHECK, m_data.memory_usage_tip.enable);
     m_memory_tip_edit.SetRange(1, 100);
@@ -243,6 +243,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     m_language_combo.AddString(_T("English"));
     m_language_combo.AddString(_T("简体中文"));
     m_language_combo.AddString(_T("繁體中文"));
+    m_language_combo.AddString(_T("Русский"));
     m_language_combo.SetCurSel(static_cast<int>(m_data.language));
 
     ((CButton*)GetDlgItem(IDC_SHOW_ALL_CONNECTION_CHECK))->SetCheck(m_data.show_all_interface);

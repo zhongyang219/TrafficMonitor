@@ -136,13 +136,13 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
     const CSkinFile::Layout& skin_layout{ theApp.m_cfg_data.m_show_more_info ? m_skin.GetLayoutInfo().layout_l : m_skin.GetLayoutInfo().layout_s }; //当前的皮肤布局
     if (!skin_layout.GetItem(TDI_UP).show)      //如果主窗口中没有显示上传速度，则在提示信息中显示上传速度
     {
-        temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_UPLOAD),
+        temp.Format(_T("\r\n%s: %s") + UNIT_TEXT_PER_SECOND, CCommon::LoadText(IDS_UPLOAD),
             CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data));
         tip_info += temp;
     }
     if (!skin_layout.GetItem(TDI_DOWN).show)
     {
-        temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_DOWNLOAD),
+        temp.Format(_T("\r\n%s: %s") + UNIT_TEXT_PER_SECOND, CCommon::LoadText(IDS_DOWNLOAD),
             CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data));
         tip_info += temp;
     }
@@ -406,8 +406,8 @@ void CTrafficMonitorDlg::IniConnection()
     if (theApp.m_debug_log)
     {
         CString log_str;
-        log_str += _T("正在初始化网络连接...\n");
-        log_str += _T("连接列表：\n");
+        log_str += _T("Initializing network connection...\n");
+        log_str += _T("Connection list:\n");
         for (size_t i{}; i < m_connections.size(); i++)
         {
             log_str += m_connections[i].description.c_str();
@@ -616,22 +616,22 @@ void CTrafficMonitorDlg::UpdateNotifyIconTip()
     CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed);
     CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed);
 
-    strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>/s"), { CCommon::LoadText(IDS_UPLOAD), out_speed });
-    strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>/s"), { CCommon::LoadText(IDS_DOWNLOAD), in_speed });
-    strTip += CCommon::StringFormat(_T("\r\nCPU: <%1%> %"), { theApp.m_cpu_usage });
+    strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>") + UNIT_TEXT_PER_SECOND, { CCommon::LoadText(IDS_UPLOAD), out_speed });
+    strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%>") + UNIT_TEXT_PER_SECOND, { CCommon::LoadText(IDS_DOWNLOAD), in_speed });
+    strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> %"), { CCommon::LoadText(IDS_CPU_USAGE), theApp.m_cpu_usage });
     strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> %"), { CCommon::LoadText(IDS_MEMORY), theApp.m_memory_usage });
     if (IsTemperatureNeeded())
     {
         if (theApp.m_general_data.IsHardwareEnable(HI_GPU) && theApp.m_gpu_usage >= 0)
             strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> %"), { CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage });
         if (theApp.m_general_data.IsHardwareEnable(HI_CPU) && theApp.m_cpu_temperature > 0)
-            strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> °C"), { CCommon::LoadText(IDS_CPU_TEMPERATURE), static_cast<int>(theApp.m_cpu_temperature) });
+            strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> ") UNIT_TEXT_CELSIUS, { CCommon::LoadText(IDS_CPU_TEMPERATURE), static_cast<int>(theApp.m_cpu_temperature) });
         if (theApp.m_general_data.IsHardwareEnable(HI_GPU) && theApp.m_gpu_temperature > 0)
-            strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> °C"), { CCommon::LoadText(IDS_GPU_TEMPERATURE), static_cast<int>(theApp.m_gpu_temperature) });
+            strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> ") UNIT_TEXT_CELSIUS, { CCommon::LoadText(IDS_GPU_TEMPERATURE), static_cast<int>(theApp.m_gpu_temperature) });
         if (theApp.m_general_data.IsHardwareEnable(HI_HDD) && theApp.m_hdd_temperature > 0)
-            strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> °C"), { CCommon::LoadText(IDS_HDD_TEMPERATURE), static_cast<int>(theApp.m_hdd_temperature) });
+            strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> ") UNIT_TEXT_CELSIUS, { CCommon::LoadText(IDS_HDD_TEMPERATURE), static_cast<int>(theApp.m_hdd_temperature) });
         if (theApp.m_general_data.IsHardwareEnable(HI_MBD) && theApp.m_main_board_temperature > 0)
-            strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> °C"), { CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), static_cast<int>(theApp.m_main_board_temperature) });
+            strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> ") UNIT_TEXT_CELSIUS, { CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), static_cast<int>(theApp.m_main_board_temperature) });
         if (theApp.m_general_data.IsHardwareEnable(HI_HDD) && theApp.m_hdd_usage >= 0)
             strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> %"), { CCommon::LoadText(IDS_HDD_USAGE), theApp.m_hdd_usage });
     }
@@ -1250,7 +1250,7 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
             if (theApp.m_debug_log)
             {
                 CString log_str;
-                log_str = _T("连接名称不匹配：\r\n");
+                log_str = _T("Connection name mismatch:\r\n");
                 log_str += _T("IfTable description: ");
                 log_str += descr.c_str();
                 log_str += _T("\r\nm_connection_name: ");
@@ -1567,25 +1567,25 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
         checkNotifyTip(theApp.m_general_data.memory_usage_tip, theApp.m_memory_usage, last_memory_usage, memory_usage_notify_time, info.GetString());
 
         //检查是否要弹出CPU温度使用率超出提示
-        info.Format(CCommon::LoadText(IDS_CPU_TEMPERATURE_EXCEED, _T(" %d°C!")), static_cast<int>(theApp.m_cpu_temperature));
+        info.Format(CCommon::LoadText(IDS_CPU_TEMPERATURE_EXCEED, _T(" %d") UNIT_TEXT_CELSIUS _T("!")), static_cast<int>(theApp.m_cpu_temperature));
         static int last_cpu_temp;
         static int cpu_temp_notify_time{ -theApp.m_notify_interval };       //记录上次弹出提示时的时间
         checkNotifyTip(theApp.m_general_data.cpu_temp_tip, theApp.m_cpu_temperature, last_cpu_temp, cpu_temp_notify_time, info.GetString());
 
         //检查是否要弹出显卡温度使用率超出提示
-        info.Format(CCommon::LoadText(IDS_GPU_TEMPERATURE_EXCEED, _T(" %d°C!")), static_cast<int>(theApp.m_gpu_temperature));
+        info.Format(CCommon::LoadText(IDS_GPU_TEMPERATURE_EXCEED, _T(" %d") UNIT_TEXT_CELSIUS _T("!")), static_cast<int>(theApp.m_gpu_temperature));
         static int last_gpu_temp;
         static int gpu_temp_notify_time{ -theApp.m_notify_interval };       //记录上次弹出提示时的时间
         checkNotifyTip(theApp.m_general_data.gpu_temp_tip, theApp.m_gpu_temperature, last_gpu_temp, gpu_temp_notify_time, info.GetString());
 
         //检查是否要弹出硬盘温度使用率超出提示
-        info.Format(CCommon::LoadText(IDS_HDD_TEMPERATURE_EXCEED, _T(" %d°C!")), static_cast<int>(theApp.m_hdd_temperature));
+        info.Format(CCommon::LoadText(IDS_HDD_TEMPERATURE_EXCEED, _T(" %d") UNIT_TEXT_CELSIUS _T("!")), static_cast<int>(theApp.m_hdd_temperature));
         static int last_hdd_temp;
         static int hdd_temp_notify_time{ -theApp.m_notify_interval };       //记录上次弹出提示时的时间
         checkNotifyTip(theApp.m_general_data.hdd_temp_tip, theApp.m_hdd_temperature, last_hdd_temp, hdd_temp_notify_time, info.GetString());
 
         //检查是否要弹出主板温度使用率超出提示
-        info.Format(CCommon::LoadText(IDS_MBD_TEMPERATURE_EXCEED, _T(" %d°C!")), static_cast<int>(theApp.m_main_board_temperature));
+        info.Format(CCommon::LoadText(IDS_MBD_TEMPERATURE_EXCEED, _T(" %d") UNIT_TEXT_CELSIUS _T("!")), static_cast<int>(theApp.m_main_board_temperature));
         static int last_main_board_temp;
         static int main_board_temp_notify_time{ -theApp.m_notify_interval };        //记录上次弹出提示时的时间
         checkNotifyTip(theApp.m_general_data.mainboard_temp_tip, theApp.m_main_board_temperature, last_main_board_temp, main_board_temp_notify_time, info.GetString());
@@ -1641,7 +1641,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                 if (theApp.m_debug_log)
                 {
                     CString log_str;
-                    log_str += _T("检测到 Windows10 深浅色变化。\n");
+                    log_str += _T("Windows 10 theme change detected.\n");
                     log_str += _T("IsWindows10LightTheme: ");
                     log_str += std::to_wstring(light_mode).c_str();
                     log_str += _T("\n");
@@ -1721,7 +1721,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             if (!erro_log_write)
             {
                 CString log_str;
-                log_str.Format(_T("检查到背景色和文字颜色都为黑色。IsWindows10LightTheme: %d, 系统启动时间：%d/%.2d/%.2d %.2d:%.2d:%.2d"),
+                log_str.Format(_T("Check that the background color and text color are both black. isWindows10LightTheme: %d, system startup time: %d/%.2d/%.2d %.2d:%.2d:%.2d"),
                     light_mode, m_start_time.wYear, m_start_time.wMonth, m_start_time.wDay, m_start_time.wHour, m_start_time.wMinute, m_start_time.wSecond);
                 CCommon::WriteLog(log_str, theApp.m_log_path.c_str());
                 erro_log_write = true;
@@ -2584,7 +2584,7 @@ BOOL CTrafficMonitorDlg::OnQueryEndSession()
 
     if (theApp.m_debug_log)
     {
-        CCommon::WriteLog(_T("TrafficMonitor进程已被终止，设置已保存。"), (theApp.m_config_dir + L".\\debug.log").c_str());
+        CCommon::WriteLog(_T("The TrafficMonitor process has been terminated and the settings have been saved."), (theApp.m_config_dir + L".\\debug.log").c_str());
     }
 
     return TRUE;
