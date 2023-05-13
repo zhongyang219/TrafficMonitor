@@ -216,9 +216,11 @@ public:
     static bool GetURL(const wstring& url, wstring& result, bool utf8 = false, const wstring& user_agent = wstring());
 
     //获取外网IP地址和IP归属地
-    static void GetInternetIp(wstring& ip_address, wstring& ip_location, bool global);
+    static void GetInternetIpIpCn(wstring& ip_address, wstring& ip_location);
 
-    static void GetInternetIp2(wstring& ip_address, wstring& ip_location, bool ipv6);
+    static void GetInternetIpYinghualuo(wstring& ip_address, wstring& ip_location, bool ipv6);
+    
+    static void GetInternetIpIcanhazip(wstring& ip_address, wstring& ip_location, bool ipv6);
 
     static void SetRect(CRect& rect, int x, int y, int width, int height);
 

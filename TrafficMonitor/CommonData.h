@@ -34,7 +34,7 @@ struct HistoryTraffic : public Date
 //历史流量统计中用于指示不同范围内的流量的颜色
 #define TRAFFIC_COLOR_BLUE RGB(0, 183, 238)
 #define TRAFFIC_COLOR_GREEN RGB(128, 194, 105)
-#define TRAFFIC_COLOR_YELLOE RGB(255, 216, 58)
+#define TRAFFIC_COLOR_YELLOW RGB(255, 216, 58)
 #define TRAFFIC_COLOR_RED RGB(255, 95, 74)
 #define TRAFFIC_COLOR_DARK_RED RGB(166, 19, 0)
 
@@ -46,6 +46,34 @@ enum class SpeedUnit
     MBPS        //MB/s
 };
 
+
+// Support constants
+#define UNIT_TEXT_CELSIUS _T("℃") // °C
+//#define UNIT_TEXT_FAHRENHEIT _T("℉") // °F
+//#define UNIT_TEXT_PERCENT _T("%")
+#define UNIT_TEXT_GHZ (CCommon::LoadText(IDS_UNIT_GIGA) + CCommon::LoadText(IDS_UNIT_HERTZ))
+#define UNIT_TEXT_PER_SECOND (_T("/") + CCommon::LoadText(IDS_UNIT_SECOND))
+// Basic units
+#define UNIT_TEXT_BIT (CCommon::LoadText(IDS_UNIT_BIT))
+#define UNIT_TEXT_BYTE (CCommon::LoadText(IDS_UNIT_BYTE))
+// Metric prefixes bit
+#define UNIT_TEXT_Kb (CCommon::LoadText(IDS_UNIT_KILO) + UNIT_TEXT_BIT)
+#define UNIT_TEXT_Mb (CCommon::LoadText(IDS_UNIT_MEGA) + UNIT_TEXT_BIT)
+#define UNIT_TEXT_Gb (CCommon::LoadText(IDS_UNIT_GIGA) + UNIT_TEXT_BIT)
+// Metric prefixes byte
+#define UNIT_TEXT_KB (CCommon::LoadText(IDS_UNIT_KILO) + UNIT_TEXT_BYTE)
+#define UNIT_TEXT_MB (CCommon::LoadText(IDS_UNIT_MEGA) + UNIT_TEXT_BYTE)
+#define UNIT_TEXT_GB (CCommon::LoadText(IDS_UNIT_GIGA) + UNIT_TEXT_BYTE)
+#define UNIT_TEXT_TB (CCommon::LoadText(IDS_UNIT_TERA) + UNIT_TEXT_BYTE)
+#define UNIT_TEXT_PB (CCommon::LoadText(IDS_UNIT_PETA) + UNIT_TEXT_BYTE)
+// Speed units bit
+#define UNIT_TEXT_Kbps (UNIT_TEXT_Kb + UNIT_TEXT_PER_SECOND)
+#define UNIT_TEXT_Mbps (UNIT_TEXT_Mb + UNIT_TEXT_PER_SECOND)
+#define UNIT_TEXT_Gbps (UNIT_TEXT_Gb + UNIT_TEXT_PER_SECOND)
+// Speed units byte
+#define UNIT_TEXT_KBps (UNIT_TEXT_KB + UNIT_TEXT_PER_SECOND)
+#define UNIT_TEXT_MBps (UNIT_TEXT_MB + UNIT_TEXT_PER_SECOND)
+#define UNIT_TEXT_GBps (UNIT_TEXT_GB + UNIT_TEXT_PER_SECOND)
 
 //硬件监控的项目
 enum HardwareItem
@@ -97,7 +125,8 @@ enum class Language
     FOLLOWING_SYSTEM,       //跟随系统
     ENGLISH,                //英语
     SIMPLIFIED_CHINESE,     //简体中文
-    TRADITIONAL_CHINESE     //繁体中文
+    TRADITIONAL_CHINESE,    //繁体中文
+    RUSSIAN
 };
 
 //颜色模式

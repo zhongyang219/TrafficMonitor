@@ -144,8 +144,12 @@ BOOL CPluginManagerDlg::OnInitDialog()
         m_list_ctrl.SetItemText(index, 2, status);
     }
 
-    m_plugin_download_lnk.SetURL(L"https://github.com/zhongyang219/TrafficMonitorPlugins/blob/main/download/plugin_download.md");
-    m_plugin_dev_guide_lnk.SetURL(L"https://github.com/zhongyang219/TrafficMonitor/wiki/%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97");
+    Language language_code = static_cast<Language>(_ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE)));
+    if (language_code == Language::SIMPLIFIED_CHINESE || language_code == Language::TRADITIONAL_CHINESE)
+        m_plugin_download_lnk.SetURL(L"https://github.com/zhongyang219/TrafficMonitorPlugins/blob/main/download/plugin_download.md");
+    else
+        m_plugin_download_lnk.SetURL(L"https://github.com/zhongyang219/TrafficMonitorPlugins/blob/main/download/plugin_download_en.md");
+    m_plugin_dev_guide_lnk.SetURL(L"https://github.com/zhongyang219/TrafficMonitor/wiki/插件开发指南");
     m_open_plugin_dir_lnk.SetLinkIsURL(false);
 
     EnableControl();
@@ -278,7 +282,7 @@ afx_msg LRESULT CPluginManagerDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
     {
         wstring plugin_dir = CCommon::GetModuleDir() + L"plugins";
         CreateDirectory(plugin_dir.c_str(), NULL);       //如果plugins不存在，则创建它
-        ShellExecute(NULL, _T("open"), _T("explorer"), plugin_dir.c_str(), NULL, SW_SHOWNORMAL);
+        ShellExecute(NULL, _T("explore"), plugin_dir.c_str(), NULL, NULL, SW_SHOWNORMAL);
     }
 
     return 0;

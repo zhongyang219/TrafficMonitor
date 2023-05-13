@@ -74,13 +74,13 @@ void CTaskBarSettingsDlg::IniUnitCombo()
     m_unit_combo.AddString(CCommon::LoadText(IDS_AUTO));
     if (m_data.unit_byte)
     {
-        m_unit_combo.AddString(CCommon::LoadText(IDS_FIXED_AS, _T(" KB/s")));
-        m_unit_combo.AddString(CCommon::LoadText(IDS_FIXED_AS, _T(" MB/s")));
+        m_unit_combo.AddString(CCommon::LoadText(IDS_FIXED_AS) + _T(" ") + UNIT_TEXT_KBps);
+        m_unit_combo.AddString(CCommon::LoadText(IDS_FIXED_AS) + _T(" ") + UNIT_TEXT_MBps);
     }
     else
     {
-        m_unit_combo.AddString(CCommon::LoadText(IDS_FIXED_AS, _T(" Kb/s")));
-        m_unit_combo.AddString(CCommon::LoadText(IDS_FIXED_AS, _T(" Mb/s")));
+        m_unit_combo.AddString(CCommon::LoadText(IDS_FIXED_AS) + _T(" ") + UNIT_TEXT_Kbps);
+        m_unit_combo.AddString(CCommon::LoadText(IDS_FIXED_AS) + _T(" ") + UNIT_TEXT_Mbps);
     }
     m_unit_combo.SetCurSel(static_cast<int>(m_data.speed_unit));
 }
@@ -326,8 +326,8 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     CheckDlgButton(IDC_SHOW_NET_SPEED_FIGURE_CHECK, m_data.show_netspeed_figure);
     m_net_speed_figure_max_val_edit.SetRange(1, 1024);
     m_net_speed_figure_max_val_edit.SetValue(m_data.netspeed_figure_max_value);
-    m_net_speed_figure_max_val_unit_combo.AddString(_T("KB"));
-    m_net_speed_figure_max_val_unit_combo.AddString(_T("MB"));
+    m_net_speed_figure_max_val_unit_combo.AddString(UNIT_TEXT_KB);
+    m_net_speed_figure_max_val_unit_combo.AddString(UNIT_TEXT_MB);
     m_net_speed_figure_max_val_unit_combo.SetCurSel(m_data.netspeed_figure_max_value_unit);
 
     ((CButton*)GetDlgItem(IDC_SET_ORDER_BUTTON))->SetIcon(theApp.GetMenuIcon(IDI_ITEM));
@@ -338,7 +338,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     for (int i{ 0 }; i < TASKBAR_DEFAULT_STYLE_NUM; i++)
     {
         CString item_name;
-        item_name.Format(_T("%s %d"), CCommon::LoadText(IDS_PRESET).GetString(), i + 1);
+        item_name.Format(_T("%s %d"), CCommon::LoadText(IDS_PRESET), i + 1);
         m_default_style_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_DEFAULT_STYLE1 + i, item_name);
         m_modify_default_style_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_MODIFY_DEFAULT_STYLE1 + i, item_name);
     }

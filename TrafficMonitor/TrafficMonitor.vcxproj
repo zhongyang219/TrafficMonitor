@@ -504,6 +504,7 @@
     <Text Include="ReadMe.txt" />
     <Text Include="res\Acknowledgement.txt" />
     <Text Include="res\Acknowledgement_en.txt" />
+    <Text Include="res\Acknowledgement_ru.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\PluginInterface.h" />

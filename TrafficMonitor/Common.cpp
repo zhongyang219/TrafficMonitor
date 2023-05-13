@@ -87,85 +87,47 @@ CString CCommon::DataSizeToString(unsigned long long size, const PublicSettingDa
     switch (cfg.speed_unit)
     {
     case SpeedUnit::AUTO:
-        if (cfg.speed_short_mode)
+        if (size < 1024 * 10)                   //10KB以下以KB为单位，保留1位小数
         {
-            if (size < 1024 * 10)                   //10KB以下以KB为单位，保留1位小数
-            {
-                value_str.Format(_T("%.1f"), size / 1024.0f);
-                unit_str = _T("K");
-            }
-            else if (size < 1024 * 1000)            //1000KB以下以KB为单位，保留整数
-            {
-                value_str.Format(_T("%.0f"), size / 1024.0f);
-                unit_str = _T("K");
-            }
-            else if (size < 1024 * 1024 * 1000)     //1000MB以下以MB为单位，保留1位小数
-            {
-                value_str.Format(_T("%.1f"), size / 1024.0f / 1024.0f);
-                unit_str = _T("M");
-            }
-            else
-            {
-                value_str.Format(_T("%.2f"), size / 1024.0f / 1024.0f / 1024.0f);
-                unit_str = _T("G");
-            }
+            value_str.Format(_T("%.1f"), size / 1024.0f);
+            unit_str = CCommon::LoadText(IDS_UNIT_KILO);
+        }
+        else if (size < 1024 * 1000)            //1000KB以下以KB为单位，保留整数
+        {
+            value_str.Format(_T("%.0f"), size / 1024.0f);
+            unit_str = CCommon::LoadText(IDS_UNIT_KILO);
+        }
+        else if (size < 1024 * 1024 * 1000)     //1000MB以下以MB为单位，保留1位小数
+        {
+            value_str.Format(_T("%.1f"), size / 1024.0f / 1024.0f);
+            unit_str = CCommon::LoadText(IDS_UNIT_MEGA);
         }
         else
         {
-            if (size < 1024 * 10)                   //10KB以下以KB为单位，保留2位小数
-            {
-                value_str.Format(_T("%.2f"), size / 1024.0f);
-                unit_str = _T("KB");
-            }
-            else if (size < 1024 * 1000)            //1000KB以下以KB为单位，保留1位小数
-            {
-                value_str.Format(_T("%.1f"), size / 1024.0f);
-                unit_str = _T("KB");
-            }
-            else if (size < 1024 * 1024 * 1000)     //1000MB以下以MB为单位，保留2位小数
-            {
-                value_str.Format(_T("%.2f"), size / 1024.0f / 1024.0f);
-                unit_str = _T("MB");
-            }
-            else
-            {
-                value_str.Format(_T("%.2f"), size / 1024.0f / 1024.0f / 1024.0f);
-                unit_str = _T("GB");
-            }
+            value_str.Format(_T("%.2f"), size / 1024.0f / 1024.0f / 1024.0f);
+            unit_str = CCommon::LoadText(IDS_UNIT_GIGA);
         }
+
+        if (!cfg.speed_short_mode)
+            unit_str += UNIT_TEXT_BYTE;
         break;
     case SpeedUnit::KBPS:
-        if (cfg.speed_short_mode)
-        {
-            if (size < 1024 * 10)                   //10KB以下保留1位小数
-                value_str.Format(_T("%.1f"), size / 1024.0f);
-            else                    //10KB以上保留整数
-                value_str.Format(_T("%.0f"), size / 1024.0f);
-            if (!cfg.hide_unit)
-                unit_str = _T("K");
-        }
-        else
-        {
-            if (size < 1024 * 10)                   //10KB以下保留2位小数
-                value_str.Format(_T("%.2f"), size / 1024.0f);
-            else            //10KB以上保留1位小数
-                value_str.Format(_T("%.1f"), size / 1024.0f);
-            if (!cfg.hide_unit)
-                unit_str = _T("KB");
+        if (size < 1024 * 10)                   //10KB以下保留1位小数
+            value_str.Format(_T("%.1f"), size / 1024.0f);
+        else                    //10KB以上保留整数
+            value_str.Format(_T("%.0f"), size / 1024.0f);
+        if (!cfg.hide_unit) {
+            unit_str = CCommon::LoadText(IDS_UNIT_KILO);
+            if (!cfg.speed_short_mode)
+                unit_str += UNIT_TEXT_BYTE;
         }
         break;
     case SpeedUnit::MBPS:
-        if (cfg.speed_short_mode)
-        {
-            value_str.Format(_T("%.1f"), size / 1024.0f / 1024.0f);
-            if (!cfg.hide_unit)
-                unit_str = _T("M");
-        }
-        else
-        {
-            value_str.Format(_T("%.2f"), size / 1024.0f / 1024.0f);
-            if (!cfg.hide_unit)
-                unit_str = _T("MB");
+        value_str.Format(_T("%.1f"), size / 1024.0f / 1024.0f);
+        if (!cfg.hide_unit) {
+            unit_str = CCommon::LoadText(IDS_UNIT_MEGA);
+            if (!cfg.speed_short_mode)
+                unit_str += UNIT_TEXT_BYTE;
         }
         break;
     }
@@ -177,9 +139,9 @@ CString CCommon::DataSizeToString(unsigned long long size, const PublicSettingDa
     if (!cfg.unit_byte)
     {
         if (cfg.speed_short_mode && !cfg.hide_unit)
-            str += _T('b');     //如果使用比特(bit)为单位，即使设置了网速简洁模式，也将“b”显示出来
+            str += UNIT_TEXT_BIT;     //如果使用比特(bit)为单位，即使设置了网速简洁模式，也将“b”显示出来
         else
-            str.Replace(_T('B'), _T('b'));  //如果使用比特(bit)为单位，将B替换成b
+            str.Replace(UNIT_TEXT_BYTE, UNIT_TEXT_BIT);  //如果使用比特(bit)为单位，将B替换成b
     }
     return str;
 }
@@ -188,15 +150,17 @@ CString CCommon::DataSizeToString(unsigned long long size, bool with_space)
 {
     CString str;
     if (size < 1024 * 10)                   //10KB以下以KB为单位，保留2位小数
-        str.Format(_T("%.2f KB"), size / 1024.0);
+        str.Format(_T("%.2f ") + UNIT_TEXT_KB, size / 1024.0);
     else if (size < 1024 * 1024)            //1MB以下以KB为单位，保留1位小数
-        str.Format(_T("%.1f KB"), size / 1024.0);
+        str.Format(_T("%.1f ") + UNIT_TEXT_KB, size / 1024.0);
     else if (size < 1024 * 1024 * 1024)     //1GB以下以MB为单位，保留2位小数
-        str.Format(_T("%.2f MB"), size / 1024.0 / 1024.0);
+        str.Format(_T("%.2f ") + UNIT_TEXT_MB, size / 1024.0 / 1024.0);
     else if (size < 1024ll * 1024 * 1024 * 1024)
-        str.Format(_T("%.2f GB"), size / 1024.0 / 1024.0 / 1024.0);
+        str.Format(_T("%.2f ") + UNIT_TEXT_GB, size / 1024.0 / 1024.0 / 1024.0);
+    else if (size < 1024ll * 1024 * 1024 * 1024 * 1024)
+        str.Format(_T("%.2f ") + UNIT_TEXT_TB, size / 1024.0 / 1024.0 / 1024.0 / 1024.0);
     else
-        str.Format(_T("%.2f TB"), size / 1024.0 / 1024.0 / 1024.0 / 1024.0);
+        str.Format(_T("%.2f ") + UNIT_TEXT_PB, size / 1024.0 / 1024.0 / 1024.0 / 1024.0 / 1024.0);
     if (!with_space)
         str.Remove(_T(' '));
     return str;
@@ -211,7 +175,7 @@ CString CCommon::TemperatureToString(float temperature, const PublicSettingData&
         str_val.Format(_T("%d"), static_cast<int>(temperature));
     if (cfg.separate_value_unit_with_space)
         str_val += _T(' ');
-    str_val += _T("°C");
+    str_val += UNIT_TEXT_CELSIUS;
     return str_val;
 }
 
@@ -237,7 +201,13 @@ CString CCommon::FreqToString(float freq, const PublicSettingData& cfg)
     if (freq < 0)
         str_val = _T("--");
     else
-        str_val.Format(_T("%.2f GHz"), freq);
+        str_val.Format(_T("%.2f"), freq);
+    if (!cfg.hide_unit)
+    {
+        if (cfg.separate_value_unit_with_space)
+            str_val += _T(' ');
+        str_val += UNIT_TEXT_GHZ;
+    }
     return str_val;
 }
 //CString CCommon::KBytesToString(unsigned int kb_size)
@@ -258,13 +228,13 @@ CString CCommon::KBytesToString(unsigned __int64 kb_size)
 {
     CString k_bytes_str;
     if (kb_size < 1024)
-        k_bytes_str.Format(_T("%d KB"), kb_size);
+        k_bytes_str.Format(_T("%d ") + UNIT_TEXT_KB, kb_size);
     else if (kb_size < 1024 * 1024)
-        k_bytes_str.Format(_T("%.2f MB"), kb_size / 1024.0);
+        k_bytes_str.Format(_T("%.2f ") + UNIT_TEXT_MB, kb_size / 1024.0);
     else if (kb_size < 1024 * 1024 * 1024)
-        k_bytes_str.Format(_T("%.2f GB"), kb_size / 1024.0 / 1024.0);
+        k_bytes_str.Format(_T("%.2f ") + UNIT_TEXT_GB, kb_size / 1024.0 / 1024.0);
     else
-        k_bytes_str.Format(_T("%.2f TB"), kb_size / 1024.0 / 1024.0 / 1024.0);
+        k_bytes_str.Format(_T("%.2f ") + UNIT_TEXT_TB, kb_size / 1024.0 / 1024.0 / 1024.0);
     return k_bytes_str;
 }
 
@@ -673,52 +643,23 @@ bool CCommon::GetURL(const wstring& url, wstring& result, bool utf8, const wstri
 }
 
 
-void CCommon::GetInternetIp(wstring& ip_address, wstring& ip_location, bool global)
+void CCommon::GetInternetIpIpCn(wstring& ip_address, wstring& ip_location)
 {
-    wstring web_page;
-    if (GetURL(L"https://ip.cn/", web_page, true))
+    wstring raw_string;
+    wstring user_agent{ L"TrafficMonitor/" };
+    user_agent += VERSION;
+    if (GetURL(L"https://ip.cn/api/index?ip=&type=0", raw_string, true, user_agent))
     {
-#ifdef _DEBUG
-        ofstream file{ L".\\IP_web_page.log" };
-        file << UnicodeToStr(web_page.c_str()) << std::endl;
-#endif // _DEBUG
-        size_t index, index1;
-        index = web_page.find(L"<code>");
-        index1 = web_page.find(L"</code>", index + 6);
-        if (index == wstring::npos || index1 == wstring::npos)
-            ip_address.clear();
-        else
-            ip_address = web_page.substr(index + 6, index1 - index - 6);    //获取IP地址
-        if (ip_address.size() > 15 || ip_address.size() < 7)        //IP地址最长15个字符，最短7个字符
-            ip_address.clear();
-
-        //获取IP地址归属地
-        if (!global)
-        {
-            index = web_page.find(L"<code>", index1 + 7);
-            index1 = web_page.find(L"</code>", index + 6);
-            if (index == wstring::npos || index1 == wstring::npos)
-                ip_location.clear();
-            else
-                ip_location = web_page.substr(index + 6, index1 - index - 6);
-        }
-        else
-        {
-            index = web_page.find(L"GeoIP", index1 + 7);
-            index1 = web_page.find(L"</p>", index + 6);
-            if (index == wstring::npos || index1 == wstring::npos)
-                ip_location.clear();
-            else
-                ip_location = web_page.substr(index + 7, index1 - index - 7);
-        }
+        ip_address = GetJsonValueSimple(raw_string, L"ip");
     }
     else
     {
         ip_address.clear();
     }
+    ip_location.clear();
 }
 
-void CCommon::GetInternetIp2(wstring& ip_address, wstring& ip_location, bool ipv6)
+void CCommon::GetInternetIpYinghualuo(wstring& ip_address, wstring& ip_location, bool ipv6)
 {
     wstring raw_string;
     wstring user_agent{ L"TrafficMonitor/" };
@@ -735,6 +676,29 @@ void CCommon::GetInternetIp2(wstring& ip_address, wstring& ip_location, bool ipv
         ip_address.clear();
         ip_location.clear();
     }
+}
+
+void CCommon::GetInternetIpIcanhazip(wstring& ip_address, wstring& ip_location, bool ipv6)
+{
+    wstring raw_string;
+    wstring user_agent{ L"TrafficMonitor/" };
+    user_agent += VERSION;
+    if (GetURL((ipv6 ? L"http://ipv6.icanhazip.com" : L"http://icanhazip.com"), raw_string, true, user_agent))
+    {
+        int max_length = ipv6 ? 45 : 15;
+        if (raw_string.length() <= max_length) {
+            ip_address = raw_string;
+        }
+        else
+        {
+            ip_address.clear();
+        }
+    }
+    else
+    {
+        ip_address.clear();
+    }
+    ip_location.clear();
 }
 
 
@@ -782,11 +746,11 @@ CString CCommon::StringFormat(LPCTSTR format_str, const std::initializer_list<CV
     return str_rtn;
 }
 
-CString CCommon::LoadTextFormat(UINT id, const std::initializer_list<CVariant>& paras)
+CString CCommon::LoadTextFormat(UINT id, const std::initializer_list<CVariant>& params)
 {
     CString str;
     str.LoadString(id);
-    return StringFormat(str.GetString(), paras);
+    return StringFormat(str.GetString(), params);
 }
 
 CString CCommon::IntToString(__int64 n, bool thousand_separation, bool is_unsigned)
@@ -881,6 +845,7 @@ void CCommon::SetThreadLanguage(Language language)
     case Language::ENGLISH: SetThreadUILanguage(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); break;
     case Language::SIMPLIFIED_CHINESE: SetThreadUILanguage(MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)); break;
     case Language::TRADITIONAL_CHINESE: SetThreadUILanguage(MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL)); break;
+    case Language::RUSSIAN: SetThreadUILanguage(MAKELANGID(LANG_RUSSIAN, SUBLANG_RUSSIAN_RUSSIA)); break;
     default: break;
     }
 }

@@ -50,7 +50,7 @@ void CNetworkInfoDlg::ShowInfo()
     }
     m_info_list.SetItemText(2, 1, temp);
     //速度
-    temp.Format(_T("%dMbps"), network_info.dwSpeed / 1000000);
+    temp.Format(_T("%d ") + UNIT_TEXT_Mbps, network_info.dwSpeed / 1000000);
     m_info_list.SetItemText(3, 1, temp);
     //适配器物理地址
     temp = _T("");
@@ -163,7 +163,11 @@ UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
     wstring ip_address, ip_location;
 
     //IPV4
-    CCommon::GetInternetIp2(ip_address, ip_location, false);			//获取外网IP地址，
+    CCommon::GetInternetIpYinghualuo(ip_address, ip_location, false);			//获取外网IP地址，
+    if (ip_address.empty())
+        CCommon::GetInternetIpIcanhazip(ip_address, ip_location, false);
+    if (ip_address.empty())
+        CCommon::GetInternetIpIpCn(ip_address, ip_location);
     if (!IsWindow(p_instance->GetSafeHwnd()))		//如果当前对话框已经销毁，则退出线程
         return 0;
     if (!ip_address.empty())
@@ -182,16 +186,18 @@ UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
 
     //IPV6
     wstring ipv6_address, ipv6_location;
-    CCommon::GetInternetIp2(ip_address, ip_location, true);			//获取外网IP地址，
+    CCommon::GetInternetIpYinghualuo(ipv6_address, ipv6_location, true);			//获取外网IP地址，
+    if (ipv6_address.empty())
+        CCommon::GetInternetIpIcanhazip(ipv6_address, ipv6_location, true);
     if (!IsWindow(p_instance->GetSafeHwnd()))		//如果当前对话框已经销毁，则退出线程
         return 0;
-    if (!ip_address.empty())
+    if (!ipv6_address.empty())
     {
         CString info;
-        if (ip_location.empty())
-            info = ip_address.c_str();
+        if (ipv6_location.empty())
+            info = ipv6_address.c_str();
         else
-            info.Format(_T("%s (%s)"), ip_address.c_str(), ip_location.c_str());
+            info.Format(_T("%s (%s)"), ipv6_address.c_str(), ipv6_location.c_str());
         p_instance->m_info_list.SetItemText(15, 1, info);
     }
     else
@@ -266,8 +272,8 @@ BOOL CNetworkInfoDlg::OnInitDialog()
     m_info_list.InsertItem(11, CCommon::LoadText(IDS_BYTES_RECEIVED_SINCE_START));
     m_info_list.InsertItem(12, CCommon::LoadText(IDS_BYTES_SENT_SINCE_START));
     m_info_list.InsertItem(13, CCommon::LoadText(IDS_PROGRAM_ELAPSED_TIME));
-    m_info_list.InsertItem(14, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS, _T(" (ipv4)")));
-    m_info_list.InsertItem(15, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS, _T(" (ipv6)")));
+    m_info_list.InsertItem(14, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS, _T(" (IPv4)")));
+    m_info_list.InsertItem(15, CCommon::LoadText(IDS_INTERNET_IP_ADDRESS, _T(" (IPv6)")));
     //if (theApp.m_cfg_data.m_show_internet_ip)
     //{
     //	m_info_list.SetItemText(14, 1, CCommon::LoadText(IDS_ACQUIRING, _T("...")));

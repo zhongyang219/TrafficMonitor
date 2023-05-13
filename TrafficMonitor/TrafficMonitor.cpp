@@ -53,12 +53,12 @@ void CTrafficMonitorApp::LoadConfig()
     m_general_data.allow_skin_cover_text = ini.GetBool(_T("general"), _T("allow_skin_cover_text"), true);
     m_general_data.language = static_cast<Language>(ini.GetInt(_T("general"), _T("language"), 0));
     m_general_data.show_all_interface = ini.GetBool(L"general", L"show_all_interface", false);
-    bool is_chinese_language{};     //当前语言是否为简体中文
+    bool is_simplified_chinese_language{};     //当前语言是否为简体中文
     if (m_general_data.language == Language::FOLLOWING_SYSTEM)
-        is_chinese_language = CCommon::LoadText(IDS_LANGUAGE_CODE) == _T("2");
+        is_simplified_chinese_language = CCommon::LoadText(IDS_LANGUAGE_CODE) == _T("2");
     else
-        is_chinese_language = (m_general_data.language == Language::SIMPLIFIED_CHINESE);
-    m_general_data.update_source = ini.GetInt(L"general", L"update_source", is_chinese_language ? 1 : 0);   //如果当前语言为简体，则默认更新源为Gitee，否则为GitHub
+        is_simplified_chinese_language = (m_general_data.language == Language::SIMPLIFIED_CHINESE);
+    m_general_data.update_source = ini.GetInt(L"general", L"update_source", is_simplified_chinese_language ? 1 : 0);   //如果当前语言为简体，则默认更新源为Gitee，否则为GitHub
     //载入获取CPU利用率的方式，默认使用GetSystemTimes获取
     m_general_data.m_get_cpu_usage_by_cpu_times = ini.GetBool(L"general", L"get_cpu_usage_by_cpu_times", /*m_win_version.GetMajorVersion() < 10*/ true);
     m_general_data.monitor_time_span = ini.GetInt(L"general", L"monitor_time_span", 1000);
@@ -596,12 +596,12 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
     {
         CString info;
         //根据语言设置选择对应语言版本的更新内容
-        int language_code = _ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE));
+        Language language_code = static_cast<Language>(_ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE)));
         wstring contents_lan;
         switch (language_code)
         {
-        case 2: contents_lan = contents_zh_cn; break;
-        case 3: contents_lan = contents_zh_tw; break;
+        case Language::SIMPLIFIED_CHINESE: contents_lan = contents_zh_cn; break;
+        case Language::TRADITIONAL_CHINESE: contents_lan = contents_zh_tw; break;
         default: contents_lan = contents_en; break;
         }
 
@@ -1301,7 +1301,11 @@ void CTrafficMonitorApp::UpdatePluginMenu(CMenu* pMenu, ITMPlugin* plugin)
 void CTrafficMonitorApp::OnHelp()
 {
     // TODO: 在此添加命令处理程序代码
-    ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/wiki"), NULL, NULL, SW_SHOW);
+    Language language_code = static_cast<Language>(_ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE)));
+    if (language_code == Language::SIMPLIFIED_CHINESE || language_code == Language::TRADITIONAL_CHINESE)
+        ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/wiki"), NULL, NULL, SW_SHOW);
+    else
+        ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/wiki/Home_en"), NULL, NULL, SW_SHOW);
 }
 
 
@@ -1313,14 +1317,14 @@ void CTrafficMonitorApp::OnFrequentyAskedQuestions()
         url_domain = _T("gitee.com");
     else
         url_domain = _T("github.com");
-    CString language_code{ CCommon::LoadText(IDS_LANGUAGE_CODE) };
     CString file_name;
-    if (language_code == _T("2"))
+    Language language_code = static_cast<Language>(_ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE)));
+    if (language_code == Language::SIMPLIFIED_CHINESE || language_code == Language::TRADITIONAL_CHINESE)
         file_name = _T("Help.md");
     else
         file_name = _T("Help_en-us.md");
     CString url;
-    url.Format(_T("https://%s/zhongyang219/TrafficMonitor/blob/master/%s"), url_domain.GetString(), file_name.GetString());
+    url.Format(_T("https://%s/zhongyang219/TrafficMonitor/blob/master/%s"), url_domain, file_name);
     ShellExecute(NULL, _T("open"), url, NULL, NULL, SW_SHOW);
 }
 
@@ -1333,15 +1337,15 @@ void CTrafficMonitorApp::OnUpdateLog()
         url_domain = _T("gitee.com");
     else
         url_domain = _T("github.com");
-    CString language_code{ CCommon::LoadText(IDS_LANGUAGE_CODE) };
     CString file_name;
-    if (language_code == _T("2"))
+    Language language_code = static_cast<Language>(_ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE)));
+    if (language_code == Language::SIMPLIFIED_CHINESE)
         file_name = _T("update_log.md");
-    else if (language_code == _T("3"))
+    else if (language_code == Language::TRADITIONAL_CHINESE)
         file_name = _T("update_log_zh-tw.md");
     else
         file_name = _T("update_log_en-us.md");
     CString url;
-    url.Format(_T("https://%s/zhongyang219/TrafficMonitor/blob/master/UpdateLog/%s"), url_domain.GetString(), file_name.GetString());
+    url.Format(_T("https://%s/zhongyang219/TrafficMonitor/blob/master/UpdateLog/%s"), url_domain, file_name);
     ShellExecute(NULL, _T("open"), url, NULL, NULL, SW_SHOW);
 }

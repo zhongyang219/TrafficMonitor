@@ -233,6 +233,9 @@
     <Text Include="res\Acknowledgement_en.txt">
       <Filter>资源文件</Filter>
     </Text>
+    <Text Include="res\Acknowledgement_ru.txt">
+      <Filter>资源文件</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">

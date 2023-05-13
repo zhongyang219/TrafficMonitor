@@ -23,7 +23,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_STATIC_ACKNOWLEDGEMENT, m_acknowledgement);
     DDX_Control(pDX, IDC_STATIC_GITHUB, m_github);
     DDX_Control(pDX, IDC_STATIC_DONATE, m_donate);
-    DDX_Control(pDX, IDC_TRANSLATOR_STATIC, m_translaotr_static);
+    DDX_Control(pDX, IDC_TRANSLATOR_STATIC, m_translator_static);
     DDX_Control(pDX, IDC_STATIC_LICENSE, m_license);
     DDX_Control(pDX, IDC_OPENHARDWAREMONITOR_LINK, m_openhardwaremonitor_link);
     DDX_Control(pDX, IDC_TINYXML2_LINK, m_tinyxml2_link);
@@ -50,8 +50,18 @@ BOOL CAboutDlg::OnInitDialog()
     SetWindowText(CCommon::LoadText(IDS_TITLE_ABOUT));
     m_mail.SetURL(_T("mailto:zhongyang219@hotmail.com"));   //设置超链接
     //m_check_update.SetURL(_T("http://pan.baidu.com/s/1c1LkPQ4"));
-    m_github.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor"));
-    m_gitee.SetURL(_T("https://gitee.com/zhongyang219/TrafficMonitor"));
+    Language language_code = (Language)_ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE));
+    if (language_code == Language::SIMPLIFIED_CHINESE || language_code == Language::TRADITIONAL_CHINESE)
+    {
+        m_github.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor"));
+        m_gitee.SetURL(_T("https://gitee.com/zhongyang219/TrafficMonitor"));
+    }
+    else
+    {
+        m_github.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor/blob/master/README_en-us.md"));
+        m_gitee.SetURL(_T("https://gitee.com/zhongyang219/TrafficMonitor/blob/master/README_en-us.md"));
+    }
+
     m_donate.SetLinkIsURL(false);
     m_acknowledgement.SetLinkIsURL(false);
     m_license.SetLinkIsURL(false);
@@ -110,16 +120,17 @@ BOOL CAboutDlg::OnInitDialog()
     m_tool_tip.SetMaxTipWidth(800);
 
     //设置翻译者信息
-    int language_code;
-    language_code = _ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE));
-    if (language_code == 1 || language_code == 2)       //语言是简体中文和英文时不显示翻译者信息
-        m_translaotr_static.ShowWindow(SW_HIDE);
-    if (language_code == 3)     //显示繁体中文翻译者的信息
+    CString translator_url = CCommon::LoadText(IDS_CONTACT_TRANSLATOR_URL);
+    if (translator_url == _T("<translator_url>"))
     {
-        m_translaotr_static.SetURL(_T("http://mkvq.blogspot.com/"));
-        m_tool_tip.AddTool(&m_translaotr_static, CCommon::LoadText(IDS_CONTACT_TRANSLATOR, _T("\r\nhttp://mkvq.blogspot.com/")));
+        m_translator_static.ShowWindow(SW_HIDE);
     }
-    m_translaotr_static.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
+    else
+    {
+        m_translator_static.SetURL(translator_url);
+        m_tool_tip.AddTool(&m_translator_static, CCommon::LoadText(IDS_CONTACT_TRANSLATOR) + _T("\r\n") + translator_url);
+    }
+    m_translator_static.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
 
     //设置图片的位置
     CRect rect;

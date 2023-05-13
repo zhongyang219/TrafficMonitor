@@ -288,7 +288,7 @@ void CHistoryTrafficCalendarDlg::OnPaint()
             else if (m_calendar[i][j].traffic() < 10 * 1024 * 1024) //流量小于10GB时绘制绿色
                 color = TRAFFIC_COLOR_GREEN;
             else if (m_calendar[i][j].traffic() < 100 * 1024 * 1024)    //流量小于100GB时绘制黄色
-                color = TRAFFIC_COLOR_YELLOE;
+                color = TRAFFIC_COLOR_YELLOW;
             else if (m_calendar[i][j].traffic() < 1024 * 1024 * 1024)   //流量小于1TB时绘制红色
                 color = TRAFFIC_COLOR_RED;
             else        //流量超过1TB时显示深红色
@@ -338,27 +338,27 @@ void CHistoryTrafficCalendarDlg::OnPaint()
     rc_legend.left = rc_legend_box.right + theApp.DPI(4);
     //蓝色图例
     draw.FillRect(rc_legend_box, TRAFFIC_COLOR_BLUE);
-    draw.DrawWindowText(rc_legend, _T("0~1GB"), text_color);
+    draw.DrawWindowText(rc_legend, _T("0~1") + UNIT_TEXT_GB, text_color);
     //绿色图例
     rc_legend.MoveToY(rc_legend.bottom + line_gap);
     rc_legend_box.MoveToY(rc_legend.top + (rc_legend.Height() - box_side) / 2);
     draw.FillRect(rc_legend_box, TRAFFIC_COLOR_GREEN);
-    draw.DrawWindowText(rc_legend, _T("1GB~10GB"), text_color);
+    draw.DrawWindowText(rc_legend, _T("1") + UNIT_TEXT_GB + _T("~10") + UNIT_TEXT_GB, text_color);
     //黄色图例
     rc_legend.MoveToY(rc_legend.bottom + line_gap);
     rc_legend_box.MoveToY(rc_legend.top + (rc_legend.Height() - box_side) / 2);
-    draw.FillRect(rc_legend_box, TRAFFIC_COLOR_YELLOE);
-    draw.DrawWindowText(rc_legend, _T("10GB~100GB"), text_color);
+    draw.FillRect(rc_legend_box, TRAFFIC_COLOR_YELLOW);
+    draw.DrawWindowText(rc_legend, _T("10") + UNIT_TEXT_GB + _T("~100") + UNIT_TEXT_GB, text_color);
     //红色图例
     rc_legend.MoveToY(rc_legend.bottom + line_gap);
     rc_legend_box.MoveToY(rc_legend.top + (rc_legend.Height() - box_side) / 2);
     draw.FillRect(rc_legend_box, TRAFFIC_COLOR_RED);
-    draw.DrawWindowText(rc_legend, _T("100GB~1TB"), text_color);
+    draw.DrawWindowText(rc_legend, _T("100") + UNIT_TEXT_GB + _T("~1") + UNIT_TEXT_TB, text_color);
     //深红色图例
     rc_legend.MoveToY(rc_legend.bottom + line_gap);
     rc_legend_box.MoveToY(rc_legend.top + (rc_legend.Height() - box_side) / 2);
     draw.FillRect(rc_legend_box, TRAFFIC_COLOR_DARK_RED);
-    draw.DrawWindowText(rc_legend, _T("1TB~"), text_color);
+    draw.DrawWindowText(rc_legend, _T("1") + UNIT_TEXT_TB + _T("~"), text_color);
 }
 
 
