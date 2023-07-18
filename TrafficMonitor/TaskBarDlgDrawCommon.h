@@ -132,6 +132,7 @@ private:
     Microsoft::WRL::ComPtr<ID2D1StrokeStyle> m_p_ps_dot_like_style{};
 
     bool IsAllDevicesRecreatedByThisFunction();
+    void InternalRecreateD3D10Device1();
 
 public:
     CTaskBarDlgDrawCommonSupport();
