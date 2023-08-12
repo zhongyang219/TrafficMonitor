@@ -156,6 +156,7 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_SET_FONT_BUTTON1, &CTaskBarSettingsDlg::OnBnClickedSetFontButton1)
     ON_BN_CLICKED(IDC_TASKBAR_WND_ON_LEFT_CHECK, &CTaskBarSettingsDlg::OnBnClickedTaskbarWndOnLeftCheck)
+    ON_BN_CLICKED(IDC_SHOW_TASKBAR_WND_IN_ALL_DISPLAYS_CHECK, &CTaskBarSettingsDlg::OnBnClickedShowTaskbarWndInAllDisplaysCheck)
     ON_BN_CLICKED(IDC_SPEED_SHORT_MODE_CHECK, &CTaskBarSettingsDlg::OnBnClickedSpeedShortModeCheck)
     ON_CBN_SELCHANGE(IDC_UNIT_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeUnitCombo)
     ON_BN_CLICKED(IDC_HIDE_UNIT_CHECK, &CTaskBarSettingsDlg::OnBnClickedHideUnitCheck)
@@ -220,6 +221,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     //SetDlgItemText(IDC_MEMORY_EDIT1, m_data.disp_str.Get(TDI_MEMORY).c_str());
 
     //((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK1))->SetCheck(m_data.swap_up_down);
+    ((CButton*)GetDlgItem(IDC_SHOW_TASKBAR_WND_IN_ALL_DISPLAYS_CHECK))->SetCheck(m_data.show_taskbar_wnd_in_all_displays);
     ((CButton*)GetDlgItem(IDC_TASKBAR_WND_ON_LEFT_CHECK))->SetCheck(m_data.tbar_wnd_on_left);
     ((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK))->SetCheck(m_data.speed_short_mode);
     ((CButton*)GetDlgItem(IDC_VALUE_RIGHT_ALIGN_CHECK))->SetCheck(m_data.value_right_align);
@@ -307,15 +309,17 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     CheckDlgButton(IDC_SHOW_DASHED_BOX, m_data.show_graph_dashed_box);
     m_item_space_edit.SetRange(0, 32);
     m_item_space_edit.SetValue(m_data.item_space);
-    CTaskBarDlg* taskbar_dlg{ CTrafficMonitorDlg::Instance()->GetTaskbarWindow() };
+    vector<CTaskBarDlg*>* taskbar_dlgs{ CTrafficMonitorDlg::Instance()->GetTaskbarWindows() };
     m_window_offset_top_edit.SetRange(-5, 20);
     m_window_offset_top_edit.SetValue(m_data.window_offset_top);
-    if (taskbar_dlg != nullptr)
-        m_window_offset_top_edit.EnableWindow(taskbar_dlg->IsTasksbarOnTopOrBottom());
+    if (taskbar_dlgs != nullptr && !taskbar_dlgs->empty())
+        for (auto* taskbar_dlg : *taskbar_dlgs)
+            m_window_offset_top_edit.EnableWindow(taskbar_dlg->IsTasksbarOnTopOrBottom());
     m_vertical_margin_edit.SetRange(-10, 10);
     m_vertical_margin_edit.SetValue(m_data.vertical_margin);
-    if (taskbar_dlg != nullptr)
-        m_vertical_margin_edit.EnableWindow(taskbar_dlg->IsTasksbarOnTopOrBottom());
+    if (taskbar_dlgs != nullptr && !taskbar_dlgs->empty())
+        for (auto* taskbar_dlg : *taskbar_dlgs)
+            m_vertical_margin_edit.EnableWindow(taskbar_dlg->IsTasksbarOnTopOrBottom());
 
     //初始化内存显示方式下拉列表
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_USAGE_PERCENTAGE));
@@ -400,6 +404,13 @@ void CTaskBarSettingsDlg::OnBnClickedTaskbarWndOnLeftCheck()
     // TODO: 在此添加控件通知处理程序代码
     m_data.tbar_wnd_on_left = (((CButton*)GetDlgItem(IDC_TASKBAR_WND_ON_LEFT_CHECK))->GetCheck() != 0);
     EnableControl();
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedShowTaskbarWndInAllDisplaysCheck()
+{
+    // TODO: 在此添加控件通知处理程序代码
+    m_data.show_taskbar_wnd_in_all_displays = (((CButton*)GetDlgItem(IDC_SHOW_TASKBAR_WND_IN_ALL_DISPLAYS_CHECK))->GetCheck() != 0);
 }
 
 

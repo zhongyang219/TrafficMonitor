@@ -77,6 +77,7 @@ public:
     virtual BOOL OnInitDialog();
     afx_msg void OnBnClickedSetFontButton1();
     afx_msg void OnBnClickedTaskbarWndOnLeftCheck();
+    afx_msg void OnBnClickedShowTaskbarWndInAllDisplaysCheck();
     afx_msg void OnBnClickedSpeedShortModeCheck();
     virtual BOOL PreTranslateMessage(MSG* pMsg);
     afx_msg void OnCbnSelchangeUnitCombo();

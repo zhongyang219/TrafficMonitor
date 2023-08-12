@@ -612,6 +612,14 @@ bool CTaskBarDlg::AdjustWindowPos()
 
     ::GetWindowRect(m_hNotify, m_rcNotify);
 
+    MONITORINFO monitorInfo;
+    HMONITOR hMonitor;
+    CRect monitorRect;
+    monitorInfo.cbSize = sizeof(MONITORINFO);
+    hMonitor = MonitorFromWindow(taskbar, MONITOR_DEFAULTTONEAREST);
+    GetMonitorInfo(hMonitor, &monitorInfo);
+    monitorRect = monitorInfo.rcMonitor;
+
     static bool last_taskbar_on_top_or_bottom;
     CheckTaskbarOnTopOrBottom();
     if (m_taskbar_on_top_or_bottom != last_taskbar_on_top_or_bottom)
@@ -637,9 +645,14 @@ bool CTaskBarDlg::AdjustWindowPos()
                 if (theApp.m_is_windows11_taskbar)
                 {
                     if (!theApp.m_taskbar_data.tbar_wnd_snap)
-                        m_rect.MoveToX(m_rcNotify.left - m_rect.Width() + 2);
+                    {
+                        if(m_hNotify != NULL)
+                            m_rect.MoveToX(m_rcNotify.left - m_rect.Width() - 2);
+                        else
+                            m_rect.MoveToX(m_rcTaskbar.Width() - 100 - m_rect.Width());
+                    }
                     else
-                        m_rect.MoveToX(m_rcMin.right + 2);
+                        m_rect.MoveToX(m_rcMin.right - monitorRect.left + 2);
                 }
                 else
                 {
@@ -659,7 +672,7 @@ bool CTaskBarDlg::AdjustWindowPos()
                         CRect m_rcStart;
                         ::GetWindowRect(m_hStart, m_rcStart);
 
-                        m_rect.MoveToX(m_rcStart.left - m_rect.Width() - 2);
+                        m_rect.MoveToX(m_rcStart.left - monitorRect.left - m_rect.Width() - 2);
                     }
                     else
                     {
@@ -1201,8 +1214,15 @@ BOOL CTaskBarDlg::OnInitDialog()
     m_pDC = GetDC();
 
     m_hTaskbar = GetShellTrayWndHandleAndSaveWindows11TaskBarExistenceInfoToTheApp(); //寻找类名是Shell_TrayWnd的窗口句柄，同时记录Windows11任务栏是否存在
+    m_hTaskbar = (taskbar == nullptr) ? m_hTaskbar : taskbar;
     m_hBar = ::FindWindowEx(m_hTaskbar, 0, L"ReBarWindow32", NULL); //寻找二级容器的句柄
+    if (m_hBar == NULL)
+        m_hBar = ::FindWindowEx(m_hTaskbar, nullptr, L"WorkerW", NULL);
+
     m_hMin = ::FindWindowEx(m_hBar, 0, L"MSTaskSwWClass", NULL);    //寻找最小化窗口的句柄
+    if (m_hMin == NULL)
+        m_hMin = ::FindWindowEx(m_hBar, 0, L"MSTaskListWClass", NULL);    //寻找最小化窗口的句柄
+
 
     m_hNotify = ::FindWindowEx(m_hTaskbar, 0, L"TrayNotifyWnd", NULL);
 

@@ -360,6 +360,7 @@
 #define IDC_CHECK_NOW_BUTTON            1045
 #define IDC_AUTO_RUN_CHECK              1046
 #define IDC_TASKBAR_WND_ON_LEFT_CHECK   1047
+#define IDC_SHOW_TASKBAR_WND_IN_ALL_DISPLAYS_CHECK 1048
 #define IDC_HIDE_UNIT_CHECK             1049
 #define IDC_UNIT_COMBO                  1050
 #define IDC_ICON_PREVIEW                1051
