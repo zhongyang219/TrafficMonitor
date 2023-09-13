@@ -386,21 +386,20 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
             format_str = _T("%s");
         else
             format_str = _T("%s/s");
-        CString str_in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data);
-        CString str_out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data);
-        CString str_total_speed = CCommon::DataSizeToString(theApp.m_in_speed + theApp.m_out_speed, theApp.m_taskbar_data);
-        //if (theApp.m_taskbar_data.swap_up_down)
-        //    std::swap(str_in_speed, str_out_speed);
+
         if (type == TDI_UP)
         {
+            CString str_out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data);
             str_value.Format(format_str, str_out_speed.GetString());
         }
         else if (type == TDI_DOWN)
         {
+            CString str_in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data);
             str_value.Format(format_str, str_in_speed.GetString());
         }
         else
         {
+            CString str_total_speed = CCommon::DataSizeToString(theApp.m_in_speed + theApp.m_out_speed, theApp.m_taskbar_data);
             str_value.Format(format_str, str_total_speed.GetString());
         }
     }
@@ -435,11 +434,6 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
             break;
         }
         str_value = CCommon::UsageToString(usage, theApp.m_taskbar_data);
-
-        //如果CPU或内存利用率达到100%，会导致显示不全，此时将绘图区域向右扩展一些
-        int text_width = m_pDC->GetTextExtent(str_value).cx;
-        if (usage >= 100 && rect_value.Width() < text_width)
-            rect_value.right = rect_value.left + text_width;
     }
 
     //绘制温度
@@ -465,7 +459,8 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
         }
         str_value = CCommon::TemperatureToString(temperature, theApp.m_taskbar_data);
     }
-    else if (type == TDI_CPU_FREQ) {
+    else if (type == TDI_CPU_FREQ)
+    {
         str_value = CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_taskbar_data);
     }
 
@@ -993,70 +988,97 @@ void CTaskBarDlg::CalculateWindowSize()
     //计算显示上传下载部分所需要的宽度
     CString sample_str;
     int value_width{};
-    wstring digits(theApp.m_taskbar_data.digits_number, L'8');      //根据数据位数生成指定个数的“8”
+
+    //计算常见符号和数字的字符宽度,处理非等宽字符显示问题
+    static std::vector<CString> char_list = {
+        _T("0"), _T("1"), _T("2"),
+        _T("3"), _T("4"), _T("5"),
+        _T("6"), _T("7"), _T("8"),
+        _T("9"), _T("%"), _T("."),
+    };
+
+    int max_char_width = 0;
+    for (auto& str : char_list)
+    {
+        max_char_width += m_pDC->GetTextExtent(str).cx;
+    }
+    max_char_width = static_cast<int>(ceil(static_cast<float>(max_char_width) / static_cast<float>(char_list.size())));
+
     bool hide_unit{ theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO };
     if (theApp.m_taskbar_data.speed_short_mode)
     {
         if (hide_unit)
-            sample_str.Format(_T("%s."), digits.c_str());
+            sample_str = _T(".");
         else
-            sample_str.Format(_T("%s.M/s"), digits.c_str());
+            sample_str = _T(".M/s");
     }
     else
     {
         if (hide_unit)
-            sample_str.Format(_T("%s.8"), digits.c_str());
+            sample_str = _T(".8");
         else
-            sample_str.Format(_T("%s.8MB/s"), digits.c_str());
+            sample_str = _T(".8MB/s");
     }
+
     if (!hide_unit && theApp.m_taskbar_data.separate_value_unit_with_space)
         sample_str += _T(' ');
     if (theApp.m_taskbar_data.speed_short_mode && !theApp.m_taskbar_data.unit_byte && !theApp.m_taskbar_data.hide_unit)
         sample_str += _T('b');
-    value_width = m_pDC->GetTextExtent(sample_str).cx;      //计算使用当前字体显示文本需要的宽度值
+
+    //计算使用当前字体显示文本需要的宽度值
+    value_width = m_pDC->GetTextExtent(sample_str).cx + max_char_width * theApp.m_taskbar_data.digits_number;
     item_widths[TDI_UP].value_width = value_width;
     item_widths[TDI_DOWN].value_width = value_width;
     item_widths[TDI_TOTAL_SPEED].value_width = value_width;
 
-    //计算显示CPU、内存部分所需要的宽度
-    CString str;
+    //计算显示CPU、内存部分所需要的宽度(Max 100%)
+    int max_temp_char_count;
     if (theApp.m_taskbar_data.hide_percent)
     {
-        str = _T("99");
+        max_temp_char_count = 3;
     }
     else if (theApp.m_taskbar_data.separate_value_unit_with_space)
     {
-        str = _T("99 %");
+        max_temp_char_count = 5;
     }
     else
     {
-        str = _T("99%");
+        max_temp_char_count = 4;
     }
-    value_width = m_pDC->GetTextExtent(str).cx;
+    value_width = max_char_width * max_temp_char_count;
+
     //内存显示的宽度
+    CString str;
     int memory_width{ value_width };
     if (theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_USED || theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_AVAILABLE)
     {
         if (theApp.m_taskbar_data.separate_value_unit_with_space)
-            str = _T("19.99 GB");
+            str = _T(" GB");
         else
-            str = _T("19.99GB");
-        memory_width = m_pDC->GetTextExtent(str).cx;
+            str = _T("GB");
+
+        // 考虑最大为99.99GB的情况
+        max_temp_char_count = 5;
+        memory_width = m_pDC->GetTextExtent(str).cx + max_char_width * max_temp_char_count;
     }
+
     item_widths[TDI_CPU].value_width = value_width;
     item_widths[TDI_MEMORY].value_width = memory_width;
     item_widths[TDI_GPU_USAGE].value_width = value_width;
     item_widths[TDI_HDD_USAGE].value_width = value_width;
 
-    item_widths[TDI_CPU_FREQ].value_width = m_pDC->GetTextExtent(_T("1.00 GHz")).cx;
+    max_temp_char_count = 4;
+    item_widths[TDI_CPU_FREQ].value_width = m_pDC->GetTextExtent(_T(" GHz")).cx + max_char_width * max_temp_char_count;
 
     //计算温度显示的宽度
+    max_temp_char_count = 2;
     if (theApp.m_taskbar_data.separate_value_unit_with_space)
-        str = _T("99 °C");
+        str = _T(" °C");
     else
-        str = _T("99°C");
-    value_width = m_pDC->GetTextExtent(str).cx;
+        str = _T("°C");
+    value_width = m_pDC->GetTextExtent(str).cx + max_char_width * max_temp_char_count;
     value_width += DPI(2);
+
     item_widths[TDI_CPU_TEMP].value_width = value_width;
     item_widths[TDI_GPU_TEMP].value_width = value_width;
     item_widths[TDI_HDD_TEMP].value_width = value_width;
