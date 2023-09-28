@@ -86,7 +86,10 @@ jobs:
       with:
         format: YYYYMMDD_HHmmss
         utcOffset: "+08:00"
-      
+
+    - name: Move dll file path 
+      run: mv Bin/x64/Release/*.dll  Bin/ARM64EC/Release/
+
     - name : Upload artifact
       uses: actions/upload-artifact@v3
       with:
