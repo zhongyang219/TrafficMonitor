@@ -31,7 +31,7 @@ class CTrafficMonitorDlg : public CDialog
 public:
     CTrafficMonitorDlg(CWnd* pParent = NULL);   // 标准构造函数
     ~CTrafficMonitorDlg();
-    CTaskBarDlg* GetTaskbarWindow() const;
+    vector<CTaskBarDlg*>* GetTaskbarWindows() const;
 
     static CTrafficMonitorDlg* Instance();
 
@@ -48,7 +48,7 @@ protected:
 protected:
     HICON m_hIcon;
     NOTIFYICONDATA m_ntIcon;    //通知区域图标
-    CTaskBarDlg* m_tBarDlg{};     //任务栏窗口的指针
+    vector<CTaskBarDlg*> m_tBarDlgs{};    //任务栏窗口的指针
 
     vector<NetWorkConection> m_connections; //保存获取到的要显示到“选择网卡”菜单项中的所有网络连接
     MIB_IFTABLE* m_pIfTable;
@@ -168,7 +168,7 @@ protected:
     void LoadBackGroundImage();
     void SetTextFont();
 
-    bool IsTaskbarWndValid() const;
+    bool IsTaskbarWndValid(CTaskBarDlg* tBarDlg) const;
 
     void TaskbarShowHideItem(DisplayItem type);
 
@@ -186,6 +186,7 @@ protected:
     afx_msg HCURSOR OnQueryDragIcon();
     DECLARE_MESSAGE_MAP()
 public:
+    vector<HWND> GetAllTaskbars();
     //  afx_msg LRESULT OnNcHitTest(CPoint point);
     afx_msg void OnTimer(UINT_PTR nIDEvent);
     //  afx_msg void OnRButtonDown(UINT nFlags, CPoint point);

@@ -283,6 +283,7 @@ struct TaskBarSettingData : public PublicSettingData
     unsigned int m_tbar_display_item{ TDI_UP | TDI_DOWN };      //任务栏窗口显示的项目
     StringSet plugin_display_item;                  //任务窗口显示的插件项目
 
+    bool show_taskbar_wnd_in_all_displays{ false };
     bool value_right_align{ false };    //数值是否右对齐
     int digits_number{ 4 };             //数据位数
     bool horizontal_arrange{ true };    //水平排列

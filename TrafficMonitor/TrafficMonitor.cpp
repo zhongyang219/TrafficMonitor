@@ -143,7 +143,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_main_wnd_data.double_click_action = static_cast<DoubleClickAction>(ini.GetInt(_T("config"), _T("double_click_action"), 0));
     m_main_wnd_data.double_click_exe = ini.GetString(L"config", L"double_click_exe", (theApp.m_system_dir + L"\\Taskmgr.exe").c_str());
 
-    m_main_wnd_data.m_alow_out_of_border = ini.GetBool(_T("config"), _T("alow_out_of_border"), false);
+    m_main_wnd_data.m_alow_out_of_border = ini.GetBool(_T("config"), _T("allow_out_of_border"), false);
 
     m_general_data.traffic_tip_enable = ini.GetBool(L"notify_tip", L"traffic_tip_enable", false);
     m_general_data.traffic_tip_value = ini.GetInt(L"notify_tip", L"traffic_tip_value", 200);
@@ -171,6 +171,7 @@ void CTrafficMonitorApp::LoadConfig()
     //m_taskbar_data.text_color = GetPrivateProfileInt(_T("task_bar"), _T("task_bar_text_color"), 0x00ffffffU, m_config_path.c_str());
     ini.LoadTaskbarWndColors(_T("task_bar"), _T("task_bar_text_color"), m_taskbar_data.text_colors, m_taskbar_data.dft_text_colors);
     m_taskbar_data.specify_each_item_color = ini.GetBool(L"task_bar", L"specify_each_item_color", false);
+    m_taskbar_data.show_taskbar_wnd_in_all_displays = ini.GetBool(_T("task_bar"), _T("show_taskbar_wnd_in_all_displays"), false);
     //m_cfg_data.m_tbar_show_cpu_memory = ini.GetBool(_T("task_bar"), _T("task_bar_show_cpu_memory"), false);
     m_taskbar_data.m_tbar_display_item = ini.GetInt(L"task_bar", L"tbar_display_item", TDI_UP | TDI_DOWN);
 
@@ -281,16 +282,16 @@ void CTrafficMonitorApp::LoadConfig()
 
     //其他设置
     //m_cfg_data.m_show_internet_ip = ini.GetBool(L"connection_details", L"show_internet_ip", false);
-    m_cfg_data.m_use_log_scale = ini.GetBool(_T("histroy_traffic"), _T("use_log_scale"), true);
-    m_cfg_data.m_sunday_first = ini.GetBool(_T("histroy_traffic"), _T("sunday_first"), true);
-    m_cfg_data.m_view_type = static_cast<HistoryTrafficViewType>(ini.GetInt(_T("histroy_traffic"), _T("view_type"), static_cast<int>(HistoryTrafficViewType::HV_DAY)));
+    m_cfg_data.m_use_log_scale = ini.GetBool(_T("history_traffic"), _T("use_log_scale"), true);
+    m_cfg_data.m_sunday_first = ini.GetBool(_T("history_traffic"), _T("sunday_first"), true);
+    m_cfg_data.m_view_type = static_cast<HistoryTrafficViewType>(ini.GetInt(_T("history_traffic"), _T("view_type"), static_cast<int>(HistoryTrafficViewType::HV_DAY)));
 
     m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), false);
     m_notify_interval = ini.GetInt(_T("other"), _T("notify_interval"), 60);
     m_exit_when_start_by_restart_manager = ini.GetBool(_T("other"), _T("exit_when_start_by_restart_manager"), true);
     m_debug_log = ini.GetBool(_T("other"), _T("debug_log"), false);
     //由于Win7系统中设置任务栏窗口透明色会导致任务栏窗口不可见，因此默认在Win7中禁用透明色的设定
-    m_taksbar_transparent_color_enable = ini.GetBool(L"other", L"taksbar_transparent_color_enable", !m_win_version.IsWindows7());
+    m_taksbar_transparent_color_enable = ini.GetBool(L"other", L"taskbar_transparent_color_enable", !m_win_version.IsWindows7());
     m_last_light_mode = ini.GetBool(L"other", L"last_light_mode", CWindowsSettingHelper::IsWindows10LightTheme());
     m_show_mouse_panetrate_tip = ini.GetBool(L"other", L"show_mouse_panetrate_tip", true);
     m_show_dot_net_notinstalled_tip = ini.GetBool(L"other", L"show_dot_net_notinstalled_tip", true);
@@ -365,7 +366,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"config", L"double_click_action", static_cast<int>(m_main_wnd_data.double_click_action));
     ini.WriteString(L"config", L"double_click_exe", m_main_wnd_data.double_click_exe);
 
-    ini.WriteInt(L"config", L"alow_out_of_border", m_main_wnd_data.m_alow_out_of_border);
+    ini.WriteInt(L"config", L"allow_out_of_border", m_main_wnd_data.m_alow_out_of_border);
 
     ini.WriteBool(L"notify_tip", L"traffic_tip_enable", m_general_data.traffic_tip_enable);
     ini.WriteInt(L"notify_tip", L"traffic_tip_value", m_general_data.traffic_tip_value);
@@ -387,6 +388,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"task_bar", L"status_bar_color", m_taskbar_data.status_bar_color);
     ini.SaveTaskbarWndColors(L"task_bar", L"task_bar_text_color", m_taskbar_data.text_colors);
     ini.WriteBool(L"task_bar", L"specify_each_item_color", m_taskbar_data.specify_each_item_color);
+    ini.WriteBool(L"task_bar", L"show_taskbar_wnd_in_all_displays", m_taskbar_data.show_taskbar_wnd_in_all_displays);
     //ini.WriteBool(L"task_bar", L"task_bar_show_cpu_memory", m_cfg_data.m_tbar_show_cpu_memory);
     ini.WriteInt(L"task_bar", L"tbar_display_item", m_taskbar_data.m_tbar_display_item);
     ini.SaveFontData(L"task_bar", m_taskbar_data.font);
@@ -445,15 +447,15 @@ void CTrafficMonitorApp::SaveConfig()
 
     //其他设置
     //ini.WriteBool(L"connection_details", L"show_internet_ip", m_cfg_data.m_show_internet_ip);
-    ini.WriteBool(L"histroy_traffic", L"use_log_scale", m_cfg_data.m_use_log_scale);
-    ini.WriteBool(L"histroy_traffic", L"sunday_first", m_cfg_data.m_sunday_first);
-    ini.WriteInt(L"histroy_traffic", L"view_type", static_cast<int>(m_cfg_data.m_view_type));
+    ini.WriteBool(L"history_traffic", L"use_log_scale", m_cfg_data.m_use_log_scale);
+    ini.WriteBool(L"history_traffic", L"sunday_first", m_cfg_data.m_sunday_first);
+    ini.WriteInt(L"history_traffic", L"view_type", static_cast<int>(m_cfg_data.m_view_type));
 
     ini.WriteBool(_T("other"), _T("no_multistart_warning"), m_no_multistart_warning);
     ini.WriteBool(_T("other"), _T("exit_when_start_by_restart_manager"), m_exit_when_start_by_restart_manager);
     ini.WriteBool(_T("other"), _T("debug_log"), m_debug_log);
     ini.WriteInt(_T("other"), _T("notify_interval"), m_notify_interval);
-    ini.WriteBool(_T("other"), _T("taksbar_transparent_color_enable"), m_taksbar_transparent_color_enable);
+    ini.WriteBool(_T("other"), _T("taskbar_transparent_color_enable"), m_taksbar_transparent_color_enable);
     ini.WriteBool(_T("other"), _T("last_light_mode"), m_last_light_mode);
     ini.WriteBool(_T("other"), _T("show_mouse_panetrate_tip"), m_show_mouse_panetrate_tip);
     ini.WriteBool(_T("other"), _T("show_dot_net_notinstalled_tip"), m_show_dot_net_notinstalled_tip);

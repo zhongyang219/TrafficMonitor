@@ -21,6 +21,8 @@ class CTaskBarDlg : public CDialogEx
     DECLARE_DYNAMIC(CTaskBarDlg)
 
 public:
+    HWND taskbar = { };
+
     CTaskBarDlg(CWnd* pParent = NULL);   // 标准构造函数
     virtual ~CTaskBarDlg();
 
