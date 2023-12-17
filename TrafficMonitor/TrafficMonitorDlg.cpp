@@ -52,9 +52,6 @@ vector<HWND> CTrafficMonitorDlg::GetAllTaskbars()
 {
 	std::vector<HWND> taskbars;
 
-	// Get the handle of the desktop window
-	HWND desktop = ::GetDesktopWindow();
-
 	// Enumerate all the top-level windows
 	EnumWindows([](HWND hwnd, LPARAM lParam) -> BOOL
 				{
@@ -1851,7 +1848,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
 	if (nIDEvent == TASKBAR_TIMER)
 	{
-		if (!m_tBarDlgs.empty() && m_tBarDlgs.size() != GetAllTaskbars().size() && theApp.m_taskbar_data.show_taskbar_wnd_in_all_displays)
+		if (theApp.m_taskbar_data.show_taskbar_wnd_in_all_displays && CWindowsSettingHelper::IsTaskbarShowingInAllDisplays() && m_tBarDlgs.size() != GetSystemMetrics(SM_CMONITORS))
 		{
 			CloseTaskBarWnd();
 			OpenTaskBarWnd();

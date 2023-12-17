@@ -55,6 +55,14 @@ bool CWindowsSettingHelper::IsTaskbarCenterAlign()
     return data != 0;
 }
 
+bool CWindowsSettingHelper::IsTaskbarShowingInAllDisplays()
+{
+    DWORD data{};
+    if (!GetDWORDRegKeyData(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", L"MMTaskbarEnabled", data))
+        return false;
+    return data != 0;
+}
+
 LONG CWindowsSettingHelper::GetDWORDRegKeyData(HKEY hKey, const wstring& strValueName, DWORD& dwValueData)
 {
     DWORD dwBufferSize(sizeof(DWORD));
