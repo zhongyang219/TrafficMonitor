@@ -189,50 +189,48 @@ namespace OpenHardwareMonitorApi
 
     bool COpenHardwareMonitor::GetCpuTemperature(IHardware^ hardware, float& temperature)
     {
-        temperature = -1;
         m_all_cpu_temperature.clear();
-        for (int i = 0; i < hardware->Sensors->Length; i++)
+        unsigned core_index = 1;
+        double sum_core_temperature = 0;
+        double package_temperature = 0;
+        double temperature_cache = 0;
+        for (unsigned sensor_index = 0; sensor_index < hardware->Sensors->Length; sensor_index++)
         {
-            //找到温度传感器
-            if (hardware->Sensors[i]->SensorType == SensorType::Temperature)
-            {
-                String^ name = hardware->Sensors[i]->Name;
-                //保存每个CPU传感器的温度
-                m_all_cpu_temperature[ClrStringToStdWstring(name)] = Convert::ToDouble(hardware->Sensors[i]->Value);
+            ISensor^ sensor = hardware->Sensors[sensor_index];
+            if (sensor->SensorType == SensorType::Temperature) {
+                String^ sensor_name = sensor->Name;
+                m_all_cpu_temperature[ClrStringToStdWstring(sensor_name)] =
+                    temperature_cache = Convert::ToDouble(sensor->Value);
+                if (sensor_name == String::Format(L"CPU Core #{0}", core_index)) {
+                    sum_core_temperature += temperature_cache;
+                    core_index += 1;
+                } else if (sensor_name == L"CPU Package") {
+                    package_temperature = temperature_cache;
+                }
             }
         }
-        //计算平均温度
-        if (!m_all_cpu_temperature.empty())
-        {
-            float sum{};
-            for (const auto& item : m_all_cpu_temperature)
-                sum += item.second;
-            temperature = sum / m_all_cpu_temperature.size();
+        if (sum_core_temperature && package_temperature) {
+            temperature = static_cast<float>(
+                (sum_core_temperature / (core_index - 1)) + package_temperature) / 2;
         }
         return temperature > 0;
     }
 
     bool COpenHardwareMonitor::GetGpuUsage(IHardware^ hardware, float& gpu_usage)
     {
-        float usage_max = 0;
-        for (int i = 0; i < hardware->Sensors->Length; i++)
-        {
-            //找到负载
-            if (hardware->Sensors[i]->SensorType == SensorType::Load)
-            {
-                float cur_gpu_usage = Convert::ToDouble(hardware->Sensors[i]->Value);
-                if (hardware->Sensors[i]->Name == L"GPU Core")
-                {
-                    gpu_usage = cur_gpu_usage;
+        gpu_usage = 0;
+        for (unsigned sensor_index { 0 }; sensor_index < hardware->Sensors->Length; ++sensor_index) {
+            ISensor^ sensor = hardware->Sensors[sensor_index];
+            if (sensor->SensorType == SensorType::Load) {
+                float curr_usage = Convert::ToDouble(sensor->Value);
+                if (sensor->Name == L"GPU Core") {
+                    gpu_usage = curr_usage;
                     return true;
+                } else if (curr_usage > gpu_usage) {
+                    gpu_usage = curr_usage;
                 }
-
-                //计算最大值
-                if (cur_gpu_usage > usage_max)
-                    usage_max = cur_gpu_usage;
             }
         }
-        gpu_usage = usage_max;
         return true;
     }
 
