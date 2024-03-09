@@ -120,22 +120,29 @@ namespace OpenHardwareMonitorApi
     {
         MonitorGlobal::Instance()->computer->IsMotherboardEnabled = enable;
     }
-    bool COpenHardwareMonitor::GetCPUFreq(IHardware^ hardware, float& freq) {
-        for (int i = 0; i < hardware->Sensors->Length; i++)
-        {
-            if (hardware->Sensors[i]->SensorType == SensorType::Clock)
-            {
-                String^ name = hardware->Sensors[i]->Name;
-                if (name != L"Bus Speed")
-                    m_all_cpu_clock[ClrStringToStdWstring(name)] = Convert::ToDouble(hardware->Sensors[i]->Value);
+
+    bool COpenHardwareMonitor::GetCpuFreq(IHardware^ hardware, float& freq)
+    {
+        /* Core speed is measured by MHz */
+        m_all_cpu_clock.clear();
+        double sum_core_speed { 0 }, core_speed { 0 };
+        unsigned short core_counts { 0 };
+        const int sensor_counts { hardware->Sensors->Length };
+        for (int sensor_index { 0 }; sensor_index < sensor_counts; ++sensor_index) {
+            ISensor^ sensor { hardware->Sensors[sensor_index] };
+            if (sensor->SensorType == SensorType::Clock) {
+                String^ sensor_name { sensor->Name };
+                if (sensor_name != L"Bus Speed") {
+                    sum_core_speed += (core_speed = Convert::ToDouble(sensor->Value));
+                    m_all_cpu_clock[ClrStringToStdWstring(sensor_name)] = core_speed;
+                    core_counts += 1;
+                }
             }
         }
-        float sum{};
-        for (auto i : m_all_cpu_clock)
-            sum += i.second;
-        freq = sum / m_all_cpu_clock.size() / 1000.0;
+        freq = static_cast<float>(sum_core_speed / core_counts / 1000.0);
         return true;
     }
+
     bool COpenHardwareMonitor::GetHardwareTemperature(IHardware^ hardware, float& temperature)
     {
         temperature = -1;
@@ -321,7 +328,7 @@ namespace OpenHardwareMonitorApi
                     if (m_cpu_temperature < 0)
                         GetCpuTemperature(computer->Hardware[i], m_cpu_temperature);
                     if (m_cpu_freq < 0)
-                        GetCPUFreq(computer->Hardware[i], m_cpu_freq);
+                        GetCpuFreq(computer->Hardware[i], m_cpu_freq);
                     break;
                 case HardwareType::GpuNvidia:
                     if (m_gpu_nvidia_temperature < 0)
