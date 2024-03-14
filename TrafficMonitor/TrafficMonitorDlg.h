@@ -20,7 +20,7 @@
 #include "LinkStatic.h"
 #include "AdapterCommon.h"
 #include "AboutDlg.h"
-#include "CPUUsage.h"
+#include "CpuUsage.h"
 #include "HistoryTrafficFile.h"
 #include "HighResolutionTimer.h"
 
@@ -59,7 +59,7 @@ protected:
     unsigned __int64 m_last_in_bytes{}; //上次已接收的字节数
     unsigned __int64 m_last_out_bytes{};    //上次已发送的字节数
 
-    CCPUUsage m_cpu_usage;
+    CpuUsage m_cpu_usage;
 
     bool m_first_start{ true };     //初始时为true，在定时器第一次启动后置为flase
 

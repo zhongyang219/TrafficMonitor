@@ -517,7 +517,7 @@
     <ClInclude Include="CMFCColorDialogEx.h" />
     <ClInclude Include="ColorSettingListCtrl.h" />
     <ClInclude Include="ComboBox2.h" />
-    <ClInclude Include="CPUUsage.h" />
+    <ClInclude Include="CpuUsage.h" />
     <ClInclude Include="crashtool.h" />
     <ClInclude Include="CTabCtrlEx.h" />
     <ClInclude Include="CVariant.h" />
@@ -602,7 +602,7 @@
     <ClCompile Include="ColorSettingListCtrl.cpp" />
     <ClCompile Include="ComboBox2.cpp" />
     <ClCompile Include="CommonData.cpp" />
-    <ClCompile Include="CPUUsage.cpp" />
+    <ClCompile Include="CpuUsage.cpp" />
     <ClCompile Include="crashtool.cpp" />
     <ClCompile Include="CTabCtrlEx.cpp" />
     <ClCompile Include="CVariant.cpp" />

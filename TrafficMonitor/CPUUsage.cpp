@@ -1,83 +1,51 @@
 #include "stdafx.h"
-#include "CPUUsage.h"
-#include "Common.h"
-#include "TrafficMonitor.h"
+#include "CpuUsage.h"
 
-void CCPUUsage::SetUseCPUTimes(bool use_get_system_times)
+int32_t
+CpuUsage::BySystemTimes()
 {
-	if (m_use_get_system_times != use_get_system_times)
-	{
-		m_use_get_system_times = use_get_system_times;
-		m_first_get_CPU_utility = true;
+	GetSystemTimes(&m_cpu_times[3], &m_cpu_times[4], &m_cpu_times[5]);
+	for (uint32_t prev_index { 0 }; prev_index < k_cpu_time_counts; ++prev_index) {
+		const uint32_t curr_index { prev_index + k_cpu_time_counts };
+		m_cpu_spans[prev_index] =
+			GetCpuSpan(m_cpu_times[prev_index], m_cpu_times[curr_index]);
+		m_cpu_times[prev_index] = m_cpu_times[curr_index];
 	}
+	const uint64_t& total_span { m_cpu_spans[1] + m_cpu_spans[2] };
+	return total_span ? static_cast<int32_t>((total_span - m_cpu_spans[0]) * 100 / total_span) : 0;
 }
 
-int CCPUUsage::GetCPUUsage()
+int32_t
+CpuUsage::ByPerfDataHelper()
 {
-	if (m_use_get_system_times)
-		return GetCPUUsageByGetSystemTimes();
-	else
-		return GetCPUUsageByPdh();
-}
-
-int CCPUUsage::GetCPUUsageByGetSystemTimes()
-{
-	int cpu_usage{};
-	FILETIME idleTime;
-	FILETIME kernelTime;
-	FILETIME userTime;
-	GetSystemTimes(&idleTime, &kernelTime, &userTime);
-
-	__int64 idle = CCommon::CompareFileTime2(m_preidleTime, idleTime);
-	__int64 kernel = CCommon::CompareFileTime2(m_prekernelTime, kernelTime);
-	__int64 user = CCommon::CompareFileTime2(m_preuserTime, userTime);
-
-	if (kernel + user == 0)
-	{
-		cpu_usage = 0;
-	}
-	else
-	{
-		//（总的时间-空闲时间）/总的时间=占用cpu的时间就是使用率
-		cpu_usage = static_cast<int>(abs((kernel + user - idle) * 100 / (kernel + user)));
-	}
-	m_preidleTime = idleTime;
-	m_prekernelTime = kernelTime;
-	m_preuserTime = userTime;
-
+	CpuUsageHelper usage_helper{
+		m_query_str, m_had_cpu_util ? &m_prev_raw_counter : NULL };
+	const auto& prev_counter_cache { usage_helper.GetRawCounter() };
+	const int32_t cpu_usage { usage_helper.GetCpuUsage() };
+	m_prev_raw_counter = prev_counter_cache;
+	if (!m_had_cpu_util) m_had_cpu_util = true;
 	return cpu_usage;
 }
 
-int CCPUUsage::GetCPUUsageByPdh()
+const PDH_RAW_COUNTER&
+CpuUsageHelper::GetRawCounter()
 {
-	int cpu_usage{};
-	HQUERY hQuery;
-	HCOUNTER hCounter;
-	DWORD counterType;
-	PDH_RAW_COUNTER rawData;
+	PdhAddCounter(m_query, m_query_str, NULL, &m_counter);
+	PdhCollectQueryData(m_query);
+	PdhGetRawCounterValue(m_counter, NULL, &m_raw_counter);
+	return m_raw_counter;
+}
 
-	PdhOpenQuery(NULL, 0, &hQuery);//开始查询
-	const wchar_t* query_str{};
-	if (theApp.m_win_version.GetMajorVersion() >= 10)
-		query_str = L"\\Processor Information(_Total)\\% Processor Utility";
-	else
-		query_str = L"\\Processor Information(_Total)\\% Processor Time";
-	PdhAddCounter(hQuery, query_str, NULL, &hCounter);
-	PdhCollectQueryData(hQuery);
-	PdhGetRawCounterValue(hCounter, &counterType, &rawData);
-
-	if (m_first_get_CPU_utility) {//需要获得两次数据才能计算CPU使用率
-		cpu_usage = 0;
-		m_first_get_CPU_utility = false;
+int32_t
+CpuUsageHelper::GetCpuUsage()
+{
+	if (m_prev_raw_counter_ptr) {
+		PdhCalculateCounterFromRawValue(
+			m_counter, PDH_FMT_DOUBLE, &m_raw_counter,
+			m_prev_raw_counter_ptr, &m_counter_value
+		);
+		return static_cast<int32_t>(m_counter_value.doubleValue);
+	} else {
+		return 0;
 	}
-	else {
-		PDH_FMT_COUNTERVALUE fmtValue;
-		PdhCalculateCounterFromRawValue(hCounter, PDH_FMT_DOUBLE, &rawData, &m_last_rawData, &fmtValue);//计算使用率
-		cpu_usage = fmtValue.doubleValue;//传出数据
-		if (cpu_usage > 100)
-			cpu_usage = 100;
-	}
-	m_last_rawData = rawData;//保存上一次数据
-	PdhCloseQuery(hQuery);//关闭查询
-	return cpu_usage;
 }

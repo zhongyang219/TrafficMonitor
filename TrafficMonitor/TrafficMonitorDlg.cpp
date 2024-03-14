@@ -748,7 +748,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     }
 
     //设置获取CPU利用率的方式
-    m_cpu_usage.SetUseCPUTimes(theApp.m_general_data.m_get_cpu_usage_by_cpu_times);
+    m_cpu_usage.UseCpuTimes(theApp.m_general_data.m_get_cpu_usage_by_cpu_times);
 
 #ifndef WITHOUT_TEMPERATURE
     if (is_hardware_monitor_item_changed)
@@ -1059,7 +1059,7 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     m_tool_tips.AddTool(this, _T(""));
 
     //设置获取CPU利用率的方式
-    m_cpu_usage.SetUseCPUTimes(theApp.m_general_data.m_get_cpu_usage_by_cpu_times);
+    m_cpu_usage.UseCpuTimes(theApp.m_general_data.m_get_cpu_usage_by_cpu_times);
 
     //如果程序启动时设置了隐藏主窗口，或窗口的位置在左上角，则先将其不透明度设为0
     if (theApp.m_cfg_data.m_hide_main_window || (theApp.m_cfg_data.m_position_x == 0 && theApp.m_cfg_data.m_position_y == 0))
@@ -1270,7 +1270,7 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     //if (!theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_show_task_bar_wnd)
     //{
     //获取CPU使用率
-    theApp.m_cpu_usage = pThis->m_cpu_usage.GetCPUUsage();
+    theApp.m_cpu_usage = pThis->m_cpu_usage.GetCpuUsage();
 
     //获取内存利用率
     MEMORYSTATUSEX statex;

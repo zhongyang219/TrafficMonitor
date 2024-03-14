@@ -115,7 +115,7 @@
     <Filter Include="源文件和头文件\公共的类\UpdateHelper">
       <UniqueIdentifier>{2b0e9f5d-dbce-4ba7-a158-7d9b705fcc02}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件和头文件\公共的类\CPUUsage">
+    <Filter Include="源文件和头文件\公共的类\CpuUsage">
       <UniqueIdentifier>{926ebc77-cc7f-431a-896d-3a4019b41991}</UniqueIdentifier>
     </Filter>
     <Filter Include="源文件和头文件\对话框类\BaseDialog">
@@ -358,8 +358,8 @@
     <ClInclude Include="UpdateHelper.h">
       <Filter>源文件和头文件\公共的类\UpdateHelper</Filter>
     </ClInclude>
-    <ClInclude Include="CPUUsage.h">
-      <Filter>源文件和头文件\公共的类\CPUUsage</Filter>
+    <ClInclude Include="CpuUsage.h">
+      <Filter>源文件和头文件\公共的类\CpuUsage</Filter>
     </ClInclude>
     <ClInclude Include="BaseDialog.h">
       <Filter>源文件和头文件\对话框类\BaseDialog</Filter>
@@ -603,8 +603,8 @@
     <ClCompile Include="UpdateHelper.cpp">
       <Filter>源文件和头文件\公共的类\UpdateHelper</Filter>
     </ClCompile>
-    <ClCompile Include="CPUUsage.cpp">
-      <Filter>源文件和头文件\公共的类\CPUUsage</Filter>
+    <ClCompile Include="CpuUsage.cpp">
+      <Filter>源文件和头文件\公共的类\CpuUsage</Filter>
     </ClCompile>
     <ClCompile Include="BaseDialog.cpp">
       <Filter>源文件和头文件\对话框类\BaseDialog</Filter>
