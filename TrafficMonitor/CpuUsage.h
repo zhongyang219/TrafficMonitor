@@ -6,7 +6,7 @@
 #include "TrafficMonitor.h"
 #pragma comment(lib,"pdh.lib")
 
-constexpr uint32_t k_cpu_time_counts { 3 };
+constexpr static uint32_t k_cpu_time_counts { 3 };
 
 class CpuUsageHelper {
 
