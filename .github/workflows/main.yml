@@ -11,7 +11,7 @@ jobs:
       uses: microsoft/setup-msbuild@v2
       
     - name: Run msbuild
-      run: msbuild -p:configuration=release -p:platform=x64 -p:platformToolset=v142
+      run: msbuild -p:configuration=release -p:platform=x64 -p:platformToolset=v143
       
     - name: Get current time
       uses: josStorer/get-current-time@v2.0.2
@@ -44,7 +44,7 @@ jobs:
       uses: microsoft/setup-msbuild@v2
       
     - name: Run msbuild
-      run: msbuild -p:configuration=release -p:platform=x86 -p:platformToolset=v142
+      run: msbuild -p:configuration=release -p:platform=x86 -p:platformToolset=v143
       
     - name: Get current time
       uses: josStorer/get-current-time@v2.0.2
