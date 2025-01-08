@@ -343,13 +343,13 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
         switch (*iter)
         {
         case TDI_UP:
-            draw_str.value = _T("88.8 KB/s");
+            draw_str.value = _T("88.8 ") + UNIT_TEXT_KBps;
             break;
         case TDI_DOWN:
-            draw_str.value = _T("88.9 KB/s");
+            draw_str.value = _T("88.9 ") + UNIT_TEXT_KBps;
             break;
         case TDI_TOTAL_SPEED:
-            draw_str.value = _T("90 KB/s");
+            draw_str.value = _T("90 ") + UNIT_TEXT_KBps;
             break;
         case TDI_CPU:
             draw_str.value = _T("50 %");
@@ -358,10 +358,10 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
             draw_str.value = _T("51 %");
             break;
         case TDI_CPU_TEMP: case TDI_GPU_TEMP: case TDI_HDD_TEMP: case TDI_MAIN_BOARD_TEMP:
-            draw_str.value = _T("40 °C");
+            draw_str.value = _T("40 ") UNIT_TEXT_CELSIUS;
             break;
         case TDI_CPU_FREQ:
-            draw_str.value = _T("1.0 GHz");
+            draw_str.value = _T("1.0 ") + UNIT_TEXT_GHZ;
             break;
         default:
             draw_str.value = _T("99");
@@ -497,13 +497,13 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
     CString total_speed = CCommon::DataSizeToString(theApp.m_in_speed + theApp.m_out_speed, theApp.m_main_wnd_data);
     if (!theApp.m_main_wnd_data.hide_unit || theApp.m_main_wnd_data.speed_unit == SpeedUnit::AUTO)
     {
-        in_speed += _T("/s");
-        out_speed += _T("/s");
-        total_speed += _T("/s");
+        in_speed += UNIT_TEXT_PER_SECOND;
+        out_speed += UNIT_TEXT_PER_SECOND;
+        total_speed += UNIT_TEXT_PER_SECOND;
     }
-    map_str[TDI_UP].value = out_speed.GetString();
-    map_str[TDI_DOWN].value = in_speed.GetString();
-    map_str[TDI_TOTAL_SPEED].value = total_speed.GetString();
+    map_str[TDI_UP].value = out_speed;
+    map_str[TDI_DOWN].value = in_speed;
+    map_str[TDI_TOTAL_SPEED].value = total_speed;
 
     if (theApp.m_main_wnd_data.swap_up_down) //交换上传和下载位置
     {

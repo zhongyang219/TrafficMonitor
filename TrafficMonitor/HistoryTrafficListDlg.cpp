@@ -73,7 +73,7 @@ void CHistoryTrafficListDlg::AddListRow(const ListRowData& data, unsigned __int6
     else if (total_kbytes < 10 * 1024 * 1024)	//流量小于10GB时绘制绿色
         color = TRAFFIC_COLOR_GREEN;
     else if (total_kbytes < 100 * 1024 * 1024)	//流量小于100GB时绘制黄色
-        color = TRAFFIC_COLOR_YELLOE;
+        color = TRAFFIC_COLOR_YELLOW;
     else if (total_kbytes < 1024 * 1024 * 1024)	//流量小于1TB时绘制红色
         color = TRAFFIC_COLOR_RED;
     else		//流量超过1TB时显示深红色

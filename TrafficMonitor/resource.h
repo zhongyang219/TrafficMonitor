@@ -287,7 +287,7 @@
 #define IDS_REFRESH_CONNECTION_LIST     378
 #define IDS_HARDWARE_MONITOR_INIT_FAILED 379
 #define IDS_HARDWARE_INFO_ACQUIRE_FAILED_ERROR 380
-#define IDS_AUTO_RUN_METHOD_REGESTRY    381
+#define IDS_AUTO_RUN_METHOD_REGISTRY    381
 #define IDS_AUTO_RUN_METHOD_TASK_SCHEDULE 382
 #define IDS_PATH                        383
 #define IDS_SET_AUTO_RUN_FAILED_WARNING 384
@@ -295,6 +295,16 @@
 #define IDS_D2DDRAWCOMMON_ERROR_TIP     386
 #define IDS_PLUGIN_OPTIONS              387
 #define IDS_PLUGIN_DETAILS              388
+#define IDS_UNIT_HERTZ                  388
+#define IDS_UNIT_BIT                    389
+#define IDS_UNIT_BYTE                   390
+#define IDS_UNIT_KILO                   391
+#define IDS_UNIT_MEGA                   392
+#define IDS_UNIT_GIGA                   393
+#define IDS_UNIT_TERA                   394
+#define IDS_UNIT_PETA                   395
+#define IDS_UNIT_SECOND                 396
+#define IDS_CONTACT_TRANSLATOR_URL      397
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
 #define IDC_STATIC_DOWN                 1002

@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// ЦРОД(јтМеЈ¬ЦР№ъ) resources
+// Китайский (упрощенное письмо, Китай) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
@@ -145,12 +145,84 @@ BEGIN
     IDS_CUSTOM_DRAW_ITEM    "ЧФ»жКѕАэ"
 END
 
-#endif    // ЦРОД(јтМеЈ¬ЦР№ъ) resources
+#endif    // Китайский (упрощенное письмо, Китай) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// УўУп(ГА№ъ) resources
+// Русский (Россия) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
+LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
+#pragma code_page(1251)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_OPTIONS_DIALOG DIALOGEX 0, 0, 112, 67
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Настройки даты и времени"
+FONT 9, "Segoe UI", 400, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "ОК",IDOK,7,46,48,14
+    PUSHBUTTON      "Отмена",IDCANCEL,57,46,48,14
+    GROUPBOX        "Формат",IDC_STATIC,7,7,98,32
+    CONTROL         "Показывать секунды",IDC_SHOW_SECOND_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,20,81,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_OPTIONS_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 105
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 60
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_OPTIONS_DIALOG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_PLUGIN_NAME         "Пример плагина к TrafficMonitor"
+    IDS_PLUGIN_DESCRIPTION  "Пример плагина к TrafficMonitor для разработчиков плагинов"
+    IDS_TIME                "Время"
+    IDS_DATE                "Дата"
+    IDS_CUSTOM_DRAW_ITEM    "Пример отрисовки"
+END
+
+#endif    // Русский (Россия) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Английский (США) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
@@ -217,7 +289,7 @@ BEGIN
     IDS_CUSTOM_DRAW_ITEM    "Custom draw example"
 END
 
-#endif    // УўУп(ГА№ъ) resources
+#endif    // Английский (США) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

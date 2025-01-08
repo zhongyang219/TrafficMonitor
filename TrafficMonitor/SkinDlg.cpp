@@ -123,7 +123,11 @@ BOOL CSkinDlg::OnInitDialog()
     ShowPreview();
 
     //设置超链接
-    m_skin_course.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor/wiki/%E7%9A%AE%E8%82%A4%E5%88%B6%E4%BD%9C%E6%95%99%E7%A8%8B"));
+    Language language_code = static_cast<Language>(_ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE)));
+    if (language_code == Language::SIMPLIFIED_CHINESE || language_code == Language::TRADITIONAL_CHINESE)
+        m_skin_course.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor/wiki/皮肤制作教程"));
+    else
+        m_skin_course.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor/wiki/Skin-Making-up-Tutorial"));
     m_skin_download.SetURL(_T("https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md"));
     m_open_skin_dir_lnk.SetLinkIsURL(false);
 
@@ -157,7 +161,7 @@ afx_msg LRESULT CSkinDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
     if (pCtrl == &m_open_skin_dir_lnk)
     {
         CreateDirectory(theApp.m_skin_path.c_str(), NULL);       //如果皮肤目录不存在，则创建它
-        ShellExecute(NULL, _T("open"), _T("explorer"), theApp.m_skin_path.c_str(), NULL, SW_SHOWNORMAL);
+        ShellExecute(NULL, _T("explore"), theApp.m_skin_path.c_str(), NULL, NULL, SW_SHOWNORMAL);
     }
     return 0;
 }

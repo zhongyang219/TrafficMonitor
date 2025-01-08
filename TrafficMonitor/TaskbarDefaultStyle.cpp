@@ -54,7 +54,7 @@ void CTaskbarDefaultStyle::SaveConfig() const
         {
             //写入日志
             CString log_str;
-            log_str.Format(_T("在保存预设%d时检测到背景色和文字颜色都为黑色，该预设未被保存。"), i);
+            log_str.Format(_T("Both background color and text color are detected as black when preset %d is saved, the preset is not saved."), i);
             CCommon::WriteLog(log_str, theApp.m_log_path.c_str());
             return;
         }
