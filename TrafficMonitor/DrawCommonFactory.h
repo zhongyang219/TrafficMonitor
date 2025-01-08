@@ -24,17 +24,16 @@ using UniqueIDrawBuffer = std::unique_ptr<void, StackObjectDeleter<IDrawBuffer>>
  * @brief 新增渲染器类型后，将新类型写到下面类型的模板参数中
  *
  */
-using DrawCommonUnionStorage = variant_storage<CDrawCommon, CTaskBarDlgDrawCommon>;
+using DrawCommonUnionStorage = AlignedUnionStorage<CDrawCommon, CTaskBarDlgDrawCommon>;
 /**
  * @brief 新增缓冲器（即析构时提交窗口绘制内容到系统的对象）类型后，将新类型写入到下面类型的模板参数中
  *
  */
-using DrawBufferUnionStorage = variant_storage<CDrawDoubleBuffer, CTaskBarDlgDrawBuffer, CTaskBarDlgDrawBufferUseDComposition>;
+using DrawBufferUnionStorage = AlignedUnionStorage<CDrawDoubleBuffer, CTaskBarDlgDrawBuffer, CTaskBarDlgDrawBufferUseDComposition>;
 struct InvolvedDrawCommonStorages
 {
-    DrawBufferUnionStorage m_draw_buffer_union_storage;
-    DrawCommonUnionStorage m_draw_common_union_storage;
-    ~InvolvedDrawCommonStorages() = delete;
+    DrawBufferUnionStorage m_draw_buffer_union_storage{};
+    DrawCommonUnionStorage m_draw_common_union_storage{};
 };
 /**
  * @brief 具有DrawCommon和DrawBuffer栈内存以及它们对应独占指针的栈内存块，
@@ -43,10 +42,13 @@ struct InvolvedDrawCommonStorages
  */
 struct AllInvolvedDrawCommonObjectsStorage
 {
-    std_aligned_storage<InvolvedDrawCommonStorages> m_storage{};
+    InvolvedDrawCommonStorages m_storage{};
     // 先析构DrawCommon再析构DrawBuffer
     UniqueIDrawBuffer m_unique_draw_buffer{};
     UniqueIDrawCommon m_unique_draw_common{};
+
+    AllInvolvedDrawCommonObjectsStorage() = default;
+    ~AllInvolvedDrawCommonObjectsStorage() = default;
     // 禁用复制移动
     AllInvolvedDrawCommonObjectsStorage(const AllInvolvedDrawCommonObjectsStorage&) = delete;
     AllInvolvedDrawCommonObjectsStorage& operator=(const AllInvolvedDrawCommonObjectsStorage&) = delete;

@@ -40,6 +40,7 @@ public:
     void SetDPI(UINT dpi);
     UINT DPI(UINT pixel) const;
     int DPI(int pixel) const;
+    LONG DPI(LONG pixel) const;
     void DPI(CRect& rect) const;
 
     static void DPIFromRect(const RECT& rect, UINT* out_dpi_x, UINT* out_dpi_y);
