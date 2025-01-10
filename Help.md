@@ -160,7 +160,7 @@ portable_mode = true
 
 由于温度监控功能在某些电脑中存在一些问题，因此温度监控功能默认是关闭的，如果你要使用TrafficMonitor的温度监控功能，请到[“选项设置”-“常规设置”-“硬件监控”](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#硬件监控)中开启。开启后，任务栏右键菜单中的“显示设置”子菜单下才会出现温度相关的项目。
 
-TrafficMonitor的温度监控功能依赖第三方开源库[LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)。如果你遇到硬件温度无法显示，或者显示的温度异常的问题，请先下载LibreHardwareMonitor，并查看LibreHardwareMonitor是否能正常显示对应的温度。
+TrafficMonitor的温度监控功能依赖第三方开源库[LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)。如果你遇到硬件温度无法显示，或者显示的温度异常的问题，请先下载LibreHardwareMonitor，并查看LibreHardwareMonitor是否能正常显示对应的温度。如果下载的最新版LibreHardwareMonitor可以正常监控到硬件温度，则将下载的LibreHardwareMonitor文件夹中的LibreHardwareMonitorLib.dll替换掉TrafficMonitor文件夹下的LibreHardwareMonitorLib.dll文件，即可解决温度无法检测的问题。
 
 请不要向我反馈诸如温度显示不准确、显卡利用率不准确之类的问题，此类问题我无法解决。TrafficMonitor不是专业的硬件监控软件，无法保证硬件监控的数据在所有设备上的准确性。
 
