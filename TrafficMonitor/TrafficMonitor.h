@@ -169,6 +169,8 @@ private:
 
     std::map<UINT, HICON> m_menu_icons;      //菜单图标资源。key是图标资源的ID，vlaue是图标的句柄
 
+    ULONG_PTR m_gdiplusToken{};
+
 // 重写
 public:
     virtual BOOL InitInstance();
