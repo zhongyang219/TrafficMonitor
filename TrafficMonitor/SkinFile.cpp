@@ -672,7 +672,7 @@ void CSkinFile::DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font)
                     plugin->OnExtenedInfo(ITMPlugin::EI_VALUE_TEXT_COLOR, std::to_wstring(cl).c_str());
                     plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_TASKBAR_WND, L"0");
                 }
-                drawer.GetDC()->SetTextColor(cl);
+                drawer.SetTextColor(cl);
                 plugin_item->DrawItem(drawer.GetDC()->GetSafeHdc(), layout_item.x, layout_item.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
             }
             else
