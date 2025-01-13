@@ -2424,12 +2424,9 @@ void CTrafficMonitorDlg::OnChangeSkin()
         Invalidate(FALSE);      //更换皮肤后立即刷新窗口信息
         //重新设置WS_EX_LAYERED样式，以解决在png皮肤和bmp皮肤之间切换时显示不正常的问题
         //清除窗口的分层样式
-        LONG style = GetWindowLong(m_hWnd, GWL_EXSTYLE);
-        style &= ~WS_EX_LAYERED;
-        SetWindowLong(m_hWnd, GWL_EXSTYLE, style);
-        //重新设置窗口的分层样式
-        style |= WS_EX_LAYERED;
-        SetWindowLong(m_hWnd, GWL_EXSTYLE, style);
+        SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) & ~WS_EX_LAYERED);
+        //重新设置透明度
+        SetTransparency();
 
         theApp.SaveConfig();
     }
