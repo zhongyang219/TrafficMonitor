@@ -527,9 +527,24 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
         //绘制显示项目
         DrawItemsInfo(gdiplus_drawer, layout, font);
 
+        //重新设置自绘插件区域的alpha值。
+        //插件自绘时可能会使用GDI绘制文本，由于使用了UpdateLayeredWindow函数，使用GDI的绘图函数绘制文本时会导致文本变得透明。
+        //这里遍历所有插件自绘区域，将alpha值为0的部分修正为正确的alpha值。
+        std::vector<CRect> rects;
+        for (const auto& plugin_item : theApp.m_plugins.GetPluginItems())
+        {
+            const auto& layout_item = layout.GetItem(plugin_item);
+            if (plugin_item->IsCustomDraw() && layout_item.show)
+            {
+                CRect rect(CPoint(layout_item.x, layout_item.y), CSize(layout_item.width, m_layout_info.text_height));
+                rects.push_back(rect);
+            }
+        }
+        DrawCommonHelper::FixBitmapTextAlpha(hBitMap, m_alpha, rects);
+
         SIZE sizeWindow = rect.Size();
         POINT ptSrc = { 0,0 };
-        ::UpdateLayeredWindow(hWnd, pDC->GetSafeHdc(), nullptr, &sizeWindow, hdcMemory, &ptSrc, RGB(255, 0, 255), &bf, ULW_ALPHA);
+        ::UpdateLayeredWindow(hWnd, pDC->GetSafeHdc(), nullptr, &sizeWindow, hdcMemory, &ptSrc, 0, &bf, ULW_ALPHA);
 
         gdiplus_drawer.GetGraphics()->ReleaseHDC(hdcMemory);
         DeleteObject(hBitMap);
@@ -672,7 +687,8 @@ void CSkinFile::DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font)
                     plugin->OnExtenedInfo(ITMPlugin::EI_VALUE_TEXT_COLOR, std::to_wstring(cl).c_str());
                     plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_TASKBAR_WND, L"0");
                 }
-                drawer.SetTextColor(cl);
+                drawer.GetDC()->SetTextColor(cl);
+                drawer.GetDC()->SetBkMode(TRANSPARENT);
                 plugin_item->DrawItem(drawer.GetDC()->GetSafeHdc(), layout_item.x, layout_item.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
             }
             else

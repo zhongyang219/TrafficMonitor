@@ -298,3 +298,57 @@ void DrawCommonHelper::ImageDrawAreaConvert(CSize image_size, CPoint& start_poin
         }
     }
 }
+
+void DrawCommonHelper::FixBitmapTextAlpha(HBITMAP hBitmap, BYTE alpha, const std::vector<CRect>& rects)
+{
+    if (rects.empty())
+        return;
+    BITMAP bm;
+    GetObject(hBitmap, sizeof(BITMAP), &bm);
+
+    int width = bm.bmWidth;
+    int height = bm.bmHeight;
+
+    // 获取位图的像素数据
+    BITMAPINFO bmpInfo = { 0 };
+    bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmpInfo.bmiHeader.biWidth = width;
+    bmpInfo.bmiHeader.biHeight = -height; // top-down DIB
+    bmpInfo.bmiHeader.biPlanes = 1;
+    bmpInfo.bmiHeader.biBitCount = 32;
+    bmpInfo.bmiHeader.biCompression = BI_RGB;
+
+    HDC hdc = CreateCompatibleDC(NULL);
+    SelectObject(hdc, hBitmap);
+
+    // 分配内存存储位图像素
+    RGBQUAD* pPixels = new RGBQUAD[width * height];
+    GetDIBits(hdc, hBitmap, 0, height, pPixels, &bmpInfo, DIB_RGB_COLORS);
+
+    // 遍历所有矩形区域
+    for (const auto& rect : rects)
+    {
+        int startX = max(0, rect.left);
+        int startY = max(0, rect.top);
+        int endX = min(width, rect.right);
+        int endY = min(height, rect.bottom);
+
+        // 遍历当前矩形内的像素
+        for (int y = startY; y < endY; ++y)
+        {
+            for (int x = startX; x < endX; ++x)
+            {
+                int index = y * width + x;
+                //如果检测到alpha值为0，则可能是被错误地设置成透明的文本部分，将其修正为正确的alpha值
+                if (pPixels[index].rgbReserved == 0)
+                    pPixels[index].rgbReserved = alpha; // 设置Alpha通道
+            }
+        }
+    }
+
+    // 将修改后的像素数据写回位图
+    SetDIBits(hdc, hBitmap, 0, height, pPixels, &bmpInfo, DIB_RGB_COLORS);
+
+    delete[] pPixels;
+    DeleteDC(hdc);
+}
