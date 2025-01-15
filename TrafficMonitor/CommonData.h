@@ -192,6 +192,11 @@ struct MainConfigData
     string m_connection_name;      //当前选择网络的名称
 
     wstring m_skin_name;            //选择的皮肤的名称
+
+    bool skin_auto_adapt{ false };  //根据深色/浅色模式自动切换皮肤
+    wstring skin_name_light_mode;   //浅色模式下的皮肤名称
+    wstring skin_name_dark_mode;    //深色模式下的皮肤名称
+
     int m_dft_notify_icon = 0;      //默认的通知图标(用于区分win10的深色和浅色模式)
     int m_notify_icon_selected{};   //要显示的通知区图标
     bool m_notify_icon_auto_adapt{ false }; //通知区图标是否自动适应Win10深浅色模式

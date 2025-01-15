@@ -175,6 +175,11 @@ protected:
     //判断一个点在哪个显示项目的区域内，并保存到m_clicked_item
     void CheckClickedItem(CPoint point);
 
+    int FindSkinIndex(const wstring& skin_name);
+
+    //应用一个皮肤
+    void ApplySkin(int skin_index);
+
 public:
     //void ApplySettings();
     bool IsTemperatureNeeded() const;       //判断是否需要显示温度信息

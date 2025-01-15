@@ -490,6 +490,9 @@
     <ClInclude Include="WindowsWebExperienceDetector.h">
       <Filter>源文件和头文件\公共的类\WindowsWebExperienceDetector</Filter>
     </ClInclude>
+    <ClInclude Include="SkinAutoAdaptSettingDlg.h">
+      <Filter>源文件和头文件\对话框类\SkinDlg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -722,6 +725,9 @@
     </ClCompile>
     <ClCompile Include="WindowsWebExperienceDetector.cpp">
       <Filter>源文件和头文件\公共的类\WindowsWebExperienceDetector</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinAutoAdaptSettingDlg.cpp">
+      <Filter>源文件和头文件\对话框类\SkinDlg</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

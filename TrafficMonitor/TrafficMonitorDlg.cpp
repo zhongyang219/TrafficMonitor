@@ -922,6 +922,69 @@ void CTrafficMonitorDlg::CheckClickedItem(CPoint point)
     }
 }
 
+int CTrafficMonitorDlg::FindSkinIndex(const wstring& skin_name)
+{
+    int skin_selected = 0;
+    for (size_t i{}; i < m_skins.size(); i++)
+    {
+        if (m_skins[i] == skin_name)
+            skin_selected = static_cast<int>(i);
+    }
+    return skin_selected;
+}
+
+void CTrafficMonitorDlg::ApplySkin(int skin_index)
+{
+    if (skin_index < 0 || skin_index >= static_cast<int>(m_skins.size()))
+        return;
+    m_skin_selected = skin_index;
+    theApp.m_cfg_data.m_skin_name = m_skins[m_skin_selected];
+    //获取皮肤布局
+    LoadSkinLayout();
+    //载入背景图片
+    LoadBackGroundImage();
+    //获取皮肤的文字颜色
+    theApp.m_main_wnd_data.specify_each_item_color = m_skin.GetSkinInfo().specify_each_item_color;
+    int i{};
+    for (const auto& item : theApp.m_plugins.AllDisplayItemsWithPlugins())
+    {
+        theApp.m_main_wnd_data.text_colors[item] = m_skin.GetSkinInfo().TextColor(i);
+        i++;
+    }
+    //SetTextColor();
+    //获取皮肤的字体
+    if (theApp.m_general_data.allow_skin_cover_font)
+    {
+        if (!m_skin.GetSkinInfo().font_info.name.IsEmpty())
+        {
+            theApp.m_main_wnd_data.font.name = m_skin.GetSkinInfo().font_info.name;
+            theApp.m_main_wnd_data.font.bold = m_skin.GetSkinInfo().font_info.bold;
+            theApp.m_main_wnd_data.font.italic = m_skin.GetSkinInfo().font_info.italic;
+            theApp.m_main_wnd_data.font.underline = m_skin.GetSkinInfo().font_info.underline;
+            theApp.m_main_wnd_data.font.strike_out = m_skin.GetSkinInfo().font_info.strike_out;
+        }
+        if (m_skin.GetSkinInfo().font_info.size >= MIN_FONT_SIZE && m_skin.GetSkinInfo().font_info.size <= MAX_FONT_SIZE)
+            theApp.m_main_wnd_data.font.size = m_skin.GetSkinInfo().font_info.size;
+        SetTextFont();
+    }
+    //获取项目的显示文本
+    bool cover_str_setting{ !m_skin.GetSkinInfo().display_text.IsInvalid() };
+    if (theApp.m_general_data.allow_skin_cover_text && !m_skin.GetLayoutInfo().no_label && cover_str_setting)
+    {
+        theApp.m_main_wnd_data.disp_str = m_skin.GetSkinInfo().display_text;
+    }
+    SetItemPosition();
+    Invalidate(FALSE);      //更换皮肤后立即刷新窗口信息
+    //重新设置WS_EX_LAYERED样式，以解决在png皮肤和bmp皮肤之间切换时显示不正常的问题
+    //清除窗口的分层样式
+    SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) & ~WS_EX_LAYERED);
+    //重新设置透明度
+    SetTransparency();
+
+    theApp.SaveConfig();
+
+}
+
 bool CTrafficMonitorDlg::IsTemperatureNeeded() const
 {
     //判断是否需要从OpenHardwareMonitor获取信息。
@@ -988,12 +1051,7 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
         });
     if (m_skins.empty())
         m_skins.push_back(L"");
-    m_skin_selected = 0;
-    for (unsigned int i{}; i < m_skins.size(); i++)
-    {
-        if (m_skins[i] == theApp.m_cfg_data.m_skin_name)
-            m_skin_selected = i;
-    }
+    m_skin_selected = FindSkinIndex(theApp.m_cfg_data.m_skin_name);
 
     //根据当前选择的皮肤获取布局数据
     LoadSkinLayout();
@@ -1692,6 +1750,12 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                 }
             }
 
+            //根据深色/浅色模式自动切换皮肤
+            if (theApp.m_win_version.IsWindows10OrLater() && theApp.m_cfg_data.skin_auto_adapt)
+            {
+                int skin_index = FindSkinIndex(light_mode ? theApp.m_cfg_data.skin_name_light_mode : theApp.m_cfg_data.skin_name_dark_mode);
+                ApplySkin(skin_index);
+            }
         }
 
         //根据任务栏颜色自动设置任务栏窗口背景色
@@ -2385,50 +2449,7 @@ void CTrafficMonitorDlg::OnChangeSkin()
     skinDlg.m_pFont = &m_font;
     if (skinDlg.DoModal() == IDOK)
     {
-        m_skin_selected = skinDlg.m_skin_selected;
-        theApp.m_cfg_data.m_skin_name = m_skins[m_skin_selected];
-        //获取皮肤布局
-        LoadSkinLayout();
-        //载入背景图片
-        LoadBackGroundImage();
-        //获取皮肤的文字颜色
-        theApp.m_main_wnd_data.specify_each_item_color = skinDlg.GetSkinData().GetSkinInfo().specify_each_item_color;
-        int i{};
-        for (const auto& item : theApp.m_plugins.AllDisplayItemsWithPlugins())
-        {
-            theApp.m_main_wnd_data.text_colors[item] = skinDlg.GetSkinData().GetSkinInfo().TextColor(i);
-            i++;
-        }
-        //SetTextColor();
-        //获取皮肤的字体
-        if (theApp.m_general_data.allow_skin_cover_font)
-        {
-            if (!skinDlg.GetSkinData().GetSkinInfo().font_info.name.IsEmpty())
-            {
-                theApp.m_main_wnd_data.font.name = skinDlg.GetSkinData().GetSkinInfo().font_info.name;
-                theApp.m_main_wnd_data.font.bold = skinDlg.GetSkinData().GetSkinInfo().font_info.bold;
-                theApp.m_main_wnd_data.font.italic = skinDlg.GetSkinData().GetSkinInfo().font_info.italic;
-                theApp.m_main_wnd_data.font.underline = skinDlg.GetSkinData().GetSkinInfo().font_info.underline;
-                theApp.m_main_wnd_data.font.strike_out = skinDlg.GetSkinData().GetSkinInfo().font_info.strike_out;
-            }
-            if (skinDlg.GetSkinData().GetSkinInfo().font_info.size >= MIN_FONT_SIZE && skinDlg.GetSkinData().GetSkinInfo().font_info.size <= MAX_FONT_SIZE)
-                theApp.m_main_wnd_data.font.size = skinDlg.GetSkinData().GetSkinInfo().font_info.size;
-            SetTextFont();
-        }
-        //获取项目的显示文本
-        if (theApp.m_general_data.allow_skin_cover_text && !skinDlg.GetSkinData().GetLayoutInfo().no_label)
-        {
-            theApp.m_main_wnd_data.disp_str = skinDlg.GetSkinData().GetSkinInfo().display_text;
-        }
-        SetItemPosition();
-        Invalidate(FALSE);      //更换皮肤后立即刷新窗口信息
-        //重新设置WS_EX_LAYERED样式，以解决在png皮肤和bmp皮肤之间切换时显示不正常的问题
-        //清除窗口的分层样式
-        SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) & ~WS_EX_LAYERED);
-        //重新设置透明度
-        SetTransparency();
-
-        theApp.SaveConfig();
+        ApplySkin(skinDlg.m_skin_selected);
     }
 }
 

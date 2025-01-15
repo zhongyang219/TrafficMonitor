@@ -53,4 +53,8 @@ public:
     afx_msg void OnSize(UINT nType, int cx, int cy);
 protected:
     afx_msg LRESULT OnLinkClicked(WPARAM wParam, LPARAM lParam);
+public:
+    afx_msg void OnBnClickedSkinAutoAdaptButton();
+    virtual void OnOK();
+    afx_msg void OnBnClickedSkinAutoAdaptCheck();
 };
