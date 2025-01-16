@@ -86,6 +86,11 @@ namespace OpenHardwareMonitorApi
             return m_cpu_freq;
     }
 
+    float COpenHardwareMonitor::CpuUsage()
+    {
+        return m_cpu_usage;
+    }
+
     const std::map<std::wstring, float>& COpenHardwareMonitor::AllHDDTemperature()
     {
         return m_all_hdd_temperature;
@@ -120,6 +125,7 @@ namespace OpenHardwareMonitorApi
     {
         MonitorGlobal::Instance()->computer->IsMotherboardEnabled = enable;
     }
+
     bool COpenHardwareMonitor::GetCPUFreq(IHardware^ hardware, float& freq) {
         for (int i = 0; i < hardware->Sensors->Length; i++)
         {
@@ -136,6 +142,24 @@ namespace OpenHardwareMonitorApi
         freq = sum / m_all_cpu_clock.size() / 1000.0;
         return true;
     }
+
+    bool COpenHardwareMonitor::GetCpuUsage(IHardware^ hardware, float& cpu_usage)
+    {
+        for (int i = 0; i < hardware->Sensors->Length; i++)
+        {
+            if (hardware->Sensors[i]->SensorType == SensorType::Load)
+            {
+                String^ name = hardware->Sensors[i]->Name;
+                if (name != L"CPU Total")
+                {
+                    cpu_usage = Convert::ToDouble(hardware->Sensors[i]->Value);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     bool COpenHardwareMonitor::GetHardwareTemperature(IHardware^ hardware, float& temperature)
     {
         temperature = -1;
@@ -277,6 +301,7 @@ namespace OpenHardwareMonitorApi
         m_all_hdd_temperature.clear();
         m_all_hdd_usage.clear();
         m_cpu_freq = -1;
+        m_cpu_usage = -1;
     }
 
     void COpenHardwareMonitor::InsertValueToMap(std::map<std::wstring, float>& value_map, const std::wstring& key, float value)
@@ -324,6 +349,8 @@ namespace OpenHardwareMonitorApi
                         GetCpuTemperature(computer->Hardware[i], m_cpu_temperature);
                     if (m_cpu_freq < 0)
                         GetCPUFreq(computer->Hardware[i], m_cpu_freq);
+                    if (m_cpu_usage < 0)
+                        GetCpuUsage(computer->Hardware[i], m_cpu_usage);
                     break;
                 case HardwareType::GpuNvidia:
                     if (m_gpu_nvidia_temperature < 0)

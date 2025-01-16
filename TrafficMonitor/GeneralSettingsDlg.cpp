@@ -164,6 +164,7 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_SHOW_NOTIFY_ICON_CHECK, &CGeneralSettingsDlg::OnBnClickedShowNotifyIconCheck)
     ON_BN_CLICKED(IDC_SELECT_CONNECTIONS_BUTTON, &CGeneralSettingsDlg::OnBnClickedSelectConnectionsButton)
     ON_BN_CLICKED(IDC_RESET_AUTO_RUN_BUTTON, &CGeneralSettingsDlg::OnBnClickedResetAutoRunButton)
+    ON_BN_CLICKED(IDC_USE_HARDWARE_MONITOR_RADIO, &CGeneralSettingsDlg::OnBnClickedUseHardwareMonitorRadio)
 END_MESSAGE_MAP()
 
 
@@ -254,8 +255,14 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     m_toolTip.AddTool(GetDlgItem(IDC_SAVE_TO_PROGRAM_DIR_RADIO), theApp.m_module_dir.c_str());
     AddOrUpdateAutoRunTooltip(true);
 
-    ((CButton*)GetDlgItem(IDC_USE_CPU_TIME_RADIO))->SetCheck(m_data.m_get_cpu_usage_by_cpu_times);
-    ((CButton*)GetDlgItem(IDC_USE_PDH_RADIO))->SetCheck(!m_data.m_get_cpu_usage_by_cpu_times);
+    if (m_data.cpu_usage_acquire_method == GeneralSettingData::CA_CPU_TIME || !m_data.IsHardwareEnable(HI_CPU))
+        CheckDlgButton(IDC_USE_CPU_TIME_RADIO, TRUE);
+    else if (m_data.cpu_usage_acquire_method == GeneralSettingData::CA_PDH)
+        CheckDlgButton(IDC_USE_PDH_RADIO, TRUE);
+    else if (m_data.cpu_usage_acquire_method == GeneralSettingData::CA_HARDWARE_MONITOR)
+        CheckDlgButton(IDC_USE_HARDWARE_MONITOR_RADIO, TRUE);
+
+    EnableDlgCtrl(IDC_USE_HARDWARE_MONITOR_RADIO, m_data.IsHardwareEnable(HI_CPU));
 
     m_monitor_span_edit.SetRange(MONITOR_TIME_SPAN_MIN, MONITOR_TIME_SPAN_MAX);
     m_monitor_span_edit.SetValue(m_data.monitor_time_span);
@@ -452,15 +459,18 @@ BOOL CGeneralSettingsDlg::PreTranslateMessage(MSG* pMsg)
 
 void CGeneralSettingsDlg::OnBnClickedUseCpuTimeRadio()
 {
-    // TODO: 在此添加控件通知处理程序代码
-    m_data.m_get_cpu_usage_by_cpu_times = true;
+    m_data.cpu_usage_acquire_method = GeneralSettingData::CA_CPU_TIME;
 }
 
 
 void CGeneralSettingsDlg::OnBnClickedUsePdhRadio()
 {
-    // TODO: 在此添加控件通知处理程序代码
-    m_data.m_get_cpu_usage_by_cpu_times = false;
+    m_data.cpu_usage_acquire_method = GeneralSettingData::CA_PDH;
+}
+
+void CGeneralSettingsDlg::OnBnClickedUseHardwareMonitorRadio()
+{
+    m_data.cpu_usage_acquire_method = GeneralSettingData::CA_HARDWARE_MONITOR;
 }
 
 void CGeneralSettingsDlg::OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult)
@@ -608,6 +618,7 @@ void CGeneralSettingsDlg::OnBnClickedCpuCheck()
         CheckDlgButton(IDC_CPU_CHECK, FALSE);
     }
     m_data.SetHardwareEnable(HI_CPU, checked);
+    EnableDlgCtrl(IDC_USE_HARDWARE_MONITOR_RADIO, checked);
 }
 
 
