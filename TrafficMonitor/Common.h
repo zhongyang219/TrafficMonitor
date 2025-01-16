@@ -256,13 +256,19 @@ public:
         //int[, ] d = new int[n + 1, m + 1]; // matrix
         vector<vector<int>> d(n + 1, vector<int>(m + 1));
         int cost; // cost
-                  // Step 1（如果其中一个字符串长度为0，则相似度为1）？
-                  //if (n == 0) return (double)m / max(srcString.size(), matchString.size());
-                  //if (m == 0) return (double)n / max(srcString.size(), matchString.size());
+        // Step 1（如果其中一个字符串长度为0，则相似度为1）？
+        //if (n == 0) return (double)m / max(srcString.size(), matchString.size());
+        //if (m == 0) return (double)n / max(srcString.size(), matchString.size());
         if (n == 0 || m == 0) return 0.0;   //如果其中一个字符串长度为0，则相似度为0
-                                            // Step 2
-        for (int i = 0; i <= n; d[i][0] = i++);
-        for (int j = 0; j <= m; d[0][j] = j++);
+        // Step 2
+        for (int i = 0; i <= n; i++)
+        {
+            d[i][0] = i;
+        }
+        for (int j = 0; j <= m; j++)
+        {
+            d[0][j] = j;
+        }
         // Step 3
         for (int i = 1; i <= n; i++)
         {
