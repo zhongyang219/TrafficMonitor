@@ -34,3 +34,14 @@ const wchar_t* CPluginSystemTime::GetItemValueSampleText() const
     else
         return L"12:00";
 }
+
+int CPluginSystemTime::IsDrawResourceUsageGraph() const
+{
+    return 1;
+}
+
+float CPluginSystemTime::GetResourceUsageGraphValue() const
+{
+    float value = CDataManager::Instance().m_system_time.wSecond / 60.0f;
+    return value;
+}

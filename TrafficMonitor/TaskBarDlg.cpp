@@ -478,6 +478,28 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
     if (item == nullptr)
         return;
     m_item_rects[item] = rect;
+
+    //绘制资源占用图
+    ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(item);
+    if (theApp.m_taskbar_data.show_status_bar && plugin != nullptr && plugin->GetAPIVersion() >= 6)
+    {
+        if (item->IsDrawResourceUsageGraph())
+        {
+             int figure_value = item->GetResourceUsageGraphValue() * 100;
+            //横向滚动图
+            if (theApp.m_taskbar_data.cm_graph_type)
+            {
+                AddHisToList(item, figure_value);
+                TryDrawGraph(drawer, rect, item);
+            }
+            //柱状图
+            else
+            {
+                TryDrawStatusBar(drawer, rect, figure_value);
+            }
+        }
+    }
+
     //设置要绘制的文本颜色
     COLORREF label_text_color{};
     COLORREF value_text_color{};
@@ -498,7 +520,6 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
         const COLORREF& bk{ theApp.m_taskbar_data.back_color };
         int background_brightness{ (GetRValue(bk) + GetGValue(bk) + GetBValue(bk)) / 3 };
         //由插件自绘
-        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(item);
         if (plugin != nullptr && plugin->GetAPIVersion() >= 2)
         {
             plugin->OnExtenedInfo(ITMPlugin::EI_LABEL_TEXT_COLOR, std::to_wstring(label_text_color).c_str());
@@ -1572,7 +1593,7 @@ void CTaskBarDlg::OnPaint()
 
 }
 
-void CTaskBarDlg::AddHisToList(DisplayItem item_type, int current_usage_percent)
+void CTaskBarDlg::AddHisToList(CommonDisplayItem item_type, int current_usage_percent)
 {
     int& data_count{ m_history_data_count[item_type] };
     std::list<int>& list = m_map_history_data[item_type];
@@ -1625,7 +1646,7 @@ bool CTaskBarDlg::CheckClickedItem(CPoint point)
     return false;
 }
 
-void CTaskBarDlg::TryDrawGraph(IDrawCommon& drawer, const CRect& value_rect, DisplayItem item_type)
+void CTaskBarDlg::TryDrawGraph(IDrawCommon& drawer, const CRect& value_rect, CommonDisplayItem item_type)
 {
     std::list<int>& list = m_map_history_data[item_type];
     if (theApp.m_taskbar_data.show_graph_dashed_box)

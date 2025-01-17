@@ -13,6 +13,8 @@ public:
     virtual const wchar_t* GetItemLableText() const override;
     virtual const wchar_t* GetItemValueText() const override;
     virtual const wchar_t* GetItemValueSampleText() const override;
+    virtual int IsDrawResourceUsageGraph() const override;
+    virtual float GetResourceUsageGraphValue() const override;
 
 private:
 };
