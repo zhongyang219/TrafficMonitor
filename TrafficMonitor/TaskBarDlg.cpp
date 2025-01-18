@@ -658,19 +658,19 @@ bool CTaskBarDlg::AdjustWindowPos()
             {
                 if (theApp.m_is_windows11_taskbar)
                 {
-                    //靠近通知区的情况
-                    if (!theApp.m_taskbar_data.tbar_wnd_snap)
+                    //靠近任务栏图标的情况
+                    if (theApp.m_taskbar_data.tbar_wnd_snap && IsTaskbarCloseToIconEnable(theApp.m_taskbar_data.tbar_wnd_on_left))
                     {
-                        //如果显示了小组件，并且任务栏靠左显示，则留出小组件的位置
-                        if (CWindowsSettingHelper::IsTaskbarWidgetsBtnShown() && !CWindowsSettingHelper::IsTaskbarCenterAlign())
+                        m_rect.MoveToX(m_rcMin.right + 2);
+                    }
+                    //靠近通知区的情况
+                    else
+                    {
+                        //如果显示了小组件，并且任务栏靠左显示，则留出小组件的位置（Win11 build 25324之后小组件显示在右侧）
+                        if (CWindowsSettingHelper::IsTaskbarWidgetsBtnShown() && !CWindowsSettingHelper::IsTaskbarCenterAlign() && theApp.m_win_version.GetBuildNumber() >= 25324)
                             m_rect.MoveToX(m_rcNotify.left - m_rect.Width() + 2 - DPI(theApp.m_cfg_data.taskbar_left_space_win11));
                         else
                             m_rect.MoveToX(m_rcNotify.left - m_rect.Width() + 2);
-                    }
-                    //靠近任务栏图标的情况
-                    else
-                    {
-                        m_rect.MoveToX(m_rcMin.right + 2);
                     }
                 }
                 else
@@ -1226,6 +1226,18 @@ bool CTaskBarDlg::IsShowCpuMemory()
 bool CTaskBarDlg::IsShowNetSpeed()
 {
     return ((theApp.m_taskbar_data.m_tbar_display_item & TDI_UP) || (theApp.m_taskbar_data.m_tbar_display_item & TDI_DOWN));
+}
+
+bool CTaskBarDlg::IsTaskbarCloseToIconEnable(bool taskbar_wnd_on_left)
+{
+    //在Windows11 24H2中，当任务栏窗口显示在右侧时，如果勾选“任务栏窗口靠近图标而不是靠近任务栏窗口”会导致和图标重叠
+    //因为"MSTaskSwWClass"窗口的矩形区域不再是任务栏图标最小化按钮所在区域，我不清楚具体是从Windows11哪个版本开始变成这样的，
+    //猜测是在增加了“不合并任务栏按钮并隐藏标签”这个功能之后开始的，也就是build 23466版本，
+    //因此这里判断当只有23466以前的版本允许这个选项
+    return theApp.m_win_version.IsWindows11OrLater() &&
+        ((theApp.m_win_version.GetBuildNumber() < 23466)
+        || (CWindowsSettingHelper::IsTaskbarCenterAlign() && taskbar_wnd_on_left)
+        );
 }
 
 BOOL CTaskBarDlg::OnInitDialog()

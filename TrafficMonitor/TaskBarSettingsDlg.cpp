@@ -111,7 +111,10 @@ void CTaskBarSettingsDlg::EnableControl()
     EnableDlgCtrl(IDC_CM_GRAPH_PLOT_RADIO, m_data.show_status_bar || m_data.show_netspeed_figure);
     EnableDlgCtrl(IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, m_data.show_netspeed_figure);
     EnableDlgCtrl(IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO, m_data.show_netspeed_figure);
-    //EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, theApp.m_win_version.IsWindows11OrLater() && !m_data.tbar_wnd_on_left);
+    bool taskbar_on_left_check = (IsDlgButtonChecked(IDC_TASKBAR_WND_ON_LEFT_CHECK) != FALSE);
+    EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, CTaskBarDlg::IsTaskbarCloseToIconEnable(taskbar_on_left_check));
+    //Win11下，任务栏左对齐时禁用“任务栏窗口显示在任务栏左侧”的选项
+    EnableDlgCtrl(IDC_TASKBAR_WND_ON_LEFT_CHECK, !theApp.m_win_version.IsWindows11OrLater() || CWindowsSettingHelper::IsTaskbarCenterAlign());
 }
 
 
@@ -296,7 +299,6 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     m_digit_number_combo.SetCurSel(m_data.digits_number - 3);
 
     SetDlgItemText(IDC_EXE_PATH_EDIT, m_data.double_click_exe.c_str());
-    EnableControl();
 
     //m_default_style_menu.LoadMenu(IDR_TASKBAR_STYLE_MENU);
 
@@ -357,6 +359,8 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
         CheckDlgButton(IDC_GDI_RADIO, true);
     else
         CheckDlgButton(IDC_D2D_RADIO, true);
+
+    EnableControl();
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE

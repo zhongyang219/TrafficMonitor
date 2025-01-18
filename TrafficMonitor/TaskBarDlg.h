@@ -205,6 +205,10 @@ public:
 
     CommonDisplayItem GetClickedItem() const { return m_clicked_item; }
 
+    //是否允许“任务栏窗口靠近图标而不是任务栏的两侧”选项
+    //taskbar_wnd_on_left: 任务栏窗口是否在任务栏左侧
+    static bool IsTaskbarCloseToIconEnable(bool taskbar_wnd_on_left);
+
     DECLARE_MESSAGE_MAP()
 
 public:
