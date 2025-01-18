@@ -15,7 +15,8 @@ enum DisplayItem
     TDI_MAIN_BOARD_TEMP = 1 << 8,
     TDI_HDD_USAGE = 1 << 9,
     TDI_TOTAL_SPEED = 1 << 10,
-    TDI_CPU_FREQ = 1 << 11
+    TDI_CPU_FREQ = 1 << 11,
+    TDI_TODAY_TRAFFIC = 1 << 12
 };
 
 //显示的项目
@@ -42,7 +43,7 @@ const std::set<DisplayItem> AllDisplayItems
 #ifndef WITHOUT_TEMPERATURE
     , TDI_GPU_USAGE, TDI_CPU_TEMP, TDI_GPU_TEMP, TDI_HDD_TEMP, TDI_MAIN_BOARD_TEMP, TDI_HDD_USAGE,TDI_CPU_FREQ
 #endif
-    , TDI_TOTAL_SPEED
+    , TDI_TOTAL_SPEED, TDI_TODAY_TRAFFIC
 };
 
 

@@ -469,6 +469,10 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
     else if (type == TDI_CPU_FREQ) {
         str_value = CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_taskbar_data);
     }
+    else if (type == TDI_TODAY_TRAFFIC)
+    {
+        str_value = CCommon::KBytesToString((theApp.m_today_up_traffic + theApp.m_today_down_traffic) / 1024u);
+    }
 
     drawer.DrawWindowText(rect_value, str_value, text_color, value_alignment);
 }
@@ -1101,6 +1105,9 @@ void CTaskBarDlg::CalculateWindowSize()
     item_widths[TDI_GPU_TEMP].value_width = value_width;
     item_widths[TDI_HDD_TEMP].value_width = value_width;
     item_widths[TDI_MAIN_BOARD_TEMP].value_width = value_width;
+
+    //今日已使用流量宽度
+    item_widths[TDI_TODAY_TRAFFIC].value_width = m_pDC->GetTextExtent(_T("999.99 MB")).cx;
 
     //计算插件项目的宽度
     for (const auto& plugin : theApp.m_plugins.GetPluginItems())

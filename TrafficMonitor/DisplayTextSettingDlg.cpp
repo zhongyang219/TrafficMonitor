@@ -131,6 +131,9 @@ void CDisplayTextSettingDlg::OnBnClickedRestoreDefaultButton()
             case TDI_TOTAL_SPEED:
                 default_text = _T("↑↓: ");
                 break;
+            case TDI_TODAY_TRAFFIC:
+                default_text = CCommon::LoadText(IDS_TRAFFIC_USED, _T(": "));
+                break;
             case TDI_CPU:
                 default_text = _T("CPU: ");
                 break;

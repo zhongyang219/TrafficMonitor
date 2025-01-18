@@ -55,6 +55,9 @@ CString CommonDisplayItem::GetItemName() const
         case TDI_MEMORY:
             item_name = CCommon::LoadText(IDS_MEMORY_USAGE);
             break;
+        case TDI_TODAY_TRAFFIC:
+            item_name = CCommon::LoadText(IDS_TRAFFIC_USED);
+            break;
 #ifndef WITHOUT_TEMPERATURE
         case TDI_GPU_USAGE:
             item_name = CCommon::LoadText(IDS_GPU_USAGE);
@@ -208,6 +211,8 @@ CString CTaskbarItemOrderHelper::GetItemDisplayName(CommonDisplayItem item)
             return CCommon::LoadText(IDS_HDD_USAGE);
         case TDI_CPU_FREQ:
             return CCommon::LoadText(IDS_CPU_FREQ);
+        case TDI_TODAY_TRAFFIC:
+            return CCommon::LoadText(IDS_TRAFFIC_USED);
         default:
             break;
         }

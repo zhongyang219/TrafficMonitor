@@ -410,6 +410,9 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
         case TDI_TOTAL_SPEED:
             draw_str.value = _T("90 KB/s");
             break;
+        case TDI_TODAY_TRAFFIC:
+            draw_str.value = _T("100 MB");
+            break;
         case TDI_CPU:
             draw_str.value = _T("50 %");
             break;
@@ -605,6 +608,7 @@ void CSkinFile::DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font)
         map_str[TDI_GPU_TEMP].label = theApp.m_main_wnd_data.disp_str.Get(TDI_GPU_TEMP).c_str();
         map_str[TDI_HDD_TEMP].label = theApp.m_main_wnd_data.disp_str.Get(TDI_HDD_TEMP).c_str();
         map_str[TDI_MAIN_BOARD_TEMP].label = theApp.m_main_wnd_data.disp_str.Get(TDI_MAIN_BOARD_TEMP).c_str();
+        map_str[TDI_TODAY_TRAFFIC].label = theApp.m_main_wnd_data.disp_str.Get(TDI_TODAY_TRAFFIC).c_str();
     }
 
     //上传/下载
@@ -650,6 +654,10 @@ void CSkinFile::DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font)
     getTemperatureStr(TDI_GPU_TEMP, theApp.m_gpu_temperature);
     getTemperatureStr(TDI_HDD_TEMP, theApp.m_hdd_temperature);
     getTemperatureStr(TDI_MAIN_BOARD_TEMP, theApp.m_main_board_temperature);
+
+    //总流量
+    CString str_traffic = CCommon::KBytesToString((theApp.m_today_up_traffic + theApp.m_today_down_traffic) / 1024u);
+    map_str[TDI_TODAY_TRAFFIC].value = str_traffic.GetString();
 
     //获取文本颜色
     std::map<CommonDisplayItem, COLORREF> text_colors{};
@@ -741,6 +749,9 @@ string CSkinFile::GetDisplayItemXmlNodeName(DisplayItem display_item)
         break;
     case TDI_TOTAL_SPEED:
         return "total_speed";
+        break;
+    case TDI_TODAY_TRAFFIC:
+        return "today_traffic";
         break;
     case TDI_CPU:
         return "cpu";
