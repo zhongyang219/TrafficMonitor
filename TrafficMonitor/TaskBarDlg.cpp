@@ -652,16 +652,25 @@ bool CTaskBarDlg::AdjustWindowPos()
             m_rcMinOri = m_rcMin;
             m_left_space = m_rcMin.left - m_rcBar.left;
             m_min_bar_width = m_rcMin.Width() - m_rect.Width(); //保存最小化窗口宽度
-            //设置为任务窗口不显示在左侧时，或者Windows11下任务栏左对齐时
+            //任务窗口显示在右侧时，或者Windows11下任务栏左对齐时
             //（Windows11下，如果任务栏设置为左对齐，即使在“任务栏窗口设置”中设置了任务窗口显示在左边，窗口仍然显示在右边）
             if (!theApp.m_taskbar_data.tbar_wnd_on_left || (theApp.m_is_windows11_taskbar && !CWindowsSettingHelper::IsTaskbarCenterAlign()))
             {
                 if (theApp.m_is_windows11_taskbar)
                 {
+                    //靠近通知区的情况
                     if (!theApp.m_taskbar_data.tbar_wnd_snap)
-                        m_rect.MoveToX(m_rcNotify.left - m_rect.Width() + 2);
+                    {
+                        if (CWindowsSettingHelper::IsTaskbarWidgetsBtnShown())
+                            m_rect.MoveToX(m_rcNotify.left - m_rect.Width() + 2 - DPI(theApp.m_cfg_data.taskbar_left_space_win11));
+                        else
+                            m_rect.MoveToX(m_rcNotify.left - m_rect.Width() + 2);
+                    }
+                    //靠近任务栏图标的情况
                     else
+                    {
                         m_rect.MoveToX(m_rcMin.right + 2);
+                    }
                 }
                 else
                 {
@@ -669,12 +678,14 @@ bool CTaskBarDlg::AdjustWindowPos()
                     m_rect.MoveToX(m_left_space + m_rcMin.Width() - m_rect.Width() + 2);
                 }
             }
+            //任务栏窗口显示在左侧时
             else
             {
                 if (theApp.m_is_windows11_taskbar)
                 {
                     //if (CWindowsSettingHelper::IsTaskbarCenterAlign())      //Windows11任务栏居中
                     //{
+                    //靠近“开始”按钮
                     if (theApp.m_taskbar_data.tbar_wnd_snap)
                     {
                         HWND m_hStart = ::FindWindowEx(m_hTaskbar, nullptr, L"Start", NULL);
@@ -683,6 +694,7 @@ bool CTaskBarDlg::AdjustWindowPos()
 
                         m_rect.MoveToX(m_rcStart.left - m_rect.Width() - 2);
                     }
+                    //靠近最左侧
                     else
                     {
                         if (CWindowsSettingHelper::IsTaskbarWidgetsBtnShown())
