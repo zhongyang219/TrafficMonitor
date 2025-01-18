@@ -127,17 +127,18 @@ void CSkinFile::LoadFromXml(const wstring& file_path)
     m_skin_info = SkinInfo();
     m_layout_info = LayoutInfo();
     m_preview_info = PreviewInfo();
+    std::map<std::string, std::wstring> display_text_map;  //显示项目的文本和xml节点的映射关系。key是xml节点，value是显示文本
 
     tinyxml2::XMLDocument doc;
     if (CTinyXml2Helper::LoadXmlFile(doc, file_path.c_str()))
     {
-        CTinyXml2Helper::IterateChildNode(doc.FirstChildElement(), [this](tinyxml2::XMLElement* child)
+        CTinyXml2Helper::IterateChildNode(doc.FirstChildElement(), [&](tinyxml2::XMLElement* child)
             {
                 string ele_name = CTinyXml2Helper::ElementName(child);
                 //读取皮肤信息
                 if (ele_name == "skin")
                 {
-                    CTinyXml2Helper::IterateChildNode(child, [this](tinyxml2::XMLElement* skin_item)
+                    CTinyXml2Helper::IterateChildNode(child, [&](tinyxml2::XMLElement* skin_item)
                         {
                             string skin_item_name = CTinyXml2Helper::ElementName(skin_item);
                             //文本颜色
@@ -182,18 +183,12 @@ void CSkinFile::LoadFromXml(const wstring& file_path)
                             }
                             else if (skin_item_name == "display_text")
                             {
-                                CTinyXml2Helper::IterateChildNode(skin_item, [this](tinyxml2::XMLElement* display_text_item)
+                                //这里先保存所有显示文本到display_text_map
+                                CTinyXml2Helper::IterateChildNode(skin_item, [&](tinyxml2::XMLElement* display_text_item)
                                     {
                                         string item_name = CTinyXml2Helper::ElementName(display_text_item);
                                         wstring item_text = CCommon::StrToUnicode(CTinyXml2Helper::ElementText(display_text_item), true);
-                                        for (auto display_item : AllDisplayItems)
-                                        {
-                                            if (item_name == CSkinFile::GetDisplayItemXmlNodeName(display_item))
-                                            {
-                                                m_skin_info.display_text.Get(display_item) = item_text;
-                                                break;
-                                            }
-                                        }
+                                        display_text_map[item_name] = item_text;
                                     });
                             }
                         });
@@ -243,6 +238,33 @@ void CSkinFile::LoadFromXml(const wstring& file_path)
                         });
                 }
             });
+    }
+
+    //载入显示文本
+    for (const auto& display_text_item : display_text_map)
+    {
+        std::string node_name = display_text_item.first;
+        std::wstring item_text = display_text_item.second;
+        //查找内建显示项目
+        for (auto display_item : AllDisplayItems)
+        {
+            if (node_name == CSkinFile::GetDisplayItemXmlNodeName(display_item))
+            {
+                m_skin_info.display_text.Get(display_item) = item_text;
+                break;
+            }
+        }
+        //查找插件项目
+        for (const auto& item : m_plugin_map)
+        {
+            if (node_name == item.first && !item.second.empty())
+            {
+                std::wstring plugin_id = CCommon::StrToUnicode(item.second.c_str(), true);
+                IPluginItem* plugin_item = theApp.m_plugins.GetItemById(plugin_id);
+                if (plugin_item != nullptr)
+                    m_skin_info.display_text.Get(plugin_item) = item_text;
+            }
+        }
     }
 
 }
