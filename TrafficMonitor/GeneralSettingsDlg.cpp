@@ -223,19 +223,19 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     m_memory_tip_edit.SetValue(m_data.memory_usage_tip.tip_value);
 
     CheckDlgButton(IDC_CPU_TEMP_TIP_CHECK, m_data.cpu_temp_tip.enable);
-    m_cpu_temp_tip_edit.SetRange(1, 100);
+    m_cpu_temp_tip_edit.SetRange(1, 120);
     m_cpu_temp_tip_edit.SetValue(m_data.cpu_temp_tip.tip_value);
 
     CheckDlgButton(IDC_GPU_TEMP_TIP_CHECK, m_data.gpu_temp_tip.enable);
-    m_gpu_temp_tip_edit.SetRange(1, 100);
+    m_gpu_temp_tip_edit.SetRange(1, 120);
     m_gpu_temp_tip_edit.SetValue(m_data.gpu_temp_tip.tip_value);
 
     CheckDlgButton(IDC_HDD_TEMP_TIP_CHECK, m_data.hdd_temp_tip.enable);
-    m_hdd_temp_tip_edit.SetRange(1, 100);
+    m_hdd_temp_tip_edit.SetRange(1, 120);
     m_hdd_temp_tip_edit.SetValue(m_data.hdd_temp_tip.tip_value);
 
     CheckDlgButton(IDC_MBD_TEMP_TIP_CHECK, m_data.mainboard_temp_tip.enable);
-    m_mbd_temp_tip_edit.SetRange(1, 100);
+    m_mbd_temp_tip_edit.SetRange(1, 120);
     m_mbd_temp_tip_edit.SetValue(m_data.mainboard_temp_tip.tip_value);
 
     SetControlEnable();
@@ -379,20 +379,25 @@ void CGeneralSettingsDlg::OnOK()
         if (value < 1) value = 1;
         if (value > 100) value = 100;
     };
+    auto checkTempTipValue = [](int& value)
+    {
+        if (value < 1) value = 1;
+        if (value > 120) value = 120;
+    };
     m_data.memory_usage_tip.tip_value = m_memory_tip_edit.GetValue();
     checkTipValue(m_data.memory_usage_tip.tip_value);
 
     m_data.cpu_temp_tip.tip_value = m_cpu_temp_tip_edit.GetValue();
-    checkTipValue(m_data.cpu_temp_tip.tip_value);
+    checkTempTipValue(m_data.cpu_temp_tip.tip_value);
 
     m_data.gpu_temp_tip.tip_value = m_gpu_temp_tip_edit.GetValue();
-    checkTipValue(m_data.gpu_temp_tip.tip_value);
+    checkTempTipValue(m_data.gpu_temp_tip.tip_value);
 
     m_data.hdd_temp_tip.tip_value = m_hdd_temp_tip_edit.GetValue();
-    checkTipValue(m_data.hdd_temp_tip.tip_value);
+    checkTempTipValue(m_data.hdd_temp_tip.tip_value);
 
     m_data.mainboard_temp_tip.tip_value = m_mbd_temp_tip_edit.GetValue();
-    checkTipValue(m_data.mainboard_temp_tip.tip_value);
+    checkTempTipValue(m_data.mainboard_temp_tip.tip_value);
 
     //获取语言的设置
     m_data.language = static_cast<Language>(m_language_combo.GetCurSel());
