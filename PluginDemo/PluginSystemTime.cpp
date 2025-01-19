@@ -14,7 +14,7 @@ const wchar_t* CPluginSystemTime::GetItemName() const
 
 const wchar_t* CPluginSystemTime::GetItemId() const
 {
-    return L"ra1YX2g1";
+    return L"B3tkxi5d";
 }
 
 const wchar_t* CPluginSystemTime::GetItemLableText() const
