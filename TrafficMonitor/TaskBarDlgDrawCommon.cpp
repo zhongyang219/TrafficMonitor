@@ -1801,11 +1801,14 @@ void CTaskBarDlgDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLOR
     }
 
     m_p_d2d1_device_context_support->SetForeColor(color, alpha);
+    D2D1_DRAW_TEXT_OPTIONS options = D2D1_DRAW_TEXT_OPTIONS_NO_SNAP | D2D1_DRAW_TEXT_OPTIONS_CLIP; // 不允许文字超出边界
+    if (theApp.m_taskbar_data.enable_colorful_emoji)
+        options |= D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT;
     m_p_device_context->DrawTextLayout(
         {layout_rect.left, layout_rect.top},
         p_text_layout.Get(),
         m_p_d2d1_device_context_support->GetRawForeSolidColorBruch(),
-        D2D1_DRAW_TEXT_OPTIONS_NO_SNAP | D2D1_DRAW_TEXT_OPTIONS_CLIP | D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT); // 不允许文字超出边界
+        options);
     // 恢复状态
     p_text_format->SetParagraphAlignment(old_vertical_align);
     p_text_format->SetTextAlignment(old_horizontal_align);

@@ -294,6 +294,7 @@ void CTrafficMonitorApp::LoadConfig()
         m_taskbar_data.disable_d2d = ini.GetBool(L"task_bar", L"disable_d2d", true);
     else
         m_taskbar_data.disable_d2d = true;
+    m_taskbar_data.enable_colorful_emoji = ini.GetBool(L"task_bar", L"enable_colorful_emoji", true);
 
     //其他设置
     //m_cfg_data.m_show_internet_ip = ini.GetBool(L"connection_details", L"show_internet_ip", false);
@@ -465,6 +466,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"task_bar", L"netspeed_figure_max_value_unit", m_taskbar_data.netspeed_figure_max_value_unit);
 
     ini.WriteBool(L"task_bar", L"disable_d2d", m_taskbar_data.disable_d2d);
+    ini.WriteBool(L"task_bar", L"enable_colorful_emoji", m_taskbar_data.enable_colorful_emoji);
 
     //其他设置
     //ini.WriteBool(L"connection_details", L"show_internet_ip", m_cfg_data.m_show_internet_ip);

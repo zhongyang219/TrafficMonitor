@@ -118,4 +118,5 @@ public:
     afx_msg void OnEnChangeNetSpeedFigureMaxValueEdit();
     afx_msg void OnBnClickedGdiRadio();
     afx_msg void OnBnClickedD2dRadio();
+    afx_msg void OnBnClickedEnableColorEmojiCheck();
 };

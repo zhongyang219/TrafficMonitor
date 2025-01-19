@@ -115,6 +115,7 @@ void CTaskBarSettingsDlg::EnableControl()
     EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, CTaskBarDlg::IsTaskbarCloseToIconEnable(taskbar_on_left_check));
     //Win11下，任务栏左对齐时禁用“任务栏窗口显示在任务栏左侧”的选项
     EnableDlgCtrl(IDC_TASKBAR_WND_ON_LEFT_CHECK, !theApp.m_win_version.IsWindows11OrLater() || CWindowsSettingHelper::IsTaskbarCenterAlign());
+    EnableDlgCtrl(IDC_ENABLE_COLOR_EMOJI_CHECK, !m_data.disable_d2d);
 }
 
 
@@ -195,6 +196,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_EN_CHANGE(IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, &CTaskBarSettingsDlg::OnEnChangeNetSpeedFigureMaxValueEdit)
     ON_BN_CLICKED(IDC_GDI_RADIO, &CTaskBarSettingsDlg::OnBnClickedGdiRadio)
     ON_BN_CLICKED(IDC_D2D_RADIO, &CTaskBarSettingsDlg::OnBnClickedD2dRadio)
+    ON_BN_CLICKED(IDC_ENABLE_COLOR_EMOJI_CHECK, &CTaskBarSettingsDlg::OnBnClickedEnableColorEmojiCheck)
 END_MESSAGE_MAP()
 
 
@@ -359,6 +361,8 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
         CheckDlgButton(IDC_GDI_RADIO, true);
     else
         CheckDlgButton(IDC_D2D_RADIO, true);
+
+    CheckDlgButton(IDC_ENABLE_COLOR_EMOJI_CHECK, m_data.enable_colorful_emoji);
 
     EnableControl();
 
@@ -838,10 +842,18 @@ void CTaskBarSettingsDlg::OnEnChangeNetSpeedFigureMaxValueEdit()
 void CTaskBarSettingsDlg::OnBnClickedGdiRadio()
 {
     m_data.disable_d2d = true;
+    EnableControl();
 }
 
 
 void CTaskBarSettingsDlg::OnBnClickedD2dRadio()
 {
     m_data.disable_d2d = false;
+    EnableControl();
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedEnableColorEmojiCheck()
+{
+    m_data.enable_colorful_emoji = (IsDlgButtonChecked(IDC_ENABLE_COLOR_EMOJI_CHECK) != FALSE);
 }

@@ -521,6 +521,7 @@
 #define IDC_SKIN_AUTO_ADAPT_BUTTON      1174
 #define IDC_DARK_MODE_SKIN_COMBO        1175
 #define IDC_LIGHT_MODE_SKIN_COMBO       1176
+#define IDC_ENABLE_COLOR_EMOJI_CHECK    1177
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -642,7 +643,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        343
 #define _APS_NEXT_COMMAND_VALUE         33665
-#define _APS_NEXT_CONTROL_VALUE         1177
+#define _APS_NEXT_CONTROL_VALUE         1178
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
