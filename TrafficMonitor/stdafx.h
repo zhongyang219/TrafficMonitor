@@ -84,6 +84,7 @@ using std::ofstream;
 #define TASKBAR_TIMER 1236
 #define CONNECTION_DETAIL_TIMER 1237
 #define MONITOR_TIMER 1238
+#define DELETE_NOTIFY_ICON_TIMER 1239   //删除通知区图标的定时器
 
 #define MAX_INSERT_TO_TASKBAR_CNT 200     //尝试嵌入任务栏的最大次数
 #define WARN_INSERT_TO_TASKBAR_CNT 20     //尝试嵌入任务栏的警告次数

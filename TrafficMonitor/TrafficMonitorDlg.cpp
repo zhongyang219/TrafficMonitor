@@ -598,7 +598,6 @@ void CTrafficMonitorDlg::ShowNotifyTip(const wchar_t* title, const wchar_t* mess
     {
         //添加通知栏图标
         AddNotifyIcon();
-        theApp.m_general_data.show_notify_icon = true;
     }
     //显示通知提示
     m_ntIcon.uFlags |= NIF_INFO;
@@ -608,6 +607,14 @@ void CTrafficMonitorDlg::ShowNotifyTip(const wchar_t* title, const wchar_t* mess
     CCommon::WStringCopy(m_ntIcon.szInfoTitle, 64, title);
     ::Shell_NotifyIcon(NIM_MODIFY, &m_ntIcon);
     m_ntIcon.uFlags &= ~NIF_INFO;
+
+    //如果不显示通知区域图标，则在弹出通知的一段时间后删除通知区图标
+    if (!theApp.m_general_data.show_notify_icon)
+    {
+        //延迟一定时间后删除通知区图标
+        KillTimer(DELETE_NOTIFY_ICON_TIMER);
+        SetTimer(DELETE_NOTIFY_ICON_TIMER, 8000, NULL);
+    }
 }
 
 void CTrafficMonitorDlg::UpdateNotifyIconTip()
@@ -1845,6 +1852,12 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
         }
     }
 
+    if (nIDEvent == DELETE_NOTIFY_ICON_TIMER)
+    {
+        DeleteNotifyIcon();
+        KillTimer(DELETE_NOTIFY_ICON_TIMER);
+    }
+
     CDialog::OnTimer(nIDEvent);
 }
 
@@ -2054,6 +2067,8 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
     if (uMsg == ID_CMD_TEST)
     {
         CTest::TestCommand();
+        //ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY), _T("测试通知"));
+
     }
 #endif // DEBUG
     //选择了插件命令
