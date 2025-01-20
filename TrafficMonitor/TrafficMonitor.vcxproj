@@ -794,6 +794,7 @@
     <ClInclude Include="DrawCommonFactory.h" />
     <ClInclude Include="DrawTextManager.h" />
     <ClInclude Include="Dxgi1Support2.h" />
+    <ClInclude Include="FileDialogEx.h" />
     <ClInclude Include="FilePathHelper.h" />
     <ClInclude Include="HighResolutionTimer.h" />
     <ClInclude Include="HistoryTrafficCalendarDlg.h" />
@@ -881,6 +882,7 @@
     <ClCompile Include="DrawCommonFactory.cpp" />
     <ClCompile Include="DrawTextManager.cpp" />
     <ClCompile Include="Dxgi1Support2.cpp" />
+    <ClCompile Include="FileDialogEx.cpp" />
     <ClCompile Include="FilePathHelper.cpp" />
     <ClCompile Include="HistoryTrafficCalendarDlg.cpp" />
     <ClCompile Include="HistoryTrafficFile.cpp" />

@@ -11,6 +11,7 @@
 #include "SetItemOrderDlg.h"
 #include "WindowsSettingHelper.h"
 #include "TrafficMonitorDlg.h"
+#include "FileDialogEx.h"
 
 // CTaskBarSettingsDlg 对话框
 
@@ -677,7 +678,7 @@ void CTaskBarSettingsDlg::OnBnClickedBrowseButton()
 {
     // TODO: 在此添加控件通知处理程序代码
     CString szFilter = CCommon::LoadText(IDS_EXE_FILTER);
-    CFileDialog fileDlg(TRUE, NULL, NULL, 0, szFilter, this);
+    CFileDialogEx fileDlg(TRUE, NULL, szFilter);
     if (IDOK == fileDlg.DoModal())
     {
         m_data.double_click_exe = fileDlg.GetPathName();

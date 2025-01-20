@@ -226,6 +226,9 @@
     <Filter Include="源文件和头文件\公共的类\WindowsWebExperienceDetector">
       <UniqueIdentifier>{4f233c31-4fef-48c1-8176-845ddd21debb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\FileDialogEx">
+      <UniqueIdentifier>{0745b192-f366-4a31-b238-d372d5b62492}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -493,6 +496,9 @@
     <ClInclude Include="SkinAutoAdaptSettingDlg.h">
       <Filter>源文件和头文件\对话框类\SkinDlg</Filter>
     </ClInclude>
+    <ClInclude Include="FileDialogEx.h">
+      <Filter>源文件和头文件\头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -728,6 +734,9 @@
     </ClCompile>
     <ClCompile Include="SkinAutoAdaptSettingDlg.cpp">
       <Filter>源文件和头文件\对话框类\SkinDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="FileDialogEx.cpp">
+      <Filter>源文件和头文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
