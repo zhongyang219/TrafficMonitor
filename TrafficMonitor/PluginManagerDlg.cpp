@@ -180,10 +180,7 @@ void CPluginManagerDlg::OnNMRClickList1(NMHDR* pNMHDR, LRESULT* pResult)
     if (m_item_selected >= 0 && m_item_selected < static_cast<int>(theApp.m_plugins.GetPlugins().size()))
     {
         auto plugin_info = theApp.m_plugins.GetPlugins()[m_item_selected];
-        if (plugin_info.plugin != nullptr)
-        {
-            theApp.UpdatePluginMenu(pContextMenu, plugin_info.plugin, 3);
-        }
+        theApp.UpdatePluginMenu(pContextMenu, plugin_info.plugin, 3);
     }
 
     CPoint point1;	//定义一个用于确定光标位置的位置

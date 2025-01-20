@@ -1300,7 +1300,7 @@ void CTrafficMonitorApp::SendSettingsToPlugin()
 
 void CTrafficMonitorApp::UpdatePluginMenu(CMenu* pMenu, ITMPlugin* plugin, int plugin_cmd_start_index)
 {
-    if (pMenu != nullptr && plugin != nullptr)
+    if (pMenu != nullptr)
     {
         //删除菜单已经存在的插件命令
         while (pMenu->GetMenuItemCount() > plugin_cmd_start_index)
@@ -1309,7 +1309,7 @@ void CTrafficMonitorApp::UpdatePluginMenu(CMenu* pMenu, ITMPlugin* plugin, int p
                 break;
         }
         //添加插件命令
-        if (plugin->GetAPIVersion() >= 5)
+        if (plugin != nullptr && plugin->GetAPIVersion() >= 5)
         {
             int plugin_cmd_count = plugin->GetCommandCount();
             //添加分隔符
