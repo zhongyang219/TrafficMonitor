@@ -58,6 +58,9 @@ CString CommonDisplayItem::GetItemName() const
         case TDI_TODAY_TRAFFIC:
             item_name = CCommon::LoadText(IDS_TRAFFIC_USED);
             break;
+        case TDI_CPU_FREQ:
+            item_name = CCommon::LoadText(IDS_CPU_FREQ);
+            break;
 #ifndef WITHOUT_TEMPERATURE
         case TDI_GPU_USAGE:
             item_name = CCommon::LoadText(IDS_GPU_USAGE);
@@ -76,9 +79,6 @@ CString CommonDisplayItem::GetItemName() const
             break;
         case TDI_HDD_USAGE:
             item_name = CCommon::LoadText(IDS_HDD_USAGE);
-            break;
-        case TDI_CPU_FREQ:
-            item_name = CCommon::LoadText(IDS_CPU_FREQ);
             break;
 #endif
         default:
