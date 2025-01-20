@@ -6,6 +6,7 @@
 #include "PluginManagerDlg.h"
 #include "FilePathHelper.h"
 #include "PluginInfoDlg.h"
+#include "WIC.h"
 
 
 // CPluginManagerDlg 对话框
@@ -157,6 +158,10 @@ BOOL CPluginManagerDlg::OnInitDialog()
 
     m_menu.LoadMenu(IDR_PLUGIN_MANAGER_MENU); //装载右键菜单
 
+    //设置菜单图标
+    CMenuIcon::AddIconToMenuItem(m_menu.GetSubMenu(0)->GetSafeHmenu(), ID_PLUGIN_DETAIL, FALSE, theApp.GetMenuIcon(IDI_INFO));
+    CMenuIcon::AddIconToMenuItem(m_menu.GetSubMenu(0)->GetSafeHmenu(), ID_PLUGIN_OPTIONS, FALSE, theApp.GetMenuIcon(IDI_SETTINGS));
+
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE
 }
@@ -171,6 +176,16 @@ void CPluginManagerDlg::OnNMRClickList1(NMHDR* pNMHDR, LRESULT* pResult)
 
     //弹出右键菜单
     CMenu* pContextMenu = m_menu.GetSubMenu(0);	//获取第一个弹出菜单
+    //更新插件子菜单
+    if (m_item_selected >= 0 && m_item_selected < static_cast<int>(theApp.m_plugins.GetPlugins().size()))
+    {
+        auto plugin_info = theApp.m_plugins.GetPlugins()[m_item_selected];
+        if (plugin_info.plugin != nullptr)
+        {
+            theApp.UpdatePluginMenu(pContextMenu, plugin_info.plugin, 3);
+        }
+    }
+
     CPoint point1;	//定义一个用于确定光标位置的位置
     GetCursorPos(&point1);	//获取当前光标的位置，以便使得菜单可以跟随光标
     pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
@@ -287,4 +302,25 @@ afx_msg LRESULT CPluginManagerDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
     }
 
     return 0;
+}
+
+
+BOOL CPluginManagerDlg::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+    UINT uMsg = LOWORD(wParam);
+    //选择了插件命令
+    if (uMsg >= ID_PLUGIN_COMMAND_START && uMsg <= ID_PLUGIN_COMMAND_MAX)
+    {
+        int index = uMsg - ID_PLUGIN_COMMAND_START;
+        if (m_item_selected >= 0 && m_item_selected < static_cast<int>(theApp.m_plugins.GetPlugins().size()))
+        {
+            ITMPlugin* plugin = theApp.m_plugins.GetPlugins()[m_item_selected].plugin;
+            if (plugin != nullptr && plugin->GetAPIVersion() >= 5)
+            {
+                plugin->OnPluginCommand(index, (void*)GetSafeHwnd(), nullptr);
+            }
+        }
+    }
+
+    return CBaseDialog::OnCommand(wParam, lParam);
 }

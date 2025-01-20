@@ -1385,7 +1385,7 @@ void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
                 CMenuIcon::AddIconToMenuItem(pMenu->GetSafeHmenu(), 15, TRUE, plugin_icon);
         }
         //更新插件子菜单
-        theApp.UpdatePluginMenu(&theApp.m_taskbar_menu_plugin_sub_menu, plugin);
+        theApp.UpdatePluginMenu(&theApp.m_taskbar_menu_plugin_sub_menu, plugin, 2);
         //弹出菜单
         pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this);
     }

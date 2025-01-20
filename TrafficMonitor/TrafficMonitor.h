@@ -157,7 +157,8 @@ public:
     void SendSettingsToPlugin();    //向所有插件发送当前的选项设置
 
     //更新插件子菜单
-    static void UpdatePluginMenu(CMenu* pMenu, ITMPlugin* plugin);
+    //plugin_cmd_start_index: 插件命令在菜单中的起始位置
+    static void UpdatePluginMenu(CMenu* pMenu, ITMPlugin* plugin, int plugin_cmd_start_index);
 
 private:
     //int m_no_multistart_warning_time{};       //用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示

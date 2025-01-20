@@ -50,4 +50,5 @@ public:
     afx_msg void OnPluginDisable();
 protected:
     afx_msg LRESULT OnLinkClicked(WPARAM wParam, LPARAM lParam);
+    virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 };

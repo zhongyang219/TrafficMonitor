@@ -1935,7 +1935,7 @@ void CTrafficMonitorDlg::OnRButtonUp(UINT nFlags, CPoint point)
             CMenuIcon::AddIconToMenuItem(pContextMenu->GetSafeHmenu(), 17, TRUE, plugin_icon);
     }
     //更新插件子菜单
-    theApp.UpdatePluginMenu(&theApp.m_main_menu_plugin_sub_menu, plugin);
+    theApp.UpdatePluginMenu(&theApp.m_main_menu_plugin_sub_menu, plugin, 2);
 
     pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
 
