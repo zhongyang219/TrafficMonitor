@@ -165,17 +165,17 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
             CCommon::KBytesToString(theApp.m_total_memory));
         tip_info += temp;
     }
+    if (!skin_layout.GetItem(TDI_CPU_FREQ).show && theApp.m_cpu_freq >= 0)
+    {
+        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_FREQ), CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_main_wnd_data));
+        tip_info += temp;
+    }
 #ifndef WITHOUT_TEMPERATURE
     if (IsTemperatureNeeded())
     {
         if (theApp.m_general_data.IsHardwareEnable(HI_GPU) && !skin_layout.GetItem(TDI_GPU_USAGE).show && theApp.m_gpu_usage >= 0)
         {
             temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
-            tip_info += temp;
-        }
-        if (theApp.m_general_data.IsHardwareEnable(HI_CPU) && !skin_layout.GetItem(TDI_CPU_FREQ).show && theApp.m_cpu_freq >= 0)
-        {
-            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_FREQ), CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_main_wnd_data));
             tip_info += temp;
         }
         if (theApp.m_general_data.IsHardwareEnable(HI_CPU) && !skin_layout.GetItem(TDI_CPU_TEMP).show && theApp.m_cpu_temperature > 0)
@@ -761,7 +761,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     }
 
     //设置获取CPU利用率的方式
-    m_cpu_usage.SetUseCPUTimes(theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_PDH);
+    m_cpu_usage_helper.SetUseCPUTimes(theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_PDH);
 
 #ifndef WITHOUT_TEMPERATURE
     if (is_hardware_monitor_item_changed)
@@ -1130,7 +1130,7 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     m_tool_tips.AddTool(this, _T(""));
 
     //设置获取CPU利用率的方式
-    m_cpu_usage.SetUseCPUTimes(theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_PDH);
+    m_cpu_usage_helper.SetUseCPUTimes(theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_PDH);
 
     //如果程序启动时设置了隐藏主窗口，或窗口的位置在左上角，则先将其不透明度设为0
     if (theApp.m_cfg_data.m_hide_main_window || (theApp.m_cfg_data.m_position_x == 0 && theApp.m_cfg_data.m_position_y == 0))
@@ -1337,13 +1337,31 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         }
     }
 
-    ////只有主窗口和任务栏窗口至少有一个显示时才执行下面的处理
-    //if (!theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_show_task_bar_wnd)
-    //{
+    bool lite_version = false;
+#ifdef WITHOUT_TEMPERATURE
+    lite_version = true;
+#endif
+
+    bool is_arm64ec = false;
+#ifdef _M_ARM64EC
+    is_arm64ec = true;
+#endif
+
+    bool cpu_usage_acquired = false;
+    bool cpu_freq_acquired = false;
+
     //获取CPU使用率
-    if (theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_HARDWARE_MONITOR || !theApp.m_general_data.IsHardwareEnable(HI_CPU))
+    if (lite_version || theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_HARDWARE_MONITOR || !theApp.m_general_data.IsHardwareEnable(HI_CPU))
     {
-        theApp.m_cpu_usage = pThis->m_cpu_usage.GetCPUUsage();
+        theApp.m_cpu_usage = pThis->m_cpu_usage_helper.GetCPUUsage();
+        cpu_usage_acquired = true;
+    }
+
+    //获取CPU频率
+    if (lite_version || is_arm64ec || !theApp.m_general_data.IsHardwareEnable(HI_CPU))
+    {
+        theApp.m_cpu_freq = pThis->m_cpu_freq_helper.GetCpuFreq();
+        cpu_freq_acquired = true;
     }
 
     //获取内存利用率
@@ -1383,8 +1401,9 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         //theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
         theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
         theApp.m_gpu_usage = theApp.m_pMonitor->GpuUsage();
-        theApp.m_cpu_freq = theApp.m_pMonitor->CpuFreq();
-        if (theApp.m_general_data.cpu_usage_acquire_method == GeneralSettingData::CA_HARDWARE_MONITOR && theApp.m_general_data.IsHardwareEnable(HI_CPU))
+        if (!cpu_freq_acquired)
+            theApp.m_cpu_freq = theApp.m_pMonitor->CpuFreq();
+        if (!cpu_usage_acquired)
             theApp.m_cpu_usage = theApp.m_pMonitor->CpuUsage();
         //获取CPU温度
         if (!theApp.m_pMonitor->AllCpuTemperature().empty())
@@ -1472,7 +1491,6 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         }
     }
 
-    //}
     pThis->m_monitor_time_cnt++;
 
     //发送监控信息更新消息

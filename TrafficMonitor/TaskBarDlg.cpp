@@ -927,6 +927,12 @@ CString CTaskBarDlg::GetMouseTipsInfo()
             CCommon::KBytesToString(theApp.m_total_memory));
         tip_info += temp;
     }
+    if (!IsItemShow(TDI_CPU_FREQ) && theApp.m_cpu_freq > 0)
+    {
+        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_FREQ), CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_taskbar_data));
+        tip_info += temp;
+    }
+
 #ifndef WITHOUT_TEMPERATURE
     CTrafficMonitorDlg* pMainWnd = dynamic_cast<CTrafficMonitorDlg*>(theApp.m_pMainWnd);
     if (pMainWnd->IsTemperatureNeeded())
@@ -939,11 +945,6 @@ CString CTaskBarDlg::GetMouseTipsInfo()
         if (!IsItemShow(TDI_CPU_TEMP) && theApp.m_cpu_temperature > 0)
         {
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_taskbar_data));
-            tip_info += temp;
-        }
-        if (!IsItemShow(TDI_CPU_FREQ) && theApp.m_cpu_freq > 0)
-        {
-            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_FREQ), CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_taskbar_data));
             tip_info += temp;
         }
         if (!IsItemShow(TDI_GPU_TEMP) && theApp.m_gpu_temperature > 0)

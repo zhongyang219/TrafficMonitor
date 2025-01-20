@@ -31,7 +31,6 @@ void CGeneralSettingsDlg::CheckTaskbarDisplayItem()
     if (!theApp.m_general_data.IsHardwareEnable(HI_CPU))
     {
         theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_CPU_TEMP;
-        theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_CPU_FREQ;
     }
     if (!theApp.m_general_data.IsHardwareEnable(HI_GPU))
     {

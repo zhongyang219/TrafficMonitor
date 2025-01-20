@@ -225,7 +225,7 @@ bool CTaskbarItemOrderHelper::IsItemDisplayed(CommonDisplayItem item)
     bool displayed = true;
     if (!item.is_plugin)
     {
-        if ((item == TDI_CPU_TEMP || item == TDI_CPU_FREQ) && !theApp.m_general_data.IsHardwareEnable(HI_CPU))
+        if ((item == TDI_CPU_TEMP) && !theApp.m_general_data.IsHardwareEnable(HI_CPU))
             displayed = false;
         if ((item == TDI_GPU_TEMP || item == TDI_GPU_USAGE) && !theApp.m_general_data.IsHardwareEnable(HI_GPU))
             displayed = false;
