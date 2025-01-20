@@ -9,6 +9,7 @@ public:
     //Windows11相关设置
     static bool IsTaskbarWidgetsBtnShown();             //任务栏是否显示了“小组件”按钮
     static bool IsTaskbarCenterAlign();                  //任务栏是否居中
+    static bool IsTaskbarShowingInAllDisplays();
 
 private:
     static LONG GetDWORDRegKeyData(HKEY hKey, const wstring& strValueName, DWORD& dwValueData);
