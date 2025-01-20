@@ -31,7 +31,7 @@ class CTrafficMonitorDlg : public CDialog
 public:
     CTrafficMonitorDlg(CWnd* pParent = NULL);   // 标准构造函数
     ~CTrafficMonitorDlg();
-    vector<CTaskBarDlg*>* GetTaskbarWindows() const;
+    void GetTaskbarWindows(vector<CTaskBarDlg *> &taskbar_dlgs) const;
 
     static CTrafficMonitorDlg* Instance();
 

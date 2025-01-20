@@ -309,17 +309,20 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     CheckDlgButton(IDC_SHOW_DASHED_BOX, m_data.show_graph_dashed_box);
     m_item_space_edit.SetRange(0, 32);
     m_item_space_edit.SetValue(m_data.item_space);
-    vector<CTaskBarDlg*>* taskbar_dlgs{ CTrafficMonitorDlg::Instance()->GetTaskbarWindows() };
+    vector<CTaskBarDlg*> taskbar_dlgs;
+    CTrafficMonitorDlg::Instance()->GetTaskbarWindows(taskbar_dlgs);
     m_window_offset_top_edit.SetRange(-5, 20);
     m_window_offset_top_edit.SetValue(m_data.window_offset_top);
-    if (taskbar_dlgs != nullptr && !taskbar_dlgs->empty())
-        for (auto* taskbar_dlg : *taskbar_dlgs)
-            m_window_offset_top_edit.EnableWindow(taskbar_dlg->IsTasksbarOnTopOrBottom());
+    if (!taskbar_dlgs.empty())
+        m_window_offset_top_edit.EnableWindow(taskbar_dlgs.front()->IsTasksbarOnTopOrBottom());
     m_vertical_margin_edit.SetRange(-10, 10);
     m_vertical_margin_edit.SetValue(m_data.vertical_margin);
-    if (taskbar_dlgs != nullptr && !taskbar_dlgs->empty())
-        for (auto* taskbar_dlg : *taskbar_dlgs)
-            m_vertical_margin_edit.EnableWindow(taskbar_dlg->IsTasksbarOnTopOrBottom());
+    if (!taskbar_dlgs.empty())
+        m_window_offset_top_edit.EnableWindow(taskbar_dlgs.front()->IsTasksbarOnTopOrBottom());
+
+    for (auto* taskbar_dlg : taskbar_dlgs)
+        delete taskbar_dlg;
+    taskbar_dlgs.clear();
 
     //初始化内存显示方式下拉列表
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_USAGE_PERCENTAGE));
