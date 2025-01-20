@@ -34,6 +34,7 @@ private:
 protected:
     virtual CString GetDialogName() const = 0;
     void EnableDlgCtrl(UINT id, bool enable);
+    void SetButtonIcon(UINT id, HICON hIcon);
 
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 

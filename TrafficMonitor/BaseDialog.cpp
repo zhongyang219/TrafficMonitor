@@ -68,6 +68,14 @@ void CBaseDialog::EnableDlgCtrl(UINT id, bool enable)
         pWnd->EnableWindow(enable);
 }
 
+void CBaseDialog::SetButtonIcon(UINT id, HICON hIcon)
+{
+    CWnd* dlgItem = GetDlgItem(id);
+    CButton* btn = static_cast<CButton*>(dlgItem);
+    if (btn != nullptr)
+        btn->SetIcon(hIcon);
+}
+
 void CBaseDialog::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);
