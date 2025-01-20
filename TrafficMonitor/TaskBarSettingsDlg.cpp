@@ -11,6 +11,7 @@
 #include "SetItemOrderDlg.h"
 #include "WindowsSettingHelper.h"
 #include "TrafficMonitorDlg.h"
+#include "FileDialogEx.h"
 
 // CTaskBarSettingsDlg 对话框
 
@@ -111,7 +112,11 @@ void CTaskBarSettingsDlg::EnableControl()
     EnableDlgCtrl(IDC_CM_GRAPH_PLOT_RADIO, m_data.show_status_bar || m_data.show_netspeed_figure);
     EnableDlgCtrl(IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, m_data.show_netspeed_figure);
     EnableDlgCtrl(IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO, m_data.show_netspeed_figure);
-    //EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, theApp.m_win_version.IsWindows11OrLater() && !m_data.tbar_wnd_on_left);
+    bool taskbar_on_left_check = (IsDlgButtonChecked(IDC_TASKBAR_WND_ON_LEFT_CHECK) != FALSE);
+    EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, CTaskBarDlg::IsTaskbarCloseToIconEnable(taskbar_on_left_check));
+    //Win11下，任务栏左对齐时禁用“任务栏窗口显示在任务栏左侧”的选项
+    EnableDlgCtrl(IDC_TASKBAR_WND_ON_LEFT_CHECK, !theApp.m_win_version.IsWindows11OrLater() || CWindowsSettingHelper::IsTaskbarCenterAlign());
+    EnableDlgCtrl(IDC_ENABLE_COLOR_EMOJI_CHECK, !m_data.disable_d2d);
 }
 
 
@@ -193,6 +198,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_EN_CHANGE(IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, &CTaskBarSettingsDlg::OnEnChangeNetSpeedFigureMaxValueEdit)
     ON_BN_CLICKED(IDC_GDI_RADIO, &CTaskBarSettingsDlg::OnBnClickedGdiRadio)
     ON_BN_CLICKED(IDC_D2D_RADIO, &CTaskBarSettingsDlg::OnBnClickedD2dRadio)
+    ON_BN_CLICKED(IDC_ENABLE_COLOR_EMOJI_CHECK, &CTaskBarSettingsDlg::OnBnClickedEnableColorEmojiCheck)
 END_MESSAGE_MAP()
 
 
@@ -298,7 +304,6 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     m_digit_number_combo.SetCurSel(m_data.digits_number - 3);
 
     SetDlgItemText(IDC_EXE_PATH_EDIT, m_data.double_click_exe.c_str());
-    EnableControl();
 
     //m_default_style_menu.LoadMenu(IDR_TASKBAR_STYLE_MENU);
 
@@ -364,6 +369,10 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
         CheckDlgButton(IDC_GDI_RADIO, true);
     else
         CheckDlgButton(IDC_D2D_RADIO, true);
+
+    CheckDlgButton(IDC_ENABLE_COLOR_EMOJI_CHECK, m_data.enable_colorful_emoji);
+
+    EnableControl();
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE
@@ -683,7 +692,7 @@ void CTaskBarSettingsDlg::OnBnClickedBrowseButton()
 {
     // TODO: 在此添加控件通知处理程序代码
     CString szFilter = CCommon::LoadText(IDS_EXE_FILTER);
-    CFileDialog fileDlg(TRUE, NULL, NULL, 0, szFilter, this);
+    CFileDialogEx fileDlg(TRUE, NULL, szFilter);
     if (IDOK == fileDlg.DoModal())
     {
         m_data.double_click_exe = fileDlg.GetPathName();
@@ -848,10 +857,18 @@ void CTaskBarSettingsDlg::OnEnChangeNetSpeedFigureMaxValueEdit()
 void CTaskBarSettingsDlg::OnBnClickedGdiRadio()
 {
     m_data.disable_d2d = true;
+    EnableControl();
 }
 
 
 void CTaskBarSettingsDlg::OnBnClickedD2dRadio()
 {
     m_data.disable_d2d = false;
+    EnableControl();
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedEnableColorEmojiCheck()
+{
+    m_data.enable_colorful_emoji = (IsDlgButtonChecked(IDC_ENABLE_COLOR_EMOJI_CHECK) != FALSE);
 }

@@ -5,6 +5,7 @@
 #include "TrafficMonitor.h"
 #include "SkinDlg.h"
 #include "afxdialogex.h"
+#include "SkinAutoAdaptSettingDlg.h"
 
 
 // CSkinDlg 对话框
@@ -84,6 +85,8 @@ BEGIN_MESSAGE_MAP(CSkinDlg, CBaseDialog)
     ON_CBN_SELCHANGE(IDC_COMBO1, &CSkinDlg::OnCbnSelchangeCombo1)
     ON_WM_SIZE()
     ON_MESSAGE(WM_LINK_CLICKED, &CSkinDlg::OnLinkClicked)
+    ON_BN_CLICKED(IDC_SKIN_AUTO_ADAPT_BUTTON, &CSkinDlg::OnBnClickedSkinAutoAdaptButton)
+    ON_BN_CLICKED(IDC_SKIN_AUTO_ADAPT_CHECK, &CSkinDlg::OnBnClickedSkinAutoAdaptCheck)
 END_MESSAGE_MAP()
 
 
@@ -121,6 +124,10 @@ BOOL CSkinDlg::OnInitDialog()
 
     //显示预览图片
     ShowPreview();
+
+    //初始化控件
+    CheckDlgButton(IDC_SKIN_AUTO_ADAPT_CHECK, theApp.m_cfg_data.skin_auto_adapt);
+    EnableDlgCtrl(IDC_SKIN_AUTO_ADAPT_BUTTON, theApp.m_cfg_data.skin_auto_adapt);
 
     //设置超链接
     m_skin_course.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor/wiki/%E7%9A%AE%E8%82%A4%E5%88%B6%E4%BD%9C%E6%95%99%E7%A8%8B"));
@@ -160,4 +167,34 @@ afx_msg LRESULT CSkinDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
         ShellExecute(NULL, _T("open"), _T("explorer"), theApp.m_skin_path.c_str(), NULL, SW_SHOWNORMAL);
     }
     return 0;
+}
+
+
+void CSkinDlg::OnBnClickedSkinAutoAdaptButton()
+{
+    CSkinAutoAdaptSettingDlg dlg(m_skins);
+    if (dlg.DoModal() == IDOK)
+    {
+        int dark_mode_skin = dlg.GetDarkModeSkin();
+        int light_mode_skin = dlg.GetLightModeSkin();
+        if (dark_mode_skin >= 0 && dark_mode_skin < static_cast<int>(m_skins.size()))
+            theApp.m_cfg_data.skin_name_dark_mode = m_skins[dark_mode_skin];
+        if (light_mode_skin >= 0 && light_mode_skin < static_cast<int>(m_skins.size()))
+            theApp.m_cfg_data.skin_name_light_mode = m_skins[light_mode_skin];
+    }
+}
+
+
+void CSkinDlg::OnOK()
+{
+    theApp.m_cfg_data.skin_auto_adapt = (IsDlgButtonChecked(IDC_SKIN_AUTO_ADAPT_CHECK) != FALSE);
+
+    CBaseDialog::OnOK();
+}
+
+
+void CSkinDlg::OnBnClickedSkinAutoAdaptCheck()
+{
+    bool skin_auto_adapt_checked = (IsDlgButtonChecked(IDC_SKIN_AUTO_ADAPT_CHECK) != FALSE);
+    EnableDlgCtrl(IDC_SKIN_AUTO_ADAPT_BUTTON, skin_auto_adapt_checked);
 }

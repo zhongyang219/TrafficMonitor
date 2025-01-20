@@ -10,6 +10,7 @@
 #include "WIC.h"
 #include "Nullable.hpp"
 #include "DrawCommonFactory.h"
+#include "WindowsWebExperienceDetector.h"
 
 #ifdef DEBUG
 // DX调试信息捕获
@@ -93,7 +94,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 #endif
     // 初始化DrawBuffer和DrawCommon栈内存
     AllInvolvedDrawCommonObjectsStorage all_involved_draw_common_objects{};
-    IDrawCommon* draw_common_interface;
+    IDrawCommon* draw_common_interface{nullptr};
     std::tie(std::ignore, draw_common_interface) =
         GetInterfaceFromAllInvolvedDrawCommonObjects(
             all_involved_draw_common_objects,
@@ -468,6 +469,10 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
     else if (type == TDI_CPU_FREQ) {
         str_value = CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_taskbar_data);
     }
+    else if (type == TDI_TODAY_TRAFFIC)
+    {
+        str_value = CCommon::KBytesToString((theApp.m_today_up_traffic + theApp.m_today_down_traffic) / 1024u);
+    }
 
     drawer.DrawWindowText(rect_value, str_value, text_color, value_alignment);
 }
@@ -477,6 +482,28 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
     if (item == nullptr)
         return;
     m_item_rects[item] = rect;
+
+    //绘制资源占用图
+    ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(item);
+    if (theApp.m_taskbar_data.show_status_bar && plugin != nullptr && plugin->GetAPIVersion() >= 6)
+    {
+        if (item->IsDrawResourceUsageGraph())
+        {
+             int figure_value = item->GetResourceUsageGraphValue() * 100;
+            //横向滚动图
+            if (theApp.m_taskbar_data.cm_graph_type)
+            {
+                AddHisToList(item, figure_value);
+                TryDrawGraph(drawer, rect, item);
+            }
+            //柱状图
+            else
+            {
+                TryDrawStatusBar(drawer, rect, figure_value);
+            }
+        }
+    }
+
     //设置要绘制的文本颜色
     COLORREF label_text_color{};
     COLORREF value_text_color{};
@@ -497,7 +524,6 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
         const COLORREF& bk{ theApp.m_taskbar_data.back_color };
         int background_brightness{ (GetRValue(bk) + GetGValue(bk) + GetBValue(bk)) / 3 };
         //由插件自绘
-        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(item);
         if (plugin != nullptr && plugin->GetAPIVersion() >= 2)
         {
             plugin->OnExtenedInfo(ITMPlugin::EI_LABEL_TEXT_COLOR, std::to_wstring(label_text_color).c_str());
@@ -638,21 +664,34 @@ bool CTaskBarDlg::AdjustWindowPos()
             m_rcMinOri = m_rcMin;
             m_left_space = m_rcMin.left - m_rcBar.left;
             m_min_bar_width = m_rcMin.Width() - m_rect.Width(); //保存最小化窗口宽度
-            //设置为任务窗口不显示在左侧时，或者Windows11下任务栏左对齐时
+            //任务窗口显示在右侧时，或者Windows11下任务栏左对齐时
             //（Windows11下，如果任务栏设置为左对齐，即使在“任务栏窗口设置”中设置了任务窗口显示在左边，窗口仍然显示在右边）
             if (!theApp.m_taskbar_data.tbar_wnd_on_left || (theApp.m_is_windows11_taskbar && !CWindowsSettingHelper::IsTaskbarCenterAlign()))
             {
                 if (theApp.m_is_windows11_taskbar)
                 {
-                    if (!theApp.m_taskbar_data.tbar_wnd_snap)
+                    //靠近任务栏图标的情况
+                    if (theApp.m_taskbar_data.tbar_wnd_snap && IsTaskbarCloseToIconEnable(theApp.m_taskbar_data.tbar_wnd_on_left))
                     {
-                        if(m_hNotify != NULL)
-                            m_rect.MoveToX(m_rcNotify.left - m_rect.Width() - 2);
-                        else
-                            m_rect.MoveToX(m_rcTaskbar.Width() - 100 - m_rect.Width());
-                    }
-                    else
                         m_rect.MoveToX(m_rcMin.right - monitorRect.left + 2);
+                    }
+                    //靠近通知区的情况
+                    else
+                    {
+                        //如果显示了小组件，并且任务栏靠左显示，则留出小组件的位置（Win11 build 25324之后小组件显示在右侧）
+                        if (CWindowsSettingHelper::IsTaskbarWidgetsBtnShown() && !CWindowsSettingHelper::IsTaskbarCenterAlign() && theApp.m_win_version.GetBuildNumber() >= 25324)
+                        {
+                            if (m_hNotify != NULL)
+                                m_rect.MoveToX(m_rcNotify.left - m_rect.Width() + 2 - DPI(theApp.m_cfg_data.taskbar_left_space_win11));
+                            else
+                                m_rect.MoveToX(m_rcTaskbar.Width() - m_rect.Width() - 100 - DPI(theApp.m_cfg_data.taskbar_left_space_win11));
+                        }
+                        else
+                            if (m_hNotify != NULL)
+                                m_rect.MoveToX(m_rcNotify.left - m_rect.Width() + 2);
+                        else
+                            m_rect.MoveToX(m_rcTaskbar.Width() - m_rect.Width() - 100);
+                    }
                 }
                 else
                 {
@@ -660,12 +699,14 @@ bool CTaskBarDlg::AdjustWindowPos()
                     m_rect.MoveToX(m_left_space + m_rcMin.Width() - m_rect.Width() + 2);
                 }
             }
+            //任务栏窗口显示在左侧时
             else
             {
                 if (theApp.m_is_windows11_taskbar)
                 {
                     //if (CWindowsSettingHelper::IsTaskbarCenterAlign())      //Windows11任务栏居中
                     //{
+                    //靠近“开始”按钮
                     if (theApp.m_taskbar_data.tbar_wnd_snap)
                     {
                         HWND m_hStart = ::FindWindowEx(m_hTaskbar, nullptr, L"Start", NULL);
@@ -674,6 +715,7 @@ bool CTaskBarDlg::AdjustWindowPos()
 
                         m_rect.MoveToX(m_rcStart.left - monitorRect.left - m_rect.Width() - 2);
                     }
+                    //靠近最左侧
                     else
                     {
                         if (CWindowsSettingHelper::IsTaskbarWidgetsBtnShown())
@@ -805,6 +847,11 @@ int CTaskBarDlg::DPI(int pixel) const
     return static_cast<int>(m_taskbar_dpi) * pixel / 96;
 }
 
+LONG CTaskBarDlg::DPI(LONG pixel) const
+{
+    return static_cast<LONG>(m_taskbar_dpi) * pixel / 96;
+}
+
 void CTaskBarDlg::DPI(CRect& rect) const
 {
     rect.left = DPI(rect.left);
@@ -896,6 +943,12 @@ CString CTaskBarDlg::GetMouseTipsInfo()
             CCommon::KBytesToString(theApp.m_total_memory));
         tip_info += temp;
     }
+    if (!IsItemShow(TDI_CPU_FREQ) && theApp.m_cpu_freq > 0)
+    {
+        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_FREQ), CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_taskbar_data));
+        tip_info += temp;
+    }
+
 #ifndef WITHOUT_TEMPERATURE
     CTrafficMonitorDlg* pMainWnd = dynamic_cast<CTrafficMonitorDlg*>(theApp.m_pMainWnd);
     if (pMainWnd->IsTemperatureNeeded())
@@ -908,11 +961,6 @@ CString CTaskBarDlg::GetMouseTipsInfo()
         if (!IsItemShow(TDI_CPU_TEMP) && theApp.m_cpu_temperature > 0)
         {
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_taskbar_data));
-            tip_info += temp;
-        }
-        if (!IsItemShow(TDI_CPU_FREQ) && theApp.m_cpu_freq > 0)
-        {
-            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_FREQ), CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_taskbar_data));
             tip_info += temp;
         }
         if (!IsItemShow(TDI_GPU_TEMP) && theApp.m_gpu_temperature > 0)
@@ -1075,6 +1123,9 @@ void CTaskBarDlg::CalculateWindowSize()
     item_widths[TDI_HDD_TEMP].value_width = value_width;
     item_widths[TDI_MAIN_BOARD_TEMP].value_width = value_width;
 
+    //今日已使用流量宽度
+    item_widths[TDI_TODAY_TRAFFIC].value_width = m_pDC->GetTextExtent(_T("999.99 MB")).cx;
+
     //计算插件项目的宽度
     for (const auto& plugin : theApp.m_plugins.GetPluginItems())
     {
@@ -1201,11 +1252,26 @@ bool CTaskBarDlg::IsShowNetSpeed()
     return ((theApp.m_taskbar_data.m_tbar_display_item & TDI_UP) || (theApp.m_taskbar_data.m_tbar_display_item & TDI_DOWN));
 }
 
+bool CTaskBarDlg::IsTaskbarCloseToIconEnable(bool taskbar_wnd_on_left)
+{
+    //在Windows11 24H2中，当任务栏窗口显示在右侧时，如果勾选“任务栏窗口靠近图标而不是靠近任务栏窗口”会导致和图标重叠
+    //因为"MSTaskSwWClass"窗口的矩形区域不再是任务栏图标最小化按钮所在区域，我不清楚具体是从Windows11哪个版本开始变成这样的，
+    //猜测是在增加了“不合并任务栏按钮并隐藏标签”这个功能之后开始的，也就是build 23466版本，
+    //因此这里判断当只有23466以前的版本允许这个选项
+    return theApp.m_win_version.IsWindows11OrLater() &&
+        ((theApp.m_win_version.GetBuildNumber() < 23466)
+        || (CWindowsSettingHelper::IsTaskbarCenterAlign() && taskbar_wnd_on_left)
+        );
+}
+
 BOOL CTaskBarDlg::OnInitDialog()
 {
     CDialogEx::OnInitDialog();
 
     // TODO:  在此添加额外的初始化
+    // 检测系统是否安装了 MicrosoftWindows.Client.WebExperience (aka Windows Web Experience Pack)
+    theApp.m_taskbar_data.is_windows_web_experience_detected =
+        WindowsWebExperienceDetector::IsDetected();
     // 根据任务栏窗口的设置禁用必要的渲染选项，仅透明且支持D2D渲染时才会使用D2D渲染
     DisableRenderFeatureIfNecessary(m_supported_render_enums);
     //设置隐藏任务栏图标
@@ -1342,7 +1408,7 @@ void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
                 CMenuIcon::AddIconToMenuItem(pMenu->GetSafeHmenu(), 15, TRUE, plugin_icon);
         }
         //更新插件子菜单
-        theApp.UpdatePluginMenu(&theApp.m_taskbar_menu_plugin_sub_menu, plugin);
+        theApp.UpdatePluginMenu(&theApp.m_taskbar_menu_plugin_sub_menu, plugin, 2);
         //弹出菜单
         pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this);
     }
@@ -1583,7 +1649,7 @@ void CTaskBarDlg::OnPaint()
 
 }
 
-void CTaskBarDlg::AddHisToList(DisplayItem item_type, int current_usage_percent)
+void CTaskBarDlg::AddHisToList(CommonDisplayItem item_type, int current_usage_percent)
 {
     int& data_count{ m_history_data_count[item_type] };
     std::list<int>& list = m_map_history_data[item_type];
@@ -1636,7 +1702,7 @@ bool CTaskBarDlg::CheckClickedItem(CPoint point)
     return false;
 }
 
-void CTaskBarDlg::TryDrawGraph(IDrawCommon& drawer, const CRect& value_rect, DisplayItem item_type)
+void CTaskBarDlg::TryDrawGraph(IDrawCommon& drawer, const CRect& value_rect, CommonDisplayItem item_type)
 {
     std::list<int>& list = m_map_history_data[item_type];
     if (theApp.m_taskbar_data.show_graph_dashed_box)

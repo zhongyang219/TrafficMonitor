@@ -59,7 +59,8 @@ protected:
     unsigned __int64 m_last_in_bytes{}; //上次已接收的字节数
     unsigned __int64 m_last_out_bytes{};    //上次已发送的字节数
 
-    CCPUUsage m_cpu_usage;
+    CCPUUsage m_cpu_usage_helper;
+    CCpuFreq m_cpu_freq_helper;
 
     bool m_first_start{ true };     //初始时为true，在定时器第一次启动后置为flase
 
@@ -174,6 +175,11 @@ protected:
 
     //判断一个点在哪个显示项目的区域内，并保存到m_clicked_item
     void CheckClickedItem(CPoint point);
+
+    int FindSkinIndex(const wstring& skin_name);
+
+    //应用一个皮肤
+    void ApplySkin(int skin_index);
 
 public:
     //void ApplySettings();

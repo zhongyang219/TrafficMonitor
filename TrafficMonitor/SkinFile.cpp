@@ -5,6 +5,7 @@
 #include "TrafficMonitor.h"
 #include "IniHelper.h"
 #include "DrawCommon.h"
+#include "DrawCommonEx.h"
 
 
 CSkinFile::CSkinFile()
@@ -14,6 +15,8 @@ CSkinFile::CSkinFile()
 
 CSkinFile::~CSkinFile()
 {
+    SAFE_DELETE(m_background_png_s);
+    SAFE_DELETE(m_background_png_l);
 }
 
 static CSkinFile::LayoutItem LayoutItemFromXmlNode(tinyxml2::XMLElement* ele)
@@ -59,9 +62,9 @@ CSkinFile::Layout CSkinFile::LayoutFromXmlNode(tinyxml2::XMLElement* ele)
     return layout;
 }
 
-void CSkinFile::DrawSkinText(CDrawCommon drawer, DrawStr draw_str, CRect rect, COLORREF color, Alignment align)
+void CSkinFile::DrawSkinText(IDrawCommon& drawer, DrawStr draw_str, CRect rect, COLORREF color, Alignment align)
 {
-    int text_width = drawer.GetDC()->GetTextExtent(draw_str.GetStr()).cx;
+    int text_width = drawer.GetTextWidth(draw_str.GetStr());
     //标签和数值两端对齐
     if (align == Alignment::SIDE && text_width < rect.Width())      //只有文本宽度小于矩形的宽度时才使用两端对齐
     {
@@ -91,12 +94,32 @@ void CSkinFile::Load(const wstring& file_path)
     //创建字体对象
     m_skin_info.font_info.Create(m_font);
 
-    //载入背景图片
     wstring path_dir = file_path_helper.GetDir();
-    m_background_s.Destroy();
-    m_background_s.Load((path_dir + BACKGROUND_IMAGE_S).c_str());
-    m_background_l.Destroy();
-    m_background_l.Load((path_dir + BACKGROUND_IMAGE_L).c_str());
+
+    //载入png背景图
+    m_is_png = true;
+    //先尝试加载png格式，失败则加载bmp格式
+    SAFE_DELETE(m_background_png_s);
+    m_background_png_s = new Gdiplus::Image((path_dir + BACKGROUND_IMAGE_S_PNG).c_str());
+    if (m_background_png_s->GetLastStatus() != Gdiplus::Ok)
+    {
+        m_is_png = false;
+    }
+    SAFE_DELETE(m_background_png_l);
+    m_background_png_l = new Gdiplus::Image((path_dir + BACKGROUND_IMAGE_L_PNG).c_str());
+    if (m_background_png_l->GetLastStatus() != Gdiplus::Ok)
+    {
+        m_is_png = false;
+    }
+
+    //png背景图加载失败，使用bmp背景图
+    if (!m_is_png)
+    {
+        m_background_s.Destroy();
+        m_background_s.Load((path_dir + BACKGROUND_IMAGE_S).c_str());
+        m_background_l.Destroy();
+        m_background_l.Load((path_dir + BACKGROUND_IMAGE_L).c_str());
+    }
 }
 
 void CSkinFile::LoadFromXml(const wstring& file_path)
@@ -104,17 +127,18 @@ void CSkinFile::LoadFromXml(const wstring& file_path)
     m_skin_info = SkinInfo();
     m_layout_info = LayoutInfo();
     m_preview_info = PreviewInfo();
+    std::map<std::string, std::wstring> display_text_map;  //显示项目的文本和xml节点的映射关系。key是xml节点，value是显示文本
 
     tinyxml2::XMLDocument doc;
     if (CTinyXml2Helper::LoadXmlFile(doc, file_path.c_str()))
     {
-        CTinyXml2Helper::IterateChildNode(doc.FirstChildElement(), [this](tinyxml2::XMLElement* child)
+        CTinyXml2Helper::IterateChildNode(doc.FirstChildElement(), [&](tinyxml2::XMLElement* child)
             {
                 string ele_name = CTinyXml2Helper::ElementName(child);
                 //读取皮肤信息
                 if (ele_name == "skin")
                 {
-                    CTinyXml2Helper::IterateChildNode(child, [this](tinyxml2::XMLElement* skin_item)
+                    CTinyXml2Helper::IterateChildNode(child, [&](tinyxml2::XMLElement* skin_item)
                         {
                             string skin_item_name = CTinyXml2Helper::ElementName(skin_item);
                             //文本颜色
@@ -159,18 +183,12 @@ void CSkinFile::LoadFromXml(const wstring& file_path)
                             }
                             else if (skin_item_name == "display_text")
                             {
-                                CTinyXml2Helper::IterateChildNode(skin_item, [this](tinyxml2::XMLElement* display_text_item)
+                                //这里先保存所有显示文本到display_text_map
+                                CTinyXml2Helper::IterateChildNode(skin_item, [&](tinyxml2::XMLElement* display_text_item)
                                     {
                                         string item_name = CTinyXml2Helper::ElementName(display_text_item);
                                         wstring item_text = CCommon::StrToUnicode(CTinyXml2Helper::ElementText(display_text_item), true);
-                                        for (auto display_item : AllDisplayItems)
-                                        {
-                                            if (item_name == CSkinFile::GetDisplayItemXmlNodeName(display_item))
-                                            {
-                                                m_skin_info.display_text.Get(display_item) = item_text;
-                                                break;
-                                            }
-                                        }
+                                        display_text_map[item_name] = item_text;
                                     });
                             }
                         });
@@ -220,6 +238,33 @@ void CSkinFile::LoadFromXml(const wstring& file_path)
                         });
                 }
             });
+    }
+
+    //载入显示文本
+    for (const auto& display_text_item : display_text_map)
+    {
+        std::string node_name = display_text_item.first;
+        std::wstring item_text = display_text_item.second;
+        //查找内建显示项目
+        for (auto display_item : AllDisplayItems)
+        {
+            if (node_name == CSkinFile::GetDisplayItemXmlNodeName(display_item))
+            {
+                m_skin_info.display_text.Get(display_item) = item_text;
+                break;
+            }
+        }
+        //查找插件项目
+        for (const auto& item : m_plugin_map)
+        {
+            if (node_name == item.first && !item.second.empty())
+            {
+                std::wstring plugin_id = CCommon::StrToUnicode(item.second.c_str(), true);
+                IPluginItem* plugin_item = theApp.m_plugins.GetItemById(plugin_id);
+                if (plugin_item != nullptr)
+                    m_skin_info.display_text.Get(plugin_item) = item_text;
+            }
+        }
     }
 
 }
@@ -311,6 +356,11 @@ void CSkinFile::LoadFromIni(const wstring& file_path)
 }
 
 
+void CSkinFile::SetAlpha(int alpha)
+{
+    m_alpha = alpha;
+}
+
 void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
 {
     CDrawCommon draw;
@@ -324,13 +374,22 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
     //绘制背景
     CRect rect_s(CPoint(m_preview_info.s_pos.x, m_preview_info.s_pos.y), CSize(m_layout_info.layout_s.width, m_layout_info.layout_s.height));
     CRect rect_l(CPoint(m_preview_info.l_pos.x, m_preview_info.l_pos.y), CSize(m_layout_info.layout_l.width, m_layout_info.layout_l.height));
-    if (m_background_s.IsNull())
-        draw.FillRect(rect_s, RGB(230, 230, 230));
+    if (IsPNG())    //png背景使用GDI+绘制
+    {
+        CDrawCommonEx gdiplus_drawer(pDC);
+        gdiplus_drawer.DrawImage(m_background_png_s, rect_s.TopLeft(), rect_s.Size(), IDrawCommon::StretchMode::STRETCH);
+        gdiplus_drawer.DrawImage(m_background_png_l, rect_l.TopLeft(), rect_l.Size(), IDrawCommon::StretchMode::STRETCH);
+    }
     else
-        draw.DrawBitmap(m_background_s, rect_s.TopLeft(), rect_s.Size());
-    if (m_background_l.IsNull())
-        draw.FillRect(rect_l, RGB(230, 230, 230));
-    draw.DrawBitmap(m_background_l, rect_l.TopLeft(), rect_l.Size());
+    {
+        if (m_background_s.IsNull())
+            draw.FillRect(rect_s, RGB(230, 230, 230));
+        else
+            draw.DrawBitmap(m_background_s, rect_s.TopLeft(), rect_s.Size());
+        if (m_background_l.IsNull())
+            draw.FillRect(rect_l, RGB(230, 230, 230));
+        draw.DrawBitmap(m_background_l, rect_l.TopLeft(), rect_l.Size());
+    }
 
     //获取每个项目显示的文本
     std::map<DisplayItem, DrawStr> map_str;
@@ -350,6 +409,9 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
             break;
         case TDI_TOTAL_SPEED:
             draw_str.value = _T("90 KB/s");
+            break;
+        case TDI_TODAY_TRAFFIC:
+            draw_str.value = _T("100 MB");
             break;
         case TDI_CPU:
             draw_str.value = _T("50 %");
@@ -463,16 +525,73 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
 void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
 {
     //绘制背景图
-    CImage& background_image{ show_more_info ? m_background_l : m_background_s };
     Layout& layout{ show_more_info ? m_layout_info.layout_l : m_layout_info.layout_s };
 
     CRect rect(CPoint(0, 0), CSize(layout.width, layout.height));
-    CDrawDoubleBuffer draw_double_buffer(pDC, rect);
-    CDrawCommon draw;
-    draw.Create(draw_double_buffer.GetMemDC(), nullptr);
 
-    draw.DrawBitmap(background_image, CPoint(0, 0), CSize(layout.width, layout.height));
+    //如果是PNG格式背景，使用UpdateLayeredWindow函数以支持透明背景，显示项目使用GDI+绘制
+    if (IsPNG())
+    {
+        HDC hdcMemory = CreateCompatibleDC(pDC->GetSafeHdc());
+        HBITMAP hBitMap = CreateCompatibleBitmap(pDC->GetSafeHdc(), rect.Width(), rect.Height());
+        SelectObject(hdcMemory, hBitMap);
 
+        BLENDFUNCTION bf{};
+        bf.BlendOp = AC_SRC_OVER;
+        bf.BlendFlags = 0;
+        bf.AlphaFormat = 1;
+        bf.SourceConstantAlpha = m_alpha; // 窗口透明度最大为255，最小为0
+
+        HWND hWnd = theApp.m_pMainWnd->GetSafeHwnd();
+        //绘制背景
+        CDrawCommonEx gdiplus_drawer;
+        gdiplus_drawer.Create(CDC::FromHandle(hdcMemory));
+        Gdiplus::Image* background_image{ show_more_info ? m_background_png_l : m_background_png_s };
+        gdiplus_drawer.DrawImage(background_image, CPoint(0, 0), rect.Size(), CDrawCommon::StretchMode::FILL);
+        
+        //绘制显示项目
+        DrawItemsInfo(gdiplus_drawer, layout, font);
+
+        //重新设置自绘插件区域的alpha值。
+        //插件自绘时可能会使用GDI绘制文本，由于使用了UpdateLayeredWindow函数，使用GDI的绘图函数绘制文本时会导致文本变得透明。
+        //这里遍历所有插件自绘区域，将alpha值为0的部分修正为正确的alpha值。
+        std::vector<CRect> rects;
+        for (const auto& plugin_item : theApp.m_plugins.GetPluginItems())
+        {
+            const auto& layout_item = layout.GetItem(plugin_item);
+            if (plugin_item->IsCustomDraw() && layout_item.show)
+            {
+                CRect rect(CPoint(layout_item.x, layout_item.y), CSize(layout_item.width, m_layout_info.text_height));
+                rects.push_back(rect);
+            }
+        }
+        DrawCommonHelper::FixBitmapTextAlpha(hBitMap, m_alpha, rects);
+
+        SIZE sizeWindow = rect.Size();
+        POINT ptSrc = { 0,0 };
+        ::UpdateLayeredWindow(hWnd, pDC->GetSafeHdc(), nullptr, &sizeWindow, hdcMemory, &ptSrc, 0, &bf, ULW_ALPHA);
+
+        gdiplus_drawer.GetGraphics()->ReleaseHDC(hdcMemory);
+        DeleteObject(hBitMap);
+        DeleteDC(hdcMemory);
+    }
+    //bmp格式背景，使用gdi绘制背景和显示项目
+    else
+    {
+        CDrawDoubleBuffer draw_double_buffer(pDC, rect);
+        CDrawCommon draw;
+        draw.Create(draw_double_buffer.GetMemDC(), nullptr);
+
+        CImage& background_image{ show_more_info ? m_background_l : m_background_s };
+        draw.DrawBitmap(background_image, CPoint(0, 0), CSize(layout.width, layout.height));
+
+        DrawItemsInfo(draw, layout, font);
+    }
+}
+
+
+void CSkinFile::DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font)
+{
     //获取每个项目显示的文本
     std::map<DisplayItem, DrawStr> map_str;
     if (!m_layout_info.no_label)
@@ -489,6 +608,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
         map_str[TDI_GPU_TEMP].label = theApp.m_main_wnd_data.disp_str.Get(TDI_GPU_TEMP).c_str();
         map_str[TDI_HDD_TEMP].label = theApp.m_main_wnd_data.disp_str.Get(TDI_HDD_TEMP).c_str();
         map_str[TDI_MAIN_BOARD_TEMP].label = theApp.m_main_wnd_data.disp_str.Get(TDI_MAIN_BOARD_TEMP).c_str();
+        map_str[TDI_TODAY_TRAFFIC].label = theApp.m_main_wnd_data.disp_str.Get(TDI_TODAY_TRAFFIC).c_str();
     }
 
     //上传/下载
@@ -512,7 +632,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
 
     //CPU/内存/显卡利用率
     map_str[TDI_CPU].value = CCommon::UsageToString(theApp.m_cpu_usage, theApp.m_main_wnd_data);
- 
+
     map_str[TDI_CPU_FREQ].value = CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_main_wnd_data);
     CString str_memory_value;
     if (theApp.m_main_wnd_data.memory_display == MemoryDisplay::MEMORY_USED)
@@ -527,13 +647,17 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
 
     //温度
     auto getTemperatureStr = [&](DisplayItem display_item, float temperature)
-    {
-        map_str[display_item].value = CCommon::TemperatureToString(temperature, theApp.m_main_wnd_data);
-    };
+        {
+            map_str[display_item].value = CCommon::TemperatureToString(temperature, theApp.m_main_wnd_data);
+        };
     getTemperatureStr(TDI_CPU_TEMP, theApp.m_cpu_temperature);
     getTemperatureStr(TDI_GPU_TEMP, theApp.m_gpu_temperature);
     getTemperatureStr(TDI_HDD_TEMP, theApp.m_hdd_temperature);
     getTemperatureStr(TDI_MAIN_BOARD_TEMP, theApp.m_main_board_temperature);
+
+    //总流量
+    CString str_traffic = CCommon::KBytesToString((theApp.m_today_up_traffic + theApp.m_today_down_traffic) / 1024u);
+    map_str[TDI_TODAY_TRAFFIC].value = str_traffic.GetString();
 
     //获取文本颜色
     std::map<CommonDisplayItem, COLORREF> text_colors{};
@@ -550,7 +674,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
     }
 
     //绘制文本
-    draw.SetFont(&font);
+    drawer.SetFont(&font);
 
     //绘制文本
     int index{};
@@ -566,7 +690,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
             COLORREF text_color = text_colors[iter->first];
 
             //绘制文本
-            DrawSkinText(draw, map_str[iter->first], rect, text_color, layout_item.align);
+            DrawSkinText(drawer, map_str[iter->first], rect, text_color, layout_item.align);
         }
         index++;
     }
@@ -593,8 +717,9 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
                     plugin->OnExtenedInfo(ITMPlugin::EI_VALUE_TEXT_COLOR, std::to_wstring(cl).c_str());
                     plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_TASKBAR_WND, L"0");
                 }
-                draw.GetDC()->SetTextColor(cl);
-                plugin_item->DrawItem(draw.GetDC()->GetSafeHdc(), layout_item.x, layout_item.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
+                drawer.GetDC()->SetTextColor(cl);
+                drawer.GetDC()->SetBkMode(TRANSPARENT);
+                plugin_item->DrawItem(drawer.GetDC()->GetSafeHdc(), layout_item.x, layout_item.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
             }
             else
             {
@@ -605,11 +730,12 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
                 DrawStr draw_str;
                 draw_str.label = theApp.m_main_wnd_data.disp_str.Get(plugin_item).c_str();
                 draw_str.value = plugin_item->GetItemValueText();
-                DrawSkinText(draw, draw_str, rect, cl, layout_item.align);
+                DrawSkinText(drawer, draw_str, rect, cl, layout_item.align);
             }
         }
     }
 }
+
 
 string CSkinFile::GetDisplayItemXmlNodeName(DisplayItem display_item)
 {
@@ -623,6 +749,9 @@ string CSkinFile::GetDisplayItemXmlNodeName(DisplayItem display_item)
         break;
     case TDI_TOTAL_SPEED:
         return "total_speed";
+        break;
+    case TDI_TODAY_TRAFFIC:
+        return "today_traffic";
         break;
     case TDI_CPU:
         return "cpu";

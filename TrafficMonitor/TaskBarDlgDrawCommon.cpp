@@ -198,13 +198,20 @@ bool CTaskBarDlgDrawCommonSupport::IsAllDevicesRecreatedByThisFunction()
     auto hr = p_d3d10_device1->GetDeviceRemovedReason();
     if (hr != S_OK)
     {
-        CCommon::WriteLog(
-            "D3D10.1 device is invalid. All devices will be recreated.",
-            theApp.m_log_path.c_str());
+        CCommon::WriteLog("Notice: D3D10.1 device is invalid. All devices will be recreated. This message is sent by "
+                          "the function on the next line:",
+                          theApp.m_log_path.c_str());
+        CCommon::WriteLog(__FUNCSIG__, theApp.m_log_path.c_str());
         RecreateAll();
         return true;
     }
     return false;
+}
+
+void CTaskBarDlgDrawCommonSupport::InternalRecreateD3D10Device1()
+{
+    auto &&default_adapter1 = CD3D10Support1::GetDeviceList(true).front();
+    m_d3d10_device1.Recreate(default_adapter1);
 }
 
 CTaskBarDlgDrawCommonSupport::CTaskBarDlgDrawCommonSupport()
@@ -259,7 +266,10 @@ auto CTaskBarDlgDrawCommonSupport::GetPsDotLikeStyle() noexcept
 
 void CTaskBarDlgDrawCommonSupport::RecreateAll()
 {
-    RecreateD3D10Device1();
+    CCommon::WriteLog("Notice: All devices will be recreated. This message is sent by the function on the next line:",
+                      theApp.m_log_path.c_str());
+    CCommon::WriteLog(__FUNCSIG__, theApp.m_log_path.c_str());
+    InternalRecreateD3D10Device1();
     RecreateD2D1Device();
     RecreateDCompositionDevice();
 }
@@ -269,11 +279,12 @@ void CTaskBarDlgDrawCommonSupport::RecreateD3D10Device1(const HRESULT recreate_r
     if (recreate_reason != S_OK)
     {
         DrawCommonHelper::LogDeviceRecreateReason(recreate_reason);
-        CCommon::WriteLog("Notice: The D3D10.1 device will be recreated.", theApp.m_log_path.c_str());
+        CCommon::WriteLog("Notice: D3D10.1 device is invalid. All devices will be recreated. This message is sent by "
+                          "the function on the next line:",
+                          theApp.m_log_path.c_str());
+        CCommon::WriteLog(__FUNCSIG__, theApp.m_log_path.c_str());
     }
-    auto&& default_adapter1 =
-        CD3D10Support1::GetDeviceList(true).front();
-    m_d3d10_device1.Recreate(default_adapter1);
+    RecreateAll();
 }
 
 void CTaskBarDlgDrawCommonSupport::RecreateD2D1Device(const HRESULT recreate_reason)
@@ -281,7 +292,10 @@ void CTaskBarDlgDrawCommonSupport::RecreateD2D1Device(const HRESULT recreate_rea
     if (recreate_reason != S_OK)
     {
         DrawCommonHelper::LogDeviceRecreateReason(recreate_reason);
-        CCommon::WriteLog("Notice: The D2D1 device will be recreated.", theApp.m_log_path.c_str());
+        CCommon::WriteLog(
+            "Notice: The D2D1 device will be recreated. This message is sent by the function on the next line:",
+            theApp.m_log_path.c_str());
+        CCommon::WriteLog(__FUNCSIG__, theApp.m_log_path.c_str());
     }
     if (IsAllDevicesRecreatedByThisFunction())
     {
@@ -299,7 +313,9 @@ void CTaskBarDlgDrawCommonSupport::RecreateDCompositionDevice(const HRESULT recr
     if (recreate_reason != S_OK)
     {
         DrawCommonHelper::LogDeviceRecreateReason(recreate_reason);
-        CCommon::WriteLog("Notice: The DirectComposition device will be recreated.", theApp.m_log_path.c_str());
+        CCommon::WriteLog("Notice: The DirectComposition device will be recreated. This message is sent by the function on the next line:",
+            theApp.m_log_path.c_str());
+        CCommon::WriteLog(__FUNCSIG__, theApp.m_log_path.c_str());
     }
     if (IsAllDevicesRecreatedByThisFunction())
     {
@@ -1785,11 +1801,14 @@ void CTaskBarDlgDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLOR
     }
 
     m_p_d2d1_device_context_support->SetForeColor(color, alpha);
+    D2D1_DRAW_TEXT_OPTIONS options = D2D1_DRAW_TEXT_OPTIONS_NO_SNAP | D2D1_DRAW_TEXT_OPTIONS_CLIP; // 不允许文字超出边界
+    if (theApp.m_taskbar_data.enable_colorful_emoji)
+        options |= D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT;
     m_p_device_context->DrawTextLayout(
         {layout_rect.left, layout_rect.top},
         p_text_layout.Get(),
         m_p_d2d1_device_context_support->GetRawForeSolidColorBruch(),
-        D2D1_DRAW_TEXT_OPTIONS_NO_SNAP | D2D1_DRAW_TEXT_OPTIONS_CLIP); // 不允许文字超出边界
+        options);
     // 恢复状态
     p_text_format->SetParagraphAlignment(old_vertical_align);
     p_text_format->SetTextAlignment(old_horizontal_align);

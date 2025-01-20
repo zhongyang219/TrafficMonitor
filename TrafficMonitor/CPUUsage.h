@@ -1,33 +1,41 @@
 #pragma once
 #include <Pdh.h>
 #include <PdhMsg.h>
-#pragma comment(lib,"pdh.lib")
 
 class CCPUUsage
 {
 public:
-	CCPUUsage()
-	{}
+    CCPUUsage()
+    {}
 
-	~CCPUUsage()
-	{}
+    ~CCPUUsage()
+    {}
 
-	void SetUseCPUTimes(bool use_get_system_times);		//设置获取CPU利用率的方式，是通过GetSystemTimes还是Pdh
-	int GetCPUUsage();
-
-private:
-	int GetCPUUsageByGetSystemTimes();
-	int GetCPUUsageByPdh();
+    void SetUseCPUTimes(bool use_get_system_times);		//设置获取CPU利用率的方式，是通过GetSystemTimes还是Pdh
+    int GetCPUUsage();
 
 private:
-	bool m_use_get_system_times{ true };		//是否使用GetSysTime这个API来获取CPU利用率
+    int GetCPUUsageByGetSystemTimes();
+    int GetCPUUsageByPdh();
 
-	PDH_RAW_COUNTER m_last_rawData;//保存计算CPU使用率的上一次数据
-	bool m_first_get_CPU_utility{ true };
+private:
+    bool m_use_get_system_times{ true };		//是否使用GetSysTime这个API来获取CPU利用率
 
-	FILETIME m_preidleTime{};
-	FILETIME m_prekernelTime{};
-	FILETIME m_preuserTime{};
+    PDH_RAW_COUNTER m_last_rawData{};//保存计算CPU使用率的上一次数据
+    bool m_first_get_CPU_utility{ true };
+
+    FILETIME m_preidleTime{};
+    FILETIME m_prekernelTime{};
+    FILETIME m_preuserTime{};
 
 };
 
+class CCpuFreq
+{
+public:
+    CCpuFreq();
+    float GetCpuFreq();
+
+private:
+    float max_cpu_freq = 0;
+};

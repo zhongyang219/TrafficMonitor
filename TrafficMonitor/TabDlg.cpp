@@ -184,15 +184,8 @@ BOOL CTabDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	if (m_scroll_enable)
 	{
-		int step = theApp.DPI(64);
-		if (zDelta > 0)
-		{
-			ScrollWindowSimple(step);
-		}
-		if (zDelta < 0)
-		{
-			ScrollWindowSimple(-step);
-		}
+        int step = theApp.DPI(64) * zDelta / 120;
+        ScrollWindowSimple(step);
         SCROLLINFO scrollinfo;
         GetScrollInfo(SB_VERT, &scrollinfo, SIF_ALL);
         m_last_pos = scrollinfo.nPos;

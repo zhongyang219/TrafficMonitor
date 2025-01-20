@@ -1,6 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug (lite)|ARM64EC">
+      <Configuration>Debug (lite)</Configuration>
+      <Platform>ARM64EC</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug (lite)|Win32">
       <Configuration>Debug (lite)</Configuration>
       <Platform>Win32</Platform>
@@ -9,9 +13,17 @@
       <Configuration>Debug (lite)</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|ARM64EC">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM64EC</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release (lite)|ARM64EC">
+      <Configuration>Release (lite)</Configuration>
+      <Platform>ARM64EC</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release (lite)|Win32">
       <Configuration>Release (lite)</Configuration>
@@ -20,6 +32,10 @@
     <ProjectConfiguration Include="Release (lite)|x64">
       <Configuration>Release (lite)</Configuration>
       <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64EC">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64EC</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
@@ -78,7 +94,21 @@
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64EC'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|ARM64EC'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -93,7 +123,23 @@
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64EC'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release (lite)|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release (lite)|ARM64EC'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -121,13 +167,25 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64EC'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|ARM64EC'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64EC'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release (lite)|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release (lite)|ARM64EC'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -152,12 +210,26 @@
     <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64EC'">
+    <LinkIncremental>true</LinkIncremental>
+    <ExcludePath />
+    <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
+    <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(SolutionDir)Bin\x64\$(Configuration)\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|x64'">
     <LinkIncremental>true</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|ARM64EC'">
+    <LinkIncremental>true</LinkIncremental>
+    <ExcludePath />
+    <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
+    <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(SolutionDir)Bin\x64\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -180,12 +252,26 @@
     <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64EC'">
+    <LinkIncremental>false</LinkIncremental>
+    <ExcludePath />
+    <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
+    <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(SolutionDir)Bin\x64\$(Configuration)\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release (lite)|x64'">
     <LinkIncremental>false</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release (lite)|ARM64EC'">
+    <LinkIncremental>false</LinkIncremental>
+    <ExcludePath />
+    <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
+    <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(SolutionDir)Bin\x64\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -196,11 +282,13 @@
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>false</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -234,10 +322,12 @@
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>false</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -270,11 +360,52 @@
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0804</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <PreBuildEvent>
+      <Command>print_compile_time.bat</Command>
+    </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64EC'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -307,10 +438,50 @@
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions);WITHOUT_TEMPERATURE</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0804</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <PreBuildEvent>
+      <Command>print_compile_time.bat</Command>
+    </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|ARM64EC'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions);WITHOUT_TEMPERATURE</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -346,13 +517,15 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>$(ExternalCompilerOptions) %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -388,12 +561,14 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>$(ExternalCompilerOptions) %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -428,13 +603,58 @@
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0804</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <PreBuildEvent>
+      <Command>print_compile_time.bat</Command>
+    </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64EC'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -469,12 +689,56 @@
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions);WITHOUT_TEMPERATURE</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0804</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <PreBuildEvent>
+      <Command>print_compile_time.bat</Command>
+    </PreBuildEvent>
+    <FxCompile>
+      <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </PreLinkEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release (lite)|ARM64EC'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions);WITHOUT_TEMPERATURE</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -530,6 +794,7 @@
     <ClInclude Include="DrawCommonFactory.h" />
     <ClInclude Include="DrawTextManager.h" />
     <ClInclude Include="Dxgi1Support2.h" />
+    <ClInclude Include="FileDialogEx.h" />
     <ClInclude Include="FilePathHelper.h" />
     <ClInclude Include="HighResolutionTimer.h" />
     <ClInclude Include="HistoryTrafficCalendarDlg.h" />
@@ -566,6 +831,7 @@
     <ClInclude Include="SelectConnectionsDlg.h" />
     <ClInclude Include="SetItemOrderDlg.h" />
     <ClInclude Include="SimpleXML.h" />
+    <ClInclude Include="SkinAutoAdaptSettingDlg.h" />
     <ClInclude Include="SkinDlg.h" />
     <ClInclude Include="SkinFile.h" />
     <ClInclude Include="SpinEdit.h" />
@@ -588,6 +854,7 @@
     <ClInclude Include="UpdateHelper.h" />
     <ClInclude Include="WIC.h" />
     <ClInclude Include="WindowsSettingHelper.h" />
+    <ClInclude Include="WindowsWebExperienceDetector.h" />
     <ClInclude Include="WinVersionHelper.h" />
   </ItemGroup>
   <ItemGroup>
@@ -615,6 +882,7 @@
     <ClCompile Include="DrawCommonFactory.cpp" />
     <ClCompile Include="DrawTextManager.cpp" />
     <ClCompile Include="Dxgi1Support2.cpp" />
+    <ClCompile Include="FileDialogEx.cpp" />
     <ClCompile Include="FilePathHelper.cpp" />
     <ClCompile Include="HistoryTrafficCalendarDlg.cpp" />
     <ClCompile Include="HistoryTrafficFile.cpp" />
@@ -645,6 +913,7 @@
     <ClCompile Include="SelectConnectionsDlg.cpp" />
     <ClCompile Include="SetItemOrderDlg.cpp" />
     <ClCompile Include="SimpleXML.cpp" />
+    <ClCompile Include="SkinAutoAdaptSettingDlg.cpp" />
     <ClCompile Include="SkinDlg.cpp" />
     <ClCompile Include="SkinFile.cpp" />
     <ClCompile Include="SpinEdit.cpp" />
@@ -653,11 +922,15 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64EC'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|ARM64EC'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release (lite)|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64EC'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release (lite)|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release (lite)|ARM64EC'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SupportedRenderEnums.cpp" />
     <ClCompile Include="TabDlg.cpp" />
@@ -675,15 +948,20 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release (lite)|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64EC'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|ARM64EC'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64EC'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release (lite)|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release (lite)|ARM64EC'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TrafficMonitor.cpp" />
     <ClCompile Include="TrafficMonitorDlg.cpp" />
     <ClCompile Include="UpdateHelper.cpp" />
     <ClCompile Include="WIC.cpp" />
     <ClCompile Include="WindowsSettingHelper.cpp" />
+    <ClCompile Include="WindowsWebExperienceDetector.cpp" />
     <ClCompile Include="WinVersionHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -715,6 +993,7 @@
     <Image Include="res\menu_icon\notify.ico" />
     <Image Include="res\menu_icon\pin.ico" />
     <Image Include="res\menu_icon\plugins.ico" />
+    <Image Include="res\menu_icon\plugin_disabled.ico" />
     <Image Include="res\menu_icon\setting.ico" />
     <Image Include="res\menu_icon\skn.ico" />
     <Image Include="res\menu_icon\statistics.ico" />

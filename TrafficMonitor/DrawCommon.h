@@ -15,7 +15,7 @@ public:
     void Create(CDC* pDC, CWnd* pMainWnd);
     void SetFont(CFont* pfont) override;		//设置绘制文本的字体
     void SetDC(CDC* pDC);		//设置绘图的DC
-    CDC* GetDC() { return m_pDC; }
+    virtual CDC* GetDC() override { return m_pDC; }
     void SetBackColor(COLORREF back_color, BYTE alpha = 255) override { m_back_color = back_color; }
     void SetTextColor(const COLORREF text_color, BYTE alpha = 255) override
     {
@@ -48,6 +48,8 @@ public:
     static void GetRegionFromImage(CRgn& rgn, CBitmap& cBitmap, int threshold);
 
     void DrawLine(CPoint start_point, int height, COLORREF color, BYTE alpha = 255) override; //使用当前画笔画线
+
+    virtual int GetTextWidth(LPCTSTR lpszString) override;
 
 private:
     CDC* m_pDC{};		//用于绘图的CDC类的指针
@@ -101,4 +103,15 @@ private:
 namespace DrawCommonHelper
 {
     UINT ProccessTextFormat(CRect rect, CSize text_length, Alignment align, bool multi_line) noexcept;
+
+    //根据图片拉伸模式，计算绘制图片的实际位置
+    //image_size[int]：图片的原始大小
+    //start_point[int][out]：绘制区域的起始位置
+    //size[int][out]：绘制区域的大小
+    //stretch_mode[int]：拉伸模式
+    void ImageDrawAreaConvert(CSize image_size, CPoint& start_point, CSize& size, IDrawCommon::StretchMode stretch_mode);
+
+    //修正位图中文本部分的Alpha通道
+    //使用了UpdateLayeredWindow后，使用GDI绘制的文本也会变得透明，此函数会遍历bitmap中alpha值为0的部分，将其修正为正确的alpha值
+    void FixBitmapTextAlpha(HBITMAP hBitmap, BYTE alpha, const std::vector<CRect>& rects);
 };

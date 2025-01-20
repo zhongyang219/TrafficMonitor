@@ -71,57 +71,10 @@ void CDrawCommon::DrawBitmap(CBitmap& bitmap, CPoint start_point, CSize size, St
     // 以下两行避免图片失真
     m_pDC->SetStretchBltMode(HALFTONE);
     m_pDC->SetBrushOrg(0, 0);
-    CSize draw_size;
-    if (size.cx == 0 || size.cy == 0) //如果指定的size为0，则使用位图的实际大小绘制
-    {
-        draw_size = CSize(bm.bmWidth, bm.bmHeight);
-    }
-    else
-    {
-        draw_size = size;
-        if (stretch_mode == StretchMode::FILL)
-        {
-            SetDrawRect(CRect(start_point, draw_size));
-            float w_h_radio, w_h_radio_draw; //图像的宽高比、绘制大小的宽高比
-            w_h_radio = static_cast<float>(bm.bmWidth) / bm.bmHeight;
-            w_h_radio_draw = static_cast<float>(size.cx) / size.cy;
-            if (w_h_radio > w_h_radio_draw) //如果图像的宽高比大于绘制区域的宽高比，则需要裁剪两边的图像
-            {
-                int image_width; //按比例缩放后的宽度
-                image_width = bm.bmWidth * draw_size.cy / bm.bmHeight;
-                start_point.x -= ((image_width - draw_size.cx) / 2);
-                draw_size.cx = image_width;
-            }
-            else
-            {
-                int image_height; //按比例缩放后的高度
-                image_height = bm.bmHeight * draw_size.cx / bm.bmWidth;
-                start_point.y -= ((image_height - draw_size.cy) / 2);
-                draw_size.cy = image_height;
-            }
-        }
-        else if (stretch_mode == StretchMode::FIT)
-        {
-            draw_size = CSize(bm.bmWidth, bm.bmHeight);
-            float w_h_radio, w_h_radio_draw; //图像的宽高比、绘制大小的宽高比
-            w_h_radio = static_cast<float>(bm.bmWidth) / bm.bmHeight;
-            w_h_radio_draw = static_cast<float>(size.cx) / size.cy;
-            if (w_h_radio > w_h_radio_draw) //如果图像的宽高比大于绘制区域的宽高比
-            {
-                draw_size.cy = draw_size.cy * size.cx / draw_size.cx;
-                draw_size.cx = size.cx;
-                start_point.y += ((size.cy - draw_size.cy) / 2);
-            }
-            else
-            {
-                draw_size.cx = draw_size.cx * size.cy / draw_size.cy;
-                draw_size.cy = size.cy;
-                start_point.x += ((size.cx - draw_size.cx) / 2);
-            }
-        }
-    }
 
-    m_pDC->StretchBlt(start_point.x, start_point.y, draw_size.cx, draw_size.cy, &memDC, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
+    DrawCommonHelper::ImageDrawAreaConvert(CSize(bm.bmWidth, bm.bmHeight), start_point, size, stretch_mode);
+
+    m_pDC->StretchBlt(start_point.x, start_point.y, size.cx, size.cy, &memDC, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
     memDC.DeleteDC();
 }
 
@@ -262,6 +215,11 @@ void CDrawCommon::DrawLine(CPoint start_point, int height, COLORREF color, BYTE 
     aPen.DeleteObject();
 }
 
+int CDrawCommon::GetTextWidth(LPCTSTR lpszString)
+{
+    return m_pDC->GetTextExtent(lpszString).cx;
+}
+
 UINT DrawCommonHelper::ProccessTextFormat(CRect rect, CSize text_length, Alignment align, bool multi_line) noexcept
 {
     UINT result; // CDC::DrawText()函数的文本格式
@@ -288,4 +246,109 @@ UINT DrawCommonHelper::ProccessTextFormat(CRect rect, CSize text_length, Alignme
         }
     }
     return result;
+}
+
+void DrawCommonHelper::ImageDrawAreaConvert(CSize image_size, CPoint& start_point, CSize& size, IDrawCommon::StretchMode stretch_mode)
+{
+    if (size.cx == 0 || size.cy == 0)       //如果指定的size为0，则使用位图的实际大小绘制
+    {
+        size = CSize(image_size.cx, image_size.cy);
+    }
+    else
+    {
+        if (stretch_mode == IDrawCommon::StretchMode::FILL)
+        {
+            float w_h_ratio, w_h_ratio_draw;        //图像的宽高比、绘制大小的宽高比
+            w_h_ratio = static_cast<float>(image_size.cx) / image_size.cy;
+            w_h_ratio_draw = static_cast<float>(size.cx) / size.cy;
+            if (w_h_ratio > w_h_ratio_draw)     //如果图像的宽高比大于绘制区域的宽高比，则需要裁剪两边的图像
+            {
+                int image_width;        //按比例缩放后的宽度
+                image_width = image_size.cx * size.cy / image_size.cy;
+                start_point.x -= ((image_width - size.cx) / 2);
+                size.cx = image_width;
+            }
+            else
+            {
+                int image_height;       //按比例缩放后的高度
+                image_height = image_size.cy * size.cx / image_size.cx;
+                start_point.y -= ((image_height - size.cy) / 2);
+                size.cy = image_height;
+            }
+        }
+        else if (stretch_mode == IDrawCommon::StretchMode::FIT)
+        {
+            CSize draw_size = image_size;
+            float w_h_ratio, w_h_ratio_draw;        //图像的宽高比、绘制大小的宽高比
+            w_h_ratio = static_cast<float>(image_size.cx) / image_size.cy;
+            w_h_ratio_draw = static_cast<float>(size.cx) / size.cy;
+            if (w_h_ratio > w_h_ratio_draw)     //如果图像的宽高比大于绘制区域的宽高比
+            {
+                draw_size.cy = draw_size.cy * size.cx / draw_size.cx;
+                draw_size.cx = size.cx;
+                start_point.y += ((size.cy - draw_size.cy) / 2);
+            }
+            else
+            {
+                draw_size.cx = draw_size.cx * size.cy / draw_size.cy;
+                draw_size.cy = size.cy;
+                start_point.x += ((size.cx - draw_size.cx) / 2);
+            }
+            size = draw_size;
+        }
+    }
+}
+
+void DrawCommonHelper::FixBitmapTextAlpha(HBITMAP hBitmap, BYTE alpha, const std::vector<CRect>& rects)
+{
+    if (rects.empty())
+        return;
+    BITMAP bm;
+    GetObject(hBitmap, sizeof(BITMAP), &bm);
+
+    int width = bm.bmWidth;
+    int height = bm.bmHeight;
+
+    // 获取位图的像素数据
+    BITMAPINFO bmpInfo = { 0 };
+    bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmpInfo.bmiHeader.biWidth = width;
+    bmpInfo.bmiHeader.biHeight = -height; // top-down DIB
+    bmpInfo.bmiHeader.biPlanes = 1;
+    bmpInfo.bmiHeader.biBitCount = 32;
+    bmpInfo.bmiHeader.biCompression = BI_RGB;
+
+    HDC hdc = CreateCompatibleDC(NULL);
+    SelectObject(hdc, hBitmap);
+
+    // 分配内存存储位图像素
+    RGBQUAD* pPixels = new RGBQUAD[width * height];
+    GetDIBits(hdc, hBitmap, 0, height, pPixels, &bmpInfo, DIB_RGB_COLORS);
+
+    // 遍历所有矩形区域
+    for (const auto& rect : rects)
+    {
+        int startX = max(0, rect.left);
+        int startY = max(0, rect.top);
+        int endX = min(width, rect.right);
+        int endY = min(height, rect.bottom);
+
+        // 遍历当前矩形内的像素
+        for (int y = startY; y < endY; ++y)
+        {
+            for (int x = startX; x < endX; ++x)
+            {
+                int index = y * width + x;
+                //如果检测到alpha值为0，则可能是被错误地设置成透明的文本部分，将其修正为正确的alpha值
+                if (pPixels[index].rgbReserved == 0)
+                    pPixels[index].rgbReserved = alpha; // 设置Alpha通道
+            }
+        }
+    }
+
+    // 将修改后的像素数据写回位图
+    SetDIBits(hdc, hBitmap, 0, height, pPixels, &bmpInfo, DIB_RGB_COLORS);
+
+    delete[] pPixels;
+    DeleteDC(hdc);
 }

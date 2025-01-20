@@ -223,6 +223,18 @@
     <Filter Include="源文件和头文件\公共的类\RenderAPISupport\DxgiSupport2">
       <UniqueIdentifier>{059ab3fb-f8b3-4cae-b5d3-72bd857e5197}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\WindowsWebExperienceDetector">
+      <UniqueIdentifier>{4f233c31-4fef-48c1-8176-845ddd21debb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件和头文件\公共的类\FileDialogEx">
+      <UniqueIdentifier>{0745b192-f366-4a31-b238-d372d5b62492}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件\icons">
+      <UniqueIdentifier>{830bdf63-7703-45a3-9e5d-a87cc2f2bb70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件\bitmaps">
+      <UniqueIdentifier>{322d1b74-5d71-43bd-ae50-b33f24b1b31c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -484,6 +496,15 @@
     <ClInclude Include="SupportedRenderEnums.h">
       <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
     </ClInclude>
+    <ClInclude Include="WindowsWebExperienceDetector.h">
+      <Filter>源文件和头文件\公共的类\WindowsWebExperienceDetector</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinAutoAdaptSettingDlg.h">
+      <Filter>源文件和头文件\对话框类\SkinDlg</Filter>
+    </ClInclude>
+    <ClInclude Include="FileDialogEx.h">
+      <Filter>源文件和头文件\头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -714,6 +735,15 @@
     <ClCompile Include="SupportedRenderEnums.cpp">
       <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
     </ClCompile>
+    <ClCompile Include="WindowsWebExperienceDetector.cpp">
+      <Filter>源文件和头文件\公共的类\WindowsWebExperienceDetector</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinAutoAdaptSettingDlg.cpp">
+      <Filter>源文件和头文件\对话框类\SkinDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="FileDialogEx.cpp">
+      <Filter>源文件和头文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TrafficMonitor.rc">
@@ -731,101 +761,104 @@
     <None Include="..\LICENSE_CN" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\TrafficMonitor.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\about_background.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\donate.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\notifyicon.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\about_background_hd.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\notifyicon2.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\notifyicon3.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\notify_preview.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\notifyicon4.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\notify_preview_light.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\donate_wechart.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\bitmap3.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\menu_icon\exit.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\menu_icon\help.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\menu_icon\info.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\menu_icon\lock.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\menu_icon\setting.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\menu_icon\statistics.ico">
-      <Filter>资源文件</Filter>
-    </Image>
     <Image Include="res\menu_icon\close.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\menu_icon\pin.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\menu_icon\skn.ico">
-      <Filter>资源文件</Filter>
+      <Filter>资源文件\icons</Filter>
     </Image>
     <Image Include="res\menu_icon\connection.ico">
-      <Filter>资源文件</Filter>
+      <Filter>资源文件\icons</Filter>
     </Image>
-    <Image Include="res\menu_icon\mouse.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\menu_icon\main_window.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\menu_icon\taskbar_window.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\menu_icon\notify.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\menu_icon\more.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\menu_icon\item.ico">
-      <Filter>资源文件</Filter>
+    <Image Include="res\menu_icon\exit.ico">
+      <Filter>资源文件\icons</Filter>
     </Image>
     <Image Include="res\menu_icon\function.ico">
-      <Filter>资源文件</Filter>
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\menu_icon\help.ico">
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\menu_icon\info.ico">
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\menu_icon\item.ico">
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\menu_icon\lock.ico">
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\menu_icon\main_window.ico">
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\menu_icon\more.ico">
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\menu_icon\mouse.ico">
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\menu_icon\notify.ico">
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\notifyicon.ico">
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\notifyicon2.ico">
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\notifyicon3.ico">
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\notifyicon4.ico">
+      <Filter>资源文件\icons</Filter>
     </Image>
     <Image Include="res\notifyicon5.ico">
-      <Filter>资源文件</Filter>
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\menu_icon\pin.ico">
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\menu_icon\plugin_disabled.ico">
+      <Filter>资源文件\icons</Filter>
     </Image>
     <Image Include="res\menu_icon\plugins.ico">
-      <Filter>资源文件</Filter>
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\menu_icon\setting.ico">
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\menu_icon\skn.ico">
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\menu_icon\statistics.ico">
+      <Filter>资源文件\icons</Filter>
     </Image>
     <Image Include="res\menu_icon\task_manager.ico">
-      <Filter>资源文件</Filter>
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\menu_icon\taskbar_window.ico">
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\TrafficMonitor.ico">
+      <Filter>资源文件\icons</Filter>
+    </Image>
+    <Image Include="res\about_background.bmp">
+      <Filter>资源文件\bitmaps</Filter>
+    </Image>
+    <Image Include="res\about_background_hd.bmp">
+      <Filter>资源文件\bitmaps</Filter>
+    </Image>
+    <Image Include="res\bitmap3.bmp">
+      <Filter>资源文件\bitmaps</Filter>
+    </Image>
+    <Image Include="res\donate.bmp">
+      <Filter>资源文件\bitmaps</Filter>
+    </Image>
+    <Image Include="res\donate_wechart.bmp">
+      <Filter>资源文件\bitmaps</Filter>
+    </Image>
+    <Image Include="res\notify_preview.bmp">
+      <Filter>资源文件\bitmaps</Filter>
+    </Image>
+    <Image Include="res\notify_preview_light.bmp">
+      <Filter>资源文件\bitmaps</Filter>
     </Image>
   </ItemGroup>
 </Project>

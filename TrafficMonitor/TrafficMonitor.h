@@ -157,7 +157,8 @@ public:
     void SendSettingsToPlugin();    //向所有插件发送当前的选项设置
 
     //更新插件子菜单
-    static void UpdatePluginMenu(CMenu* pMenu, ITMPlugin* plugin);
+    //plugin_cmd_start_index: 插件命令在菜单中的起始位置
+    static void UpdatePluginMenu(CMenu* pMenu, ITMPlugin* plugin, int plugin_cmd_start_index);
 
 private:
     //int m_no_multistart_warning_time{};       //用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示
@@ -168,6 +169,8 @@ private:
     bool m_checking_update{ false };        //是否正在检查更新
 
     std::map<UINT, HICON> m_menu_icons;      //菜单图标资源。key是图标资源的ID，vlaue是图标的句柄
+
+    ULONG_PTR m_gdiplusToken{};
 
 // 重写
 public:

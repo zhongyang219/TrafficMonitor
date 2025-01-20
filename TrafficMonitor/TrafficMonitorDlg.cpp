@@ -195,17 +195,17 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
                     CCommon::KBytesToString(theApp.m_total_memory));
         tip_info += temp;
     }
+    if (!skin_layout.GetItem(TDI_CPU_FREQ).show && theApp.m_cpu_freq >= 0)
+    {
+        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_FREQ), CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_main_wnd_data));
+        tip_info += temp;
+    }
 #ifndef WITHOUT_TEMPERATURE
     if (IsTemperatureNeeded())
     {
         if (theApp.m_general_data.IsHardwareEnable(HI_GPU) && !skin_layout.GetItem(TDI_GPU_USAGE).show && theApp.m_gpu_usage >= 0)
         {
             temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
-            tip_info += temp;
-        }
-        if (theApp.m_general_data.IsHardwareEnable(HI_GPU) && !skin_layout.GetItem(TDI_CPU_FREQ).show && theApp.m_cpu_freq >= 0)
-        {
-            temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_CPU_FREQ), theApp.m_cpu_freq);
             tip_info += temp;
         }
         if (theApp.m_general_data.IsHardwareEnable(HI_CPU) && !skin_layout.GetItem(TDI_CPU_TEMP).show && theApp.m_cpu_temperature > 0)
@@ -243,14 +243,20 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 
 void CTrafficMonitorDlg::SetTransparency()
 {
-    SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
-    SetLayeredWindowAttributes(0, theApp.m_cfg_data.m_transparency * 255 / 100, LWA_ALPHA);  //透明度取值范围为0~255
+    SetTransparency(theApp.m_cfg_data.m_transparency);
 }
 
 void CTrafficMonitorDlg::SetTransparency(int transparency)
 {
     SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
-    SetLayeredWindowAttributes(0, transparency * 255 / 100, LWA_ALPHA);  //透明度取值范围为0~255
+    if (m_skin.IsPNG())
+    {
+        m_skin.SetAlpha(transparency * 255 / 100);
+    }
+    else
+    {
+        SetLayeredWindowAttributes(0, transparency * 255 / 100, LWA_ALPHA);  //透明度取值范围为0~255
+    }
 }
 
 void CTrafficMonitorDlg::SetAlwaysOnTop()
@@ -659,7 +665,6 @@ void CTrafficMonitorDlg::ShowNotifyTip(const wchar_t* title, const wchar_t* mess
     {
         //添加通知栏图标
         AddNotifyIcon();
-        theApp.m_general_data.show_notify_icon = true;
     }
     //显示通知提示
     m_ntIcon.uFlags |= NIF_INFO;
@@ -669,6 +674,14 @@ void CTrafficMonitorDlg::ShowNotifyTip(const wchar_t* title, const wchar_t* mess
     CCommon::WStringCopy(m_ntIcon.szInfoTitle, 64, title);
     ::Shell_NotifyIcon(NIM_MODIFY, &m_ntIcon);
     m_ntIcon.uFlags &= ~NIF_INFO;
+
+    //如果不显示通知区域图标，则在弹出通知的一段时间后删除通知区图标
+    if (!theApp.m_general_data.show_notify_icon)
+    {
+        //延迟一定时间后删除通知区图标
+        KillTimer(DELETE_NOTIFY_ICON_TIMER);
+        SetTimer(DELETE_NOTIFY_ICON_TIMER, 8000, NULL);
+    }
 }
 
 void CTrafficMonitorDlg::UpdateNotifyIconTip()
@@ -818,7 +831,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     }
 
     //设置获取CPU利用率的方式
-    m_cpu_usage.SetUseCPUTimes(theApp.m_general_data.m_get_cpu_usage_by_cpu_times);
+    m_cpu_usage_helper.SetUseCPUTimes(theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_PDH);
 
 #ifndef WITHOUT_TEMPERATURE
     if (is_hardware_monitor_item_changed)
@@ -992,6 +1005,69 @@ void CTrafficMonitorDlg::CheckClickedItem(CPoint point)
     }
 }
 
+int CTrafficMonitorDlg::FindSkinIndex(const wstring& skin_name)
+{
+    int skin_selected = 0;
+    for (size_t i{}; i < m_skins.size(); i++)
+    {
+        if (m_skins[i] == skin_name)
+            skin_selected = static_cast<int>(i);
+    }
+    return skin_selected;
+}
+
+void CTrafficMonitorDlg::ApplySkin(int skin_index)
+{
+    if (skin_index < 0 || skin_index >= static_cast<int>(m_skins.size()))
+        return;
+    m_skin_selected = skin_index;
+    theApp.m_cfg_data.m_skin_name = m_skins[m_skin_selected];
+    //获取皮肤布局
+    LoadSkinLayout();
+    //载入背景图片
+    LoadBackGroundImage();
+    //获取皮肤的文字颜色
+    theApp.m_main_wnd_data.specify_each_item_color = m_skin.GetSkinInfo().specify_each_item_color;
+    int i{};
+    for (const auto& item : theApp.m_plugins.AllDisplayItemsWithPlugins())
+    {
+        theApp.m_main_wnd_data.text_colors[item] = m_skin.GetSkinInfo().TextColor(i);
+        i++;
+    }
+    //SetTextColor();
+    //获取皮肤的字体
+    if (theApp.m_general_data.allow_skin_cover_font)
+    {
+        if (!m_skin.GetSkinInfo().font_info.name.IsEmpty())
+        {
+            theApp.m_main_wnd_data.font.name = m_skin.GetSkinInfo().font_info.name;
+            theApp.m_main_wnd_data.font.bold = m_skin.GetSkinInfo().font_info.bold;
+            theApp.m_main_wnd_data.font.italic = m_skin.GetSkinInfo().font_info.italic;
+            theApp.m_main_wnd_data.font.underline = m_skin.GetSkinInfo().font_info.underline;
+            theApp.m_main_wnd_data.font.strike_out = m_skin.GetSkinInfo().font_info.strike_out;
+        }
+        if (m_skin.GetSkinInfo().font_info.size >= MIN_FONT_SIZE && m_skin.GetSkinInfo().font_info.size <= MAX_FONT_SIZE)
+            theApp.m_main_wnd_data.font.size = m_skin.GetSkinInfo().font_info.size;
+        SetTextFont();
+    }
+    //获取项目的显示文本
+    bool cover_str_setting{ !m_skin.GetSkinInfo().display_text.IsInvalid() };
+    if (theApp.m_general_data.allow_skin_cover_text && !m_skin.GetLayoutInfo().no_label && cover_str_setting)
+    {
+        theApp.m_main_wnd_data.disp_str = m_skin.GetSkinInfo().display_text;
+    }
+    SetItemPosition();
+    Invalidate(FALSE);      //更换皮肤后立即刷新窗口信息
+    //重新设置WS_EX_LAYERED样式，以解决在png皮肤和bmp皮肤之间切换时显示不正常的问题
+    //清除窗口的分层样式
+    SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) & ~WS_EX_LAYERED);
+    //重新设置透明度
+    SetTransparency();
+
+    theApp.SaveConfig();
+
+}
+
 bool CTrafficMonitorDlg::IsTemperatureNeeded() const
 {
     //判断是否需要从OpenHardwareMonitor获取信息。
@@ -1049,6 +1125,20 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     theApp.InitMenuResourse();
     //theApp.UpdateTaskbarWndMenu();
 
+    //初始化皮肤
+    CCommon::GetFiles((theApp.m_skin_path + L"\\*").c_str(), [&](const wstring& file_name)
+        {
+            wstring file_name1 = L'\\' + file_name;
+            if (CCommon::IsFolder(theApp.m_skin_path + file_name1))
+                m_skins.push_back(file_name1);
+        });
+    if (m_skins.empty())
+        m_skins.push_back(L"");
+    m_skin_selected = FindSkinIndex(theApp.m_cfg_data.m_skin_name);
+
+    //根据当前选择的皮肤获取布局数据
+    LoadSkinLayout();
+
     //设置窗口透明度
     SetTransparency();
 
@@ -1095,25 +1185,6 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     //m_timer.CreateTimer((DWORD_PTR)this, theApp.m_general_data.monitor_time_span, MonitorThreadCallback);
 
 
-    //初始化皮肤
-    CCommon::GetFiles((theApp.m_skin_path + L"\\*").c_str(), [&](const wstring& file_name)
-                      {
-                          wstring file_name1 = L'\\' + file_name;
-                          if (CCommon::IsFolder(theApp.m_skin_path + file_name1))
-                              m_skins.push_back(file_name1);
-                      });
-    if (m_skins.empty())
-        m_skins.push_back(L"");
-    m_skin_selected = 0;
-    for (unsigned int i{}; i < m_skins.size(); i++)
-    {
-        if (m_skins[i] == theApp.m_cfg_data.m_skin_name)
-            m_skin_selected = i;
-    }
-
-    //根据当前选择的皮肤获取布局数据
-    LoadSkinLayout();
-
     //初始化窗口位置
     SetItemPosition();
     if (theApp.m_cfg_data.m_position_x != -1 && theApp.m_cfg_data.m_position_y != -1)
@@ -1135,7 +1206,7 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     m_tool_tips.AddTool(this, _T(""));
 
     //设置获取CPU利用率的方式
-    m_cpu_usage.SetUseCPUTimes(theApp.m_general_data.m_get_cpu_usage_by_cpu_times);
+    m_cpu_usage_helper.SetUseCPUTimes(theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_PDH);
 
     //如果程序启动时设置了隐藏主窗口，或窗口的位置在左上角，则先将其不透明度设为0
     if (theApp.m_cfg_data.m_hide_main_window || (theApp.m_cfg_data.m_position_x == 0 && theApp.m_cfg_data.m_position_y == 0))
@@ -1342,11 +1413,32 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         }
     }
 
-    ////只有主窗口和任务栏窗口至少有一个显示时才执行下面的处理
-    //if (!theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_show_task_bar_wnd)
-    //{
+    bool lite_version = false;
+#ifdef WITHOUT_TEMPERATURE
+    lite_version = true;
+#endif
+
+    bool is_arm64ec = false;
+#ifdef _M_ARM64EC
+    is_arm64ec = true;
+#endif
+
+    bool cpu_usage_acquired = false;
+    bool cpu_freq_acquired = false;
+
     //获取CPU使用率
-    theApp.m_cpu_usage = pThis->m_cpu_usage.GetCPUUsage();
+    if (lite_version || theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_HARDWARE_MONITOR || !theApp.m_general_data.IsHardwareEnable(HI_CPU))
+    {
+        theApp.m_cpu_usage = pThis->m_cpu_usage_helper.GetCPUUsage();
+        cpu_usage_acquired = true;
+    }
+
+    //获取CPU频率
+    if (lite_version || is_arm64ec || !theApp.m_general_data.IsHardwareEnable(HI_CPU))
+    {
+        theApp.m_cpu_freq = pThis->m_cpu_freq_helper.GetCpuFreq();
+        cpu_freq_acquired = true;
+    }
 
     //获取内存利用率
     MEMORYSTATUSEX statex;
@@ -1385,7 +1477,10 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         //theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
         theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
         theApp.m_gpu_usage = theApp.m_pMonitor->GpuUsage();
-        theApp.m_cpu_freq = theApp.m_pMonitor->CpuFreq();
+        if (!cpu_freq_acquired)
+            theApp.m_cpu_freq = theApp.m_pMonitor->CpuFreq();
+        if (!cpu_usage_acquired)
+            theApp.m_cpu_usage = theApp.m_pMonitor->CpuUsage();
         //获取CPU温度
         if (!theApp.m_pMonitor->AllCpuTemperature().empty())
         {
@@ -1472,7 +1567,6 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         }
     }
 
-    //}
     pThis->m_monitor_time_cnt++;
 
     //发送监控信息更新消息
@@ -1778,6 +1872,12 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                 }
             }
 
+            //根据深色/浅色模式自动切换皮肤
+            if (theApp.m_win_version.IsWindows10OrLater() && theApp.m_cfg_data.skin_auto_adapt)
+            {
+                int skin_index = FindSkinIndex(light_mode ? theApp.m_cfg_data.skin_name_light_mode : theApp.m_cfg_data.skin_name_dark_mode);
+                ApplySkin(skin_index);
+            }
         }
 
         //根据任务栏颜色自动设置任务栏窗口背景色
@@ -1880,6 +1980,12 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
         }
     }
 
+    if (nIDEvent == DELETE_NOTIFY_ICON_TIMER)
+    {
+        DeleteNotifyIcon();
+        KillTimer(DELETE_NOTIFY_ICON_TIMER);
+    }
+
     CDialog::OnTimer(nIDEvent);
 }
 
@@ -1939,7 +2045,7 @@ void CTrafficMonitorDlg::OnRButtonUp(UINT nFlags, CPoint point)
             CMenuIcon::AddIconToMenuItem(pContextMenu->GetSafeHmenu(), 17, TRUE, plugin_icon);
     }
     //更新插件子菜单
-    theApp.UpdatePluginMenu(&theApp.m_main_menu_plugin_sub_menu, plugin);
+    theApp.UpdatePluginMenu(&theApp.m_main_menu_plugin_sub_menu, plugin, 2);
 
     pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
 
@@ -2093,6 +2199,8 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
     if (uMsg == ID_CMD_TEST)
     {
         CTest::TestCommand();
+        //ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY), _T("测试通知"));
+
     }
 #endif // DEBUG
     //选择了插件命令
@@ -2494,44 +2602,7 @@ void CTrafficMonitorDlg::OnChangeSkin()
     skinDlg.m_pFont = &m_font;
     if (skinDlg.DoModal() == IDOK)
     {
-        m_skin_selected = skinDlg.m_skin_selected;
-        theApp.m_cfg_data.m_skin_name = m_skins[m_skin_selected];
-        //获取皮肤布局
-        LoadSkinLayout();
-        //载入背景图片
-        LoadBackGroundImage();
-        //获取皮肤的文字颜色
-        theApp.m_main_wnd_data.specify_each_item_color = skinDlg.GetSkinData().GetSkinInfo().specify_each_item_color;
-        int i{};
-        for (const auto& item : theApp.m_plugins.AllDisplayItemsWithPlugins())
-        {
-            theApp.m_main_wnd_data.text_colors[item] = skinDlg.GetSkinData().GetSkinInfo().TextColor(i);
-            i++;
-        }
-        //SetTextColor();
-        //获取皮肤的字体
-        if (theApp.m_general_data.allow_skin_cover_font)
-        {
-            if (!skinDlg.GetSkinData().GetSkinInfo().font_info.name.IsEmpty())
-            {
-                theApp.m_main_wnd_data.font.name = skinDlg.GetSkinData().GetSkinInfo().font_info.name;
-                theApp.m_main_wnd_data.font.bold = skinDlg.GetSkinData().GetSkinInfo().font_info.bold;
-                theApp.m_main_wnd_data.font.italic = skinDlg.GetSkinData().GetSkinInfo().font_info.italic;
-                theApp.m_main_wnd_data.font.underline = skinDlg.GetSkinData().GetSkinInfo().font_info.underline;
-                theApp.m_main_wnd_data.font.strike_out = skinDlg.GetSkinData().GetSkinInfo().font_info.strike_out;
-            }
-            if (skinDlg.GetSkinData().GetSkinInfo().font_info.size >= MIN_FONT_SIZE && skinDlg.GetSkinData().GetSkinInfo().font_info.size <= MAX_FONT_SIZE)
-                theApp.m_main_wnd_data.font.size = skinDlg.GetSkinData().GetSkinInfo().font_info.size;
-            SetTextFont();
-        }
-        //获取项目的显示文本
-        if (theApp.m_general_data.allow_skin_cover_text && !skinDlg.GetSkinData().GetLayoutInfo().no_label)
-        {
-            theApp.m_main_wnd_data.disp_str = skinDlg.GetSkinData().GetSkinInfo().display_text;
-        }
-        SetItemPosition();
-        Invalidate(FALSE);      //更换皮肤后立即刷新窗口信息
-        theApp.SaveConfig();
+        ApplySkin(skinDlg.m_skin_selected);
     }
 }
 

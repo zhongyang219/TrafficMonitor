@@ -9,7 +9,7 @@ const wchar_t* CCustomDrawItem::GetItemName() const
 
 const wchar_t* CCustomDrawItem::GetItemId() const
 {
-    return L"b4zc373y";
+    return L"4Tc21hGS";
 }
 
 const wchar_t* CCustomDrawItem::GetItemLableText() const

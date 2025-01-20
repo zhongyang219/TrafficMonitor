@@ -2,6 +2,7 @@
 #include "CommonData.h"
 #include "TinyXml2Helper.h"
 #include "DrawCommon.h"
+#include <gdiplus.h>
 
 class CSkinFile
 {
@@ -88,6 +89,9 @@ public:
     const CImage& GetBackgroundL() const { return m_background_l; }
     const CImage& GetBackgroundS() const { return m_background_s; }
 
+    bool IsPNG() const { return m_is_png; }
+    void SetAlpha(int alpha);       //设置主窗口的不透明度，alpha:0~255，仅当使用png背景时有效
+
     //绘制预览图
     //pDC: 绘图的CDC
     //rect: 绘图区域
@@ -114,7 +118,10 @@ private:
         }
     };
 
-    static void DrawSkinText(CDrawCommon drawer, DrawStr draw_str, CRect rect, COLORREF color, Alignment align);
+    static void DrawSkinText(IDrawCommon& drawer, DrawStr draw_str, CRect rect, COLORREF color, Alignment align);
+
+    //绘制主界面中除背景图外所有显示项目
+    void DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font);
 
 private:
     SkinInfo m_skin_info;
@@ -125,5 +132,8 @@ private:
     CFont m_font;
     CImage m_background_s;
     CImage m_background_l;
-
+    bool m_is_png{};
+    Gdiplus::Image* m_background_png_s{};
+    Gdiplus::Image* m_background_png_l{};
+    int m_alpha{ 255 };     //不透明度，仅当背景为png时有效
 };
