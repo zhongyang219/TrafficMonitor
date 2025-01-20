@@ -108,7 +108,12 @@ BOOL CPluginManagerDlg::OnInitDialog()
             hIcon = (HICON)plugin.plugin->GetPluginIcon();
         }
         if (hIcon == nullptr)
-            hIcon = theApp.GetMenuIcon(IDI_PLUGINS);
+        {
+            if (plugin.state == CPluginManager::PluginState::PS_DISABLE)
+                hIcon = theApp.GetMenuIcon(IDI_PLUGIN_DISABLED);
+            else
+                hIcon = theApp.GetMenuIcon(IDI_PLUGINS);
+        }
         m_plugin_icon_list.Add(hIcon);
     }
     m_list_ctrl.SetImageList(&m_plugin_icon_list, LVSIL_SMALL);
