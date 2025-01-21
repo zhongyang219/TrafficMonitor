@@ -1,4 +1,5 @@
-**[简体中文](./README.md) | English**<br>
+**[简体中文](./README.md) | English**
+
 [![Badge](https://img.shields.io/badge/link-996.icu-%23FF4D5B.svg?style=flat-square)](https://996.icu/#/en_US)
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg?style=flat-square)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/zhongyang219/TrafficMonitor/main.yml?branch=master&label=Release%20CI&logo=github&style=flat-square)](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI")
@@ -41,7 +42,7 @@ See below for the functions comparison of the two versions.
 | Internet speed monitoring                     | ✔                | ✔            |
 | CPU and RAM usage monitoring                  | ✔                | ✔            |
 | CPU, GPU, hard disk, mother board temperature | ✔                | ❌            |
-| CPU frequency monitoring                      | ✔                | ❌            |
+| CPU frequency monitoring                      | ✔                | ✔            |
 | GPU usage monitoring                          | ✔                | ❌            |
 | Hard disk usage monitoring                    | ✔                | ❌            |
 | Network connection details                    | ✔                | ✔            |
@@ -71,12 +72,19 @@ Main Floating Window:
 Right-Click Menu:  
 ![](./Screenshots/en_us/main.png)  
 Taskbar Window  
+
 ![](./Screenshots/en_us/taskbar.png)  
+
 Colorful Skins:  
+
 ![](./Screenshots/skins.PNG)  
+
 Change Skins:  
+
 ![](./Screenshots/en_us/selecte_skin.png)  
+
 Options:  
+
 <img src="./Screenshots/en_us/option.jpg" style="zoom:80%;" />  
 
 # How to Use
@@ -85,17 +93,22 @@ As the program starts, a floating window showing network speed will appear on th
 
 TrafficMonitor can display information on the taskbar. However, the default setting for TrafficMonitor shows only the main window (floating window), in order to show embedded display on the taskbar, right click the window and select "Show Taskbar Window" in the pop-up menu.
 
-Users can customize displayed items on the embedded taskbar window. By default, only the network speed is displayed. In order to display both CPU and RAM usage, check the desirable items to be displayed under the "Display Settings" submenu in the taskbar pop-up menu, as shown below:
+Users can customize displayed items on the embedded taskbar window. By default, only the network speed is displayed. In order to display CPU and RAM usage, or other informations, please select “Display Settings” in the right-click menu of the taskbar window, and check the items you want to display in the “Display Settings” dialog box, as shown below:
 
 <img src="./Screenshots/en_us/taskbar_item_settings.png" style="zoom:80%;" />
 
 # Customizable Skin
-<img src="./Screenshots/selecte_skin.png" style="zoom:80%;" /><br>
-In order to access the skin changing interface, choose "Other Functions" - “Change Skins" in the main window or the pop-up window. Users can download more skins and customize the skins [here](https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md) according to their own needs.<br>
-Skin files are stored under the 'skins' directory within the directory where the app is located. Each skin is stored in its individual folder and the name of the folder is the name of the skin. <br>
-Among the files, `background.bmp` and `background_l.bmp` are background pictures，`skin.ini` is the configuration document for the skin, users can customize text colors, fonts, skin creator, and the size and location of each items etc. <br>
+<img src="./Screenshots/selecte_skin.png" style="zoom:80%;" />
 
-For version 1.80 and later, an xml format of skin configuration file `skin.xml` has been added. Without the xml skin configuration document, TrafficMonitor will not be able to display temperature and GUP usage.
+You can select “Other Functions”-“Change Skin” on the right-click menu of the main window or notification area icon to open the interface of changing skin. Users can also download more skins and customize the skins [here](https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md) according to their own needs.
+
+Skin files are stored under the `skins` directory within the directory where the app is located. Each skin is stored in its individual folder and the name of the folder is the name of the skin. 
+
+Among the files, `background.bmp` and `background_l.bmp` are background pictures，`skin.ini` is the configuration document for the skin, users can customize text colors, fonts, skin creator, and the size and location of each items etc. 
+
+Since version 1.80, an xml format of skin configuration file `skin.xml` has been added. Without the xml skin configuration document, TrafficMonitor will not be able to display temperature and GUP usage.
+
+Since version 1.85, support for background images in png format has been added, you can use the png format to create skins with transparent backgrounds. The file names of the background image files are `background.png` and `background_l.png`.
 
 Click the link below for detailed instruction on skin making: 
 
@@ -103,9 +116,11 @@ Click the link below for detailed instruction on skin making:
 
 # Configuring Options
 <img src="./Screenshots/option.jpg" style="zoom:80%;" /><br>
-Choosing "Options..." in the pop-up menu allows users to access the options configuration. In the dialog box of options configuration, the user can set the text color, text font, background color, net speed unit, and displayed text etc. for the main window and task window separately. <br>
-In "Regular Configurations", users can change the settings on whether the program conducts auto-update and whether the program runs automatically when the computer starts up. Users can also configure when notifications need to be sent. <br>
-For version 1.72 and later, users can configure text colors for each item individually. Check the option to "Designate Colors for Each Items", click the color box on the right of "text colors" to prompt a pop-up dialog box for detailed color configuration where users can designate colors for each items inidividually. <br>
+Choosing "Options..." in the pop-up menu allows users to access the options configuration. In the dialog box of options configuration, the user can set the text color, text font, background color, net speed unit, and displayed text etc. for the main window and task window separately. 
+
+In "Regular Configurations", users can change the settings on whether the program conducts auto-update and whether the program runs automatically when the computer starts up. Users can also configure when notifications need to be sent. 
+
+For version 1.72 and later, users can configure text colors for each item individually. Check the option to "Designate Colors for Each Items", click the color box on the right of "text colors" to prompt a pop-up dialog box for detailed color configuration where users can designate colors for each items inidividually. 
 
 # Plug-in system
 

@@ -1,4 +1,5 @@
-**简体中文 | [English](./README_en-us.md)**<br>
+**简体中文 | [English](./README_en-us.md)**
+
 [![Badge](https://img.shields.io/badge/link-996.icu-%23FF4D5B.svg?style=flat-square)](https://996.icu/#/en_US)
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg?style=flat-square)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/zhongyang219/TrafficMonitor/main.yml?branch=master&label=Release%20CI&logo=github&style=flat-square)](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI")
@@ -12,12 +13,13 @@ Traffic Monitor是一款用于Windows平台的网速监控悬浮窗软件，可�
 
 # 相关链接：
 
-请[点击此处](https://github.com/zhongyang219/TrafficMonitor/releases/latest)下载TrafficMonitor的最新版本。<br>
-备用链接：[百度网盘下载](https://pan.baidu.com/s/15PMt7s-ASpyDwtS__4cUhg) 提取码：`ou0m`<br>
+请[点击此处](https://github.com/zhongyang219/TrafficMonitor/releases/latest)下载TrafficMonitor的最新版本。
+
+备用链接：[百度网盘下载](https://pan.baidu.com/s/15PMt7s-ASpyDwtS__4cUhg) 提取码：`ou0m`
 
 国内用户如果遇到Github下载缓慢的问题，可以[点击此处](https://gitee.com/zhongyang219/TrafficMonitor)转到此项目在Gitee上的页面。
 
-如果遇到问题，请[点击此处](./Help.md)查看常见问题。<br>
+如果遇到问题，请[点击此处](./Help.md)查看常见问题。
 
 你也可以[点击此处](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI")下载TrafficMonitor的预发行构建版本。
 
@@ -29,18 +31,18 @@ TrafficMonitor依赖于Microsoft Visual C++ 运行环境，如果程序启动时
 
 # 版本说明
 
-TrafficMonitor提供了普通版和Lite版两种版本可用。普通版包含了所有的功能，Lite版本则不包含温度监控、显卡利用率、硬盘利用率等硬件监控功能。普通版运行需要管理员权限，而Lite版本则不需要。
+TrafficMonitor提供了标准版和Lite版两种版本可用。标准版包含了所有的功能，Lite版本则不包含温度监控、显卡利用率、硬盘利用率等硬件监控功能。标准版运行需要管理员权限，而Lite版本则不需要。
 
 如果没有监控温度等硬件信息的需要，建议使用Lite版。
 
 以下是两个版本功能对比。
 
-| 功能                          | 普通版 | Lite版 |
+| 功能                          | 标准版 | Lite版 |
 | ----------------------------- | ------ | ------ |
 | 网速监控                      | ✔      | ✔      |
 | CPU、内存利用率          | ✔      | ✔      |
 | CPU、显卡、硬盘、主板温度监控  | ✔      | ❌      |
-| CPU频率监控 | ✔ | ❌ |
+| CPU频率监控 | ✔ | ✔ |
 | 显卡利用率监控                | ✔      | ❌      |
 | 硬盘利用率监控                | ✔      | ❌      |
 | 网络详细信息                  | ✔      | ✔      |
@@ -64,41 +66,53 @@ TrafficMonitor提供了普通版和Lite版两种版本可用。普通版包含�
 
 # 截图
 
-主悬浮窗：<br>
-![](./Screenshots/main1.png)<br>
-右键菜单：<br>
-![](./Screenshots/main.png)<br>
-任务栏窗口：<br>
-![](./Screenshots/taskbar.PNG)<br>
-多彩皮肤：<br>
-<img src="./Screenshots/skins.PNG" style="zoom:80%;" /><br>
+主悬浮窗：
+![](./Screenshots/main1.png)
+
+右键菜单：
+![](./Screenshots/main.png)
+
+任务栏窗口：
+
+![](./Screenshots/taskbar.PNG)
+
+多彩皮肤：
+<img src="./Screenshots/skins.PNG" style="zoom:80%;" />
 
 # 如何使用
 程序启动后在会在屏幕中显示一个显示网速的悬浮窗。在悬浮窗上点击鼠标右键可以弹出右键菜单。
 
 TrafficMonitor支持将信息显示到任务栏。但是TrafficMonitor默认只显示主窗口（悬浮窗），如果需要让它嵌入到任务栏显示，请在右键菜单中选择“显示任务栏窗口”命令。
 
-任务栏窗口支持自定义显示项目，默认情况下只显示网速，如果需要显示CPU和内存利用率，请在任务栏右键菜单中的“显示设置”子菜单下勾选需要显示的项目，如下图所示：
+任务栏窗口支持自定义显示项目，默认情况下只显示网速，如果需要显示CPU和内存利用率等其他信息，请在任务栏窗口右键菜单中选择“显示设置”，在弹出的“显示设置”对话框中勾选需要显示的项目，如下图所示：
 
 <img src="./Screenshots/taskbar_item_settings.png" style="zoom:80%;" />
 
 # 自定义皮肤
-<img src="./Screenshots/selecte_skin.png" style="zoom:80%;" /><br>
-在主窗口或通知区图标右键菜单上选择“其他功能”——“更换皮肤”可以打开更换皮肤界面。[点击此处](https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md)可以下载更多皮肤。用户还可以根据自己的需要编辑自己的皮肤。<br>
-皮肤文件放在程序所在目录的`skins`目录下，每个皮肤被放到单独的文件夹下，文件夹的名称就是皮肤的名称。<br>
-其中`background.bmp`和`background_l.bmp`是背景图片，`skin.ini`是皮肤的配置文件，可以通过`skin.ini`指定文本颜色、字体、皮肤作者、每个项目的大小和位置等信息。<br>
+<img src="./Screenshots/selecte_skin.png" style="zoom:80%;" />
+
+在主窗口或通知区图标右键菜单上选择“其他功能”——“更换皮肤”可以打开更换皮肤界面。[点击此处](https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md)可以下载更多皮肤。用户还可以根据自己的需要编辑自己的皮肤。
+
+皮肤文件放在程序所在目录的`skins`目录下，每个皮肤被放到单独的文件夹下，文件夹的名称就是皮肤的名称。
+
+其中`background.bmp`和`background_l.bmp`是背景图片，`skin.ini`是皮肤的配置文件，可以通过`skin.ini`指定文本颜色、字体、皮肤作者、每个项目的大小和位置等信息。
 
 从1.80版本开始增加了xml格式的皮肤配置文件`skin.xml`，只有xml格式的皮肤配置文件才支持温度和显卡使用率显示。
+
+从1.85版本开始增加了对png格式背景图片的支持，你可以使用png格式来制作带透明背景的皮肤，背景图片的文件名为`background.png`和`background_l.png`。
 
 详细的皮肤制作教程请点击以下链接：
 
 [皮肤制作教程 · zhongyang219/TrafficMonitor Wiki (github.com)](https://github.com/zhongyang219/TrafficMonitor/wiki/皮肤制作教程)
 
 # 选项设置
-<img src="./Screenshots/option.jpg" style="zoom:80%;" /><br>
-在右键菜单选择“选项...”可以进入选项设置。在选项设置对话框中，可以单独设置主窗口和任务栏窗口的文本颜色、字体、背景颜色、网速单位、显示的文本等。<br>
-在“常规设置”选项卡中，可以设置是否在程序时自动检查更新，以及是否需要在开机是自动运行。可以设置在什么时候需要发出消息通知。<br>
-从1.72版本开始，支持每个项目文本颜色单独设置。勾选“指定每个项目的颜色”后，点击“文本颜色”右边的颜色框，会弹出详细颜色设置的对话框，可以在这里单独指定每个项目的颜色。<br>
+<img src="./Screenshots/option.jpg" style="zoom:80%;" />
+
+在右键菜单选择“选项...”可以进入选项设置。在选项设置对话框中，可以单独设置主窗口和任务栏窗口的文本颜色、字体、背景颜色、网速单位、显示的文本等。
+
+在“常规设置”选项卡中，可以设置是否在程序时自动检查更新，以及是否需要在开机是自动运行。可以设置在什么时候需要发出消息通知。
+
+从1.72版本开始，支持每个项目文本颜色单独设置。勾选“指定每个项目的颜色”后，点击“文本颜色”右边的颜色框，会弹出详细颜色设置的对话框，可以在这里单独指定每个项目的颜色。
 
 # 插件系统
 

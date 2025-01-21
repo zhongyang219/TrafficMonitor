@@ -1,6 +1,36 @@
 **[简体中文](./update_log.md) | [繁體中文](./update_log_zh-tw.md) | English**
 
 # TrafficMonitor Update log
+## V1.85 (2025/01/21)
+
+**Feature Updates:**
+
+* Add Direct2D rendering method to the taskbar window, whitch solve the problem that sometimes the edges of fonts are jagged.
+* Add the support for Intel displays for graphics card monitoring function.
+* Add a plugin menu to the context menu when right-clicking on a plugin item.
+* Add the plugin icon in the plugin management dialog, add plugin command for the context menu.
+* The maximum value of the monitoring interval is adjusted to 30s.
+* Add the options for "Window offset top" and "Vertical Margin" in the Taskbar Window Settings.
+* Add the support for transparent background images in png format to the main window.
+* Add the function of automatically switching skins according to the dark / light Windows color mode. #1013
+* Add the function of displaying the resource usage graph of the plug-in items in the taskbar, and updated the corresponding plug-in interface. #1077
+* Add the display of today's total traffic in the main window and taskbar window. #1174
+* Add "Enable colorful emoji" option in the taskbar window settings (Direct2D rendering only).
+* Upper limit of temperature notification in general settings adjusted to 120 degrees. #1814
+* Add the support for Arm64EC.
+* Add the ability to display CPU frequency in Lite version.
+* Add default text color to "Preset 2" and "Preset 3" in Taskbar Settings - Preset.
+
+**Issue fixed:**
+* LibreHardwareMonitorLib.dll is updated to version 0.9.4. Solve the problem that hardware monitor information of some devices can't be displayed correctly.
+* Fixed the problem that the position of the  taskbar window is incorrect for touchscreen devices after Windows 11 build 22621.
+* Fixed the problem that the position of the taskbar window is incorrect when the Widgets did not exist under Windows 11.
+* Fixed the problem that the taskbar window would overlap with the system Widgets when it was displayed on the right side under Windows 11.
+* Fixed the problem of scrolling too fast when using touchpad gestures in the Options Settings dialog.
+* Fixed the problem that the display of CPU frequency in the mouse tip of the main window is incorrect.
+* Fixed the problem that the display text for the plugin items in the skin files is invalid. #1813
+* Fixed the problem that if the notification area icon is hidden, it reappears after the notification popup. #1814 #1812 #1811
+
 ## V1.84.1 (2022/11/18)
 
 * Fixed the issue that the taskbar window cannot be displayed on the left side in Window 11.
