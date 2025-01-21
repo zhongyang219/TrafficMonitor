@@ -599,6 +599,8 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
     version = update_helper.GetVersion();
 #ifdef _M_X64
     link = update_helper.GetLink64();
+#elif defined _M_ARM64EC
+    link = update_helper.GetLinkArm64ec();
 #else
     link = update_helper.GetLink();
 #endif

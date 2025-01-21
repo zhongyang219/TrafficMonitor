@@ -69,16 +69,19 @@ void CUpdateHelper::ParseUpdateInfo(wstring version_info)
 
     m_version = version_xml.GetNode(L"version");
     wstring str_source_tag = (m_update_source == UpdateSource::GitHubSource ? L"GitHub" : L"Gitee");
-    wstring str_link_tag, str_link_tag_x64;
+    wstring str_link_tag, str_link_tag_x64, str_link_tag_arm64ec;
 #ifdef WITHOUT_TEMPERATURE
     str_link_tag = L"link_without_temperature";
     str_link_tag_x64 = L"link_without_temperature_x64";
+    str_link_tag_arm64ec = L"link_without_temperature_arm64ec";
 #else
     str_link_tag = L"link";
     str_link_tag_x64 = L"link_x64";
+    str_link_tag_arm64ec = L"link_arm64ec";
 #endif
     m_link64 = version_xml.GetNode(str_link_tag_x64.c_str(), str_source_tag.c_str());
     m_link = version_xml.GetNode(str_link_tag.c_str(), str_source_tag.c_str());
+    m_link_arm64ec = version_xml.GetNode(str_link_tag_arm64ec.c_str(), str_source_tag.c_str());
     CString contents_zh_cn = version_xml.GetNode(L"contents_zh_cn", L"update_contents").c_str();
     CString contents_en = version_xml.GetNode(L"contents_en", L"update_contents").c_str();
     CString contents_zh_tw = version_xml.GetNode(L"contents_zh_tw", L"update_contents").c_str();
@@ -103,6 +106,11 @@ const std::wstring& CUpdateHelper::GetLink() const
 const std::wstring& CUpdateHelper::GetLink64() const
 {
     return m_link64;
+}
+
+const std::wstring& CUpdateHelper::GetLinkArm64ec() const
+{
+    return m_link_arm64ec;
 }
 
 const std::wstring& CUpdateHelper::GetContentsEn() const

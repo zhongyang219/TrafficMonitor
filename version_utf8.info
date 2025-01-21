@@ -1,18 +1,24 @@
-﻿<version>1.84.1</version>
-<GitHub>
-	<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x86.zip</link>
-	<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x64.zip</link_x64>
-	<link_without_temperature>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x86_Lite.zip</link_without_temperature>
-	<link_without_temperature_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x64_Lite.zip</link_without_temperature_x64>
-</GitHub>
-<Gitee>
-	<link>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x86.zip</link>
-	<link_x64>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x64.zip</link_x64>
-	<link_without_temperature>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x86_Lite.zip</link_without_temperature>
-	<link_without_temperature_x64>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x64_Lite.zip</link_without_temperature_x64>
-</Gitee>
-<update_contents>
-	<contents_zh_cn>修正Windows11下任务栏窗口无法显示到左边的问题\n修正任务栏显示在桌面两侧时任务栏窗口会显示不全的问题\n修正Windows11 22H2中，关闭了所有窗口且任务栏上没有固定任何图标时，任务栏窗口位置不正确的问题\n为触屏设备添加长按右键菜单的支持\n修正由于最新版本Windows11中搜索按钮比较宽导致任务栏窗口的位置不正确的问题\n修正“关于”对话框的大小有时不正确的问题</contents_zh_cn>
-	<contents_en>Fixed the issue that the taskbar window cannot be displayed on the left side in Window 11.\nFixed the issue that the information in the taskbar window could not be fully displayed when the taskbar on the left or right side of the desktop.\nFixed the issue in Windows 11 22H2, when all the windows are closed and no icons are fixed on the taskbar, the position of the taskbar window is not correct.\nAdded the support of long press to show context menu in touchscreen devices.\nFixed the issue that the position of the taskbar window is not correct due to the wide search button in the latest version of Windows 11.\nFixed the issue that the size of "About" dialog box is not correct.</contents_en>
-	<contents_zh_tw>修正Windows11下工作列視窗無法顯示到左邊的問題\n修正工作列顯示在桌面兩側時工作列視窗會顯示不全的問題\n修正Windows11 22H2中，關閉了所有視窗且工作列上沒有固定任何圖示時，工作列視窗位置不正確的問題\n為觸屏裝置新增長按右鍵選單的支援\n修正由於最新版本Windows11中搜索按鈕比較寬導致工作列視窗的位置不正確的問題\n修正“關於”對話方塊的大小有時不正確的問題</contents_zh_tw>
-</update_contents>
+﻿<root>
+	<version>1.84.1</version>
+	<GitHub>
+		<link>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x86.zip</link>
+		<link_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x64.zip</link_x64>
+		<link_arm64ec></link_arm64ec>
+		<link_without_temperature>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x86_Lite.zip</link_without_temperature>
+		<link_without_temperature_x64>https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x64_Lite.zip</link_without_temperature_x64>
+		<link_without_temperature_arm64ec></link_without_temperature_arm64ec>
+	</GitHub>
+	<Gitee>
+		<link>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x86.zip</link>
+		<link_x64>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x64.zip</link_x64>
+		<link_arm64ec></link_arm64ec>
+		<link_without_temperature>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x86_Lite.zip</link_without_temperature>
+		<link_without_temperature_x64>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x64_Lite.zip</link_without_temperature_x64>
+		<link_without_temperature_arm64ec></link_without_temperature_arm64ec>
+	</Gitee>
+	<update_contents>
+		<contents_zh_cn>修正Windows11下任务栏窗口无法显示到左边的问题\n修正任务栏显示在桌面两侧时任务栏窗口会显示不全的问题\n修正Windows11 22H2中，关闭了所有窗口且任务栏上没有固定任何图标时，任务栏窗口位置不正确的问题\n为触屏设备添加长按右键菜单的支持\n修正由于最新版本Windows11中搜索按钮比较宽导致任务栏窗口的位置不正确的问题\n修正“关于”对话框的大小有时不正确的问题</contents_zh_cn>
+		<contents_en>Fixed the issue that the taskbar window cannot be displayed on the left side in Window 11.\nFixed the issue that the information in the taskbar window could not be fully displayed when the taskbar on the left or right side of the desktop.\nFixed the issue in Windows 11 22H2, when all the windows are closed and no icons are fixed on the taskbar, the position of the taskbar window is not correct.\nAdded the support of long press to show context menu in touchscreen devices.\nFixed the issue that the position of the taskbar window is not correct due to the wide search button in the latest version of Windows 11.\nFixed the issue that the size of "About" dialog box is not correct.</contents_en>
+		<contents_zh_tw>修正Windows11下工作列視窗無法顯示到左邊的問題\n修正工作列顯示在桌面兩側時工作列視窗會顯示不全的問題\n修正Windows11 22H2中，關閉了所有視窗且工作列上沒有固定任何圖示時，工作列視窗位置不正確的問題\n為觸屏裝置新增長按右鍵選單的支援\n修正由於最新版本Windows11中搜索按鈕比較寬導致工作列視窗的位置不正確的問題\n修正“關於”對話方塊的大小有時不正確的問題</contents_zh_tw>
+	</update_contents>
+</root>
