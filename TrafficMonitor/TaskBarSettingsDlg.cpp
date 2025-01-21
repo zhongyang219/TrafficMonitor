@@ -115,7 +115,7 @@ void CTaskBarSettingsDlg::EnableControl()
     bool taskbar_on_left_check = (IsDlgButtonChecked(IDC_TASKBAR_WND_ON_LEFT_CHECK) != FALSE);
     EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, CTaskBarDlg::IsTaskbarCloseToIconEnable(taskbar_on_left_check));
     //Win11下，任务栏左对齐时禁用“任务栏窗口显示在任务栏左侧”的选项
-    EnableDlgCtrl(IDC_TASKBAR_WND_ON_LEFT_CHECK, !theApp.m_win_version.IsWindows11OrLater() || CWindowsSettingHelper::IsTaskbarCenterAlign());
+    EnableDlgCtrl(IDC_TASKBAR_WND_ON_LEFT_CHECK, !theApp.m_is_windows11_taskbar || CWindowsSettingHelper::IsTaskbarCenterAlign());
     EnableDlgCtrl(IDC_ENABLE_COLOR_EMOJI_CHECK, !m_data.disable_d2d);
 }
 
