@@ -5,8 +5,8 @@
 
 **Feature Updates:**
 
-* Add Direct2D rendering method to the taskbar window, whitch solve the problem that sometimes the edges of fonts are jagged.
-* Add the support for Intel displays for graphics card monitoring function.
+* Add Direct2D rendering method to the taskbar window, whitch solve the problem that sometimes the edges of fonts are jagged. #1156
+* Add the support for Intel graphics cards for graphics card monitoring function.
 * Add a plugin menu to the context menu when right-clicking on a plugin item.
 * Add the plugin icon in the plugin management dialog, add plugin command for the context menu.
 * The maximum value of the monitoring interval is adjusted to 30s.
@@ -17,14 +17,14 @@
 * Add the display of today's total traffic in the main window and taskbar window. #1174
 * Add "Enable colorful emoji" option in the taskbar window settings (Direct2D rendering only).
 * Upper limit of temperature notification in general settings adjusted to 120 degrees. #1814
-* Add the support for Arm64EC.
+* Add the support for Arm64EC. #1703
 * Add the ability to display CPU frequency in Lite version.
 * Add default text color to "Preset 2" and "Preset 3" in Taskbar Settings - Preset.
 
 **Issue fixed:**
 * LibreHardwareMonitorLib.dll is updated to version 0.9.4. Solve the problem that hardware monitor information of some devices can't be displayed correctly.
 * Fixed the problem that the position of the  taskbar window is incorrect for touchscreen devices after Windows 11 build 22621.
-* Fixed the problem that the position of the taskbar window is incorrect when the Widgets did not exist under Windows 11.
+* Fixed the problem that the position of the taskbar window is incorrect when the Widgets did not exist under Windows 11. #1582
 * Fixed the problem that the taskbar window would overlap with the system Widgets when it was displayed on the right side under Windows 11.
 * Fixed the problem of scrolling too fast when using touchpad gestures in the Options Settings dialog.
 * Fixed the problem that the display of CPU frequency in the mouse tip of the main window is incorrect.
