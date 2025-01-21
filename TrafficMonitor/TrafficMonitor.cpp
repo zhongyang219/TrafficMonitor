@@ -793,6 +793,8 @@ CString CTrafficMonitorApp::GetSystemInfoString()
     info += _T(" ");
 #ifdef _M_X64
     info += _T("x64");
+#elif defined _M_ARM64EC
+    info += _T("Arm64EC");
 #else
     info += _T("x86");
 #endif
