@@ -325,10 +325,6 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     if (!taskbar_dlgs.empty())
         m_window_offset_top_edit.EnableWindow(taskbar_dlgs.front()->IsTasksbarOnTopOrBottom());
 
-    for (auto* taskbar_dlg : taskbar_dlgs)
-        delete taskbar_dlg;
-    taskbar_dlgs.clear();
-
     //初始化内存显示方式下拉列表
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_USAGE_PERCENTAGE));
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_MEMORY_USED));

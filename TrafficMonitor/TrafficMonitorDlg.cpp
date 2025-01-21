@@ -1943,7 +1943,11 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
     if (nIDEvent == TASKBAR_TIMER)
     {
-        if (theApp.m_taskbar_data.show_taskbar_wnd_in_all_displays && CWindowsSettingHelper::IsTaskbarShowingInAllDisplays() && m_tBarDlgs.size() != GetSystemMetrics(SM_CMONITORS))
+        if (!theApp.m_cfg_data.m_show_task_bar_wnd)
+        {
+            CloseTaskBarWnd();
+        }
+        else if (theApp.m_taskbar_data.show_taskbar_wnd_in_all_displays && CWindowsSettingHelper::IsTaskbarShowingInAllDisplays() && m_tBarDlgs.size() != GetSystemMetrics(SM_CMONITORS))
         {
             CloseTaskBarWnd();
             OpenTaskBarWnd();
