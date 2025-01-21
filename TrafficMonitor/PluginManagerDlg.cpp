@@ -180,6 +180,7 @@ void CPluginManagerDlg::OnNMRClickList1(NMHDR* pNMHDR, LRESULT* pResult)
 
     //弹出右键菜单
     CMenu* pContextMenu = m_menu.GetSubMenu(0);	//获取第一个弹出菜单
+    pContextMenu->SetDefaultItem(ID_PLUGIN_DETAIL);
     //更新插件子菜单
     if (m_item_selected >= 0 && m_item_selected < static_cast<int>(theApp.m_plugins.GetPlugins().size()))
     {
