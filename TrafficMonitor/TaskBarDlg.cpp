@@ -718,6 +718,13 @@ bool CTaskBarDlg::AdjustWindowPos()
                     m_rect.MoveToX(m_left_space);
                 }
             }
+            //水平偏移
+            m_rect.MoveToX(m_rect.left + DPI(theApp.m_taskbar_data.window_offset_left));
+            //确保水平方向不超出屏幕边界
+            if (m_rect.left < 0)
+                m_rect.MoveToX(0);
+            if (m_rcTaskbar.right > m_rect.Width() && m_rect.right > m_rcTaskbar.right)
+                m_rect.MoveToX(m_rcTaskbar.right - m_rect.Width());
 
             //设置任务栏窗口的垂直位置
             if (theApp.m_is_windows11_taskbar)

@@ -516,6 +516,8 @@
 #define IDC_WINDOW_OFFSET_TOP_EDIT      1167
 #define IDC_VERTICAL_MARGIN_EDIT        1168
 #define IDC_VERTICAL_MARGIN_NEGATIVE_CHECK 1169
+#define IDC_WINDOW_OFFSET_LEFT_EDIT     1169
+#define IDC_WINDOW_OFFSET_TOP_EDIT2     1169
 #define IDC_DISABLE_D2D                 1170
 #define IDC_GDI_RADIO                   1171
 #define IDC_D2D_RADIO                   1172

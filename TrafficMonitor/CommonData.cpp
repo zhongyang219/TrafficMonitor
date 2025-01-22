@@ -198,6 +198,14 @@ void TaskBarSettingData::ValidItemSpace()
         item_space = 32;
 }
 
+void TaskBarSettingData::ValidVerticalMargin()
+{
+    if (vertical_margin < -10)
+        vertical_margin = -10;
+    if (vertical_margin > 10)
+        vertical_margin = 10;
+}
+
 void TaskBarSettingData::ValidWindowOffsetTop()
 {
     if (window_offset_top < -5)
@@ -206,12 +214,12 @@ void TaskBarSettingData::ValidWindowOffsetTop()
         window_offset_top = 20;
 }
 
-void TaskBarSettingData::ValidVerticalMargin()
+void TaskBarSettingData::ValidWindowOffsetLeft()
 {
-    if (vertical_margin < -10)
-        vertical_margin = -10;
-    if (vertical_margin > 10)
-        vertical_margin = 10;
+    if (window_offset_left < -800)
+        window_offset_top = -800;
+    if (window_offset_top > 800)
+        window_offset_top = 800;
 }
 
 unsigned __int64 TaskBarSettingData::GetNetspeedFigureMaxValueInBytes() const

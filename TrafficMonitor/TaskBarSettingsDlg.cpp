@@ -129,6 +129,7 @@ void CTaskBarSettingsDlg::SetControlMouseWheelEnable(bool enable)
     m_memory_display_combo.SetMouseWheelEnable(enable);
     m_item_space_edit.SetMouseWheelEnable(enable);
     m_window_offset_top_edit.SetMouseWheelEnable(enable);
+    m_window_offset_left_edit.SetMouseWheelEnable(enable);
     m_vertical_margin_edit.SetMouseWheelEnable(enable);
     m_net_speed_figure_max_val_edit.SetMouseWheelEnable(enable);
     m_net_speed_figure_max_val_unit_combo.SetMouseWheelEnable(enable);
@@ -155,6 +156,7 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_VERTICAL_MARGIN_EDIT, m_vertical_margin_edit);
     DDX_Control(pDX, IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, m_net_speed_figure_max_val_edit);
     DDX_Control(pDX, IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO, m_net_speed_figure_max_val_unit_combo);
+    DDX_Control(pDX, IDC_WINDOW_OFFSET_LEFT_EDIT, m_window_offset_left_edit);
 }
 
 
@@ -198,6 +200,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_GDI_RADIO, &CTaskBarSettingsDlg::OnBnClickedGdiRadio)
     ON_BN_CLICKED(IDC_D2D_RADIO, &CTaskBarSettingsDlg::OnBnClickedD2dRadio)
     ON_BN_CLICKED(IDC_ENABLE_COLOR_EMOJI_CHECK, &CTaskBarSettingsDlg::OnBnClickedEnableColorEmojiCheck)
+    ON_EN_CHANGE(IDC_WINDOW_OFFSET_LEFT_EDIT, &CTaskBarSettingsDlg::OnEnChangeWindowOffsetLeftEdit)
 END_MESSAGE_MAP()
 
 
@@ -317,6 +320,10 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     m_window_offset_top_edit.SetValue(m_data.window_offset_top);
     if (taskbar_dlg != nullptr)
         m_window_offset_top_edit.EnableWindow(taskbar_dlg->IsTasksbarOnTopOrBottom());
+    m_window_offset_left_edit.SetRange(-800, 800);
+    m_window_offset_left_edit.SetValue(m_data.window_offset_left);
+    if (taskbar_dlg != nullptr)
+        m_window_offset_left_edit.EnableWindow(taskbar_dlg->IsTasksbarOnTopOrBottom());
     m_vertical_margin_edit.SetRange(-10, 10);
     m_vertical_margin_edit.SetValue(m_data.vertical_margin);
     if (taskbar_dlg != nullptr)
@@ -857,4 +864,12 @@ void CTaskBarSettingsDlg::OnBnClickedD2dRadio()
 void CTaskBarSettingsDlg::OnBnClickedEnableColorEmojiCheck()
 {
     m_data.enable_colorful_emoji = (IsDlgButtonChecked(IDC_ENABLE_COLOR_EMOJI_CHECK) != FALSE);
+}
+
+
+void CTaskBarSettingsDlg::OnEnChangeWindowOffsetLeftEdit()
+{
+    m_data.window_offset_left = m_window_offset_left_edit.GetValue();
+    m_data.ValidWindowOffsetLeft();
+
 }
