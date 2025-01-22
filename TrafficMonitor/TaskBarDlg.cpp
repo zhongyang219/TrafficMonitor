@@ -670,11 +670,11 @@ bool CTaskBarDlg::AdjustWindowPos()
                     //靠近通知区的情况
                     else
                     {
-                        //如果显示了小组件，并且任务栏靠左显示，则留出小组件的位置（Win11 build 25324之后小组件显示在右侧）
-                        if (CWindowsSettingHelper::IsTaskbarWidgetsBtnShown() && !CWindowsSettingHelper::IsTaskbarCenterAlign() && theApp.m_win_version.GetBuildNumber() >= 25324)
-                            m_rect.MoveToX(m_rcNotify.left - m_rect.Width() + 2 - DPI(theApp.m_cfg_data.taskbar_left_space_win11));
-                        else
-                            m_rect.MoveToX(m_rcNotify.left - m_rect.Width() + 2);
+                        ////如果显示了小组件，并且任务栏靠左显示，则留出小组件的位置（Win11 build 25324之后小组件显示在右侧）
+                        //if (CWindowsSettingHelper::IsTaskbarWidgetsBtnShown() && !CWindowsSettingHelper::IsTaskbarCenterAlign() && theApp.m_win_version.GetBuildNumber() >= 25324)
+                        //    m_rect.MoveToX(m_rcNotify.left - m_rect.Width() + 2 - DPI(theApp.m_cfg_data.taskbar_left_space_win11));
+                        //else
+                        m_rect.MoveToX(m_rcNotify.left - m_rect.Width() + 2);
                     }
                 }
                 else
