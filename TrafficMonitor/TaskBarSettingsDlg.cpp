@@ -318,12 +318,10 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     CTaskBarDlg* taskbar_dlg{ CTrafficMonitorDlg::Instance()->GetTaskbarWindow() };
     m_window_offset_top_edit.SetRange(-5, 20);
     m_window_offset_top_edit.SetValue(m_data.window_offset_top);
-    if (taskbar_dlg != nullptr)
-        m_window_offset_top_edit.EnableWindow(taskbar_dlg->IsTasksbarOnTopOrBottom());
+    m_window_offset_top_edit.EnableWindow(theApp.m_is_windows11_taskbar);
     m_window_offset_left_edit.SetRange(-800, 800);
     m_window_offset_left_edit.SetValue(m_data.window_offset_left);
-    if (taskbar_dlg != nullptr)
-        m_window_offset_left_edit.EnableWindow(taskbar_dlg->IsTasksbarOnTopOrBottom());
+    m_window_offset_left_edit.EnableWindow(theApp.m_is_windows11_taskbar);
     m_vertical_margin_edit.SetRange(-10, 10);
     m_vertical_margin_edit.SetValue(m_data.vertical_margin);
     if (taskbar_dlg != nullptr)
