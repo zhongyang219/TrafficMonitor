@@ -121,4 +121,5 @@ public:
     afx_msg void OnBnClickedD2dRadio();
     afx_msg void OnBnClickedEnableColorEmojiCheck();
     afx_msg void OnEnChangeWindowOffsetLeftEdit();
+    afx_msg void OnCbnSelchangeDigitNumberCombo();
 };

@@ -201,6 +201,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_D2D_RADIO, &CTaskBarSettingsDlg::OnBnClickedD2dRadio)
     ON_BN_CLICKED(IDC_ENABLE_COLOR_EMOJI_CHECK, &CTaskBarSettingsDlg::OnBnClickedEnableColorEmojiCheck)
     ON_EN_CHANGE(IDC_WINDOW_OFFSET_LEFT_EDIT, &CTaskBarSettingsDlg::OnEnChangeWindowOffsetLeftEdit)
+    ON_CBN_SELCHANGE(IDC_DIGIT_NUMBER_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeDigitNumberCombo)
 END_MESSAGE_MAP()
 
 
@@ -475,9 +476,6 @@ void CTaskBarSettingsDlg::OnOK()
         m_data.font.size = font_size;
     }
     GetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font.name);
-
-    //获取数据位数的设置
-    m_data.digits_number = m_digit_number_combo.GetCurSel() + 3;
 
     bool is_taskbar_transparent_checked = (m_background_transparent_chk.GetCheck() != 0);
     m_data.SetTaskabrTransparent(is_taskbar_transparent_checked);
@@ -870,4 +868,11 @@ void CTaskBarSettingsDlg::OnEnChangeWindowOffsetLeftEdit()
     m_data.window_offset_left = m_window_offset_left_edit.GetValue();
     m_data.ValidWindowOffsetLeft();
 
+}
+
+
+void CTaskBarSettingsDlg::OnCbnSelchangeDigitNumberCombo()
+{
+    //获取数据位数的设置
+    m_data.digits_number = m_digit_number_combo.GetCurSel() + 3;
 }
