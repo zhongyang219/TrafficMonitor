@@ -208,6 +208,12 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
     //添加插件项目的鼠标提示
     tip_info += theApp.GetPlauginTooltipInfo().c_str();
 
+    //if (IsTaskbarWndValid())
+    //{
+    //    tip_info += L"\r\n";
+    //    tip_info += m_tBarDlg->GetTaskbarDebugString().c_str();
+    //}
+
     return tip_info;
 }
 

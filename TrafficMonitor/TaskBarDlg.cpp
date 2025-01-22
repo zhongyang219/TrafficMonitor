@@ -693,11 +693,10 @@ bool CTaskBarDlg::AdjustWindowPos()
                     //靠近“开始”按钮
                     if (theApp.m_taskbar_data.tbar_wnd_snap)
                     {
-                        HWND m_hStart = ::FindWindowEx(m_hTaskbar, nullptr, L"Start", NULL);
-                        CRect m_rcStart;
-                        ::GetWindowRect(m_hStart, m_rcStart);
+                        CRect rcStart;
+                        ::GetWindowRect(m_hStart, rcStart);
 
-                        m_rect.MoveToX(m_rcStart.left - m_rect.Width() - 2);
+                        m_rect.MoveToX(rcStart.left - m_rect.Width() - 2);
                     }
                     //靠近最左侧
                     else
@@ -719,9 +718,21 @@ bool CTaskBarDlg::AdjustWindowPos()
                     m_rect.MoveToX(m_left_space);
                 }
             }
-            //注：这里加上(m_rcTaskbar.Height() - m_rcBar.Height())用于修正Windows11 build 22621版本后触屏设备任务栏窗口位置不正确的问题。
-            //在这种情况下m_rcTaskbar的高度要大于m_rcBar的高度，正常情况下，它们的高度相同
-            m_rect.MoveToY((m_rcBar.Height() - m_rect.Height()) / 2 + (m_rcTaskbar.Height() - m_rcBar.Height()) + DPI(theApp.m_taskbar_data.window_offset_top));
+
+            //设置任务栏窗口的垂直位置
+            if (theApp.m_is_windows11_taskbar)
+            {
+                CRect rcStart;
+                ::GetWindowRect(m_hStart, rcStart);
+                //注：这里加上(m_rcTaskbar.Height() - rcStart.Height())用于修正Windows11 build 22621版本后触屏设备任务栏窗口位置不正确的问题。
+                //在这种情况下m_rcTaskbar的高度要大于m_rcBar的高度，正常情况下，它们的高度相同
+                //但是当任务栏上没有任何图标时，m_rcBar的高度会变为0，因此使用rcStart代替
+                m_rect.MoveToY((rcStart.Height() - m_rect.Height()) / 2 + (m_rcTaskbar.Height() - rcStart.Height()) + DPI(theApp.m_taskbar_data.window_offset_top));
+            }
+            else
+            {
+                m_rect.MoveToY((m_rcBar.Height() - m_rect.Height()) / 2 + DPI(theApp.m_taskbar_data.window_offset_top));
+            }
             if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())
                 m_rect.MoveToY(m_rect.top + DPI(1));
             MoveWindow(m_rect);
@@ -1248,6 +1259,15 @@ bool CTaskBarDlg::IsTaskbarCloseToIconEnable(bool taskbar_wnd_on_left)
         );
 }
 
+std::wstring CTaskBarDlg::GetTaskbarDebugString() const
+{
+    std::wstring str = std::format(L"m_rcTaskbar: 左上坐标({},{}) 左下坐标({},{}) 大小({}x{})"
+        "\r\nm_rcBar: 左上坐标({},{}) 左下坐标({},{}) 大小({}x{})",
+        m_rcTaskbar.left, m_rcTaskbar.top, m_rcTaskbar.right, m_rcTaskbar.bottom, m_rcTaskbar.Width(), m_rcTaskbar.Height(),
+        m_rcBar.left, m_rcBar.top, m_rcBar.right, m_rcBar.bottom, m_rcBar.Width(), m_rcBar.Height());
+    return str;
+}
+
 BOOL CTaskBarDlg::OnInitDialog()
 {
     CDialogEx::OnInitDialog();
@@ -1268,6 +1288,7 @@ BOOL CTaskBarDlg::OnInitDialog()
     m_hMin = ::FindWindowEx(m_hBar, 0, L"MSTaskSwWClass", NULL);    //寻找最小化窗口的句柄
 
     m_hNotify = ::FindWindowEx(m_hTaskbar, 0, L"TrayNotifyWnd", NULL);
+    m_hStart = ::FindWindowEx(m_hTaskbar, nullptr, L"Start", NULL);
 
     //设置窗口透明色
     ApplyWindowTransparentColor();

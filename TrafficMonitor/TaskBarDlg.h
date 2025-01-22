@@ -83,6 +83,7 @@ protected:
     HWND m_hBar;		//任务栏窗口二级容器的句柄
     HWND m_hMin;		//最小化窗口的句柄
     HWND m_hNotify;     //任务栏通知区域的句柄
+    HWND m_hStart;      //开始按钮的句柄
 
     CRect m_rcTaskbar;  //任务栏的矩形区域
     CRect m_rcNotify;   //任务栏通知区域的矩形区域
@@ -208,6 +209,8 @@ public:
     //是否允许“任务栏窗口靠近图标而不是任务栏的两侧”选项
     //taskbar_wnd_on_left: 任务栏窗口是否在任务栏左侧
     static bool IsTaskbarCloseToIconEnable(bool taskbar_wnd_on_left);
+
+    std::wstring GetTaskbarDebugString() const;
 
     DECLARE_MESSAGE_MAP()
 
