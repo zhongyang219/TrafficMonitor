@@ -1348,11 +1348,6 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     lite_version = true;
 #endif
 
-    bool is_arm64ec = false;
-#ifdef _M_ARM64EC
-    is_arm64ec = true;
-#endif
-
     bool cpu_usage_acquired = false;
     bool cpu_freq_acquired = false;
 
@@ -1364,11 +1359,11 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     }
 
     //获取CPU频率
-    if (lite_version || is_arm64ec || !theApp.m_general_data.IsHardwareEnable(HI_CPU))
-    {
-        theApp.m_cpu_freq = pThis->m_cpu_freq_helper.GetCpuFreq();
+    //if (lite_version || is_arm64ec || !theApp.m_general_data.IsHardwareEnable(HI_CPU))
+    //{
+    if (pThis->m_cpu_freq_helper.GetCpuFreq(theApp.m_cpu_freq))
         cpu_freq_acquired = true;
-    }
+    //}
 
     //获取内存利用率
     MEMORYSTATUSEX statex;

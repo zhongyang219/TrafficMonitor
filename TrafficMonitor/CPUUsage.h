@@ -34,7 +34,7 @@ class CCpuFreq
 {
 public:
     CCpuFreq();
-    float GetCpuFreq();
+    bool GetCpuFreq(float& freq) const;
 
 private:
     float max_cpu_freq = 0;

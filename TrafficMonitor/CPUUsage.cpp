@@ -110,22 +110,19 @@ CCpuFreq::CCpuFreq()
 
 }
 
-float CCpuFreq::GetCpuFreq()
+bool CCpuFreq::GetCpuFreq(float& freq) const
 {
-    float freq{};
     HQUERY query;
     PDH_STATUS status = PdhOpenQuery(NULL, NULL, &query);
     if (status != ERROR_SUCCESS)
     {
-        freq = 0.1;
-        return true;
+        return false;
     }
     HCOUNTER counter;
     status = PdhAddCounterA(query, LPCSTR("\\Processor Information(_Total)\\% Processor Performance"), NULL, &counter);
     if (status != ERROR_SUCCESS)
     {
-        freq = 0.2;
-        return true;
+        return false;
     }
     PdhCollectQueryData(query);
     Sleep(200);
@@ -135,10 +132,9 @@ float CCpuFreq::GetCpuFreq()
     status = PdhGetFormattedCounterValue(counter, PDH_FMT_DOUBLE, &dwValue, &pdhValue);
     if (status != ERROR_SUCCESS)
     {
-        freq = 0.3;
-        return true;
+        return false;
     }
     PdhCloseQuery(query);
     freq = pdhValue.doubleValue / 100 * max_cpu_freq;
-    return freq;
+    return true;
 }
