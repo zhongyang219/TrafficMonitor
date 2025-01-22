@@ -43,7 +43,8 @@ CTrafficMonitorApp::CTrafficMonitorApp()
     // TODO: 在此处添加构造代码，
     // 将所有重要的初始化放置在 InitInstance 中
     CRASHREPORT::StartCrashReport();
-    winrt::init_apartment();
+    if (m_win_version.IsWindows11OrLater())
+        winrt::init_apartment();
 }
 
 void CTrafficMonitorApp::LoadConfig()
