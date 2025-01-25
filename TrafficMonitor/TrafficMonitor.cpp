@@ -271,6 +271,8 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.ValidItemSpace();
     m_taskbar_data.ValidWindowOffsetTop();
     m_taskbar_data.ValidWindowOffsetLeft();
+    m_taskbar_data.avoid_overlap_with_widgets = ini.GetBool(_T("task_bar"), _T("avoid_overlap_with_widgets"), false);
+    m_taskbar_data.taskbar_left_space_win11 = ini.GetInt(L"task_bar", L"taskbar_left_space_win11", 160);
 
     if (m_win_version.IsWindows10OrLater())     //只有Win10才支持自动适应系统深色/浅色主题
         m_taskbar_data.auto_adapt_light_theme = ini.GetBool(L"task_bar", L"auto_adapt_light_theme", false);
@@ -314,8 +316,6 @@ void CTrafficMonitorApp::LoadConfig()
     m_last_light_mode = ini.GetBool(L"other", L"last_light_mode", CWindowsSettingHelper::IsWindows10LightTheme());
     m_show_mouse_panetrate_tip = ini.GetBool(L"other", L"show_mouse_panetrate_tip", true);
     m_show_dot_net_notinstalled_tip = ini.GetBool(L"other", L"show_dot_net_notinstalled_tip", true);
-
-    m_cfg_data.taskbar_left_space_win11 = ini.GetInt(L"task_bar", L"taskbar_left_space_win11", 160);
 }
 
 void CTrafficMonitorApp::SaveConfig()
@@ -455,6 +455,8 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"task_bar", L"vertical_margin", m_taskbar_data.vertical_margin);
     ini.WriteInt(L"task_bar", L"window_offset_top", m_taskbar_data.window_offset_top);
     ini.WriteInt(L"task_bar", L"window_offset_left", m_taskbar_data.window_offset_left);
+    ini.WriteBool(L"task_bar", L"avoid_overlap_with_widgets", m_taskbar_data.avoid_overlap_with_widgets);
+    ini.WriteInt(L"task_bar", L"taskbar_left_space_win11", m_taskbar_data.taskbar_left_space_win11);
 
     ini.WriteBool(L"task_bar", L"auto_adapt_light_theme", m_taskbar_data.auto_adapt_light_theme);
     ini.WriteInt(L"task_bar", L"dark_default_style", m_taskbar_data.dark_default_style);
@@ -488,8 +490,6 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(_T("other"), _T("show_dot_net_notinstalled_tip"), m_show_dot_net_notinstalled_tip);
 
     ini.WriteString(L"config", L"plugin_disabled", m_cfg_data.plugin_disabled.ToString());
-
-    ini.WriteInt(L"task_bar", L"taskbar_left_space_win11", m_cfg_data.taskbar_left_space_win11);
 
     ini.WriteString(L"app", L"version", VERSION);
 

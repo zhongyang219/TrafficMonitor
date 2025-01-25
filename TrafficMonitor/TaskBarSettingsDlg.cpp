@@ -12,6 +12,7 @@
 #include "WindowsSettingHelper.h"
 #include "TrafficMonitorDlg.h"
 #include "FileDialogEx.h"
+#include "Win11TaskbarSettingDlg.h"
 
 // CTaskBarSettingsDlg 对话框
 
@@ -112,11 +113,10 @@ void CTaskBarSettingsDlg::EnableControl()
     EnableDlgCtrl(IDC_CM_GRAPH_PLOT_RADIO, m_data.show_status_bar || m_data.show_netspeed_figure);
     EnableDlgCtrl(IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, m_data.show_netspeed_figure);
     EnableDlgCtrl(IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO, m_data.show_netspeed_figure);
-    bool taskbar_on_left_check = (IsDlgButtonChecked(IDC_TASKBAR_WND_ON_LEFT_CHECK) != FALSE);
-    EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, CTaskBarDlg::IsTaskbarCloseToIconEnable(taskbar_on_left_check));
     //Win11下，任务栏左对齐时禁用“任务栏窗口显示在任务栏左侧”的选项
     EnableDlgCtrl(IDC_TASKBAR_WND_ON_LEFT_CHECK, !theApp.m_is_windows11_taskbar || CWindowsSettingHelper::IsTaskbarCenterAlign());
     EnableDlgCtrl(IDC_ENABLE_COLOR_EMOJI_CHECK, !m_data.disable_d2d);
+    EnableDlgCtrl(IDC_WIN11_SETTINGS_BUTTON, theApp.m_is_windows11_taskbar);
 }
 
 
@@ -128,8 +128,6 @@ void CTaskBarSettingsDlg::SetControlMouseWheelEnable(bool enable)
     m_font_size_edit.SetMouseWheelEnable(enable);
     m_memory_display_combo.SetMouseWheelEnable(enable);
     m_item_space_edit.SetMouseWheelEnable(enable);
-    m_window_offset_top_edit.SetMouseWheelEnable(enable);
-    m_window_offset_left_edit.SetMouseWheelEnable(enable);
     m_vertical_margin_edit.SetMouseWheelEnable(enable);
     m_net_speed_figure_max_val_edit.SetMouseWheelEnable(enable);
     m_net_speed_figure_max_val_unit_combo.SetMouseWheelEnable(enable);
@@ -152,11 +150,9 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_AUTO_SET_BACK_COLOR_CHECK, m_auto_set_back_color_chk);
     DDX_Control(pDX, IDC_MEMORY_DISPLAY_COMBO, m_memory_display_combo);
     DDX_Control(pDX, IDC_ITEM_SPACE_EDIT, m_item_space_edit);
-    DDX_Control(pDX, IDC_WINDOW_OFFSET_TOP_EDIT, m_window_offset_top_edit);
     DDX_Control(pDX, IDC_VERTICAL_MARGIN_EDIT, m_vertical_margin_edit);
     DDX_Control(pDX, IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, m_net_speed_figure_max_val_edit);
     DDX_Control(pDX, IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO, m_net_speed_figure_max_val_unit_combo);
-    DDX_Control(pDX, IDC_WINDOW_OFFSET_LEFT_EDIT, m_window_offset_left_edit);
 }
 
 
@@ -190,9 +186,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_CBN_SELCHANGE(IDC_MEMORY_DISPLAY_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeMemoryDisplayCombo)
     ON_BN_CLICKED(IDC_SHOW_DASHED_BOX, &CTaskBarSettingsDlg::OnBnClickedShowDashedBox)
     ON_BN_CLICKED(IDC_SET_ORDER_BUTTON, &CTaskBarSettingsDlg::OnBnClickedSetOrderButton)
-    ON_BN_CLICKED(IDC_TASKBAR_WND_SNAP_CHECK, &CTaskBarSettingsDlg::OnBnClickedTaskbarWndSnapCheck)
     ON_EN_CHANGE(IDC_ITEM_SPACE_EDIT, &CTaskBarSettingsDlg::OnEnChangeItemSpaceEdit)
-    ON_EN_CHANGE(IDC_WINDOW_OFFSET_TOP_EDIT, &CTaskBarSettingsDlg::OnEnChangeWindowOffsetTopEdit)
     ON_EN_CHANGE(IDC_VERTICAL_MARGIN_EDIT, &CTaskBarSettingsDlg::OnEnChangeVerticalMarginEdit)
     ON_BN_CLICKED(IDC_SHOW_NET_SPEED_FIGURE_CHECK, &CTaskBarSettingsDlg::OnBnClickedShowNetSpeedFigureCheck)
     ON_CBN_SELCHANGE(IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeNetSpeedFigureMaxValueUnitCombo)
@@ -200,8 +194,8 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_GDI_RADIO, &CTaskBarSettingsDlg::OnBnClickedGdiRadio)
     ON_BN_CLICKED(IDC_D2D_RADIO, &CTaskBarSettingsDlg::OnBnClickedD2dRadio)
     ON_BN_CLICKED(IDC_ENABLE_COLOR_EMOJI_CHECK, &CTaskBarSettingsDlg::OnBnClickedEnableColorEmojiCheck)
-    ON_EN_CHANGE(IDC_WINDOW_OFFSET_LEFT_EDIT, &CTaskBarSettingsDlg::OnEnChangeWindowOffsetLeftEdit)
     ON_CBN_SELCHANGE(IDC_DIGIT_NUMBER_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeDigitNumberCombo)
+    ON_BN_CLICKED(IDC_WIN11_SETTINGS_BUTTON, &CTaskBarSettingsDlg::OnBnClickedWin11SettingsButton)
 END_MESSAGE_MAP()
 
 
@@ -237,9 +231,6 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     ((CButton*)GetDlgItem(IDC_SHOW_STATUS_BAR_CHECK))->SetCheck(m_data.show_status_bar);
     ((CButton*)GetDlgItem(IDC_SEPARATE_VALUE_UNIT_CHECK))->SetCheck(m_data.separate_value_unit_with_space);
     ((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->SetCheck(m_data.show_tool_tip);
-
-    EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, theApp.m_win_version.IsWindows11OrLater());
-    CheckDlgButton(IDC_TASKBAR_WND_SNAP_CHECK, m_data.tbar_wnd_snap);
 
     m_text_color_static.SetLinkCursor();
     m_back_color_static.SetLinkCursor();
@@ -317,12 +308,6 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     m_item_space_edit.SetRange(0, 32);
     m_item_space_edit.SetValue(m_data.item_space);
     CTaskBarDlg* taskbar_dlg{ CTrafficMonitorDlg::Instance()->GetTaskbarWindow() };
-    m_window_offset_top_edit.SetRange(-5, 20);
-    m_window_offset_top_edit.SetValue(m_data.window_offset_top);
-    m_window_offset_top_edit.EnableWindow(theApp.m_is_windows11_taskbar);
-    m_window_offset_left_edit.SetRange(-800, 800);
-    m_window_offset_left_edit.SetValue(m_data.window_offset_left);
-    m_window_offset_left_edit.EnableWindow(theApp.m_is_windows11_taskbar);
     m_vertical_margin_edit.SetRange(-10, 10);
     m_vertical_margin_edit.SetValue(m_data.vertical_margin);
     if (taskbar_dlg != nullptr)
@@ -770,13 +755,6 @@ void CTaskBarSettingsDlg::OnBnClickedSetOrderButton()
 }
 
 
-void CTaskBarSettingsDlg::OnBnClickedTaskbarWndSnapCheck()
-{
-    // TODO: 在此添加控件通知处理程序代码
-    m_data.tbar_wnd_snap = (IsDlgButtonChecked(IDC_TASKBAR_WND_SNAP_CHECK) != 0);
-}
-
-
 void CTaskBarSettingsDlg::OnEnChangeItemSpaceEdit()
 {
     // TODO:  如果该控件是 RICHEDIT 控件，它将不
@@ -787,12 +765,6 @@ void CTaskBarSettingsDlg::OnEnChangeItemSpaceEdit()
     // TODO:  在此添加控件通知处理程序代码
     m_data.item_space = m_item_space_edit.GetValue();
     m_data.ValidItemSpace();
-}
-
-void CTaskBarSettingsDlg::OnEnChangeWindowOffsetTopEdit()
-{
-    m_data.window_offset_top = m_window_offset_top_edit.GetValue();
-    m_data.ValidWindowOffsetTop();
 }
 
 void CTaskBarSettingsDlg::OnEnChangeVerticalMarginEdit()
@@ -863,16 +835,15 @@ void CTaskBarSettingsDlg::OnBnClickedEnableColorEmojiCheck()
 }
 
 
-void CTaskBarSettingsDlg::OnEnChangeWindowOffsetLeftEdit()
-{
-    m_data.window_offset_left = m_window_offset_left_edit.GetValue();
-    m_data.ValidWindowOffsetLeft();
-
-}
-
-
 void CTaskBarSettingsDlg::OnCbnSelchangeDigitNumberCombo()
 {
     //获取数据位数的设置
     m_data.digits_number = m_digit_number_combo.GetCurSel() + 3;
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedWin11SettingsButton()
+{
+    CWin11TaskbarSettingDlg dlg(m_data);
+    dlg.DoModal();
 }

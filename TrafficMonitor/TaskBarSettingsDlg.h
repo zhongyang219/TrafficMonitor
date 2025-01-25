@@ -50,8 +50,6 @@ protected:
     CButton m_auto_set_back_color_chk;
     CComboBox2 m_memory_display_combo;
     CSpinEdit m_item_space_edit;
-    CSpinEdit m_window_offset_top_edit;
-    CSpinEdit m_window_offset_left_edit;
     CSpinEdit m_vertical_margin_edit;
     CSpinEdit m_net_speed_figure_max_val_edit;
     CComboBox2 m_net_speed_figure_max_val_unit_combo;
@@ -109,9 +107,7 @@ public:
     afx_msg void OnCbnSelchangeMemoryDisplayCombo();
     afx_msg void OnBnClickedShowDashedBox();
     afx_msg void OnBnClickedSetOrderButton();
-    afx_msg void OnBnClickedTaskbarWndSnapCheck();
     afx_msg void OnEnChangeItemSpaceEdit();
-    afx_msg void OnEnChangeWindowOffsetTopEdit();
     afx_msg void OnEnChangeVerticalMarginEdit();
     virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
     afx_msg void OnBnClickedShowNetSpeedFigureCheck();
@@ -120,6 +116,6 @@ public:
     afx_msg void OnBnClickedGdiRadio();
     afx_msg void OnBnClickedD2dRadio();
     afx_msg void OnBnClickedEnableColorEmojiCheck();
-    afx_msg void OnEnChangeWindowOffsetLeftEdit();
     afx_msg void OnCbnSelchangeDigitNumberCombo();
+    afx_msg void OnBnClickedWin11SettingsButton();
 };

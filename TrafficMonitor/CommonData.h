@@ -207,7 +207,6 @@ struct MainConfigData
     bool m_sunday_first{ true };            //是否将周日作为一周的第一天
     StringSet plugin_disabled;      //已禁用的插件
 
-    int taskbar_left_space_win11{};         //Windows11下，任务栏窗口显示在左侧时的边距
 };
 
 //内存显示方式
@@ -305,6 +304,8 @@ struct TaskBarSettingData : public PublicSettingData
     void ValidVerticalMargin();
     void ValidWindowOffsetTop();
     void ValidWindowOffsetLeft();
+    bool avoid_overlap_with_widgets{ false };   //避免与右侧小组件重叠
+    int taskbar_left_space_win11{};         //Windows11下，任务栏小工具的宽度
 
     bool show_netspeed_figure{ false };     //是否显示网速占用图
     int netspeed_figure_max_value;          //网速占用图的最大值

@@ -235,6 +235,9 @@
     <Filter Include="资源文件\bitmaps">
       <UniqueIdentifier>{322d1b74-5d71-43bd-ae50-b33f24b1b31c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\对话框类\选项设置对话框\Win11TaskbarSettingDlg">
+      <UniqueIdentifier>{d048fa7a-2509-4713-9df3-c537c4b35018}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -505,6 +508,9 @@
     <ClInclude Include="FileDialogEx.h">
       <Filter>源文件和头文件\头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Win11TaskbarSettingDlg.h">
+      <Filter>源文件和头文件\对话框类\选项设置对话框\Win11TaskbarSettingDlg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -743,6 +749,9 @@
     </ClCompile>
     <ClCompile Include="FileDialogEx.cpp">
       <Filter>源文件和头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Win11TaskbarSettingDlg.cpp">
+      <Filter>源文件和头文件\对话框类\选项设置对话框\Win11TaskbarSettingDlg</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
