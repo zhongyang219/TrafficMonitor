@@ -6,6 +6,7 @@
 #include "afxdialogex.h"
 #include "IniHelper.h"
 #include "TrafficMonitor.h"
+#include "TrafficMonitorDlg.h"
 
 // CBaseDialog 对话框
 std::map<CString, HWND> CBaseDialog::m_unique_hwnd;
@@ -36,6 +37,16 @@ HWND CBaseDialog::GetUniqueHandel(LPCTSTR dlg_name)
 const std::map<CString, HWND>& CBaseDialog::AllUniqueHandels()
 {
     return m_unique_hwnd;
+}
+
+bool CBaseDialog::IsAllDialogClosed()
+{
+    for (const auto& hwnd : m_unique_hwnd)
+    {
+        if (hwnd.second != nullptr)
+            return false;
+    }
+    return true;
 }
 
 void CBaseDialog::LoadConfig()
@@ -117,6 +128,8 @@ BOOL CBaseDialog::OnInitDialog()
         SetWindowPos(nullptr, 0, 0, m_window_size.cx, m_window_size.cy, SWP_NOZORDER | SWP_NOMOVE);
     }
 
+    SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);       //取消置顶
+
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE
 }
@@ -129,6 +142,11 @@ void CBaseDialog::OnDestroy()
     // TODO: 在此处添加消息处理程序代码
     m_unique_hwnd[GetDialogName()] = NULL;
     SaveConfig();
+
+    //当所有对话框关闭时重新设置主窗口置顶
+    CTrafficMonitorDlg* pDlg = dynamic_cast<CTrafficMonitorDlg*>(theApp.m_pMainWnd);
+    if (pDlg != nullptr && IsAllDialogClosed())
+        pDlg->SetAlwaysOnTop();
 }
 
 
