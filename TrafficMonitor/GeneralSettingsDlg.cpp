@@ -254,12 +254,21 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     m_toolTip.AddTool(GetDlgItem(IDC_SAVE_TO_PROGRAM_DIR_RADIO), theApp.m_module_dir.c_str());
     AddOrUpdateAutoRunTooltip(true);
 
-    if (m_data.cpu_usage_acquire_method == GeneralSettingData::CA_CPU_TIME || !m_data.IsHardwareEnable(HI_CPU))
+    if (m_data.cpu_usage_acquire_method == GeneralSettingData::CA_CPU_TIME)
+    {
         CheckDlgButton(IDC_USE_CPU_TIME_RADIO, TRUE);
+    }
     else if (m_data.cpu_usage_acquire_method == GeneralSettingData::CA_PDH)
+    {
         CheckDlgButton(IDC_USE_PDH_RADIO, TRUE);
+    }
     else if (m_data.cpu_usage_acquire_method == GeneralSettingData::CA_HARDWARE_MONITOR)
-        CheckDlgButton(IDC_USE_HARDWARE_MONITOR_RADIO, TRUE);
+    {
+        if (m_data.IsHardwareEnable(HI_CPU))
+            CheckDlgButton(IDC_USE_HARDWARE_MONITOR_RADIO, TRUE);
+        else
+            CheckDlgButton(IDC_USE_CPU_TIME_RADIO, TRUE);
+    }
 
     EnableDlgCtrl(IDC_USE_HARDWARE_MONITOR_RADIO, m_data.IsHardwareEnable(HI_CPU));
 
