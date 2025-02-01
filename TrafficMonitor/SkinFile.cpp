@@ -369,8 +369,6 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
         draw.SetFont(&m_font);
     else
         draw.SetFont(theApp.m_pMainWnd->GetFont());
-    draw.SetDrawRect(rect);
-    draw.FillRect(rect, RGB(255, 255, 255));
     //绘制背景
     CRect rect_s(CPoint(m_preview_info.s_pos.x, m_preview_info.s_pos.y), CSize(m_layout_info.layout_s.width, m_layout_info.layout_s.height));
     CRect rect_l(CPoint(m_preview_info.l_pos.x, m_preview_info.l_pos.y), CSize(m_layout_info.layout_l.width, m_layout_info.layout_l.height));
