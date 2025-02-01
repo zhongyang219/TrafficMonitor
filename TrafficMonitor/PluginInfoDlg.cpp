@@ -58,8 +58,10 @@ void CPluginInfoDlg::ShowInfo()
         m_info_list.SetItemText(RI_COPYRIGHT, 1, plugin_info.Property(ITMPlugin::TMI_COPYRIGHT).c_str());
         m_info_list.SetItemText(RI_URL, 1, plugin_info.Property(ITMPlugin::TMI_URL).c_str());
         m_info_list.SetItemText(RI_VERSION, 1, plugin_info.Property(ITMPlugin::TMI_VERSION).c_str());
+        std::wstring api_version;
         if (plugin_info.plugin != nullptr)
-            m_info_list.SetItemText(RI_API_VERSION, 1, std::to_wstring(plugin_info.plugin->GetAPIVersion()).c_str());
+            api_version = std::to_wstring(plugin_info.plugin->GetAPIVersion());
+        m_info_list.SetItemText(RI_API_VERSION, 1, api_version.c_str());
     }
 
     //显示当前选择指示
