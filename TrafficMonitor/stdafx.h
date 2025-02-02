@@ -90,6 +90,7 @@ using std::ofstream;
 #define WARN_INSERT_TO_TASKBAR_CNT 20     //尝试嵌入任务栏的警告次数
 
 #define APP_NAME _T("TrafficMonitor")
+#define TASKBAR_WINDOW_NAME _T("TrafficMonitorTaskbarWindow")
 #define APP_CLASS_NAME _T("TrafficMonitor_r7XZaS4p") //程序主窗口的类名
 #define VERSION L"1.85"
 

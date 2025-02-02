@@ -1279,6 +1279,7 @@ BOOL CTaskBarDlg::OnInitDialog()
     CDialogEx::OnInitDialog();
 
     // TODO:  在此添加额外的初始化
+    SetWindowText(TASKBAR_WINDOW_NAME);
     // 检测系统是否安装了 MicrosoftWindows.Client.WebExperience (aka Windows Web Experience Pack)
     theApp.m_taskbar_data.is_windows_web_experience_detected =
         WindowsWebExperienceDetector::IsDetected();
