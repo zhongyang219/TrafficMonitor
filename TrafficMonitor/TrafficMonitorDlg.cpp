@@ -1235,9 +1235,17 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     //if (cur_out_speed > 1073741824)
     //  cur_out_speed = 0;
 
+    //计算两次获取网速的时间间隔
+    static ULONGLONG last_net_speed_time = 0;
+    ULONGLONG net_speed_time = CCommon::GetCurrentTimeSinceEpochMilliseconds();
+    int time_span = theApp.m_general_data.monitor_time_span;
+    if (last_net_speed_time != 0)
+        time_span = static_cast<int>(net_speed_time - last_net_speed_time);
+    last_net_speed_time = net_speed_time;
+
     //将当前监控时间间隔的流量转换成每秒时间间隔内的流量
-    theApp.m_in_speed = static_cast<unsigned __int64>(cur_in_speed * 1000 / theApp.m_general_data.monitor_time_span);
-    theApp.m_out_speed = static_cast<unsigned __int64>(cur_out_speed * 1000 / theApp.m_general_data.monitor_time_span);
+    theApp.m_in_speed = static_cast<unsigned __int64>(cur_in_speed * 1000 / time_span);
+    theApp.m_out_speed = static_cast<unsigned __int64>(cur_out_speed * 1000 / time_span);
 
     pThis->m_connection_change_flag = false;    //清除连接发生变化的标志
 

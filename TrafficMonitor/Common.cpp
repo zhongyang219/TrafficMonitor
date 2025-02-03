@@ -498,6 +498,24 @@ SYSTEMTIME CCommon::CompareSystemTime(SYSTEMTIME a, SYSTEMTIME b)
     return result;
 }
 
+ULONGLONG CCommon::GetCurrentTimeSinceEpochMilliseconds()
+{
+    FILETIME fileTime;
+    GetSystemTimeAsFileTime(&fileTime);  // 获取当前系统时间
+
+    // 将FILETIME转换为ULARGE_INTEGER以便计算
+    ULARGE_INTEGER uli;
+    uli.LowPart = fileTime.dwLowDateTime;
+    uli.HighPart = fileTime.dwHighDateTime;
+
+    // 从1601年1月1日到1970年1月1日的100纳秒间隔数
+    const ULONGLONG EPOCH_OFFSET = 116444736000000000ULL;
+
+    // 转换为从1970年1月1日开始的毫秒数
+    ULONGLONG millisecondsSince1970 = (uli.QuadPart - EPOCH_OFFSET) / 10000;
+    return millisecondsSince1970;
+}
+
 wstring CCommon::GetModuleDir()
 {
     wchar_t path[MAX_PATH];

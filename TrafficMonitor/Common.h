@@ -178,6 +178,9 @@ public:
     //计算两个SYSTEMTIME结构时间的差（a-b，只保留时、分、秒）
     static SYSTEMTIME CompareSystemTime(SYSTEMTIME a, SYSTEMTIME b);
 
+    //获取从1970年1月1日到现在的毫秒数
+    static ULONGLONG GetCurrentTimeSinceEpochMilliseconds();
+
     //获取当前程序的目录
     static wstring GetModuleDir();
 
