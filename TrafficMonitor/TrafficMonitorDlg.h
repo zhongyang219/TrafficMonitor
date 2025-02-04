@@ -123,7 +123,12 @@ protected:
     void DoMonitorAcquisition();    //获取一次监控信息
     static UINT MonitorThreadCallback(LPVOID dwUser);   //获取监控信息的线程函数
     int m_thread_monitor_counter{};          //线程中的监控计数器，每当需要获取监控数据时加1，获取到一次监控数据时减1
+    bool m_is_thread_exit{ false }; //线程退出标志
+    CEvent m_threadExitEvent;       //用于通知主线程工作线程已退出
+public:
+    void ExitMonitorThread();       //停止监控线程
 
+protected:
     CString GetMouseTipsInfo();     //获取鼠标提示信息
     void SetTransparency();         //根据m_transparency的值设置窗口透明度
     void SetTransparency(int transparency);

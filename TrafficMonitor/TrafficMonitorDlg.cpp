@@ -1516,10 +1516,29 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         {
             Sleep(10);
         }
+
+        // 检查退出标志
+        if (pThis->m_is_thread_exit)
+        {
+            // 触发事件，通知主线程工作线程已退出
+            pThis->m_threadExitEvent.SetEvent();
+            return 0;
+        }
     }
 
     return 0;
 }
+
+
+void CTrafficMonitorDlg::ExitMonitorThread()
+{
+    // 通知线程退出
+    m_is_thread_exit = true;
+
+    // 等待线程退出
+    ::WaitForSingleObject(m_threadExitEvent.m_hObject, 1000);
+}
+
 
 void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 {
@@ -2336,7 +2355,9 @@ void CTrafficMonitorDlg::OnDestroy()
 
     //程序退出时删除通知栏图标
     ::Shell_NotifyIcon(NIM_DELETE, &m_ntIcon);
-    // TODO: 在此处添加消息处理程序代码
+
+    // 停止监控线程
+    ExitMonitorThread();
 }
 
 
