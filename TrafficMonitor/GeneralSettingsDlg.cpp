@@ -164,6 +164,7 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_SELECT_CONNECTIONS_BUTTON, &CGeneralSettingsDlg::OnBnClickedSelectConnectionsButton)
     ON_BN_CLICKED(IDC_RESET_AUTO_RUN_BUTTON, &CGeneralSettingsDlg::OnBnClickedResetAutoRunButton)
     ON_BN_CLICKED(IDC_USE_HARDWARE_MONITOR_RADIO, &CGeneralSettingsDlg::OnBnClickedUseHardwareMonitorRadio)
+    ON_EN_CHANGE(IDC_MONITOR_SPAN_EDIT, &CGeneralSettingsDlg::OnEnChangeMonitorSpanEdit)
 END_MESSAGE_MAP()
 
 
@@ -421,8 +422,6 @@ void CGeneralSettingsDlg::OnOK()
     {
         MessageBox(CCommon::LoadText(IDS_CFG_DIR_CHANGED_INFO), NULL, MB_ICONINFORMATION | MB_OK);
     }
-
-    m_data.monitor_time_span = m_monitor_span_edit.GetValue();
 
     //m_taskbar_item_modified = (theApp.m_taskbar_data.m_tbar_display_item != taskbar_displat_item_ori);
 
@@ -726,4 +725,10 @@ void CGeneralSettingsDlg::OnBnClickedResetAutoRunButton()
     CheckDlgButton(IDC_AUTO_RUN_CHECK, auto_run);
     //更新鼠标提示
     AddOrUpdateAutoRunTooltip(false);
+}
+
+
+void CGeneralSettingsDlg::OnEnChangeMonitorSpanEdit()
+{
+    m_data.monitor_time_span = m_monitor_span_edit.GetValue();
 }

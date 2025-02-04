@@ -104,4 +104,5 @@ public:
     afx_msg void OnBnClickedShowNotifyIconCheck();
     afx_msg void OnBnClickedSelectConnectionsButton();
     afx_msg void OnBnClickedResetAutoRunButton();
+    afx_msg void OnEnChangeMonitorSpanEdit();
 };
