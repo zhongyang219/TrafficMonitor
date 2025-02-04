@@ -1103,10 +1103,8 @@ void CTaskBarDlg::CalculateWindowSize()
     int memory_width{ value_width };
     if (theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_USED || theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_AVAILABLE)
     {
-        if (theApp.m_taskbar_data.separate_value_unit_with_space)
-            str = _T("19.99 GB");
-        else
-            str = _T("19.99GB");
+        //宽度为总内存的宽度
+        str = CCommon::DataSizeToString(static_cast<unsigned long long>(theApp.m_total_memory) * 1024, theApp.m_taskbar_data.separate_value_unit_with_space);
         memory_width = m_pDC->GetTextExtent(str).cx;
     }
     item_widths[TDI_CPU].value_width = value_width;
