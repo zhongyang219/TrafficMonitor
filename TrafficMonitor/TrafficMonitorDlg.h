@@ -22,7 +22,6 @@
 #include "AboutDlg.h"
 #include "CPUUsage.h"
 #include "HistoryTrafficFile.h"
-#include "HighResolutionTimer.h"
 
 // CTrafficMonitorDlg 对话框
 class CTrafficMonitorDlg : public CDialog
@@ -121,10 +120,9 @@ protected:
 
     string m_connection_name_preferd{ theApp.m_cfg_data.m_connection_name };          //保存用户手动选择的网络连接名称
 
-    //CHighResolutionTimer m_timer;           // 采用多媒体定时器(也防止了界面阻塞出现的卡顿现象)
-    CCriticalSection m_critical;
-    static UINT MonitorThreadCallback(LPVOID dwUser);
-    bool m_is_monitor_thread_runing{ false };
+    void DoMonitorAcquisition();    //获取一次监控信息
+    static UINT MonitorThreadCallback(LPVOID dwUser);   //获取监控信息的线程函数
+    int m_thread_monitor_counter{};          //线程中的监控计数器，每当需要获取监控数据时加1，获取到一次监控数据时减1
 
     CString GetMouseTipsInfo();     //获取鼠标提示信息
     void SetTransparency();         //根据m_transparency的值设置窗口透明度

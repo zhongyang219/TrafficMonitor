@@ -762,8 +762,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     {
         KillTimer(MONITOR_TIMER);
         SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, NULL);
-        //m_timer.KillTimer();
-        //m_timer.CreateTimer((DWORD_PTR)this, theApp.m_general_data.monitor_time_span, MonitorThreadCallback);
+        m_thread_monitor_counter = 1;     //重置线程中的监控计数器
     }
 
     //设置获取CPU利用率的方式
@@ -1112,8 +1111,7 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     SetTimer(MAIN_TIMER, 1000, NULL);
 
     SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, NULL);
-    //m_timer.CreateTimer((DWORD_PTR)this, theApp.m_general_data.monitor_time_span, MonitorThreadCallback);
-
+    AfxBeginThread(MonitorThreadCallback, (LPVOID)this);
 
     //初始化窗口位置
     SetItemPosition();
@@ -1164,31 +1162,27 @@ static int GetMonitorTimerCount(int second)
 }
 
 
-UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
+void CTrafficMonitorDlg::DoMonitorAcquisition()
 {
-    CTrafficMonitorDlg* pThis = (CTrafficMonitorDlg*)dwUser;
-    CFlagLocker flag_locker(pThis->m_is_monitor_thread_runing);
-
     //获取网络连接速度
     int rtn{};
-    auto getLfTable = [&]()
-    {
+    auto getLfTable = [&]() {
         __try
         {
-            rtn = GetIfTable(pThis->m_pIfTable, &pThis->m_dwSize, FALSE);
+            rtn = GetIfTable(m_pIfTable, &m_dwSize, FALSE);
         }
         __except (EXCEPTION_EXECUTE_HANDLER)
         {
-            free(pThis->m_pIfTable);
-            pThis->m_dwSize = sizeof(MIB_IFTABLE);
-            pThis->m_pIfTable = (MIB_IFTABLE*)malloc(pThis->m_dwSize);
-            rtn = GetIfTable(pThis->m_pIfTable, &pThis->m_dwSize, FALSE);
+            free(m_pIfTable);
+            m_dwSize = sizeof(MIB_IFTABLE);
+            m_pIfTable = (MIB_IFTABLE*)malloc(m_dwSize);
+            rtn = GetIfTable(m_pIfTable, &m_dwSize, FALSE);
             if (rtn == ERROR_INSUFFICIENT_BUFFER)	//如果函数返回值为ERROR_INSUFFICIENT_BUFFER，说明m_pIfTable的大小不够
             {
-                free(pThis->m_pIfTable);
-                pThis->m_pIfTable = (MIB_IFTABLE*)malloc(pThis->m_dwSize);	//用新的大小重新开辟一块内存
+                free(m_pIfTable);
+                m_pIfTable = (MIB_IFTABLE*)malloc(m_dwSize);	//用新的大小重新开辟一块内存
             }
-            GetIfTable(pThis->m_pIfTable, &pThis->m_dwSize, FALSE);
+            GetIfTable(m_pIfTable, &m_dwSize, FALSE);
         }
     };
 
@@ -1196,38 +1190,38 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
 
     if (!theApp.m_cfg_data.m_select_all)        //获取当前选中连接的网速
     {
-        auto table = pThis->GetConnectIfTable(pThis->m_connection_selected);
-        pThis->m_in_bytes = table.dwInOctets;
-        pThis->m_out_bytes = table.dwOutOctets;
+        auto table = GetConnectIfTable(m_connection_selected);
+        m_in_bytes = table.dwInOctets;
+        m_out_bytes = table.dwOutOctets;
     }
     else        //获取全部连接的网速
     {
-        pThis->m_in_bytes = 0;
-        pThis->m_out_bytes = 0;
-        for (size_t i{}; i < pThis->m_connections.size(); i++)
+        m_in_bytes = 0;
+        m_out_bytes = 0;
+        for (size_t i{}; i < m_connections.size(); i++)
         {
-            auto table = pThis->GetConnectIfTable(i);
+            auto table = GetConnectIfTable(i);
             //if (i > 0 && m_pIfTable->table[m_connections[i].index].dwInOctets == m_pIfTable->table[m_connections[i - 1].index].dwInOctets
             //  && m_pIfTable->table[m_connections[i].index].dwOutOctets == m_pIfTable->table[m_connections[i - 1].index].dwOutOctets)
             //  continue;       //连接列表中可能会有相同的连接，统计所有连接的网速时，忽略掉已发送和已接收字节数完全相同的连接
-            pThis->m_in_bytes += table.dwInOctets;
-            pThis->m_out_bytes += table.dwOutOctets;
+            m_in_bytes += table.dwInOctets;
+            m_out_bytes += table.dwOutOctets;
         }
     }
 
     unsigned __int64 cur_in_speed{}, cur_out_speed{};       //本次监控时间间隔内的上传和下载速度
 
     //如果发送和接收的字节数为0或上次发送和接收的字节数为0或当前连接已改变时，网速无效
-    if ((pThis->m_in_bytes == 0 && pThis->m_out_bytes == 0) || (pThis->m_last_in_bytes == 0 && pThis->m_last_out_bytes == 0) || pThis->m_connection_change_flag
-        || pThis->m_last_in_bytes > pThis->m_in_bytes || pThis->m_last_out_bytes > pThis->m_out_bytes)
+    if ((m_in_bytes == 0 && m_out_bytes == 0) || (m_last_in_bytes == 0 && m_last_out_bytes == 0) || m_connection_change_flag
+        || m_last_in_bytes > m_in_bytes || m_last_out_bytes > m_out_bytes)
     {
         cur_in_speed = 0;
         cur_out_speed = 0;
     }
     else
     {
-        cur_in_speed = pThis->m_in_bytes - pThis->m_last_in_bytes;
-        cur_out_speed = pThis->m_out_bytes - pThis->m_last_out_bytes;
+        cur_in_speed = m_in_bytes - m_last_in_bytes;
+        cur_out_speed = m_out_bytes - m_last_out_bytes;
     }
     ////如果大于1GB/s，说明可能产生了异常，网速无效
     //if (cur_in_speed > 1073741824)
@@ -1247,36 +1241,36 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     theApp.m_in_speed = static_cast<unsigned __int64>(cur_in_speed * 1000 / time_span);
     theApp.m_out_speed = static_cast<unsigned __int64>(cur_out_speed * 1000 / time_span);
 
-    pThis->m_connection_change_flag = false;    //清除连接发生变化的标志
+    m_connection_change_flag = false;    //清除连接发生变化的标志
 
-    pThis->m_last_in_bytes = pThis->m_in_bytes;
-    pThis->m_last_out_bytes = pThis->m_out_bytes;
+    m_last_in_bytes = m_in_bytes;
+    m_last_out_bytes = m_out_bytes;
 
     //处于自动选择状态时，如果连续30秒没有网速，则可能自动选择的网络不对，此时执行一次自动选择
     if (theApp.m_cfg_data.m_auto_select)
     {
         if (cur_in_speed == 0 && cur_out_speed == 0)
-            pThis->m_zero_speed_cnt++;
+            m_zero_speed_cnt++;
         else
-            pThis->m_zero_speed_cnt = 0;
-        if (pThis->m_zero_speed_cnt >= GetMonitorTimerCount(30))
+            m_zero_speed_cnt = 0;
+        if (m_zero_speed_cnt >= GetMonitorTimerCount(30))
         {
-            pThis->AutoSelect();
-            pThis->m_zero_speed_cnt = 0;
+            AutoSelect();
+            m_zero_speed_cnt = 0;
         }
     }
 
     //检测当前日期是否改变，如果已改变，就向历史流量列表插入一个新的日期
     SYSTEMTIME current_time;
     GetLocalTime(&current_time);
-    if (pThis->m_history_traffic.GetTraffics()[0].day != current_time.wDay)
+    if (m_history_traffic.GetTraffics()[0].day != current_time.wDay)
     {
         HistoryTraffic traffic;
         traffic.year = current_time.wYear;
         traffic.month = current_time.wMonth;
         traffic.day = current_time.wDay;
         traffic.mixed = false;
-        pThis->m_history_traffic.GetTraffics().push_front(traffic);
+        m_history_traffic.GetTraffics().push_front(traffic);
         theApp.m_today_up_traffic = 0;
         theApp.m_today_down_traffic = 0;
     }
@@ -1284,29 +1278,29 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     //统计今天已使用的流量
     theApp.m_today_up_traffic += cur_out_speed;
     theApp.m_today_down_traffic += cur_in_speed;
-    pThis->m_history_traffic.GetTraffics()[0].up_kBytes = theApp.m_today_up_traffic / 1024u;
-    pThis->m_history_traffic.GetTraffics()[0].down_kBytes = theApp.m_today_down_traffic / 1024u;
+    m_history_traffic.GetTraffics()[0].up_kBytes = theApp.m_today_up_traffic / 1024u;
+    m_history_traffic.GetTraffics()[0].down_kBytes = theApp.m_today_down_traffic / 1024u;
     //每隔30秒保存一次流量历史记录
-    if (pThis->m_monitor_time_cnt % GetMonitorTimerCount(30) == GetMonitorTimerCount(30) - 1)
+    if (m_monitor_time_cnt % GetMonitorTimerCount(30) == GetMonitorTimerCount(30) - 1)
     {
         static unsigned __int64 last_today_kbytes;
-        if (pThis->m_history_traffic.GetTraffics()[0].kBytes() - last_today_kbytes >= 100u) //只有当流量变化超过100KB时才保存历史流量记录，防止磁盘写入过于频繁
+        if (m_history_traffic.GetTraffics()[0].kBytes() - last_today_kbytes >= 100u) //只有当流量变化超过100KB时才保存历史流量记录，防止磁盘写入过于频繁
         {
-            pThis->SaveHistoryTraffic();
-            last_today_kbytes = pThis->m_history_traffic.GetTraffics()[0].kBytes();
+            SaveHistoryTraffic();
+            last_today_kbytes = m_history_traffic.GetTraffics()[0].kBytes();
         }
     }
 
     if (rtn == ERROR_INSUFFICIENT_BUFFER)
     {
-        pThis->IniConnection();
+        IniConnection();
         CString info;
         info.LoadString(IDS_INSUFFICIENT_BUFFER);
-        info.Replace(_T("<%cnt%>"), CCommon::IntToString(pThis->m_restart_cnt));
+        info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt));
         CCommon::WriteLog(info, theApp.m_log_path.c_str());
     }
 
-    if (pThis->m_monitor_time_cnt % GetMonitorTimerCount(3) == GetMonitorTimerCount(3) - 1)
+    if (m_monitor_time_cnt % GetMonitorTimerCount(3) == GetMonitorTimerCount(3) - 1)
     {
         //重新获取当前连接数量
         static DWORD last_interface_num = -1;
@@ -1320,15 +1314,15 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
                 info.LoadString(IDS_CONNECTION_NUM_CHANGED);
                 info.Replace(_T("<%before%>"), CCommon::IntToString(last_interface_num));
                 info.Replace(_T("<%after%>"), CCommon::IntToString(interface_num));
-                info.Replace(_T("<%cnt%>"), CCommon::IntToString(pThis->m_restart_cnt + 1));
+                info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt + 1));
                 CCommon::WriteLog(info, theApp.m_log_path.c_str());
             }
-            pThis->IniConnection();
+            IniConnection();
             last_interface_num = interface_num;
         }
 
         string descr;
-        descr = (const char*)pThis->GetConnectIfTable(pThis->m_connection_selected).bDescr;
+        descr = (const char*)GetConnectIfTable(m_connection_selected).bDescr;
         if (descr != theApp.m_cfg_data.m_connection_name)
         {
             //写入额外的调试信息
@@ -1343,10 +1337,10 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
                 CCommon::WriteLog(log_str, (theApp.m_config_dir + L".\\connections.log").c_str());
             }
 
-            pThis->IniConnection();
+            IniConnection();
             CString info;
             info.LoadString(IDS_CONNECTION_NOT_MATCH);
-            info.Replace(_T("<%cnt%>"), CCommon::IntToString(pThis->m_restart_cnt));
+            info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt));
             CCommon::WriteLog(info, theApp.m_log_path.c_str());
         }
     }
@@ -1362,14 +1356,14 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     //获取CPU使用率
     if (lite_version || theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_HARDWARE_MONITOR || !theApp.m_general_data.IsHardwareEnable(HI_CPU))
     {
-        theApp.m_cpu_usage = pThis->m_cpu_usage_helper.GetCPUUsage();
+        theApp.m_cpu_usage = m_cpu_usage_helper.GetCPUUsage();
         cpu_usage_acquired = true;
     }
 
     //获取CPU频率
     //if (lite_version || is_arm64ec || !theApp.m_general_data.IsHardwareEnable(HI_CPU))
     //{
-    if (pThis->m_cpu_freq_helper.GetCpuFreq(theApp.m_cpu_freq))
+    if (m_cpu_freq_helper.GetCpuFreq(theApp.m_cpu_freq))
         cpu_freq_acquired = true;
     //}
 
@@ -1383,21 +1377,21 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
 
 #ifndef WITHOUT_TEMPERATURE
     //获取温度
-    if (pThis->IsTemperatureNeeded() && theApp.m_pMonitor != nullptr)
+    if (IsTemperatureNeeded() && theApp.m_pMonitor != nullptr)
     {
         CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
 
         auto getHardwareInfo = []()
-        {
-            __try
             {
-                theApp.m_pMonitor->GetHardwareInfo();
-            }
-            __except (EXCEPTION_EXECUTE_HANDLER)
-            {
-                AfxMessageBox(IDS_HARDWARE_INFO_ACQUIRE_FAILED_ERROR, MB_ICONERROR | MB_OK);
-            }
-        };
+                __try
+                {
+                    theApp.m_pMonitor->GetHardwareInfo();
+                }
+                __except (EXCEPTION_EXECUTE_HANDLER)
+                {
+                    AfxMessageBox(IDS_HARDWARE_INFO_ACQUIRE_FAILED_ERROR, MB_ICONERROR | MB_OK);
+                }
+            };
 
         getHardwareInfo();
         auto monitor_error_message{ OpenHardwareMonitorApi::GetErrorMessage() };
@@ -1500,22 +1494,39 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         }
     }
 
-    pThis->m_monitor_time_cnt++;
+    m_monitor_time_cnt++;
 
     //发送监控信息更新消息
-    pThis->SendMessage(WM_MONITOR_INFO_UPDATED);
+    SendMessage(WM_MONITOR_INFO_UPDATED);
+}
+
+UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
+{
+    CTrafficMonitorDlg* pThis = (CTrafficMonitorDlg*)dwUser;
+    while (true)
+    {
+        //监控计数器大于0时获取一次监控数据
+        if (pThis->m_thread_monitor_counter > 0)
+        {
+            pThis->DoMonitorAcquisition();
+            //每获取一次监控数据，计数减1
+            pThis->m_thread_monitor_counter--;
+        }
+        else
+        {
+            Sleep(10);
+        }
+    }
 
     return 0;
 }
 
 void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 {
-
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     if (nIDEvent == MONITOR_TIMER)
     {
-        if (!m_is_monitor_thread_runing)    //确保线程已退出
-            AfxBeginThread(MonitorThreadCallback, (LPVOID)this);
+        m_thread_monitor_counter++;
     }
 
     if (nIDEvent == MAIN_TIMER)
