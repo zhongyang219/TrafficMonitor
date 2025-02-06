@@ -110,31 +110,35 @@ CCpuFreq::CCpuFreq()
 
 }
 
-bool CCpuFreq::GetCpuFreq(float& freq) const
+bool CCpuFreq::GetCpuFreq(float& freq)
 {
-    HQUERY query;
+    //从query中获取数据
+    if (query != 0 && counter != NULL)
+    {
+        PdhCollectQueryData(query);
+        PDH_FMT_COUNTERVALUE pdhValue;
+        DWORD dwValue;
+        PDH_STATUS status = PdhGetFormattedCounterValue(counter, PDH_FMT_DOUBLE, &dwValue, &pdhValue);
+        if (status != ERROR_SUCCESS)
+        {
+            return false;
+        }
+        PdhCloseQuery(query);
+        freq = pdhValue.doubleValue / 100 * max_cpu_freq;
+    }
+
+    //初始化query，为下次获取数据做准备
     PDH_STATUS status = PdhOpenQuery(NULL, NULL, &query);
     if (status != ERROR_SUCCESS)
     {
         return false;
     }
-    HCOUNTER counter;
     status = PdhAddCounterA(query, LPCSTR("\\Processor Information(_Total)\\% Processor Performance"), NULL, &counter);
     if (status != ERROR_SUCCESS)
     {
         return false;
     }
     PdhCollectQueryData(query);
-    Sleep(200);
-    PdhCollectQueryData(query);
-    PDH_FMT_COUNTERVALUE pdhValue;
-    DWORD dwValue;
-    status = PdhGetFormattedCounterValue(counter, PDH_FMT_DOUBLE, &dwValue, &pdhValue);
-    if (status != ERROR_SUCCESS)
-    {
-        return false;
-    }
-    PdhCloseQuery(query);
-    freq = pdhValue.doubleValue / 100 * max_cpu_freq;
+    //Sleep(200);
     return true;
 }
