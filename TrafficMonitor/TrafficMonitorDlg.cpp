@@ -762,7 +762,6 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     {
         KillTimer(MONITOR_TIMER);
         SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, NULL);
-        m_thread_monitor_counter = 1;     //重置线程中的监控计数器
     }
 
     //设置获取CPU利用率的方式
@@ -1505,12 +1504,12 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     CTrafficMonitorDlg* pThis = (CTrafficMonitorDlg*)dwUser;
     while (true)
     {
-        //监控计数器大于0时获取一次监控数据
-        if (pThis->m_thread_monitor_counter > 0)
+        //获取一次监控数据
+        if (pThis->m_monitor_data_required)
         {
             pThis->DoMonitorAcquisition();
-            //每获取一次监控数据，计数减1
-            pThis->m_thread_monitor_counter--;
+            //获取到监控数据后重置flag
+            pThis->m_monitor_data_required = false;
         }
         else
         {
@@ -1545,7 +1544,8 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     if (nIDEvent == MONITOR_TIMER)
     {
-        m_thread_monitor_counter++;
+        //通知线程获取监控数据
+        m_monitor_data_required = true;
     }
 
     if (nIDEvent == MAIN_TIMER)
