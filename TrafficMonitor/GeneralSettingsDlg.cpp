@@ -278,7 +278,11 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
             CheckDlgButton(IDC_USE_CPU_TIME_RADIO, TRUE);
     }
 
+#ifndef WITHOUT_TEMPERATURE
     EnableDlgCtrl(IDC_USE_HARDWARE_MONITOR_RADIO, m_data.IsHardwareEnable(HI_CPU));
+#else
+    EnableDlgCtrl(IDC_USE_HARDWARE_MONITOR_RADIO, false);
+#endif
 
     m_monitor_span_edit.SetRange(MONITOR_TIME_SPAN_MIN, MONITOR_TIME_SPAN_MAX);
     m_monitor_span_edit.SetValue(m_data.monitor_time_span);
