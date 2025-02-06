@@ -299,6 +299,7 @@
 #define IDS_D2DDRAWCOMMON_ERROR_TIP     386
 #define IDS_PLUGIN_OPTIONS              387
 #define IDS_PLUGIN_DETAILS              388
+#define IDS_GET_CPU_USAGE_BY_PDH_FAILED_LOG 388
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
 #define IDC_STATIC_DOWN                 1002

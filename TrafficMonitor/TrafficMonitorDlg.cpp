@@ -1355,7 +1355,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     //获取CPU使用率
     if (lite_version || theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_HARDWARE_MONITOR || !theApp.m_general_data.IsHardwareEnable(HI_CPU))
     {
-        theApp.m_cpu_usage = m_cpu_usage_helper.GetCPUUsage();
+        theApp.m_cpu_usage = m_cpu_usage_helper.GetCpuUsage();
         cpu_usage_acquired = true;
     }
 
