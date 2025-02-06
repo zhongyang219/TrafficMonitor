@@ -61,6 +61,13 @@ void CGeneralSettingsDlg::SetControlMouseWheelEnable(bool enable)
     m_select_cpu_combo.SetMouseWheelEnable(enable);
 }
 
+void CGeneralSettingsDlg::OnSettingsApplied()
+{
+    //当设置被应用时，重置xxxx_ori的值
+    m_monitor_time_span_ori = m_data.monitor_time_span;
+    m_update_source_ori = m_data.update_source;
+}
+
 bool CGeneralSettingsDlg::ShowHardwareMonitorWarning()
 {
     //如果已经有硬件监控项目被勾选了，则不再弹出提示

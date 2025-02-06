@@ -142,4 +142,8 @@ void COptionsDlg::OnBnClickedApplyButton()
 {
     m_tab2_dlg.SaveColorSettingToDefaultStyle();
     ::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_SETTINGS_APPLIED, (WPARAM)this, 0);
+    for (size_t i = 0; i < m_tab_vect.size(); i++)
+    {
+        m_tab_vect[i]->OnSettingsApplied();
+    }
 }

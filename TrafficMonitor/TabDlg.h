@@ -15,6 +15,7 @@ public:
     virtual void OnOK();
 	void SetScrollEnable(bool enable) { m_scroll_enable = enable; }
     virtual void SetControlMouseWheelEnable(bool enable) {}     //在派生类中重写此函数以设置控件是否允许响应鼠标滚轮
+    virtual void OnSettingsApplied() {}   //点击了“应用”按钮，应用完设置之后被调用
 
     bool IsScrollBarVisible();    //滚动条是否可见
 
