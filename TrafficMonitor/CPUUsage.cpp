@@ -98,6 +98,7 @@ typedef struct _PROCESSOR_POWER_INFORMATION {
 
 CCpuFreq::CCpuFreq()
 {
+    //获取max_cpu_freq
     SYSTEM_INFO si;
     GetSystemInfo(&si);
     auto ppInfo = std::vector<PROCESSOR_POWER_INFORMATION>(si.dwNumberOfProcessors);
@@ -108,37 +109,55 @@ CCpuFreq::CCpuFreq()
         max_cpu_freq = max(max_cpu_freq, ppInfo[i].MaxMhz / 1000.f);
     }
 
+    //初始化CPU频率查询
+    Initialize();
+}
+
+CCpuFreq::~CCpuFreq()
+{
+    PdhCloseQuery(query);
+}
+
+bool CCpuFreq::Initialize()
+{
+    if (isInitialized)
+        return true;
+
+    PDH_STATUS status;
+    //打开查询
+    status = PdhOpenQuery(NULL, NULL, &query);
+    if (status != ERROR_SUCCESS)
+        return false;
+
+    //添加计数器
+    status = PdhAddCounterA(query, LPCSTR("\\Processor Information(_Total)\\% Processor Performance"), NULL, &counter);
+    if (status != ERROR_SUCCESS)
+    {
+        PdhCloseQuery(query);
+        query = nullptr;
+        return false;
+    }
+
+    //初始化计数器
+    PdhCollectQueryData(query);
+    isInitialized = true;
+    return true;
 }
 
 bool CCpuFreq::GetCpuFreq(float& freq)
 {
-    //从query中获取数据
-    if (query != 0 && counter != NULL)
-    {
-        PdhCollectQueryData(query);
-        PDH_FMT_COUNTERVALUE pdhValue;
-        DWORD dwValue;
-        PDH_STATUS status = PdhGetFormattedCounterValue(counter, PDH_FMT_DOUBLE, &dwValue, &pdhValue);
-        if (status != ERROR_SUCCESS)
-        {
-            return false;
-        }
-        PdhCloseQuery(query);
-        freq = pdhValue.doubleValue / 100 * max_cpu_freq;
-    }
+    if (!isInitialized && !Initialize())
+        return false;
 
-    //初始化query，为下次获取数据做准备
-    PDH_STATUS status = PdhOpenQuery(NULL, NULL, &query);
-    if (status != ERROR_SUCCESS)
-    {
-        return false;
-    }
-    status = PdhAddCounterA(query, LPCSTR("\\Processor Information(_Total)\\% Processor Performance"), NULL, &counter);
-    if (status != ERROR_SUCCESS)
-    {
-        return false;
-    }
+    //从query中获取数据
     PdhCollectQueryData(query);
-    //Sleep(200);
+    PDH_FMT_COUNTERVALUE pdhValue;
+    DWORD dwValue;
+    PDH_STATUS status = PdhGetFormattedCounterValue(counter, PDH_FMT_DOUBLE, &dwValue, &pdhValue);
+    if (status != ERROR_SUCCESS)
+    {
+        return false;
+    }
+    freq = pdhValue.doubleValue / 100 * max_cpu_freq;
     return true;
 }
