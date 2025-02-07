@@ -45,7 +45,7 @@ bool CPdhQuery::Initialize()
 
 bool CPdhQuery::QueryValue(double& value)
 {
-    if (!isInitialized && !Initialize())
+    if (!isInitialized)
         return false;
 
     //更新数据
