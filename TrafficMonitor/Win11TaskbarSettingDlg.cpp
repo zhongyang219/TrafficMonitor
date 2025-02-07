@@ -54,7 +54,7 @@ BOOL CWin11TaskbarSettingDlg::OnInitDialog()
 
     EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, CTaskBarDlg::IsTaskbarCloseToIconEnable(m_data.tbar_wnd_on_left));
     CheckDlgButton(IDC_TASKBAR_WND_SNAP_CHECK, m_data.tbar_wnd_snap);
-    m_window_offset_top_edit.SetRange(-5, 20);
+    m_window_offset_top_edit.SetRange(-20, 20);
     m_window_offset_top_edit.SetValue(m_data.window_offset_top);
     m_window_offset_left_edit.SetRange(-800, 800);
     m_window_offset_left_edit.SetValue(m_data.window_offset_left);

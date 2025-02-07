@@ -208,8 +208,8 @@ void TaskBarSettingData::ValidVerticalMargin()
 
 void TaskBarSettingData::ValidWindowOffsetTop()
 {
-    if (window_offset_top < -5)
-        window_offset_top = -5;
+    if (window_offset_top < -20)
+        window_offset_top = -20;
     if (window_offset_top > 20)
         window_offset_top = 20;
 }

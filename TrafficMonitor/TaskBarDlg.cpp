@@ -725,8 +725,8 @@ bool CTaskBarDlg::AdjustWindowPos()
                 //确保水平方向不超出屏幕边界
                 if (m_rect.left < 0)
                     m_rect.MoveToX(0);
-                if (m_rcTaskbar.right > m_rect.Width() && m_rect.right > m_rcTaskbar.right)
-                    m_rect.MoveToX(m_rcTaskbar.right - m_rect.Width());
+                if (m_rcTaskbar.Width() > m_rect.Width() && m_rect.right > m_rcTaskbar.Width())
+                    m_rect.MoveToX(m_rcTaskbar.Width() - m_rect.Width());
             }
 
             //设置任务栏窗口的垂直位置
@@ -738,6 +738,11 @@ bool CTaskBarDlg::AdjustWindowPos()
                 //在这种情况下m_rcTaskbar的高度要大于m_rcBar的高度，正常情况下，它们的高度相同
                 //但是当任务栏上没有任何图标时，m_rcBar的高度会变为0，因此使用rcStart代替
                 m_rect.MoveToY((rcStart.Height() - m_rect.Height()) / 2 + (m_rcTaskbar.Height() - rcStart.Height()) + DPI(theApp.m_taskbar_data.window_offset_top));
+                //确保垂直方向不超出屏幕边界
+                if (m_rect.top < 0)
+                    m_rect.MoveToY(0);
+                if (m_rcTaskbar.Height() > m_rect.Height() && m_rect.bottom > m_rcTaskbar.Height())
+                    m_rect.MoveToY(m_rcTaskbar.Height() - m_rect.Height());
             }
             else
             {
