@@ -122,3 +122,7 @@ using std::ofstream;
 
 //如果需要为Windows XP系统编译，请去掉下面一行代码的注释
 //#define COMPILE_FOR_WINXP
+
+//是否禁用WebExperience检测功能，用于检测Windows11下是否存在“小组件”
+//如果这部分功能导致编译出错，请去掉下面一行代码的注释
+//#define DISABLE_WINDOWS_WEB_EXPERIENCE_DETECTOR

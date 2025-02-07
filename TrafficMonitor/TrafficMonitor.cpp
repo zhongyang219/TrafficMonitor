@@ -12,7 +12,9 @@
 #include "auto_start_helper.h"
 #include "AppAlreadyRuningDlg.h"
 #include "WindowsSettingHelper.h"
+#ifndef DISABLE_WINDOWS_WEB_EXPERIENCE_DETECTOR
 #include "winrt/base.h"
+#endif
 #include <gdiplus.h>
 
 #ifdef _DEBUG
@@ -43,8 +45,10 @@ CTrafficMonitorApp::CTrafficMonitorApp()
     // TODO: 在此处添加构造代码，
     // 将所有重要的初始化放置在 InitInstance 中
     CRASHREPORT::StartCrashReport();
+#ifndef DISABLE_WINDOWS_WEB_EXPERIENCE_DETECTOR
     if (m_win_version.IsWindows11OrLater())
         winrt::init_apartment();
+#endif
 }
 
 void CTrafficMonitorApp::LoadConfig()
