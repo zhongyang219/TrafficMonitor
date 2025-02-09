@@ -29,12 +29,17 @@ bool CPdhQuery::Initialize()
         return false;
 
     //添加计数器
-    status = PdhAddEnglishCounter(query, fullCounterPath.GetString(), NULL, &counter);
+    status = PdhAddCounter(query, fullCounterPath.GetString(), NULL, &counter);
+    //先调用PdhAddCounter，如果失败使用PdhAddEnglishCounter再试一次
     if (status != ERROR_SUCCESS)
     {
-        PdhCloseQuery(query);
-        query = nullptr;
-        return false;
+        status = PdhAddEnglishCounter(query, fullCounterPath.GetString(), NULL, &counter);
+        if (status != ERROR_SUCCESS)
+        {
+            PdhCloseQuery(query);
+            query = nullptr;
+            return false;
+        }
     }
 
     //初始化计数器
@@ -91,13 +96,13 @@ int CCPUUsage::GetCpuUsage()
         {
             cpu_usage = GetCpuUsageByGetSystemTimes();
             //写入日志
-            static bool write_log = false;
-            if (!write_log)
-            {
-                CString str_log = CCommon::LoadTextFormat(IDS_GET_CPU_USAGE_BY_PDH_FAILED_LOG, { fullCounterPath });
-                CCommon::WriteLog(str_log, theApp.m_log_path.c_str());
-                write_log = true;
-            }
+            //static bool write_log = false;
+            //if (!write_log)
+            //{
+            //    CString str_log = CCommon::LoadTextFormat(IDS_GET_CPU_USAGE_BY_PDH_FAILED_LOG, { fullCounterPath });
+            //    CCommon::WriteLog(str_log, theApp.m_log_path.c_str());
+            //    write_log = true;
+            //}
         }
     }
     return cpu_usage;
