@@ -13,6 +13,8 @@ body:
     attributes:
       label: 您当前使用的TrafficMonitor版本
       description: 右键TrafficMonitor托盘图标，选择`帮助` → `关于`。
+    validations: 
+      required: true
   - type: textarea
     attributes:
       label: 发生了什么?
