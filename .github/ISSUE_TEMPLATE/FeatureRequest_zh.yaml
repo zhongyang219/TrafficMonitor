@@ -1,7 +1,6 @@
 name: 功能请求
 description: 请求一个新功能
-labels:
-  - enhancement
+labels: ["enhancement"]
 body:
   - type: checkboxes
     attributes: 
