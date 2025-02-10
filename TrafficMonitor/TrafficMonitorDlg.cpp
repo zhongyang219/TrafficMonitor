@@ -1612,7 +1612,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                 }
             }
 
-            if (m_timer_cnt % 300 == 299 && !theApp.m_cfg_data.m_hide_main_window && theApp.m_main_wnd_data.m_always_on_top)
+            if (m_timer_cnt % 300 == 299 && CBaseDialog::IsAllDialogClosed() && !theApp.m_cfg_data.m_hide_main_window && theApp.m_main_wnd_data.m_always_on_top)
             {
                 SetAlwaysOnTop();       //每5分钟执行一次设置窗口置顶
             }
