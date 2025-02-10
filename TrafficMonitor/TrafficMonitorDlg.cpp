@@ -551,6 +551,7 @@ void CTrafficMonitorDlg::CloseTaskBarWnd()
 
 void CTrafficMonitorDlg::OpenTaskBarWnd()
 {
+    CloseTaskBarWnd(); // 防止创建多个实例，内存泄露
     m_tBarDlg = new CTaskBarDlg;
 
     CSupportedRenderEnums supported_render_enums{};
@@ -2771,6 +2772,7 @@ LRESULT CTrafficMonitorDlg::OnDisplaychange(WPARAM wParam, LPARAM lParam)
 {
     GetScreenSize();
     CheckWindowPos(true);
+    OpenTaskBarWnd(); // 重新创建任务栏窗口
     return 0;
 }
 
