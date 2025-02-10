@@ -9,9 +9,6 @@ body:
     options:
       - label: 已经在[issue](https://github.com/zhongyang219/TrafficMonitor/issues)列表中搜索了相关问题。
         required: true
-- type: markdown
-    attributes:
-      value: "## 详细信息"
 - type: input
   attributes:
     label: 您当前使用的TrafficMonitor版本
