@@ -1,6 +1,18 @@
 **[简体中文](./update_log.md) | [繁體中文](./update_log_zh-tw.md) | English**
 
 # TrafficMonitor Update log
+## V1.85.1 (2025/02/10)
+
+* Fixed the problem that when using third-party software to change to the classical taskbar in Windows 11, the option "Taskbar window appears to the left of the taskbar" in the Taskbar Window Settings is not available.
+
+* Fixed the problem that the position of the taskbar windows is not correct when there is no any icon on the taskbar. #1913
+* Fixed the problem that the "Network speed data width" does not take effect when clicking "Apply" in the Taskbar Window Settings. #1916
+* Windows 11 related settings in Taskbar Windows Settings moved to the new dialog. Add an option to avoid overlapping with right Widgets.
+* Fixed the problem that when "CPU" in Hardware Monitoring is not enabled, the "CPU usage acquisition method" will be changed back to the "Based on CPU time" when set it to "Use the performance counter".
+* Fixed the problem of messy charactors in the acknowledgement dialog.
+* Fixed the problem that the displayed net speed may be larger than the actual net speed when the "Monitoring intervals" is set too small. #1263 #1674
+* Fixed the problem that the "Memory available" in the taskbar window cannot be fully displayed when the memory exceeds 100G. #1722
+
 ## V1.85 (2025/01/21)
 
 **Feature Updates:**

@@ -1,4 +1,4 @@
-<version>1.85</version>
-<link>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.85/TrafficMonitor_V1.85_x86_Lite.zip</link>
-<link_x64>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.85/TrafficMonitor_V1.85_x64_Lite.zip</link_x64>
-<contents>功能更新：\n任务栏窗口增加Direct2D的渲染方式，解决有时字体边缘有锯齿的问题\n显卡监控功能增加对英特尔显示的支持\n右击插件项目时的右键菜单中增加插件菜单\n插件管理界面增加插件图标的显示，右键菜单中增加插件命令\n监控时间间隔的最大值调整为30s\n任务栏窗口设置中增加“窗口顶部边距”和“垂直边距”的选项\n主窗口增加对png格式透明背景图片的支持\n新增根据Windows深浅色模式自动切换皮肤的功能\n新增在任务栏的插件项目中显示资源占用图的功能，并更新对应的插件接口\n主窗口和任务栏窗口中新增今日总流量的显示\n任务栏窗口设置中新增“使用彩色emoji”的选项（仅Direct2D渲染方式）\n常规设置中的温度通知上限调整为120度\n新增Arm64EC的支持\n新增Lite版显示CPU频率的功能\n任务栏设置-预设方案中的方案2和方案3增加默认的文本颜色\n问题修正：\nLibreHardwareMonitorLib.dll更新到0.9.4版本，解决部分设备硬件监控信息无法正常显示的问题\n修正Windows 11 build 22621版本后触屏设备任务栏窗口位置不正确的问题\n修正Windows 11下小组件不存在时，任务栏窗口的位置不正确的问题的问题\n修正Windows 11下，当任务栏窗口显示在右侧时，会和系统小组件重叠的问题\n修正选项设置对话框中使用触摸板手势时滚动过快的问题\n修正主窗口鼠标提示中CPU频率显示不正确的问题\n修正皮肤文件中插件项目的显示文本无效的问题\n修正如果隐藏了通知区图标，弹出通知后通知区图标再次出现的问题</contents>
+<version>1.85.1</version>
+<link>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.85.1/TrafficMonitor_V1.85.1_x86_Lite.zip</link>
+<link_x64>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.85.1/TrafficMonitor_V1.85.1_x64_Lite.zip</link_x64>
+<contents>修正Windows11下使用第三方软件改成旧版任务栏时，任务栏窗口设置中“任务栏窗口显示在任务栏左侧”选项不可用的问题\n修正当任务栏上没有任何图标时任务栏窗口的位置不正确的问题\n修正任务栏窗口设置中点击“应用”时网速数据宽度不生效的问题\n任务栏设置中Windows11相关设置移动到单独的对话框中，增加避免与右侧小组件重叠的选项\n修正未启用硬件监控中的CPU监控时，CPU使用率获取方式改成使用性能计数器后，会改回基于CPU使用时间的问题\n修正鸣谢界面有乱码的问题\n修正当监控时间间隔设置得过小时，显示的网速可能会大于实际网速问题\n修正当内存超过100G时显示任务栏剩余内存显示不全的问题</contents>
