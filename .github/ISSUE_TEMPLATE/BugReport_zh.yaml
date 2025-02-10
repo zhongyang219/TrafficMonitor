@@ -23,7 +23,7 @@ body:
   - type: textarea
     attributes:
       label: 日志输出
-      description: "错误日志可在TrafficMonitor根目录中找到。\这将自动格式化为代码,因此无需反引号。"
+      description: "错误日志可在TrafficMonitor根目录中找到。<br>这将自动格式化为代码,因此无需反引号。"
       render: shell
   - type: textarea
     attributes:
