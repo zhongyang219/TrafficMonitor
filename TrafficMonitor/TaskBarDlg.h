@@ -31,7 +31,7 @@ public:
 
     void TryDrawGraph(IDrawCommon& drawer, const CRect& value_rect, CommonDisplayItem item_type);		// 绘制CPU/内存动态图
 
-    bool AdjustWindowPos();	//设置窗口在任务栏中的位置
+    bool AdjustWindowPos(bool force_adjust = false);	//设置窗口在任务栏中的位置（如果force_adjust为true，则会强制调整一位任务栏窗口的位置）
     void ApplyWindowTransparentColor();
 
     bool IsTaskbarChanged();

@@ -612,7 +612,7 @@ void CTaskBarDlg::TryDrawStatusBar(IDrawCommon& drawer, const CRect& rect_bar, i
     drawer.FillRect(rect_fill, theApp.m_taskbar_data.status_bar_color);
 }
 
-bool CTaskBarDlg::AdjustWindowPos()
+bool CTaskBarDlg::AdjustWindowPos(bool force_adjust)
 {
     if (this->GetSafeHwnd() == NULL || !IsWindow(this->GetSafeHwnd()))
         return false;
@@ -635,7 +635,7 @@ bool CTaskBarDlg::AdjustWindowPos()
         //设置窗口大小
         m_rect.right = m_rect.left + m_window_width;
         m_rect.bottom = m_rect.top + m_window_height;
-        if (m_rcMin.Width() != m_min_bar_width)   //如果最小化窗口的宽度改变了，重新设置任务栏窗口的位置
+        if (force_adjust || m_rcMin.Width() != m_min_bar_width)   //如果最小化窗口的宽度改变了，重新设置任务栏窗口的位置
         {
             m_rcMinOri = m_rcMin;
             m_left_space = m_rcMin.left - m_rcBar.left;
@@ -1351,7 +1351,7 @@ BOOL CTaskBarDlg::OnInitDialog()
     m_rect.bottom = m_window_height;
     m_rect.right = m_rect.left + m_window_width;
     m_error_code = GetLastError();
-    AdjustWindowPos();
+    AdjustWindowPos(true);
 
     SetBackgroundColor(theApp.m_taskbar_data.back_color);
 
