@@ -20,6 +20,7 @@
 #include "Nullable.hpp"
 #include "TaskBarDlgDrawCommon.h"
 #include "DllFunctions.h"
+#include "StrTable.h"
 
 // CTrafficMonitorApp:
 // 有关此类的实现，请参阅 TrafficMonitor.cpp
@@ -86,6 +87,7 @@ public:
     CTaskbarDefaultStyle m_taskbar_default_style;
     CPluginManager m_plugins;
     CDllFunctions m_dll_functions;
+    CStrTable m_str_table;
 
     CMenu m_main_menu;          //主窗口右键菜单
     CMenu m_main_menu_plugin;   //右击主窗口插件区域的右键菜单

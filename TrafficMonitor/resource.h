@@ -257,7 +257,9 @@
 #define IDD_WIN11_TASKBAR_SETTING_DLG   344
 #define IDS_HARDWARE_MONITOR_WARNING    345
 #define IDS_HARDWARE_MONITOR_WARNING2   346
+#define IDR_LANGUAGE                    346
 #define IDS_HDD_USAGE                   347
+#define IDR_LANGUAGE_DEFAULT            347
 #define IDS_FILE_NAME                   348
 #define IDS_STATUS                      349
 #define IDS_PLUGIN_LOAD_SUCCEED         350
@@ -652,7 +654,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        346
+#define _APS_NEXT_RESOURCE_VALUE        348
 #define _APS_NEXT_COMMAND_VALUE         33665
 #define _APS_NEXT_CONTROL_VALUE         1182
 #define _APS_NEXT_SYMED_VALUE           101

@@ -247,6 +247,9 @@ public:
     //安全的字符串复制函数
     static void WStringCopy(wchar_t* str_dest, int dest_size, const wchar_t* str_source, int source_size = INT_MAX);
 
+    //字符串替换
+    static bool StringReplace(wstring& str, const wstring& str_old, const wstring& str_new);
+
     /// <summary>
     /// 字符串相似度算法-编辑距离法
     /// </summary>

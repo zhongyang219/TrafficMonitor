@@ -1030,6 +1030,8 @@ BOOL CTrafficMonitorApp::InitInstance()
     //  return FALSE;
     //}
 
+    m_str_table.Init();
+
     //检查是否已有实例正在运行
     LPCTSTR mutex_name{};
 #ifdef _DEBUG

@@ -7,18 +7,18 @@ CIniHelper::CIniHelper(const wstring& file_path)
 {
     m_file_path = file_path;
     ifstream file_stream{ file_path };
-    if (file_stream.fail())
-    {
+    if (!file_stream.is_open())
         return;
-    }
-    //读取文件内容
+    // 获取文件大小
+    file_stream.seekg(0, std::ios::end);
+    size_t file_size = static_cast<size_t>(file_stream.tellg());
+    file_stream.seekg(0, std::ios::beg);
+    // 读取文件内容
     string ini_str;
-    while (!file_stream.eof())
-    {
-        ini_str.push_back(file_stream.get());
-    }
-    ini_str.pop_back();
-    if (!ini_str.empty() && ini_str.back() != L'\n')        //确保文件末尾有回车符
+    ini_str.resize(file_size + 1);
+    file_stream.read(&ini_str[0], file_size);
+    // 检查并添加末尾的空行
+    if (!ini_str.empty() && ini_str.back() != L'\n')
         ini_str.push_back(L'\n');
     //判断文件是否是utf8编码
     bool is_utf8;
@@ -34,6 +34,11 @@ CIniHelper::CIniHelper(const wstring& file_path)
     }
     //转换成Unicode
     m_ini_str = CCommon::StrToUnicode(ini_str.c_str(), is_utf8);
+}
+
+CIniHelper::CIniHelper(UINT id, bool is_utf8)
+{
+    m_ini_str = CCommon::GetTextResource(id, is_utf8 ? 1 : 0);
 }
 
 
@@ -173,8 +178,46 @@ void CIniHelper::SaveFontData(const wchar_t * AppName, const FontInfo & font)
     WriteBoolArray(AppName, L"font_style", style, 4);
 }
 
+void CIniHelper::GetAllKeyValues(const wstring& AppName, std::map<wstring, wstring>& map) const
+{
+    wstring app_str{ L"[" };
+    app_str.append(AppName).append(L"]");
+    size_t app_pos{}, app_end_pos{};
+    app_pos = m_ini_str.find(app_str);
+    if (app_pos == wstring::npos)
+        return;
+    app_end_pos = m_ini_str.find(L"\n[", app_pos + 2);
+    if (app_end_pos != wstring::npos)
+        app_end_pos++;
+    app_str = m_ini_str.substr(app_pos, app_end_pos - app_pos);
+    vector<wstring> line;
+    CCommon::StringSplit(app_str, L'\n', line);
+    for (wstring str : line)
+    {
+        // CCommon::StringSplit会跳过空字符串，str一定非空
+        if (str[0] == L';' || str[0] == L'#')   // 跳过注释行（只支持行首注释）
+            continue;
+        size_t pos = str.find_first_of(L'=');
+        if (pos == wstring::npos)
+            continue;
+        wstring key{ str.substr(0, pos) };
+        wstring value{ str.substr(pos + 1) };
+        CCommon::StringNormalize(key);
+        CCommon::StringNormalize(value);
+        if (!key.empty() && !value.empty())
+        {
+            if (value.front() == L'\"' && value.back() == L'\"')
+                value = value.substr(1, value.size() - 2);
+            UnEscapeString(value);
+            map[key] = value;
+        }
+    }
+}
+
 bool CIniHelper::Save()
 {
+    if (m_file_path.empty())
+        return false;
     ofstream file_stream{ m_file_path };
     if(file_stream.fail())
         return false;
@@ -303,6 +346,41 @@ void CIniHelper::SavePluginDisplayStr(bool is_main_window)
     {
         WriteString(app_name.c_str(), plugin->GetItemId(), disp_str.Get(plugin));
     }
+}
+
+void CIniHelper::UnEscapeString(wstring& str)
+{
+    if (str.find(L'\\') == wstring::npos) // 仅含有‘\’时需要处理转义字符
+        return;
+    bool escape{ false };
+    wstring result;
+    result.reserve(str.size());
+    for (size_t i = 0; i < str.size(); i++)
+    {
+        wchar_t ch = str[i];
+        if (escape)
+        {
+            switch (ch)
+            {
+            case L'n': result += L'\n'; break;
+            case L'r': result += L'\r'; break;
+            case L't': result += L'\t'; break;
+            case L'"': result += L'"'; break;
+            case L';': result += L';'; break;
+            case L'#': result += L'#'; break;
+            case L'\\': result += L'\\'; break;
+            default:result += '\\'; result += ch; break;
+            }
+            escape = false;
+        }
+        else if (ch == L'\\')
+            escape = true;
+        else if (i > 0 && ch == '\"' && str[i - 1] == '\"')     //两个连续的引号只保留一个引号
+            continue;
+        else
+            result += ch;
+    }
+    str.swap(result);
 }
 
 void CIniHelper::_WriteString(const wchar_t * AppName, const wchar_t * KeyName, const wstring & str)

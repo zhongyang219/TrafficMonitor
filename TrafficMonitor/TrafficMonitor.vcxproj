@@ -837,6 +837,7 @@
     <ClInclude Include="SpinEdit.h" />
     <ClInclude Include="StaticEx.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StrTable.h" />
     <ClInclude Include="SupportedRenderEnums.h" />
     <ClInclude Include="TabDlg.h" />
     <ClInclude Include="targetver.h" />
@@ -933,6 +934,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release (lite)|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release (lite)|ARM64EC'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StrTable.cpp" />
     <ClCompile Include="SupportedRenderEnums.cpp" />
     <ClCompile Include="TabDlg.cpp" />
     <ClCompile Include="TaskbarColorDlg.cpp" />
@@ -972,7 +974,13 @@
   <ItemGroup>
     <None Include="..\LICENSE" />
     <None Include="..\LICENSE_CN" />
+    <None Include="language\English.ini" />
+    <None Include="language\Simplified_Chinese.ini" />
+    <None Include="language\Traditional_Chinese.ini" />
     <None Include="res\license.bin" />
+    <None Include="res\menu_icon\language.bin" />
+    <None Include="res\menu_icon\text1.bin" />
+    <None Include="res\menu_icon\text3.bin" />
     <None Include="res\TrafficMonitor.rc2" />
   </ItemGroup>
   <ItemGroup>

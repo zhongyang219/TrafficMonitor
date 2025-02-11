@@ -892,6 +892,21 @@ void CCommon::WStringCopy(wchar_t* str_dest, int dest_size, const wchar_t* str_s
         str_dest[dest_size - 1] = L'\0';
 }
 
+bool CCommon::StringReplace(wstring& str, const wstring& str_old, const wstring& str_new)
+{
+    if (str.empty())
+        return false;
+    bool replaced{ false };
+    size_t pos = 0;
+    while ((pos = str.find(str_old, pos)) != std::wstring::npos)
+    {
+        str.replace(pos, str_old.length(), str_new);
+        replaced = true;
+        pos += str_new.length();    // 前进到替换后的字符串末尾
+    }
+    return replaced;
+}
+
 void CCommon::SetThreadLanguage(Language language)
 {
     switch (language)

@@ -297,3 +297,4 @@ __pycache__/
 [Dd]ebug (lite)/
 [Rr]elease (lite)/
 /TrafficMonitor/compile_time.txt
+!/TrafficMonitor/language/*.ini
