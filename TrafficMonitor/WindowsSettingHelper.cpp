@@ -39,6 +39,14 @@ bool CWindowsSettingHelper::IsDotNetFramework4Point5Installed()
     return netFramewordRelease >= 379893;
 }
 
+bool CWindowsSettingHelper::IsTaskbarShowingInAllDisplays()
+{
+    DWORD data{};
+    if (!GetDWORDRegKeyData(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", L"MMTaskbarEnabled", data))
+        return true;
+    return data != 0;
+}
+
 bool CWindowsSettingHelper::IsTaskbarWidgetsBtnShown()
 {
     if (!theApp.m_taskbar_data.is_windows_web_experience_detected)

@@ -654,11 +654,16 @@ bool CTaskBarDlg::AdjustWindowPos()
                     //靠近通知区的情况
                     else
                     {
+                        //通知区窗口的水平位置
+                        int notify_x_pos = m_rcNotify.left;
+                        //Win11副屏没有通知区窗口，这里使用固定的值
+                        if (m_is_secondary_display)
+                            notify_x_pos = m_rcTaskbar.Width() - DPI(88);
                         //如果显示了小组件，并且任务栏靠左显示，则留出小组件的位置
                         if (theApp.m_taskbar_data.avoid_overlap_with_widgets && CWindowsSettingHelper::IsTaskbarWidgetsBtnShown() && !CWindowsSettingHelper::IsTaskbarCenterAlign())
-                            m_rect.MoveToX(m_rcNotify.left - m_rect.Width() + 2 - DPI(theApp.m_taskbar_data.taskbar_left_space_win11));
+                            m_rect.MoveToX(notify_x_pos - m_rect.Width() + 2 - DPI(theApp.m_taskbar_data.taskbar_left_space_win11));
                         else
-                            m_rect.MoveToX(m_rcNotify.left - m_rect.Width() + 2);
+                            m_rect.MoveToX(notify_x_pos - m_rect.Width() + 2);
                     }
                 }
                 else
@@ -816,9 +821,15 @@ void CTaskBarDlg::ApplyWindowTransparentColor()
 #endif // !COMPILE_FOR_WINXP
 }
 
-const RECT& CTaskBarDlg::GetSelfRect() const
+bool CTaskBarDlg::IsTaskbarChanged()
 {
-    return m_rect;
+    bool is_scendary_display;
+    return m_hTaskbar != FindTaskbarHandle(is_scendary_display);
+}
+
+const CRect& CTaskBarDlg::GetRectForDpiCheck() const
+{
+    return m_rcMin;
 }
 
 UINT CTaskBarDlg::GetDPI() const
@@ -866,6 +877,22 @@ UINT CTaskBarDlg::ClassCheckWindowMonitorDPIAndHandle::buffered_dpi_x{0};
 UINT CTaskBarDlg::ClassCheckWindowMonitorDPIAndHandle::buffered_dpi_y{0};
 UINT CTaskBarDlg::ClassCheckWindowMonitorDPIAndHandle::dpi_x{0};
 UINT CTaskBarDlg::ClassCheckWindowMonitorDPIAndHandle::dpi_y{0};
+
+HWND CTaskBarDlg::FindTaskbarHandle(bool& is_scendary_display)
+{
+    is_scendary_display = false;
+    HWND hTaskbar = nullptr;
+    if (theApp.m_taskbar_data.show_taskbar_wnd_in_secondary_display && CWindowsSettingHelper::IsTaskbarShowingInAllDisplays())
+    {
+        hTaskbar = ::FindWindow(_T("Shell_SecondaryTrayWnd"), NULL);
+        if (hTaskbar != nullptr)
+            is_scendary_display = true;
+    }
+    if (hTaskbar == nullptr)
+        hTaskbar = ::FindWindow(_T("Shell_TrayWnd"), NULL);
+
+    return hTaskbar;
+}
 
 void CTaskBarDlg::CheckTaskbarOnTopOrBottom()
 {
@@ -1277,9 +1304,13 @@ BOOL CTaskBarDlg::OnInitDialog()
 
     m_pDC = GetDC();
 
-    m_hTaskbar =::FindWindow(L"Shell_TrayWnd", NULL); //寻找类名是Shell_TrayWnd的窗口句柄
+    m_hTaskbar = FindTaskbarHandle(m_is_secondary_display); //寻找类名是Shell_TrayWnd的窗口句柄
     m_hBar = ::FindWindowEx(m_hTaskbar, 0, L"ReBarWindow32", NULL); //寻找二级容器的句柄
+    if (m_hBar == NULL)
+        m_hBar = ::FindWindowEx(m_hTaskbar, nullptr, L"WorkerW", NULL);
     m_hMin = ::FindWindowEx(m_hBar, 0, L"MSTaskSwWClass", NULL);    //寻找最小化窗口的句柄
+    if (m_hMin == NULL)
+        m_hMin = ::FindWindowEx(m_hBar, 0, L"MSTaskListWClass", NULL);    //寻找最小化窗口的句柄
 
     m_hNotify = ::FindWindowEx(m_hTaskbar, 0, L"TrayNotifyWnd", NULL);
     m_hStart = ::FindWindowEx(m_hTaskbar, nullptr, L"Start", NULL);
@@ -1302,7 +1333,7 @@ BOOL CTaskBarDlg::OnInitDialog()
     if (theApp.m_win_version.IsWindows8Point1OrLater())
     {
         UINT dpi_x, dpi_y;
-        DPIFromRect(m_rcMin, &dpi_x, &dpi_y);
+        DPIFromRect(GetRectForDpiCheck(), &dpi_x, &dpi_y);
         SetDPI(dpi_x);
     }
     else

@@ -34,7 +34,10 @@ public:
     bool AdjustWindowPos();	//设置窗口在任务栏中的位置
     void ApplyWindowTransparentColor();
 
-    const RECT& GetSelfRect() const;
+    bool IsTaskbarChanged();
+
+    //获取用于检查DPI的矩形区域
+    const CRect& GetRectForDpiCheck() const;
 
     UINT GetDPI() const;
     void SetDPI(UINT dpi);
@@ -54,7 +57,7 @@ public:
         template <class HandlerFunc>
         void operator()(CTaskBarDlg& ref_taskbar_window, HandlerFunc handler)
         {
-            DPIFromRect(ref_taskbar_window.GetSelfRect(), &dpi_x, &dpi_y);
+            DPIFromRect(ref_taskbar_window.GetRectForDpiCheck(), &dpi_x, &dpi_y);
             //只取dpi_x作为程序dpi
             if (dpi_x != buffered_dpi_x || dpi_y != buffered_dpi_y)
             {
@@ -151,6 +154,7 @@ protected:
     bool m_taskbar_on_top_or_bottom{ true };		//如果任务栏在屏幕顶部或底部，则为ture
     int m_error_code{};
     bool m_menu_popuped{ false };               //指示当前是否有菜单处于弹出状态
+    bool m_is_secondary_display{ false };       //是否显示在副显示器中
 
     UINT m_taskbar_dpi{};//TaskBarDlg自身专用dpi
 
@@ -158,6 +162,7 @@ protected:
 
     CDC* m_pDC{};		//窗口的DC，用来计算窗口的宽度
 
+    HWND FindTaskbarHandle(bool& is_scendary_display);
     void CheckTaskbarOnTopOrBottom();		//检查任务栏是否在屏幕的顶部或底部，并将结果保存在m_taskbar_on_top_or_bottom中
     CString GetMouseTipsInfo();		//获取鼠标提示
 

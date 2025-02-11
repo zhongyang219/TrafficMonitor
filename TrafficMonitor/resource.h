@@ -531,6 +531,8 @@
 #define IDC_ENABLE_COLOR_EMOJI_CHECK    1177
 #define IDC_WIN11_SETTINGS_BUTTON       1178
 #define IDC_AVOID_OVERLAP_RIGHT_WIDGETS_CHECK 1179
+#define IDC_TASKBAR_WND_IN_SECONDARY_DISPLAY_CHECK 1181
+#define IDC_CHECK1                      1181
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -652,7 +654,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        346
 #define _APS_NEXT_COMMAND_VALUE         33665
-#define _APS_NEXT_CONTROL_VALUE         1181
+#define _APS_NEXT_CONTROL_VALUE         1182
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

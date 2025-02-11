@@ -1887,6 +1887,15 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
         if (IsTaskbarWndValid())
         {
             ++m_taskbar_timer_cnt;
+            
+            if (theApp.m_taskbar_data.show_taskbar_wnd_in_secondary_display && CWindowsSettingHelper::IsTaskbarShowingInAllDisplays())
+            {
+                if (m_tBarDlg->IsTaskbarChanged())
+                {
+                    CloseTaskBarWnd();
+                    OpenTaskBarWnd();
+                }
+            }
 
             //启动时就隐藏主窗体的情况下，无法收到dpichange消息，故需要手动检查
             //每次100ms*10执行一次屏幕DPI检查，并且尽可能少的检查操作系统版本
