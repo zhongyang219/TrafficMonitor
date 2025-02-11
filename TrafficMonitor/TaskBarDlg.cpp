@@ -603,22 +603,6 @@ void CTaskBarDlg::DisableRenderFeatureIfNecessary(CSupportedRenderEnums& ref_sup
     }
 }
 
-HWND CTaskBarDlg::GetShellTrayWndHandleAndSaveWindows11TaskBarExistenceInfoToTheApp() noexcept
-{
-    auto result = ::FindWindow(L"Shell_TrayWnd", NULL);
-    // 在“Shell_TrayWnd”的子窗口找到类名为“Windows.UI.Composition.DesktopWindowContentBridge”的窗口则认为是Windows11的任务栏
-    if (theApp.m_win_version.IsWindows11OrLater())
-    {
-        theApp.m_is_windows11_taskbar =
-            (::FindWindowExW(result, 0, L"Windows.UI.Composition.DesktopWindowContentBridge", NULL) != NULL);
-    }
-    else
-    {
-        theApp.m_is_windows11_taskbar = false;
-    }
-    return result;
-}
-
 void CTaskBarDlg::TryDrawStatusBar(IDrawCommon& drawer, const CRect& rect_bar, int usage_percent)
 {
     CSize fill_size = CSize(rect_bar.Width() * usage_percent / 100, rect_bar.Height());
@@ -658,9 +642,9 @@ bool CTaskBarDlg::AdjustWindowPos()
             m_min_bar_width = m_rcMin.Width() - m_rect.Width(); //保存最小化窗口宽度
             //任务窗口显示在右侧时，或者Windows11下任务栏左对齐时
             //（Windows11下，如果任务栏设置为左对齐，即使在“任务栏窗口设置”中设置了任务窗口显示在左边，窗口仍然显示在右边）
-            if (!theApp.m_taskbar_data.tbar_wnd_on_left || (theApp.m_is_windows11_taskbar && !CWindowsSettingHelper::IsTaskbarCenterAlign()))
+            if (!theApp.m_taskbar_data.tbar_wnd_on_left || (theApp.IsWindows11Taskbar() && !CWindowsSettingHelper::IsTaskbarCenterAlign()))
             {
-                if (theApp.m_is_windows11_taskbar)
+                if (theApp.IsWindows11Taskbar())
                 {
                     //靠近任务栏图标的情况
                     if (theApp.m_taskbar_data.tbar_wnd_snap && IsTaskbarCloseToIconEnable(theApp.m_taskbar_data.tbar_wnd_on_left))
@@ -686,7 +670,7 @@ bool CTaskBarDlg::AdjustWindowPos()
             //任务栏窗口显示在左侧时
             else
             {
-                if (theApp.m_is_windows11_taskbar)
+                if (theApp.IsWindows11Taskbar())
                 {
                     //if (CWindowsSettingHelper::IsTaskbarCenterAlign())      //Windows11任务栏居中
                     //{
@@ -719,7 +703,7 @@ bool CTaskBarDlg::AdjustWindowPos()
                 }
             }
             //水平偏移
-            if (theApp.m_is_windows11_taskbar)
+            if (theApp.IsWindows11Taskbar())
             {
                 m_rect.MoveToX(m_rect.left + DPI(theApp.m_taskbar_data.window_offset_left));
                 //确保水平方向不超出屏幕边界
@@ -730,7 +714,7 @@ bool CTaskBarDlg::AdjustWindowPos()
             }
 
             //设置任务栏窗口的垂直位置
-            if (theApp.m_is_windows11_taskbar)
+            if (theApp.IsWindows11Taskbar())
             {
                 CRect rcStart;
                 ::GetWindowRect(m_hStart, rcStart);
@@ -797,7 +781,7 @@ bool CTaskBarDlg::AdjustWindowPos()
 void CTaskBarDlg::ApplyWindowTransparentColor()
 {
 #ifndef COMPILE_FOR_WINXP
-    if (theApp.m_is_windows11_taskbar)      //Windows11下背景色不使用纯黑色，以解决深色模式下右键菜单无法弹出的问题
+    if (theApp.IsWindows11Taskbar())      //Windows11下背景色不使用纯黑色，以解决深色模式下右键菜单无法弹出的问题
     {
         if (theApp.m_taskbar_data.transparent_color == 0 && theApp.m_taskbar_data.back_color == 0)
         {
@@ -1293,7 +1277,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 
     m_pDC = GetDC();
 
-    m_hTaskbar = GetShellTrayWndHandleAndSaveWindows11TaskBarExistenceInfoToTheApp(); //寻找类名是Shell_TrayWnd的窗口句柄，同时记录Windows11任务栏是否存在
+    m_hTaskbar =::FindWindow(L"Shell_TrayWnd", NULL); //寻找类名是Shell_TrayWnd的窗口句柄
     m_hBar = ::FindWindowEx(m_hTaskbar, 0, L"ReBarWindow32", NULL); //寻找二级容器的句柄
     m_hMin = ::FindWindowEx(m_hBar, 0, L"MSTaskSwWClass", NULL);    //寻找最小化窗口的句柄
 
@@ -1312,7 +1296,7 @@ BOOL CTaskBarDlg::OnInitDialog()
     m_left_space = m_rcMin.left - m_rcBar.left;
     m_top_space = m_rcMin.top - m_rcBar.top;
 
-    m_connot_insert_to_task_bar = !(::SetParent(this->m_hWnd, theApp.m_is_windows11_taskbar ? m_hTaskbar : m_hBar)); //把程序窗口设置成任务栏的子窗口
+    m_connot_insert_to_task_bar = !(::SetParent(this->m_hWnd, theApp.IsWindows11Taskbar() ? m_hTaskbar : m_hBar)); //把程序窗口设置成任务栏的子窗口
 
     //根据已经确定的任务栏最小化窗口区域得到屏幕并获得所在屏幕的DPI（Windows 8.1及其以上）
     if (theApp.m_win_version.IsWindows8Point1OrLater())
