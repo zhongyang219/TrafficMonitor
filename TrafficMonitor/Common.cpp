@@ -975,16 +975,21 @@ CString CCommon::GetTextResource(UINT id, int code_type)
     HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(id), _T("TEXT"));
     if (hRes != NULL)
     {
+        DWORD resSize = SizeofResource(NULL, hRes);  // 获取资源的大小
         HGLOBAL hglobal = LoadResource(NULL, hRes);
         if (hglobal != NULL)
         {
+            LPVOID pResourceData = LockResource(hglobal);  // 获取资源数据的指针
             if (code_type == 2)
             {
-                res_str = (const wchar_t*)hglobal;
+                // 资源是宽字符字符串
+                res_str = CString((const wchar_t*)pResourceData, resSize / sizeof(wchar_t));
             }
             else
             {
-                res_str = CCommon::StrToUnicode((const char*)hglobal, (code_type != 0)).c_str();
+                // 资源是窄字符字符串
+                std::string strData((const char*)pResourceData, resSize);
+                res_str = CCommon::StrToUnicode(strData.c_str(), (code_type != 0)).c_str();
             }
         }
     }
