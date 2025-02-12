@@ -185,6 +185,7 @@ BOOL CBaseDialog::OnInitDialog()
         //获取控件文本
         CString str;
         pWnd->GetWindowText(str);
+        UINT id = pWnd->GetDlgCtrlID();
         if (str.Left(4) == _T("TXT_"))
         {
             //设置控件文本
@@ -192,12 +193,17 @@ BOOL CBaseDialog::OnInitDialog()
             if (!str_translated.empty())
                 pWnd->SetWindowTextW(str_translated.c_str());
         }
+        //处理标准按钮
+        else
+        {
+            if (id == IDOK)
+                pWnd->SetWindowTextW(theApp.m_str_table.LoadText(TXT_OK).c_str());
+            else if (id == IDCANCEL)
+                pWnd->SetWindowTextW(theApp.m_str_table.LoadText(TXT_CANCEL).c_str());
+            else if (id == IDCLOSE)
+                pWnd->SetWindowTextW(theApp.m_str_table.LoadText(TXT_CLOSE).c_str());
+        }
     });
-
-    //处理标准按钮
-    SetDlgItemTextW(IDOK, theApp.m_str_table.LoadText(IDS_OK).c_str());
-    SetDlgItemTextW(IDCANCEL, theApp.m_str_table.LoadText(IDS_CANCEL).c_str());
-    SetDlgItemTextW(IDCLOSE, theApp.m_str_table.LoadText(IDS_CLOSE).c_str());
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE

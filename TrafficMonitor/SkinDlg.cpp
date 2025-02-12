@@ -97,7 +97,6 @@ BOOL CSkinDlg::OnInitDialog()
     CBaseDialog::OnInitDialog();
 
     // TODO:  在此添加额外的初始化
-    SetWindowText(CCommon::LoadText(IDS_TITLE_CHANGE_SKIN));
     SetIcon(theApp.GetMenuIcon(IDI_SKIN), FALSE);		// 设置小图标
     //初始化选择框
     for (const auto& skin_path : m_skins)

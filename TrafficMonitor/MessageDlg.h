@@ -1,9 +1,10 @@
 ﻿#pragma once
 #include "afxwin.h"
+#include "BaseDialog.h"
 
 // CMessageDlg 对话框
 
-class CMessageDlg : public CDialog
+class CMessageDlg : public CBaseDialog
 {
 	DECLARE_DYNAMIC(CMessageDlg)
 

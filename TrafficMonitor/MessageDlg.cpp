@@ -11,10 +11,10 @@
 
 #define MESSAGE_DLG_ICON_SIZE (theApp.DPI(32))
 
-IMPLEMENT_DYNAMIC(CMessageDlg, CDialog)
+IMPLEMENT_DYNAMIC(CMessageDlg, CBaseDialog)
 
 CMessageDlg::CMessageDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD_MESSAGE_DIALOG, pParent)
+	: CBaseDialog(IDD_MESSAGE_DIALOG, pParent)
 {
 
 }
@@ -63,13 +63,13 @@ void CMessageDlg::SetInfoStaticSize(int cx)
 
 void CMessageDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CBaseDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_HELP_EDIT, m_message_edit);
 	DDX_Control(pDX, IDC_INFO_STATIC, m_info_static);
 }
 
 
-BEGIN_MESSAGE_MAP(CMessageDlg, CDialog)
+BEGIN_MESSAGE_MAP(CMessageDlg, CBaseDialog)
 	ON_WM_GETMINMAXINFO()
 	//ON_NOTIFY(NM_CLICK, IDC_SYSLINK1, &CMessageDlg::OnNMClickSyslink1)
     ON_WM_PAINT()
@@ -82,7 +82,7 @@ END_MESSAGE_MAP()
 
 BOOL CMessageDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	CBaseDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
 
@@ -131,7 +131,7 @@ void CMessageDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	lpMMI->ptMinTrackSize.x = m_min_size.cx;		//设置最小宽度
 	lpMMI->ptMinTrackSize.y = m_min_size.cy;		//设置最小高度
 
-	CDialog::OnGetMinMaxInfo(lpMMI);
+	CBaseDialog::OnGetMinMaxInfo(lpMMI);
 }
 
 
@@ -149,7 +149,7 @@ void CMessageDlg::OnPaint()
 {
     CPaintDC dc(this); // device context for painting
                        // TODO: 在此处添加消息处理程序代码
-                       // 不为绘图消息调用 CDialog::OnPaint()
+                       // 不为绘图消息调用 CBaseDialog::OnPaint()
 
     CDrawCommon draw;
     draw.Create(&dc, this);
@@ -159,7 +159,7 @@ void CMessageDlg::OnPaint()
 
 void CMessageDlg::OnSize(UINT nType, int cx, int cy)
 {
-    CDialog::OnSize(nType, cx, cy);
+    CBaseDialog::OnSize(nType, cx, cy);
 
     // TODO: 在此处添加消息处理程序代码
     SetInfoStaticSize(cx);

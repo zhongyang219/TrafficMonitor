@@ -298,8 +298,8 @@
 #define IDC_VERTICAL_MARGIN_EDIT        1168
 #define IDC_WIDTET_WIDTH_EDIT           1168
 #define IDC_VERTICAL_MARGIN_NEGATIVE_CHECK 1169
-#define IDC_WINDOW_OFFSET_LEFT_EDIT     1169
 #define IDC_WINDOW_OFFSET_TOP_EDIT2     1169
+#define IDC_WINDOW_OFFSET_LEFT_EDIT     1169
 #define IDC_DISABLE_D2D                 1170
 #define IDC_GDI_RADIO                   1171
 #define IDC_D2D_RADIO                   1172
@@ -310,8 +310,8 @@
 #define IDC_ENABLE_COLOR_EMOJI_CHECK    1177
 #define IDC_WIN11_SETTINGS_BUTTON       1178
 #define IDC_AVOID_OVERLAP_RIGHT_WIDGETS_CHECK 1179
-#define IDC_TASKBAR_WND_IN_SECONDARY_DISPLAY_CHECK 1181
 #define IDC_CHECK1                      1181
+#define IDC_TASKBAR_WND_IN_SECONDARY_DISPLAY_CHECK 1181
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773

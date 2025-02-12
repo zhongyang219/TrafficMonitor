@@ -63,7 +63,6 @@ BOOL CHistoryTrafficDlg::OnInitDialog()
     CBaseDialog::OnInitDialog();
 
     // TODO:  在此添加额外的初始化
-    SetWindowText(CCommon::LoadText(IDS_TITLE_HISTORY_TRAFFIC));
     SetIcon(theApp.GetMenuIcon(IDI_STATISTICS), FALSE);		// 设置小图标
 
     //插入标签

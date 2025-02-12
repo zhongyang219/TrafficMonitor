@@ -47,7 +47,6 @@ BOOL COptionsDlg::OnInitDialog()
     CBaseDialog::OnInitDialog();
 
     // TODO:  在此添加额外的初始化
-    SetWindowText(CCommon::LoadText(IDS_TITLE_OPTION));
     SetIcon(theApp.GetMenuIcon(IDI_SETTINGS), FALSE);       // 设置小图标
 
     //创建子对话框

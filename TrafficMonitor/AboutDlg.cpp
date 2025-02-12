@@ -47,7 +47,6 @@ BOOL CAboutDlg::OnInitDialog()
     CBaseDialog::OnInitDialog();
 
     // TODO:  在此添加额外的初始化
-    SetWindowText(CCommon::LoadText(IDS_TITLE_ABOUT));
     m_mail.SetURL(_T("mailto:zhongyang219@hotmail.com"));   //设置超链接
     //m_check_update.SetURL(_T("http://pan.baidu.com/s/1c1LkPQ4"));
     m_github.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor"));

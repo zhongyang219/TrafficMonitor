@@ -47,7 +47,6 @@ BOOL CDonateDlg::OnInitDialog()
     CBaseDialog::OnInitDialog();
 
     // TODO:  在此添加额外的初始化
-    SetWindowText(CCommon::LoadText(IDS_TITLE_DONATE));
 
     //计算两个二维码图片的位置
     CRect rect{};

@@ -1,10 +1,10 @@
 ﻿#pragma once
 #include "afxdialogex.h"
-
+#include "BaseDialog.h"
 
 // CSkinAutoAdaptSettingDlg 对话框
 
-class CSkinAutoAdaptSettingDlg : public CDialog
+class CSkinAutoAdaptSettingDlg : public CBaseDialog
 {
 	DECLARE_DYNAMIC(CSkinAutoAdaptSettingDlg)
 

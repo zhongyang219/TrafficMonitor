@@ -9,10 +9,10 @@
 
 // CSkinAutoAdaptSettingDlg 对话框
 
-IMPLEMENT_DYNAMIC(CSkinAutoAdaptSettingDlg, CDialog)
+IMPLEMENT_DYNAMIC(CSkinAutoAdaptSettingDlg, CBaseDialog)
 
 CSkinAutoAdaptSettingDlg::CSkinAutoAdaptSettingDlg(const vector<wstring>& skins, CWnd* pParent /*=nullptr*/)
-	: CDialog(IDD_SKIN_AUTO_ADAPT_DLG, pParent)
+	: CBaseDialog(IDD_SKIN_AUTO_ADAPT_DLG, pParent)
     , m_skins(skins)
 {
 
@@ -32,13 +32,13 @@ int CSkinAutoAdaptSettingDlg::FindSkinIndex(const wstring& skin_name)
 
 void CSkinAutoAdaptSettingDlg::DoDataExchange(CDataExchange* pDX)
 {
-    CDialog::DoDataExchange(pDX);
+    CBaseDialog::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_DARK_MODE_SKIN_COMBO, m_dark_mode_skin_combo);
     DDX_Control(pDX, IDC_LIGHT_MODE_SKIN_COMBO, m_light_mode_skin_combo);
 }
 
 
-BEGIN_MESSAGE_MAP(CSkinAutoAdaptSettingDlg, CDialog)
+BEGIN_MESSAGE_MAP(CSkinAutoAdaptSettingDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
@@ -47,7 +47,7 @@ END_MESSAGE_MAP()
 
 BOOL CSkinAutoAdaptSettingDlg::OnInitDialog()
 {
-    CDialog::OnInitDialog();
+    CBaseDialog::OnInitDialog();
 
     //初始化下拉列表
     for (const auto& skin_path : m_skins)
@@ -74,5 +74,5 @@ void CSkinAutoAdaptSettingDlg::OnOK()
     m_dark_mode_skin = m_dark_mode_skin_combo.GetCurSel();
     m_light_mode_skin = m_light_mode_skin_combo.GetCurSel();
 
-    CDialog::OnOK();
+    CBaseDialog::OnOK();
 }
