@@ -350,8 +350,6 @@ void CIniHelper::SavePluginDisplayStr(bool is_main_window)
 
 void CIniHelper::UnEscapeString(wstring& str)
 {
-    if (str.find(L'\\') == wstring::npos) // 仅含有‘\’时需要处理转义字符
-        return;
     bool escape{ false };
     wstring result;
     result.reserve(str.size());

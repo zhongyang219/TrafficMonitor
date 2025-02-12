@@ -53,6 +53,7 @@ using std::ofstream;
 #include <afxinet.h>    //用于支持使用网络相关的类
 #include <afxwin.h>
 
+#include "language.h"
 
 #ifdef _UNICODE
 #if defined _M_IX86

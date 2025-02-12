@@ -977,10 +977,6 @@
     <None Include="language\English.ini" />
     <None Include="language\Simplified_Chinese.ini" />
     <None Include="language\Traditional_Chinese.ini" />
-    <None Include="res\license.bin" />
-    <None Include="res\menu_icon\language.bin" />
-    <None Include="res\menu_icon\text1.bin" />
-    <None Include="res\menu_icon\text3.bin" />
     <None Include="res\TrafficMonitor.rc2" />
   </ItemGroup>
   <ItemGroup>

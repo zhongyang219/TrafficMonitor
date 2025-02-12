@@ -104,7 +104,6 @@ bool CHistoryTrafficCalendarDlg::IsWeekend(int index)
 
 CString CHistoryTrafficCalendarDlg::GetWeekdayString(int index)
 {
-    CString str;
     if (!theApp.m_cfg_data.m_sunday_first)
     {
         index++;
@@ -114,28 +113,21 @@ CString CHistoryTrafficCalendarDlg::GetWeekdayString(int index)
     switch (index)
     {
     case 0:
-        str.LoadString(IDS_SUNDAY);
-        break;
+        return CCommon::LoadText(IDS_SUNDAY);
     case 1:
-        str.LoadString(IDS_MONDAY);
-        break;
+        return CCommon::LoadText(IDS_MONDAY);
     case 2:
-        str.LoadString(IDS_TUESDAY);
-        break;
+        return CCommon::LoadText(IDS_TUESDAY);
     case 3:
-        str.LoadString(IDS_WEDNESDAY);
-        break;
+        return CCommon::LoadText(IDS_WEDNESDAY);
     case 4:
-        str.LoadString(IDS_THURSDAY);
-        break;
+        return CCommon::LoadText(IDS_THURSDAY);
     case 5:
-        str.LoadString(IDS_FRIDAY);
-        break;
+        return CCommon::LoadText(IDS_FRIDAY);
     case 6:
-        str.LoadString(IDS_SATURDAY);
-        break;
+        return CCommon::LoadText(IDS_SATURDAY);
     }
-    return str;
+    return CString();
 }
 
 BEGIN_MESSAGE_MAP(CHistoryTrafficCalendarDlg, CTabDlg)

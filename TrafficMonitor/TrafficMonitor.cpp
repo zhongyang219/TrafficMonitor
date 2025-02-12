@@ -53,6 +53,12 @@ CTrafficMonitorApp::CTrafficMonitorApp()
     CheckWindows11Taskbar();
 }
 
+void CTrafficMonitorApp::LoadLanguageConfig()
+{
+    CIniHelper ini{ m_config_path };
+    m_general_data.language = static_cast<Language>(ini.GetInt(_T("general"), _T("language"), 0));
+}
+
 void CTrafficMonitorApp::LoadConfig()
 {
     CIniHelper ini{ m_config_path };
@@ -61,7 +67,6 @@ void CTrafficMonitorApp::LoadConfig()
     m_general_data.check_update_when_start = ini.GetBool(_T("general"), _T("check_update_when_start"), true);
     m_general_data.allow_skin_cover_font = ini.GetBool(_T("general"), _T("allow_skin_cover_font"), true);
     m_general_data.allow_skin_cover_text = ini.GetBool(_T("general"), _T("allow_skin_cover_text"), true);
-    m_general_data.language = static_cast<Language>(ini.GetInt(_T("general"), _T("language"), 0));
     m_general_data.show_all_interface = ini.GetBool(L"general", L"show_all_interface", false);
     bool is_chinese_language{};     //当前语言是否为简体中文
     if (m_general_data.language == Language::FOLLOWING_SYSTEM)
@@ -130,7 +135,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_main_wnd_data.hide_main_wnd_when_fullscreen = ini.GetBool(_T("config"), _T("hide_main_wnd_when_fullscreen"), true);
 
     FontInfo default_font{};
-    default_font.name = CCommon::LoadText(IDS_DEFAULT_FONT);
+    default_font.name = m_str_table.GetDefaultFontName().c_str();
     default_font.size = 10;
     ini.LoadFontData(_T("config"), m_main_wnd_data.font, default_font);
     //m_main_wnd_data.font.name = ini.GetString(_T("config"), _T("font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();
@@ -234,7 +239,7 @@ void CTrafficMonitorApp::LoadConfig()
     //m_taskbar_data.font.name = ini.GetString(_T("task_bar"), _T("tack_bar_font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();
     //m_taskbar_data.font.size = ini.GetInt(_T("task_bar"), _T("tack_bar_font_size"), 9);
     default_font = FontInfo{};
-    default_font.name = CCommon::LoadText(IDS_DEFAULT_FONT);
+    default_font.name = m_str_table.GetDefaultFontName().c_str();
     default_font.size = 9;
     ini.LoadFontData(_T("task_bar"), m_taskbar_data.font, default_font);
 
@@ -506,8 +511,7 @@ void CTrafficMonitorApp::SaveConfig()
     {
         if (m_cannot_save_config_warning)
         {
-            CString info;
-            info.LoadString(IDS_CONNOT_SAVE_CONFIG_WARNING);
+            CString info = CCommon::LoadText(IDS_CONNOT_SAVE_CONFIG_WARNING);
             info.Replace(_T("<%file_path%>"), m_config_path.c_str());
             AfxMessageBox(info, MB_ICONWARNING);
         }
@@ -1015,8 +1019,7 @@ BOOL CTrafficMonitorApp::InitInstance()
     LoadPluginDisabledSettings();
     m_plugins.LoadPlugins();
 
-    //从ini文件载入设置
-    LoadConfig();
+    LoadLanguageConfig();
 
     //初始化界面语言
     CCommon::SetThreadLanguage(m_general_data.language);
@@ -1030,7 +1033,11 @@ BOOL CTrafficMonitorApp::InitInstance()
     //  return FALSE;
     //}
 
+    //初始化字符串资源
     m_str_table.Init();
+
+    //从ini文件载入设置
+    LoadConfig();
 
     //检查是否已有实例正在运行
     LPCTSTR mutex_name{};

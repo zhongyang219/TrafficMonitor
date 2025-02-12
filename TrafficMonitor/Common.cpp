@@ -764,19 +764,17 @@ void CCommon::SetRect(CRect& rect, int x, int y, int width, int height)
     rect.bottom = y + height;
 }
 
-CString CCommon::LoadText(UINT id, LPCTSTR back_str)
+CString CCommon::LoadText(const wchar_t* id, LPCTSTR back_str)
 {
-    CString str;
-    str.LoadString(id);
+    CString str = theApp.m_str_table.LoadText(id).c_str();
     if (back_str != nullptr)
         str += back_str;
     return str;
 }
 
-CString CCommon::LoadText(LPCTSTR front_str, UINT id, LPCTSTR back_str)
+CString CCommon::LoadText(LPCTSTR front_str, const wchar_t* id, LPCTSTR back_str)
 {
-    CString str;
-    str.LoadString(id);
+    CString str = theApp.m_str_table.LoadText(id).c_str();
     if (back_str != nullptr)
         str += back_str;
     if (front_str != nullptr)
@@ -800,10 +798,9 @@ CString CCommon::StringFormat(LPCTSTR format_str, const std::initializer_list<CV
     return str_rtn;
 }
 
-CString CCommon::LoadTextFormat(UINT id, const std::initializer_list<CVariant>& paras)
+CString CCommon::LoadTextFormat(const wchar_t* id, const std::initializer_list<CVariant>& paras)
 {
-    CString str;
-    str.LoadString(id);
+    CString str = theApp.m_str_table.LoadText(id).c_str();
     return StringFormat(str.GetString(), paras);
 }
 

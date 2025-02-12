@@ -25,7 +25,7 @@ void CStrTable::Init()
 
     m_language_info.display_name = ini.GetString(L"general", L"DISPLAY_NAME", L"");
     m_language_info.bcp_47 = ini.GetString(L"general", L"BCP_47", L"");
-    m_language_info.default_font_name = ini.GetString(L"general", L"DEFAULT_FONT", L"");
+    m_language_info.default_font_name = ini.GetString(L"general", L"DEFAULT_FONT", L"Microsoft Sans Serif");
     ini.GetStringList(L"general", L"TRANSLATOR", m_language_info.translator, vector<wstring>{ L"<Unknown>" });
 }
 
@@ -34,6 +34,7 @@ const wstring& CStrTable::LoadText(const wstring& key) const
     auto iter = m_text_string_table.find(key);
     if (iter != m_text_string_table.end())
         return iter->second;
+    ASSERT(false);
     static std::wstring str_empty;
     return str_empty;
 }
@@ -43,6 +44,7 @@ wstring CStrTable::LoadTextFormat(const wstring& key, const std::initializer_lis
     auto iter = m_text_string_table.find(key);
     if (iter == m_text_string_table.end())
     {
+        ASSERT(false);
         return std::wstring();
     }
     wstring str{ iter->second };    // 复制以避免原始字符串修改
@@ -54,4 +56,14 @@ wstring CStrTable::LoadTextFormat(const wstring& key, const std::initializer_lis
         ++index;
     }
     return str;
+}
+
+const wstring& CStrTable::GetDefaultFontName() const
+{
+    return m_language_info.default_font_name;
+}
+
+const wstring& CStrTable::GetLanguageTag() const
+{
+    return m_language_info.bcp_47;
 }

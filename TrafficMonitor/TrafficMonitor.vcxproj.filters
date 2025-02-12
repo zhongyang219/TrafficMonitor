@@ -779,24 +779,16 @@
       <Filter>资源文件</Filter>
     </None>
     <None Include="..\LICENSE" />
-    <None Include="res\license.bin">
-      <Filter>资源文件</Filter>
-    </None>
     <None Include="..\LICENSE_CN" />
-    <None Include="res\menu_icon\text1.bin">
-      <Filter>资源文件</Filter>
-    </None>
     <None Include="language\Simplified_Chinese.ini">
       <Filter>资源文件\language</Filter>
     </None>
-    <None Include="res\menu_icon\language.bin">
-      <Filter>资源文件</Filter>
+    <None Include="language\Traditional_Chinese.ini">
+      <Filter>资源文件\language</Filter>
     </None>
-    <None Include="language\Traditional_Chinese.ini" />
-    <None Include="res\menu_icon\text3.bin">
-      <Filter>资源文件</Filter>
+    <None Include="language\English.ini">
+      <Filter>资源文件\language</Filter>
     </None>
-    <None Include="language\English.ini" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\menu_icon\close.ico">

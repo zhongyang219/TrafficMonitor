@@ -226,14 +226,14 @@ public:
     static void SetRect(CRect& rect, int x, int y, int width, int height);
 
     //从资源文件载入字符串。其中，front_str、back_str为载入字符串时需要在前面或后面添加的字符串
-    static CString LoadText(UINT id, LPCTSTR back_str = nullptr);
-    static CString LoadText(LPCTSTR front_str, UINT id, LPCTSTR back_str = nullptr);
+    static CString LoadText(const wchar_t* id, LPCTSTR back_str = nullptr);
+    static CString LoadText(LPCTSTR front_str, const wchar_t* id, LPCTSTR back_str);
 
     //安全的格式化字符串，将format_str中形如<%序号%>的字符串替换成初始化列表paras中的元素，元素支持int/double/LPCTSTR/CString格式，序号从1开始
     static CString StringFormat(LPCTSTR format_str, const std::initializer_list<CVariant>& paras);
 
     //从资源文件中载入字符串，并将资源字符串中形如<%序号%>的字符串替换成可变参数列表中的参数
-    static CString LoadTextFormat(UINT id, const std::initializer_list<CVariant>& paras);
+    static CString LoadTextFormat(const wchar_t* id, const std::initializer_list<CVariant>& paras);
 
     //将int类型转换成字符串
     //n：要转换的数值

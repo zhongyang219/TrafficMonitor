@@ -1293,8 +1293,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     if (rtn == ERROR_INSUFFICIENT_BUFFER)
     {
         IniConnection();
-        CString info;
-        info.LoadString(IDS_INSUFFICIENT_BUFFER);
+        CString info = CCommon::LoadText(IDS_INSUFFICIENT_BUFFER);
         info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt));
         CCommon::WriteLog(info, theApp.m_log_path.c_str());
     }
@@ -1309,8 +1308,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         {
             if (theApp.m_debug_log)
             {
-                CString info;
-                info.LoadString(IDS_CONNECTION_NUM_CHANGED);
+                CString info = CCommon::LoadText(IDS_CONNECTION_NUM_CHANGED);
                 info.Replace(_T("<%before%>"), CCommon::IntToString(last_interface_num));
                 info.Replace(_T("<%after%>"), CCommon::IntToString(interface_num));
                 info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt + 1));
@@ -1337,8 +1335,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
             }
 
             IniConnection();
-            CString info;
-            info.LoadString(IDS_CONNECTION_NOT_MATCH);
+            CString info = CCommon::LoadText(IDS_CONNECTION_NOT_MATCH);
             info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt));
             CCommon::WriteLog(info, theApp.m_log_path.c_str());
         }
@@ -1653,8 +1650,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                     if (m_tBarDlg->GetCannotInsertToTaskBar() && m_insert_to_taskbar_cnt >= WARN_INSERT_TO_TASKBAR_CNT)
                     {
                         //写入错误日志
-                        CString info;
-                        info.LoadString(IDS_CONNOT_INSERT_TO_TASKBAR_ERROR_LOG);
+                        CString info = CCommon::LoadText(IDS_CONNOT_INSERT_TO_TASKBAR_ERROR_LOG);
                         info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_insert_to_taskbar_cnt));
                         info.Replace(_T("<%error_code%>"), CCommon::IntToString(m_tBarDlg->GetErrorCode()));
                         CCommon::WriteLog(info, theApp.m_log_path.c_str());
