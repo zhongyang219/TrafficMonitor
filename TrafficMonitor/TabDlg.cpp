@@ -2,9 +2,9 @@
 #include "TabDlg.h"
 #include "TrafficMonitor.h"
 
-IMPLEMENT_DYNAMIC(CTabDlg, CDialogEx)
+IMPLEMENT_DYNAMIC(CTabDlg, CBaseDialog)
 
-CTabDlg::CTabDlg(UINT nIDTemplate, CWnd * pParent) : CDialogEx(nIDTemplate, pParent)
+CTabDlg::CTabDlg(UINT nIDTemplate, CWnd * pParent) : CBaseDialog(nIDTemplate, pParent)
 {
 	m_pParent = pParent;
 }
@@ -33,13 +33,13 @@ BOOL CTabDlg::PreTranslateMessage(MSG* pMsg)
 		return TRUE;
 	}
 
-	return CDialogEx::PreTranslateMessage(pMsg);
+	return CBaseDialog::PreTranslateMessage(pMsg);
 }
 
 
 BOOL CTabDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	CBaseDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
 	//将窗口背景设置成白色
@@ -128,7 +128,7 @@ void CTabDlg::ShowDlgCtrl(UINT id, bool show)
         pCtrl->ShowWindow(show);
 }
 
-BEGIN_MESSAGE_MAP(CTabDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CTabDlg, CBaseDialog)
 	ON_WM_VSCROLL()
 	ON_WM_MOUSEWHEEL()
     ON_WM_SIZE()
@@ -175,7 +175,7 @@ void CTabDlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		}
         m_last_pos = scrollinfo.nPos;
 	}
-	CDialogEx::OnVScroll(nSBCode, nPos, pScrollBar);
+	CBaseDialog::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
 
@@ -191,7 +191,7 @@ BOOL CTabDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
         m_last_pos = scrollinfo.nPos;
     }
 
-	return CDialogEx::OnMouseWheel(nFlags, zDelta, pt);
+	return CBaseDialog::OnMouseWheel(nFlags, zDelta, pt);
 }
 
 
@@ -199,7 +199,7 @@ void CTabDlg::OnOK()
 {
     // TODO: 在此添加专用代码和/或调用基类
 
-    CDialogEx::OnOK();
+    CBaseDialog::OnOK();
 }
 
 
@@ -213,7 +213,7 @@ bool CTabDlg::IsScrollBarVisible()
 
 void CTabDlg::OnSize(UINT nType, int cx, int cy)
 {
-    CDialogEx::OnSize(nType, cx, cy);
+    CBaseDialog::OnSize(nType, cx, cy);
 
     // TODO: 在此处添加消息处理程序代码
     SetControlMouseWheelEnable(!IsScrollBarVisible());      //如果显示了滚动条，则禁止控件响应鼠标滚轮，此时鼠标滚轮用于滚动窗口

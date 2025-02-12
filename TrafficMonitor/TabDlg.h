@@ -1,6 +1,8 @@
 ﻿//这是用于Tab标签中的子对话框类
 #pragma once
-class CTabDlg : public CDialogEx
+#include "BaseDialog.h"
+
+class CTabDlg : public CBaseDialog
 {
 	DECLARE_DYNAMIC(CTabDlg)
 public:

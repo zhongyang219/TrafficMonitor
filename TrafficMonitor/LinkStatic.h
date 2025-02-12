@@ -29,6 +29,8 @@ protected:
 	bool m_bHot{ false };			//当鼠标指向超链接时，则为true
 	CString m_strURL;				//超链接字符串
     COLORREF m_back_color{ GetSysColor(COLOR_BTNFACE) };
+    CFont m_hover_font;
+    bool IsLinkValid() const;
 
 protected:
 	DECLARE_MESSAGE_MAP()

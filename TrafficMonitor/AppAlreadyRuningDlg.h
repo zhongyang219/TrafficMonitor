@@ -1,9 +1,9 @@
 ﻿#pragma once
-
+#include "BaseDialog.h"
 
 // CAppAlreadyRuningDlg 对话框
 
-class CAppAlreadyRuningDlg : public CDialog
+class CAppAlreadyRuningDlg : public CBaseDialog
 {
     DECLARE_DYNAMIC(CAppAlreadyRuningDlg)
 

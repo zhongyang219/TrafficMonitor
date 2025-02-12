@@ -23,6 +23,25 @@ CBaseDialog::~CBaseDialog()
 {
 }
 
+void CBaseDialog::SetBackgroundColor(COLORREF color, BOOL bRepaint)
+{
+    if (m_brBkgr.GetSafeHandle() != NULL)
+    {
+        m_brBkgr.DeleteObject();
+    }
+
+    if (color != (COLORREF)-1)
+    {
+        m_brBkgr.CreateSolidBrush(color);
+    }
+
+    if (bRepaint && GetSafeHwnd() != NULL)
+    {
+        Invalidate();
+        UpdateWindow();
+    }
+}
+
 void CBaseDialog::SetMinSize(int cx, int cy)
 {
     m_min_size.cx = cx;
@@ -110,6 +129,7 @@ void CBaseDialog::SetButtonIcon(UINT id, HICON hIcon)
 
 void CBaseDialog::IterateControls(std::function<void(CWnd*)> func)
 {
+    func(this);
     IterateControls(this, func);
 }
 
@@ -123,6 +143,8 @@ BEGIN_MESSAGE_MAP(CBaseDialog, CDialog)
     ON_WM_DESTROY()
     ON_WM_GETMINMAXINFO()
     ON_WM_SIZE()
+    ON_WM_ERASEBKGND()
+    ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 
@@ -236,4 +258,57 @@ INT_PTR CBaseDialog::DoModal()
         return 0;
     }
     return CDialog::DoModal();
+}
+
+
+BOOL CBaseDialog::OnEraseBkgnd(CDC* pDC)
+{
+    // 修改窗口背景（CDialogEx）
+    if (m_brBkgr.GetSafeHandle() != NULL)
+    {
+        ASSERT_VALID(pDC);
+        CRect rectClient;
+        GetClientRect(rectClient);
+        pDC->FillRect(rectClient, &m_brBkgr);
+        return TRUE;
+    }
+    return CDialog::OnEraseBkgnd(pDC);
+}
+
+
+HBRUSH CBaseDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+    // 修改窗口背景（CDialogEx）
+    if (m_brBkgr.GetSafeHandle() != NULL)
+    {
+#define AFX_MAX_CLASS_NAME 255
+#define AFX_STATIC_CLASS _T("Static")
+#define AFX_BUTTON_CLASS _T("Button")
+#define AFX_SLIDER_CLASS _T("msctls_trackbar32")    // 滑动条控件CSliderCtrl及其派生类
+#define AFX_SYSLINK_CLASS _T("SysLink")             // 超链接控件CSysLink及其派生类
+
+        if (nCtlColor == CTLCOLOR_STATIC)
+        {
+            TCHAR lpszClassName[AFX_MAX_CLASS_NAME + 1];
+
+            ::GetClassName(pWnd->GetSafeHwnd(), lpszClassName, AFX_MAX_CLASS_NAME);
+            CString strClass = lpszClassName;
+
+            if (strClass == AFX_BUTTON_CLASS || strClass == AFX_STATIC_CLASS || strClass == AFX_SLIDER_CLASS || strClass == AFX_SYSLINK_CLASS)
+            {
+                pDC->SetBkMode(TRANSPARENT);
+
+                if (m_brBkgr.GetSafeHandle() != NULL && IsAppThemed())
+                {
+                    return (HBRUSH)m_brBkgr.GetSafeHandle();
+                }
+                else
+                {
+                    return (HBRUSH)::GetStockObject(HOLLOW_BRUSH);
+                }
+            }
+        }
+    }
+
+    return CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
 }

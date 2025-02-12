@@ -9,10 +9,10 @@
 
 // CAppAlreadyRuningDlg 对话框
 
-IMPLEMENT_DYNAMIC(CAppAlreadyRuningDlg, CDialog)
+IMPLEMENT_DYNAMIC(CAppAlreadyRuningDlg, CBaseDialog)
 
 CAppAlreadyRuningDlg::CAppAlreadyRuningDlg(HWND handel, CWnd* pParent /*=nullptr*/)
-    : CDialog(IDD_APP_ALREAD_RUNING_DIALOG, pParent), m_handle(handel)
+    : CBaseDialog(IDD_APP_ALREAD_RUNING_DIALOG, pParent), m_handle(handel)
 {
 
 }
@@ -23,11 +23,11 @@ CAppAlreadyRuningDlg::~CAppAlreadyRuningDlg()
 
 void CAppAlreadyRuningDlg::DoDataExchange(CDataExchange* pDX)
 {
-    CDialog::DoDataExchange(pDX);
+    CBaseDialog::DoDataExchange(pDX);
 }
 
 
-BEGIN_MESSAGE_MAP(CAppAlreadyRuningDlg, CDialog)
+BEGIN_MESSAGE_MAP(CAppAlreadyRuningDlg, CBaseDialog)
     ON_BN_CLICKED(IDC_EXIT_INST_BUTTON, &CAppAlreadyRuningDlg::OnBnClickedExitInstButton)
     ON_BN_CLICKED(IDC_OPEN_SETTINGS_BUTTON, &CAppAlreadyRuningDlg::OnBnClickedOpenSettingsButton)
     ON_BN_CLICKED(IDC_SHOW_HIDE_MAIN_WINDOW_BUTTON, &CAppAlreadyRuningDlg::OnBnClickedShowHideMainWindowButton)
@@ -40,7 +40,7 @@ END_MESSAGE_MAP()
 
 BOOL CAppAlreadyRuningDlg::OnInitDialog()
 {
-    CDialog::OnInitDialog();
+    CBaseDialog::OnInitDialog();
 
     // TODO:  在此添加额外的初始化
     SetIcon(AfxGetApp()->LoadIcon(IDR_MAINFRAME), FALSE);

@@ -13,6 +13,9 @@ public:
     CBaseDialog(UINT nIDTemplate, CWnd* pParent = NULL);   // 标准构造函数
     virtual ~CBaseDialog();
 
+    // 复制自CDialogEx，与其功能相同（新增滑动条控件和超链接控件的处理）
+    void SetBackgroundColor(COLORREF color, BOOL bRepaint = TRUE);
+
     // 对话框数据
     //#ifdef AFX_DESIGN_TIME
     //	enum { IDD = IDD_BASEDIALOG };
@@ -31,10 +34,11 @@ private:
 private:
     CSize m_min_size{};     //窗口的最小大小（以 96dpi 的大小保存）
     CSize m_window_size{ -1, -1 };
+    CBrush m_brBkgr;
     static std::map<CString, HWND> m_unique_hwnd;        //针对每一个基类的唯一的窗口句柄
 
 protected:
-    virtual CString GetDialogName() const = 0;
+    virtual CString GetDialogName() const { return CString(); }
     void EnableDlgCtrl(UINT id, bool enable);
     void SetButtonIcon(UINT id, HICON hIcon);
 
@@ -50,4 +54,6 @@ public:
     afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
     afx_msg void OnSize(UINT nType, int cx, int cy);
     virtual INT_PTR DoModal();
+    afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+    afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 };

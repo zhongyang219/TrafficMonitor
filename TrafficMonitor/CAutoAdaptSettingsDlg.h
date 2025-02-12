@@ -1,9 +1,9 @@
 ﻿#pragma once
-
+#include "BaseDialog.h"
 
 // CAutoAdaptSettingsDlg 对话框
 
-class CAutoAdaptSettingsDlg : public CDialog
+class CAutoAdaptSettingsDlg : public CBaseDialog
 {
 	DECLARE_DYNAMIC(CAutoAdaptSettingsDlg)
 

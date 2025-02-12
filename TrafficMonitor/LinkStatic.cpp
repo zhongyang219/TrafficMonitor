@@ -48,6 +48,11 @@ END_MESSAGE_MAP()
 
 // CLinkStatic 消息处理程序
 
+bool CLinkStatic::IsLinkValid() const
+{
+    return (!m_link_is_url || !m_strURL.IsEmpty());
+}
+
 void CLinkStatic::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
@@ -63,17 +68,17 @@ void CLinkStatic::OnMouseMove(UINT nFlags, CPoint point)
 void CLinkStatic::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-		if (m_link_is_url)
-		{
-			if (!m_strURL.IsEmpty())
-				ShellExecute(NULL, _T("open"), m_strURL, NULL, NULL, SW_SHOW);	//打开超链接
-		}
-		else
-		{
-			CWnd* pParent{ GetParent() };
-			if (pParent != nullptr)
-				pParent->SendMessage(WM_LINK_CLICKED, (WPARAM)this);
-		}
+	if (m_link_is_url)
+	{
+		if (!m_strURL.IsEmpty())
+			ShellExecute(NULL, _T("open"), m_strURL, NULL, NULL, SW_SHOW);	//打开超链接
+	}
+	else
+	{
+		CWnd* pParent{ GetParent() };
+		if (pParent != nullptr)
+			pParent->SendMessage(WM_LINK_CLICKED, (WPARAM)this);
+	}
 }
 
 
@@ -103,7 +108,7 @@ void CLinkStatic::OnMouseLeave()
 BOOL CLinkStatic::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	if (m_bHot)
+	if (IsLinkValid() && m_bHot)
 	{
 		::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(32649)));
 		return TRUE;
@@ -120,17 +125,26 @@ void CLinkStatic::OnPaint()
 					   // TODO: 在此处添加消息处理程序代码
 					   // 不为绘图消息调用 CStatic::OnPaint()
 	//准备工作
-	CFont* pFont = GetFont();
-	CFont font;
-	if (pFont != NULL)
-	{
-		LOGFONT lf;
-		pFont->GetLogFont(&lf);
-		lf.lfUnderline = m_bHot;
-		if (font.CreateFontIndirect(&lf))
-			dc.SelectObject(font);
-	}
-	dc.SetTextColor(GetSysColor(COLOR_HOTLIGHT));
+    if (m_hover_font.GetSafeHandle() == NULL)
+    {
+        LOGFONT lf;
+        GetFont()->GetLogFont(&lf);
+        lf.lfUnderline = true;
+        m_hover_font.CreateFontIndirect(&lf);
+    }
+
+    if (IsLinkValid())
+    {
+        if (m_bHot)
+            dc.SelectObject(&m_hover_font);
+        else
+            dc.SelectObject(GetFont());
+        dc.SetTextColor(GetSysColor(COLOR_HOTLIGHT));
+    }
+    else
+    {
+        dc.SelectObject(GetFont());
+    }
 	dc.SetBkMode(TRANSPARENT);
 	CRect rect;
 	this->GetClientRect(&rect);
@@ -143,7 +157,6 @@ void CLinkStatic::OnPaint()
 	{
 		dc.DrawText(text, rect, DT_VCENTER | DT_SINGLELINE);
 	}
-	font.DeleteObject();
 }
 
 
