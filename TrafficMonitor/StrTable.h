@@ -12,7 +12,8 @@ public:
         wstring display_name;           // 在语言设置下拉菜单显示的字符串
         wstring bcp_47;                 // BCP-47代码
         wstring default_font_name;      // 默认字体
-        vector<wstring> translator;
+        wstring translator;
+        wstring translator_url;
     };
 
     void Init();
@@ -23,9 +24,7 @@ public:
     wstring LoadTextFormat(const wstring& key, const std::initializer_list<CVariant>& paras) const;
 
     // 获取默认字体名称
-    const wstring& GetDefaultFontName() const;
-
-    const wstring& GetLanguageTag() const;
+    const LanguageInfo& GetLanguageInfo() const { return m_language_info; }
 
 private:
     std::map<std::wstring, std::wstring> m_text_string_table;

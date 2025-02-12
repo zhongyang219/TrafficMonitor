@@ -1,5 +1,5 @@
 ﻿#pragma once
-
+#include <functional>
 
 // CBaseDialog 对话框
 //用于实现记住对话框大小
@@ -26,6 +26,7 @@ public:
 private:
     void LoadConfig();
     void SaveConfig() const;
+    void IterateControls(CWnd* pParent, std::function<void(CWnd*)> func);
 
 private:
     CSize m_min_size{};     //窗口的最小大小（以 96dpi 的大小保存）
@@ -36,6 +37,9 @@ protected:
     virtual CString GetDialogName() const = 0;
     void EnableDlgCtrl(UINT id, bool enable);
     void SetButtonIcon(UINT id, HICON hIcon);
+
+    //遍历所有子控件
+    void IterateControls(std::function<void(CWnd*)> func);
 
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 

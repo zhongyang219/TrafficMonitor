@@ -523,6 +523,9 @@
     <ClInclude Include="StrTable.h">
       <Filter>源文件和头文件\公共的类\StrTable</Filter>
     </ClInclude>
+    <ClInclude Include="language.h">
+      <Filter>源文件和头文件\头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">

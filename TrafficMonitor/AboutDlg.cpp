@@ -64,6 +64,12 @@ BOOL CAboutDlg::OnInitDialog()
     m_tinyxml2_link.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
     m_musicplayer2_link.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
     m_simplenotepad_link.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
+    m_mail.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
+    m_acknowledgement.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
+    m_github.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
+    m_gitee.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
+    m_donate.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
+    m_license.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
 
     //设置版本信息
     CString version_info;
@@ -112,14 +118,15 @@ BOOL CAboutDlg::OnInitDialog()
     m_tool_tip.SetMaxTipWidth(800);
 
     //设置翻译者信息
-    int language_code;
-    language_code = _ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE));
-    if (language_code == 1 || language_code == 2)       //语言是简体中文和英文时不显示翻译者信息
+    wstring language_tag{ theApp.m_str_table.GetLanguageInfo().bcp_47 };
+    if (language_tag == L"zh-CN" || language_tag == L"en-US")       //语言是简体中文和英文时不显示翻译者信息
         m_translaotr_static.ShowWindow(SW_HIDE);
-    if (language_code == 3)     //显示繁体中文翻译者的信息
+    m_translaotr_static.SetWindowTextW(theApp.m_str_table.LoadTextFormat(L"TXT_ABOUT_TRANSLATOR", { theApp.m_str_table.GetLanguageInfo().translator }).c_str());
+    std::wstring translator_url{ theApp.m_str_table.GetLanguageInfo().translator_url };
+    if (!translator_url.empty())     //显示翻译者的信息
     {
-        m_translaotr_static.SetURL(_T("http://mkvq.blogspot.com/"));
-        m_tool_tip.AddTool(&m_translaotr_static, CCommon::LoadText(IDS_CONTACT_TRANSLATOR, _T("\r\nhttp://mkvq.blogspot.com/")));
+        m_translaotr_static.SetURL(translator_url.c_str());
+        m_tool_tip.AddTool(&m_translaotr_static, CCommon::LoadText(IDS_CONTACT_TRANSLATOR, translator_url.c_str()));
     }
     m_translaotr_static.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
 

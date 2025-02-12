@@ -803,6 +803,7 @@
     <ClInclude Include="HResultException.h" />
     <ClInclude Include="IDrawCommon.h" />
     <ClInclude Include="Image2DEffect.h" />
+    <ClInclude Include="language.h" />
     <ClInclude Include="LinkStatic.h" />
     <ClInclude Include="ColorStatic.h" />
     <ClInclude Include="Common.h" />

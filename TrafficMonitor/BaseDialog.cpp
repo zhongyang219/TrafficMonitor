@@ -72,6 +72,27 @@ void CBaseDialog::SaveConfig() const
     }
 }
 
+void CBaseDialog::IterateControls(CWnd* pParent, std::function<void(CWnd*)> func)
+{
+    if (pParent == nullptr)
+        return;
+
+    // 获取第一个子控件
+    CWnd* pChild = pParent->GetWindow(GW_CHILD);
+
+    // 遍历所有子控件
+    while (pChild != nullptr)
+    {
+        func(pChild);
+
+        // 递归遍历子控件的子控件（处理嵌套控件）
+        IterateControls(pChild, func);
+
+        // 获取下一个兄弟控件
+        pChild = pChild->GetWindow(GW_HWNDNEXT);
+    }
+}
+
 void CBaseDialog::EnableDlgCtrl(UINT id, bool enable)
 {
     CWnd* pWnd = GetDlgItem(id);
@@ -85,6 +106,11 @@ void CBaseDialog::SetButtonIcon(UINT id, HICON hIcon)
     CButton* btn = static_cast<CButton*>(dlgItem);
     if (btn != nullptr)
         btn->SetIcon(hIcon);
+}
+
+void CBaseDialog::IterateControls(std::function<void(CWnd*)> func)
+{
+    IterateControls(this, func);
 }
 
 void CBaseDialog::DoDataExchange(CDataExchange* pDX)
@@ -129,6 +155,27 @@ BOOL CBaseDialog::OnInitDialog()
     }
 
     SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);       //取消置顶
+
+    //处理对话框中的文本翻译 
+    IterateControls([](CWnd* pWnd) {
+        //设置控件字体
+        pWnd->SetFont(theApp.GetDlgFont());
+        //获取控件文本
+        CString str;
+        pWnd->GetWindowText(str);
+        if (str.Left(4) == _T("TXT_"))
+        {
+            //设置控件文本
+            const std::wstring& str_translated = theApp.m_str_table.LoadText(str.GetString());
+            if (!str_translated.empty())
+                pWnd->SetWindowTextW(str_translated.c_str());
+        }
+    });
+
+    //处理标准按钮
+    SetDlgItemTextW(IDOK, theApp.m_str_table.LoadText(IDS_OK).c_str());
+    SetDlgItemTextW(IDCANCEL, theApp.m_str_table.LoadText(IDS_CANCEL).c_str());
+    SetDlgItemTextW(IDCLOSE, theApp.m_str_table.LoadText(IDS_CLOSE).c_str());
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE

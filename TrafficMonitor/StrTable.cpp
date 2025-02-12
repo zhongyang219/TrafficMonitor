@@ -26,7 +26,8 @@ void CStrTable::Init()
     m_language_info.display_name = ini.GetString(L"general", L"DISPLAY_NAME", L"");
     m_language_info.bcp_47 = ini.GetString(L"general", L"BCP_47", L"");
     m_language_info.default_font_name = ini.GetString(L"general", L"DEFAULT_FONT", L"Microsoft Sans Serif");
-    ini.GetStringList(L"general", L"TRANSLATOR", m_language_info.translator, vector<wstring>{ L"<Unknown>" });
+    m_language_info.translator = ini.GetString(L"general", L"TRANSLATOR", L"<Unknown>");
+    m_language_info.translator_url = ini.GetString(L"general", L"TRANSLATOR_URL", L"");
 }
 
 const wstring& CStrTable::LoadText(const wstring& key) const
@@ -56,14 +57,4 @@ wstring CStrTable::LoadTextFormat(const wstring& key, const std::initializer_lis
         ++index;
     }
     return str;
-}
-
-const wstring& CStrTable::GetDefaultFontName() const
-{
-    return m_language_info.default_font_name;
-}
-
-const wstring& CStrTable::GetLanguageTag() const
-{
-    return m_language_info.bcp_47;
 }

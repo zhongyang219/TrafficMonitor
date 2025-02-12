@@ -135,7 +135,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_main_wnd_data.hide_main_wnd_when_fullscreen = ini.GetBool(_T("config"), _T("hide_main_wnd_when_fullscreen"), true);
 
     FontInfo default_font{};
-    default_font.name = m_str_table.GetDefaultFontName().c_str();
+    default_font.name = m_str_table.GetLanguageInfo().default_font_name.c_str();
     default_font.size = 10;
     ini.LoadFontData(_T("config"), m_main_wnd_data.font, default_font);
     //m_main_wnd_data.font.name = ini.GetString(_T("config"), _T("font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();
@@ -239,7 +239,7 @@ void CTrafficMonitorApp::LoadConfig()
     //m_taskbar_data.font.name = ini.GetString(_T("task_bar"), _T("tack_bar_font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();
     //m_taskbar_data.font.size = ini.GetInt(_T("task_bar"), _T("tack_bar_font_size"), 9);
     default_font = FontInfo{};
-    default_font.name = m_str_table.GetDefaultFontName().c_str();
+    default_font.name = m_str_table.GetLanguageInfo().default_font_name.c_str();
     default_font.size = 9;
     ini.LoadFontData(_T("task_bar"), m_taskbar_data.font, default_font);
 
@@ -1035,6 +1035,9 @@ BOOL CTrafficMonitorApp::InitInstance()
 
     //初始化字符串资源
     m_str_table.Init();
+
+    //初始化对话框字体
+    m_dlg_font.CreatePointFont(90, m_str_table.GetLanguageInfo().default_font_name.c_str());
 
     //从ini文件载入设置
     LoadConfig();
