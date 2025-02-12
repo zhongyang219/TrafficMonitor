@@ -23,7 +23,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_STATIC_ACKNOWLEDGEMENT, m_acknowledgement);
     DDX_Control(pDX, IDC_STATIC_GITHUB, m_github);
     DDX_Control(pDX, IDC_STATIC_DONATE, m_donate);
-    DDX_Control(pDX, IDC_TRANSLATOR_STATIC, m_translaotr_static);
+    DDX_Control(pDX, IDC_TRANSLATOR_STATIC, m_translator_static);
     DDX_Control(pDX, IDC_STATIC_LICENSE, m_license);
     DDX_Control(pDX, IDC_OPENHARDWAREMONITOR_LINK, m_openhardwaremonitor_link);
     DDX_Control(pDX, IDC_TINYXML2_LINK, m_tinyxml2_link);
@@ -115,13 +115,13 @@ BOOL CAboutDlg::OnInitDialog()
     int language_code;
     language_code = _ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE));
     if (language_code == 1 || language_code == 2)       //语言是简体中文和英文时不显示翻译者信息
-        m_translaotr_static.ShowWindow(SW_HIDE);
+        m_translator_static.ShowWindow(SW_HIDE);
     if (language_code == 3)     //显示繁体中文翻译者的信息
     {
-        m_translaotr_static.SetURL(_T("http://mkvq.blogspot.com/"));
-        m_tool_tip.AddTool(&m_translaotr_static, CCommon::LoadText(IDS_CONTACT_TRANSLATOR, _T("\r\nhttp://mkvq.blogspot.com/")));
+        m_translator_static.SetURL(_T("http://mkvq.blogspot.com/"));
+        m_tool_tip.AddTool(&m_translator_static, CCommon::LoadText(IDS_CONTACT_TRANSLATOR, _T("\r\nhttp://mkvq.blogspot.com/")));
     }
-    m_translaotr_static.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
+    m_translator_static.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
 
     //设置图片的位置
     CRect rect;
