@@ -23,7 +23,7 @@ protected:
     CLinkStatic m_donate;           //“捐助”超链接
     CLinkStatic m_license;          //“开源协议”超链接
     CToolTipCtrl m_tool_tip;            //鼠标指向时的工具提示
-    CLinkStatic m_translaotr_static;
+    CLinkStatic m_translator_static;
     CLinkStatic m_openhardwaremonitor_link;
     CLinkStatic m_tinyxml2_link;
     CLinkStatic m_musicplayer2_link;
