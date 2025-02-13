@@ -829,10 +829,10 @@ CString CTrafficMonitorApp::GetSystemInfoString()
 void CTrafficMonitorApp::InitMenuResourse()
 {
     //载入菜单
-    m_main_menu.LoadMenu(IDR_MENU1);
-    m_main_menu_plugin.LoadMenu(IDR_MENU1);
-    m_taskbar_menu.LoadMenu(IDR_TASK_BAR_MENU);
-    m_taskbar_menu_plugin.LoadMenu(IDR_TASK_BAR_MENU);
+    CCommon::LoadMenuResource(m_main_menu, IDR_MENU1);
+    CCommon::LoadMenuResource(m_main_menu_plugin, IDR_MENU1);
+    CCommon::LoadMenuResource(m_taskbar_menu, IDR_TASK_BAR_MENU);
+    CCommon::LoadMenuResource(m_taskbar_menu_plugin, IDR_TASK_BAR_MENU);
 
     //为插件菜单添加额外项目
     m_main_menu_plugin_sub_menu.CreatePopupMenu();

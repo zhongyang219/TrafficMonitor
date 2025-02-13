@@ -319,6 +319,9 @@ public:
     //获取一个菜单项的序号
     static int GetMenuItemPosition(CMenu* pMenu, UINT id);
 
+    //从资源文件加载一个菜单，并处理文本翻译
+    static void LoadMenuResource(CMenu& menu, UINT res_id);
+
     static bool IsColorSimilar(COLORREF color1, COLORREF color2);
 
     //计算二进制中1的个数

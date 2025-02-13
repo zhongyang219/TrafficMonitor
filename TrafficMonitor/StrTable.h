@@ -24,6 +24,9 @@ public:
     // 载入翻译字符串，并将字符串中形如<%序号%>的字符串替换成可变参数列表中的参数
     wstring LoadTextFormat(const wstring& key, const std::initializer_list<CVariant>& paras) const;
 
+    const wstring& LoadMenuText(const wstring& key) const;
+
+
     // 获取默认字体名称
     const LanguageInfo& GetLanguageInfo() const { return m_language_info; }
 

@@ -156,7 +156,7 @@ BOOL CPluginManagerDlg::OnInitDialog()
 
     EnableControl();
 
-    m_menu.LoadMenu(IDR_PLUGIN_MANAGER_MENU); //装载右键菜单
+    CCommon::LoadMenuResource(m_menu, IDR_PLUGIN_MANAGER_MENU); //装载右键菜单
 
     //设置菜单图标
     CMenuIcon::AddIconToMenuItem(m_menu.GetSubMenu(0)->GetSafeHmenu(), ID_PLUGIN_DETAIL, FALSE, theApp.GetMenuIcon(IDI_INFO));

@@ -259,7 +259,7 @@ BOOL CHistoryTrafficListDlg::OnInitDialog()
     //显示列表数据
     ShowListData();
 
-	m_menu.LoadMenu(IDR_HISTORY_TRAFFIC_MENU);
+    CCommon::LoadMenuResource(m_menu, IDR_HISTORY_TRAFFIC_MENU);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE

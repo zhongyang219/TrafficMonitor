@@ -1019,6 +1019,48 @@ int CCommon::GetMenuItemPosition(CMenu* pMenu, UINT id)
     return pos;
 }
 
+// 递归遍历菜单项并处理多语言翻译
+static void TranslateMenuItems(CMenu& menu)
+{
+    // 遍历菜单项
+    for (int i = 0; i < menu.GetMenuItemCount(); ++i)
+    {
+        UINT menuItemID = menu.GetMenuItemID(i);
+        CString menuText;
+        menu.GetMenuString(i, menuText, MF_BYPOSITION);
+
+        // 检查菜单项文本是否以TXT_开头
+        if (menuText.Left(4) == _T("TXT_"))
+        {
+            // 获取翻译后的文本
+            std::wstring key(menuText);
+            const std::wstring& translatedText = theApp.m_str_table.LoadMenuText(key);
+
+            // 更新菜单项文本
+            menu.ModifyMenu(i, MF_BYPOSITION | MF_STRING, menuItemID, translatedText.c_str());
+        }
+
+        if (menuItemID == -1)
+        {
+            // 这是一个弹出菜单（子菜单），递归处理
+            CMenu* pSubMenu = menu.GetSubMenu(i);
+            if (pSubMenu)
+            {
+                TranslateMenuItems(*pSubMenu); // 递归调用
+            }
+        }
+    }
+}
+
+void CCommon::LoadMenuResource(CMenu& menu, UINT res_id)
+{
+    // 加载菜单资源
+    menu.LoadMenu(res_id);
+
+    // 处理菜单项翻译
+    TranslateMenuItems(menu);
+}
+
 bool CCommon::IsColorSimilar(COLORREF color1, COLORREF color2)
 {
     const int DIFF{ 24 };

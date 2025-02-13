@@ -112,7 +112,7 @@ BOOL CPluginInfoDlg::OnInitDialog()
 
     m_info_list.GetToolTips()->SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 
-    m_menu.LoadMenu(IDR_INFO_MENU); //装载右键菜单
+    CCommon::LoadMenuResource(m_menu, IDR_INFO_MENU); //装载右键菜单
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE

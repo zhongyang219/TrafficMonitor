@@ -293,7 +293,7 @@ BOOL CNetworkInfoDlg::OnInitDialog()
     //SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);		//取消置顶
     m_info_list.GetToolTips()->SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 
-    m_menu.LoadMenu(IDR_INFO_MENU); //装载右键菜单
+    CCommon::LoadMenuResource(m_menu, IDR_INFO_MENU); //装载右键菜单
 
     SetTimer(CONNECTION_DETAIL_TIMER, 1000, NULL);
 

@@ -104,3 +104,13 @@ wstring CStrTable::LoadTextFormat(const wstring& key, const std::initializer_lis
     }
     return str;
 }
+
+const wstring& CStrTable::LoadMenuText(const wstring& key) const
+{
+    auto iter = m_menu_string_table.find(key);
+    if (iter != m_menu_string_table.end())
+        return iter->second;
+    ASSERT(false);
+    static std::wstring str_empty;
+    return str_empty;
+}

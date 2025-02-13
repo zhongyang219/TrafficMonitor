@@ -179,7 +179,7 @@ BOOL CHistoryTrafficCalendarDlg::OnInitDialog()
     m_tool_tips.SetMaxTipWidth(800);        //为鼠标提示设置一个最大宽度，以允许其换行
     m_tool_tips.AddTool(this, _T(""));
 
-    m_menu.LoadMenu(IDR_HISTORY_TRAFFIC_MENU);
+    CCommon::LoadMenuResource(m_menu, IDR_HISTORY_TRAFFIC_MENU);
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE
