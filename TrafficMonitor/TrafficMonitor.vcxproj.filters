@@ -792,6 +792,9 @@
     <None Include="language\English.ini">
       <Filter>资源文件\language</Filter>
     </None>
+    <None Include="language\Turkish.ini">
+      <Filter>资源文件\language</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\menu_icon\close.ico">
