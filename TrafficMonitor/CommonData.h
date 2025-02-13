@@ -91,15 +91,6 @@ enum class DoubleClickAction
     NONE                //不执行任何动作
 };
 
-//语言
-enum class Language
-{
-    FOLLOWING_SYSTEM,       //跟随系统
-    ENGLISH,                //英语
-    SIMPLIFIED_CHINESE,     //简体中文
-    TRADITIONAL_CHINESE     //繁体中文
-};
-
 //颜色模式
 enum class ColorMode
 {
@@ -346,8 +337,8 @@ struct GeneralSettingData
     NotifyTipSettings mainboard_temp_tip;   //主板温度超出提示
 
 
-    //语言
-    Language language;
+    //语言id
+    WORD language;
 
     bool show_all_interface{ true };
 

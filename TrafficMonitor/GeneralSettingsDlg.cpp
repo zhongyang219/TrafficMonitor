@@ -248,10 +248,15 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     SetControlEnable();
 
     m_language_combo.AddString(CCommon::LoadText(IDS_FOLLOWING_SYSTEM));
-    m_language_combo.AddString(_T("English"));
-    m_language_combo.AddString(_T("简体中文"));
-    m_language_combo.AddString(_T("繁體中文"));
-    m_language_combo.SetCurSel(static_cast<int>(m_data.language));
+    int current_language_index{ -1 };       //当前语言在所有语言列表中的序号
+    for (size_t i = 0; i < theApp.m_str_table.GetLanguageList().size(); i++)
+    {
+        const CStrTable::LanguageInfo& language_info = theApp.m_str_table.GetLanguageList()[i];
+        m_language_combo.AddString(language_info.display_name.c_str());
+        if (language_info.language_id == m_data.language)
+            current_language_index = static_cast<int>(i);
+    }
+    m_language_combo.SetCurSel(current_language_index + 1);     //由于ComboBox第一项是“跟随系统”，因此ComboBox的序号需要加1
 
     ((CButton*)GetDlgItem(IDC_SHOW_ALL_CONNECTION_CHECK))->SetCheck(m_data.show_all_interface);
 
@@ -420,7 +425,16 @@ void CGeneralSettingsDlg::OnOK()
     checkTempTipValue(m_data.mainboard_temp_tip.tip_value);
 
     //获取语言的设置
-    m_data.language = static_cast<Language>(m_language_combo.GetCurSel());
+    m_data.language = 0;
+    if (m_language_combo.GetCurSel() > 0)
+    {
+        //选择的不是“跟随系统”
+        int current_language_index = m_language_combo.GetCurSel() - 1;
+        if (current_language_index >= 0 && current_language_index < static_cast<int>(theApp.m_str_table.GetLanguageList().size()))
+        {
+            m_data.language = theApp.m_str_table.GetLanguageList()[current_language_index].language_id;
+        }
+    }
     if (m_data.language != theApp.m_general_data.language)
     {
         MessageBox(CCommon::LoadText(IDS_LANGUAGE_CHANGE_INFO), NULL, MB_ICONINFORMATION | MB_OK);

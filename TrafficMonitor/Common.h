@@ -295,7 +295,7 @@ public:
     }
 
     //设置线程语言
-    static void SetThreadLanguage(Language language);
+    static void SetThreadLanguage(WORD language);
 
     //设置颜色模式
     static void SetColorMode(ColorMode mode);

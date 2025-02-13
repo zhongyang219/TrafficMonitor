@@ -14,6 +14,7 @@ public:
         wstring default_font_name;      // 默认字体
         wstring translator;
         wstring translator_url;
+        WORD language_id{};
     };
 
     void Init();
@@ -26,9 +27,13 @@ public:
     // 获取默认字体名称
     const LanguageInfo& GetLanguageInfo() const { return m_language_info; }
 
+    // 获取所有支持语言
+    const std::vector<LanguageInfo>& GetLanguageList() const { return m_language_list; }
+
 private:
     std::map<std::wstring, std::wstring> m_text_string_table;
     std::map<std::wstring, std::wstring> m_menu_string_table;
-    LanguageInfo m_language_info;
+    LanguageInfo m_language_info;                   //当前语言
+    std::vector<LanguageInfo> m_language_list;      //所有支持的语言
 };
 

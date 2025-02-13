@@ -904,15 +904,10 @@ bool CCommon::StringReplace(wstring& str, const wstring& str_old, const wstring&
     return replaced;
 }
 
-void CCommon::SetThreadLanguage(Language language)
+void CCommon::SetThreadLanguage(WORD language)
 {
-    switch (language)
-    {
-    case Language::ENGLISH: SetThreadUILanguage(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); break;
-    case Language::SIMPLIFIED_CHINESE: SetThreadUILanguage(MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED)); break;
-    case Language::TRADITIONAL_CHINESE: SetThreadUILanguage(MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL)); break;
-    default: break;
-    }
+    if (language != 0)
+        SetThreadUILanguage(language);
 }
 
 void CCommon::SetColorMode(ColorMode mode)

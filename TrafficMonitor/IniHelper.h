@@ -12,7 +12,10 @@ public:
 	CIniHelper(const wstring& file_path);
     // 从资源文件加载ini (只能读取)
     CIniHelper(UINT id, bool is_utf8 = true);
+    CIniHelper();
 	~CIniHelper();
+
+    void FromDirectString(const wstring& str_content);
 
 	void SetSaveAsUTF8(bool utf8);
 

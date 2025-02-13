@@ -23,7 +23,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_STATIC_ACKNOWLEDGEMENT, m_acknowledgement);
     DDX_Control(pDX, IDC_STATIC_GITHUB, m_github);
     DDX_Control(pDX, IDC_STATIC_DONATE, m_donate);
-    DDX_Control(pDX, IDC_TRANSLATOR_STATIC, m_translaotr_static);
+    DDX_Control(pDX, IDC_TRANSLATOR_STATIC, m_translator_static);
     DDX_Control(pDX, IDC_STATIC_LICENSE, m_license);
     DDX_Control(pDX, IDC_OPENHARDWAREMONITOR_LINK, m_openhardwaremonitor_link);
     DDX_Control(pDX, IDC_TINYXML2_LINK, m_tinyxml2_link);
@@ -117,17 +117,18 @@ BOOL CAboutDlg::OnInitDialog()
     m_tool_tip.SetMaxTipWidth(800);
 
     //设置翻译者信息
-    wstring language_tag{ theApp.m_str_table.GetLanguageInfo().bcp_47 };
+    const auto& language_info{ theApp.m_str_table.GetLanguageInfo() };
+    wstring language_tag{ language_info.bcp_47 };
     if (language_tag == L"zh-CN" || language_tag == L"en-US")       //语言是简体中文和英文时不显示翻译者信息
-        m_translaotr_static.ShowWindow(SW_HIDE);
-    m_translaotr_static.SetWindowTextW(theApp.m_str_table.LoadTextFormat(L"TXT_ABOUT_TRANSLATOR", { theApp.m_str_table.GetLanguageInfo().translator }).c_str());
-    std::wstring translator_url{ theApp.m_str_table.GetLanguageInfo().translator_url };
+        m_translator_static.ShowWindow(SW_HIDE);
+    m_translator_static.SetWindowTextW(theApp.m_str_table.LoadTextFormat(L"TXT_ABOUT_TRANSLATOR", { language_info.display_name, language_info.translator }).c_str());
+    std::wstring translator_url{ language_info.translator_url };
     if (!translator_url.empty())     //显示翻译者的信息
     {
-        m_translaotr_static.SetURL(translator_url.c_str());
-        m_tool_tip.AddTool(&m_translaotr_static, CCommon::LoadText(IDS_CONTACT_TRANSLATOR, translator_url.c_str()));
+        m_translator_static.SetURL(translator_url.c_str());
+        m_tool_tip.AddTool(&m_translator_static, CCommon::LoadText(IDS_CONTACT_TRANSLATOR, translator_url.c_str()));
     }
-    m_translaotr_static.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
+    m_translator_static.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
 
     //设置图片的位置
     CRect rect;

@@ -56,7 +56,7 @@ CTrafficMonitorApp::CTrafficMonitorApp()
 void CTrafficMonitorApp::LoadLanguageConfig()
 {
     CIniHelper ini{ m_config_path };
-    m_general_data.language = static_cast<Language>(ini.GetInt(_T("general"), _T("language"), 0));
+    m_general_data.language = static_cast<WORD>(ini.GetInt(_T("general"), _T("language"), 0));
 }
 
 void CTrafficMonitorApp::LoadConfig()
@@ -69,10 +69,10 @@ void CTrafficMonitorApp::LoadConfig()
     m_general_data.allow_skin_cover_text = ini.GetBool(_T("general"), _T("allow_skin_cover_text"), true);
     m_general_data.show_all_interface = ini.GetBool(L"general", L"show_all_interface", false);
     bool is_chinese_language{};     //当前语言是否为简体中文
-    if (m_general_data.language == Language::FOLLOWING_SYSTEM)
+    if (m_general_data.language == 0)
         is_chinese_language = CCommon::LoadText(IDS_LANGUAGE_CODE) == _T("2");
     else
-        is_chinese_language = (m_general_data.language == Language::SIMPLIFIED_CHINESE);
+        is_chinese_language = (m_general_data.language == 2052);
     m_general_data.update_source = ini.GetInt(L"general", L"update_source", is_chinese_language ? 1 : 0);   //如果当前语言为简体，则默认更新源为Gitee，否则为GitHub
     //载入获取CPU利用率的方式，默认使用性能计数器获取
     m_general_data.cpu_usage_acquire_method = static_cast<GeneralSettingData::CpuUsageAcquireMethod>(ini.GetInt(L"general", L"cpu_usage_acquire_method", GeneralSettingData::CA_PDH));

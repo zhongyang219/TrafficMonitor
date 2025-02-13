@@ -41,9 +41,18 @@ CIniHelper::CIniHelper(UINT id, bool is_utf8)
     m_ini_str = CCommon::GetTextResource(id, is_utf8 ? 1 : 0);
 }
 
+CIniHelper::CIniHelper()
+{
+}
+
 
 CIniHelper::~CIniHelper()
 {
+}
+
+void CIniHelper::FromDirectString(const wstring& str_content)
+{
+    m_ini_str = str_content;
 }
 
 void CIniHelper::SetSaveAsUTF8(bool utf8)
