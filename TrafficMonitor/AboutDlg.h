@@ -29,12 +29,12 @@ protected:
     CLinkStatic m_musicplayer2_link;
     CLinkStatic m_simplenotepad_link;
 
-    CRect m_rc_pic;     //图片的位置
     CBitmap m_about_pic;
 
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
     CString GetDonateList();        //从资源文件加载捐赠人员名单
     virtual CString GetDialogName() const override;
+    CRect CalculatePicRect();       //计算图片的位置
 
     // 实现
 protected:

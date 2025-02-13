@@ -42,6 +42,19 @@ CString CAboutDlg::GetDialogName() const
     return CString();
 }
 
+CRect CAboutDlg::CalculatePicRect()
+{
+    CRect rect;
+    GetClientRect(rect);
+    CRect rc_pic = rect;
+    ::GetWindowRect(GetDlgItem(IDC_STATIC_VERSION)->GetSafeHwnd(), rect);
+    ScreenToClient(rect);
+    rc_pic.bottom = rect.top - theApp.DPI(6);
+    if (rc_pic.Height() <= 0)
+        rc_pic.bottom = rc_pic.top + theApp.DPI(50);
+    return rc_pic;
+}
+
 BOOL CAboutDlg::OnInitDialog()
 {
     CBaseDialog::OnInitDialog();
@@ -130,16 +143,6 @@ BOOL CAboutDlg::OnInitDialog()
     }
     m_translator_static.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
 
-    //设置图片的位置
-    CRect rect;
-    GetClientRect(rect);
-    m_rc_pic = rect;
-    ::GetWindowRect(GetDlgItem(IDC_STATIC_VERSION)->GetSafeHwnd(), rect);
-    ScreenToClient(rect);
-    m_rc_pic.bottom = rect.top - theApp.DPI(6);
-    if (m_rc_pic.Height() <= 0)
-        m_rc_pic.bottom = m_rc_pic.top + theApp.DPI(50);
-
     //加载图片
     m_about_pic.LoadBitmap(IDB_ABOUT_BACKGROUND_HD);
 
@@ -200,8 +203,9 @@ void CAboutDlg::OnPaint()
                        // 不为绘图消息调用 CBaseDialog::OnPaint()
     CDrawCommon draw;
     draw.Create(&dc, this);
-    draw.GetDC()->FillSolidRect(m_rc_pic, RGB(161, 200, 255));
-    draw.DrawBitmap(m_about_pic, m_rc_pic.TopLeft(), m_rc_pic.Size(), CDrawCommon::StretchMode::FIT);
+    CRect rc_pic = CalculatePicRect();
+    draw.GetDC()->FillSolidRect(rc_pic, RGB(161, 200, 255));
+    draw.DrawBitmap(m_about_pic, rc_pic.TopLeft(), rc_pic.Size(), CDrawCommon::StretchMode::FIT);
 }
 
 
