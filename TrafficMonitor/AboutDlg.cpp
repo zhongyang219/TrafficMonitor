@@ -88,7 +88,7 @@ BOOL CAboutDlg::OnInitDialog()
     GetDlgItemText(IDC_STATIC_VERSION, version_info);
     CString str_lite;
 #ifdef WITHOUT_TEMPERATURE
-    str_lite = CCommon::LoadText(_T(" ("), IDS_WITHOUT_TEMPERATURE, _T(")"));
+    str_lite = _T(" (Lite)");
 #endif
     version_info = CCommon::StringFormat(version_info, { str_lite, VERSION });
 

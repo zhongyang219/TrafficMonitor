@@ -816,7 +816,7 @@ CString CTrafficMonitorApp::GetSystemInfoString()
 #endif
 
 #ifdef WITHOUT_TEMPERATURE
-    info += CCommon::LoadText(_T(" ("), IDS_WITHOUT_TEMPERATURE, _T(")"));
+    info += _T(" (Lite)");
 #endif
 
     info += _T("\r\nLast compiled date: ");
