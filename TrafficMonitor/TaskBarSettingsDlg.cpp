@@ -144,6 +144,10 @@ bool CTaskBarSettingsDlg::InitializeControls()
         { CtrlTextInfo::C0, IDC_BACKGROUND_TRANSPARENT_CHECK, CtrlTextInfo::W16 }
     });
     RepositionTextBasedControls({
+        { CtrlTextInfo::C0, IDC_AUTO_ADAPT_LIGHT_THEME_CHECK, CtrlTextInfo::W16 },
+        { CtrlTextInfo::R1, IDC_AUTO_ADAPT_SETTINGS_BUTTON, CtrlTextInfo::W16 }
+    });
+    RepositionTextBasedControls({
         { CtrlTextInfo::L4, IDC_NET_SPEED_WIDTH_STATIC },
         { CtrlTextInfo::L3, IDC_DIGIT_NUMBER_COMBO },
         { CtrlTextInfo::L2, IDC_CHARACTOR_STATIC }
