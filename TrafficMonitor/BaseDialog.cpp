@@ -70,7 +70,7 @@ bool CBaseDialog::IsAllDialogClosed()
 
 void CBaseDialog::LoadConfig()
 {
-    if (!GetDialogName().IsEmpty())
+    if (!GetDialogName().IsEmpty() && m_remember_dlg_size)
     {
         CIniHelper ini{ theApp.m_config_path };
         //载入窗口大小设置
@@ -81,7 +81,7 @@ void CBaseDialog::LoadConfig()
 
 void CBaseDialog::SaveConfig() const
 {
-    if (!GetDialogName().IsEmpty())
+    if (!GetDialogName().IsEmpty() && m_remember_dlg_size)
     {
         CIniHelper ini{ theApp.m_config_path };
         //保存窗口大小设置

@@ -35,12 +35,15 @@ private:
     CSize m_min_size{};     //窗口的最小大小（以 96dpi 的大小保存）
     CSize m_window_size{ -1, -1 };
     CBrush m_brBkgr;
-    static std::map<CString, HWND> m_unique_hwnd;        //针对每一个基类的唯一的窗口句柄
+    CDC* m_pDC = nullptr;                               // InitializeControls期间有效，用于测量文本长度
+    static std::map<CString, HWND> m_unique_hwnd;       //针对每一个基类的唯一的窗口句柄
+    bool m_remember_dlg_size{ true };                   //是否记住窗口大小（当此标志为true且GetDialogName返回字符串不为空时会记住窗口大小）
 
 protected:
     virtual CString GetDialogName() const { return CString(); }
     void EnableDlgCtrl(UINT id, bool enable);
     void SetButtonIcon(UINT id, HICON hIcon);
+    void SetRememberDlgSize(bool enable) { m_remember_dlg_size = enable; }
 
     //遍历所有子控件
     void IterateControls(std::function<void(CWnd*)> func);
