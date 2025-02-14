@@ -103,7 +103,7 @@ BOOL CAboutDlg::OnInitDialog()
     GetDlgItemText(IDC_STATIC_VERSION, version_info);
     CString str_lite;
 #ifdef WITHOUT_TEMPERATURE
-    str_lite = _T(" (Lite)");
+    str_lite = CCommon::LoadText(_T(" ("), IDS_WITHOUT_TEMPERATURE, _T(")"));
 #endif
     version_info = CCommon::StringFormat(version_info, { str_lite, VERSION });
 
@@ -147,7 +147,7 @@ BOOL CAboutDlg::OnInitDialog()
     //设置翻译者信息
     const auto& language_info{ theApp.m_str_table.GetLanguageInfo() };
     wstring language_tag{ language_info.bcp_47 };
-    if (language_tag == L"zh-CN" || language_tag == L"en-US")       //语言是简体中文和英文时不显示翻译者信息
+    if (language_info.translator.empty())           //没有翻译者时不显示翻译者信息
         m_translator_static.ShowWindow(SW_HIDE);
     m_translator_static.SetWindowTextW(theApp.m_str_table.LoadTextFormat(L"TXT_ABOUT_TRANSLATOR", { language_info.display_name, language_info.translator }).c_str());
     std::wstring translator_url{ language_info.translator_url };

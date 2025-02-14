@@ -68,11 +68,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_general_data.allow_skin_cover_font = ini.GetBool(_T("general"), _T("allow_skin_cover_font"), true);
     m_general_data.allow_skin_cover_text = ini.GetBool(_T("general"), _T("allow_skin_cover_text"), true);
     m_general_data.show_all_interface = ini.GetBool(L"general", L"show_all_interface", false);
-    bool is_chinese_language{};     //当前语言是否为简体中文
-    if (m_general_data.language == 0)
-        is_chinese_language = CCommon::LoadText(IDS_LANGUAGE_CODE) == _T("2");
-    else
-        is_chinese_language = (m_general_data.language == 2052);
+    bool is_chinese_language{ m_str_table.IsSimplifiedChinese() };     //当前语言是否为简体中文
     m_general_data.update_source = ini.GetInt(L"general", L"update_source", is_chinese_language ? 1 : 0);   //如果当前语言为简体，则默认更新源为Gitee，否则为GitHub
     //载入获取CPU利用率的方式，默认使用性能计数器获取
     m_general_data.cpu_usage_acquire_method = static_cast<GeneralSettingData::CpuUsageAcquireMethod>(ini.GetInt(L"general", L"cpu_usage_acquire_method", GeneralSettingData::CA_PDH));
@@ -639,15 +635,14 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
     {
         CString info;
         //根据语言设置选择对应语言版本的更新内容
-        int language_code = _ttoi(CCommon::LoadText(IDS_LANGUAGE_CODE));
+        wstring language_tag = m_str_table.GetLanguageInfo().bcp_47;
         wstring contents_lan;
-        switch (language_code)
-        {
-        case 2: contents_lan = contents_zh_cn; break;
-        case 3: contents_lan = contents_zh_tw; break;
-        default: contents_lan = contents_en; break;
-        }
-
+        if (language_tag == L"zh-CN")
+            contents_lan = contents_zh_cn;
+        else if (language_tag == L"zh-TW")
+            contents_lan = contents_zh_tw;
+        else
+            contents_lan = contents_en;
         if (contents_lan.empty())
             info.Format(CCommon::LoadText(IDS_UPDATE_AVLIABLE), version.c_str());
         else
@@ -1407,11 +1402,11 @@ void CTrafficMonitorApp::OnUpdateLog()
         url_domain = _T("gitee.com");
     else
         url_domain = _T("github.com");
-    CString language_code{ CCommon::LoadText(IDS_LANGUAGE_CODE) };
+    wstring language_tag = m_str_table.GetLanguageInfo().bcp_47;
     CString file_name;
-    if (language_code == _T("2"))
+    if (language_tag == L"zh-CN")
         file_name = _T("update_log.md");
-    else if (language_code == _T("3"))
+    else if (language_tag == L"zh-TW")
         file_name = _T("update_log_zh-tw.md");
     else
         file_name = _T("update_log_en-us.md");

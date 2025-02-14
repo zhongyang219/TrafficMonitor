@@ -31,12 +31,14 @@ public:
 
     const wstring& LoadMenuText(const wstring& key) const;
 
-
     // 获取默认字体名称
     const LanguageInfo& GetLanguageInfo() const { return m_language_info; }
 
     // 获取所有支持语言
     const std::vector<LanguageInfo>& GetLanguageList() const { return m_language_list; }
+
+    // 当前语言是否为简体中文（选择默认更新源以及更新信息语言）
+    bool IsSimplifiedChinese() const { return  m_language_info.bcp_47 == L"zh-CN"; };
 
 private:
     std::map<std::wstring, std::wstring> m_text_string_table;
