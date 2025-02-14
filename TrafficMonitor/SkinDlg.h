@@ -29,11 +29,12 @@ public:
 
 protected:
     virtual CString GetDialogName() const override;
+    virtual bool InitializeControls() override;
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 protected:
     //控件变量
-    CComboBox m_select_box;			//选择框
+    CListBox m_skin_list_box;   //选择皮肤列表
     CLinkStatic m_skin_course;	//“皮肤制作教程”超链接
     CLinkStatic m_skin_download;	//“更多皮肤下载”超链接
     CLinkStatic m_open_skin_dir_lnk;
@@ -49,7 +50,7 @@ protected:
     DECLARE_MESSAGE_MAP()
 public:
     virtual BOOL OnInitDialog();
-    afx_msg void OnCbnSelchangeCombo1();
+    afx_msg void OnLbnSelchangeList1();
     afx_msg void OnSize(UINT nType, int cx, int cy);
 protected:
     afx_msg LRESULT OnLinkClicked(WPARAM wParam, LPARAM lParam);

@@ -27,15 +27,30 @@ CString CSkinDlg::GetDialogName() const
     return _T("SkinDlg");
 }
 
+bool CSkinDlg::InitializeControls()
+{
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_SKIN_AUTO_ADAPT_CHECK, CtrlTextInfo::W32 },
+        { CtrlTextInfo::L3, IDC_SKIN_AUTO_ADAPT_BUTTON, CtrlTextInfo::W16 }
+    });
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_SKIN_DOWNLOAD_STATIC },
+        { CtrlTextInfo::L3, IDC_SKIN_COURSE_STATIC },
+        { CtrlTextInfo::L2, IDC_OPEN_SKIN_DIR_STATIC }
+    });
+
+    return true;
+}
+
 void CSkinDlg::DoDataExchange(CDataExchange* pDX)
 {
     CBaseDialog::DoDataExchange(pDX);
-    DDX_Control(pDX, IDC_COMBO1, m_select_box);
     DDX_Control(pDX, IDC_SKIN_COURSE_STATIC, m_skin_course);
     DDX_Control(pDX, IDC_SKIN_DOWNLOAD_STATIC, m_skin_download);
     DDX_Control(pDX, IDC_PREVIEW_GROUP_STATIC, m_preview_static);
     DDX_Control(pDX, IDC_NOTIFY_STATIC, m_notify_static);
     DDX_Control(pDX, IDC_OPEN_SKIN_DIR_STATIC, m_open_skin_dir_lnk);
+    DDX_Control(pDX, IDC_LIST1, m_skin_list_box);
 }
 
 
@@ -82,7 +97,7 @@ CRect CSkinDlg::CalculateViewRect()
 
 
 BEGIN_MESSAGE_MAP(CSkinDlg, CBaseDialog)
-    ON_CBN_SELCHANGE(IDC_COMBO1, &CSkinDlg::OnCbnSelchangeCombo1)
+    ON_LBN_SELCHANGE(IDC_LIST1, &CSkinDlg::OnLbnSelchangeList1)
     ON_WM_SIZE()
     ON_MESSAGE(WM_LINK_CLICKED, &CSkinDlg::OnLinkClicked)
     ON_BN_CLICKED(IDC_SKIN_AUTO_ADAPT_BUTTON, &CSkinDlg::OnBnClickedSkinAutoAdaptButton)
@@ -99,15 +114,15 @@ BOOL CSkinDlg::OnInitDialog()
     // TODO:  在此添加额外的初始化
     SetIcon(theApp.GetMenuIcon(IDI_SKIN), FALSE);		// 设置小图标
     //初始化选择框
+    m_skin_list_box.SetItemHeight(0, theApp.DPI(18));
     for (const auto& skin_path : m_skins)
     {
         wstring skin_name;
         size_t index = skin_path.find_last_of(L'\\');
         skin_name = skin_path.substr(index + 1);
-        m_select_box.AddString(skin_name.c_str());
+        m_skin_list_box.AddString(skin_name.c_str());
     }
-    m_select_box.SetCurSel(m_skin_selected);
-    m_select_box.SetMinVisibleItems(9);
+    m_skin_list_box.SetCurSel(m_skin_selected);
     //初始化预览视图
     m_view = (CSkinPreviewView*)RUNTIME_CLASS(CSkinPreviewView)->CreateObject();
     m_view->Create(NULL, NULL, WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL, CalculateViewRect(), this, 3000);
@@ -138,10 +153,9 @@ BOOL CSkinDlg::OnInitDialog()
 }
 
 
-void CSkinDlg::OnCbnSelchangeCombo1()
+void CSkinDlg::OnLbnSelchangeList1()
 {
-    // TODO: 在此添加控件通知处理程序代码
-    m_skin_selected = m_select_box.GetCurSel();
+    m_skin_selected = m_skin_list_box.GetCurSel();
     ShowPreview();
 }
 
