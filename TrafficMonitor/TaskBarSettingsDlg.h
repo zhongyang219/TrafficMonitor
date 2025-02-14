@@ -68,6 +68,7 @@ public:
 protected:
     void EnableControl();
     virtual void SetControlMouseWheelEnable(bool enable) override;
+    virtual bool InitializeControls() override;
 
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 

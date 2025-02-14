@@ -16,7 +16,7 @@ IMPLEMENT_DYNAMIC(CBaseDialog, CDialog)
 CBaseDialog::CBaseDialog(UINT nIDTemplate, CWnd* pParent /*=NULL*/)
     : CDialog(nIDTemplate, pParent)
 {
-
+    m_nDialogID = nIDTemplate;
 }
 
 CBaseDialog::~CBaseDialog()
@@ -112,6 +112,133 @@ void CBaseDialog::IterateControls(CWnd* pParent, std::function<void(CWnd*)> func
     }
 }
 
+void CBaseDialog::ReLoadLayoutResource()
+{
+    ASSERT(m_nDialogID);
+    CMFCDynamicLayout* pDynamicLayout = GetDynamicLayout();
+    if (pDynamicLayout)
+    {
+        HRSRC layoutRes = ::FindResourceW(NULL, MAKEINTRESOURCEW(m_nDialogID), RT_DIALOG_LAYOUT);
+        if (layoutRes)
+        {
+            HGLOBAL hResData = ::LoadResource(NULL, layoutRes);
+            if (hResData)
+            {
+                LPVOID layoutResData = ::LockResource(hResData);
+                DWORD layoutResSize = ::SizeofResource(NULL, layoutRes);
+                // std::wstring data(static_cast<wchar_t*>(layoutResData), layoutResSize / sizeof(wchar_t));
+                pDynamicLayout->LoadResource(this, layoutResData, layoutResSize);
+            }
+        }
+    }
+}
+
+CRect CBaseDialog::GetTextExtent(const CString& text)
+{
+    ASSERT(m_pDC != nullptr);   // m_pDC由OnInitDialog负责申请释放
+    if (m_pDC == nullptr)
+        return CRect();
+    if (text.IsEmpty())
+        return CRect();
+    CRect text_size;
+    m_pDC->DrawTextW(text, &text_size, DT_CALCRECT);    // 使用CDC::DrawTextW测量文本宽度（CDC::GetTextExtent是理论宽度，不准确）
+    return text_size;
+}
+
+void CBaseDialog::RepositionTextBasedControls(const vector<CtrlTextInfo>& items, CtrlTextInfo::Width center_min_width)
+{
+    ASSERT(m_pDC != nullptr);   // 此方法仅在InitializeControls期间可用
+    if (m_pDC == nullptr)
+        return;
+    int center_width = theApp.DPI(center_min_width);
+    std::map<int, std::pair<int, int>> col_info;
+    struct itemInfo
+    {
+        int col_index;
+        CWnd* p;
+        CRect rect;
+    };
+    vector<itemInfo> items_info;
+    int center_left{ 0 }, center_right{ INT_MAX };
+
+    for (const auto& item : items)
+    {
+        ASSERT(item.col_index != CtrlTextInfo::UN_USE);
+        ASSERT(item.id != 0);
+        // 获取所有列所需dx，以及左贴靠元素的右边缘center_left，右贴靠元素的左边缘center_right
+        CWnd* pItem = GetDlgItem(item.id);
+        if (pItem == nullptr)
+            continue;
+        CRect rect{};
+        pItem->GetWindowRect(&rect);
+        ScreenToClient(&rect);
+        CString text;
+        pItem->GetWindowTextW(text);
+        int dx = GetTextExtent(text).Width() + theApp.DPI(item.ext_width) - rect.Width();
+        if (dx < 0) dx = 0;                                     // 文字只增加控件宽度
+        if (col_info[item.col_index].first < dx)                // 取此列元素中宽度增长最多的
+            col_info[item.col_index].first = dx;
+        if (item.col_index < 0 && center_left < rect.right)
+            center_left = rect.right;
+        if (item.col_index > 0 && center_right > rect.left)
+            center_right = rect.left;
+        if (item.col_index == 0)    // col_index为0的控件可能有多个
+        {
+            if (center_left < rect.left)
+                center_left = rect.left;
+            if (center_right > rect.right)
+                center_right = rect.right;
+        }
+        items_info.emplace_back(itemInfo{ item.col_index, pItem, std::move(rect) });
+    }
+
+    if (center_right == INT_MAX)    // 如果控件全部都是左贴靠的那么以窗口右边缘作为剩余空间的右边缘
+    {
+        CRect dlg_rect{};
+        GetClientRect(&dlg_rect);
+        center_right = dlg_rect.Width();
+    }
+    // 此断言触发说明资源文件中的原始布局没有给中间控件/空闲空间留够宽度
+    ASSERT(center_right - center_left >= center_width);
+    int dx_sum_left{}, dx_sum_right{};
+    // 因为同一col_index可以有多个控件&没有要求顺序所以控件的最终位置必须可以无状态的计算出来
+    for (auto& a : col_info)
+    {
+        if (a.first < 0)
+        {
+            a.second.second = dx_sum_left;    // 存储此列之前控件的总dx，即此列控件的右移距离
+            dx_sum_left += a.second.first;
+        }
+        else if (a.first > 0)
+        {
+            a.second.second = dx_sum_right;
+            dx_sum_right += a.second.first;
+        }
+    }
+    float scale{ 1.0f };
+    if (center_right - center_left - dx_sum_left - dx_sum_right < center_width)
+    {
+        // ASSERT(false);
+        // 现在加载的文本使此行的中间控件/空闲空间被挤压的太小
+        // 这需要重新设计窗口控件排布以适应当前翻译长度，这里先简单的把缺少的空间分摊给各dx
+        scale = static_cast<float>(center_right - center_left - center_width) / (dx_sum_left + dx_sum_right);
+        dx_sum_left = static_cast<int>(dx_sum_left * scale + 0.5f);
+        dx_sum_right = static_cast<int>(dx_sum_right * scale + 0.5f);
+    }
+    for (const auto& item : items_info)
+    {
+        const auto& rect = item.rect;
+        int dx = static_cast<int>(col_info[item.col_index].first * scale + 0.5f);
+        int sum_dx = static_cast<int>(col_info[item.col_index].second * scale + 0.5f);
+        if (item.col_index < 0)
+            item.p->SetWindowPos(nullptr, rect.left + sum_dx, rect.top, rect.Width() + dx, rect.Height(), SWP_NOZORDER);
+        else if (item.col_index > 0)
+            item.p->SetWindowPos(nullptr, rect.left + sum_dx - dx_sum_right, rect.top, rect.Width() + dx, rect.Height(), SWP_NOZORDER);
+        else if (item.col_index == 0)
+            item.p->SetWindowPos(nullptr, rect.left + dx_sum_left, rect.top, rect.Width() - dx_sum_left - dx_sum_right, rect.Height(), SWP_NOZORDER);
+    }
+}
+
 void CBaseDialog::EnableDlgCtrl(UINT id, bool enable)
 {
     CWnd* pWnd = GetDlgItem(id);
@@ -170,12 +297,6 @@ BOOL CBaseDialog::OnInitDialog()
     //载入设置
     LoadConfig();
 
-    //初始化窗口大小
-    if (m_window_size.cx > 0 && m_window_size.cy > 0)
-    {
-        SetWindowPos(nullptr, 0, 0, m_window_size.cx, m_window_size.cy, SWP_NOZORDER | SWP_NOMOVE);
-    }
-
     SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);       //取消置顶
 
     //处理对话框中的文本翻译 
@@ -204,6 +325,24 @@ BOOL CBaseDialog::OnInitDialog()
                 pWnd->SetWindowTextW(theApp.m_str_table.LoadText(TXT_CLOSE).c_str());
         }
     });
+
+    // 在还原窗口大小之前（当前窗口状态与资源一致），派生类执行控件文本初始化及调整控件排布
+    // 与实际窗口大小相关的初始化（比如表格列宽）应在派生类的OnInitDialog进行
+    m_pDC = GetDC();
+    m_pDC->SelectObject(theApp.GetDlgFont());
+    bool rtn = InitializeControls();
+    ReleaseDC(m_pDC);
+    m_pDC = nullptr;
+    // 如果更改了控件排布那么应当返回true以向布局管理器应用控件调整（重新加载动态布局设置）
+    if (rtn)
+        ReLoadLayoutResource();
+
+
+    //初始化窗口大小
+    if (m_window_size.cx > 0 && m_window_size.cy > 0)
+    {
+        SetWindowPos(nullptr, 0, 0, m_window_size.cx, m_window_size.cy, SWP_NOZORDER | SWP_NOMOVE);
+    }
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE

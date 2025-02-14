@@ -31,6 +31,34 @@ void CMainWndSettingsDlg::SetControlMouseWheelEnable(bool enable)
     m_memory_display_combo.SetMouseWheelEnable(enable);
 }
 
+bool CMainWndSettingsDlg::InitializeControls()
+{
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_TXT_COLOR_LABEL_STATIC },
+        { CtrlTextInfo::L3, IDC_TEXT_COLOR_STATIC },
+        { CtrlTextInfo::L2, IDC_SPECIFY_EACH_ITEM_COLOR_CHECK, CtrlTextInfo::W16 }
+        });
+
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_DISPLAY_TEXT_SETTING_BUTTON, CtrlTextInfo::W16 }
+    });
+
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L1, IDC_MEMORY_DISPLAY_MODE_STATIC },
+        { CtrlTextInfo::C0, IDC_MEMORY_DISPLAY_COMBO }
+    });
+
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L1, IDC_DOUBLE_CLICK_ACTION_STATIC },
+        { CtrlTextInfo::C0, IDC_DOUBLE_CLICK_COMBO },
+        { CtrlTextInfo::L1, IDC_EXE_PATH_STATIC },
+        { CtrlTextInfo::C0, IDC_EXE_PATH_EDIT },
+        { CtrlTextInfo::R1, IDC_BROWSE_BUTTON }
+    });
+
+    return true;
+}
+
 void CMainWndSettingsDlg::DrawStaticColor()
 {
     //CCommon::FillStaticColor(m_color_static, m_data.text_color);

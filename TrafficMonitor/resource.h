@@ -83,6 +83,7 @@
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
 #define IDC_STATIC_DOWN                 1002
+#define IDC_PIXELS_STATIC1              1002
 #define IDC_STATIC_UP                   1003
 #define IDC_STATIC2                     1003
 #define IDC_STATIC_DOWN1                1003
@@ -312,6 +313,26 @@
 #define IDC_AVOID_OVERLAP_RIGHT_WIDGETS_CHECK 1179
 #define IDC_CHECK1                      1181
 #define IDC_TASKBAR_WND_IN_SECONDARY_DISPLAY_CHECK 1181
+#define IDC_MEMORY_USAGE_BACK_STATIC    1182
+#define IDC_TODAY_TRAFFIC_BACK_STATIC   1183
+#define IDC_UPDATE_SORUCE_STATIC        1184
+#define IDC_LANGUAGE_STATIC             1185
+#define IDC_DOUBLE_CLICK_ACTION_STATIC  1186
+#define IDC_MEMORY_DISPLAY_MODE_STATIC  1187
+#define IDC_TXT_COLOR_STATIC            1188
+#define IDC_BACK_COLOR_STATIC           1189
+#define IDC_MONITOR_INTERVAL_STATIC     1190
+#define IDC_MILLISECONDS_STATIC         1191
+#define IDC_NET_SPEED_WIDTH_STATIC      1192
+#define IDC_CHARACTOR_STATIC            1193
+#define IDC_ITEM_SPACING_STATIC         1194
+#define IDC_PIXELS_STATIC               1195
+#define IDC_VERTICAL_MARGIN_STATIC      1196
+#define TXT_MEMORY_DISPLAY_MODE         1197
+#define IDC_TXT_COLOR_LABEL_STATIC      1198
+#define IDC_NET_SPEED_MAX_VALUE_STATIC  1199
+#define IDC_USAGE_GRAPH_COLOR_STATIC    1200
+#define IDC_GRAPH_DISPLAY_MODE_STATIC   1201
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -433,7 +454,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        348
 #define _APS_NEXT_COMMAND_VALUE         33665
-#define _APS_NEXT_CONTROL_VALUE         1182
+#define _APS_NEXT_CONTROL_VALUE         1202
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

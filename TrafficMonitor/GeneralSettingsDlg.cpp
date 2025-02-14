@@ -68,6 +68,73 @@ void CGeneralSettingsDlg::OnSettingsApplied()
     m_update_source_ori = m_data.update_source;
 }
 
+bool CGeneralSettingsDlg::InitializeControls()
+{
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_CHECK_NOW_BUTTON, CtrlTextInfo::W16 }
+        });
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_UPDATE_SORUCE_STATIC },
+        { CtrlTextInfo::L3, IDC_GITHUB_RADIO },
+        { CtrlTextInfo::L2, IDC_GITEE_RADIO }
+        });
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_RESET_AUTO_RUN_BUTTON, CtrlTextInfo::W16 }
+        });
+
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_LANGUAGE_STATIC },
+        { CtrlTextInfo::L3, IDC_LANGUAGE_COMBO }
+        });
+
+    //调整“今日使用流量已达到”这一行控件的水平位置
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_TODAY_TRAFFIC_TIP_CHECK, CtrlTextInfo::W16 },
+        { CtrlTextInfo::L3, IDC_TODAY_TRAFFIC_TIP_EDIT },
+        { CtrlTextInfo::L2, IDC_TODAY_TRAFFIC_TIP_COMBO },
+        { CtrlTextInfo::L1, IDC_TODAY_TRAFFIC_BACK_STATIC}
+        });
+    //调整“内存使用率已达到”、“温度已达到”这几行控件的水平位置
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_MEMORY_USAGE_TIP_CHECK, CtrlTextInfo::W16 },
+        { CtrlTextInfo::L3, IDC_MEMORY_USAGE_TIP_EDIT },
+        { CtrlTextInfo::L2, IDC_MEMORY_USAGE_BACK_STATIC },
+        { CtrlTextInfo::L4, IDC_CPU_TEMP_TIP_CHECK, CtrlTextInfo::W16 },
+        { CtrlTextInfo::L3, IDC_CPU_TEMP_TIP_EDIT },
+        { CtrlTextInfo::L2, IDC_CPU_TEMP_STATIC },
+        { CtrlTextInfo::L4, IDC_GPU_TEMP_TIP_CHECK, CtrlTextInfo::W16 },
+        { CtrlTextInfo::L3, IDC_GPU_TEMP_TIP_EDIT },
+        { CtrlTextInfo::L2, IDC_GPU_TEMP_STATIC },
+        { CtrlTextInfo::L4, IDC_HDD_TEMP_TIP_CHECK, CtrlTextInfo::W16 },
+        { CtrlTextInfo::L3, IDC_HDD_TIP_EDIT },
+        { CtrlTextInfo::L2, IDC_HDD_STATIC },
+        { CtrlTextInfo::L4, IDC_MBD_TEMP_TIP_CHECK, CtrlTextInfo::W16 },
+        { CtrlTextInfo::L3, IDC_MBD_TEMP_TIP_EDIT },
+        { CtrlTextInfo::L2, IDC_MBD_TEMP_STATIC },
+        });
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L1, IDC_SELECT_HDD_STATIC },
+        { CtrlTextInfo::C0, IDC_SELECT_HARD_DISK_COMBO },
+        { CtrlTextInfo::L1, IDC_SELECT_CPU_STATIC },
+        { CtrlTextInfo::C0, IDC_SELECT_CPU_COMBO },
+    });
+
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_SELECT_CONNECTIONS_BUTTON, CtrlTextInfo::W32 }
+    });
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_MONITOR_INTERVAL_STATIC },
+        { CtrlTextInfo::L3, IDC_MONITOR_SPAN_EDIT },
+        { CtrlTextInfo::L2, IDC_MILLISECONDS_STATIC },
+        { CtrlTextInfo::L1, IDC_RESTORE_DEFAULT_TIME_SPAN_BUTTON, CtrlTextInfo::W16 }
+    });
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_PLUGIN_MANAGE_BUTTON, CtrlTextInfo::W32 }
+    });
+
+    return true;
+}
+
 bool CGeneralSettingsDlg::ShowHardwareMonitorWarning()
 {
     //如果已经有硬件监控项目被勾选了，则不再弹出提示
@@ -151,7 +218,6 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_SHOW_ALL_CONNECTION_CHECK, &CGeneralSettingsDlg::OnBnClickedShowAllConnectionCheck)
     ON_BN_CLICKED(IDC_USE_CPU_TIME_RADIO, &CGeneralSettingsDlg::OnBnClickedUseCpuTimeRadio)
     ON_BN_CLICKED(IDC_USE_PDH_RADIO, &CGeneralSettingsDlg::OnBnClickedUsePdhRadio)
-    ON_NOTIFY(UDN_DELTAPOS, SPIN_ID, &CGeneralSettingsDlg::OnDeltaposSpin)
     ON_EN_KILLFOCUS(IDC_MONITOR_SPAN_EDIT, &CGeneralSettingsDlg::OnEnKillfocusMonitorSpanEdit)
     ON_BN_CLICKED(IDC_CPU_TEMP_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedCpuTempTipCheck)
     ON_BN_CLICKED(IDC_GPU_TEMP_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedGpuTempTipCheck)
@@ -172,6 +238,7 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_RESET_AUTO_RUN_BUTTON, &CGeneralSettingsDlg::OnBnClickedResetAutoRunButton)
     ON_BN_CLICKED(IDC_USE_HARDWARE_MONITOR_RADIO, &CGeneralSettingsDlg::OnBnClickedUseHardwareMonitorRadio)
     ON_EN_CHANGE(IDC_MONITOR_SPAN_EDIT, &CGeneralSettingsDlg::OnEnChangeMonitorSpanEdit)
+    ON_MESSAGE(WM_SPIN_EDIT_POS_CHANGED, &CGeneralSettingsDlg::OnSpinEditPosChanged)
 END_MESSAGE_MAP()
 
 
@@ -289,7 +356,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     EnableDlgCtrl(IDC_USE_HARDWARE_MONITOR_RADIO, false);
 #endif
 
-    m_monitor_span_edit.SetRange(MONITOR_TIME_SPAN_MIN, MONITOR_TIME_SPAN_MAX);
+    m_monitor_span_edit.SetRange(MONITOR_TIME_SPAN_MIN, MONITOR_TIME_SPAN_MAX, MONITOR_SPAN_STEP);
     m_monitor_span_edit.SetValue(m_data.monitor_time_span);
 
     m_monitor_time_span_ori = m_data.monitor_time_span;
@@ -510,21 +577,15 @@ void CGeneralSettingsDlg::OnBnClickedUseHardwareMonitorRadio()
     m_data.cpu_usage_acquire_method = GeneralSettingData::CA_HARDWARE_MONITOR;
 }
 
-void CGeneralSettingsDlg::OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult)
+afx_msg LRESULT CGeneralSettingsDlg::OnSpinEditPosChanged(WPARAM wParam, LPARAM lParam)
 {
-    //这里响应微调按钮（spin button）点击上下按钮时的事件，
-    //CSpinButtonCtrl的对象是作为CSpinEdit的成员变量的，而此消息会向CSpinButtonCtrl的父窗口发送，但是CSpinEdit不是它的父窗口，
-    //因此此消息无法在CSpinEdit中响应，只能在这里响应。
-    //所有CSpinEdit类中的Spin按钮点击时的响应都在这里，因为这些Spin按钮的ID都是“SPIN_ID”。
-    //通过GetBuddy的返回值判断微调按钮是属于哪个EditBox的。
-
-    CSpinButtonCtrl* pSpin = (CSpinButtonCtrl*)CWnd::FromHandle(pNMHDR->hwndFrom);
+    CSpinButtonCtrl* pSpin = (CSpinButtonCtrl*)wParam;
     if (pSpin == nullptr)
-        return;
+        return 0;
     CWnd* pEdit = pSpin->GetBuddy();
     if (pEdit == &m_monitor_span_edit)       //当用户点击了“监控时间间隔”的微调按钮时
     {
-        LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+        LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(lParam);
         if (pNMUpDown->iDelta == -1)
         {
             // 用户按下了spin控件的向下箭头
@@ -545,7 +606,7 @@ void CGeneralSettingsDlg::OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult)
         }
         pNMUpDown->iDelta = 0;
     }
-    *pResult = 0;
+    return 0;
 }
 
 
