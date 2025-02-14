@@ -148,13 +148,21 @@ BOOL CAboutDlg::OnInitDialog()
     const auto& language_info{ theApp.m_str_table.GetLanguageInfo() };
     wstring language_tag{ language_info.bcp_47 };
     if (language_info.translator.empty())           //没有翻译者时不显示翻译者信息
+    {
         m_translator_static.ShowWindow(SW_HIDE);
+    }
     m_translator_static.SetWindowTextW(theApp.m_str_table.LoadTextFormat(L"TXT_ABOUT_TRANSLATOR", { language_info.display_name, language_info.translator }).c_str());
     std::wstring translator_url{ language_info.translator_url };
     if (!translator_url.empty())     //显示翻译者的信息
     {
+        //如果url中包含“@”但是前面没有“mailto:”，则在前面加上“mailto:”
+        if (translator_url.find(L'@') != std::wstring::npos && (translator_url.size() < 7 || translator_url.substr(0, 7) != L"mailto:"))
+            translator_url = L"mailto:" + translator_url;
         m_translator_static.SetURL(translator_url.c_str());
-        m_tool_tip.AddTool(&m_translator_static, CCommon::LoadText(IDS_CONTACT_TRANSLATOR, translator_url.c_str()));
+        CString str_tool_tip = CCommon::LoadText(IDS_CONTACT_TRANSLATOR);
+        str_tool_tip += _T("\r\n");
+        str_tool_tip += translator_url.c_str();
+        m_tool_tip.AddTool(&m_translator_static, str_tool_tip);
     }
     m_translator_static.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
 

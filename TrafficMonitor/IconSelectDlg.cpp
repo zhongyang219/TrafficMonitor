@@ -70,6 +70,7 @@ BOOL CIconSelectDlg::OnInitDialog()
     CBaseDialog::OnInitDialog();
 
     // TODO:  在此添加额外的初始化
+    SetIcon(theApp.GetMenuIcon(IDI_NOTIFY), FALSE);		// 设置小图标
 
     //设置预览图大小
     m_preview_pic.SetWindowPos(nullptr, 0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT, SWP_NOZORDER | SWP_NOMOVE);
@@ -132,5 +133,14 @@ void CIconSelectDlg::OnBnClickedAutoAdaptCheck()
 
 CString CIconSelectDlg::GetDialogName() const
 {
-    return _T("");
+    return _T("IconSelectDlg");
+}
+
+bool CIconSelectDlg::InitializeControls()
+{
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L1, IDC_SELECT_ICON_STATIC },
+        { CtrlTextInfo::C0, IDC_COMBO1 }
+    });
+    return true;
 }

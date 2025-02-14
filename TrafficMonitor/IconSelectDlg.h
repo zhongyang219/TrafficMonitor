@@ -41,6 +41,7 @@ protected:
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
     virtual CString GetDialogName() const override;
+    virtual bool InitializeControls() override;
 
     void DrawPreviewIcon(CDC* pDC);
 

@@ -89,26 +89,26 @@ bool CGeneralSettingsDlg::InitializeControls()
 
     //调整“今日使用流量已达到”这一行控件的水平位置
     RepositionTextBasedControls({
-        { CtrlTextInfo::L4, IDC_TODAY_TRAFFIC_TIP_CHECK, CtrlTextInfo::W16 },
+        { CtrlTextInfo::L4, IDC_TODAY_TRAFFIC_TIP_CHECK, CtrlTextInfo::W24 },
         { CtrlTextInfo::L3, IDC_TODAY_TRAFFIC_TIP_EDIT },
         { CtrlTextInfo::L2, IDC_TODAY_TRAFFIC_TIP_COMBO },
         { CtrlTextInfo::L1, IDC_TODAY_TRAFFIC_BACK_STATIC}
         });
     //调整“内存使用率已达到”、“温度已达到”这几行控件的水平位置
     RepositionTextBasedControls({
-        { CtrlTextInfo::L4, IDC_MEMORY_USAGE_TIP_CHECK, CtrlTextInfo::W16 },
+        { CtrlTextInfo::L4, IDC_MEMORY_USAGE_TIP_CHECK, CtrlTextInfo::W24 },
         { CtrlTextInfo::L3, IDC_MEMORY_USAGE_TIP_EDIT },
         { CtrlTextInfo::L2, IDC_MEMORY_USAGE_BACK_STATIC },
-        { CtrlTextInfo::L4, IDC_CPU_TEMP_TIP_CHECK, CtrlTextInfo::W16 },
+        { CtrlTextInfo::L4, IDC_CPU_TEMP_TIP_CHECK, CtrlTextInfo::W24 },
         { CtrlTextInfo::L3, IDC_CPU_TEMP_TIP_EDIT },
         { CtrlTextInfo::L2, IDC_CPU_TEMP_STATIC },
-        { CtrlTextInfo::L4, IDC_GPU_TEMP_TIP_CHECK, CtrlTextInfo::W16 },
+        { CtrlTextInfo::L4, IDC_GPU_TEMP_TIP_CHECK, CtrlTextInfo::W24 },
         { CtrlTextInfo::L3, IDC_GPU_TEMP_TIP_EDIT },
         { CtrlTextInfo::L2, IDC_GPU_TEMP_STATIC },
-        { CtrlTextInfo::L4, IDC_HDD_TEMP_TIP_CHECK, CtrlTextInfo::W16 },
+        { CtrlTextInfo::L4, IDC_HDD_TEMP_TIP_CHECK, CtrlTextInfo::W24 },
         { CtrlTextInfo::L3, IDC_HDD_TIP_EDIT },
         { CtrlTextInfo::L2, IDC_HDD_STATIC },
-        { CtrlTextInfo::L4, IDC_MBD_TEMP_TIP_CHECK, CtrlTextInfo::W16 },
+        { CtrlTextInfo::L4, IDC_MBD_TEMP_TIP_CHECK, CtrlTextInfo::W24 },
         { CtrlTextInfo::L3, IDC_MBD_TEMP_TIP_EDIT },
         { CtrlTextInfo::L2, IDC_MBD_TEMP_STATIC },
         });
