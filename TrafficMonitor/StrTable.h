@@ -15,6 +15,11 @@ public:
         wstring translator;
         wstring translator_url;
         WORD language_id{};
+
+        bool operator==(const LanguageInfo& another) const
+        {
+            return bcp_47 == another.bcp_47;
+        }
     };
 
     void Init();

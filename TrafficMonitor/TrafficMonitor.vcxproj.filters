@@ -241,9 +241,6 @@
     <Filter Include="资源文件\language">
       <UniqueIdentifier>{f1f6139c-f164-49f7-86e8-0e5ac6bef657}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件和头文件\StrTable">
-      <UniqueIdentifier>{66216d29-2897-4782-9297-fb60cf20d18e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件和头文件\公共的类\StrTable">
       <UniqueIdentifier>{357eeb5d-af51-4701-83c9-e13a17c7f771}</UniqueIdentifier>
     </Filter>
@@ -790,9 +787,6 @@
       <Filter>资源文件\language</Filter>
     </None>
     <None Include="language\English.ini">
-      <Filter>资源文件\language</Filter>
-    </None>
-    <None Include="language\Turkish.ini">
       <Filter>资源文件\language</Filter>
     </None>
   </ItemGroup>

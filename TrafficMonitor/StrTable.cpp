@@ -2,6 +2,7 @@
 #include "StrTable.h"
 #include "Common.h"
 #include "IniHelper.h"
+#include "TrafficMonitor.h"
 
 CStrTable::CStrTable()
 {
@@ -72,8 +73,37 @@ void CStrTable::Init()
     CIniHelper ini(IDR_LANGUAGE);
     ini.GetAllKeyValues(L"text", m_text_string_table);
     ini.GetAllKeyValues(L"menu", m_menu_string_table);
-
     LanguageInfoFromIni(m_language_info, ini);
+
+    //从外部language文件夹获取语言文件
+    vector<wstring> files;
+    std::wstring language_dir;
+#ifdef _DEBUG
+    language_dir = L".\\language";
+#else
+    language_dir = theApp.m_module_dir + L"language";
+#endif
+    CCommon::GetFiles((language_dir + L"\\*.ini").c_str(), files);
+    for (const wstring& file_name : files)
+    {
+        std::wstring file_path{ language_dir + file_name };
+        CIniHelper ini_file(file_path);
+        LanguageInfo language_info;
+        LanguageInfoFromIni(language_info, ini_file);
+        language_info.language_id = LocaleNameToLCID(language_info.bcp_47.c_str(), 0);  //根据语言bcp-47代码获取语言id
+        WORD cur_language_id = GetThreadUILanguage();   //当前语言id
+        //从外部语言文件读取到当前语言，先从外部语言文件加载
+        if (language_info.language_id == cur_language_id)
+        {
+            ini_file.GetAllKeyValues(L"text", m_text_string_table);
+            ini_file.GetAllKeyValues(L"menu", m_menu_string_table);
+        }
+
+        //如果语言不在m_language_list，添加到该列表
+        auto iter = std::find(m_language_list.begin(), m_language_list.end(), language_info);
+        if (iter == m_language_list.end())
+            m_language_list.push_back(language_info);
+    }
 }
 
 const wstring& CStrTable::LoadText(const wstring& key) const
