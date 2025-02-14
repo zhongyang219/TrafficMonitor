@@ -95,6 +95,7 @@ void CStrTable::Init()
         //从外部语言文件读取到当前语言，先从外部语言文件加载
         if (language_info.language_id == cur_language_id)
         {
+            m_language_info = language_info;
             ini_file.GetAllKeyValues(L"text", m_text_string_table);
             ini_file.GetAllKeyValues(L"menu", m_menu_string_table);
         }
