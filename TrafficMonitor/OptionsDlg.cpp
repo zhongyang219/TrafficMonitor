@@ -121,7 +121,6 @@ void COptionsDlg::OnSize(UINT nType, int cx, int cy)
         //为每个子窗口设置滚动信息
         for (size_t i = 0; i < m_tab_vect.size(); i++)
         {
-            m_tab_vect[i]->ResetScroll();
             m_tab_vect[i]->SetScrollbarInfo(m_tab.m_tab_rect.Height(), m_tab_height[i]);
         }
     }
