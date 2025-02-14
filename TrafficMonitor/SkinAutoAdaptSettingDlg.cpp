@@ -37,6 +37,11 @@ void CSkinAutoAdaptSettingDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_LIGHT_MODE_SKIN_COMBO, m_light_mode_skin_combo);
 }
 
+CString CSkinAutoAdaptSettingDlg::GetDialogName() const
+{
+    return _T("SkinAutoAdaptSettingDlg");
+}
+
 bool CSkinAutoAdaptSettingDlg::InitializeControls()
 {
     RepositionTextBasedControls({

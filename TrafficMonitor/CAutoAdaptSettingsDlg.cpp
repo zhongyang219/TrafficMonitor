@@ -47,6 +47,11 @@ void CAutoAdaptSettingsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIGHT_MODE_DEFAULT_STYLE_COMBO, m_light_mode_default_style_combo);
 }
 
+CString CAutoAdaptSettingsDlg::GetDialogName() const
+{
+    return _T("AutoAdaptSettingsDlg");
+}
+
 bool CAutoAdaptSettingsDlg::InitializeControls()
 {
     RepositionTextBasedControls({

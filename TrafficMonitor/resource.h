@@ -335,6 +335,8 @@
 #define IDC_GRAPH_DISPLAY_MODE_STATIC   1201
 #define IDC_DARK_MODE_STATIC            1202
 #define IDC_LIGHT_MODE_STATIC           1203
+#define IDC_FONT_STATIC                 1204
+#define IDC_FONT_SIZE_STATIC            1205
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -456,7 +458,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        348
 #define _APS_NEXT_COMMAND_VALUE         33665
-#define _APS_NEXT_CONTROL_VALUE         1204
+#define _APS_NEXT_CONTROL_VALUE         1206
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

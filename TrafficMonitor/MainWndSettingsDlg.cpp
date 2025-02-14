@@ -34,6 +34,13 @@ void CMainWndSettingsDlg::SetControlMouseWheelEnable(bool enable)
 bool CMainWndSettingsDlg::InitializeControls()
 {
     RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_FONT_STATIC },
+        { CtrlTextInfo::C0, IDC_FONT_NAME_EDIT },
+        { CtrlTextInfo::R1, IDC_FONT_SIZE_STATIC },
+        { CtrlTextInfo::R2, IDC_FONT_SIZE_EDIT },
+        { CtrlTextInfo::R3, IDC_SET_FONT_BUTTON, CtrlTextInfo::W16 }
+        });
+    RepositionTextBasedControls({
         { CtrlTextInfo::L4, IDC_TXT_COLOR_LABEL_STATIC },
         { CtrlTextInfo::L3, IDC_TEXT_COLOR_STATIC },
         { CtrlTextInfo::L2, IDC_SPECIFY_EACH_ITEM_COLOR_CHECK, CtrlTextInfo::W16 }
