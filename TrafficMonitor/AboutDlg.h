@@ -34,6 +34,7 @@ protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
     CString GetDonateList();        //从资源文件加载捐赠人员名单
     virtual CString GetDialogName() const override;
+    virtual bool InitializeControls() override;
     CRect CalculatePicRect();       //计算图片的位置
 
     // 实现

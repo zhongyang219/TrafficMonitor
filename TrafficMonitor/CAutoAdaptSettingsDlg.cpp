@@ -47,6 +47,17 @@ void CAutoAdaptSettingsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIGHT_MODE_DEFAULT_STYLE_COMBO, m_light_mode_default_style_combo);
 }
 
+bool CAutoAdaptSettingsDlg::InitializeControls()
+{
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L1, IDC_DARK_MODE_STATIC },
+        { CtrlTextInfo::C0, IDC_DARK_MODE_DEFAULT_STYLE_COMBO },
+        { CtrlTextInfo::L1, IDC_LIGHT_MODE_STATIC },
+        { CtrlTextInfo::C0, IDC_LIGHT_MODE_DEFAULT_STYLE_COMBO }
+    });
+    return true;
+}
+
 
 BEGIN_MESSAGE_MAP(CAutoAdaptSettingsDlg, CBaseDialog)
 END_MESSAGE_MAP()

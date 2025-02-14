@@ -37,6 +37,17 @@ void CSkinAutoAdaptSettingDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_LIGHT_MODE_SKIN_COMBO, m_light_mode_skin_combo);
 }
 
+bool CSkinAutoAdaptSettingDlg::InitializeControls()
+{
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L1, IDC_DARK_MODE_STATIC },
+        { CtrlTextInfo::C0, IDC_DARK_MODE_SKIN_COMBO },
+        { CtrlTextInfo::L1, IDC_LIGHT_MODE_STATIC },
+        { CtrlTextInfo::C0, IDC_LIGHT_MODE_SKIN_COMBO }
+    });
+    return true;
+}
+
 
 BEGIN_MESSAGE_MAP(CSkinAutoAdaptSettingDlg, CBaseDialog)
 END_MESSAGE_MAP()

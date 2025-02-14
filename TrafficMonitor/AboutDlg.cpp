@@ -42,6 +42,19 @@ CString CAboutDlg::GetDialogName() const
     return _T("AboutDlg");
 }
 
+bool CAboutDlg::InitializeControls()
+{
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_STATIC_MAIL },
+        { CtrlTextInfo::L3, IDC_STATIC_GITHUB },
+        { CtrlTextInfo::L2, IDC_STATIC_GITEE },
+        { CtrlTextInfo::L4, IDC_STATIC_LICENSE },
+        { CtrlTextInfo::L3, IDC_STATIC_DONATE },
+        { CtrlTextInfo::L2, IDC_STATIC_ACKNOWLEDGEMENT }
+        });
+    return true;
+}
+
 CRect CAboutDlg::CalculatePicRect()
 {
     CRect rect;
