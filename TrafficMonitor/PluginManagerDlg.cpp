@@ -62,6 +62,15 @@ CString CPluginManagerDlg::GetDialogName() const
     return _T("PluginManagerDlg");
 }
 
+bool CPluginManagerDlg::InitializeControls()
+{
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_PLUGIN_INFO_BUTTON, CtrlTextInfo::W32 },
+        { CtrlTextInfo::L3, IDC_OPTINS_BUTTON, CtrlTextInfo::W32 }
+    });
+    return true;
+}
+
 
 BEGIN_MESSAGE_MAP(CPluginManagerDlg, CBaseDialog)
     ON_NOTIFY(NM_RCLICK, IDC_LIST1, &CPluginManagerDlg::OnNMRClickList1)

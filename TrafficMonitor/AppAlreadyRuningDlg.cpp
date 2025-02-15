@@ -26,6 +26,11 @@ void CAppAlreadyRuningDlg::DoDataExchange(CDataExchange* pDX)
     CBaseDialog::DoDataExchange(pDX);
 }
 
+CString CAppAlreadyRuningDlg::GetDialogName() const
+{
+    return _T("AppAlreadyRuningDlg");
+}
+
 
 BEGIN_MESSAGE_MAP(CAppAlreadyRuningDlg, CBaseDialog)
     ON_BN_CLICKED(IDC_EXIT_INST_BUTTON, &CAppAlreadyRuningDlg::OnBnClickedExitInstButton)

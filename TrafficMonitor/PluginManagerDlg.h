@@ -37,6 +37,8 @@ protected:
 
     // 通过 CBaseDialog 继承
     virtual CString GetDialogName() const override;
+    virtual bool InitializeControls() override;
+
 public:
     virtual BOOL OnInitDialog();
     afx_msg void OnNMRClickList1(NMHDR* pNMHDR, LRESULT* pResult);

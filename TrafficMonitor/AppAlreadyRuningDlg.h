@@ -21,6 +21,7 @@ private:
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+    virtual CString GetDialogName() const override;
 
     DECLARE_MESSAGE_MAP()
 public:
