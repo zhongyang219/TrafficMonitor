@@ -1381,7 +1381,12 @@ void CTrafficMonitorApp::CreateDlgFont()
 void CTrafficMonitorApp::OnHelp()
 {
     // TODO: 在此添加命令处理程序代码
-    ShellExecute(NULL, _T("open"), _T("https://github.com/zhongyang219/TrafficMonitor/wiki"), NULL, NULL, SW_SHOW);
+    CString help_url;
+    if (m_str_table.IsSimplifiedChinese())
+        help_url = _T("https://github.com/zhongyang219/TrafficMonitor/wiki");
+    else
+        help_url = _T("https://github.com/zhongyang219/TrafficMonitor/wiki/Home_en");
+    ShellExecute(NULL, _T("open"), help_url, NULL, NULL, SW_SHOW);
 }
 
 
@@ -1393,9 +1398,8 @@ void CTrafficMonitorApp::OnFrequentyAskedQuestions()
         url_domain = _T("gitee.com");
     else
         url_domain = _T("github.com");
-    CString language_code{ CCommon::LoadText(IDS_LANGUAGE_CODE) };
     CString file_name;
-    if (language_code == _T("2"))
+    if (m_str_table.IsSimplifiedChinese())
         file_name = _T("Help.md");
     else
         file_name = _T("Help_en-us.md");
