@@ -92,7 +92,7 @@ void CSkinFile::Load(const wstring& file_path)
         m_font.DeleteObject();
 
     //创建字体对象
-    m_skin_info.font_info.Create(m_font);
+    m_skin_info.font_info.Create(m_font, theApp.GetDpi());
 
     wstring path_dir = file_path_helper.GetDir();
 
