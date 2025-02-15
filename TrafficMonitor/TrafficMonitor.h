@@ -165,6 +165,7 @@ public:
     void CheckWindows11Taskbar();
     bool IsWindows11Taskbar() const { return m_is_windows11_taskbar; }
 
+    void CreateDlgFont();
     CFont* GetDlgFont() { return &m_dlg_font; }
 
 private:

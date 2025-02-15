@@ -1031,9 +1031,6 @@ BOOL CTrafficMonitorApp::InitInstance()
     //初始化字符串资源
     m_str_table.Init();
 
-    //初始化对话框字体
-    m_dlg_font.CreatePointFont(90, m_str_table.GetLanguageInfo().default_font_name.c_str());
-
     //从ini文件载入设置
     LoadConfig();
 
@@ -1365,6 +1362,20 @@ void CTrafficMonitorApp::CheckWindows11Taskbar()
     {
         m_is_windows11_taskbar = false;
     }
+}
+
+void CTrafficMonitorApp::CreateDlgFont()
+{
+    if (m_dlg_font.GetSafeHandle() != NULL)
+        m_dlg_font.DeleteObject();
+    FontInfo font_info;
+    font_info.name = m_str_table.GetLanguageInfo().default_font_name.c_str();
+    font_info.size = 9;
+    font_info.bold = false;
+    font_info.italic = false;
+    font_info.strike_out = false;
+    font_info.underline = false;
+    font_info.Create(m_dlg_font, m_dpi);
 }
 
 void CTrafficMonitorApp::OnHelp()

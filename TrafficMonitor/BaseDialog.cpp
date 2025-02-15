@@ -302,7 +302,8 @@ BOOL CBaseDialog::OnInitDialog()
     //处理对话框中的文本翻译 
     IterateControls([](CWnd* pWnd) {
         //设置控件字体
-        pWnd->SetFont(theApp.GetDlgFont());
+        if (theApp.GetDlgFont()->GetSafeHandle() != NULL)
+            pWnd->SetFont(theApp.GetDlgFont());
         //获取控件文本
         CString str;
         pWnd->GetWindowText(str);
