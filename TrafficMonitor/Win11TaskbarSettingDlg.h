@@ -1,11 +1,11 @@
 ﻿#pragma once
 #include "afxdialogex.h"
 #include "SpinEdit.h"
-
+#include "BaseDialog.h"
 
 // CWin11TaskbarSettingDlg 对话框
 
-class CWin11TaskbarSettingDlg : public CDialog
+class CWin11TaskbarSettingDlg : public CBaseDialog
 {
 	DECLARE_DYNAMIC(CWin11TaskbarSettingDlg)
 
@@ -25,7 +25,9 @@ private:
     CSpinEdit m_widgets_width_edit;
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+    virtual CString GetDialogName() const override;
+    virtual bool InitializeControls() override;
 
     void EnableDlgCtrl(UINT id, bool enable);
 

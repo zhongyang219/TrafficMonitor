@@ -11,10 +11,10 @@
 
 // CWin11TaskbarSettingDlg 对话框
 
-IMPLEMENT_DYNAMIC(CWin11TaskbarSettingDlg, CDialog)
+IMPLEMENT_DYNAMIC(CWin11TaskbarSettingDlg, CBaseDialog)
 
 CWin11TaskbarSettingDlg::CWin11TaskbarSettingDlg(TaskBarSettingData& data, CWnd* pParent /*=nullptr*/)
-	: CDialog(IDD_WIN11_TASKBAR_SETTING_DLG, pParent)
+	: CBaseDialog(IDD_WIN11_TASKBAR_SETTING_DLG, pParent)
     , m_data(data)
 {
 
@@ -28,8 +28,32 @@ void CWin11TaskbarSettingDlg::DoDataExchange(CDataExchange* pDX)
 {
     DDX_Control(pDX, IDC_WINDOW_OFFSET_TOP_EDIT, m_window_offset_top_edit);
     DDX_Control(pDX, IDC_WINDOW_OFFSET_LEFT_EDIT, m_window_offset_left_edit);
-    CDialog::DoDataExchange(pDX);
+    CBaseDialog::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_WIDTET_WIDTH_EDIT, m_widgets_width_edit);
+}
+
+CString CWin11TaskbarSettingDlg::GetDialogName() const
+{
+    return _T("Win11TaskbarSettingDlg");
+}
+
+bool CWin11TaskbarSettingDlg::InitializeControls()
+{
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_VERTICAL_OFFSET_STATIC },
+        { CtrlTextInfo::L3, IDC_WINDOW_OFFSET_TOP_EDIT },
+        { CtrlTextInfo::L2, IDC_PIXEL_STATIC },
+        { CtrlTextInfo::L4, IDC_HORIZONTAL_OFFSET_STATIC },
+        { CtrlTextInfo::L3, IDC_WINDOW_OFFSET_LEFT_EDIT },
+        { CtrlTextInfo::L2, IDC_PIXEL_STATIC1 },
+        });
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_WIDGET_WIDTH_STATIC },
+        { CtrlTextInfo::L3, IDC_WIDTET_WIDTH_EDIT },
+        { CtrlTextInfo::L2, IDC_PIXEL_STATIC2 },
+        });
+
+    return true;
 }
 
 void CWin11TaskbarSettingDlg::EnableDlgCtrl(UINT id, bool enable)
@@ -40,7 +64,7 @@ void CWin11TaskbarSettingDlg::EnableDlgCtrl(UINT id, bool enable)
 }
 
 
-BEGIN_MESSAGE_MAP(CWin11TaskbarSettingDlg, CDialog)
+BEGIN_MESSAGE_MAP(CWin11TaskbarSettingDlg, CBaseDialog)
     ON_BN_CLICKED(IDC_RESTORE_DEFAULT_BUTTON, &CWin11TaskbarSettingDlg::OnBnClickedRestoreDefaultButton)
 END_MESSAGE_MAP()
 
@@ -50,7 +74,8 @@ END_MESSAGE_MAP()
 
 BOOL CWin11TaskbarSettingDlg::OnInitDialog()
 {
-    CDialog::OnInitDialog();
+    CBaseDialog::OnInitDialog();
+    SetIcon(theApp.GetMenuIcon(IDI_TASKBAR_WINDOW), FALSE);
 
     EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, CTaskBarDlg::IsTaskbarCloseToIconEnable(m_data.tbar_wnd_on_left));
     CheckDlgButton(IDC_TASKBAR_WND_SNAP_CHECK, m_data.tbar_wnd_snap);
@@ -86,7 +111,7 @@ void CWin11TaskbarSettingDlg::OnOK()
     if (m_data.taskbar_left_space_win11 > 300)
         m_data.taskbar_left_space_win11 = 300;
 
-    CDialog::OnOK();
+    CBaseDialog::OnOK();
 }
 
 
