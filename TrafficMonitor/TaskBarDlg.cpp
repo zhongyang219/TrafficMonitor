@@ -1111,7 +1111,7 @@ BOOL CTaskBarDlg::OnInitDialog()
 
     m_pDC = GetDC();
 
-    m_hTaskbar = FindTaskbarHandle(m_is_secondary_display); //寻找类名是Shell_TrayWnd的窗口句柄
+    m_hTaskbar = FindTaskbarHandle(m_is_secondary_display); //查找任务栏的句柄
     ::GetWindowRect(m_hTaskbar, m_rcTaskbar);   //获得任务栏的矩形区域
 
     //设置窗口透明色

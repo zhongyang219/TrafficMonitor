@@ -123,12 +123,12 @@ void CClassicalTaskbarDlg::CheckTaskbarOnTopOrBottom()
     CRect rcBar;
     if (m_hTaskbar != 0)
     {
-        ::GetWindowRect(m_hMin, rcMin); //获得最小化窗口的区域
-        ::GetWindowRect(m_hBar, rcBar); //获得二级容器的区域
-        if (m_left_space == 0)
-            m_left_space = rcMin.left - rcBar.left;
-        if (m_top_space == 0)
-            m_top_space = rcMin.top - rcBar.top;
+        //::GetWindowRect(m_hMin, rcMin); //获得最小化窗口的区域
+        //::GetWindowRect(m_hBar, rcBar); //获得二级容器的区域
+        //if (m_left_space == 0)
+        //    m_left_space = rcMin.left - rcBar.left;
+        //if (m_top_space == 0)
+        //    m_top_space = rcMin.top - rcBar.top;
 
         ::GetWindowRect(m_hTaskbar, rect);          //获取任务栏的矩形区域
         m_taskbar_on_top_or_bottom = (rect.Width() >= rect.Height());     //如果任务栏的宽度大于高度，则任务在屏幕的顶部或底部
