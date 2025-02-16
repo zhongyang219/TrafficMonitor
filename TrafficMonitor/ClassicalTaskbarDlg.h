@@ -10,7 +10,7 @@ private:
     // 通过 CTaskBarDlg 继承
     virtual void AdjustTaskbarWndPos(bool force_adjust) override;
     void InitTaskbarWnd() override;
-    void UnInitTaskbarWnd() override;
+    void ResetTaskbarPos() override;
     virtual HWND GetParentHwnd() override;
 
 private:

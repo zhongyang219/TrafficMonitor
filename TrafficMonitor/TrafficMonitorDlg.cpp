@@ -919,8 +919,9 @@ void CTrafficMonitorDlg::TaskbarShowHideItem(DisplayItem type)
         {
             theApp.m_taskbar_data.m_tbar_display_item |= type;
         }
-        CloseTaskBarWnd();
-        OpenTaskBarWnd();
+        //CloseTaskBarWnd();
+        //OpenTaskBarWnd();
+        m_tBarDlg->AdjustWindowPos(true);
     }
 }
 
@@ -1768,9 +1769,9 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             }
             if (restart_taskbar_dlg && IsTaskbarWndValid())
             {
-                //m_tBarDlg->ApplyWindowTransparentColor();
-                CloseTaskBarWnd();
-                OpenTaskBarWnd();
+                m_tBarDlg->ApplyWindowTransparentColor();
+                //CloseTaskBarWnd();
+                //OpenTaskBarWnd();
 
                 //写入调试日志
                 if (theApp.m_debug_log)
@@ -2403,7 +2404,7 @@ void CTrafficMonitorDlg::OnShowCpuMemory()
 void CTrafficMonitorDlg::OnShowCpuMemory2()
 {
     // TODO: 在此添加命令处理程序代码
-    if (m_tBarDlg != nullptr)
+    if (IsTaskbarWndValid())
     {
         bool show_cpu_memory = ((theApp.m_taskbar_data.m_tbar_display_item & TDI_CPU) || (theApp.m_taskbar_data.m_tbar_display_item & TDI_MEMORY));
         if (show_cpu_memory)
@@ -2418,8 +2419,9 @@ void CTrafficMonitorDlg::OnShowCpuMemory2()
         }
         //theApp.m_cfg_data.m_tbar_show_cpu_memory = !theApp.m_cfg_data.m_tbar_show_cpu_memory;
         //切换显示CPU和内存利用率时，删除任务栏窗口，再重新显示
-        CloseTaskBarWnd();
-        OpenTaskBarWnd();
+        //CloseTaskBarWnd();
+        //OpenTaskBarWnd();
+        m_tBarDlg->AdjustWindowPos(true);
     }
 }
 
@@ -2675,7 +2677,7 @@ afx_msg LRESULT CTrafficMonitorDlg::OnTaskbarMenuPopedUp(WPARAM wParam, LPARAM l
 void CTrafficMonitorDlg::OnShowNetSpeed()
 {
     // TODO: 在此添加命令处理程序代码
-    if (m_tBarDlg != nullptr)
+    if (IsTaskbarWndValid())
     {
         bool show_net_speed = ((theApp.m_taskbar_data.m_tbar_display_item & TDI_UP) || (theApp.m_taskbar_data.m_tbar_display_item & TDI_DOWN));
         if (show_net_speed)
@@ -2688,8 +2690,9 @@ void CTrafficMonitorDlg::OnShowNetSpeed()
             theApp.m_taskbar_data.m_tbar_display_item |= TDI_UP;
             theApp.m_taskbar_data.m_tbar_display_item |= TDI_DOWN;
         }
-        CloseTaskBarWnd();
-        OpenTaskBarWnd();
+        //CloseTaskBarWnd();
+        //OpenTaskBarWnd();
+        m_tBarDlg->AdjustWindowPos(true);
     }
 }
 
@@ -2840,8 +2843,10 @@ void CTrafficMonitorDlg::OnDisplaySettings()
         theApp.m_taskbar_data.item_order.SetOrder(dlg.GetItemOrder());
         theApp.m_taskbar_data.m_tbar_display_item = dlg.GetDisplayItem();
         theApp.m_taskbar_data.plugin_display_item = dlg.GetPluginDisplayItem();
-        CloseTaskBarWnd();
-        OpenTaskBarWnd();
+        //CloseTaskBarWnd();
+        //OpenTaskBarWnd();
+        if (IsTaskbarWndValid())
+            m_tBarDlg->AdjustWindowPos(true);
     }
 }
 
@@ -2923,8 +2928,9 @@ void CTrafficMonitorDlg::OnPluginOptionsTaksbar()
             auto rtn = plugin->ShowOptionsDialog(GetSafeHwnd());
             if (rtn == ITMPlugin::OR_OPTION_CHANGED)    //选项设置有更改，重新打开任务栏窗口
             {
-                CloseTaskBarWnd();
-                OpenTaskBarWnd();
+                //CloseTaskBarWnd();
+                //OpenTaskBarWnd();
+                m_tBarDlg->AdjustWindowPos(true);
             }
             if (rtn == ITMPlugin::OR_OPTION_NOT_PROVIDED)
                 MessageBox(CCommon::LoadText(IDS_PLUGIN_NO_OPTIONS_INFO), nullptr, MB_ICONINFORMATION | MB_OK);

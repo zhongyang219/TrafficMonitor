@@ -616,7 +616,21 @@ bool CTaskBarDlg::AdjustWindowPos(bool force_adjust)
 {
     if (this->GetSafeHwnd() == NULL || !IsWindow(this->GetSafeHwnd()))
         return false;
+
+    if (force_adjust)
+        ResetTaskbarPos();
+
     ::GetWindowRect(m_hTaskbar, m_rcTaskbar);   //获得任务栏的矩形区域
+
+    static bool last_taskbar_on_top_or_bottom;
+    CheckTaskbarOnTopOrBottom();
+    if (force_adjust || m_taskbar_on_top_or_bottom != last_taskbar_on_top_or_bottom)
+    {
+        CalculateWindowSize();
+        last_taskbar_on_top_or_bottom = m_taskbar_on_top_or_bottom;
+        force_adjust = true;
+    }
+
     AdjustTaskbarWndPos(force_adjust);
 
     return true;
@@ -1176,7 +1190,7 @@ void CTaskBarDlg::OnCancel()
     }
 
     DestroyWindow();
-    UnInitTaskbarWnd();
+    ResetTaskbarPos();
 
     //CDialogEx::OnCancel();
 }

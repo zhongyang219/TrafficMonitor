@@ -6,14 +6,6 @@ void CClassicalTaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
     ::GetWindowRect(m_hMin, m_rcMin); //获得最小化窗口的区域
     ::GetWindowRect(m_hBar, m_rcBar); //获得二级容器的区域
 
-    static bool last_taskbar_on_top_or_bottom;
-    CheckTaskbarOnTopOrBottom();
-    if (m_taskbar_on_top_or_bottom != last_taskbar_on_top_or_bottom)
-    {
-        CalculateWindowSize();
-        last_taskbar_on_top_or_bottom = m_taskbar_on_top_or_bottom;
-    }
-
     if (m_taskbar_on_top_or_bottom)     //当任务栏在桌面顶部或底部时
     {
         //设置窗口大小
@@ -100,15 +92,17 @@ void CClassicalTaskbarDlg::InitTaskbarWnd()
     m_top_space = m_rcMin.top - m_rcBar.top;
 }
 
-void CClassicalTaskbarDlg::UnInitTaskbarWnd()
+void CClassicalTaskbarDlg::ResetTaskbarPos()
 {
     //程序关闭的时候，把最小化窗口的width恢复回去
-    CheckTaskbarOnTopOrBottom();
-    if (m_taskbar_on_top_or_bottom)
-        ::MoveWindow(m_hMin, m_left_space, 0, m_rcMinOri.Width(), m_rcMinOri.Height(), TRUE);
-    else
+    if (!m_rcMinOri.IsRectEmpty())
+    {
+        if (m_taskbar_on_top_or_bottom)
+            ::MoveWindow(m_hMin, m_left_space, 0, m_rcMinOri.Width(), m_rcMinOri.Height(), TRUE);
+        else
 
-        ::MoveWindow(m_hMin, 0, m_top_space, m_rcMinOri.Width(), m_rcMinOri.Height(), TRUE);
+            ::MoveWindow(m_hMin, 0, m_top_space, m_rcMinOri.Width(), m_rcMinOri.Height(), TRUE);
+    }
 }
 
 HWND CClassicalTaskbarDlg::GetParentHwnd()

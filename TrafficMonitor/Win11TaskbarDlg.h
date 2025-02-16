@@ -9,7 +9,7 @@ private:
     // 通过 CTaskBarDlg 继承
     void InitTaskbarWnd() override;
     virtual void AdjustTaskbarWndPos(bool force_adjust) override;
-    void UnInitTaskbarWnd() override;
+    void ResetTaskbarPos() override;
     virtual HWND GetParentHwnd() override;
 
     HWND m_hNotify;     //任务栏通知区域的句柄

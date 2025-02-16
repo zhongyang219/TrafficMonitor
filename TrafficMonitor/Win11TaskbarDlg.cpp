@@ -88,7 +88,7 @@ void CWin11TaskbarDlg::InitTaskbarWnd()
     ::GetWindowRect(m_hNotify, m_rcNotify);
 }
 
-void CWin11TaskbarDlg::UnInitTaskbarWnd()
+void CWin11TaskbarDlg::ResetTaskbarPos()
 {
 }
 

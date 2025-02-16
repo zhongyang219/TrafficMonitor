@@ -26,12 +26,6 @@ public:
 
     CToolTipCtrl m_tool_tips;
 
-    virtual void InitTaskbarWnd() = 0;
-    virtual void AdjustTaskbarWndPos(bool force_adjust) = 0;
-    virtual void UnInitTaskbarWnd() = 0;
-    virtual void CheckTaskbarOnTopOrBottom() = 0;		//检查任务栏是否在屏幕的顶部或底部，并将结果保存在m_taskbar_on_top_or_bottom中
-    virtual HWND GetParentHwnd() = 0;
-
     void ShowInfo(CDC* pDC); 	//将信息绘制到控件上
     void TryDrawStatusBar(IDrawCommon& drawer, const CRect& rect_bar, int usage_percent); //绘制CPU/内存状态条
 
@@ -86,6 +80,12 @@ public:
 #endif
 
 protected:
+    virtual void InitTaskbarWnd() = 0;
+    virtual void AdjustTaskbarWndPos(bool force_adjust) = 0;
+    virtual void ResetTaskbarPos() = 0;
+    virtual void CheckTaskbarOnTopOrBottom() = 0;		//检查任务栏是否在屏幕的顶部或底部，并将结果保存在m_taskbar_on_top_or_bottom中
+    virtual HWND GetParentHwnd() = 0;
+
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
     HWND m_hTaskbar;	//任务栏窗口句柄
