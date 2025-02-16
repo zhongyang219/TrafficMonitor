@@ -523,6 +523,12 @@
     <ClInclude Include="language.h">
       <Filter>源文件和头文件\头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ClassicalTaskbarDlg.h">
+      <Filter>源文件和头文件\TaskBarDlg</Filter>
+    </ClInclude>
+    <ClInclude Include="Win11TaskbarDlg.h">
+      <Filter>源文件和头文件\TaskBarDlg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -767,6 +773,12 @@
     </ClCompile>
     <ClCompile Include="StrTable.cpp">
       <Filter>源文件和头文件\公共的类\StrTable</Filter>
+    </ClCompile>
+    <ClCompile Include="ClassicalTaskbarDlg.cpp">
+      <Filter>源文件和头文件\TaskBarDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="Win11TaskbarDlg.cpp">
+      <Filter>源文件和头文件\TaskBarDlg</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

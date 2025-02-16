@@ -13,6 +13,8 @@
 #include "PluginInfoDlg.h"
 #include "WIC.h"
 #include "SupportedRenderEnums.h"
+#include "ClassicalTaskbarDlg.h"
+#include "Win11TaskbarDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -551,7 +553,10 @@ void CTrafficMonitorDlg::CloseTaskBarWnd()
 
 void CTrafficMonitorDlg::OpenTaskBarWnd()
 {
-    m_tBarDlg = new CTaskBarDlg;
+    if (theApp.IsWindows11Taskbar())
+        m_tBarDlg = new CWin11TaskbarDlg();
+    else
+        m_tBarDlg = new CClassicalTaskbarDlg();
 
     CSupportedRenderEnums supported_render_enums{};
     // 强制初始化theApp.m_is_windows11_taskbar的值

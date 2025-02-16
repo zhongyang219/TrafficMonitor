@@ -26,12 +26,18 @@ public:
 
     CToolTipCtrl m_tool_tips;
 
+    virtual void InitTaskbarWnd() = 0;
+    virtual void AdjustTaskbarWndPos(bool force_adjust) = 0;
+    virtual void UnInitTaskbarWnd() = 0;
+    virtual void CheckTaskbarOnTopOrBottom() = 0;		//检查任务栏是否在屏幕的顶部或底部，并将结果保存在m_taskbar_on_top_or_bottom中
+    virtual HWND GetParentHwnd() = 0;
+
     void ShowInfo(CDC* pDC); 	//将信息绘制到控件上
     void TryDrawStatusBar(IDrawCommon& drawer, const CRect& rect_bar, int usage_percent); //绘制CPU/内存状态条
 
     void TryDrawGraph(IDrawCommon& drawer, const CRect& value_rect, CommonDisplayItem item_type);		// 绘制CPU/内存动态图
 
-    bool AdjustWindowPos(bool force_adjust = false);	//设置窗口在任务栏中的位置（如果force_adjust为true，则会强制调整一位任务栏窗口的位置）
+    bool AdjustWindowPos(bool force_adjust = false);	//设置窗口在任务栏中的位置（如果force_adjust为true，则会强制调整一次任务栏窗口的位置）
     void ApplyWindowTransparentColor();
 
     bool IsTaskbarChanged();
@@ -83,16 +89,7 @@ protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
     HWND m_hTaskbar;	//任务栏窗口句柄
-    HWND m_hBar;		//任务栏窗口二级容器的句柄
-    HWND m_hMin;		//最小化窗口的句柄
-    HWND m_hNotify;     //任务栏通知区域的句柄
-    HWND m_hStart;      //开始按钮的句柄
-
     CRect m_rcTaskbar;  //任务栏的矩形区域
-    CRect m_rcNotify;   //任务栏通知区域的矩形区域
-    CRect m_rcBar;		//初始状态时任务栏窗口的矩形区域
-    CRect m_rcMin;		//最小化窗口的矩形区域
-    CRect m_rcMinOri;   //初始状态时最小化窗口的矩形区域
     CRect m_rect;		//当前窗口的矩形区域
     int m_window_width{};
     int m_window_height{};
@@ -141,14 +138,8 @@ protected:
     std::map<CommonDisplayItem, CRect> m_item_rects;    //任务栏窗口每个部分的矩形区域
     CommonDisplayItem m_clicked_item;           //鼠标点击的任务栏项目
 
-    int m_min_bar_width;	//最小化窗口缩小宽度后的宽度
-    int m_min_bar_height;	//最小化窗口缩小高度后的高度（用于任务栏在屏幕左侧或右侧时）
-
     std::map<CommonDisplayItem, std::list<int>> m_map_history_data;  //保存各项数据历史数据的链表，链表保存按照时间顺序，越靠近头部数据越新
     std::map<CommonDisplayItem, int> m_history_data_count;            //统计添加到历史数据链表的次数
-
-    int m_left_space{};			//最小化窗口和二级窗口窗口左侧的边距
-    int m_top_space{};			//最小化窗口和二级窗口窗口顶部的边距（用于任务栏在屏幕左侧或右侧时）
 
     bool m_connot_insert_to_task_bar{ false };	//如果窗口无法嵌入任务栏，则为true
     bool m_taskbar_on_top_or_bottom{ true };		//如果任务栏在屏幕顶部或底部，则为ture
@@ -163,7 +154,6 @@ protected:
     CDC* m_pDC{};		//窗口的DC，用来计算窗口的宽度
 
     HWND FindTaskbarHandle(bool& is_scendary_display);
-    void CheckTaskbarOnTopOrBottom();		//检查任务栏是否在屏幕的顶部或底部，并将结果保存在m_taskbar_on_top_or_bottom中
     CString GetMouseTipsInfo();		//获取鼠标提示
 
     void AddHisToList(CommonDisplayItem item_type, int current_usage_percent);		//将当前利用率数值添加进链表
@@ -213,8 +203,6 @@ public:
     //是否允许“任务栏窗口靠近图标而不是任务栏的两侧”选项
     //taskbar_wnd_on_left: 任务栏窗口是否在任务栏左侧
     static bool IsTaskbarCloseToIconEnable(bool taskbar_wnd_on_left);
-
-    std::wstring GetTaskbarDebugString() const;
 
     DECLARE_MESSAGE_MAP()
 

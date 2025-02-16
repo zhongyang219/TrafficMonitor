@@ -778,6 +778,7 @@
     <ClInclude Include="BaseDialog.h" />
     <ClInclude Include="CalendarHelper.h" />
     <ClInclude Include="CAutoAdaptSettingsDlg.h" />
+    <ClInclude Include="ClassicalTaskbarDlg.h" />
     <ClInclude Include="CMFCColorDialogEx.h" />
     <ClInclude Include="ColorSettingListCtrl.h" />
     <ClInclude Include="ComboBox2.h" />
@@ -855,6 +856,7 @@
     <ClInclude Include="TrafficMonitorDlg.h" />
     <ClInclude Include="UpdateHelper.h" />
     <ClInclude Include="WIC.h" />
+    <ClInclude Include="Win11TaskbarDlg.h" />
     <ClInclude Include="Win11TaskbarSettingDlg.h" />
     <ClInclude Include="WindowsSettingHelper.h" />
     <ClInclude Include="WindowsWebExperienceDetector.h" />
@@ -868,6 +870,7 @@
     <ClCompile Include="BaseDialog.cpp" />
     <ClCompile Include="CalendarHelper.cpp" />
     <ClCompile Include="CAutoAdaptSettingsDlg.cpp" />
+    <ClCompile Include="ClassicalTaskbarDlg.cpp" />
     <ClCompile Include="CMFCColorDialogEx.cpp" />
     <ClCompile Include="ColorSettingListCtrl.cpp" />
     <ClCompile Include="ComboBox2.cpp" />
@@ -964,6 +967,7 @@
     <ClCompile Include="TrafficMonitorDlg.cpp" />
     <ClCompile Include="UpdateHelper.cpp" />
     <ClCompile Include="WIC.cpp" />
+    <ClCompile Include="Win11TaskbarDlg.cpp" />
     <ClCompile Include="Win11TaskbarSettingDlg.cpp" />
     <ClCompile Include="WindowsSettingHelper.cpp" />
     <ClCompile Include="WindowsWebExperienceDetector.cpp" />
