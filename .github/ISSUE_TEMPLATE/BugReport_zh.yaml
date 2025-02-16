@@ -1,0 +1,31 @@
+name: Bug反馈
+description: 提交Bug反馈
+labels: ["bug"]
+body:
+  - type: checkboxes
+    attributes: 
+      label: 前置条件
+      options:
+        - label: 已经在[issue](https://github.com/zhongyang219/TrafficMonitor/issues)列表中搜索了相关问题。
+          required: true
+  - type: input
+    attributes:
+      label: 您当前使用的TrafficMonitor版本
+      description: 右键TrafficMonitor托盘图标，选择`帮助` → `关于`。
+    validations: 
+      required: true
+  - type: textarea
+    attributes:
+      label: 发生了什么?
+      description: "为了方便我们管理，请不要在同一个issue下报告多个不相关的问题。"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 日志输出
+      description: "错误日志可在TrafficMonitor根目录中找到。<br>这将自动格式化为代码,因此无需反引号。"
+      render: shell
+  - type: textarea
+    attributes:
+      label: 附加信息
+      description: "如果你还有其他需要提供的信息，可以在这里填写。"
