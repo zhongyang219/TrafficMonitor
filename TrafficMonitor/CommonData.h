@@ -114,12 +114,12 @@ inline int FontSizeToLfHeight(int font_size, int dpi = 0)
 //字体
 struct FontInfo
 {
-    CString name;   //字体名称
-    int size;       //字体大小
-    bool bold;          //粗体
-    bool italic;        //斜体
-    bool underline;     //下划线
-    bool strike_out;    //删除线
+    CString name;       //字体名称
+    int size{ 9 };      //字体大小
+    bool bold{};        //粗体
+    bool italic{};      //斜体
+    bool underline{};   //下划线
+    bool strike_out{};  //删除线
 
     //创建一个CFont对象
     void Create(CFont& font, int dpi = 0)

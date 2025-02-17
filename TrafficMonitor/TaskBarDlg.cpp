@@ -742,12 +742,6 @@ void CTaskBarDlg::DPI(CRect& rect) const
     rect.bottom = DPI(rect.bottom);
 }
 
-void CTaskBarDlg::DPIFromRect(const RECT& rect, UINT* out_dpi_x, UINT* out_dpi_y)
-{
-    HMONITOR h_current_monitor = ::MonitorFromRect(&rect, MONITOR_DEFAULTTONEAREST);
-    theApp.m_dll_functions.GetDpiForMonitor(h_current_monitor, MDT_EFFECTIVE_DPI, out_dpi_x, out_dpi_y);
-}
-
 CTaskBarDlg::ClassCheckWindowMonitorDPIAndHandle CTaskBarDlg::CheckWindowMonitorDPIAndHandle{};
 
 UINT CTaskBarDlg::ClassCheckWindowMonitorDPIAndHandle::buffered_dpi_x{0};
@@ -1162,7 +1156,7 @@ BOOL CTaskBarDlg::OnInitDialog()
     if (theApp.m_win_version.IsWindows8Point1OrLater())
     {
         UINT dpi_x, dpi_y;
-        DPIFromRect(GetRectForDpiCheck(), &dpi_x, &dpi_y);
+        theApp.DPIFromRect(GetRectForDpiCheck(), &dpi_x, &dpi_y);
         SetDPI(dpi_x);
     }
     else

@@ -41,6 +41,7 @@ private:
     CDC* m_pDC = nullptr;                               // InitializeControls期间有效，用于测量文本长度
     static std::map<CString, HWND> m_unique_hwnd;       //针对每一个基类的唯一的窗口句柄
     bool m_remember_dlg_size{ true };                   //是否记住窗口大小（当此标志为true且GetDialogName返回字符串不为空时会记住窗口大小）
+    CFont m_dlg_font;
 
 protected:
     // 仅在InitializeControls期间可用，测量控件文本长度

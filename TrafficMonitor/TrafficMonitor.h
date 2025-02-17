@@ -165,8 +165,7 @@ public:
     void CheckWindows11Taskbar();
     bool IsWindows11Taskbar() const { return m_is_windows11_taskbar; }
 
-    void CreateDlgFont();
-    CFont* GetDlgFont() { return &m_dlg_font; }
+    void DPIFromRect(const RECT& rect, UINT* out_dpi_x, UINT* out_dpi_y);
 
 private:
     //int m_no_multistart_warning_time{};       //用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示
@@ -177,7 +176,6 @@ private:
     bool m_checking_update{ false };        //是否正在检查更新
 
     std::map<UINT, HICON> m_menu_icons;      //菜单图标资源。key是图标资源的ID，vlaue是图标的句柄
-    CFont m_dlg_font;
 
     ULONG_PTR m_gdiplusToken{};
 

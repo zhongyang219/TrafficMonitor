@@ -1364,18 +1364,10 @@ void CTrafficMonitorApp::CheckWindows11Taskbar()
     }
 }
 
-void CTrafficMonitorApp::CreateDlgFont()
+void CTrafficMonitorApp::DPIFromRect(const RECT& rect, UINT* out_dpi_x, UINT* out_dpi_y)
 {
-    if (m_dlg_font.GetSafeHandle() != NULL)
-        m_dlg_font.DeleteObject();
-    FontInfo font_info;
-    font_info.name = m_str_table.GetLanguageInfo().default_font_name.c_str();
-    font_info.size = 9;
-    font_info.bold = false;
-    font_info.italic = false;
-    font_info.strike_out = false;
-    font_info.underline = false;
-    font_info.Create(m_dlg_font, m_dpi);
+    HMONITOR h_current_monitor = ::MonitorFromRect(&rect, MONITOR_DEFAULTTONEAREST);
+    m_dll_functions.GetDpiForMonitor(h_current_monitor, MDT_EFFECTIVE_DPI, out_dpi_x, out_dpi_y);
 }
 
 void CTrafficMonitorApp::OnHelp()

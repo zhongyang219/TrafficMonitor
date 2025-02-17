@@ -1050,7 +1050,6 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     ModifyStyleEx(WS_EX_APPWINDOW, WS_EX_TOOLWINDOW);
 
     theApp.DPIFromWindow(this);
-    theApp.CreateDlgFont();
     //获取屏幕大小
     GetScreenSize();
     m_last_screen_rects = m_screen_rects;
@@ -2744,7 +2743,6 @@ afx_msg LRESULT CTrafficMonitorDlg::OnDpichanged(WPARAM wParam, LPARAM lParam)
     LoadBackGroundImage();
     SetTextFont();      //重新加载字体
     Invalidate(FALSE);  //重绘界面
-    theApp.CreateDlgFont(); //重新加载对话框字体
 
     return 0;
 }

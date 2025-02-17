@@ -48,7 +48,6 @@ public:
     LONG DPI(LONG pixel) const;
     void DPI(CRect& rect) const;
 
-    static void DPIFromRect(const RECT& rect, UINT* out_dpi_x, UINT* out_dpi_y);
     //下面的类定义可以看做函数定义，避免模板函数不同实例化导致静态变量不同。
     // 近似函数声明
     // template <class HanlderFunc>
@@ -59,7 +58,7 @@ public:
         template <class HandlerFunc>
         void operator()(CTaskBarDlg& ref_taskbar_window, HandlerFunc handler)
         {
-            DPIFromRect(ref_taskbar_window.GetRectForDpiCheck(), &dpi_x, &dpi_y);
+            theApp.DPIFromRect(ref_taskbar_window.GetRectForDpiCheck(), &dpi_x, &dpi_y);
             //只取dpi_x作为程序dpi
             if (dpi_x != buffered_dpi_x || dpi_y != buffered_dpi_y)
             {

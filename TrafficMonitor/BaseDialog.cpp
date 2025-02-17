@@ -285,6 +285,16 @@ BOOL CBaseDialog::OnInitDialog()
 
     // TODO:  在此添加额外的初始化
 
+    //初始化字体
+    CRect rect;
+    GetWindowRect(rect);
+    UINT dpi_x{}, dpi_y{};
+    theApp.DPIFromRect(rect, &dpi_x, &dpi_y);
+    FontInfo font_info;
+    font_info.name = theApp.m_str_table.GetLanguageInfo().default_font_name.c_str();
+    font_info.size = 9;
+    font_info.Create(m_dlg_font, dpi_x);
+
     //获取初始时窗口的大小
     if (m_min_size.cx <= 0 || m_min_size.cy <= 0)
     {
@@ -300,10 +310,10 @@ BOOL CBaseDialog::OnInitDialog()
     SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);       //取消置顶
 
     //处理对话框中的文本翻译 
-    IterateControls([](CWnd* pWnd) {
+    IterateControls([&](CWnd* pWnd) {
         //设置控件字体
-        if (theApp.GetDlgFont()->GetSafeHandle() != NULL)
-            pWnd->SetFont(theApp.GetDlgFont());
+        if (m_dlg_font.GetSafeHandle() != NULL)
+            pWnd->SetFont(&m_dlg_font);
         //获取控件文本
         CString str;
         pWnd->GetWindowText(str);
@@ -330,7 +340,7 @@ BOOL CBaseDialog::OnInitDialog()
     // 在还原窗口大小之前（当前窗口状态与资源一致），派生类执行控件文本初始化及调整控件排布
     // 与实际窗口大小相关的初始化（比如表格列宽）应在派生类的OnInitDialog进行
     m_pDC = GetDC();
-    m_pDC->SelectObject(theApp.GetDlgFont());
+    m_pDC->SelectObject(&m_dlg_font);
     bool rtn = InitializeControls();
     ReleaseDC(m_pDC);
     m_pDC = nullptr;
