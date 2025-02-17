@@ -1395,18 +1395,18 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     if (IsTemperatureNeeded() && theApp.m_pMonitor != nullptr)
     {
         CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
+        CString error_info = CCommon::LoadText(IDS_HARDWARE_INFO_ACQUIRE_FAILED_ERROR);
 
-        auto getHardwareInfo = []()
+        auto getHardwareInfo = [&]() {
+            __try
             {
-                __try
-                {
-                    theApp.m_pMonitor->GetHardwareInfo();
-                }
-                __except (EXCEPTION_EXECUTE_HANDLER)
-                {
-                    AfxMessageBox(CCommon::LoadText(IDS_HARDWARE_INFO_ACQUIRE_FAILED_ERROR), MB_ICONERROR | MB_OK);
-                }
-            };
+                theApp.m_pMonitor->GetHardwareInfo();
+            }
+            __except (EXCEPTION_EXECUTE_HANDLER)
+            {
+                AfxMessageBox(error_info, MB_ICONERROR | MB_OK);
+            }
+        };
 
         getHardwareInfo();
         auto monitor_error_message{ OpenHardwareMonitorApi::GetErrorMessage() };
