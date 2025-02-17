@@ -1364,10 +1364,11 @@ void CTrafficMonitorApp::CheckWindows11Taskbar()
     }
 }
 
-void CTrafficMonitorApp::DPIFromRect(const RECT& rect, UINT* out_dpi_x, UINT* out_dpi_y)
+bool CTrafficMonitorApp::DPIFromRect(const RECT& rect, UINT* out_dpi_x, UINT* out_dpi_y)
 {
     HMONITOR h_current_monitor = ::MonitorFromRect(&rect, MONITOR_DEFAULTTONEAREST);
-    m_dll_functions.GetDpiForMonitor(h_current_monitor, MDT_EFFECTIVE_DPI, out_dpi_x, out_dpi_y);
+    HRESULT hr = m_dll_functions.GetDpiForMonitor(h_current_monitor, MDT_EFFECTIVE_DPI, out_dpi_x, out_dpi_y);
+    return hr == S_OK;
 }
 
 void CTrafficMonitorApp::OnHelp()

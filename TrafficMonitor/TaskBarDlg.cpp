@@ -1156,8 +1156,10 @@ BOOL CTaskBarDlg::OnInitDialog()
     if (theApp.m_win_version.IsWindows8Point1OrLater())
     {
         UINT dpi_x, dpi_y;
-        theApp.DPIFromRect(GetRectForDpiCheck(), &dpi_x, &dpi_y);
-        SetDPI(dpi_x);
+        if (theApp.DPIFromRect(GetRectForDpiCheck(), &dpi_x, &dpi_y))
+            SetDPI(dpi_x);
+        else
+            SetDPI(theApp.GetDpi());
     }
     else
     {

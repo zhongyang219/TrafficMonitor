@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "DllFunctions.h"
 
 CDllFunctions::CDllFunctions()
@@ -24,7 +24,7 @@ HRESULT CDllFunctions::GetDpiForMonitor(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiT
 {
     if (m_getDpiForMonitor != nullptr)
         return m_getDpiForMonitor(hmonitor, dpiType, dpiX, dpiY);
-    return 0;
+    return E_NOINTERFACE;
 }
 
 #define TRAFFICMONITOR_DEFINE_STATIC_MEMBER_IN_DLL_FUNCTIONS(member_name, ...) \

@@ -165,7 +165,7 @@ public:
     void CheckWindows11Taskbar();
     bool IsWindows11Taskbar() const { return m_is_windows11_taskbar; }
 
-    void DPIFromRect(const RECT& rect, UINT* out_dpi_x, UINT* out_dpi_y);
+    bool DPIFromRect(const RECT& rect, UINT* out_dpi_x, UINT* out_dpi_y);
 
 private:
     //int m_no_multistart_warning_time{};       //用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示

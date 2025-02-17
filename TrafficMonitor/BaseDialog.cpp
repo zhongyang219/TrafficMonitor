@@ -288,12 +288,14 @@ BOOL CBaseDialog::OnInitDialog()
     //初始化字体
     CRect rect;
     GetWindowRect(rect);
-    UINT dpi_x{}, dpi_y{};
-    theApp.DPIFromRect(rect, &dpi_x, &dpi_y);
     FontInfo font_info;
     font_info.name = theApp.m_str_table.GetLanguageInfo().default_font_name.c_str();
     font_info.size = 9;
-    font_info.Create(m_dlg_font, dpi_x);
+    UINT dpi_x{}, dpi_y{};
+    if (theApp.DPIFromRect(rect, &dpi_x, &dpi_y))
+        font_info.Create(m_dlg_font, dpi_x);
+    else
+        font_info.Create(m_dlg_font, theApp.GetDpi());
 
     //获取初始时窗口的大小
     if (m_min_size.cx <= 0 || m_min_size.cy <= 0)

@@ -1578,9 +1578,9 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             UINT dpi_x, dpi_y;
             CRect rect;
             GetWindowRect(rect);
-            theApp.DPIFromRect(rect, & dpi_x, & dpi_y);
+            bool rtn = theApp.DPIFromRect(rect, & dpi_x, & dpi_y);
             int dpi = static_cast<int>(dpi_x);
-            if (dpi != theApp.GetDpi())
+            if (rtn && dpi != theApp.GetDpi())
             {
                 theApp.SetDPI(dpi_x);
                 LoadSkinLayout();   //根据当前选择的皮肤获取布局数据
