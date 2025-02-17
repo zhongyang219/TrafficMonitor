@@ -32,6 +32,9 @@ void CWin11TaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
             //Win11副屏没有通知区窗口，这里使用固定的值
             if (m_is_secondary_display)
                 notify_x_pos = m_rcTaskbar.Width() - DPI(88);
+            //如果不是副屏，但是没有获取到通知区域的位置，也使用一个固定值
+            else if (notify_x_pos == 0)
+                notify_x_pos = m_rcTaskbar.Width() - DPI(220);
             //如果显示了小组件，并且任务栏靠左显示，则留出小组件的位置
             if (theApp.m_taskbar_data.avoid_overlap_with_widgets && CWindowsSettingHelper::IsTaskbarWidgetsBtnShown() && !CWindowsSettingHelper::IsTaskbarCenterAlign())
                 m_rect.MoveToX(notify_x_pos - m_rect.Width() + 2 - DPI(theApp.m_taskbar_data.taskbar_left_space_win11));
@@ -58,22 +61,22 @@ void CWin11TaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
         }
         //水平偏移
         m_rect.MoveToX(m_rect.left + DPI(theApp.m_taskbar_data.window_offset_left));
-        //确保水平方向不超出屏幕边界
-        if (m_rect.left < 0)
-            m_rect.MoveToX(0);
-        if (m_rcTaskbar.Width() > m_rect.Width() && m_rect.right > m_rcTaskbar.Width())
-            m_rect.MoveToX(m_rcTaskbar.Width() - m_rect.Width());
+        ////确保水平方向不超出屏幕边界
+        //if (m_rect.left < 0)
+        //    m_rect.MoveToX(0);
+        //if (m_rcTaskbar.Width() > m_rect.Width() && m_rect.right > m_rcTaskbar.Width())
+        //    m_rect.MoveToX(m_rcTaskbar.Width() - m_rect.Width());
 
         //设置任务栏窗口的垂直位置
         //注：这里加上(m_rcTaskbar.Height() - rcStart.Height())用于修正Windows11 build 22621版本后触屏设备任务栏窗口位置不正确的问题。
         //在这种情况下m_rcTaskbar的高度要大于m_rcBar的高度，正常情况下，它们的高度相同
         //但是当任务栏上没有任何图标时，m_rcBar的高度会变为0，因此使用rcStart代替
         m_rect.MoveToY((m_rcStart.Height() - m_rect.Height()) / 2 + (m_rcTaskbar.Height() - m_rcStart.Height()) + DPI(theApp.m_taskbar_data.window_offset_top));
-        //确保垂直方向不超出屏幕边界
-        if (m_rect.top < 0)
-            m_rect.MoveToY(0);
-        if (m_rcTaskbar.Height() > m_rect.Height() && m_rect.bottom > m_rcTaskbar.Height())
-            m_rect.MoveToY(m_rcTaskbar.Height() - m_rect.Height());
+        ////确保垂直方向不超出屏幕边界
+        //if (m_rect.top < 0)
+        //    m_rect.MoveToY(0);
+        //if (m_rcTaskbar.Height() > m_rect.Height() && m_rect.bottom > m_rcTaskbar.Height())
+        //    m_rect.MoveToY(m_rcTaskbar.Height() - m_rect.Height());
 
         if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())
             m_rect.MoveToY(m_rect.top + DPI(1));
