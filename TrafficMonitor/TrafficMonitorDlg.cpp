@@ -553,14 +553,14 @@ void CTrafficMonitorDlg::CloseTaskBarWnd()
 
 void CTrafficMonitorDlg::OpenTaskBarWnd()
 {
+    // 强制初始化theApp.m_is_windows11_taskbar的值
+    theApp.CheckWindows11Taskbar();
     if (theApp.IsWindows11Taskbar())
         m_tBarDlg = new CWin11TaskbarDlg();
     else
         m_tBarDlg = new CClassicalTaskbarDlg();
 
     CSupportedRenderEnums supported_render_enums{};
-    // 强制初始化theApp.m_is_windows11_taskbar的值
-    theApp.CheckWindows11Taskbar();
     CTaskBarDlg::DisableRenderFeatureIfNecessary(supported_render_enums);
     auto render_type = supported_render_enums.GetAutoFitEnum();
     // WS_EX_LAYERED 和 WS_EX_NOREDIRECTIONBITMAP 可以共存，见微软示例代码
