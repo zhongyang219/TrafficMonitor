@@ -636,6 +636,21 @@ bool CTaskBarDlg::AdjustWindowPos(bool force_adjust)
 
     AdjustTaskbarWndPos(force_adjust);
 
+    //如果窗口没有被成功嵌入到任务栏，窗口移动到了基于屏幕左上角的绝对位置，则修正窗口的位置
+    if (m_connot_insert_to_task_bar)
+    {
+        CRect rc_parent;
+        ::GetWindowRect(GetParentHwnd(), rc_parent);
+        CRect rect{ m_rect };
+        rect.MoveToXY(rect.left + rc_parent.left, rect.top + rc_parent.top);
+        this->MoveWindow(rect);
+
+        if (::GetForegroundWindow() == m_hTaskbar)   //在窗口无法嵌入任务栏时，如果焦点设置在了任务栏上，则让窗口置顶
+        {
+            SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);         //设置置顶
+        }
+    }
+
     m_is_width_changed = false;     //调整完窗口位置重置标志
     return true;
 }
