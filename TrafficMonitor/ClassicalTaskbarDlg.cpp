@@ -14,23 +14,20 @@ void CClassicalTaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
         m_rect.right = m_rect.left + m_window_width;
         m_rect.bottom = m_rect.top + m_window_height;
         bool width_changed;     //宽度是否变化
-        //副显示器由于没有通知区域，所以检测最小化窗口的宽度
-        if (m_is_secondary_display)
-            width_changed = m_rcMin.Width() != m_last_width;
-        //主显示器检测通知区域的宽度。
-        //由于程序还需要调整最小化窗口的宽度，如果检测最小化窗口的变化的话会导致和其他同类软件发生冲突
-        else
+        if (IsCheckNotifyWndWidth())
             width_changed = rcNotify.Width() != m_last_width;
+        else
+            width_changed = m_rcMin.Width() != m_last_width;
 
         if (force_adjust || width_changed)   //如果宽度改变了，重新设置任务栏窗口的位置
         {
             m_rcMinOri = m_rcMin;
             m_left_space = m_rcMin.left - m_rcBar.left;
             //保存上次的宽度
-            if (m_is_secondary_display)
-                m_last_width = m_rcMin.Width() - m_rect.Width();
-            else
+            if (IsCheckNotifyWndWidth())
                 m_last_width = rcNotify.Width();
+            else
+                m_last_width = m_rcMin.Width() - m_rect.Width();
             //任务窗口显示在右侧时
             if (!theApp.m_taskbar_data.tbar_wnd_on_left)
             {
@@ -54,13 +51,10 @@ void CClassicalTaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
     else        //当任务栏在屏幕在左侧或右侧时
     {
         bool height_changed;     //高度是否变化
-        //副显示器由于没有通知区域，所以检测最小化窗口的高度
-        if (m_is_secondary_display)
-            height_changed = m_rcMin.Height() != m_last_height;
-        //主显示器检测通知区域的高度。
-        //由于程序还需要调整最小化窗口的高度，如果检测最小化窗口的变化的话会导致和其他同类软件发生冲突
-        else
+        if (IsCheckNotifyWndWidth())
             height_changed = rcNotify.Height() != m_last_height;
+        else
+            height_changed = m_rcMin.Height() != m_last_height;
 
         //设置窗口大小
         if (force_adjust || height_changed)     //如果高度改变了，重新设置任务栏窗口的位置
@@ -69,10 +63,10 @@ void CClassicalTaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
             m_top_space = m_rcMin.top - m_rcBar.top;
             m_last_height = rcNotify.Height();  //保存最小化窗口高度
             //保存上次的宽度
-            if (m_is_secondary_display)
-                m_last_height = m_rcMin.Height() - m_rect.Height();
-            else
+            if (IsCheckNotifyWndWidth())
                 m_last_height = rcNotify.Height();
+            else
+                m_last_height = m_rcMin.Height() - m_rect.Height();
 
             if (!theApp.m_taskbar_data.tbar_wnd_on_left)
             {
@@ -149,5 +143,12 @@ void CClassicalTaskbarDlg::CheckTaskbarOnTopOrBottom()
     {
         m_taskbar_on_top_or_bottom = true;
     }
+}
+
+bool CClassicalTaskbarDlg::IsCheckNotifyWndWidth()
+{
+    //副显示器由于没有通知区域，所以检测最小化窗口的宽度。Win10以前的系统使用原来的逻辑
+    //由于程序还需要调整最小化窗口的宽度，如果检测最小化窗口的变化的话会导致和其他同类软件发生冲突
+    return !m_is_secondary_display && theApp.m_win_version.IsWindows10OrLater();
 }
 

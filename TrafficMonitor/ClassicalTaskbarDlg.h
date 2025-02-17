@@ -29,5 +29,7 @@ private:
     // 通过 CTaskBarDlg 继承
     void CheckTaskbarOnTopOrBottom() override;
 
+    bool IsCheckNotifyWndWidth();   //是否通过检查通知区的宽度来调整任务栏窗口位置
+
 };
 
