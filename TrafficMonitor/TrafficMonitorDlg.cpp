@@ -1404,7 +1404,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
                 }
                 __except (EXCEPTION_EXECUTE_HANDLER)
                 {
-                    AfxMessageBox(IDS_HARDWARE_INFO_ACQUIRE_FAILED_ERROR, MB_ICONERROR | MB_OK);
+                    AfxMessageBox(CCommon::LoadText(IDS_HARDWARE_INFO_ACQUIRE_FAILED_ERROR), MB_ICONERROR | MB_OK);
                 }
             };
 
