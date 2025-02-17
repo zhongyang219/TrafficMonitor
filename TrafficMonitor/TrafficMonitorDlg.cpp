@@ -728,6 +728,12 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     bool is_show_notify_icon_changed = (optionsDlg.m_tab3_dlg.m_data.show_notify_icon != theApp.m_general_data.show_notify_icon);
     bool is_connections_hide_changed = (optionsDlg.m_tab3_dlg.m_data.connections_hide.data() != theApp.m_general_data.connections_hide.data());
     bool d2d_turned_on = (theApp.m_taskbar_data.disable_d2d && !optionsDlg.m_tab2_dlg.m_data.disable_d2d);
+    //需要重新关闭再打开任务栏窗口的情况
+    bool taskbar_changed = (theApp.m_taskbar_data.show_taskbar_wnd_in_secondary_display != optionsDlg.m_tab2_dlg.m_data.show_taskbar_wnd_in_secondary_display
+        || theApp.m_taskbar_data.disable_d2d != optionsDlg.m_tab2_dlg.m_data.disable_d2d
+        || theApp.m_taskbar_data.IsTaskbarTransparent() != optionsDlg.m_tab2_dlg.m_data.IsTaskbarTransparent()
+        || theApp.m_taskbar_data.auto_set_background_color != optionsDlg.m_tab2_dlg.m_data.auto_set_background_color
+        );
 
     theApp.m_main_wnd_data = optionsDlg.m_tab1_dlg.m_data;
     theApp.m_taskbar_data = optionsDlg.m_tab2_dlg.m_data;
@@ -750,8 +756,15 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     {
         m_tBarDlg->ApplySettings();
         //如果更改了任务栏窗口字体或显示的文本，则任务栏窗口可能要变化，于是关闭再打开任务栏窗口
-        CloseTaskBarWnd();
-        OpenTaskBarWnd();
+        if (taskbar_changed)
+        {
+            CloseTaskBarWnd();
+            OpenTaskBarWnd();
+        }
+        else
+        {
+            m_tBarDlg->WidthChanged();
+        }
     }
 
     if (optionsDlg.m_tab3_dlg.IsAutoRunModified())
