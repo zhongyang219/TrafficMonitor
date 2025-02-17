@@ -261,7 +261,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.speed_unit = static_cast<SpeedUnit>(ini.GetInt(_T("task_bar"), _T("task_bar_speed_unit"), 0));
     m_taskbar_data.hide_unit = ini.GetBool(_T("task_bar"), _T("task_bar_hide_unit"), false);
     m_taskbar_data.hide_percent = ini.GetBool(_T("task_bar"), _T("task_bar_hide_percent"), false);
-    m_taskbar_data.value_right_align = ini.GetBool(_T("task_bar"), _T("value_right_align"), false);
+    m_taskbar_data.value_right_align = ini.GetBool(_T("task_bar"), _T("value_right_align"), true);
     m_taskbar_data.horizontal_arrange = ini.GetBool(_T("task_bar"), _T("horizontal_arrange"), false);
     m_taskbar_data.show_status_bar = ini.GetBool(_T("task_bar"), _T("show_status_bar"), false);
     m_taskbar_data.separate_value_unit_with_space = ini.GetBool(_T("task_bar"), _T("separate_value_unit_with_space"), true);
@@ -272,7 +272,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.double_click_exe = ini.GetString(L"task_bar", L"double_click_exe", (theApp.m_system_dir + L"\\Taskmgr.exe").c_str());
     m_taskbar_data.cm_graph_type = ini.GetBool(_T("task_bar"), _T("cm_graph_type"), true);
     m_taskbar_data.show_graph_dashed_box = ini.GetBool(L"task_bar", L"show_graph_dashed_box", false);
-    m_taskbar_data.item_space = ini.GetInt(L"task_bar", L"item_space", 4);
+    m_taskbar_data.item_space = ini.GetInt(L"task_bar", L"item_space", 8);
     m_taskbar_data.vertical_margin = ini.GetInt(L"task_bar", L"vertical_margin", 0);
     m_taskbar_data.window_offset_top = ini.GetInt(L"task_bar", L"window_offset_top", 0);
     m_taskbar_data.window_offset_left = ini.GetInt(L"task_bar", L"window_offset_left", 0);
