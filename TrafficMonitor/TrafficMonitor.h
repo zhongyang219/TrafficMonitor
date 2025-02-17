@@ -191,6 +191,7 @@ public:
     afx_msg void OnHelp();
     afx_msg void OnFrequentyAskedQuestions();
     afx_msg void OnUpdateLog();
+    virtual int ExitInstance();
 };
 
 extern CTrafficMonitorApp theApp;

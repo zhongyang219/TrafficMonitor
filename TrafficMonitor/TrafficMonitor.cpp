@@ -1173,9 +1173,6 @@ BOOL CTrafficMonitorApp::InitInstance()
         delete pShellManager;
     }
 
-    // 释放GDI+
-    Gdiplus::GdiplusShutdown(m_gdiplusToken);
-
 #ifndef _AFXDLL
     ControlBarCleanUp();
 #endif
@@ -1421,4 +1418,13 @@ void CTrafficMonitorApp::OnUpdateLog()
     CString url;
     url.Format(_T("https://%s/zhongyang219/TrafficMonitor/blob/master/UpdateLog/%s"), url_domain.GetString(), file_name.GetString());
     ShellExecute(NULL, _T("open"), url, NULL, NULL, SW_SHOW);
+}
+
+
+int CTrafficMonitorApp::ExitInstance()
+{
+    // 释放GDI+
+    Gdiplus::GdiplusShutdown(m_gdiplusToken);
+
+    return CWinApp::ExitInstance();
 }
