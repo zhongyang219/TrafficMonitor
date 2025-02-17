@@ -77,7 +77,7 @@ BOOL CSetItemOrderDlg::OnInitDialog()
     // TODO:  在此添加额外的初始化
     SetIcon(theApp.GetMenuIcon(IDI_ITEM), FALSE);		// 设置小图标
 
-    m_list_ctrl.SetItemHeight(0, theApp.DPI(20));
+    m_list_ctrl.SetItemHeight(0, DPI(20));
     EnableCtrl(-1);
     ShowItem();
 

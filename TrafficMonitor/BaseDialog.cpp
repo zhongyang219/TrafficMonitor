@@ -17,6 +17,7 @@ CBaseDialog::CBaseDialog(UINT nIDTemplate, CWnd* pParent /*=NULL*/)
     : CDialog(nIDTemplate, pParent)
 {
     m_nDialogID = nIDTemplate;
+    m_dpi = theApp.GetDpi();
 }
 
 CBaseDialog::~CBaseDialog()
@@ -131,6 +132,11 @@ void CBaseDialog::ReLoadLayoutResource()
             }
         }
     }
+}
+
+int CBaseDialog::DPI(int pixel) const
+{
+    return m_dpi * pixel / 96;
 }
 
 CRect CBaseDialog::GetTextExtent(const CString& text)
@@ -293,9 +299,9 @@ BOOL CBaseDialog::OnInitDialog()
     font_info.size = 9;
     UINT dpi_x{}, dpi_y{};
     if (theApp.DPIFromRect(rect, &dpi_x, &dpi_y))
-        font_info.Create(m_dlg_font, dpi_x);
-    else
-        font_info.Create(m_dlg_font, theApp.GetDpi());
+        m_dpi = dpi_x;
+
+    font_info.Create(m_dlg_font, m_dpi);
 
     //获取初始时窗口的大小
     if (m_min_size.cx <= 0 || m_min_size.cy <= 0)

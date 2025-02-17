@@ -90,8 +90,8 @@ CRect CSkinDlg::CalculateViewRect()
     m_preview_static.GetWindowRect(rect);		//获取“预览” group box 的位置
     ScreenToClient(&rect);
     CRect scroll_view_rect{ rect };
-    scroll_view_rect.DeflateRect(theApp.DPI(12), theApp.DPI(40));
-    scroll_view_rect.top = rect.top + theApp.DPI(28);
+    scroll_view_rect.DeflateRect(DPI(12), DPI(40));
+    scroll_view_rect.top = rect.top + DPI(28);
     return scroll_view_rect;
 }
 
@@ -114,7 +114,7 @@ BOOL CSkinDlg::OnInitDialog()
     // TODO:  在此添加额外的初始化
     SetIcon(theApp.GetMenuIcon(IDI_SKIN), FALSE);		// 设置小图标
     //初始化选择框
-    m_skin_list_box.SetItemHeight(0, theApp.DPI(18));
+    m_skin_list_box.SetItemHeight(0, DPI(18));
     for (const auto& skin_path : m_skins)
     {
         wstring skin_name;
