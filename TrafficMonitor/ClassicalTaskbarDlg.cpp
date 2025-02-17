@@ -5,17 +5,32 @@ void CClassicalTaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
 {
     ::GetWindowRect(m_hMin, m_rcMin); //获得最小化窗口的区域
     ::GetWindowRect(m_hBar, m_rcBar); //获得二级容器的区域
+    CRect rcNotify;
+    ::GetWindowRect(m_hNotify, rcNotify); //获得通知区的区域
 
     if (m_taskbar_on_top_or_bottom)     //当任务栏在桌面顶部或底部时
     {
         //设置窗口大小
         m_rect.right = m_rect.left + m_window_width;
         m_rect.bottom = m_rect.top + m_window_height;
-        if (force_adjust || m_rcMin.Width() != m_min_bar_width)   //如果最小化窗口的宽度改变了，重新设置任务栏窗口的位置
+        bool width_changed;     //宽度是否变化
+        //副显示器由于没有通知区域，所以检测最小化窗口的宽度
+        if (m_is_secondary_display)
+            width_changed = m_rcMin.Width() != m_last_width;
+        //主显示器检测通知区域的宽度。
+        //由于程序还需要调整最小化窗口的宽度，如果检测最小化窗口的变化的话会导致和其他同类软件发生冲突
+        else
+            width_changed = rcNotify.Width() != m_last_width;
+
+        if (force_adjust || width_changed)   //如果宽度改变了，重新设置任务栏窗口的位置
         {
             m_rcMinOri = m_rcMin;
             m_left_space = m_rcMin.left - m_rcBar.left;
-            m_min_bar_width = m_rcMin.Width() - m_rect.Width(); //保存最小化窗口宽度
+            //保存上次的宽度
+            if (m_is_secondary_display)
+                m_last_width = m_rcMin.Width() - m_rect.Width();
+            else
+                m_last_width = rcNotify.Width();
             //任务窗口显示在右侧时
             if (!theApp.m_taskbar_data.tbar_wnd_on_left)
             {
@@ -38,12 +53,27 @@ void CClassicalTaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
     }
     else        //当任务栏在屏幕在左侧或右侧时
     {
+        bool height_changed;     //高度是否变化
+        //副显示器由于没有通知区域，所以检测最小化窗口的高度
+        if (m_is_secondary_display)
+            height_changed = m_rcMin.Height() != m_last_height;
+        //主显示器检测通知区域的高度。
+        //由于程序还需要调整最小化窗口的高度，如果检测最小化窗口的变化的话会导致和其他同类软件发生冲突
+        else
+            height_changed = rcNotify.Height() != m_last_height;
+
         //设置窗口大小
-        if (m_rcMin.Height() != m_min_bar_height) //如果最小化窗口的高度改变了，重新设置任务栏窗口的位置
+        if (force_adjust || height_changed)     //如果高度改变了，重新设置任务栏窗口的位置
         {
             m_rcMinOri = m_rcMin;
             m_top_space = m_rcMin.top - m_rcBar.top;
-            m_min_bar_height = m_rcMin.Height() - m_rect.Height();  //保存最小化窗口高度
+            m_last_height = rcNotify.Height();  //保存最小化窗口高度
+            //保存上次的宽度
+            if (m_is_secondary_display)
+                m_last_height = m_rcMin.Height() - m_rect.Height();
+            else
+                m_last_height = rcNotify.Height();
+
             if (!theApp.m_taskbar_data.tbar_wnd_on_left)
             {
                 ::MoveWindow(m_hMin, 0, m_top_space, m_rcMin.Width(), m_rcMin.Height() - m_rect.Height(), TRUE);    //设置最小化窗口的位置
@@ -71,6 +101,7 @@ void CClassicalTaskbarDlg::InitTaskbarWnd()
     m_hMin = ::FindWindowEx(m_hBar, 0, L"MSTaskSwWClass", NULL);    //寻找最小化窗口的句柄
     if (m_hMin == NULL)
         m_hMin = ::FindWindowEx(m_hBar, 0, L"MSTaskListWClass", NULL);    //寻找最小化窗口的句柄
+    m_hNotify = ::FindWindowEx(m_hTaskbar, 0, L"TrayNotifyWnd", NULL);
 
     ::GetWindowRect(m_hMin, m_rcMin);   //获得最小化窗口的区域
     ::GetWindowRect(m_hBar, m_rcBar);   //获得二级容器的区域
