@@ -1574,6 +1574,22 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             }
             SetTransparency();              //重新设置窗口不透明度
 
+            //检查主窗口所在位置的DPI是否变化
+            UINT dpi_x, dpi_y;
+            CRect rect;
+            GetWindowRect(rect);
+            theApp.DPIFromRect(rect, & dpi_x, & dpi_y);
+            int dpi = static_cast<int>(dpi_x);
+            if (dpi != theApp.GetDpi())
+            {
+                theApp.SetDPI(dpi_x);
+                LoadSkinLayout();   //根据当前选择的皮肤获取布局数据
+                SetItemPosition();  //初始化窗口位置
+                LoadBackGroundImage();
+                SetTextFont();      //重新加载字体
+                Invalidate(FALSE);  //重绘界面
+            }
+
             m_first_start = false;
         }
 
