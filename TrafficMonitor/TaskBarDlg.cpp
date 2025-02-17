@@ -617,6 +617,9 @@ bool CTaskBarDlg::AdjustWindowPos(bool force_adjust)
     if (this->GetSafeHwnd() == NULL || !IsWindow(this->GetSafeHwnd()))
         return false;
 
+    if (m_is_width_changed)
+        force_adjust = true;
+
     if (force_adjust)
         ResetTaskbarPos();
 
@@ -633,6 +636,7 @@ bool CTaskBarDlg::AdjustWindowPos(bool force_adjust)
 
     AdjustTaskbarWndPos(force_adjust);
 
+    m_is_width_changed = false;     //调整完窗口位置重置标志
     return true;
 }
 
@@ -678,6 +682,11 @@ bool CTaskBarDlg::IsTaskbarChanged()
 {
     bool is_scendary_display;
     return m_hTaskbar != FindTaskbarHandle(is_scendary_display);
+}
+
+void CTaskBarDlg::WidthChanged()
+{
+    m_is_width_changed = true;
 }
 
 const CRect& CTaskBarDlg::GetRectForDpiCheck() const
@@ -1370,7 +1379,17 @@ void CTaskBarDlg::OnTimer(UINT_PTR nIDEvent)
         {
             m_tool_tips.Pop();
         }
-
+        
+        //每秒钟重新计算窗口的宽度，如果发生变化，则重新调整任务栏窗口位置
+        static int last_window_width = m_window_width;
+        static int last_window_height = m_window_height;
+        CalculateWindowSize();
+        if (last_window_width != m_window_width || last_window_height != m_window_height)
+        {
+            WidthChanged();
+            last_window_width = m_window_width;
+            last_window_height = m_window_height;
+        }
     }
 
     CDialogEx::OnTimer(nIDEvent);

@@ -36,6 +36,8 @@ public:
 
     bool IsTaskbarChanged();
 
+    void WidthChanged();    //调用此函数通知任务栏窗口宽度改变以强制调整一次任务栏窗口位置
+
     //获取用于检查DPI的矩形区域
     const CRect& GetRectForDpiCheck() const;
 
@@ -91,8 +93,8 @@ protected:
     HWND m_hTaskbar;	//任务栏窗口句柄
     CRect m_rcTaskbar;  //任务栏的矩形区域
     CRect m_rect;		//当前窗口的矩形区域
-    int m_window_width{};
-    int m_window_height{};
+    int m_window_width{};   //保存计算得到的窗口宽度
+    int m_window_height{};  //保存计算得到的宽度高度
     CSupportedRenderEnums m_supported_render_enums{};
     DefaultCLazyConstructableWithInitializer<
         CTaskBarDlgDrawCommonWindowSupport,
@@ -146,6 +148,7 @@ protected:
     int m_error_code{};
     bool m_menu_popuped{ false };               //指示当前是否有菜单处于弹出状态
     bool m_is_secondary_display{ false };       //是否显示在副显示器中
+    bool m_is_width_changed{ false };
 
     UINT m_taskbar_dpi{};//TaskBarDlg自身专用dpi
 

@@ -921,7 +921,7 @@ void CTrafficMonitorDlg::TaskbarShowHideItem(DisplayItem type)
         }
         //CloseTaskBarWnd();
         //OpenTaskBarWnd();
-        m_tBarDlg->AdjustWindowPos(true);
+        m_tBarDlg->WidthChanged();
     }
 }
 
@@ -2421,7 +2421,7 @@ void CTrafficMonitorDlg::OnShowCpuMemory2()
         //切换显示CPU和内存利用率时，删除任务栏窗口，再重新显示
         //CloseTaskBarWnd();
         //OpenTaskBarWnd();
-        m_tBarDlg->AdjustWindowPos(true);
+        m_tBarDlg->WidthChanged();
     }
 }
 
@@ -2692,7 +2692,7 @@ void CTrafficMonitorDlg::OnShowNetSpeed()
         }
         //CloseTaskBarWnd();
         //OpenTaskBarWnd();
-        m_tBarDlg->AdjustWindowPos(true);
+        m_tBarDlg->WidthChanged();
     }
 }
 
@@ -2846,7 +2846,7 @@ void CTrafficMonitorDlg::OnDisplaySettings()
         //CloseTaskBarWnd();
         //OpenTaskBarWnd();
         if (IsTaskbarWndValid())
-            m_tBarDlg->AdjustWindowPos(true);
+            m_tBarDlg->WidthChanged();
     }
 }
 
@@ -2930,7 +2930,7 @@ void CTrafficMonitorDlg::OnPluginOptionsTaksbar()
             {
                 //CloseTaskBarWnd();
                 //OpenTaskBarWnd();
-                m_tBarDlg->AdjustWindowPos(true);
+                m_tBarDlg->WidthChanged();
             }
             if (rtn == ITMPlugin::OR_OPTION_NOT_PROVIDED)
                 MessageBox(CCommon::LoadText(IDS_PLUGIN_NO_OPTIONS_INFO), nullptr, MB_ICONINFORMATION | MB_OK);
