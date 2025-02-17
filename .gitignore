@@ -298,3 +298,4 @@ __pycache__/
 [Rr]elease (lite)/
 /TrafficMonitor/compile_time.txt
 !/TrafficMonitor/language/*.ini
+*.diagsession
