@@ -1919,12 +1919,16 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
         {
             ++m_taskbar_timer_cnt;
             
-            if (theApp.m_taskbar_data.show_taskbar_wnd_in_secondary_display && CWindowsSettingHelper::IsTaskbarShowingInAllDisplays())
+            if (theApp.m_taskbar_data.show_taskbar_wnd_in_secondary_display)
             {
                 if (m_tBarDlg->IsTaskbarChanged())
                 {
-                    CloseTaskBarWnd();
-                    OpenTaskBarWnd();
+                    //延迟一段时间后重启任务栏窗口
+                    KillTimer(RESTART_TASKBAR_TIMER);
+                    SetTimer(RESTART_TASKBAR_TIMER, 500, [](HWND, UINT, UINT_PTR, DWORD) {
+                        theApp.m_pMainWnd->SendMessage(WM_REOPEN_TASKBAR_WND);
+                        ::KillTimer(theApp.m_pMainWnd->GetSafeHwnd(), RESTART_TASKBAR_TIMER);
+                    });
                 }
             }
 
