@@ -279,6 +279,7 @@ struct TaskBarSettingData : public PublicSettingData
     StringSet plugin_display_item;                  //任务窗口显示的插件项目
 
     bool show_taskbar_wnd_in_secondary_display{ false };    //是否在副显示器上显示任务栏窗口
+    int secondary_display_index{};      //在第几个副显示器上显示任务栏窗口
     bool value_right_align{ false };    //数值是否右对齐
     int digits_number{ 4 };             //数据位数
     bool horizontal_arrange{ true };    //水平排列

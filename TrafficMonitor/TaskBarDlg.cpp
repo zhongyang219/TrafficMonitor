@@ -11,6 +11,7 @@
 #include "Nullable.hpp"
 #include "DrawCommonFactory.h"
 #include "WindowsWebExperienceDetector.h"
+#include "TaskbarHelper.h"
 
 #ifdef DEBUG
 // DX调试信息捕获
@@ -761,11 +762,23 @@ HWND CTaskBarDlg::FindTaskbarHandle(bool& is_scendary_display)
 {
     is_scendary_display = false;
     HWND hTaskbar = nullptr;
+    //显示在副显示器上
     if (theApp.m_taskbar_data.show_taskbar_wnd_in_secondary_display && CWindowsSettingHelper::IsTaskbarShowingInAllDisplays())
     {
-        hTaskbar = ::FindWindow(_T("Shell_SecondaryTrayWnd"), NULL);
-        if (hTaskbar != nullptr)
-            is_scendary_display = true;
+        //获取所有副显示器的任务栏
+        std::vector<HWND> secondary_taskbars;
+        CTaskbarHelper::GetAllSecondaryDisplayTaskbar(secondary_taskbars);
+        if (!secondary_taskbars.empty())
+        {
+            int index = theApp.m_taskbar_data.secondary_display_index;
+            if (index < 0)
+                index = 0;
+            if (index >= static_cast<int>(secondary_taskbars.size()))
+                index = static_cast<int>(secondary_taskbars.size()) - 1;
+            hTaskbar = secondary_taskbars[index];
+            if (hTaskbar != nullptr)
+                is_scendary_display = true;
+        }
     }
     if (hTaskbar == nullptr)
         hTaskbar = ::FindWindow(_T("Shell_TrayWnd"), NULL);

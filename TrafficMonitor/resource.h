@@ -344,6 +344,8 @@
 #define IDC_PIXEL_STATIC1               1210
 #define IDC_WIDGET_WIDTH_STATIC         1211
 #define IDC_PIXEL_STATIC2               1212
+#define IDC_DISPLAY_TO_SHOW_TASKBAR_WND_COMBO 1213
+#define IDC_DISPLAY_TO_SHOW_TASKBAR_WND_STATIC 1214
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -465,7 +467,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        348
 #define _APS_NEXT_COMMAND_VALUE         33665
-#define _APS_NEXT_CONTROL_VALUE         1213
+#define _APS_NEXT_CONTROL_VALUE         1215
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

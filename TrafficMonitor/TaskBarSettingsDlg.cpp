@@ -13,6 +13,7 @@
 #include "TrafficMonitorDlg.h"
 #include "FileDialogEx.h"
 #include "Win11TaskbarSettingDlg.h"
+#include "TaskbarHelper.h"
 
 // CTaskBarSettingsDlg 对话框
 
@@ -131,6 +132,7 @@ void CTaskBarSettingsDlg::SetControlMouseWheelEnable(bool enable)
     m_vertical_margin_edit.SetMouseWheelEnable(enable);
     m_net_speed_figure_max_val_edit.SetMouseWheelEnable(enable);
     m_net_speed_figure_max_val_unit_combo.SetMouseWheelEnable(enable);
+    m_displays_combo.SetMouseWheelEnable(enable);
 }
 
 bool CTaskBarSettingsDlg::InitializeControls()
@@ -171,6 +173,10 @@ bool CTaskBarSettingsDlg::InitializeControls()
         { CtrlTextInfo::L4, IDC_VERTICAL_MARGIN_STATIC },
         { CtrlTextInfo::L3, IDC_VERTICAL_MARGIN_EDIT },
         { CtrlTextInfo::L2, IDC_PIXELS_STATIC1 }
+    });
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L1, IDC_DISPLAY_TO_SHOW_TASKBAR_WND_STATIC },
+        { CtrlTextInfo::C0, IDC_DISPLAY_TO_SHOW_TASKBAR_WND_COMBO }
     });
     RepositionTextBasedControls({
         { CtrlTextInfo::L4, IDC_WIN11_SETTINGS_BUTTON, CtrlTextInfo::W16 }
@@ -220,6 +226,7 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_VERTICAL_MARGIN_EDIT, m_vertical_margin_edit);
     DDX_Control(pDX, IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, m_net_speed_figure_max_val_edit);
     DDX_Control(pDX, IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO, m_net_speed_figure_max_val_unit_combo);
+    DDX_Control(pDX, IDC_DISPLAY_TO_SHOW_TASKBAR_WND_COMBO, m_displays_combo);
 }
 
 
@@ -264,6 +271,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_CBN_SELCHANGE(IDC_DIGIT_NUMBER_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeDigitNumberCombo)
     ON_BN_CLICKED(IDC_WIN11_SETTINGS_BUTTON, &CTaskBarSettingsDlg::OnBnClickedWin11SettingsButton)
     ON_BN_CLICKED(IDC_TASKBAR_WND_IN_SECONDARY_DISPLAY_CHECK, &CTaskBarSettingsDlg::OnBnClickedTaskbarWndInSecondaryDisplayCheck)
+    ON_CBN_SELCHANGE(IDC_DISPLAY_TO_SHOW_TASKBAR_WND_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeDisplayToShowTaskbarWndCombo)
 END_MESSAGE_MAP()
 
 
@@ -410,6 +418,28 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     }
     m_default_style_menu.AppendMenu(MF_SEPARATOR);
     m_default_style_menu.AppendMenu(MF_POPUP | MF_STRING, (UINT)m_modify_default_style_menu.m_hMenu, CCommon::LoadText(IDS_MODIFY_PRESET));
+
+    //获取副显示器的数量
+    std::vector<HWND> secondary_displays;
+    CTaskbarHelper::GetAllSecondaryDisplayTaskbar(secondary_displays);
+    //初始化“显示任务栏窗口的显示器”下拉列表
+    m_displays_combo.AddString(CCommon::LoadText(IDS_PRIMARY_DISPLAY));
+    for (size_t i = 0; i < secondary_displays.size(); i++)
+    {
+        m_displays_combo.AddString(CCommon::LoadTextFormat(IDS_SECONDARY_DISPLAY, { i + 1 }));
+    }
+    if (!m_data.show_taskbar_wnd_in_secondary_display)
+    {
+        m_displays_combo.SetCurSel(0);
+    }
+    else
+    {
+        int combo_index = m_data.secondary_display_index + 1;
+        int combo_item_count = m_displays_combo.GetCount();
+        if (combo_index >= combo_item_count)
+            combo_index = combo_item_count - 1;
+        m_displays_combo.SetCurSel(combo_index);
+    }
 
     //设置是否禁用D2D
     if (!CTaskBarDlgDrawCommonSupport::CheckSupport())
@@ -922,4 +952,21 @@ void CTaskBarSettingsDlg::OnBnClickedWin11SettingsButton()
 void CTaskBarSettingsDlg::OnBnClickedTaskbarWndInSecondaryDisplayCheck()
 {
     m_data.show_taskbar_wnd_in_secondary_display = (IsDlgButtonChecked(IDC_TASKBAR_WND_IN_SECONDARY_DISPLAY_CHECK) != FALSE);
+}
+
+
+void CTaskBarSettingsDlg::OnCbnSelchangeDisplayToShowTaskbarWndCombo()
+{
+    
+    int combo_index = m_displays_combo.GetCurSel();
+    if (combo_index == 0)
+    {
+        m_data.show_taskbar_wnd_in_secondary_display = false;
+    }
+    else
+    {
+        m_data.show_taskbar_wnd_in_secondary_display = true;
+        m_data.secondary_display_index = combo_index - 1;
+
+    }
 }

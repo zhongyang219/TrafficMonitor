@@ -1915,23 +1915,22 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
     if (nIDEvent == TASKBAR_TIMER)
     {
+        ++m_taskbar_timer_cnt;
+        if (m_taskbar_timer_cnt % 5 == 0 && theApp.m_cfg_data.m_show_task_bar_wnd && theApp.m_taskbar_data.show_taskbar_wnd_in_secondary_display)
+        {
+            if (m_tBarDlg->IsTaskbarChanged())
+            {
+                //延迟一段时间后重启任务栏窗口
+                KillTimer(RESTART_TASKBAR_TIMER);
+                SetTimer(RESTART_TASKBAR_TIMER, 500, [](HWND, UINT, UINT_PTR, DWORD) {
+                    theApp.m_pMainWnd->SendMessage(WM_REOPEN_TASKBAR_WND);
+                    ::KillTimer(theApp.m_pMainWnd->GetSafeHwnd(), RESTART_TASKBAR_TIMER);
+                });
+            }
+        }
+
         if (IsTaskbarWndValid())
         {
-            ++m_taskbar_timer_cnt;
-            
-            if (theApp.m_taskbar_data.show_taskbar_wnd_in_secondary_display)
-            {
-                if (m_tBarDlg->IsTaskbarChanged())
-                {
-                    //延迟一段时间后重启任务栏窗口
-                    KillTimer(RESTART_TASKBAR_TIMER);
-                    SetTimer(RESTART_TASKBAR_TIMER, 500, [](HWND, UINT, UINT_PTR, DWORD) {
-                        theApp.m_pMainWnd->SendMessage(WM_REOPEN_TASKBAR_WND);
-                        ::KillTimer(theApp.m_pMainWnd->GetSafeHwnd(), RESTART_TASKBAR_TIMER);
-                    });
-                }
-            }
-
             //启动时就隐藏主窗体的情况下，无法收到dpichange消息，故需要手动检查
             //每次100ms*10执行一次屏幕DPI检查，并且尽可能少的检查操作系统版本
             if (m_taskbar_timer_cnt % 10 == 0 && theApp.m_win_version.IsWindows8Point1OrLater())

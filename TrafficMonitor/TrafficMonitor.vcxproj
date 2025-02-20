@@ -847,6 +847,7 @@
     <ClInclude Include="TaskbarDefaultStyle.h" />
     <ClInclude Include="TaskBarDlg.h" />
     <ClInclude Include="TaskBarDlgDrawCommon.h" />
+    <ClInclude Include="TaskbarHelper.h" />
     <ClInclude Include="TaskbarItemOrderHelper.h" />
     <ClInclude Include="TaskBarSettingsDlg.h" />
     <ClInclude Include="Test.h" />
@@ -945,6 +946,7 @@
     <ClCompile Include="TaskbarDefaultStyle.cpp" />
     <ClCompile Include="TaskBarDlg.cpp" />
     <ClCompile Include="TaskBarDlgDrawCommon.cpp" />
+    <ClCompile Include="TaskbarHelper.cpp" />
     <ClCompile Include="TaskbarItemOrderHelper.cpp" />
     <ClCompile Include="TaskBarSettingsDlg.cpp" />
     <ClCompile Include="Test.cpp" />

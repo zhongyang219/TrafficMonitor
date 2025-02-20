@@ -155,6 +155,8 @@ protected:
 
     CDC* m_pDC{};		//窗口的DC，用来计算窗口的宽度
 
+    //查找任务栏的句柄
+    //is_scendary_display：找到的是否为副显示器的任务栏
     HWND FindTaskbarHandle(bool& is_scendary_display);
     CString GetMouseTipsInfo();		//获取鼠标提示
 

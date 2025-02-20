@@ -53,6 +53,7 @@ protected:
     CSpinEdit m_vertical_margin_edit;
     CSpinEdit m_net_speed_figure_max_val_edit;
     CComboBox2 m_net_speed_figure_max_val_unit_combo;
+    CComboBox2 m_displays_combo;
 
     bool m_style_modified{};
 
@@ -120,4 +121,5 @@ public:
     afx_msg void OnCbnSelchangeDigitNumberCombo();
     afx_msg void OnBnClickedWin11SettingsButton();
     afx_msg void OnBnClickedTaskbarWndInSecondaryDisplayCheck();
+    afx_msg void OnCbnSelchangeDisplayToShowTaskbarWndCombo();
 };

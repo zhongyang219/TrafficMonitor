@@ -529,6 +529,9 @@
     <ClInclude Include="Win11TaskbarDlg.h">
       <Filter>源文件和头文件\TaskBarDlg</Filter>
     </ClInclude>
+    <ClInclude Include="TaskbarHelper.h">
+      <Filter>源文件和头文件\TaskBarDlg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -778,6 +781,9 @@
       <Filter>源文件和头文件\TaskBarDlg</Filter>
     </ClCompile>
     <ClCompile Include="Win11TaskbarDlg.cpp">
+      <Filter>源文件和头文件\TaskBarDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskbarHelper.cpp">
       <Filter>源文件和头文件\TaskBarDlg</Filter>
     </ClCompile>
   </ItemGroup>
