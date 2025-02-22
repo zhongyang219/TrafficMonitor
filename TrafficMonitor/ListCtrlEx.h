@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "afxcmn.h"
 #include "DrawCommon.h"
 #include <set>
@@ -12,16 +12,16 @@ public:
 	CListCtrlEx();
 	~CListCtrlEx();
 
-    void Edit(int row, int col);			//±à¼­Ö¸¶¨µ¥Ôª¸ñ
+    void Edit(int row, int col);			//ç¼–è¾‘æŒ‡å®šå•å…ƒæ ¼
 
-    enum eEditColMethod       //Òª±à¼­µÄÁĞµÄ·½Ê½
+    enum eEditColMethod       //è¦ç¼–è¾‘çš„åˆ—çš„æ–¹å¼
     {
-        EC_NONE,        //ÎŞ
-        EC_ALL,         //È«²¿
-        EC_SPECIFIED    //Ö¸¶¨µÄÁĞ
+        EC_NONE,        //æ— 
+        EC_ALL,         //å…¨éƒ¨
+        EC_SPECIFIED    //æŒ‡å®šçš„åˆ—
     };
     void SetEditColMethod(eEditColMethod method);
-    void SetEditableCol(const std::initializer_list<int>& paras);   //ÉèÖÃÔÊĞí±à¼­µÄÁĞ
+    void SetEditableCol(const std::initializer_list<int>& paras);   //è®¾ç½®å…è®¸ç¼–è¾‘çš„åˆ—
 
 private:
     CEdit m_item_edit;
@@ -41,5 +41,7 @@ protected:
     afx_msg BOOL OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult);
     afx_msg void OnLvnBeginScroll(NMHDR *pNMHDR, LRESULT *pResult);
     afx_msg LRESULT OnTabletQuerysystemgesturestatus(WPARAM wParam, LPARAM lParam);
+public:
+    virtual BOOL PreTranslateMessage(MSG* pMsg);
 };
 

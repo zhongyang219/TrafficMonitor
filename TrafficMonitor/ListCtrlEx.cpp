@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "ListCtrlEx.h"
 
 IMPLEMENT_DYNAMIC(CListCtrlEx, CListCtrl)
@@ -14,20 +14,20 @@ CListCtrlEx::~CListCtrlEx()
 
 void CListCtrlEx::Edit(int row, int col)
 {
-    EnsureVisible(row, FALSE);				//±à¼­Ò»ĞĞÊ±È·±£¸ÃĞĞ¿É¼û
+    EnsureVisible(row, FALSE);				//ç¼–è¾‘ä¸€è¡Œæ—¶ç¡®ä¿è¯¥è¡Œå¯è§
     m_editing = true;
 
     m_edit_row = row;
     m_edit_col = col;
     CRect item_rect;
-    GetSubItemRect(row, col, LVIR_LABEL, item_rect);	//È¡µÃ×ÓÏîµÄ¾ØĞÎ
+    GetSubItemRect(row, col, LVIR_LABEL, item_rect);	//å–å¾—å­é¡¹çš„çŸ©å½¢
 
-    CString text = GetItemText(row, col);		//È¡µÃ×ÓÏîµÄÄÚÈİ
+    CString text = GetItemText(row, col);		//å–å¾—å­é¡¹çš„å†…å®¹
 
-    m_item_edit.SetWindowText(text);		//½«×ÓÏîµÄÄÚÈİÏÔÊ¾µ½±à¼­¿òÖĞ
-    m_item_edit.ShowWindow(SW_SHOW);		//ÏÔÊ¾±à¼­¿ò
-    m_item_edit.MoveWindow(item_rect);		//½«±à¼­¿òÒÆ¶¯µ½×ÓÏîÉÏÃæ£¬¸²¸ÇÔÚ×ÓÏîÉÏ
-    m_item_edit.SetFocus();					//Ê¹±à¼­¿òÈ¡µÃ½¹µã
+    m_item_edit.SetWindowText(text);		//å°†å­é¡¹çš„å†…å®¹æ˜¾ç¤ºåˆ°ç¼–è¾‘æ¡†ä¸­
+    m_item_edit.ShowWindow(SW_SHOW);		//æ˜¾ç¤ºç¼–è¾‘æ¡†
+    m_item_edit.MoveWindow(item_rect);		//å°†ç¼–è¾‘æ¡†ç§»åŠ¨åˆ°å­é¡¹ä¸Šé¢ï¼Œè¦†ç›–åœ¨å­é¡¹ä¸Š
+    m_item_edit.SetFocus();					//ä½¿ç¼–è¾‘æ¡†å–å¾—ç„¦ç‚¹
     m_item_edit.SetSel(0, -1);
 }
 
@@ -48,10 +48,10 @@ void CListCtrlEx::EndEdit()
         if (m_edit_row >= 0 && m_edit_row < GetItemCount())
         {
             CString str;
-            m_item_edit.GetWindowText(str);	//È¡µÃ±à¼­¿òµÄÄÚÈİ
-            SetItemText(m_edit_row, m_edit_col, str);	//½«¸ÃÄÚÈİ¸üĞÂµ½CListCtrlÖĞ
+            m_item_edit.GetWindowText(str);	//å–å¾—ç¼–è¾‘æ¡†çš„å†…å®¹
+            SetItemText(m_edit_row, m_edit_col, str);	//å°†è¯¥å†…å®¹æ›´æ–°åˆ°CListCtrlä¸­
         }
-        m_item_edit.ShowWindow(SW_HIDE);//Òş²Ø±à¼­¿ò
+        m_item_edit.ShowWindow(SW_HIDE);//éšè—ç¼–è¾‘æ¡†
         m_editing = false;
     }
 }
@@ -66,7 +66,7 @@ END_MESSAGE_MAP()
 
 void CListCtrlEx::OnEnKillfocusEdit1()
 {
-    //µ±ÎÄ±¾±à¼­¿Ø¼ş¿Ø¼şÊ§È¥½¹µãÊ±ÏìÓ¦
+    //å½“æ–‡æœ¬ç¼–è¾‘æ§ä»¶æ§ä»¶å¤±å»ç„¦ç‚¹æ—¶å“åº”
     EndEdit();
 }
 
@@ -74,7 +74,7 @@ void CListCtrlEx::OnEnKillfocusEdit1()
 
 void CListCtrlEx::PreSubclassWindow()
 {
-    // TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
+    // TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
     m_item_edit.Create(WS_BORDER | ES_AUTOHSCROLL, CRect(), this, IDC_ITEM_EDITBOX);
     m_item_edit.SetFont(GetFont());
 
@@ -85,9 +85,9 @@ void CListCtrlEx::PreSubclassWindow()
 BOOL CListCtrlEx::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
 {
     LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-    // TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 
-    //Èç¹ûË«»÷µÄÁĞÊÇÒª±à¼­µÄÁĞ
+    //å¦‚æœåŒå‡»çš„åˆ—æ˜¯è¦ç¼–è¾‘çš„åˆ—
     if (m_edit_col_method == EC_ALL
         || (m_edit_col_method == EC_SPECIFIED && m_edit_cols.find(pNMItemActivate->iSubItem) != m_edit_cols.end()))
     {
@@ -104,10 +104,10 @@ BOOL CListCtrlEx::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CListCtrlEx::OnLvnBeginScroll(NMHDR *pNMHDR, LRESULT *pResult)
 {
-    // ´Ë¹¦ÄÜÒªÇó Internet Explorer 5.5 »ò¸ü¸ß°æ±¾¡£
-    // ·ûºÅ _WIN32_IE ±ØĞëÊÇ >= 0x0560¡£
+    // æ­¤åŠŸèƒ½è¦æ±‚ Internet Explorer 5.5 æˆ–æ›´é«˜ç‰ˆæœ¬ã€‚
+    // ç¬¦å· _WIN32_IE å¿…é¡»æ˜¯ >= 0x0560ã€‚
     LPNMLVSCROLL pStateChanged = reinterpret_cast<LPNMLVSCROLL>(pNMHDR);
-    // TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
     EndEdit();
 
     *pResult = 0;
@@ -117,4 +117,20 @@ void CListCtrlEx::OnLvnBeginScroll(NMHDR *pNMHDR, LRESULT *pResult)
 afx_msg LRESULT CListCtrlEx::OnTabletQuerysystemgesturestatus(WPARAM wParam, LPARAM lParam)
 {
     return 0;
+}
+
+
+BOOL CListCtrlEx::PreTranslateMessage(MSG* pMsg)
+{
+    if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
+    {
+        //ç¼–è¾‘çŠ¶æ€ä¸‹æŒ‰å›è½¦é”®ç»“æŸç¼–è¾‘è€Œä¸æ˜¯å…³é—­å¯¹è¯æ¡†
+        if (m_editing)
+        {
+            EndEdit();
+            return TRUE;
+        }
+    }
+
+    return CListCtrl::PreTranslateMessage(pMsg);
 }
