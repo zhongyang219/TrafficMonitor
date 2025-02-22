@@ -122,6 +122,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_COMMAND(ID_PLUGIN_DETAIL, &CTrafficMonitorDlg::OnPluginDetail)
     ON_COMMAND(ID_PLUGIN_OPTIONS_TASKBAR, &CTrafficMonitorDlg::OnPluginOptionsTaksbar)
     ON_COMMAND(ID_PLUGIN_DETAIL_TASKBAR, &CTrafficMonitorDlg::OnPluginDetailTaksbar)
+    ON_WM_POWERBROADCAST()
 END_MESSAGE_MAP()
 
 
@@ -2982,4 +2983,40 @@ void CTrafficMonitorDlg::OnPluginDetailTaksbar()
             dlg.DoModal();
         }
     }
+}
+
+
+UINT CTrafficMonitorDlg::OnPowerBroadcast(UINT nPowerEvent, LPARAM nEventData)
+{
+    // 系统从休眠恢复
+    if (nPowerEvent == PBT_APMRESUMESUSPEND)
+    {
+        //延迟一段时间后重新初始化网络连接
+        KillTimer(INIT_CONNECT_TIMER);
+        static CTrafficMonitorDlg* pThis = this;
+        static int check_times = 0;
+        SetTimer(INIT_CONNECT_TIMER, 10000, [](HWND, UINT, UINT_PTR, DWORD) {
+            pThis->IniConnection();
+            check_times++;
+
+            //写入日志
+            CString info = CCommon::LoadTextFormat(IDS_RESTORE_FROM_SLEEP_LOG, {pThis->m_restart_cnt });
+            CCommon::WriteLog(info, theApp.m_log_path.c_str());
+
+            //如果连接为空，定时器继续运行，每隔一段时间重新初始化连接
+            if (pThis->m_connections.size() == 0)
+            {
+                //超过20次，结束定时器
+                if (check_times >= 20)
+                    pThis->KillTimer(INIT_CONNECT_TIMER);
+            }
+            //成功获取到连接，结束定时器
+            else
+            {
+                pThis->KillTimer(INIT_CONNECT_TIMER);
+                check_times = 0;
+            }
+        });
+    }
+    return CDialog::OnPowerBroadcast(nPowerEvent, nEventData);
 }
