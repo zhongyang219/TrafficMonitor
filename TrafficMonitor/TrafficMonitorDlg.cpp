@@ -15,6 +15,7 @@
 #include "SupportedRenderEnums.h"
 #include "ClassicalTaskbarDlg.h"
 #include "Win11TaskbarDlg.h"
+#include "TaskbarHelper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -731,6 +732,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     bool d2d_turned_on = (theApp.m_taskbar_data.disable_d2d && !optionsDlg.m_tab2_dlg.m_data.disable_d2d);
     //需要重新关闭再打开任务栏窗口的情况
     bool taskbar_changed = (theApp.m_taskbar_data.show_taskbar_wnd_in_secondary_display != optionsDlg.m_tab2_dlg.m_data.show_taskbar_wnd_in_secondary_display
+        || theApp.m_taskbar_data.secondary_display_index != optionsDlg.m_tab2_dlg.m_data.secondary_display_index
         || theApp.m_taskbar_data.disable_d2d != optionsDlg.m_tab2_dlg.m_data.disable_d2d
         || theApp.m_taskbar_data.IsTaskbarTransparent() != optionsDlg.m_tab2_dlg.m_data.IsTaskbarTransparent()
         || theApp.m_taskbar_data.auto_set_background_color != optionsDlg.m_tab2_dlg.m_data.auto_set_background_color
@@ -1919,8 +1921,12 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
         ++m_taskbar_timer_cnt;
         if (m_taskbar_timer_cnt % 5 == 0 && theApp.m_cfg_data.m_show_task_bar_wnd && theApp.m_taskbar_data.show_taskbar_wnd_in_secondary_display)
         {
-            if (m_tBarDlg->IsTaskbarChanged())
+            static int last_taskbar_num = 0;
+            int taskbar_num = CTaskbarHelper::GetSecondaryTaskbarNum();
+            //如果副显示器的任务栏数量发生变化，则重启任务栏窗口
+            if (last_taskbar_num != taskbar_num)
             {
+                last_taskbar_num = taskbar_num;
                 //延迟一段时间后重启任务栏窗口
                 KillTimer(RESTART_TASKBAR_TIMER);
                 SetTimer(RESTART_TASKBAR_TIMER, 500, [](HWND, UINT, UINT_PTR, DWORD) {

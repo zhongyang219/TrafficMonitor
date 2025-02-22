@@ -100,3 +100,17 @@ void CTaskbarHelper::GetAllSecondaryDisplayTaskbar(std::vector<HWND>& secondary_
         secondary_taskbars.push_back(taskbar.hwnd);
     }
 }
+
+int CTaskbarHelper::GetDisplayNum()
+{
+    monitors.clear();
+    EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
+    return static_cast<int>(monitors.size());
+}
+
+int CTaskbarHelper::GetSecondaryTaskbarNum()
+{
+    taskbars.clear();
+    EnumWindows(EnumWindowsProc, 0);
+    return static_cast<int>(taskbars.size());
+}

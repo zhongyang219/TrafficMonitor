@@ -694,19 +694,19 @@ void CTaskBarDlg::ApplyWindowTransparentColor()
 #endif // !COMPILE_FOR_WINXP
 }
 
-bool CTaskBarDlg::IsTaskbarChanged()
-{
-    bool is_scendary_display;
-    static HWND last_taskbar_handle{};
-    HWND taskbar_handle = FindTaskbarHandle(is_scendary_display);
-    bool changed{ false };
-    if (last_taskbar_handle != taskbar_handle)
-    {
-        changed = true;
-        last_taskbar_handle = taskbar_handle;
-    }
-    return changed;
-}
+//bool CTaskBarDlg::IsTaskbarChanged()
+//{
+//    bool is_scendary_display;
+//    static HWND last_taskbar_handle{};
+//    HWND taskbar_handle = FindTaskbarHandle(is_scendary_display);
+//    bool changed{ false };
+//    if (last_taskbar_handle != taskbar_handle)
+//    {
+//        changed = true;
+//        last_taskbar_handle = taskbar_handle;
+//    }
+//    return changed;
+//}
 
 void CTaskBarDlg::WidthChanged()
 {
