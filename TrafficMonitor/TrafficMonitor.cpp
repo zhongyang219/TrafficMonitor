@@ -51,6 +51,7 @@ CTrafficMonitorApp::CTrafficMonitorApp()
 #endif
 
     CheckWindows11Taskbar();
+    m_theme_color = CCommon::GetWindowsThemeColor();
 }
 
 void CTrafficMonitorApp::LoadLanguageConfig()
@@ -303,6 +304,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.show_netspeed_figure = ini.GetBool(L"task_bar", L"show_netspeed_figure", false);
     m_taskbar_data.netspeed_figure_max_value = ini.GetInt(L"task_bar", L"netspeed_figure_max_value", 512);
     m_taskbar_data.netspeed_figure_max_value_unit = ini.GetInt(L"task_bar", L"netspeed_figure_max_value_unit", 0);
+    m_taskbar_data.graph_color_following_system = ini.GetBool(L"task_bar", L"graph_color_following_system", false);
 
     if (CTaskBarDlgDrawCommonSupport::CheckSupport())
         m_taskbar_data.disable_d2d = ini.GetBool(L"task_bar", L"disable_d2d", true);
@@ -482,6 +484,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(L"task_bar", L"show_netspeed_figure", m_taskbar_data.show_netspeed_figure);
     ini.WriteInt(L"task_bar", L"netspeed_figure_max_value", m_taskbar_data.netspeed_figure_max_value);
     ini.WriteInt(L"task_bar", L"netspeed_figure_max_value_unit", m_taskbar_data.netspeed_figure_max_value_unit);
+    ini.WriteBool(L"task_bar", L"graph_color_following_system", m_taskbar_data.graph_color_following_system);
 
     ini.WriteBool(L"task_bar", L"disable_d2d", m_taskbar_data.disable_d2d);
     ini.WriteBool(L"task_bar", L"enable_colorful_emoji", m_taskbar_data.enable_colorful_emoji);
@@ -1358,6 +1361,16 @@ bool CTrafficMonitorApp::DPIFromRect(const RECT& rect, UINT* out_dpi_x, UINT* ou
     HMONITOR h_current_monitor = ::MonitorFromRect(&rect, MONITOR_DEFAULTTONEAREST);
     HRESULT hr = m_dll_functions.GetDpiForMonitor(h_current_monitor, MDT_EFFECTIVE_DPI, out_dpi_x, out_dpi_y);
     return hr == S_OK;
+}
+
+COLORREF CTrafficMonitorApp::GetThemeColor() const
+{
+    return m_theme_color;
+}
+
+void CTrafficMonitorApp::SetThemeColor(COLORREF color)
+{
+    m_theme_color = color;
 }
 
 void CTrafficMonitorApp::OnHelp()

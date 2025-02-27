@@ -124,6 +124,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_COMMAND(ID_PLUGIN_OPTIONS_TASKBAR, &CTrafficMonitorDlg::OnPluginOptionsTaksbar)
     ON_COMMAND(ID_PLUGIN_DETAIL_TASKBAR, &CTrafficMonitorDlg::OnPluginDetailTaksbar)
     ON_WM_POWERBROADCAST()
+    ON_WM_DWMCOLORIZATIONCOLORCHANGED()
 END_MESSAGE_MAP()
 
 
@@ -3043,4 +3044,24 @@ UINT CTrafficMonitorDlg::OnPowerBroadcast(UINT nPowerEvent, LPARAM nEventData)
         });
     }
     return CDialog::OnPowerBroadcast(nPowerEvent, nEventData);
+}
+
+
+void CTrafficMonitorDlg::OnColorizationColorChanged(DWORD dwColorizationColor, BOOL bOpacity)
+{
+    // 此功能要求 Windows Vista 或更高版本。
+    // _WIN32_WINNT 符号必须 >= 0x0600。
+    // TODO: 在此添加消息处理程序代码和/或调用默认值
+
+    static DWORD last_color;
+    if (last_color != dwColorizationColor)
+    {
+        last_color = dwColorizationColor;
+        BYTE red = (dwColorizationColor >> 16) & 0xFF;
+        BYTE green = (dwColorizationColor >> 8) & 0xFF;
+        BYTE blue = dwColorizationColor & 0xFF;
+        COLORREF theme_color = RGB(red, green, blue);
+        theApp.SetThemeColor(theme_color);
+    }
+    CDialog::OnColorizationColorChanged(dwColorizationColor, bOpacity);
 }

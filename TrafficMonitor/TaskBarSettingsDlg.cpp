@@ -68,7 +68,7 @@ void CTaskBarSettingsDlg::DrawStaticColor()
     }
     m_back_color_static.SetFillColor(m_data.back_color);
     //m_trans_color_static.SetFillColor(m_data.transparent_color);
-    m_status_bar_color_static.SetFillColor(m_data.status_bar_color);
+    m_status_bar_color_static.SetFillColor(m_data.GetUsageGraphColor());
 }
 
 void CTaskBarSettingsDlg::IniUnitCombo()
@@ -194,8 +194,9 @@ bool CTaskBarSettingsDlg::InitializeControls()
     { CtrlTextInfo::L2, IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO }
         });
     RepositionTextBasedControls({
-        { CtrlTextInfo::L4, IDC_USAGE_GRAPH_COLOR_STATIC },
-        { CtrlTextInfo::L3, IDC_TEXT_COLOR_STATIC3 }
+        { CtrlTextInfo::L2, IDC_USAGE_GRAPH_COLOR_STATIC },
+        { CtrlTextInfo::L1, IDC_TEXT_COLOR_STATIC3 },
+        { CtrlTextInfo::C0, IDC_USAGE_GRAPH_FOLLOW_SYSTEM_CHECK, CtrlTextInfo::W16 }
         });
     RepositionTextBasedControls({
         { CtrlTextInfo::L4, IDC_GRAPH_DISPLAY_MODE_STATIC },
@@ -272,6 +273,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_WIN11_SETTINGS_BUTTON, &CTaskBarSettingsDlg::OnBnClickedWin11SettingsButton)
     ON_BN_CLICKED(IDC_TASKBAR_WND_IN_SECONDARY_DISPLAY_CHECK, &CTaskBarSettingsDlg::OnBnClickedTaskbarWndInSecondaryDisplayCheck)
     ON_CBN_SELCHANGE(IDC_DISPLAY_TO_SHOW_TASKBAR_WND_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeDisplayToShowTaskbarWndCombo)
+    ON_BN_CLICKED(IDC_USAGE_GRAPH_FOLLOW_SYSTEM_CHECK, &CTaskBarSettingsDlg::OnBnClickedUsageGraphFollowSystemCheck)
 END_MESSAGE_MAP()
 
 
@@ -383,6 +385,8 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     else
         CheckDlgButton(IDC_CM_GRAPH_BAR_RADIO, TRUE);
     CheckDlgButton(IDC_SHOW_DASHED_BOX, m_data.show_graph_dashed_box);
+    CheckDlgButton(IDC_USAGE_GRAPH_FOLLOW_SYSTEM_CHECK, m_data.graph_color_following_system);
+
     m_item_space_edit.SetRange(0, 32);
     m_item_space_edit.SetValue(m_data.item_space);
     CTaskBarDlg* taskbar_dlg{ CTrafficMonitorDlg::Instance()->GetTaskbarWindow() };
@@ -663,6 +667,11 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
         if (colorDlg.DoModal() == IDOK)
         {
             m_data.status_bar_color = colorDlg.GetColor();
+
+            //更改了资源占用图的颜色后，去掉“跟随Windows主题颜色”的勾选
+            CheckDlgButton(IDC_USAGE_GRAPH_FOLLOW_SYSTEM_CHECK, FALSE);
+            m_data.graph_color_following_system = false;
+
             DrawStaticColor();
             m_style_modified = true;
         }
@@ -969,4 +978,11 @@ void CTaskBarSettingsDlg::OnCbnSelchangeDisplayToShowTaskbarWndCombo()
         m_data.secondary_display_index = combo_index - 1;
 
     }
+}
+
+
+void CTaskBarSettingsDlg::OnBnClickedUsageGraphFollowSystemCheck()
+{
+    m_data.graph_color_following_system = (IsDlgButtonChecked(IDC_USAGE_GRAPH_FOLLOW_SYSTEM_CHECK) != FALSE);
+    DrawStaticColor();
 }

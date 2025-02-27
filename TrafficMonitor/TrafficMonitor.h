@@ -167,6 +167,9 @@ public:
 
     bool DPIFromRect(const RECT& rect, UINT* out_dpi_x, UINT* out_dpi_y);
 
+    COLORREF GetThemeColor() const;
+    void SetThemeColor(COLORREF color);
+
 private:
     //int m_no_multistart_warning_time{};       //用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示
     bool m_no_multistart_warning{};         //如果为false，则永远都不会弹出“已经有一个程序正在运行”的警告提示
@@ -180,6 +183,7 @@ private:
     ULONG_PTR m_gdiplusToken{};
 
     bool m_is_windows11_taskbar{ false };  //是否为Windows11的任务栏
+    COLORREF m_theme_color{};
 
 // 重写
 public:

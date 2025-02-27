@@ -122,4 +122,5 @@ public:
     afx_msg void OnBnClickedWin11SettingsButton();
     afx_msg void OnBnClickedTaskbarWndInSecondaryDisplayCheck();
     afx_msg void OnCbnSelchangeDisplayToShowTaskbarWndCombo();
+    afx_msg void OnBnClickedUsageGraphFollowSystemCheck();
 };
