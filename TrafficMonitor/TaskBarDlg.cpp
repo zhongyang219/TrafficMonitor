@@ -902,7 +902,7 @@ void CTaskBarDlg::ApplySettings()
 void CTaskBarDlg::CalculateWindowSize()
 {
     bool horizontal_arrange = theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom;
-    if (theApp.m_taskbar_data.m_tbar_display_item == 0)
+    if (theApp.m_taskbar_data.m_tbar_display_item == 0 && theApp.m_taskbar_data.plugin_display_item.data().empty())
         theApp.m_taskbar_data.m_tbar_display_item |= TDI_UP;        //至少显示一项
 
     m_item_widths.clear();
