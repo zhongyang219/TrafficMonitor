@@ -2766,22 +2766,40 @@ void CTrafficMonitorDlg::OnPaint()
 
 afx_msg LRESULT CTrafficMonitorDlg::OnDpichanged(WPARAM wParam, LPARAM lParam)
 {
-    int dpi = LOWORD(wParam);
-    theApp.SetDPI(dpi);
-    //当系统版本小于Windows 8.1时使用原来的行为
-    if (IsTaskbarWndValid() && !theApp.m_win_version.IsWindows8Point1OrLater())
-    {
-        //为任务栏窗口重新指定DPI
-        m_tBarDlg->SetDPI(dpi);
-        //根据新的DPI重新设置任务栏窗口字体
-        m_tBarDlg->SetTextFont();
-    }
+    static int dpi;
+    static CTrafficMonitorDlg* pThis;
+    dpi = LOWORD(wParam);
+    pThis = this;
 
-    LoadSkinLayout();   //根据当前选择的皮肤获取布局数据
-    SetItemPosition();  //初始化窗口位置
-    LoadBackGroundImage();
-    SetTextFont();      //重新加载字体
-    Invalidate(FALSE);  //重绘界面
+    //由于当悬浮拖动到不同DPI的显示器上时，会短时间内触发多次DPI更改消息，因此这里在收到消息后延迟一段时间后再处理
+    KillTimer(DPI_CHANGE_TIMER);
+    SetTimer(DPI_CHANGE_TIMER, 500, [](HWND, UINT, UINT_PTR, DWORD) {
+        //根据主窗口的位置获取DPI
+        CRect rect;
+        pThis->GetWindowRect(rect);
+        UINT dpi_x, dpi_y;
+        if (theApp.DPIFromRect(rect, &dpi_x, &dpi_y))   //获取成功，则使用根据主窗口位置得到的dpi
+            dpi = dpi_x;
+        TRACE("Dpi changed: %d\n", dpi);
+
+        theApp.SetDPI(dpi);
+        //当系统版本小于Windows 8.1时使用原来的行为
+        if (pThis->IsTaskbarWndValid() && !theApp.m_win_version.IsWindows8Point1OrLater())
+        {
+            //为任务栏窗口重新指定DPI
+            pThis->m_tBarDlg->SetDPI(dpi);
+            //根据新的DPI重新设置任务栏窗口字体
+            pThis->m_tBarDlg->SetTextFont();
+        }
+
+        pThis->LoadSkinLayout();   //根据当前选择的皮肤获取布局数据
+        pThis->SetItemPosition();  //初始化窗口位置
+        pThis->LoadBackGroundImage();
+        pThis->SetTextFont();      //重新加载字体
+        pThis->Invalidate(FALSE);  //重绘界面
+
+        pThis->KillTimer(DPI_CHANGE_TIMER);
+    });
 
     return 0;
 }
