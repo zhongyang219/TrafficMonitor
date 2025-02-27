@@ -6,7 +6,6 @@ class CClassicalTaskbarDlg :
 public:
 
 private:
-
     // 通过 CTaskBarDlg 继承
     virtual void AdjustTaskbarWndPos(bool force_adjust) override;
     void InitTaskbarWnd() override;
@@ -19,7 +18,6 @@ private:
     int m_top_space{};			//最小化窗口和二级窗口窗口顶部的边距（用于任务栏在屏幕左侧或右侧时）
     HWND m_hBar;		//任务栏窗口二级容器的句柄
     HWND m_hMin;		//最小化窗口的句柄
-    HWND m_hNotify;     //任务栏通知区域的句柄
     CRect m_rcBar;		//初始状态时任务栏窗口的矩形区域
     CRect m_rcMin;		//最小化窗口的矩形区域
 
@@ -28,8 +26,5 @@ private:
 
     // 通过 CTaskBarDlg 继承
     void CheckTaskbarOnTopOrBottom() override;
-
-    bool IsCheckNotifyWndWidth();   //是否通过检查通知区的宽度来调整任务栏窗口位置
-
 };
 
