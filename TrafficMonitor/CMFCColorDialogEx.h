@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 // CMFCColorDialogEx
@@ -10,6 +10,9 @@ class CMFCColorDialogEx : public CMFCColorDialog
 public:
 	CMFCColorDialogEx(COLORREF clrInit = 0, DWORD dwFlags = 0 /* reserved */, CWnd* pParentWnd = NULL, HPALETTE hPal = NULL);
 	virtual ~CMFCColorDialogEx();
+
+protected:
+	CFont m_dlg_font;
 
 protected:
 	DECLARE_MESSAGE_MAP()
