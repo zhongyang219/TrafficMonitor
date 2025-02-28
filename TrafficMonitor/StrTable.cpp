@@ -63,6 +63,10 @@ void CStrTable::Init()
 {
     // 获取 IDR_LANGUAGE 资源的所有语言版本
     EnumResourceLanguages(NULL, _T("TEXT"), MAKEINTRESOURCE(IDR_LANGUAGE), EnumResLangProc, reinterpret_cast<LONG_PTR>(&m_language_list));
+    //按bcp47排序
+    std::sort(m_language_list.begin(), m_language_list.end(), [](const LanguageInfo& a, const LanguageInfo& b) {
+        return a.bcp_47 < b.bcp_47;
+    });
 
     //读取字符串资源
     CIniHelper ini(IDR_LANGUAGE);
