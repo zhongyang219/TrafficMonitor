@@ -352,6 +352,9 @@ public:
         }
     }
 
+    //获取Windows主题颜色
+    static COLORREF GetWindowsThemeColor();
+
 };
 
 /**

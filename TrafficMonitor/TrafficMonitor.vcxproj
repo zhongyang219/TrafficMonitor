@@ -286,7 +286,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
       <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
@@ -326,7 +326,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
       <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
     <Midl>
@@ -364,7 +364,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
       <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
@@ -403,7 +403,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
       <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
@@ -442,7 +442,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
       <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
     <Midl>
@@ -480,7 +480,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
       <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
     <Midl>
@@ -523,7 +523,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
       <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
@@ -567,7 +567,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
       <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
     <Midl>
@@ -609,7 +609,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
       <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
@@ -652,7 +652,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
       <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
@@ -695,7 +695,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
       <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
     <Midl>
@@ -737,7 +737,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
       <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
     </Link>
     <Midl>

@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "CMFCColorDialogEx.h"
 #include "Common.h"
+#include "TrafficMonitor.h"
 
 // CMFCColorDialogEx
 
@@ -33,20 +34,23 @@ BOOL CMFCColorDialogEx::OnInitDialog()
 
 	// TODO:  在此添加额外的初始化
 
-	//设置控件字体
-	CWnd* pParent = GetParent();
-	if (pParent != nullptr)
-	{
-		CCommon::SetDialogFont(this, pParent->GetFont());
+	//初始化字体
+	CRect rect;
+	GetWindowRect(rect);
+	FontInfo font_info;
+	font_info.name = theApp.m_str_table.GetLanguageInfo().default_font_name.c_str();
+	font_info.size = 9;
+	UINT dpi_x{}, dpi_y{};
+	int dpi = theApp.GetDpi();
+	if (theApp.DPIFromRect(rect, &dpi_x, &dpi_y))
+		dpi = dpi_x;
+	font_info.Create(m_dlg_font, dpi);
 
-		CWnd* pPropSheet = m_pColourSheetOne->GetParent();
-		if (pPropSheet != nullptr)
-			CCommon::SetDialogFont(pPropSheet, pParent->GetFont());
+	CCommon::SetDialogFont(this, &m_dlg_font);
 
-		//CCommon::SetDialogFont(m_pColourSheetOne, pParent->GetFont());
-		//CCommon::SetDialogFont(m_pColourSheetTwo, pParent->GetFont());
-	}
-
+	CWnd* pPropSheet = m_pColourSheetOne->GetParent();
+	if (pPropSheet != nullptr)
+		CCommon::SetDialogFont(pPropSheet, &m_dlg_font);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE

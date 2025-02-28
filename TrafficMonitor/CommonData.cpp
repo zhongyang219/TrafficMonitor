@@ -229,3 +229,32 @@ unsigned __int64 TaskBarSettingData::GetNetspeedFigureMaxValueInBytes() const
     else
         return static_cast<unsigned __int64>(netspeed_figure_max_value) * 1024 * 1024;
 }
+
+COLORREF TaskBarSettingData::GetUsageGraphColor() const
+{
+    if (graph_color_following_system)
+    {
+        COLORREF theme_color = theApp.GetThemeColor();
+        //转换为HLS
+        double h, l, s;
+        CDrawingManager::RGBtoHSL(theme_color, &h, &s, &l);
+        //根据当前系统深浅色模式指定亮度
+        if (theApp.m_last_light_mode)
+        {
+            //浅色任务栏，将亮度设为0.7
+            l = 0.7;
+        }
+        else
+        {
+            //深色任务栏，将亮度设为0.4
+            l = 0.4;
+        }
+        //转换回RGB
+        COLORREF graph_color = CDrawingManager::HLStoRGB_ONE(h, l, s);
+        return graph_color;
+    }
+    else
+    {
+        return status_bar_color;
+    }
+}

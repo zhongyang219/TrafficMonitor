@@ -225,7 +225,7 @@ void CSetItemOrderDlg::OnOK()
     //    SaveItemChecked(item, is_checked);
     //}
 
-    if (m_display_item == 0)
+    if (m_display_item == 0 && m_plugin_item.data().empty())
         m_display_item = TDI_UP;
 
     CBaseDialog::OnOK();
