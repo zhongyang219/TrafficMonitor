@@ -68,6 +68,11 @@ void CStrTable::Init()
         return a.bcp_47 < b.bcp_47;
     });
 
+    //先读取默认字符串资源，如果当前语言中没有对应字符串，则会使用默认的字符串资源
+    CIniHelper ini_default(IDR_LANGUAGE_DEFAULT);
+    ini_default.GetAllKeyValues(L"text", m_text_string_table);
+    ini_default.GetAllKeyValues(L"menu", m_menu_string_table);
+
     //读取字符串资源
     CIniHelper ini(IDR_LANGUAGE);
     ini.GetAllKeyValues(L"text", m_text_string_table);

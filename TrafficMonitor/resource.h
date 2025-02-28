@@ -78,6 +78,7 @@
 #define IDI_PLUGIN_DISABLED             343
 #define IDD_WIN11_TASKBAR_SETTING_DLG   344
 #define IDR_LANGUAGE                    346
+#define IDR_LANGUAGE_DEFAULT            347
 #define IDS_PLUGIN_DETAILS              388
 #define IDC_STATIC_INFO                 1001
 #define IDC_STATIC1                     1002
