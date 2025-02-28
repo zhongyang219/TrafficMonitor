@@ -68,6 +68,11 @@ bool CPluginManagerDlg::InitializeControls()
         { CtrlTextInfo::L4, IDC_PLUGIN_INFO_BUTTON, CtrlTextInfo::W32 },
         { CtrlTextInfo::L3, IDC_OPTINS_BUTTON, CtrlTextInfo::W32 }
     });
+    RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_PLUGIN_DOWNLOAD_STATIC },
+        { CtrlTextInfo::L3, IDC_PLUGIN_DEV_GUID_STATIC },
+        { CtrlTextInfo::L2, IDC_OPEN_PLUGIN_DIR_STATIC }
+    });
     return true;
 }
 
