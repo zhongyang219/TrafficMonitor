@@ -92,7 +92,16 @@ void CSkinFile::Load(const wstring& file_path)
         m_font.DeleteObject();
 
     //创建字体对象
-    m_skin_info.font_info.Create(m_font, theApp.GetDpi());
+    if (!m_skin_info.font_info.name.IsEmpty() && m_skin_info.font_info.size > 0)
+    {
+        m_skin_info.font_info.Create(m_font, theApp.GetDpi());
+    }
+    else
+    {
+        FontInfo font_info;
+        font_info.name = theApp.m_str_table.GetLanguageInfo().default_font_name.c_str();
+        font_info.Create(m_font, theApp.GetDpi());
+    }
 
     wstring path_dir = file_path_helper.GetDir();
 
@@ -365,10 +374,8 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
 {
     CDrawCommon draw;
     draw.Create(pDC, nullptr);
-    if (!m_skin_info.font_info.name.IsEmpty() && m_skin_info.font_info.size > 0)
-        draw.SetFont(&m_font);
-    else
-        draw.SetFont(theApp.m_pMainWnd->GetFont());
+    //设置字体
+    draw.SetFont(&m_font);
     //绘制背景
     CRect rect_s(CPoint(m_preview_info.s_pos.x, m_preview_info.s_pos.y), CSize(m_layout_info.layout_s.width, m_layout_info.layout_s.height));
     CRect rect_l(CPoint(m_preview_info.l_pos.x, m_preview_info.l_pos.y), CSize(m_layout_info.layout_l.width, m_layout_info.layout_l.height));
@@ -430,7 +437,12 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
         if (m_skin_info.display_text.Get(*iter) == NONE_STR)
             m_skin_info.display_text.Get(*iter) = theApp.m_main_wnd_data.disp_str.Get(*iter);
         if (!m_layout_info.no_label)
-            draw_str.label = m_skin_info.display_text.Get(*iter).c_str();
+        {
+            if (m_skin_info.display_text.IsInvalid())
+                draw_str.label = DispStrings::DefaultString(*iter, true).c_str();
+            else
+                draw_str.label = m_skin_info.display_text.Get(*iter).c_str();
+        }
         map_str[*iter] = draw_str;
     }
 
