@@ -517,7 +517,10 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
                 {
                     //绘制文本
                     DrawStr draw_str;
-                    draw_str.label = plugin_item->GetItemLableText();
+                    if (m_skin_info.display_text.IsInvalid())
+                        draw_str.label = plugin_item->GetItemLableText();
+                    else
+                        draw_str.label = m_skin_info.display_text.Get(plugin_item).c_str();
                     draw_str.value = plugin_item->GetItemValueSampleText();
                     DrawSkinText(draw, draw_str, rect, cl, layout_item.align);
                 }
