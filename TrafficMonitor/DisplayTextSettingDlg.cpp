@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include "TrafficMonitor.h"
 #include "DisplayTextSettingDlg.h"
+#include "TrafficMonitorDlg.h"
+#include "SkinManager.h"
 
 
 // CDisplayTextSettingDlg 对话框
@@ -104,10 +106,26 @@ void CDisplayTextSettingDlg::OnBnClickedRestoreDefaultButton()
 {
     // TODO: 在此添加控件通知处理程序代码
     int item_count = m_list_ctrl.GetItemCount();
-    for (int i{}; i < item_count; i++)
+    CTrafficMonitorDlg* pMainWnd = CTrafficMonitorDlg::Instance();
+    if (m_main_window_text && pMainWnd != nullptr)
     {
-        CommonDisplayItem display_item = GetDisplayItem(i);
-        std::wstring default_text = DispStrings::DefaultString(display_item, m_main_window_text);
-        m_list_ctrl.SetItemText(i, 1, default_text.c_str());
+        //主窗口恢复默认显示文本时，从皮肤获取
+        SkinSettingData skin_setting_data;
+        CSkinManager::SkinSettingDataFronSkin(skin_setting_data, pMainWnd->GetCurSkin());
+        for (int i{}; i < item_count; i++)
+        {
+            CommonDisplayItem display_item = GetDisplayItem(i);
+            std::wstring default_text = skin_setting_data.disp_str.Get(display_item);
+            m_list_ctrl.SetItemText(i, 1, default_text.c_str());
+        }
+    }
+    else
+    {
+        for (int i{}; i < item_count; i++)
+        {
+            CommonDisplayItem display_item = GetDisplayItem(i);
+            std::wstring default_text = DispStrings::DefaultString(display_item, m_main_window_text);
+            m_list_ctrl.SetItemText(i, 1, default_text.c_str());
+        }
     }
 }

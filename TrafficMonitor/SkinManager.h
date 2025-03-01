@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "CommonData.h"
+#include "SkinFile.h"
 
 class CSkinManager
 {
@@ -14,6 +15,8 @@ public:
     void AddSkinSettingData(const std::wstring& skin_name, const SkinSettingData& data);
 
     void Save();
+
+    static void SkinSettingDataFronSkin(SkinSettingData& skin_setting_data, const CSkinFile& skin_file);
 
 private:
     CSkinManager()

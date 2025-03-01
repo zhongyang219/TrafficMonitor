@@ -122,3 +122,52 @@ void CSkinManager::Save()
         ini.Save();
     }
 }
+
+void CSkinManager::SkinSettingDataFronSkin(SkinSettingData& skin_setting_data, const CSkinFile& skin_file)
+{
+    //获取皮肤的文字颜色
+    skin_setting_data.specify_each_item_color = skin_file.GetSkinInfo().specify_each_item_color;
+    int i{};
+    for (const auto& item : theApp.m_plugins.AllDisplayItemsWithPlugins())
+    {
+        skin_setting_data.text_colors[item] = skin_file.GetSkinInfo().TextColor(i);
+        i++;
+    }
+    //获取皮肤的字体
+    if (!skin_file.GetSkinInfo().font_info.name.IsEmpty())
+    {
+        skin_setting_data.font.name = skin_file.GetSkinInfo().font_info.name;
+        skin_setting_data.font.bold = skin_file.GetSkinInfo().font_info.bold;
+        skin_setting_data.font.italic = skin_file.GetSkinInfo().font_info.italic;
+        skin_setting_data.font.underline = skin_file.GetSkinInfo().font_info.underline;
+        skin_setting_data.font.strike_out = skin_file.GetSkinInfo().font_info.strike_out;
+    }
+    else
+    {
+        skin_setting_data.font.name = theApp.m_str_table.GetLanguageInfo().default_font_name.c_str();
+    }
+    if (skin_file.GetSkinInfo().font_info.size >= MIN_FONT_SIZE && skin_file.GetSkinInfo().font_info.size <= MAX_FONT_SIZE)
+        skin_setting_data.font.size = skin_file.GetSkinInfo().font_info.size;
+
+    //获取项目的显示文本
+    if (!skin_file.GetLayoutInfo().no_label)
+    {
+        if (!skin_file.GetSkinInfo().display_text.IsInvalid())
+        {
+            skin_setting_data.disp_str = skin_file.GetSkinInfo().display_text;
+        }
+        //获取皮肤默认的显示文本
+        else
+        {
+            //获取皮肤所有显示项目
+            std::set<CommonDisplayItem> skin_all_items;
+            for (const auto& layout_items : skin_file.GetLayoutInfo().layout_l.layout_items)
+                skin_all_items.insert(layout_items.first);
+            for (const auto& layout_items : skin_file.GetLayoutInfo().layout_s.layout_items)
+                skin_all_items.insert(layout_items.first);
+            //获取所有显示项目的默认显示文本
+            for (const auto& display_item : skin_all_items)
+                skin_setting_data.disp_str.Get(display_item) = DispStrings::DefaultString(display_item, true);
+        }
+    }
+}

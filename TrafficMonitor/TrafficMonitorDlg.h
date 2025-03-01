@@ -39,6 +39,8 @@ public:
     enum { IDD = IDD_TRAFFICMONITOR_DIALOG };
 #endif
 
+    const CSkinFile& GetCurSkin() const { return m_skin; }
+
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 

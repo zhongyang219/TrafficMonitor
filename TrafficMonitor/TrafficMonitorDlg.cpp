@@ -972,56 +972,7 @@ void CTrafficMonitorDlg::ApplySkin(int skin_index)
     SkinSettingData cur_skin_data;
     if (!CSkinManager::Instance().GetSkinSettingDataByIndex(m_skin_selected, cur_skin_data))
     {
-        //获取皮肤的文字颜色
-        cur_skin_data.specify_each_item_color = m_skin.GetSkinInfo().specify_each_item_color;
-        int i{};
-        for (const auto& item : theApp.m_plugins.AllDisplayItemsWithPlugins())
-        {
-            cur_skin_data.text_colors[item] = m_skin.GetSkinInfo().TextColor(i);
-            i++;
-        }
-        //SetTextColor();
-        //获取皮肤的字体
-        //if (theApp.m_general_data.allow_skin_cover_font)
-        //{
-            if (!m_skin.GetSkinInfo().font_info.name.IsEmpty())
-            {
-                cur_skin_data.font.name = m_skin.GetSkinInfo().font_info.name;
-                cur_skin_data.font.bold = m_skin.GetSkinInfo().font_info.bold;
-                cur_skin_data.font.italic = m_skin.GetSkinInfo().font_info.italic;
-                cur_skin_data.font.underline = m_skin.GetSkinInfo().font_info.underline;
-                cur_skin_data.font.strike_out = m_skin.GetSkinInfo().font_info.strike_out;
-            }
-            else
-            {
-                cur_skin_data.font.name = theApp.m_str_table.GetLanguageInfo().default_font_name.c_str();
-            }
-
-            if (m_skin.GetSkinInfo().font_info.size >= MIN_FONT_SIZE && m_skin.GetSkinInfo().font_info.size <= MAX_FONT_SIZE)
-                cur_skin_data.font.size = m_skin.GetSkinInfo().font_info.size;
-            //SetTextFont();
-        //}
-        //获取项目的显示文本
-        if (!m_skin.GetLayoutInfo().no_label)
-        {
-            if (!m_skin.GetSkinInfo().display_text.IsInvalid())
-            {
-                cur_skin_data.disp_str = m_skin.GetSkinInfo().display_text;
-            }
-            //获取皮肤默认的显示文本
-            else
-            {
-                //获取皮肤所有显示项目
-                std::set<CommonDisplayItem> skin_all_items;
-                for (const auto& layout_items : m_skin.GetLayoutInfo().layout_l.layout_items)
-                    skin_all_items.insert(layout_items.first);
-                for (const auto& layout_items : m_skin.GetLayoutInfo().layout_s.layout_items)
-                    skin_all_items.insert(layout_items.first);
-                //获取所有显示项目的默认显示文本
-                for (const auto& display_item : skin_all_items)
-                    cur_skin_data.disp_str.Get(display_item) = DispStrings::DefaultString(display_item, true);
-            }
-        }
+        CSkinManager::SkinSettingDataFronSkin(cur_skin_data, m_skin);
     }
     theApp.m_main_wnd_data.FormSkinSettingData(cur_skin_data);
     SetTextFont();

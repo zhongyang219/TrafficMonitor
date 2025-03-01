@@ -8,6 +8,8 @@
 #include "CMFCColorDialogEx.h"
 #include "DisplayTextSettingDlg.h"
 #include "FileDialogEx.h"
+#include "TrafficMonitorDlg.h"
+#include "SkinManager.h"
 
 // CMainWndSettingsDlg 对话框
 
@@ -41,10 +43,11 @@ bool CMainWndSettingsDlg::InitializeControls()
         { CtrlTextInfo::R3, IDC_SET_FONT_BUTTON, CtrlTextInfo::W16 }
         });
     RepositionTextBasedControls({
-        { CtrlTextInfo::L4, IDC_TXT_COLOR_LABEL_STATIC },
-        { CtrlTextInfo::L3, IDC_TEXT_COLOR_STATIC },
-        { CtrlTextInfo::L2, IDC_SPECIFY_EACH_ITEM_COLOR_CHECK, CtrlTextInfo::W16 }
-        });
+        { CtrlTextInfo::L2, IDC_TXT_COLOR_LABEL_STATIC },
+        { CtrlTextInfo::L1, IDC_TEXT_COLOR_STATIC },
+        { CtrlTextInfo::C0, IDC_SPECIFY_EACH_ITEM_COLOR_CHECK, CtrlTextInfo::W16 },
+        { CtrlTextInfo::R1, IDC_RESOTRE_SKIN_DEFAULT_BUTTON, CtrlTextInfo::W16 }
+    });
 
     RepositionTextBasedControls({
         { CtrlTextInfo::L4, IDC_DISPLAY_TEXT_SETTING_BUTTON, CtrlTextInfo::W16 }
@@ -166,6 +169,7 @@ BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_MOUSE_PENETRATE_CHECK, &CMainWndSettingsDlg::OnBnClickedMousePenetrateCheck)
     ON_BN_CLICKED(IDC_LOCK_WINDOW_POS_CHECK, &CMainWndSettingsDlg::OnBnClickedLockWindowPosCheck)
     ON_BN_CLICKED(IDC_ALOW_OUT_OF_BORDER_CHECK, &CMainWndSettingsDlg::OnBnClickedAlowOutOfBorderCheck)
+    ON_BN_CLICKED(IDC_RESOTRE_SKIN_DEFAULT_BUTTON, &CMainWndSettingsDlg::OnBnClickedResotreSkinDefaultButton)
 END_MESSAGE_MAP()
 
 
@@ -585,4 +589,22 @@ void CMainWndSettingsDlg::OnBnClickedAlowOutOfBorderCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.m_alow_out_of_border = IsDlgButtonChecked(IDC_ALOW_OUT_OF_BORDER_CHECK) != 0;
+}
+
+
+void CMainWndSettingsDlg::OnBnClickedResotreSkinDefaultButton()
+{
+    SkinSettingData skin_setting_data;
+    CTrafficMonitorDlg* pMainWnd = CTrafficMonitorDlg::Instance();
+    if (pMainWnd != nullptr)
+    {
+        CSkinManager::SkinSettingDataFronSkin(skin_setting_data, pMainWnd->GetCurSkin());
+        m_data.text_colors = skin_setting_data.text_colors;
+        m_data.specify_each_item_color = skin_setting_data.specify_each_item_color;
+        m_data.font = skin_setting_data.font;
+
+        SetDlgItemText(IDC_FONT_NAME_EDIT, m_data.font.name);
+        SetDlgItemText(IDC_FONT_SIZE_EDIT, std::to_wstring(m_data.font.size).c_str());
+        DrawStaticColor();
+    }
 }

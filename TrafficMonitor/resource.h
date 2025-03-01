@@ -113,6 +113,7 @@
 #define IDC_STATIC_DONATE               1022
 #define IDC_TEXT_COLOR_STATIC           1022
 #define IDC_UPLOAD_EDIT                 1023
+#define IDC_RESOTRE_SKIN_DEFAULT_BUTTON 1023
 #define IDC_DOWNLOAD_EDIT               1024
 #define IDC_CPU_EDIT                    1025
 #define IDC_MEMORY_EDIT                 1026
