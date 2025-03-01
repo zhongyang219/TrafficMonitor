@@ -24,7 +24,13 @@ CSkinAutoAdaptSettingDlg::~CSkinAutoAdaptSettingDlg()
 
 int CSkinAutoAdaptSettingDlg::FindSkinIndex(const wstring& skin_name)
 {
-    auto iter = std::find(m_skins.begin(), m_skins.end(), skin_name);
+    std::wstring _skin_name{ skin_name };
+    //如果名称前面有斜杠，则将它去掉
+    if (!_skin_name.empty() && (_skin_name[0] == L'\\' || _skin_name[0] == L'/'))
+    {
+        _skin_name = _skin_name.substr(1);
+    }
+    auto iter = std::find(m_skins.begin(), m_skins.end(), _skin_name);
     if (iter == m_skins.end())
         return 0;
     return iter - m_skins.begin();
@@ -66,11 +72,8 @@ BOOL CSkinAutoAdaptSettingDlg::OnInitDialog()
     CBaseDialog::OnInitDialog();
 
     //初始化下拉列表
-    for (const auto& skin_path : m_skins)
+    for (const auto& skin_name : m_skins)
     {
-        wstring skin_name;
-        size_t index = skin_path.rfind(L'\\');
-        skin_name = skin_path.substr(index + 1);
         m_dark_mode_skin_combo.AddString(skin_name.c_str());
         m_light_mode_skin_combo.AddString(skin_name.c_str());
     }

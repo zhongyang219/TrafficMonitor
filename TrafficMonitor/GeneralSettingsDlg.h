@@ -75,8 +75,6 @@ public:
     afx_msg void OnBnClickedCheckNowButton();
     afx_msg void OnBnClickedCheckUpdateCheck();
     afx_msg void OnBnClickedAutoRunCheck();
-    afx_msg void OnBnClickedAllowSkinFontCheck();
-    afx_msg void OnBnClickedAllowSkinDispStrCheck();
     virtual void OnOK();
     afx_msg void OnBnClickedTodayTrafficTipCheck();
     afx_msg void OnBnClickedMemoryUsageTipCheck();

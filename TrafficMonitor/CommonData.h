@@ -336,8 +336,6 @@ struct GeneralSettingData
     bool check_update_when_start{ true };
     int update_source{};                    //更新源。0: GitHub; 1: Gitee
     bool auto_run{ false };
-    bool allow_skin_cover_font{ true };
-    bool allow_skin_cover_text{ true };
     bool show_notify_icon{ true };    //显示通知区域图标
 //通知消息
     bool traffic_tip_enable{ false };       //是否启用流量超出时提示

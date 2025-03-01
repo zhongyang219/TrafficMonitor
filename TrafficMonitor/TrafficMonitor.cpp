@@ -67,8 +67,8 @@ void CTrafficMonitorApp::LoadConfig()
 
     //常规设置
     m_general_data.check_update_when_start = ini.GetBool(_T("general"), _T("check_update_when_start"), true);
-    m_general_data.allow_skin_cover_font = ini.GetBool(_T("general"), _T("allow_skin_cover_font"), true);
-    m_general_data.allow_skin_cover_text = ini.GetBool(_T("general"), _T("allow_skin_cover_text"), true);
+    //m_general_data.allow_skin_cover_font = ini.GetBool(_T("general"), _T("allow_skin_cover_font"), true);
+    //m_general_data.allow_skin_cover_text = ini.GetBool(_T("general"), _T("allow_skin_cover_text"), true);
     m_general_data.show_all_interface = ini.GetBool(L"general", L"show_all_interface", false);
     bool is_chinese_language{ m_str_table.IsSimplifiedChinese() };     //当前语言是否为简体中文
     m_general_data.update_source = ini.GetInt(L"general", L"update_source", is_chinese_language ? 1 : 0);   //如果当前语言为简体，则默认更新源为Gitee，否则为GitHub
@@ -313,8 +313,8 @@ void CTrafficMonitorApp::SaveConfig()
 
     //常规设置
     ini.WriteBool(_T("general"), _T("check_update_when_start"), m_general_data.check_update_when_start);
-    ini.WriteBool(_T("general"), _T("allow_skin_cover_font"), m_general_data.allow_skin_cover_font);
-    ini.WriteBool(_T("general"), _T("allow_skin_cover_text"), m_general_data.allow_skin_cover_text);
+    //ini.WriteBool(_T("general"), _T("allow_skin_cover_font"), m_general_data.allow_skin_cover_font);
+    //ini.WriteBool(_T("general"), _T("allow_skin_cover_text"), m_general_data.allow_skin_cover_text);
     ini.WriteInt(_T("general"), _T("language"), static_cast<int>(m_general_data.language));
     ini.WriteInt(L"general", L"update_source", m_general_data.update_source);
     ini.WriteBool(L"general", L"show_all_interface", m_general_data.show_all_interface);

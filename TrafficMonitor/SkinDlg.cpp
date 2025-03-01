@@ -68,19 +68,19 @@ void CSkinDlg::ShowPreview()
 
     //显示皮肤作者
     SetDlgItemText(IDC_SKIN_INFO, CCommon::LoadText(IDS_SKIN_AUTHOUR, m_skin_data.GetSkinInfo().skin_author.c_str()));
-    //设置提示信息
-    bool cover_font_setting{ !m_skin_data.GetSkinInfo().font_info.name.IsEmpty() || (m_skin_data.GetSkinInfo().font_info.size >= MIN_FONT_SIZE && m_skin_data.GetSkinInfo().font_info.size <= MAX_FONT_SIZE) };
-    bool cover_str_setting{ !m_skin_data.GetSkinInfo().display_text.IsInvalid() };
-    cover_font_setting = cover_font_setting && theApp.m_general_data.allow_skin_cover_font;
-    cover_str_setting = cover_str_setting && theApp.m_general_data.allow_skin_cover_text;
-    if (cover_font_setting && cover_str_setting)
-        m_notify_static.SetWindowTextEx(CCommon::LoadText(IDS_OVERWRITE_FONT_TEXT_WARNING));
-    else if (cover_font_setting)
-        m_notify_static.SetWindowTextEx(CCommon::LoadText(IDS_OVERWRITE_FONT_WARNING));
-    else if (cover_str_setting)
-        m_notify_static.SetWindowTextEx(CCommon::LoadText(IDS_OVERWRITE_TEXT_WARNING));
-    else
-        m_notify_static.SetWindowTextEx(_T(""));
+    ////设置提示信息
+    //bool cover_font_setting{ !m_skin_data.GetSkinInfo().font_info.name.IsEmpty() || (m_skin_data.GetSkinInfo().font_info.size >= MIN_FONT_SIZE && m_skin_data.GetSkinInfo().font_info.size <= MAX_FONT_SIZE) };
+    //bool cover_str_setting{ !m_skin_data.GetSkinInfo().display_text.IsInvalid() };
+    //cover_font_setting = cover_font_setting && theApp.m_general_data.allow_skin_cover_font;
+    //cover_str_setting = cover_str_setting && theApp.m_general_data.allow_skin_cover_text;
+    //if (cover_font_setting && cover_str_setting)
+    //    m_notify_static.SetWindowTextEx(CCommon::LoadText(IDS_OVERWRITE_FONT_TEXT_WARNING));
+    //else if (cover_font_setting)
+    //    m_notify_static.SetWindowTextEx(CCommon::LoadText(IDS_OVERWRITE_FONT_WARNING));
+    //else if (cover_str_setting)
+    //    m_notify_static.SetWindowTextEx(CCommon::LoadText(IDS_OVERWRITE_TEXT_WARNING));
+    //else
+    //m_notify_static.SetWindowTextEx(_T(""));
 }
 
 
