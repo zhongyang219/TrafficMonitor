@@ -45,8 +45,8 @@ public:
     void LoadDisplayStr(const wchar_t* AppName, DispStrings& disp_str, bool is_main_window) const;
     void SaveDisplayStr(const wchar_t* AppName, const DispStrings& disp_str);
 
-    void LoadPluginDisplayStr(bool is_main_window);
-    void SavePluginDisplayStr(bool is_main_window);
+    void LoadPluginDisplayStr(const wchar_t* AppName, DispStrings& disp_str);
+    void SavePluginDisplayStr(const wchar_t* AppName, const DispStrings& disp_str);
 
     // 获取带有指定前缀的所有AppName（不含前缀）
     vector<wstring> GetAllAppName(const wstring& prefix) const;

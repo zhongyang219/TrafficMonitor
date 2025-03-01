@@ -388,23 +388,19 @@ void CIniHelper::SaveDisplayStr(const wchar_t* AppName, const DispStrings& disp_
     WriteString(AppName, _T("today_traffic_string"), disp_str.Get(TDI_TODAY_TRAFFIC));
 }
 
-void CIniHelper::LoadPluginDisplayStr(bool is_main_window)
+void CIniHelper::LoadPluginDisplayStr(const wchar_t* AppName, DispStrings& disp_str)
 {
-    DispStrings& disp_str{ is_main_window ? theApp.m_main_wnd_data.disp_str : theApp.m_taskbar_data.disp_str };
-    std::wstring app_name{ is_main_window ? L"plugin_display_str_main_window" : L"plugin_display_str_taskbar_window" };
     for (const auto& plugin : theApp.m_plugins.GetPluginItems())
     {
-        disp_str.Load(plugin->GetItemId(), GetString(app_name.c_str(), plugin->GetItemId(), plugin->GetItemLableText()));
+        disp_str.Load(plugin->GetItemId(), GetString(AppName, plugin->GetItemId(), plugin->GetItemLableText()));
     }
 }
 
-void CIniHelper::SavePluginDisplayStr(bool is_main_window)
+void CIniHelper::SavePluginDisplayStr(const wchar_t* AppName, const DispStrings& disp_str)
 {
-    DispStrings& disp_str{ is_main_window ? theApp.m_main_wnd_data.disp_str : theApp.m_taskbar_data.disp_str };
-    std::wstring app_name{ is_main_window ? L"plugin_display_str_main_window" : L"plugin_display_str_taskbar_window" };
     for (const auto& plugin : theApp.m_plugins.GetPluginItems())
     {
-        WriteString(app_name.c_str(), plugin->GetItemId(), disp_str.Get(plugin));
+        WriteString(AppName, plugin->GetItemId(), disp_str.Get(plugin));
     }
 }
 

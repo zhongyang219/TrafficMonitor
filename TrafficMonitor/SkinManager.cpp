@@ -39,6 +39,7 @@ void CSkinManager::Init()
                 ini.LoadFontData(app_name.c_str(), data.font, default_font);
                 //显示文本
                 ini.LoadDisplayStr(app_name.c_str(), data.disp_str, true);
+                ini.LoadPluginDisplayStr(app_name.c_str(), data.disp_str);
 
                 m_skin_setting_data_map[skin_name] = data;
             }
@@ -119,6 +120,7 @@ void CSkinManager::Save()
         ini.SaveFontData(app_name.c_str(), data.second.font);
         //显示文本
         ini.SaveDisplayStr(app_name.c_str(), data.second.disp_str);
+        ini.SavePluginDisplayStr(app_name.c_str(), data.second.disp_str);
         ini.Save();
     }
 }

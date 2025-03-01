@@ -143,7 +143,7 @@ void CTrafficMonitorApp::LoadConfig()
     ini.LoadDisplayStr(L"config", m_main_wnd_data.disp_str, true);
 
     //载入插件项目的显示文本设置
-    ini.LoadPluginDisplayStr(true);
+    ini.LoadPluginDisplayStr(L"plugin_display_str_main_window", m_main_wnd_data.disp_str);
 
     m_main_wnd_data.speed_short_mode = ini.GetBool(_T("config"), _T("speed_short_mode"), false);
     m_main_wnd_data.separate_value_unit_with_space = ini.GetBool(_T("config"), _T("separate_value_unit_with_space"), true);
@@ -232,7 +232,7 @@ void CTrafficMonitorApp::LoadConfig()
 
     //载入显示文本设置
     ini.LoadDisplayStr(L"task_bar", m_taskbar_data.disp_str, false);
-    ini.LoadPluginDisplayStr(false);
+    ini.LoadPluginDisplayStr(L"plugin_display_str_taskbar_window", m_taskbar_data.disp_str);
 
     m_taskbar_data.tbar_wnd_on_left = ini.GetBool(_T("task_bar"), _T("task_bar_wnd_on_left"), false);
     m_taskbar_data.speed_short_mode = ini.GetBool(_T("task_bar"), _T("task_bar_speed_short_mode"), false);
@@ -356,7 +356,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(L"config", L"hide_main_wnd_when_fullscreen", m_main_wnd_data.hide_main_wnd_when_fullscreen);
 
     ini.SaveDisplayStr(L"config", m_main_wnd_data.disp_str);
-    ini.SavePluginDisplayStr(true);
+    ini.SavePluginDisplayStr(L"plugin_display_str_main_window", m_main_wnd_data.disp_str);
 
     //将当前皮肤设置保存到SkinManager
     SkinSettingData skin_data = m_main_wnd_data.ToSkinSettingData();
@@ -403,7 +403,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"task_bar", L"secondary_display_index", m_taskbar_data.secondary_display_index);
 
     ini.SaveDisplayStr(L"task_bar", m_taskbar_data.disp_str);
-    ini.SavePluginDisplayStr(false);
+    ini.SavePluginDisplayStr(L"plugin_display_str_taskbar_window", m_taskbar_data.disp_str);
 
     ini.WriteBool(L"task_bar", L"task_bar_wnd_on_left", m_taskbar_data.tbar_wnd_on_left);
     ini.WriteBool(L"task_bar", L"task_bar_wnd_snap", m_taskbar_data.tbar_wnd_snap);
