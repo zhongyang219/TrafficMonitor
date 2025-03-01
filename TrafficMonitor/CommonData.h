@@ -66,7 +66,7 @@ private:
 public:
     //获取一个显示的文本
     wstring& Get(CommonDisplayItem item);
-    const wstring& Get(CommonDisplayItem item) const;
+    const wstring& GetConst(CommonDisplayItem item) const;
 
     const std::map<CommonDisplayItem, wstring>& GetAllItems() const;
 

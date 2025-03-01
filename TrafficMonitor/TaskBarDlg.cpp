@@ -364,7 +364,7 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
     //绘制标签
     if (label_width > 0)
     {
-        wstring str_label = theApp.m_taskbar_data.disp_str.Get(type);
+        wstring str_label = theApp.m_taskbar_data.disp_str.GetConst(type);
         //if (theApp.m_taskbar_data.swap_up_down)
         //{
         //    if (type == TDI_UP)
@@ -570,7 +570,7 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
             }
         }
         //画标签
-        CString lable_text = theApp.m_taskbar_data.disp_str.Get(item).c_str();
+        CString lable_text = theApp.m_taskbar_data.disp_str.GetConst(item).c_str();
         lable_text += L' ';
         drawer.DrawWindowText(rect_label, lable_text, label_text_color, (vertical ? Alignment::CENTER : Alignment::LEFT));
         //画数值
@@ -927,7 +927,7 @@ void CTaskBarDlg::CalculateWindowSize()
                 }
                 else
                 {
-                    CString lable_text = theApp.m_taskbar_data.disp_str.Get(plugin).c_str();
+                    CString lable_text = theApp.m_taskbar_data.disp_str.GetConst(plugin).c_str();
                     if (!lable_text.IsEmpty())
                         lable_text += L' ';
                     label_width = m_pDC->GetTextExtent(lable_text).cx;
@@ -936,7 +936,7 @@ void CTaskBarDlg::CalculateWindowSize()
         }
         else
         {
-            item_widths[*iter].label_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.Get(*iter).c_str()).cx;
+            item_widths[*iter].label_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.GetConst(*iter).c_str()).cx;
         }
     }
 

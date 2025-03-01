@@ -373,19 +373,26 @@ void CIniHelper::LoadDisplayStr(const wchar_t* AppName, DispStrings& disp_str, b
 
 void CIniHelper::SaveDisplayStr(const wchar_t* AppName, const DispStrings& disp_str)
 {
-    WriteString(AppName, _T("up_string"), disp_str.Get(TDI_UP));
-    WriteString(AppName, _T("down_string"), disp_str.Get(TDI_DOWN));
-    WriteString(AppName, _T("total_speed_string"), disp_str.Get(TDI_TOTAL_SPEED));
-    WriteString(AppName, _T("cpu_string"), disp_str.Get(TDI_CPU));
-    WriteString(AppName, _T("memory_string"), disp_str.Get(TDI_MEMORY));
-    WriteString(AppName, _T("gpu_string"), disp_str.Get(TDI_GPU_USAGE));
-    WriteString(AppName, _T("cpu_temp_string"), disp_str.Get(TDI_CPU_TEMP));
-    WriteString(AppName, _T("cpu_freq_string"), disp_str.Get(TDI_CPU_FREQ));
-    WriteString(AppName, _T("gpu_temp_string"), disp_str.Get(TDI_GPU_TEMP));
-    WriteString(AppName, _T("hdd_temp_string"), disp_str.Get(TDI_HDD_TEMP));
-    WriteString(AppName, _T("main_board_temp_string"), disp_str.Get(TDI_MAIN_BOARD_TEMP));
-    WriteString(AppName, _T("hdd_string"), disp_str.Get(TDI_HDD_USAGE));
-    WriteString(AppName, _T("today_traffic_string"), disp_str.Get(TDI_TODAY_TRAFFIC));
+    auto writeDisplayString = [&](const wchar_t* key_name, DisplayItem display_item) {
+        if (disp_str.GetAllItems().find(display_item) != disp_str.GetAllItems().end())
+        {
+            WriteString(AppName, key_name, disp_str.GetConst(display_item));
+        }
+    };
+
+    writeDisplayString(_T("up_string"), TDI_UP);
+    writeDisplayString(_T("down_string"), TDI_DOWN);
+    writeDisplayString(_T("total_speed_string"), TDI_TOTAL_SPEED);
+    writeDisplayString(_T("cpu_string"), TDI_CPU);
+    writeDisplayString(_T("memory_string"), TDI_MEMORY);
+    writeDisplayString(_T("gpu_string"), TDI_GPU_USAGE);
+    writeDisplayString(_T("cpu_temp_string"), TDI_CPU_TEMP);
+    writeDisplayString(_T("cpu_freq_string"), TDI_CPU_FREQ);
+    writeDisplayString(_T("gpu_temp_string"), TDI_GPU_TEMP);
+    writeDisplayString(_T("hdd_temp_string"), TDI_HDD_TEMP);
+    writeDisplayString(_T("main_board_temp_string"), TDI_MAIN_BOARD_TEMP);
+    writeDisplayString(_T("hdd_string"), TDI_HDD_USAGE);
+    writeDisplayString(_T("today_traffic_string"), TDI_TODAY_TRAFFIC);
 }
 
 void CIniHelper::LoadPluginDisplayStr(const wchar_t* AppName, DispStrings& disp_str)
@@ -400,7 +407,8 @@ void CIniHelper::SavePluginDisplayStr(const wchar_t* AppName, const DispStrings&
 {
     for (const auto& plugin : theApp.m_plugins.GetPluginItems())
     {
-        WriteString(AppName, plugin->GetItemId(), disp_str.Get(plugin));
+        if (disp_str.GetAllItems().find(plugin) != disp_str.GetAllItems().end())
+            WriteString(AppName, plugin->GetItemId(), disp_str.GetConst(plugin));
     }
 }
 

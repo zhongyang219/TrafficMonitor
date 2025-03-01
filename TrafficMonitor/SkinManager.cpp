@@ -153,19 +153,20 @@ void CSkinManager::SkinSettingDataFronSkin(SkinSettingData& skin_setting_data, c
     if (skin_file.GetSkinInfo().font_info.size >= MIN_FONT_SIZE && skin_file.GetSkinInfo().font_info.size <= MAX_FONT_SIZE)
         skin_setting_data.font.size = skin_file.GetSkinInfo().font_info.size;
 
+    //获取皮肤所有显示项目
+    std::set<CommonDisplayItem> skin_all_items;
+    skin_file.GetSkinDisplayItems(skin_all_items);
     //获取项目的显示文本
     if (!skin_file.GetLayoutInfo().no_label)
     {
         if (!skin_file.GetSkinInfo().display_text.IsInvalid())
         {
-            skin_setting_data.disp_str = skin_file.GetSkinInfo().display_text;
+            for (const auto& display_item : skin_all_items)
+                skin_setting_data.disp_str.Get(display_item) = skin_file.GetSkinInfo().display_text.GetConst(display_item);
         }
         //获取皮肤默认的显示文本
         else
         {
-            //获取皮肤所有显示项目
-            std::set<CommonDisplayItem> skin_all_items;
-            skin_file.GetSkinDisplayItems(skin_all_items);
             //获取所有显示项目的默认显示文本
             for (const auto& display_item : skin_all_items)
                 skin_setting_data.disp_str.Get(display_item) = DispStrings::DefaultString(display_item, true);

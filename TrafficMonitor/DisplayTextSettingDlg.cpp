@@ -70,7 +70,7 @@ BOOL CDisplayTextSettingDlg::OnInitDialog()
         m_display_texts = DispStrings();
         for (const auto& display_item : all_skin_items)
         {
-            m_display_texts.Get(display_item) = temp.Get(display_item);
+            m_display_texts.Get(display_item) = temp.GetConst(display_item);
         }
     }
 
@@ -129,7 +129,7 @@ void CDisplayTextSettingDlg::OnBnClickedRestoreDefaultButton()
         for (int i{}; i < item_count; i++)
         {
             CommonDisplayItem display_item = GetDisplayItem(i);
-            std::wstring default_text = skin_setting_data.disp_str.Get(display_item);
+            std::wstring default_text = skin_setting_data.disp_str.GetConst(display_item);
             m_list_ctrl.SetItemText(i, 1, default_text.c_str());
         }
     }

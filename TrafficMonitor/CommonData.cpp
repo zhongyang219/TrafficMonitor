@@ -60,7 +60,7 @@ wstring& DispStrings::Get(CommonDisplayItem item)
     return map_str[item];
 }
 
-const wstring& DispStrings::Get(CommonDisplayItem item) const
+const wstring& DispStrings::GetConst(CommonDisplayItem item) const
 {
     auto iter = map_str.find(item);
     if (iter != map_str.end())
