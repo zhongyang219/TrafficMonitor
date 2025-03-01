@@ -107,64 +107,7 @@ void CDisplayTextSettingDlg::OnBnClickedRestoreDefaultButton()
     for (int i{}; i < item_count; i++)
     {
         CommonDisplayItem display_item = GetDisplayItem(i);
-        CString default_text;
-        if (display_item.is_plugin)
-        {
-            default_text = display_item.plugin_item->GetItemLableText();
-        }
-        else
-        {
-            switch (display_item.item_type)
-            {
-            case TDI_UP:
-                if (m_main_window_text)
-                    default_text = CCommon::LoadText(IDS_UPLOAD_DISP, _T(": "));
-                else
-                    default_text = _T("↑: ");
-                break;
-            case TDI_DOWN:
-                if (m_main_window_text)
-                    default_text = CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": "));
-                else
-                    default_text = _T("↓: ");
-                break;
-            case TDI_TOTAL_SPEED:
-                default_text = _T("↑↓: ");
-                break;
-            case TDI_TODAY_TRAFFIC:
-                default_text = CCommon::LoadText(IDS_TRAFFIC_USED, _T(": "));
-                break;
-            case TDI_CPU:
-                default_text = _T("CPU: ");
-                break;
-            case TDI_CPU_FREQ:
-                default_text = CCommon::LoadText(IDS_CPU_FREQ, _T(": "));
-                break;
-            case TDI_MEMORY:
-                default_text = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
-                break;
-            case TDI_GPU_USAGE:
-                default_text = CCommon::LoadText(IDS_GPU_DISP, _T(": "));
-                break;
-            case TDI_CPU_TEMP:
-                default_text = _T("CPU: ");
-                break;
-            case TDI_GPU_TEMP:
-                default_text = CCommon::LoadText(IDS_GPU_DISP, _T(": "));
-                break;
-            case TDI_HDD_TEMP:
-                default_text = CCommon::LoadText(IDS_HDD_DISP, _T(": "));
-                break;
-            case TDI_MAIN_BOARD_TEMP:
-                default_text = CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": "));
-                break;
-            case TDI_HDD_USAGE:
-                default_text = CCommon::LoadText(IDS_HDD_DISP, _T(": "));
-                break;
-            default:
-                break;
-            }
-        }
-        m_list_ctrl.SetItemText(i, 1, default_text);
+        std::wstring default_text = DispStrings::DefaultString(display_item, m_main_window_text);
+        m_list_ctrl.SetItemText(i, 1, default_text.c_str());
     }
 }

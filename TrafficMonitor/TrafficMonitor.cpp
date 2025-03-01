@@ -12,6 +12,7 @@
 #include "auto_start_helper.h"
 #include "AppAlreadyRuningDlg.h"
 #include "WindowsSettingHelper.h"
+#include "SkinManager.h"
 #ifndef DISABLE_WINDOWS_WEB_EXPERIENCE_DETECTOR
 #include "winrt/base.h"
 #endif
@@ -110,7 +111,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_cfg_data.m_select_all = ini.GetBool(_T("connection"), _T("select_all"), false);
     //判断皮肤是否存在
     std::vector<wstring> skin_files;
-    CCommon::GetFiles((theApp.m_skin_path + L"\\*").c_str(), skin_files);
+    CCommon::GetFiles((theApp.m_skin_path + L"*").c_str(), skin_files);
     bool is_skin_exist = (!skin_files.empty());
     ini.LoadMainWndColors(_T("config"), _T("text_color"), m_main_wnd_data.text_colors, (is_skin_exist ? 16384 : 16777215)); //根据皮肤是否存在来设置默认的文本颜色，皮肤文件不存在时文本颜色默认为白色
     m_main_wnd_data.specify_each_item_color = ini.GetBool(_T("config"), _T("specify_each_item_color"), false);
@@ -139,19 +140,7 @@ void CTrafficMonitorApp::LoadConfig()
     //m_main_wnd_data.font.size = ini.GetInt(_T("config"), _T("font_size"), 10);
 
     //载入显示文本设置
-    m_main_wnd_data.disp_str.Get(TDI_UP) = ini.GetString(_T("config"), L"up_string", CCommon::LoadText(IDS_UPLOAD_DISP, _T(": $")));
-    m_main_wnd_data.disp_str.Get(TDI_DOWN) = ini.GetString(L"config", L"down_string", CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": $")));
-    m_main_wnd_data.disp_str.Get(TDI_TOTAL_SPEED) = ini.GetString(L"config", L"total_speed_string", _T("↑↓: $"));
-    m_main_wnd_data.disp_str.Get(TDI_CPU) = ini.GetString(L"config", L"cpu_string", L"CPU: $");
-    m_main_wnd_data.disp_str.Get(TDI_CPU_FREQ) = ini.GetString(L"config", L"cpu_freq_string", CCommon::LoadText(IDS_CPU_FREQ, _T(": $")));
-    m_main_wnd_data.disp_str.Get(TDI_MEMORY) = ini.GetString(L"config", L"memory_string", CCommon::LoadText(IDS_MEMORY_DISP, _T(": $")));
-    m_main_wnd_data.disp_str.Get(TDI_GPU_USAGE) = ini.GetString(L"config", L"gpu_string", CCommon::LoadText(IDS_GPU_DISP, _T(": $")));
-    m_main_wnd_data.disp_str.Get(TDI_CPU_TEMP) = ini.GetString(L"config", L"cpu_temp_string", L"CPU: $");
-    m_main_wnd_data.disp_str.Get(TDI_GPU_TEMP) = ini.GetString(L"config", L"gpu_temp_string", CCommon::LoadText(IDS_GPU_DISP, _T(": $")));
-    m_main_wnd_data.disp_str.Get(TDI_HDD_TEMP) = ini.GetString(L"config", L"hdd_temp_string", CCommon::LoadText(IDS_HDD_DISP, _T(": $")));
-    m_main_wnd_data.disp_str.Get(TDI_MAIN_BOARD_TEMP) = ini.GetString(L"config", L"main_board_temp_string", CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": $")));
-    m_main_wnd_data.disp_str.Get(TDI_HDD_USAGE) = ini.GetString(L"config", L"hdd_string", CCommon::LoadText(IDS_HDD_DISP, _T(": $")));
-    m_main_wnd_data.disp_str.Get(TDI_TODAY_TRAFFIC) = ini.GetString(L"config", L"today_traffic_string", CCommon::LoadText(IDS_TRAFFIC_USED, _T(": $")));
+    ini.LoadDisplayStr(L"config", m_main_wnd_data.disp_str, true);
 
     //载入插件项目的显示文本设置
     ini.LoadPluginDisplayStr(true);
@@ -241,19 +230,8 @@ void CTrafficMonitorApp::LoadConfig()
     default_font.size = 9;
     ini.LoadFontData(_T("task_bar"), m_taskbar_data.font, default_font);
 
-    m_taskbar_data.disp_str.Get(TDI_UP) = ini.GetString(L"task_bar", L"up_string", L"↑: $");
-    m_taskbar_data.disp_str.Get(TDI_DOWN) = ini.GetString(L"task_bar", L"down_string", L"↓: $");
-    m_taskbar_data.disp_str.Get(TDI_TOTAL_SPEED) = ini.GetString(L"task_bar", L"total_speed_string", L"↑↓: $");
-    m_taskbar_data.disp_str.Get(TDI_CPU) = ini.GetString(L"task_bar", L"cpu_string", L"CPU: $");
-    m_taskbar_data.disp_str.Get(TDI_MEMORY) = ini.GetString(L"task_bar", L"memory_string", CCommon::LoadText(IDS_MEMORY_DISP, _T(": $")));
-    m_taskbar_data.disp_str.Get(TDI_GPU_USAGE) = ini.GetString(L"task_bar", L"gpu_string", CCommon::LoadText(IDS_GPU_DISP, _T(": $")));
-    m_taskbar_data.disp_str.Get(TDI_CPU_TEMP) = ini.GetString(L"task_bar", L"cpu_temp_string", L"CPU: $");
-    m_taskbar_data.disp_str.Get(TDI_GPU_TEMP) = ini.GetString(L"task_bar", L"gpu_temp_string", CCommon::LoadText(IDS_GPU_DISP, _T(": ")));
-    m_taskbar_data.disp_str.Get(TDI_HDD_TEMP) = ini.GetString(L"task_bar", L"hdd_temp_string", CCommon::LoadText(IDS_HDD_DISP, _T(": ")));
-    m_taskbar_data.disp_str.Get(TDI_MAIN_BOARD_TEMP) = ini.GetString(L"task_bar", L"main_board_temp_string", CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": ")));
-    m_taskbar_data.disp_str.Get(TDI_HDD_USAGE) = ini.GetString(L"task_bar", L"hdd_string", CCommon::LoadText(IDS_HDD_DISP, _T(": ")));
-    m_taskbar_data.disp_str.Get(TDI_CPU_FREQ) = ini.GetString(L"task_bar", L"cpu_freq_string", CCommon::LoadText(IDS_CPU_FREQ, _T(": $")));
-    m_taskbar_data.disp_str.Get(TDI_TODAY_TRAFFIC) = ini.GetString(L"task_bar", L"today_traffic_string", CCommon::LoadText(IDS_TRAFFIC_USED, _T(": $")));
+    //载入显示文本设置
+    ini.LoadDisplayStr(L"task_bar", m_taskbar_data.disp_str, false);
     ini.LoadPluginDisplayStr(false);
 
     m_taskbar_data.tbar_wnd_on_left = ini.GetBool(_T("task_bar"), _T("task_bar_wnd_on_left"), false);
@@ -377,20 +355,12 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(L"config", L"swap_up_down", m_main_wnd_data.swap_up_down);
     ini.WriteBool(L"config", L"hide_main_wnd_when_fullscreen", m_main_wnd_data.hide_main_wnd_when_fullscreen);
 
-    ini.WriteString(_T("config"), _T("up_string"), m_main_wnd_data.disp_str.Get(TDI_UP));
-    ini.WriteString(_T("config"), _T("down_string"), m_main_wnd_data.disp_str.Get(TDI_DOWN));
-    ini.WriteString(_T("config"), _T("total_speed_string"), m_main_wnd_data.disp_str.Get(TDI_TOTAL_SPEED));
-    ini.WriteString(_T("config"), _T("cpu_string"), m_main_wnd_data.disp_str.Get(TDI_CPU));
-    ini.WriteString(_T("config"), _T("memory_string"), m_main_wnd_data.disp_str.Get(TDI_MEMORY));
-    ini.WriteString(_T("config"), _T("gpu_string"), m_main_wnd_data.disp_str.Get(TDI_GPU_USAGE));
-    ini.WriteString(_T("config"), _T("cpu_temp_string"), m_main_wnd_data.disp_str.Get(TDI_CPU_TEMP));
-    ini.WriteString(_T("config"), _T("cpu_freq_string"), m_main_wnd_data.disp_str.Get(TDI_CPU_FREQ));
-    ini.WriteString(_T("config"), _T("gpu_temp_string"), m_main_wnd_data.disp_str.Get(TDI_GPU_TEMP));
-    ini.WriteString(_T("config"), _T("hdd_temp_string"), m_main_wnd_data.disp_str.Get(TDI_HDD_TEMP));
-    ini.WriteString(_T("config"), _T("main_board_temp_string"), m_main_wnd_data.disp_str.Get(TDI_MAIN_BOARD_TEMP));
-    ini.WriteString(_T("config"), _T("hdd_string"), m_main_wnd_data.disp_str.Get(TDI_HDD_USAGE));
-    ini.WriteString(_T("config"), _T("today_traffic_string"), m_main_wnd_data.disp_str.Get(TDI_TODAY_TRAFFIC));
+    ini.SaveDisplayStr(L"config", m_main_wnd_data.disp_str);
     ini.SavePluginDisplayStr(true);
+
+    //将当前皮肤设置保存到SkinManager
+    SkinSettingData skin_data = m_main_wnd_data.ToSkinSettingData();
+    CSkinManager::Instance().AddSkinSettingData(m_cfg_data.m_skin_name, skin_data);
 
     ini.WriteBool(L"config", L"speed_short_mode", m_main_wnd_data.speed_short_mode);
     ini.WriteBool(L"config", L"separate_value_unit_with_space", m_main_wnd_data.separate_value_unit_with_space);
@@ -432,19 +402,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(L"task_bar", L"show_taskbar_wnd_in_secondary_display", m_taskbar_data.show_taskbar_wnd_in_secondary_display);
     ini.WriteInt(L"task_bar", L"secondary_display_index", m_taskbar_data.secondary_display_index);
 
-    ini.WriteString(_T("task_bar"), _T("up_string"), m_taskbar_data.disp_str.Get(TDI_UP));
-    ini.WriteString(_T("task_bar"), _T("down_string"), m_taskbar_data.disp_str.Get(TDI_DOWN));
-    ini.WriteString(_T("task_bar"), _T("total_speed_string"), m_taskbar_data.disp_str.Get(TDI_TOTAL_SPEED));
-    ini.WriteString(_T("task_bar"), _T("cpu_string"), m_taskbar_data.disp_str.Get(TDI_CPU));
-    ini.WriteString(_T("task_bar"), _T("memory_string"), m_taskbar_data.disp_str.Get(TDI_MEMORY));
-    ini.WriteString(_T("task_bar"), _T("gpu_string"), m_taskbar_data.disp_str.Get(TDI_GPU_USAGE));
-    ini.WriteString(_T("task_bar"), _T("cpu_temp_string"), m_taskbar_data.disp_str.Get(TDI_CPU_TEMP));
-    ini.WriteString(_T("task_bar"), _T("cpu_freq_string"), m_taskbar_data.disp_str.Get(TDI_CPU_FREQ));
-    ini.WriteString(_T("task_bar"), _T("gpu_temp_string"), m_taskbar_data.disp_str.Get(TDI_GPU_TEMP));
-    ini.WriteString(_T("task_bar"), _T("hdd_temp_string"), m_taskbar_data.disp_str.Get(TDI_HDD_TEMP));
-    ini.WriteString(_T("task_bar"), _T("main_board_temp_string"), m_taskbar_data.disp_str.Get(TDI_MAIN_BOARD_TEMP));
-    ini.WriteString(_T("task_bar"), _T("hdd_string"), m_taskbar_data.disp_str.Get(TDI_HDD_USAGE));
-    ini.WriteString(_T("task_bar"), _T("today_traffic_string"), m_taskbar_data.disp_str.Get(TDI_TODAY_TRAFFIC));
+    ini.SaveDisplayStr(L"task_bar", m_taskbar_data.disp_str);
     ini.SavePluginDisplayStr(false);
 
     ini.WriteBool(L"task_bar", L"task_bar_wnd_on_left", m_taskbar_data.tbar_wnd_on_left);
@@ -990,13 +948,13 @@ BOOL CTrafficMonitorApp::InitInstance()
 
 #ifdef _DEBUG
     m_config_dir = L".\\";
-    m_skin_path = L".\\skins";
+    m_skin_path = L".\\skins\\";
 #else
     if (m_general_data.portable_mode)
         m_config_dir = m_module_dir;
     else
         m_config_dir = m_appdata_dir;
-    m_skin_path = m_module_dir + L"skins";
+    m_skin_path = m_module_dir + L"skins\\";
 #endif
     //AppData里面的程序配置文件路径
     m_config_path = m_config_dir + L"config.ini";

@@ -115,11 +115,8 @@ BOOL CSkinDlg::OnInitDialog()
     SetIcon(theApp.GetMenuIcon(IDI_SKIN), FALSE);		// 设置小图标
     //初始化选择框
     m_skin_list_box.SetItemHeight(0, DPI(18));
-    for (const auto& skin_path : m_skins)
+    for (const auto& skin_name : m_skins)
     {
-        wstring skin_name;
-        size_t index = skin_path.find_last_of(L'\\');
-        skin_name = skin_path.substr(index + 1);
         m_skin_list_box.AddString(skin_name.c_str());
     }
     m_skin_list_box.SetCurSel(m_skin_selected);

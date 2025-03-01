@@ -60,6 +60,15 @@ wstring& DispStrings::Get(CommonDisplayItem item)
     return map_str[item];
 }
 
+const wstring& DispStrings::Get(CommonDisplayItem item) const
+{
+    auto iter = map_str.find(item);
+    if (iter != map_str.end())
+        return iter->second;
+    static wstring empty_str;
+    return empty_str;
+}
+
 const std::map<CommonDisplayItem, wstring>& DispStrings::GetAllItems() const
 {
     return map_str;
@@ -86,6 +95,70 @@ bool DispStrings::IsInvalid() const
             return true;
     }
     return false;
+}
+
+std::wstring DispStrings::DefaultString(CommonDisplayItem display_item, bool is_main_window)
+{
+    std::wstring default_text;
+    if (display_item.is_plugin)
+    {
+        default_text = display_item.plugin_item->GetItemLableText();
+    }
+    else
+    {
+        switch (display_item.item_type)
+        {
+        case TDI_UP:
+            if (is_main_window)
+                default_text = CCommon::LoadText(IDS_UPLOAD_DISP, _T(": "));
+            else
+                default_text = _T("↑: ");
+            break;
+        case TDI_DOWN:
+            if (is_main_window)
+                default_text = CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": "));
+            else
+                default_text = _T("↓: ");
+            break;
+        case TDI_TOTAL_SPEED:
+            default_text = _T("↑↓: ");
+            break;
+        case TDI_TODAY_TRAFFIC:
+            default_text = CCommon::LoadText(IDS_TRAFFIC_USED, _T(": "));
+            break;
+        case TDI_CPU:
+            default_text = _T("CPU: ");
+            break;
+        case TDI_CPU_FREQ:
+            default_text = CCommon::LoadText(IDS_CPU_FREQ, _T(": "));
+            break;
+        case TDI_MEMORY:
+            default_text = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
+            break;
+        case TDI_GPU_USAGE:
+            default_text = CCommon::LoadText(IDS_GPU_DISP, _T(": "));
+            break;
+        case TDI_CPU_TEMP:
+            default_text = _T("CPU: ");
+            break;
+        case TDI_GPU_TEMP:
+            default_text = CCommon::LoadText(IDS_GPU_DISP, _T(": "));
+            break;
+        case TDI_HDD_TEMP:
+            default_text = CCommon::LoadText(IDS_HDD_DISP, _T(": "));
+            break;
+        case TDI_MAIN_BOARD_TEMP:
+            default_text = CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": "));
+            break;
+        case TDI_HDD_USAGE:
+            default_text = CCommon::LoadText(IDS_HDD_DISP, _T(": "));
+            break;
+        default:
+            break;
+        }
+    }
+
+    return default_text;
 }
 
 void DispStrings::Load(const std::wstring& plugin_id, const std::wstring& disp_str)
@@ -156,6 +229,32 @@ std::set<std::wstring>& StringSet::data()
     return string_set;
 }
 
+///////////////////////////////////////////////////////////////////////////////////
+bool SkinSettingData::IsEmpty() const
+{
+    return font.name.IsEmpty() && disp_str.GetAllItems().empty() && text_colors.empty();
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+void MainWndSettingData::FormSkinSettingData(const SkinSettingData& sking_setting_data)
+{
+    font = sking_setting_data.font;
+    disp_str = sking_setting_data.disp_str;
+    text_colors = sking_setting_data.text_colors;
+    specify_each_item_color = sking_setting_data.specify_each_item_color;
+}
+
+SkinSettingData MainWndSettingData::ToSkinSettingData() const
+{
+    SkinSettingData sking_setting_data;
+    sking_setting_data.font = font;
+    sking_setting_data.disp_str = disp_str;
+    sking_setting_data.text_colors = text_colors;
+    sking_setting_data.specify_each_item_color = specify_each_item_color;
+    return sking_setting_data;
+}
+
+///////////////////////////////////////////////////////////////////////////////////
 bool TaskBarSettingData::IsTaskbarTransparent() const
 {
     if (CWindowsSettingHelper::IsWindows10LightTheme() || theApp.m_win_version.IsWindows8Or8point1() || theApp.IsWindows11Taskbar())

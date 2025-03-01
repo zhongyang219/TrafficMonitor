@@ -66,6 +66,7 @@ private:
 public:
     //获取一个显示的文本
     wstring& Get(CommonDisplayItem item);
+    const wstring& Get(CommonDisplayItem item) const;
 
     const std::map<CommonDisplayItem, wstring>& GetAllItems() const;
 
@@ -76,6 +77,8 @@ public:
 
     //是否无效
     bool IsInvalid() const;
+
+    static std::wstring DefaultString(CommonDisplayItem display_item, bool is_main_window);
 };
 
 //鼠标双击窗口的动作
@@ -208,6 +211,17 @@ enum class MemoryDisplay
     MEMORY_AVAILABLE        //内存可用
 };
 
+//为每个皮肤单独保存的数据
+struct SkinSettingData
+{
+    FontInfo font;          //字体
+    DispStrings disp_str;   //显示的文本
+    std::map<CommonDisplayItem, COLORREF> text_colors{};    //文字的颜色
+    bool specify_each_item_color{};
+
+    bool IsEmpty() const;
+};
+
 //选项设置中“主窗口设置”和“任务栏窗口设置”中公共的数据（不使用此结构体创建对象）
 struct PublicSettingData
 {
@@ -231,7 +245,7 @@ struct PublicSettingData
 //选项设置中“主窗口设置”的数据
 struct MainWndSettingData : public PublicSettingData
 {
-    std::map<CommonDisplayItem, COLORREF> text_colors{};    //方字的颜色
+    std::map<CommonDisplayItem, COLORREF> text_colors{};    //文字的颜色
     bool swap_up_down{ false };     //交换上传和下载显示的位置
     bool hide_main_wnd_when_fullscreen;     //有程序全屏运行时隐藏悬浮窗
     bool m_always_on_top{ false };      //窗口置顶
@@ -239,6 +253,8 @@ struct MainWndSettingData : public PublicSettingData
     bool m_mouse_penetrate{ false };    //鼠标穿透
     bool m_alow_out_of_border{ false };     //是否允许悬浮窗超出屏幕边界
 
+    void FormSkinSettingData(const SkinSettingData& sking_setting_data);
+    SkinSettingData ToSkinSettingData() const;
 };
 
 //#define TASKBAR_COLOR_NUM 18      //任务栏窗口颜色数量

@@ -244,6 +244,9 @@
     <Filter Include="源文件和头文件\公共的类\StrTable">
       <UniqueIdentifier>{357eeb5d-af51-4701-83c9-e13a17c7f771}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\SkinManager">
+      <UniqueIdentifier>{28301057-fd34-4d04-a86a-0520143fdc14}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -532,6 +535,9 @@
     <ClInclude Include="TaskbarHelper.h">
       <Filter>源文件和头文件\TaskBarDlg</Filter>
     </ClInclude>
+    <ClInclude Include="SkinManager.h">
+      <Filter>源文件和头文件\公共的类\SkinManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -785,6 +791,9 @@
     </ClCompile>
     <ClCompile Include="TaskbarHelper.cpp">
       <Filter>源文件和头文件\TaskBarDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinManager.cpp">
+      <Filter>源文件和头文件\公共的类\SkinManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

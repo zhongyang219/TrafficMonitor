@@ -104,7 +104,6 @@ protected:
 
     static unsigned int m_WM_TASKBARCREATED;    //任务栏重启消息
 
-    vector<wstring> m_skins;    //储存皮肤文件的路径
     int m_skin_selected{};      //选择的皮肤序号
 
     SYSTEMTIME m_start_time;    //程序启动时的时间
@@ -180,8 +179,6 @@ protected:
 
     //判断一个点在哪个显示项目的区域内，并保存到m_clicked_item
     void CheckClickedItem(CPoint point);
-
-    int FindSkinIndex(const wstring& skin_name);
 
     //应用一个皮肤
     void ApplySkin(int skin_index);

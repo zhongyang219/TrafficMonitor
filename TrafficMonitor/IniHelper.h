@@ -42,9 +42,14 @@ public:
     void LoadTaskbarWndColors(const wchar_t * AppName, const wchar_t * KeyName, std::map<CommonDisplayItem, TaskbarItemColor>& text_colors, COLORREF default_color);
     void SaveTaskbarWndColors(const wchar_t * AppName, const wchar_t * KeyName, const std::map<CommonDisplayItem, TaskbarItemColor>& text_colors);
 
+    void LoadDisplayStr(const wchar_t* AppName, DispStrings& disp_str, bool is_main_window) const;
+    void SaveDisplayStr(const wchar_t* AppName, const DispStrings& disp_str);
+
     void LoadPluginDisplayStr(bool is_main_window);
     void SavePluginDisplayStr(bool is_main_window);
 
+    // 获取带有指定前缀的所有AppName（不含前缀）
+    vector<wstring> GetAllAppName(const wstring& prefix) const;
     // 获取一个AppName下所有键值对
     void GetAllKeyValues(const wstring& AppName, std::map<wstring, wstring>& map) const;
 

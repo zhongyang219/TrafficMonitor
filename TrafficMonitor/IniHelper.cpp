@@ -187,6 +187,23 @@ void CIniHelper::SaveFontData(const wchar_t * AppName, const FontInfo & font)
     WriteBoolArray(AppName, L"font_style", style, 4);
 }
 
+vector<wstring> CIniHelper::GetAllAppName(const wstring& prefix) const
+{
+    vector<wstring> list;
+    size_t pos{};
+    while ((pos = m_ini_str.find(L"\n[" + prefix, pos)) != wstring::npos)
+    {
+        size_t end = m_ini_str.find(L']', pos + 1);
+        if (end != wstring::npos)
+        {
+            wstring tmp(m_ini_str.begin() + pos + prefix.size() + 2, m_ini_str.begin() + end);
+            list.push_back(std::move(tmp));
+            pos = end + 1;
+        }
+    }
+    return list;
+}
+
 void CIniHelper::GetAllKeyValues(const wstring& AppName, std::map<wstring, wstring>& map) const
 {
     wstring app_str{ L"[" };
@@ -335,6 +352,40 @@ void CIniHelper::SaveTaskbarWndColors(const wchar_t * AppName, const wchar_t * K
         str += tmp;
     }
     _WriteString(AppName, KeyName, wstring(str));
+}
+
+void CIniHelper::LoadDisplayStr(const wchar_t* AppName, DispStrings& disp_str, bool is_main_window) const
+{
+    disp_str.Get(TDI_UP) = GetString(AppName, L"up_string", is_main_window ? CCommon::LoadText(IDS_UPLOAD_DISP, L": $").GetString() : L"↑: $");
+    disp_str.Get(TDI_DOWN) = GetString(AppName, L"down_string", is_main_window ? CCommon::LoadText(IDS_DOWNLOAD_DISP, L": $").GetString() : L"↓: $");
+    disp_str.Get(TDI_TOTAL_SPEED) = GetString(AppName, L"total_speed_string", _T("↑↓: $"));
+    disp_str.Get(TDI_CPU) = GetString(AppName, L"cpu_string", L"CPU: $");
+    disp_str.Get(TDI_CPU_FREQ) = GetString(AppName, L"cpu_freq_string", CCommon::LoadText(IDS_CPU_FREQ, _T(": $")));
+    disp_str.Get(TDI_MEMORY) = GetString(AppName, L"memory_string", CCommon::LoadText(IDS_MEMORY_DISP, _T(": $")));
+    disp_str.Get(TDI_GPU_USAGE) = GetString(AppName, L"gpu_string", CCommon::LoadText(IDS_GPU_DISP, _T(": $")));
+    disp_str.Get(TDI_CPU_TEMP) = GetString(AppName, L"cpu_temp_string", L"CPU: $");
+    disp_str.Get(TDI_GPU_TEMP) = GetString(AppName, L"gpu_temp_string", CCommon::LoadText(IDS_GPU_DISP, _T(": $")));
+    disp_str.Get(TDI_HDD_TEMP) = GetString(AppName, L"hdd_temp_string", CCommon::LoadText(IDS_HDD_DISP, _T(": $")));
+    disp_str.Get(TDI_MAIN_BOARD_TEMP) = GetString(AppName, L"main_board_temp_string", CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": $")));
+    disp_str.Get(TDI_HDD_USAGE) = GetString(AppName, L"hdd_string", CCommon::LoadText(IDS_HDD_DISP, _T(": $")));
+    disp_str.Get(TDI_TODAY_TRAFFIC) = GetString(AppName, L"today_traffic_string", CCommon::LoadText(IDS_TRAFFIC_USED, _T(": $")));
+}
+
+void CIniHelper::SaveDisplayStr(const wchar_t* AppName, const DispStrings& disp_str)
+{
+    WriteString(AppName, _T("up_string"), disp_str.Get(TDI_UP));
+    WriteString(AppName, _T("down_string"), disp_str.Get(TDI_DOWN));
+    WriteString(AppName, _T("total_speed_string"), disp_str.Get(TDI_TOTAL_SPEED));
+    WriteString(AppName, _T("cpu_string"), disp_str.Get(TDI_CPU));
+    WriteString(AppName, _T("memory_string"), disp_str.Get(TDI_MEMORY));
+    WriteString(AppName, _T("gpu_string"), disp_str.Get(TDI_GPU_USAGE));
+    WriteString(AppName, _T("cpu_temp_string"), disp_str.Get(TDI_CPU_TEMP));
+    WriteString(AppName, _T("cpu_freq_string"), disp_str.Get(TDI_CPU_FREQ));
+    WriteString(AppName, _T("gpu_temp_string"), disp_str.Get(TDI_GPU_TEMP));
+    WriteString(AppName, _T("hdd_temp_string"), disp_str.Get(TDI_HDD_TEMP));
+    WriteString(AppName, _T("main_board_temp_string"), disp_str.Get(TDI_MAIN_BOARD_TEMP));
+    WriteString(AppName, _T("hdd_string"), disp_str.Get(TDI_HDD_USAGE));
+    WriteString(AppName, _T("today_traffic_string"), disp_str.Get(TDI_TODAY_TRAFFIC));
 }
 
 void CIniHelper::LoadPluginDisplayStr(bool is_main_window)

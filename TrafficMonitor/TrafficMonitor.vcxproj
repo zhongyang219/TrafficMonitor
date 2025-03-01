@@ -836,6 +836,7 @@
     <ClInclude Include="SkinAutoAdaptSettingDlg.h" />
     <ClInclude Include="SkinDlg.h" />
     <ClInclude Include="SkinFile.h" />
+    <ClInclude Include="SkinManager.h" />
     <ClInclude Include="SpinEdit.h" />
     <ClInclude Include="StaticEx.h" />
     <ClInclude Include="stdafx.h" />
@@ -923,6 +924,7 @@
     <ClCompile Include="SkinAutoAdaptSettingDlg.cpp" />
     <ClCompile Include="SkinDlg.cpp" />
     <ClCompile Include="SkinFile.cpp" />
+    <ClCompile Include="SkinManager.cpp" />
     <ClCompile Include="SpinEdit.cpp" />
     <ClCompile Include="StaticEx.cpp" />
     <ClCompile Include="stdafx.cpp">
