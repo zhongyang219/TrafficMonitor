@@ -60,6 +60,20 @@ BOOL CDisplayTextSettingDlg::OnInitDialog()
     m_list_ctrl.InsertColumn(0, CCommon::LoadText(IDS_ITEM), LVCFMT_LEFT, width0);		//插入第0列
     m_list_ctrl.InsertColumn(1, CCommon::LoadText(IDS_VALUE), LVCFMT_LEFT, width1);		//插入第1列
 
+    //如果是主窗口，清除当前皮肤中没有的行
+    if (m_main_window_text)
+    {
+        std::set<CommonDisplayItem> all_skin_items;
+        CTrafficMonitorDlg::Instance()->GetCurSkin().GetSkinDisplayItems(all_skin_items);
+
+        DispStrings temp = m_display_texts;
+        m_display_texts = DispStrings();
+        for (const auto& display_item : all_skin_items)
+        {
+            m_display_texts.Get(display_item) = temp.Get(display_item);
+        }
+    }
+
     //向列表中插入行
     for (auto iter = m_display_texts.GetAllItems().begin(); iter != m_display_texts.GetAllItems().end(); ++iter)
     {

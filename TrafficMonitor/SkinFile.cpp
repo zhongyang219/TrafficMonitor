@@ -798,3 +798,12 @@ string CSkinFile::GetDisplayItemXmlNodeName(DisplayItem display_item)
         break;
     }
 }
+
+void CSkinFile::GetSkinDisplayItems(std::set<CommonDisplayItem>& skin_all_items) const
+{
+    skin_all_items.clear();
+    for (const auto& layout_items : GetLayoutInfo().layout_l.layout_items)
+        skin_all_items.insert(layout_items.first);
+    for (const auto& layout_items : GetLayoutInfo().layout_s.layout_items)
+        skin_all_items.insert(layout_items.first);
+}

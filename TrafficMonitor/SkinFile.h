@@ -102,6 +102,9 @@ public:
 
     static string GetDisplayItemXmlNodeName(DisplayItem display_item);
 
+    //获取此皮肤上所有显示项目
+    void GetSkinDisplayItems(std::set<CommonDisplayItem>& skin_all_items) const;
+
 private:
     void LoadFromXml(const wstring& file_path);     //从xml文件读取皮肤数据
     void LoadFromIni(const wstring& file_path);     //从ini文件读取皮肤数据（用于兼容旧版皮肤）

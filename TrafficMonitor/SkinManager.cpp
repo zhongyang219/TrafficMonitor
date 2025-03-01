@@ -32,6 +32,7 @@ void CSkinManager::Init()
                 SkinSettingData data;
                 //文本颜色
                 ini.LoadMainWndColors(app_name.c_str(), L"text_color", data.text_colors, 16384); //根据皮肤是否存在来设置默认的文本颜色，皮肤文件不存在时文本颜色默认为白色
+                data.specify_each_item_color = ini.GetBool(app_name.c_str(), L"specify_each_item_color", false);
                 //字体
                 FontInfo default_font{};
                 default_font.name = theApp.m_str_table.GetLanguageInfo().default_font_name.c_str();
@@ -116,6 +117,7 @@ void CSkinManager::Save()
         std::wstring app_name = SKIN_SETTINGS_PREFIX + data.first;
         //文本颜色
         ini.SaveMainWndColors(app_name.c_str(), L"text_color", data.second.text_colors);
+        ini.WriteBool(app_name.c_str(), L"specify_each_item_color", data.second.specify_each_item_color);
         //字体
         ini.SaveFontData(app_name.c_str(), data.second.font);
         //显示文本
@@ -163,10 +165,7 @@ void CSkinManager::SkinSettingDataFronSkin(SkinSettingData& skin_setting_data, c
         {
             //获取皮肤所有显示项目
             std::set<CommonDisplayItem> skin_all_items;
-            for (const auto& layout_items : skin_file.GetLayoutInfo().layout_l.layout_items)
-                skin_all_items.insert(layout_items.first);
-            for (const auto& layout_items : skin_file.GetLayoutInfo().layout_s.layout_items)
-                skin_all_items.insert(layout_items.first);
+            skin_file.GetSkinDisplayItems(skin_all_items);
             //获取所有显示项目的默认显示文本
             for (const auto& display_item : skin_all_items)
                 skin_setting_data.disp_str.Get(display_item) = DispStrings::DefaultString(display_item, true);
