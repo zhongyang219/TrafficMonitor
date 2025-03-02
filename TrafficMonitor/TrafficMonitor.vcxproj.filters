@@ -538,6 +538,9 @@
     <ClInclude Include="SkinManager.h">
       <Filter>源文件和头文件\公共的类\SkinManager</Filter>
     </ClInclude>
+    <ClInclude Include="SettingsHelper.h">
+      <Filter>源文件和头文件\公共的类\IniHelper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -794,6 +797,9 @@
     </ClCompile>
     <ClCompile Include="SkinManager.cpp">
       <Filter>源文件和头文件\公共的类\SkinManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsHelper.cpp">
+      <Filter>源文件和头文件\公共的类\IniHelper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

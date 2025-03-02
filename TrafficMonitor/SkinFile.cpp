@@ -3,7 +3,7 @@
 #include "Common.h"
 #include "FilePathHelper.h"
 #include "TrafficMonitor.h"
-#include "IniHelper.h"
+#include "SettingsHelper.h"
 #include "DrawCommon.h"
 #include "DrawCommonEx.h"
 
@@ -285,7 +285,7 @@ void CSkinFile::LoadFromIni(const wstring& file_path)
     m_preview_info = PreviewInfo();
 
     //获取皮肤信息
-    CIniHelper ini(file_path);
+    CSettingsHelper ini(file_path);
     //获取当前皮肤的文字颜色
     std::map<CommonDisplayItem, COLORREF> text_colors{};
     ini.LoadMainWndColors(_T("skin"), _T("text_color"), text_colors, 0);

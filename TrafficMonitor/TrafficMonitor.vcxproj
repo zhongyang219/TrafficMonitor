@@ -832,6 +832,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SelectConnectionsDlg.h" />
     <ClInclude Include="SetItemOrderDlg.h" />
+    <ClInclude Include="SettingsHelper.h" />
     <ClInclude Include="SimpleXML.h" />
     <ClInclude Include="SkinAutoAdaptSettingDlg.h" />
     <ClInclude Include="SkinDlg.h" />
@@ -920,6 +921,7 @@
     <ClCompile Include="PluginManagerDlg.cpp" />
     <ClCompile Include="SelectConnectionsDlg.cpp" />
     <ClCompile Include="SetItemOrderDlg.cpp" />
+    <ClCompile Include="SettingsHelper.cpp" />
     <ClCompile Include="SimpleXML.cpp" />
     <ClCompile Include="SkinAutoAdaptSettingDlg.cpp" />
     <ClCompile Include="SkinDlg.cpp" />

@@ -13,6 +13,7 @@
 #include "AppAlreadyRuningDlg.h"
 #include "WindowsSettingHelper.h"
 #include "SkinManager.h"
+#include "SettingsHelper.h"
 #ifndef DISABLE_WINDOWS_WEB_EXPERIENCE_DETECTOR
 #include "winrt/base.h"
 #endif
@@ -63,7 +64,7 @@ void CTrafficMonitorApp::LoadLanguageConfig()
 
 void CTrafficMonitorApp::LoadConfig()
 {
-    CIniHelper ini{ m_config_path };
+    CSettingsHelper ini;
 
     //常规设置
     m_general_data.check_update_when_start = ini.GetBool(_T("general"), _T("check_update_when_start"), true);
@@ -299,7 +300,7 @@ void CTrafficMonitorApp::LoadConfig()
 
 void CTrafficMonitorApp::SaveConfig()
 {
-    CIniHelper ini{ m_config_path };
+    CSettingsHelper ini;
 
     //常规设置
     ini.WriteBool(_T("general"), _T("check_update_when_start"), m_general_data.check_update_when_start);

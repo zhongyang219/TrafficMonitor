@@ -2,6 +2,7 @@
 #include "SkinManager.h"
 #include "Common.h"
 #include "TrafficMonitor.h"
+#include "SettingsHelper.h"
 
 CSkinManager CSkinManager::m_instance;
 
@@ -21,7 +22,7 @@ void CSkinManager::Init()
             m_skins.push_back(L"");
 
         //载入所有皮肤的独立设置
-        CIniHelper ini(theApp.m_config_path);
+        CSettingsHelper ini;
         std::vector<std::wstring> skin_data_app_names = ini.GetAllAppName(SKIN_SETTINGS_PREFIX);
         for (const std::wstring& skin_name : skin_data_app_names)
         {
@@ -107,7 +108,7 @@ void CSkinManager::AddSkinSettingData(const std::wstring& skin_name, const SkinS
 void CSkinManager::Save()
 {
     //保存所有皮肤的独立配置
-    CIniHelper ini(theApp.m_config_path);
+    CSettingsHelper ini;
     for (const auto& data : m_skin_setting_data_map)
     {
         std::wstring app_name = SKIN_SETTINGS_PREFIX + data.first;

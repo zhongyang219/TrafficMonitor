@@ -10,7 +10,6 @@
 
 #include "resource.h"       // 主符号
 #include "Common.h"
-#include "IniHelper.h"
 #include "WinVersionHelper.h"
 #include "SimpleXML.h"
 #include "TaskbarDefaultStyle.h"
