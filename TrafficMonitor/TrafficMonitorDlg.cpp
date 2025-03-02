@@ -860,7 +860,7 @@ void CTrafficMonitorDlg::SetItemPosition()
     }
 }
 
-void CTrafficMonitorDlg::LoadSkinLayout()
+bool CTrafficMonitorDlg::LoadSkinLayout()
 {
     wstring skin_cfg_path{ theApp.m_skin_path + CSkinManager::Instance().GetSkinName(m_skin_selected) + L"\\skin.xml" };
     if (!CCommon::FileExist(skin_cfg_path.c_str()))
@@ -868,6 +868,7 @@ void CTrafficMonitorDlg::LoadSkinLayout()
     m_skin.Load(skin_cfg_path);
     if (m_skin.GetLayoutInfo().no_label)        //如果皮肤布局不显示文本，则不允许交换上传和下载的位置，因为上传和下载的位置已经固定在皮肤中了
         theApp.m_main_wnd_data.swap_up_down = false;
+    return CCommon::FileExist(skin_cfg_path.c_str());
 }
 
 void CTrafficMonitorDlg::LoadBackGroundImage()
@@ -1047,12 +1048,16 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     //初始化皮肤
     CSkinManager::Instance().Init();
     m_skin_selected = CSkinManager::Instance().FindSkinIndex(theApp.m_cfg_data.m_skin_name);
-    SkinSettingData cur_skin_data;
-    if (CSkinManager::Instance().GetSkinSettingDataByIndex(m_skin_selected, cur_skin_data))
-        theApp.m_main_wnd_data.FormSkinSettingData(cur_skin_data);
 
     //根据当前选择的皮肤获取布局数据
-    LoadSkinLayout();
+    if (LoadSkinLayout())
+    {
+        //从SkinManager中获取当前皮肤的设置
+        SkinSettingData cur_skin_data;
+        CSkinManager::SkinSettingDataFronSkin(cur_skin_data, m_skin);   //获取皮肤的默认设置
+        CSkinManager::Instance().GetSkinSettingDataByIndex(m_skin_selected, cur_skin_data); //获取皮肤的用户保存的数据
+        theApp.m_main_wnd_data.FormSkinSettingData(cur_skin_data);
+    }
 
     //设置窗口透明度
     SetTransparency();

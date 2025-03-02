@@ -170,7 +170,7 @@ protected:
     void ApplySettings(COptionsDlg& optionsDlg);
 
     void SetItemPosition();     //设置显示的4个项目的位置
-    void LoadSkinLayout();      //从当前皮肤获取布局数据
+    bool LoadSkinLayout();      //从当前皮肤获取布局数据
 
     void LoadBackGroundImage();
     void SetTextFont();
