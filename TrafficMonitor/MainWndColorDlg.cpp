@@ -6,6 +6,7 @@
 #include "MainWndColorDlg.h"
 #include "afxdialogex.h"
 #include "CMFCColorDialogEx.h"
+#include "TrafficMonitorDlg.h"
 
 
 // CMainWndColorDlg 对话框
@@ -60,8 +61,11 @@ BOOL CMainWndColorDlg::OnInitDialog()
     m_list_ctrl.InsertColumn(1, CCommon::LoadText(IDS_COLOR), LVCFMT_LEFT, width1);		//插入第1列
     m_list_ctrl.SetDrawItemRangMargin(theApp.DPI(2));
 
+    static std::set<CommonDisplayItem> all_skin_items;
+    CTrafficMonitorDlg::Instance()->GetCurSkin().GetSkinDisplayItems(all_skin_items);
+
     //向列表中插入行
-    for (auto iter = theApp.m_plugins.AllDisplayItemsWithPlugins().begin(); iter != theApp.m_plugins.AllDisplayItemsWithPlugins().end(); ++iter)
+    for (auto iter = all_skin_items.begin(); iter != all_skin_items.end(); ++iter)
     {
         CString item_name = iter->GetItemName();
         if (!item_name.IsEmpty())
