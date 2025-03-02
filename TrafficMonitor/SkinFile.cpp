@@ -103,6 +103,7 @@ bool CSkinFile::Load(const wstring& skin_name)
     {
         FontInfo font_info;
         font_info.name = theApp.m_str_table.GetLanguageInfo().default_font_name.c_str();
+        font_info.size = 10;
         font_info.Create(m_font, theApp.GetDpi());
     }
 
@@ -301,6 +302,8 @@ void CSkinFile::LoadFromIni(const wstring& file_path)
     m_skin_info.specify_each_item_color = ini.GetBool(_T("skin"), _T("specify_each_item_color"), false);
     //获取当前皮肤的字体
     FontInfo default_font{};
+    default_font.name = theApp.m_str_table.GetLanguageInfo().default_font_name.c_str();
+    default_font.size = 10;
     ini.LoadFontData(L"skin", m_skin_info.font_info, default_font);
     //获取皮肤作者
     m_skin_info.skin_author = ini.GetString(_T("skin"), _T("skin_author"), _T("unknow"));

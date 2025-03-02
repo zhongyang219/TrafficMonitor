@@ -172,6 +172,7 @@ void CSkinManager::SkinSettingDataFronSkin(SkinSettingData& skin_setting_data, c
     else
     {
         skin_setting_data.font.name = theApp.m_str_table.GetLanguageInfo().default_font_name.c_str();
+        skin_setting_data.font.size = 10;
     }
     if (skin_file.GetSkinInfo().font_info.size >= MIN_FONT_SIZE && skin_file.GetSkinInfo().font_info.size <= MAX_FONT_SIZE)
         skin_setting_data.font.size = skin_file.GetSkinInfo().font_info.size;
