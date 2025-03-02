@@ -167,6 +167,7 @@ BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_LOCK_WINDOW_POS_CHECK, &CMainWndSettingsDlg::OnBnClickedLockWindowPosCheck)
     ON_BN_CLICKED(IDC_ALOW_OUT_OF_BORDER_CHECK, &CMainWndSettingsDlg::OnBnClickedAlowOutOfBorderCheck)
     ON_BN_CLICKED(IDC_RESOTRE_SKIN_DEFAULT_BUTTON, &CMainWndSettingsDlg::OnBnClickedResotreSkinDefaultButton)
+    ON_EN_CHANGE(IDC_FONT_SIZE_EDIT, &CMainWndSettingsDlg::OnEnChangeFontSizeEdit)
 END_MESSAGE_MAP()
 
 
@@ -604,4 +605,10 @@ void CMainWndSettingsDlg::OnBnClickedResotreSkinDefaultButton()
         SetDlgItemText(IDC_FONT_SIZE_EDIT, std::to_wstring(m_data.font.size).c_str());
         DrawStaticColor();
     }
+}
+
+
+void CMainWndSettingsDlg::OnEnChangeFontSizeEdit()
+{
+    m_data.font.size = m_font_size_edit.GetValue();
 }

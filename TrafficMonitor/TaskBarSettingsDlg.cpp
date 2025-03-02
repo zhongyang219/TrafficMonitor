@@ -271,6 +271,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_TASKBAR_WND_IN_SECONDARY_DISPLAY_CHECK, &CTaskBarSettingsDlg::OnBnClickedTaskbarWndInSecondaryDisplayCheck)
     ON_CBN_SELCHANGE(IDC_DISPLAY_TO_SHOW_TASKBAR_WND_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeDisplayToShowTaskbarWndCombo)
     ON_BN_CLICKED(IDC_USAGE_GRAPH_FOLLOW_SYSTEM_CHECK, &CTaskBarSettingsDlg::OnBnClickedUsageGraphFollowSystemCheck)
+    ON_EN_CHANGE(IDC_FONT_SIZE_EDIT1, &CTaskBarSettingsDlg::OnEnChangeFontSizeEdit1)
 END_MESSAGE_MAP()
 
 
@@ -982,4 +983,10 @@ void CTaskBarSettingsDlg::OnBnClickedUsageGraphFollowSystemCheck()
 {
     m_data.graph_color_following_system = (IsDlgButtonChecked(IDC_USAGE_GRAPH_FOLLOW_SYSTEM_CHECK) != FALSE);
     DrawStaticColor();
+}
+
+
+void CTaskBarSettingsDlg::OnEnChangeFontSizeEdit1()
+{
+    m_data.font.size = m_font_size_edit.GetValue();
 }

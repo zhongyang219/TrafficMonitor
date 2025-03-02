@@ -123,4 +123,5 @@ public:
     afx_msg void OnBnClickedTaskbarWndInSecondaryDisplayCheck();
     afx_msg void OnCbnSelchangeDisplayToShowTaskbarWndCombo();
     afx_msg void OnBnClickedUsageGraphFollowSystemCheck();
+    afx_msg void OnEnChangeFontSizeEdit1();
 };

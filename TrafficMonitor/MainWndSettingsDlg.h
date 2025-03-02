@@ -80,4 +80,5 @@ public:
     afx_msg void OnBnClickedLockWindowPosCheck();
     afx_msg void OnBnClickedAlowOutOfBorderCheck();
     afx_msg void OnBnClickedResotreSkinDefaultButton();
+    afx_msg void OnEnChangeFontSizeEdit();
 };
