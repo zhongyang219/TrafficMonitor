@@ -51,8 +51,7 @@ void CTest::TestGetLicense()
 void CTest::TestSkin()
 {
     CSkinFile skin;
-    //skin.Load(L"C:\\Users\\zhong\\OneDrive\\文档\\TrafficMonitorSkin.xml");
-    skin.Load(L"D:\\Projects\\GitHub Project\\TrafficMonitor\\TrafficMonitor\\skins\\0默认皮肤\\skin.ini");
+    skin.Load(L"0默认皮肤");
     int a = 0;
 }
 

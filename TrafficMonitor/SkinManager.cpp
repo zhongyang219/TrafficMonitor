@@ -30,9 +30,15 @@ void CSkinManager::Init()
             //判断皮肤是否存在
             if (std::find(m_skins.begin(), m_skins.end(), skin_name) != m_skins.end())
             {
+                CSkinFile skin_file;
+                skin_file.Load(skin_name);
+                //获取皮肤所有显示项目
+                std::set<CommonDisplayItem> skin_all_items;
+                skin_file.GetSkinDisplayItems(skin_all_items);
+
                 SkinSettingData data;
                 //文本颜色
-                ini.LoadMainWndColors(app_name.c_str(), L"text_color", data.text_colors, 16384); //根据皮肤是否存在来设置默认的文本颜色，皮肤文件不存在时文本颜色默认为白色
+                ini.LoadMainWndColors(app_name.c_str(), L"text_color", skin_all_items, data.text_colors, 16384); //根据皮肤是否存在来设置默认的文本颜色，皮肤文件不存在时文本颜色默认为白色
                 data.specify_each_item_color = ini.GetBool(app_name.c_str(), L"specify_each_item_color", false);
                 //字体
                 FontInfo default_font{};
@@ -126,10 +132,14 @@ void CSkinManager::Save()
 
 void CSkinManager::SkinSettingDataFronSkin(SkinSettingData& skin_setting_data, const CSkinFile& skin_file)
 {
+    //获取皮肤所有显示项目
+    std::set<CommonDisplayItem> skin_all_items;
+    skin_file.GetSkinDisplayItems(skin_all_items);
     //获取皮肤的文字颜色
     skin_setting_data.specify_each_item_color = skin_file.GetSkinInfo().specify_each_item_color;
     int i{};
-    for (const auto& item : theApp.m_plugins.AllDisplayItemsWithPlugins())
+
+    for (const auto& item : skin_all_items)
     {
         skin_setting_data.text_colors[item] = skin_file.GetSkinInfo().TextColor(i);
         i++;
@@ -150,9 +160,6 @@ void CSkinManager::SkinSettingDataFronSkin(SkinSettingData& skin_setting_data, c
     if (skin_file.GetSkinInfo().font_info.size >= MIN_FONT_SIZE && skin_file.GetSkinInfo().font_info.size <= MAX_FONT_SIZE)
         skin_setting_data.font.size = skin_file.GetSkinInfo().font_info.size;
 
-    //获取皮肤所有显示项目
-    std::set<CommonDisplayItem> skin_all_items;
-    skin_file.GetSkinDisplayItems(skin_all_items);
     //获取项目的显示文本
     if (!skin_file.GetLayoutInfo().no_label)
     {

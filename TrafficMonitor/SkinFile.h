@@ -11,8 +11,12 @@ public:
     ~CSkinFile();
 
 
-    //从文件载入皮肤信息
-    void Load(const wstring& file_path);
+    //
+    /**
+     * @brief  从文件载入皮肤信息
+     * @param skin_name 皮肤名称
+     */
+    bool Load(const wstring& skin_name);
 
     //皮肤信息
     struct SkinInfo

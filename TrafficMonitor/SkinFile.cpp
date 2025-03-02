@@ -79,8 +79,11 @@ void CSkinFile::DrawSkinText(IDrawCommon& drawer, DrawStr draw_str, CRect rect, 
     }
 }
 
-void CSkinFile::Load(const wstring& file_path)
+bool CSkinFile::Load(const wstring& skin_name)
 {
+    std::wstring file_path{ theApp.m_skin_path + skin_name + L"\\skin.xml" };
+    if (!CCommon::FileExist(file_path.c_str()))
+        file_path = theApp.m_skin_path + skin_name + L"\\skin.ini";
     CFilePathHelper file_path_helper{ file_path };
     wstring ext = file_path_helper.GetFileExtension();
     if (ext == L"ini")
@@ -129,6 +132,7 @@ void CSkinFile::Load(const wstring& file_path)
         m_background_l.Destroy();
         m_background_l.Load((path_dir + BACKGROUND_IMAGE_L).c_str());
     }
+    return CCommon::FileExist(file_path.c_str());
 }
 
 void CSkinFile::LoadFromXml(const wstring& file_path)
@@ -288,7 +292,7 @@ void CSkinFile::LoadFromIni(const wstring& file_path)
     CSettingsHelper ini(file_path);
     //获取当前皮肤的文字颜色
     std::map<CommonDisplayItem, COLORREF> text_colors{};
-    ini.LoadMainWndColors(_T("skin"), _T("text_color"), text_colors, 0);
+    ini.LoadMainWndColors(_T("skin"), _T("text_color"), { TDI_UP, TDI_DOWN, TDI_CPU, TDI_MEMORY }, text_colors, 0);
     for (const auto& item : text_colors)
     {
         m_skin_info.text_color.push_back(item.second);

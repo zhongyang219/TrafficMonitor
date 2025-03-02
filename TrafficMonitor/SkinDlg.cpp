@@ -57,10 +57,7 @@ void CSkinDlg::DoDataExchange(CDataExchange* pDX)
 void CSkinDlg::ShowPreview()
 {
     //载入布局数据
-    wstring cfg_path{ theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.xml" };
-    if (!CCommon::FileExist(cfg_path.c_str()))
-        cfg_path = theApp.m_skin_path + m_skins[m_skin_selected] + L"\\skin.ini";
-    m_skin_data.Load(cfg_path);
+    m_skin_data.Load(m_skins[m_skin_selected]);
     //获取预览区大小
     m_view->SetSize(m_skin_data.GetPreviewInfo().width, m_skin_data.GetPreviewInfo().height);
     //刷新预览图

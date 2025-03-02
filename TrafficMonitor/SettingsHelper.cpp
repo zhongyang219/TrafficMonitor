@@ -36,7 +36,7 @@ void CSettingsHelper::LoadFontData(const wchar_t* AppName, FontInfo& font, const
     font.strike_out = style[3];
 }
 
-void CSettingsHelper::LoadMainWndColors(const wchar_t* AppName, const wchar_t* KeyName, std::map<CommonDisplayItem, COLORREF>& text_colors, COLORREF default_color)
+void CSettingsHelper::LoadMainWndColors(const wchar_t* AppName, const wchar_t* KeyName, const std::set<CommonDisplayItem>& all_items, std::map<CommonDisplayItem, COLORREF>& text_colors, COLORREF default_color)
 {
     CString default_str;
     default_str.Format(_T("%d"), default_color);
@@ -45,7 +45,8 @@ void CSettingsHelper::LoadMainWndColors(const wchar_t* AppName, const wchar_t* K
     std::vector<wstring> split_result;
     CCommon::StringSplit(str, L',', split_result);
     size_t index = 0;
-    for (auto iter = theApp.m_plugins.AllDisplayItemsWithPlugins().begin(); iter != theApp.m_plugins.AllDisplayItemsWithPlugins().end(); ++iter)
+    const std::set<CommonDisplayItem>& items{ all_items.empty() ? theApp.m_plugins.AllDisplayItemsWithPlugins() : all_items };
+    for (auto iter = items.begin(); iter != items.end(); ++iter)
     {
         if (index < split_result.size())
             text_colors[*iter] = _wtoi(split_result[index].c_str());

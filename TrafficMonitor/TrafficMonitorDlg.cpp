@@ -862,13 +862,10 @@ void CTrafficMonitorDlg::SetItemPosition()
 
 bool CTrafficMonitorDlg::LoadSkinLayout()
 {
-    wstring skin_cfg_path{ theApp.m_skin_path + CSkinManager::Instance().GetSkinName(m_skin_selected) + L"\\skin.xml" };
-    if (!CCommon::FileExist(skin_cfg_path.c_str()))
-        skin_cfg_path = theApp.m_skin_path + CSkinManager::Instance().GetSkinName(m_skin_selected) + L"\\skin.ini";
-    m_skin.Load(skin_cfg_path);
+    bool rtn = m_skin.Load(CSkinManager::Instance().GetSkinName(m_skin_selected));
     if (m_skin.GetLayoutInfo().no_label)        //如果皮肤布局不显示文本，则不允许交换上传和下载的位置，因为上传和下载的位置已经固定在皮肤中了
         theApp.m_main_wnd_data.swap_up_down = false;
-    return CCommon::FileExist(skin_cfg_path.c_str());
+    return rtn;
 }
 
 void CTrafficMonitorDlg::LoadBackGroundImage()
