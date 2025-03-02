@@ -73,12 +73,19 @@ void CIniHelper::WriteString(const wchar_t * AppName, const wchar_t * KeyName, c
 
 wstring CIniHelper::GetString(const wchar_t * AppName, const wchar_t * KeyName, const wchar_t* default_str) const
 {
-    wstring rtn{_GetString(AppName, KeyName, default_str)};
+    wstring rtn{ default_str };
+    GetString(AppName, KeyName, rtn);
+    return rtn;
+}
+
+bool CIniHelper::GetString(const wchar_t* AppName, const wchar_t* KeyName, wstring& str) const
+{
+    bool rtn = _GetString(AppName, KeyName, str);
     //如果读取的字符串前后有指定的字符，则删除它
-    if (!rtn.empty() && (rtn.front() == L'$' || rtn.front() == DEF_CH))
-        rtn = rtn.substr(1);
-    if (!rtn.empty() && (rtn.back() == L'$' || rtn.back() == DEF_CH))
-        rtn.pop_back();
+    if (!str.empty() && (str.front() == L'$' || str.front() == DEF_CH))
+        str = str.substr(1);
+    if (!str.empty() && (str.back() == L'$' || str.back() == DEF_CH))
+        str.pop_back();
     return rtn;
 }
 
@@ -89,7 +96,8 @@ void CIniHelper::WriteInt(const wchar_t * AppName, const wchar_t * KeyName, int 
 
 int CIniHelper::GetInt(const wchar_t * AppName, const wchar_t * KeyName, int default_value) const
 {
-    wstring rtn{ _GetString(AppName, KeyName, std::to_wstring(default_value).c_str()) };
+    wstring rtn{ std::to_wstring(default_value) };
+    _GetString(AppName, KeyName, rtn);
     return _ttoi(rtn.c_str());
 }
 
@@ -103,7 +111,8 @@ void CIniHelper::WriteBool(const wchar_t * AppName, const wchar_t * KeyName, boo
 
 bool CIniHelper::GetBool(const wchar_t * AppName, const wchar_t * KeyName, bool default_value) const
 {
-    wstring rtn{ _GetString(AppName, KeyName, (default_value ? L"true" : L"false")) };
+    wstring rtn{ default_value ? L"true" : L"false" };
+    _GetString(AppName, KeyName, rtn);
     if (rtn == L"true")
         return true;
     else if (rtn == L"false")
@@ -127,8 +136,8 @@ void CIniHelper::GetIntArray(const wchar_t * AppName, const wchar_t * KeyName, i
 {
     CString default_str;
     default_str.Format(_T("%d"), default_value);
-    wstring str;
-    str = _GetString(AppName, KeyName, default_str);
+    wstring str{ default_str.GetString() };
+    _GetString(AppName, KeyName, str);
     std::vector<wstring> split_result;
     CCommon::StringSplit(str, L',', split_result);
     for (int i = 0; i < size; i++)
@@ -170,8 +179,8 @@ void CIniHelper::WriteStringList(const wchar_t* AppName, const wchar_t* KeyName,
 
 void CIniHelper::GetStringList(const wchar_t* AppName, const wchar_t* KeyName, vector<wstring>& values, const vector<wstring>& default_value) const
 {
-    wstring default_str = MergeStringList(default_value);
-    wstring str_value = _GetString(AppName, KeyName, default_str.c_str());
+    wstring str_value = MergeStringList(default_value);
+    _GetString(AppName, KeyName, str_value);
     SplitStringList(values, str_value);
 }
 
@@ -336,14 +345,14 @@ void CIniHelper::_WriteString(const wchar_t * AppName, const wchar_t * KeyName, 
     }
 }
 
-wstring CIniHelper::_GetString(const wchar_t * AppName, const wchar_t * KeyName, const wchar_t* default_str) const
+bool CIniHelper::_GetString(const wchar_t* AppName, const wchar_t* KeyName, wstring& str) const
 {
     wstring app_str{ L"[" };
     app_str.append(AppName).append(L"]");
     size_t app_pos{}, app_end_pos, key_pos;
     app_pos = m_ini_str.find(app_str);
     if (app_pos == wstring::npos)       //找不到AppName，返回默认字符串
-        return default_str;
+        return false;
 
     app_end_pos = m_ini_str.find(L"\n[", app_pos + 2);
     if (app_end_pos != wstring::npos)
@@ -354,7 +363,7 @@ wstring CIniHelper::_GetString(const wchar_t * AppName, const wchar_t * KeyName,
         key_pos = m_ini_str.find(wstring(L"\n") + KeyName + L'=', app_pos);
     if (key_pos >= app_end_pos)             //找不到KeyName，返回默认字符串
     {
-        return default_str;
+        return false;
     }
     else    //找到了KeyName，获取等号到换行符之间的文本
     {
@@ -363,7 +372,7 @@ wstring CIniHelper::_GetString(const wchar_t * AppName, const wchar_t * KeyName,
         size_t line_end_pos = m_ini_str.find(L'\n', key_pos + 2);
         if (str_pos > line_end_pos) //所在行没有等号，返回默认字符串
         {
-            return default_str;
+            return false;
         }
         else
         {
@@ -375,7 +384,8 @@ wstring CIniHelper::_GetString(const wchar_t * AppName, const wchar_t * KeyName,
         wstring return_str{ m_ini_str.substr(str_pos, str_end_pos - str_pos) };
         //如果前后有空格，则将其删除
         CCommon::StringNormalize(return_str);
-        return return_str;
+        str = return_str;
+        return true;
     }
 }
 
@@ -396,7 +406,7 @@ wstring CIniHelper::MergeStringList(const vector<wstring>& values)
     return str_merge;
 }
 
-void CIniHelper::SplitStringList(vector<wstring>& values, wstring str_value)
+void CIniHelper::SplitStringList(vector<wstring>& values, const wstring& str_value)
 {
     CCommon::StringSplit(str_value, wstring(L"\",\""), values);
     if (!values.empty())

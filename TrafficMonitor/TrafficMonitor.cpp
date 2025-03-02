@@ -223,7 +223,7 @@ void CTrafficMonitorApp::LoadConfig()
 
     //载入显示文本设置
     ini.LoadDisplayStr(L"task_bar", m_taskbar_data.disp_str, false);
-    ini.LoadPluginDisplayStr(L"plugin_display_str_taskbar_window", m_taskbar_data.disp_str);
+    ini.LoadPluginDisplayStr(L"plugin_display_str_taskbar_window", m_taskbar_data.disp_str, false);
 
     m_taskbar_data.tbar_wnd_on_left = ini.GetBool(_T("task_bar"), _T("task_bar_wnd_on_left"), false);
     m_taskbar_data.speed_short_mode = ini.GetBool(_T("task_bar"), _T("task_bar_speed_short_mode"), false);

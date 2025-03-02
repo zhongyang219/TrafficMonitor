@@ -40,8 +40,8 @@ void CSettingsHelper::LoadMainWndColors(const wchar_t* AppName, const wchar_t* K
 {
     CString default_str;
     default_str.Format(_T("%d"), default_color);
-    wstring str;
-    str = _GetString(AppName, KeyName, default_str);
+    wstring str{ default_str.GetString() };
+    _GetString(AppName, KeyName, str);
     std::vector<wstring> split_result;
     CCommon::StringSplit(str, L',', split_result);
     size_t index = 0;
@@ -71,8 +71,8 @@ void CSettingsHelper::SaveMainWndColors(const wchar_t* AppName, const wchar_t* K
 
 void CSettingsHelper::LoadTaskbarWndColors(const wchar_t* AppName, const wchar_t* KeyName, std::map<CommonDisplayItem, TaskbarItemColor>& text_colors, const wchar_t* default_str)
 {
-    wstring str;
-    str = _GetString(AppName, KeyName, default_str);
+    wstring str{ default_str };
+    _GetString(AppName, KeyName, str);
     std::vector<wstring> split_result;
     CCommon::StringSplit(str, L',', split_result);
     size_t index = 0;
@@ -117,29 +117,40 @@ void CSettingsHelper::SaveTaskbarWndColors(const wchar_t* AppName, const wchar_t
 
 void CSettingsHelper::LoadDisplayStr(const wchar_t* AppName, DispStrings& disp_str, bool is_main_window) const
 {
-    disp_str.Get(TDI_UP) = GetString(AppName, L"up_string", is_main_window ? CCommon::LoadText(IDS_UPLOAD_DISP, L": $").GetString() : L"↑: $");
-    disp_str.Get(TDI_DOWN) = GetString(AppName, L"down_string", is_main_window ? CCommon::LoadText(IDS_DOWNLOAD_DISP, L": $").GetString() : L"↓: $");
-    disp_str.Get(TDI_TOTAL_SPEED) = GetString(AppName, L"total_speed_string", _T("↑↓: $"));
-    disp_str.Get(TDI_CPU) = GetString(AppName, L"cpu_string", L"CPU: $");
-    disp_str.Get(TDI_CPU_FREQ) = GetString(AppName, L"cpu_freq_string", CCommon::LoadText(IDS_CPU_FREQ, _T(": $")));
-    disp_str.Get(TDI_MEMORY) = GetString(AppName, L"memory_string", CCommon::LoadText(IDS_MEMORY_DISP, _T(": $")));
-    disp_str.Get(TDI_GPU_USAGE) = GetString(AppName, L"gpu_string", CCommon::LoadText(IDS_GPU_DISP, _T(": $")));
-    disp_str.Get(TDI_CPU_TEMP) = GetString(AppName, L"cpu_temp_string", L"CPU: $");
-    disp_str.Get(TDI_GPU_TEMP) = GetString(AppName, L"gpu_temp_string", CCommon::LoadText(IDS_GPU_DISP, _T(": $")));
-    disp_str.Get(TDI_HDD_TEMP) = GetString(AppName, L"hdd_temp_string", CCommon::LoadText(IDS_HDD_DISP, _T(": $")));
-    disp_str.Get(TDI_MAIN_BOARD_TEMP) = GetString(AppName, L"main_board_temp_string", CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": $")));
-    disp_str.Get(TDI_HDD_USAGE) = GetString(AppName, L"hdd_string", CCommon::LoadText(IDS_HDD_DISP, _T(": $")));
-    disp_str.Get(TDI_TODAY_TRAFFIC) = GetString(AppName, L"today_traffic_string", CCommon::LoadText(IDS_TRAFFIC_USED, _T(": $")));
+    //读取一个显示文本设置
+    auto getDisplayString = [&](const wchar_t* key_name, DisplayItem display_item, const wchar_t* default_str) {
+        std::wstring str{ default_str };
+        bool exist = GetString(AppName, key_name, str);
+        //主窗口只读取配置文件中存在的项，任务栏窗口读取所有项
+        if (!is_main_window || exist)
+            disp_str.Get(display_item) = str;
+    };
+
+    getDisplayString(L"up_string", TDI_UP, is_main_window ? CCommon::LoadText(IDS_UPLOAD_DISP, L": $").GetString() : L"↑: $");
+    getDisplayString(L"down_string", TDI_DOWN, is_main_window ? CCommon::LoadText(IDS_DOWNLOAD_DISP, L": $").GetString() : L"↓: $");
+    getDisplayString(L"total_speed_string", TDI_TOTAL_SPEED, _T("↑↓: $"));
+    getDisplayString(L"cpu_string", TDI_CPU, L"CPU: $");
+    getDisplayString(L"cpu_freq_string", TDI_CPU_FREQ, CCommon::LoadText(IDS_CPU_FREQ, _T(": $")));
+    getDisplayString(L"memory_string", TDI_MEMORY, CCommon::LoadText(IDS_MEMORY_DISP, _T(": $")));
+    getDisplayString(L"gpu_string", TDI_GPU_USAGE, CCommon::LoadText(IDS_GPU_DISP, _T(": $")));
+    getDisplayString(L"cpu_temp_string", TDI_CPU_TEMP, L"CPU: $");
+    getDisplayString(L"gpu_temp_string", TDI_GPU_TEMP, CCommon::LoadText(IDS_GPU_DISP, _T(": $")));
+    getDisplayString(L"hdd_temp_string", TDI_HDD_TEMP, CCommon::LoadText(IDS_HDD_DISP, _T(": $")));
+    getDisplayString(L"main_board_temp_string", TDI_MAIN_BOARD_TEMP, CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": $")));
+    getDisplayString(L"hdd_string", TDI_HDD_USAGE, CCommon::LoadText(IDS_HDD_DISP, _T(": $")));
+    getDisplayString(L"today_traffic_string", TDI_TODAY_TRAFFIC, CCommon::LoadText(IDS_TRAFFIC_USED, _T(": $")));
 }
 
 void CSettingsHelper::SaveDisplayStr(const wchar_t* AppName, const DispStrings& disp_str)
 {
+    //写入一个显示文本设置
     auto writeDisplayString = [&](const wchar_t* key_name, DisplayItem display_item) {
         if (disp_str.GetAllItems().find(display_item) != disp_str.GetAllItems().end())
         {
+            //仅当该显示文本项目存在时才写入
             WriteString(AppName, key_name, disp_str.GetConst(display_item));
         }
-        };
+    };
 
     writeDisplayString(_T("up_string"), TDI_UP);
     writeDisplayString(_T("down_string"), TDI_DOWN);
@@ -156,11 +167,15 @@ void CSettingsHelper::SaveDisplayStr(const wchar_t* AppName, const DispStrings& 
     writeDisplayString(_T("today_traffic_string"), TDI_TODAY_TRAFFIC);
 }
 
-void CSettingsHelper::LoadPluginDisplayStr(const wchar_t* AppName, DispStrings& disp_str)
+void CSettingsHelper::LoadPluginDisplayStr(const wchar_t* AppName, DispStrings& disp_str, bool is_main_window)
 {
     for (const auto& plugin : theApp.m_plugins.GetPluginItems())
     {
-        disp_str.Load(plugin->GetItemId(), GetString(AppName, plugin->GetItemId(), plugin->GetItemLableText()));
+        std::wstring str{ plugin->GetItemLableText() };
+        bool exist = GetString(AppName, plugin->GetItemId(), str);
+        //主窗口只读取配置文件中存在的项，任务栏窗口读取所有项
+        if (!is_main_window || exist)
+            disp_str.Load(plugin->GetItemId(), str);
     }
 }
 

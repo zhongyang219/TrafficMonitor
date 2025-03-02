@@ -21,6 +21,7 @@ public:
 
 	void WriteString(const wchar_t* AppName, const wchar_t* KeyName, const wstring& str);
 	wstring GetString(const wchar_t* AppName, const wchar_t* KeyName, const wchar_t* default_str) const;
+	bool GetString(const wchar_t* AppName, const wchar_t* KeyName, wstring& str) const;
 	void WriteInt(const wchar_t * AppName, const wchar_t * KeyName, int value);
 	int GetInt(const wchar_t * AppName, const wchar_t * KeyName, int default_value) const;
 	void WriteBool(const wchar_t * AppName, const wchar_t * KeyName, bool value);
@@ -46,8 +47,8 @@ protected:
 
     static void UnEscapeString(wstring& str);
     void _WriteString(const wchar_t* AppName, const wchar_t* KeyName, const wstring& str);
-	wstring _GetString(const wchar_t* AppName, const wchar_t* KeyName, const wchar_t* default_str) const;
+	bool _GetString(const wchar_t* AppName, const wchar_t* KeyName, wstring& str) const;
 
     static wstring MergeStringList(const vector<wstring>& values);
-    static void SplitStringList(vector<wstring>& values, wstring str_value);
+    static void SplitStringList(vector<wstring>& values, const wstring& str_value);
 };
