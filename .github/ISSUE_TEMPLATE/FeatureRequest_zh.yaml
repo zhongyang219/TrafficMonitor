@@ -1,0 +1,26 @@
+name: 功能请求
+description: 请求一个新功能
+labels: ["enhancement"]
+body:
+  - type: checkboxes
+    attributes: 
+      label: 前置条件
+      options:
+        - label: 已经在[issue](https://github.com/zhongyang219/TrafficMonitor/issues)列表中搜索了相关问题。
+          required: true
+  - type: input
+    attributes:
+      label: 您当前使用的TrafficMonitor版本
+      description: 右键TrafficMonitor托盘图标，选择`帮助` → `关于`。
+    validations: 
+      required: true
+  - type: textarea
+    attributes:   
+      label: 描述一下该功能
+      description: "为了方便我们管理，请不要在同一个issue下提交多个没有相关性的特性。"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 附加信息
+      description: "如果你还有其他需要提供的信息，可以在这里填写。"

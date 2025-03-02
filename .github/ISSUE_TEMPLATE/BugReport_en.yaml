@@ -1,0 +1,31 @@
+name: Bug Report
+description: File a bug report
+labels: ["bug"]
+body:
+  - type: checkboxes
+    attributes: 
+      label: Prerequisites
+      options:
+        - label: I have searched for related issues in the [issues](https://github.com/halo-dev/halo/issues) list.
+          required: true
+  - type: input
+    attributes:
+      label: Current TrafficMonitor Version
+      description: Right-click the TrafficMonitor tray icon, select `Help` → `About`.
+    validations: 
+      required: true
+  - type: textarea
+    attributes:
+      label: What happened?
+      description: "For ease of management, please do not report multiple unrelated issues under the same issue."
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Log Output
+      description: "Error logs can be found in the TrafficMonitor root directory.<br>This will be automatically formatted as code, so no backticks are needed."
+      render: shell
+  - type: textarea
+    attributes:
+      label: Additional Information
+      description: "If you have other information to note, you can fill it in here."
