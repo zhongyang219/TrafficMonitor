@@ -109,12 +109,6 @@ void CTrafficMonitorApp::LoadConfig()
     m_cfg_data.m_position_y = ini.GetInt(_T("config"), _T("position_y"), -1);
     m_cfg_data.m_auto_select = ini.GetBool(_T("connection"), _T("auto_select"), true);
     m_cfg_data.m_select_all = ini.GetBool(_T("connection"), _T("select_all"), false);
-    //判断皮肤是否存在
-    std::vector<wstring> skin_files;
-    CCommon::GetFiles((theApp.m_skin_path + L"*").c_str(), skin_files);
-    bool is_skin_exist = (!skin_files.empty());
-    ini.LoadMainWndColors(_T("config"), _T("text_color"), m_main_wnd_data.text_colors, (is_skin_exist ? 16384 : 16777215)); //根据皮肤是否存在来设置默认的文本颜色，皮肤文件不存在时文本颜色默认为白色
-    m_main_wnd_data.specify_each_item_color = ini.GetBool(_T("config"), _T("specify_each_item_color"), false);
     m_cfg_data.m_hide_main_window = ini.GetBool(_T("config"), _T("hide_main_window"), false);
     m_cfg_data.m_connection_name = CCommon::UnicodeToStr(ini.GetString(L"connection", L"connection_name", L"").c_str());
     m_cfg_data.m_skin_name = ini.GetString(_T("config"), _T("skin_selected"), _T(""));
@@ -133,18 +127,15 @@ void CTrafficMonitorApp::LoadConfig()
     m_main_wnd_data.swap_up_down = ini.GetBool(_T("config"), _T("swap_up_down"), false);
     m_main_wnd_data.hide_main_wnd_when_fullscreen = ini.GetBool(_T("config"), _T("hide_main_wnd_when_fullscreen"), true);
 
-    FontInfo default_font{};
-    default_font.name = m_str_table.GetLanguageInfo().default_font_name.c_str();
-    default_font.size = 10;
-    ini.LoadFontData(_T("config"), m_main_wnd_data.font, default_font);
-    //m_main_wnd_data.font.name = ini.GetString(_T("config"), _T("font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();
-    //m_main_wnd_data.font.size = ini.GetInt(_T("config"), _T("font_size"), 10);
-
-    //载入显示文本设置
-    ini.LoadDisplayStr(L"config", m_main_wnd_data.disp_str, true);
-
-    //载入插件项目的显示文本设置
-    ini.LoadPluginDisplayStr(L"plugin_display_str_main_window", m_main_wnd_data.disp_str);
+    //由于主窗口的文本颜色、字体、显示文本设置不再从配置文件读取，这些设置保存在每个皮肤的单独设置中，因此这里只将它们初始化为固定的值
+    m_main_wnd_data.text_colors[TDI_UP] = RGB(255, 255, 255);
+    m_main_wnd_data.specify_each_item_color = false;
+    m_main_wnd_data.font.name = m_str_table.GetLanguageInfo().default_font_name.c_str();
+    m_main_wnd_data.font.size = 10;
+    m_main_wnd_data.disp_str.Get(TDI_UP) = CCommon::LoadText(IDS_UPLOAD_DISP, L": ");
+    m_main_wnd_data.disp_str.Get(TDI_DOWN) = CCommon::LoadText(IDS_DOWNLOAD_DISP, L": ");
+    m_main_wnd_data.disp_str.Get(TDI_CPU) = L"CPU: ";
+    m_main_wnd_data.disp_str.Get(TDI_MEMORY) = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
 
     m_main_wnd_data.speed_short_mode = ini.GetBool(_T("config"), _T("speed_short_mode"), false);
     m_main_wnd_data.separate_value_unit_with_space = ini.GetBool(_T("config"), _T("separate_value_unit_with_space"), true);
@@ -224,9 +215,7 @@ void CTrafficMonitorApp::LoadConfig()
         m_taskbar_data.text_colors.begin()->second.label = m_taskbar_data.dft_text_colors;
     }
 
-    //m_taskbar_data.font.name = ini.GetString(_T("task_bar"), _T("tack_bar_font_name"), CCommon::LoadText(IDS_MICROSOFT_YAHEI)).c_str();
-    //m_taskbar_data.font.size = ini.GetInt(_T("task_bar"), _T("tack_bar_font_size"), 9);
-    default_font = FontInfo{};
+    FontInfo default_font;
     default_font.name = m_str_table.GetLanguageInfo().default_font_name.c_str();
     default_font.size = 9;
     ini.LoadFontData(_T("task_bar"), m_taskbar_data.font, default_font);
@@ -338,8 +327,8 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"config", L"position_y", m_cfg_data.m_position_y);
     ini.WriteBool(L"connection", L"auto_select", m_cfg_data.m_auto_select);
     ini.WriteBool(L"connection", L"select_all", m_cfg_data.m_select_all);
-    ini.SaveMainWndColors(L"config", L"text_color", m_main_wnd_data.text_colors);
-    ini.WriteBool(_T("config"), _T("specify_each_item_color"), m_main_wnd_data.specify_each_item_color);
+    //ini.SaveMainWndColors(L"config", L"text_color", m_main_wnd_data.text_colors);
+    //ini.WriteBool(_T("config"), _T("specify_each_item_color"), m_main_wnd_data.specify_each_item_color);
     ini.WriteInt(L"config", L"hide_main_window", m_cfg_data.m_hide_main_window);
     ini.WriteString(L"connection", L"connection_name", CCommon::StrToUnicode(m_cfg_data.m_connection_name.c_str()));
     ini.WriteString(_T("config"), _T("skin_selected"), m_cfg_data.m_skin_name.c_str());
@@ -351,13 +340,13 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"config", L"notify_icon_selected", m_cfg_data.m_notify_icon_selected);
     ini.WriteBool(L"config", L"notify_icon_auto_adapt", m_cfg_data.m_notify_icon_auto_adapt);
 
-    ini.SaveFontData(L"config", m_main_wnd_data.font);
+    //ini.SaveFontData(L"config", m_main_wnd_data.font);
 
     ini.WriteBool(L"config", L"swap_up_down", m_main_wnd_data.swap_up_down);
     ini.WriteBool(L"config", L"hide_main_wnd_when_fullscreen", m_main_wnd_data.hide_main_wnd_when_fullscreen);
 
-    ini.SaveDisplayStr(L"config", m_main_wnd_data.disp_str);
-    ini.SavePluginDisplayStr(L"plugin_display_str_main_window", m_main_wnd_data.disp_str);
+    //ini.SaveDisplayStr(L"config", m_main_wnd_data.disp_str);
+    //ini.SavePluginDisplayStr(L"plugin_display_str_main_window", m_main_wnd_data.disp_str);
 
     //将当前皮肤设置保存到SkinManager
     SkinSettingData skin_data = m_main_wnd_data.ToSkinSettingData();
