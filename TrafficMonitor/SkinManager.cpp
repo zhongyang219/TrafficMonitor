@@ -65,11 +65,7 @@ std::wstring CSkinManager::GetSkinName(int index) const
 int CSkinManager::FindSkinIndex(const std::wstring& skin_name) const
 {
     std::wstring _skin_name{ skin_name };
-    //如果名称前面有斜杠，则将它去掉
-    if (!_skin_name.empty() && (_skin_name[0] == L'\\' || _skin_name[0] == L'/'))
-    {
-        _skin_name = _skin_name.substr(1);
-    }
+    SkinNameNormalize(_skin_name);
     for (size_t i{}; i < m_skins.size(); i++)
     {
         if (m_skins[i] == _skin_name)
@@ -172,4 +168,14 @@ void CSkinManager::SkinSettingDataFronSkin(SkinSettingData& skin_setting_data, c
                 skin_setting_data.disp_str.Get(display_item) = DispStrings::DefaultString(display_item, true);
         }
     }
+}
+
+void CSkinManager::SkinNameNormalize(std::wstring& skin_name)
+{
+    //如果名称前面有斜杠，则将它去掉
+    if (!skin_name.empty() && (skin_name[0] == L'\\' || skin_name[0] == L'/'))
+    {
+        skin_name = skin_name.substr(1);
+    }
+
 }

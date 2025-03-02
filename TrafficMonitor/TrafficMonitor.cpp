@@ -120,6 +120,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_cfg_data.m_skin_name = ini.GetString(_T("config"), _T("skin_selected"), _T(""));
     if (m_cfg_data.m_skin_name.substr(0, 8) == L".\\skins\\")       //如果读取到的皮肤名称前面有".\\skins\\"，则把它删除。（用于和前一个版本保持兼容性）
         m_cfg_data.m_skin_name = m_cfg_data.m_skin_name.substr(7);
+    CSkinManager::SkinNameNormalize(m_cfg_data.m_skin_name);
 
     m_cfg_data.skin_auto_adapt = ini.GetBool(L"skins", L"skin_auto_adapt", false);
     m_cfg_data.skin_name_dark_mode = ini.GetString(L"skins", L"skin_name_dark_mode", L"");

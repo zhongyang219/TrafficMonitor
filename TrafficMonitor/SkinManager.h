@@ -16,7 +16,11 @@ public:
 
     void Save();
 
+    //从一个皮肤文件获取SkinSettingData对象
     static void SkinSettingDataFronSkin(SkinSettingData& skin_setting_data, const CSkinFile& skin_file);
+
+    //去掉皮肤名称前面的斜杠
+    static void SkinNameNormalize(std::wstring& skin_name);
 
 private:
     CSkinManager()

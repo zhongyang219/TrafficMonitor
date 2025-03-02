@@ -5,6 +5,7 @@
 #include "TrafficMonitor.h"
 #include "afxdialogex.h"
 #include "SkinAutoAdaptSettingDlg.h"
+#include "SkinManager.h"
 
 
 // CSkinAutoAdaptSettingDlg 对话框
@@ -25,11 +26,7 @@ CSkinAutoAdaptSettingDlg::~CSkinAutoAdaptSettingDlg()
 int CSkinAutoAdaptSettingDlg::FindSkinIndex(const wstring& skin_name)
 {
     std::wstring _skin_name{ skin_name };
-    //如果名称前面有斜杠，则将它去掉
-    if (!_skin_name.empty() && (_skin_name[0] == L'\\' || _skin_name[0] == L'/'))
-    {
-        _skin_name = _skin_name.substr(1);
-    }
+    CSkinManager::SkinNameNormalize(_skin_name);
     auto iter = std::find(m_skins.begin(), m_skins.end(), _skin_name);
     if (iter == m_skins.end())
         return 0;
