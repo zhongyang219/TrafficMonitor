@@ -1262,14 +1262,15 @@ void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
         if (plugin != nullptr)
         {
             //将右键菜单中插件菜单的显示文本改为插件名
-            pMenu->ModifyMenu(15, MF_BYPOSITION, 15, plugin->GetInfo(ITMPlugin::TMI_NAME));
+            const int PLUGIN_ITEM_INDEX = pMenu->GetMenuItemCount() - 1;    //插件项目为菜单中的最后一项
+            pMenu->ModifyMenu(PLUGIN_ITEM_INDEX, MF_BYPOSITION, PLUGIN_ITEM_INDEX, plugin->GetInfo(ITMPlugin::TMI_NAME));
             //获取插件图标
             HICON plugin_icon{};
             if (plugin->GetAPIVersion() >= 5)
                 plugin_icon = (HICON)plugin->GetPluginIcon();
             //设置插件图标
             if (plugin_icon != nullptr)
-                CMenuIcon::AddIconToMenuItem(pMenu->GetSafeHmenu(), 15, TRUE, plugin_icon);
+                CMenuIcon::AddIconToMenuItem(pMenu->GetSafeHmenu(), PLUGIN_ITEM_INDEX, TRUE, plugin_icon);
         }
         //更新插件子菜单
         theApp.UpdatePluginMenu(&theApp.m_taskbar_menu_plugin_sub_menu, plugin, 2);
