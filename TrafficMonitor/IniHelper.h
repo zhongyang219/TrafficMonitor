@@ -38,6 +38,9 @@ public:
     // 获取一个AppName下所有键值对
     void GetAllKeyValues(const wstring& AppName, std::map<wstring, wstring>& map) const;
 
+	//移除一个段
+	bool RemoveSection(const wstring& AppName);
+
 	bool Save();		//将ini文件保存到文件，成功返回true
 
 protected:

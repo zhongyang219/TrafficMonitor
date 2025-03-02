@@ -15,4 +15,5 @@ private:
     static void TestCrash();
     static void TestPlugin();
     static void TestDate();
+    static void TestIni();
 };

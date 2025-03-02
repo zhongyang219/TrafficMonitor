@@ -127,8 +127,23 @@ void CSkinManager::Save()
         //显示文本
         ini.SaveDisplayStr(app_name.c_str(), data.second.disp_str);
         ini.SavePluginDisplayStr(app_name.c_str(), data.second.disp_str);
-        ini.Save();
     }
+
+    //移除不存在的皮肤配置
+    //获取所有皮肤配置段
+    auto all_skin_section = ini.GetAllAppName(SKIN_SETTINGS_PREFIX);
+    for (const auto& skin_name : all_skin_section)
+    {
+        //判断皮肤配置是否存在
+        auto iter = m_skin_setting_data_map.find(skin_name);
+        //如果皮肤配置不存在，则将它从ini文件中移除
+        if (iter == m_skin_setting_data_map.end())
+        {
+            ini.RemoveSection(SKIN_SETTINGS_PREFIX + skin_name);
+        }
+    }
+
+    ini.Save();
 }
 
 void CSkinManager::SkinSettingDataFronSkin(SkinSettingData& skin_setting_data, const CSkinFile& skin_file)

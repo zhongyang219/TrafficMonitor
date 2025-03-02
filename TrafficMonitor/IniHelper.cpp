@@ -237,6 +237,26 @@ void CIniHelper::GetAllKeyValues(const wstring& AppName, std::map<wstring, wstri
     }
 }
 
+bool CIniHelper::RemoveSection(const wstring& AppName)
+{
+    if (AppName.empty())
+        return false;
+    wstring app_str{ L"[" };
+    app_str.append(AppName).append(L"]");
+    size_t app_pos{}, app_end_pos{};
+    app_pos = m_ini_str.find(app_str);
+    if (app_pos == wstring::npos)       //找不到AppName，返回默认字符串
+        return false;
+
+    app_end_pos = m_ini_str.find(L"\n[", app_pos + 2);
+    if (app_end_pos != wstring::npos)
+        app_end_pos++;
+
+    m_ini_str.erase(app_pos, app_end_pos - app_pos);
+
+    return true;
+}
+
 bool CIniHelper::Save()
 {
     if (m_file_path.empty())

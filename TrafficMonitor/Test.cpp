@@ -3,6 +3,7 @@
 #include "Common.h"
 #include "SkinFile.h"
 #include "TrafficMonitor.h"
+#include "IniHelper.h"
 
 CTest::CTest()
 {
@@ -19,6 +20,7 @@ void CTest::Test()
     //TestSkin();
     //TestCrash();
     //TestDate();
+    //TestIni();
 }
 
 void CTest::TestCommand()
@@ -78,5 +80,13 @@ void CTest::TestDate()
     d.month = 1;
     d.day = 4;
     int week = d.week();
+    int a = 0;
+}
+
+void CTest::TestIni()
+{
+    CIniHelper ini(L"D:\\Temp\\config.ini");
+    ini.RemoveSection(L"skin_360悬浮窗dark");
+    ini.Save();
     int a = 0;
 }
