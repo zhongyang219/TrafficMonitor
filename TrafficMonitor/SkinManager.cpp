@@ -31,7 +31,8 @@ void CSkinManager::Init()
             if (std::find(m_skins.begin(), m_skins.end(), skin_name) != m_skins.end())
             {
                 CSkinFile skin_file;
-                skin_file.Load(skin_name);
+                if (!skin_file.Load(skin_name))
+                    continue;
                 //获取皮肤所有显示项目
                 std::set<CommonDisplayItem> skin_all_items;
                 skin_file.GetSkinDisplayItems(skin_all_items);
