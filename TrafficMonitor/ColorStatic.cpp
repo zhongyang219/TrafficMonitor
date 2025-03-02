@@ -85,87 +85,40 @@ void CColorStatic::OnPaint()
 
 	if (IsWindowEnabled() && color_num > 0)
 	{
-		switch (color_num)
+		if (color_num == 1)
 		{
-		case 1:
 			dc.FillSolidRect(rect, m_colors[0]);
-			break;
-		case 4:
-			dc.FillSolidRect(rect, RGB(255,255,255));
-			rc_tmp.right /= 2;
-			rc_tmp.bottom /= 2;
-			dc.FillSolidRect(rc_tmp, m_colors[0]);
-			rc_tmp.MoveToX(rc_tmp.right);
-			dc.FillSolidRect(rc_tmp, m_colors[1]);
-			rc_tmp.MoveToXY(0, rc_tmp.bottom);
-			dc.FillSolidRect(rc_tmp, m_colors[2]);
-			rc_tmp.MoveToX(rc_tmp.right);
-			dc.FillSolidRect(rc_tmp, m_colors[3]);
-			break;
-		case 8:
+		}
+		//颜色数量大于或等于4，并且是4个位数时，上下两行以“Z”字形排列
+		else if (color_num >= 4 && color_num % 4 == 0)
+		{
 			dc.FillSolidRect(rect, RGB(255, 255, 255));
-			rc_tmp.right /= (color_num / 2);
-			rc_tmp.bottom /= 2;
-			dc.FillSolidRect(rc_tmp, m_colors[0]);
-			rc_tmp.MoveToX(rc_tmp.right);
-			dc.FillSolidRect(rc_tmp, m_colors[1]);
-			rc_tmp.MoveToX(rc_tmp.right);
-			dc.FillSolidRect(rc_tmp, m_colors[4]);
-			rc_tmp.MoveToX(rc_tmp.right);
-			dc.FillSolidRect(rc_tmp, m_colors[5]);
-			rc_tmp.MoveToXY(0, rc_tmp.bottom);
-			dc.FillSolidRect(rc_tmp, m_colors[2]);
-			rc_tmp.MoveToX(rc_tmp.right);
-			dc.FillSolidRect(rc_tmp, m_colors[3]);
-			rc_tmp.MoveToX(rc_tmp.right);
-			dc.FillSolidRect(rc_tmp, m_colors[6]);
-			rc_tmp.MoveToX(rc_tmp.right);
-			dc.FillSolidRect(rc_tmp, m_colors[7]);
-			break;
-        case 16:
-            dc.FillSolidRect(rect, RGB(255, 255, 255));
-            rc_tmp.right /= color_num / 2;
-            rc_tmp.bottom /= 2;
-            dc.FillSolidRect(rc_tmp, m_colors[0]);
-            rc_tmp.MoveToX(rc_tmp.right);
-            dc.FillSolidRect(rc_tmp, m_colors[1]);
-            rc_tmp.MoveToX(rc_tmp.right);
-            dc.FillSolidRect(rc_tmp, m_colors[4]);
-            rc_tmp.MoveToX(rc_tmp.right);
-            dc.FillSolidRect(rc_tmp, m_colors[5]);
-            rc_tmp.MoveToX(rc_tmp.right);
-            dc.FillSolidRect(rc_tmp, m_colors[8]);
-            rc_tmp.MoveToX(rc_tmp.right);
-            dc.FillSolidRect(rc_tmp, m_colors[9]);
-            rc_tmp.MoveToX(rc_tmp.right);
-            dc.FillSolidRect(rc_tmp, m_colors[12]);
-            rc_tmp.MoveToX(rc_tmp.right);
-            dc.FillSolidRect(rc_tmp, m_colors[13]);
-
-            rc_tmp.MoveToXY(0, rc_tmp.bottom);
-            dc.FillSolidRect(rc_tmp, m_colors[2]);
-            rc_tmp.MoveToX(rc_tmp.right);
-            dc.FillSolidRect(rc_tmp, m_colors[3]);
-            rc_tmp.MoveToX(rc_tmp.right);
-            dc.FillSolidRect(rc_tmp, m_colors[6]);
-            rc_tmp.MoveToX(rc_tmp.right);
-            dc.FillSolidRect(rc_tmp, m_colors[7]);
-            rc_tmp.MoveToX(rc_tmp.right);
-            dc.FillSolidRect(rc_tmp, m_colors[10]);
-            rc_tmp.MoveToX(rc_tmp.right);
-            dc.FillSolidRect(rc_tmp, m_colors[11]);
-            rc_tmp.MoveToX(rc_tmp.right);
-            dc.FillSolidRect(rc_tmp, m_colors[14]);
-            rc_tmp.MoveToX(rc_tmp.right);
-            dc.FillSolidRect(rc_tmp, m_colors[15]);
-            break;
-        default:
-			dc.FillSolidRect(rect, RGB(255, 255, 255));
-			rc_tmp.right = rect.Width() / color_num;
-			for (int i{}; i < color_num; i++)
+			int group_num = color_num / 4;		//颜色组数（4个为一组）
+			for (int i = 0; i < group_num; i++)
 			{
-				rc_tmp.MoveToX(i*(rect.Width() / color_num));
-				dc.FillSolidRect(rc_tmp, m_colors[i]);
+				int group_left = rect.Width() * i / group_num;
+				int group_right = rect.Width() * (i + 1) / group_num;
+				CRect rc_group(group_left, 0, group_right, rect.Height());	//当前组的矩形区域
+				CRect rc1(group_left, 0, group_left + rc_group.Width() / 2, rc_group.Height() / 2);
+				CRect rc2(group_left + rc_group.Width() / 2, 0, rc_group.right, rc_group.Height() / 2);
+				CRect rc3(group_left, rc_group.Height() / 2, group_left + rc_group.Width() / 2, rc_group.bottom);
+				CRect rc4(group_left + rc_group.Width() / 2, rc_group.Height() / 2, rc_group.right, rc_group.bottom);
+				dc.FillSolidRect(rc1, m_colors[static_cast<size_t>(i) * 4]);
+				dc.FillSolidRect(rc2, m_colors[static_cast<size_t>(i) * 4 + 1]);
+				dc.FillSolidRect(rc3, m_colors[static_cast<size_t>(i) * 4 + 2]);
+				dc.FillSolidRect(rc4, m_colors[static_cast<size_t>(i) * 4 + 3]);
+			}
+		}
+		//其他情况，一行从左到右排列
+		else
+		{
+			dc.FillSolidRect(rect, RGB(255, 255, 255));
+			for (int i = 0; i < color_num; i++)
+			{
+				int left = rect.Width() * i / color_num;
+				int right = rect.Width() * (i + 1) / color_num;
+				CRect rc_cell(left, 0, right, rect.Height());
+				dc.FillSolidRect(rc_cell, m_colors[i]);
 			}
 		}
 
