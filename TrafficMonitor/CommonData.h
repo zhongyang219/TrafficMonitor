@@ -71,6 +71,7 @@ public:
     const std::map<CommonDisplayItem, wstring>& GetAllItems() const;
 
     void operator=(const DispStrings& disp_str);     //重载赋值运算符
+    bool operator==(const DispStrings& disp_str) const;
 
     //载入一个插件项目的显示文本
     void Load(const std::wstring& plugin_id, const std::wstring& disp_str);
@@ -123,6 +124,8 @@ struct FontInfo
     bool italic{};      //斜体
     bool underline{};   //下划线
     bool strike_out{};  //删除线
+
+    bool operator==(const FontInfo& a) const;
 
     //创建一个CFont对象
     void Create(CFont& font, int dpi = 0)
@@ -220,6 +223,7 @@ struct SkinSettingData
     bool specify_each_item_color{};
 
     bool IsEmpty() const;
+    bool operator==(const SkinSettingData& a) const;
 };
 
 //选项设置中“主窗口设置”和“任务栏窗口设置”中公共的数据（不使用此结构体创建对象）

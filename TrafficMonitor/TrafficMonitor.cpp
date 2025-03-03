@@ -349,10 +349,6 @@ void CTrafficMonitorApp::SaveConfig()
     //ini.SaveDisplayStr(L"config", m_main_wnd_data.disp_str);
     //ini.SavePluginDisplayStr(L"plugin_display_str_main_window", m_main_wnd_data.disp_str);
 
-    //将当前皮肤设置保存到SkinManager
-    SkinSettingData skin_data = m_main_wnd_data.ToSkinSettingData();
-    CSkinManager::Instance().AddSkinSettingData(m_cfg_data.m_skin_name, skin_data);
-
     ini.WriteBool(L"config", L"speed_short_mode", m_main_wnd_data.speed_short_mode);
     ini.WriteBool(L"config", L"separate_value_unit_with_space", m_main_wnd_data.separate_value_unit_with_space);
     ini.WriteBool(L"config", L"show_tool_tip", m_main_wnd_data.show_tool_tip);

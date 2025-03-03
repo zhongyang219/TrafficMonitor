@@ -87,6 +87,11 @@ void DispStrings::operator=(const DispStrings& disp_str)
     map_str = tmp;
 }
 
+bool DispStrings::operator==(const DispStrings& disp_str) const
+{
+    return map_str == disp_str.map_str;
+}
+
 bool DispStrings::IsInvalid() const
 {
     for (auto iter = map_str.begin(); iter != map_str.end(); ++iter)
@@ -171,6 +176,13 @@ void DispStrings::Load(const std::wstring& plugin_id, const std::wstring& disp_s
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
+bool FontInfo::operator==(const FontInfo& a) const
+{
+    return name == a.name && size == a.size && bold == a.bold && italic == a.italic
+        && underline == a.underline && strike_out == a.strike_out;
+}
+
+///////////////////////////////////////////////////////////////////////////////////
 bool StringSet::Contains(const std::wstring& str) const
 {
     return string_set.count(str) != 0;
@@ -233,6 +245,11 @@ std::set<std::wstring>& StringSet::data()
 bool SkinSettingData::IsEmpty() const
 {
     return font.name.IsEmpty() && disp_str.GetAllItems().empty() && text_colors.empty();
+}
+
+bool SkinSettingData::operator==(const SkinSettingData& a) const
+{
+    return font == a.font && disp_str == a.disp_str && text_colors == a.text_colors && specify_each_item_color == a.specify_each_item_color;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

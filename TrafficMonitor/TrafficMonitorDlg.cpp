@@ -739,6 +739,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
         || theApp.m_taskbar_data.IsTaskbarTransparent() != optionsDlg.m_tab2_dlg.m_data.IsTaskbarTransparent()
         || theApp.m_taskbar_data.auto_set_background_color != optionsDlg.m_tab2_dlg.m_data.auto_set_background_color
         );
+    bool is_skin_data_changed = (theApp.m_main_wnd_data.ToSkinSettingData() != optionsDlg.m_tab1_dlg.m_data.ToSkinSettingData());
 
     theApp.m_main_wnd_data = optionsDlg.m_tab1_dlg.m_data;
     theApp.m_taskbar_data = optionsDlg.m_tab2_dlg.m_data;
@@ -843,9 +844,16 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
             DeleteNotifyIcon();
     }
 
+    if (is_skin_data_changed)
+    {
+        //将当前皮肤设置保存到SkinManager
+        SkinSettingData skin_data = theApp.m_main_wnd_data.ToSkinSettingData();
+        CSkinManager::Instance().AddSkinSettingData(theApp.m_cfg_data.m_skin_name, skin_data);
+        CSkinManager::Instance().Save();
+    }
+
     theApp.SaveConfig();
     theApp.SaveGlobalConfig();
-    CSkinManager::Instance().Save();
 }
 
 void CTrafficMonitorDlg::SetItemPosition()
@@ -2092,7 +2100,6 @@ void CTrafficMonitorDlg::OnClose()
     theApp.m_cannot_save_global_config_warning = true;
     theApp.SaveConfig();    //退出前保存设置到ini文件
     theApp.SaveGlobalConfig();
-    CSkinManager::Instance().Save();
     SaveHistoryTraffic();
     BackupHistoryTrafficFile();
 
@@ -2711,7 +2718,6 @@ BOOL CTrafficMonitorDlg::OnQueryEndSession()
     // TODO:  在此添加专用的查询结束会话代码
     theApp.SaveConfig();
     theApp.SaveGlobalConfig();
-    CSkinManager::Instance().Save();
     SaveHistoryTraffic();
     BackupHistoryTrafficFile();
 
