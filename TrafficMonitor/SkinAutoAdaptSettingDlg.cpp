@@ -12,25 +12,14 @@
 
 IMPLEMENT_DYNAMIC(CSkinAutoAdaptSettingDlg, CBaseDialog)
 
-CSkinAutoAdaptSettingDlg::CSkinAutoAdaptSettingDlg(const vector<wstring>& skins, CWnd* pParent /*=nullptr*/)
+CSkinAutoAdaptSettingDlg::CSkinAutoAdaptSettingDlg(CWnd* pParent /*=nullptr*/)
 	: CBaseDialog(IDD_SKIN_AUTO_ADAPT_DLG, pParent)
-    , m_skins(skins)
 {
 
 }
 
 CSkinAutoAdaptSettingDlg::~CSkinAutoAdaptSettingDlg()
 {
-}
-
-int CSkinAutoAdaptSettingDlg::FindSkinIndex(const wstring& skin_name)
-{
-    std::wstring _skin_name{ skin_name };
-    CSkinManager::SkinNameNormalize(_skin_name);
-    auto iter = std::find(m_skins.begin(), m_skins.end(), _skin_name);
-    if (iter == m_skins.end())
-        return 0;
-    return iter - m_skins.begin();
 }
 
 void CSkinAutoAdaptSettingDlg::DoDataExchange(CDataExchange* pDX)
@@ -69,14 +58,14 @@ BOOL CSkinAutoAdaptSettingDlg::OnInitDialog()
     CBaseDialog::OnInitDialog();
 
     //初始化下拉列表
-    for (const auto& skin_name : m_skins)
+    for (const auto& skin_name : CSkinManager::Instance().GetSkinNames())
     {
         m_dark_mode_skin_combo.AddString(skin_name.c_str());
         m_light_mode_skin_combo.AddString(skin_name.c_str());
     }
 
-    int dark_mode_skin = FindSkinIndex(theApp.m_cfg_data.skin_name_dark_mode);
-    int light_mode_skin = FindSkinIndex(theApp.m_cfg_data.skin_name_light_mode);
+    int dark_mode_skin = CSkinManager::Instance().FindSkinIndex(theApp.m_cfg_data.skin_name_dark_mode);
+    int light_mode_skin = CSkinManager::Instance().FindSkinIndex(theApp.m_cfg_data.skin_name_light_mode);
     m_dark_mode_skin_combo.SetCurSel(dark_mode_skin);
     m_light_mode_skin_combo.SetCurSel(light_mode_skin);
 

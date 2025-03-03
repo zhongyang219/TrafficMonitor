@@ -921,9 +921,7 @@ void CTrafficMonitorDlg::LoadBackGroundImage()
 
 void CTrafficMonitorDlg::SetTextFont()
 {
-    if (m_font.m_hObject)   //如果m_font已经关联了一个字体资源对象，则释放它
-        m_font.DeleteObject();
-    theApp.m_main_wnd_data.font.Create(m_font, theApp.GetDpi());
+    m_skin.SetFont(theApp.m_main_wnd_data.font);
 }
 
 bool CTrafficMonitorDlg::IsTaskbarWndValid() const
@@ -2549,9 +2547,7 @@ void CTrafficMonitorDlg::OnChangeSkin()
     // TODO: 在此添加命令处理程序代码
     CSkinDlg skinDlg;
     //初始化CSkinDlg对象的数据
-    skinDlg.m_skins = CSkinManager::Instance().GetSkinNames();
     skinDlg.m_skin_selected = m_skin_selected;
-    skinDlg.m_pFont = &m_font;
     if (skinDlg.DoModal() == IDOK)
     {
         ApplySkin(skinDlg.m_skin_selected);
@@ -2735,7 +2731,7 @@ void CTrafficMonitorDlg::OnPaint()
     CPaintDC dc(this); // device context for painting
                        // TODO: 在此处添加消息处理程序代码
                        // 不为绘图消息调用 CDialog::OnPaint()
-    m_skin.DrawInfo(&dc, theApp.m_cfg_data.m_show_more_info, m_font);
+    m_skin.DrawInfo(&dc, theApp.m_cfg_data.m_show_more_info);
 }
 
 

@@ -6,6 +6,7 @@
 #include "SkinDlg.h"
 #include "afxdialogex.h"
 #include "SkinAutoAdaptSettingDlg.h"
+#include "SkinManager.h"
 
 
 // CSkinDlg 对话框
@@ -57,7 +58,13 @@ void CSkinDlg::DoDataExchange(CDataExchange* pDX)
 void CSkinDlg::ShowPreview()
 {
     //载入布局数据
-    m_skin_data.Load(m_skins[m_skin_selected]);
+    m_skin_data.Load(CSkinManager::Instance().GetSkinName(m_skin_selected));
+    //获取当前皮肤中用户更改字体
+    SkinSettingData cur_skin_data;
+    if (CSkinManager::Instance().GetSkinSettingDataByIndex(m_skin_selected, cur_skin_data))
+    {
+        m_skin_data.SetFont(cur_skin_data.font);
+    }
     //获取预览区大小
     m_view->SetSize(m_skin_data.GetPreviewInfo().width, m_skin_data.GetPreviewInfo().height);
     //刷新预览图
@@ -112,7 +119,7 @@ BOOL CSkinDlg::OnInitDialog()
     SetIcon(theApp.GetMenuIcon(IDI_SKIN), FALSE);		// 设置小图标
     //初始化选择框
     m_skin_list_box.SetItemHeight(0, DPI(18));
-    for (const auto& skin_name : m_skins)
+    for (const auto& skin_name : CSkinManager::Instance().GetSkinNames())
     {
         m_skin_list_box.AddString(skin_name.c_str());
     }
@@ -122,7 +129,6 @@ BOOL CSkinDlg::OnInitDialog()
     m_view->Create(NULL, NULL, WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL, CalculateViewRect(), this, 3000);
     m_view->InitialUpdate();
     m_view->SetSkinData(&m_skin_data);
-    m_view->SetFont(m_pFont);
     m_view->ShowWindow(SW_SHOW);
 
     //设置提示信息
@@ -179,15 +185,16 @@ afx_msg LRESULT CSkinDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
 
 void CSkinDlg::OnBnClickedSkinAutoAdaptButton()
 {
-    CSkinAutoAdaptSettingDlg dlg(m_skins);
+    CSkinAutoAdaptSettingDlg dlg;
+    const auto& skins{ CSkinManager::Instance().GetSkinNames() };
     if (dlg.DoModal() == IDOK)
     {
         int dark_mode_skin = dlg.GetDarkModeSkin();
         int light_mode_skin = dlg.GetLightModeSkin();
-        if (dark_mode_skin >= 0 && dark_mode_skin < static_cast<int>(m_skins.size()))
-            theApp.m_cfg_data.skin_name_dark_mode = m_skins[dark_mode_skin];
-        if (light_mode_skin >= 0 && light_mode_skin < static_cast<int>(m_skins.size()))
-            theApp.m_cfg_data.skin_name_light_mode = m_skins[light_mode_skin];
+        if (dark_mode_skin >= 0 && dark_mode_skin < static_cast<int>(skins.size()))
+            theApp.m_cfg_data.skin_name_dark_mode = skins[dark_mode_skin];
+        if (light_mode_skin >= 0 && light_mode_skin < static_cast<int>(skins.size()))
+            theApp.m_cfg_data.skin_name_light_mode = skins[light_mode_skin];
     }
 }
 

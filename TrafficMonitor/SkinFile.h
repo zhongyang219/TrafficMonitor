@@ -96,13 +96,15 @@ public:
     bool IsPNG() const { return m_is_png; }
     void SetAlpha(int alpha);       //设置主窗口的不透明度，alpha:0~255，仅当使用png背景时有效
 
+    void SetFont(const FontInfo& font_info);
+
     //绘制预览图
     //pDC: 绘图的CDC
     //rect: 绘图区域
     void DrawPreview(CDC* pDC, CRect rect);
 
     //绘制主界面
-    void DrawInfo(CDC* pDC, bool show_more_info, CFont& font);
+    void DrawInfo(CDC* pDC, bool show_more_info);
 
     static string GetDisplayItemXmlNodeName(DisplayItem display_item);
 

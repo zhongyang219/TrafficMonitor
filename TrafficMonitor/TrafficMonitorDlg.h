@@ -94,8 +94,6 @@ protected:
     CSkinFile m_skin;
     CommonDisplayItem m_clicked_item;           //鼠标点击的项目
 
-    CFont m_font;           //字体
-
     int m_restart_cnt{ -1 };    //重新初始化次数
     unsigned int m_timer_cnt{};     //定时器触发次数（自程序启动以来的秒数）
     unsigned int m_taskbar_timer_cnt{0}; //适用于TaskBarDlg的定时器触发次数（自程序启动以来的秒数）

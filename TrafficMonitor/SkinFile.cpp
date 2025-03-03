@@ -146,112 +146,106 @@ void CSkinFile::LoadFromXml(const wstring& file_path)
     tinyxml2::XMLDocument doc;
     if (CTinyXml2Helper::LoadXmlFile(doc, file_path.c_str()))
     {
-        CTinyXml2Helper::IterateChildNode(doc.FirstChildElement(), [&](tinyxml2::XMLElement* child)
+        CTinyXml2Helper::IterateChildNode(doc.FirstChildElement(), [&](tinyxml2::XMLElement* child) {
+            string ele_name = CTinyXml2Helper::ElementName(child);
+            //读取皮肤信息
+            if (ele_name == "skin")
             {
-                string ele_name = CTinyXml2Helper::ElementName(child);
-                //读取皮肤信息
-                if (ele_name == "skin")
-                {
-                    CTinyXml2Helper::IterateChildNode(child, [&](tinyxml2::XMLElement* skin_item)
+                CTinyXml2Helper::IterateChildNode(child, [&](tinyxml2::XMLElement* skin_item) {
+                    string skin_item_name = CTinyXml2Helper::ElementName(skin_item);
+                    //文本颜色
+                    if (skin_item_name == "text_color")
+                    {
+                        string str_text_color = CTinyXml2Helper::ElementText(skin_item);
+                        std::vector<string> split_result;
+                        CCommon::StringSplit(str_text_color, L',', split_result);
+                        for (const auto& str : split_result)
                         {
-                            string skin_item_name = CTinyXml2Helper::ElementName(skin_item);
-                            //文本颜色
-                            if (skin_item_name == "text_color")
-                            {
-                                string str_text_color = CTinyXml2Helper::ElementText(skin_item);
-                                std::vector<string> split_result;
-                                CCommon::StringSplit(str_text_color, L',', split_result);
-                                for (const auto& str : split_result)
-                                {
-                                    m_skin_info.text_color.push_back(atoi(str.c_str()));
-                                }
-                            }
+                            m_skin_info.text_color.push_back(atoi(str.c_str()));
+                        }
+                    }
 
-                            if (m_skin_info.text_color.size() < theApp.m_plugins.AllDisplayItemsWithPlugins().size())
-                            {
-                                COLORREF default_color{};
-                                if (!m_skin_info.text_color.empty())
-                                    default_color = m_skin_info.text_color.front();
-                                m_skin_info.text_color.resize(theApp.m_plugins.AllDisplayItemsWithPlugins().size(), default_color);
-                            }
-                            //指定每个项目的颜色
-                            else if (skin_item_name == "specify_each_item_color")
-                            {
-                                m_skin_info.specify_each_item_color = CTinyXml2Helper::StringToBool(CTinyXml2Helper::ElementText(skin_item));
-                            }
-                            //皮肤作者
-                            else if (skin_item_name == "skin_author")
-                            {
-                                m_skin_info.skin_author = CCommon::StrToUnicode(CTinyXml2Helper::ElementText(skin_item), true);
-                            }
-                            //字体
-                            else if (skin_item_name == "font")
-                            {
-                                m_skin_info.font_info.name = CTinyXml2Helper::ElementAttribute(skin_item, "name");
-                                m_skin_info.font_info.size = atoi(CTinyXml2Helper::ElementAttribute(skin_item, "size"));
-                                int font_style = atoi(CTinyXml2Helper::ElementAttribute(skin_item, "style"));
-                                m_skin_info.font_info.bold = CCommon::GetNumberBit(font_style, 0);
-                                m_skin_info.font_info.italic = CCommon::GetNumberBit(font_style, 1);
-                                m_skin_info.font_info.underline = CCommon::GetNumberBit(font_style, 2);
-                                m_skin_info.font_info.strike_out = CCommon::GetNumberBit(font_style, 3);
-                            }
-                            else if (skin_item_name == "display_text")
-                            {
-                                //这里先保存所有显示文本到display_text_map
-                                CTinyXml2Helper::IterateChildNode(skin_item, [&](tinyxml2::XMLElement* display_text_item)
-                                    {
-                                        string item_name = CTinyXml2Helper::ElementName(display_text_item);
-                                        wstring item_text = CCommon::StrToUnicode(CTinyXml2Helper::ElementText(display_text_item), true);
-                                        display_text_map[item_name] = item_text;
-                                    });
-                            }
+                    if (m_skin_info.text_color.size() < theApp.m_plugins.AllDisplayItemsWithPlugins().size())
+                    {
+                        COLORREF default_color{};
+                        if (!m_skin_info.text_color.empty())
+                            default_color = m_skin_info.text_color.front();
+                        m_skin_info.text_color.resize(theApp.m_plugins.AllDisplayItemsWithPlugins().size(), default_color);
+                    }
+                    //指定每个项目的颜色
+                    else if (skin_item_name == "specify_each_item_color")
+                    {
+                        m_skin_info.specify_each_item_color = CTinyXml2Helper::StringToBool(CTinyXml2Helper::ElementText(skin_item));
+                    }
+                    //皮肤作者
+                    else if (skin_item_name == "skin_author")
+                    {
+                        m_skin_info.skin_author = CCommon::StrToUnicode(CTinyXml2Helper::ElementText(skin_item), true);
+                    }
+                    //字体
+                    else if (skin_item_name == "font")
+                    {
+                        m_skin_info.font_info.name = CTinyXml2Helper::ElementAttribute(skin_item, "name");
+                        m_skin_info.font_info.size = atoi(CTinyXml2Helper::ElementAttribute(skin_item, "size"));
+                        int font_style = atoi(CTinyXml2Helper::ElementAttribute(skin_item, "style"));
+                        m_skin_info.font_info.bold = CCommon::GetNumberBit(font_style, 0);
+                        m_skin_info.font_info.italic = CCommon::GetNumberBit(font_style, 1);
+                        m_skin_info.font_info.underline = CCommon::GetNumberBit(font_style, 2);
+                        m_skin_info.font_info.strike_out = CCommon::GetNumberBit(font_style, 3);
+                    }
+                    else if (skin_item_name == "display_text")
+                    {
+                        //这里先保存所有显示文本到display_text_map
+                        CTinyXml2Helper::IterateChildNode(skin_item, [&](tinyxml2::XMLElement* display_text_item) {
+                            string item_name = CTinyXml2Helper::ElementName(display_text_item);
+                            wstring item_text = CCommon::StrToUnicode(CTinyXml2Helper::ElementText(display_text_item), true);
+                            display_text_map[item_name] = item_text;
                         });
-                }
-                //布局信息
-                else if (ele_name == "layout")
-                {
-                    m_layout_info.text_height = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(child, "text_height")));
-                    m_layout_info.no_label = CTinyXml2Helper::StringToBool(CTinyXml2Helper::ElementAttribute(child, "no_label"));
-                    CTinyXml2Helper::IterateChildNode(child, [this](tinyxml2::XMLElement* ele_layout)
-                        {
-                            string str_layout = CTinyXml2Helper::ElementName(ele_layout);
-                            if (str_layout == "layout_l")
-                                m_layout_info.layout_l = LayoutFromXmlNode(ele_layout);
-                            else if (str_layout == "layout_s")
-                                m_layout_info.layout_s = LayoutFromXmlNode(ele_layout);
-                        });
-                }
-                //预览图
-                else if (ele_name == "preview")
-                {
-                    m_preview_info.width = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(child, "width")));
-                    m_preview_info.height = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(child, "height")));
-                    CTinyXml2Helper::IterateChildNode(child, [this](tinyxml2::XMLElement* ele_priview_item)
-                        {
-                            string str_item_name = CTinyXml2Helper::ElementName(ele_priview_item);
-                            if (str_item_name == "l")
-                            {
-                                m_preview_info.l_pos.x = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(ele_priview_item, "x")));
-                                m_preview_info.l_pos.y = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(ele_priview_item, "y")));
-                            }
-                            else if (str_item_name == "s")
-                            {
-                                m_preview_info.s_pos.x = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(ele_priview_item, "x")));
-                                m_preview_info.s_pos.y = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(ele_priview_item, "y")));
-                            }
-                        });
-                }
-                //插件名称映射
-                else if (ele_name == "plugin_map")
-                {
-                    CTinyXml2Helper::IterateChildNode(child, [this](tinyxml2::XMLElement* plugin_item)
-                        {
-                            string ele_name = CTinyXml2Helper::ElementName(plugin_item);
-                            string ele_text = CTinyXml2Helper::ElementText(plugin_item);
-                            m_plugin_map[ele_name] = ele_text;
-                        });
-                }
-            });
+                    }
+                });
+            }
+            //布局信息
+            else if (ele_name == "layout")
+            {
+                m_layout_info.text_height = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(child, "text_height")));
+                m_layout_info.no_label = CTinyXml2Helper::StringToBool(CTinyXml2Helper::ElementAttribute(child, "no_label"));
+                CTinyXml2Helper::IterateChildNode(child, [this](tinyxml2::XMLElement* ele_layout) {
+                    string str_layout = CTinyXml2Helper::ElementName(ele_layout);
+                    if (str_layout == "layout_l")
+                        m_layout_info.layout_l = LayoutFromXmlNode(ele_layout);
+                    else if (str_layout == "layout_s")
+                        m_layout_info.layout_s = LayoutFromXmlNode(ele_layout);
+                });
+            }
+            //预览图
+            else if (ele_name == "preview")
+            {
+                m_preview_info.width = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(child, "width")));
+                m_preview_info.height = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(child, "height")));
+                CTinyXml2Helper::IterateChildNode(child, [this](tinyxml2::XMLElement* ele_priview_item) {
+                    string str_item_name = CTinyXml2Helper::ElementName(ele_priview_item);
+                    if (str_item_name == "l")
+                    {
+                        m_preview_info.l_pos.x = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(ele_priview_item, "x")));
+                        m_preview_info.l_pos.y = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(ele_priview_item, "y")));
+                    }
+                    else if (str_item_name == "s")
+                    {
+                        m_preview_info.s_pos.x = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(ele_priview_item, "x")));
+                        m_preview_info.s_pos.y = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(ele_priview_item, "y")));
+                    }
+                });
+            }
+            //插件名称映射
+            else if (ele_name == "plugin_map")
+            {
+                CTinyXml2Helper::IterateChildNode(child, [this](tinyxml2::XMLElement* plugin_item) {
+                    string ele_name = CTinyXml2Helper::ElementName(plugin_item);
+                    string ele_text = CTinyXml2Helper::ElementText(plugin_item);
+                    m_plugin_map[ele_name] = ele_text;
+                });
+            }
+        });
     }
 
     //载入显示文本
@@ -375,6 +369,13 @@ void CSkinFile::LoadFromIni(const wstring& file_path)
 void CSkinFile::SetAlpha(int alpha)
 {
     m_alpha = alpha;
+}
+
+void CSkinFile::SetFont(const FontInfo& font_info)
+{
+    if (m_font.m_hObject)   //如果m_font已经关联了一个字体资源对象，则释放它
+        m_font.DeleteObject();
+    font_info.Create(m_font, theApp.GetDpi());
 }
 
 void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
@@ -542,7 +543,7 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
     drawPreviewText(m_layout_info.layout_l, m_preview_info.l_pos);
 }
 
-void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
+void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info)
 {
     //绘制背景图
     Layout& layout{ show_more_info ? m_layout_info.layout_l : m_layout_info.layout_s };
@@ -570,7 +571,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
         gdiplus_drawer.DrawImage(background_image, CPoint(0, 0), rect.Size(), CDrawCommon::StretchMode::FILL);
         
         //绘制显示项目
-        DrawItemsInfo(gdiplus_drawer, layout, font);
+        DrawItemsInfo(gdiplus_drawer, layout, m_font);
 
         //重新设置自绘插件区域的alpha值。
         //插件自绘时可能会使用GDI绘制文本，由于使用了UpdateLayeredWindow函数，使用GDI的绘图函数绘制文本时会导致文本变得透明。
@@ -605,7 +606,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info, CFont& font)
         CImage& background_image{ show_more_info ? m_background_l : m_background_s };
         draw.DrawBitmap(background_image, CPoint(0, 0), CSize(layout.width, layout.height));
 
-        DrawItemsInfo(draw, layout, font);
+        DrawItemsInfo(draw, layout, m_font);
     }
 }
 

@@ -128,7 +128,7 @@ struct FontInfo
     bool operator==(const FontInfo& a) const;
 
     //创建一个CFont对象
-    void Create(CFont& font, int dpi = 0)
+    void Create(CFont& font, int dpi = 0) const
     {
         font.CreateFont(
             FontSizeToLfHeight(size, dpi), // nHeight

@@ -16,9 +16,7 @@ public:
     CSkinDlg(CWnd* pParent = NULL);   // 标准构造函数
     virtual ~CSkinDlg();
 
-    vector<wstring> m_skins;		//皮肤文件的路径
     int m_skin_selected;			//选择的皮肤
-    CFont* m_pFont;		//预览图的字体
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME

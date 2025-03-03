@@ -9,7 +9,7 @@ class CSkinAutoAdaptSettingDlg : public CBaseDialog
 	DECLARE_DYNAMIC(CSkinAutoAdaptSettingDlg)
 
 public:
-	CSkinAutoAdaptSettingDlg(const vector<wstring>& skins, CWnd* pParent = nullptr);   // 标准构造函数
+	CSkinAutoAdaptSettingDlg(CWnd* pParent = nullptr);   // 标准构造函数
 	virtual ~CSkinAutoAdaptSettingDlg();
 
     int GetDarkModeSkin() const { return m_dark_mode_skin; }
@@ -21,10 +21,6 @@ public:
 #endif
 
 private:
-    int FindSkinIndex(const wstring& skin_name);
-
-private:
-    const vector<wstring>& m_skins;
     CComboBox m_dark_mode_skin_combo;
     CComboBox m_light_mode_skin_combo;
 
