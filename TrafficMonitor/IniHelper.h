@@ -3,8 +3,6 @@
 //在向ini文件写入数据时，需要在最后调用Save()函数以将更改保存到文件
 //默认以UTF8_BOM编码保存，如果要以ANSI保存，请调用SetSaveAsUTF8(false);
 #pragma once
-#include "CommonData.h"
-#include "Common.h"
 
 class CIniHelper
 {

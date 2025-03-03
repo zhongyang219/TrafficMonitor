@@ -1,7 +1,6 @@
 ﻿#include "stdafx.h"
 #include "IniHelper.h"
-#include "TrafficMonitor.h"
-
+#include "Common.h"
 
 CIniHelper::CIniHelper(const wstring& file_path)
 {

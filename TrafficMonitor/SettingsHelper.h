@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "IniHelper.h"
+#include "CommonData.h"
 
 class CSettingsHelper : public CIniHelper
 {
