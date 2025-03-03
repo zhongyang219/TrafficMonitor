@@ -203,6 +203,8 @@ void CGeneralSettingsDlg::SetControlEnable()
 
     m_hard_disk_combo.EnableWindow(m_data.IsHardwareEnable(HI_HDD));
     m_select_cpu_combo.EnableWindow(m_data.IsHardwareEnable(HI_CPU));
+
+    EnableDlgCtrl(IDC_SELECT_CONNECTIONS_BUTTON, !m_data.show_all_interface);
 }
 
 
@@ -530,6 +532,7 @@ void CGeneralSettingsDlg::OnBnClickedShowAllConnectionCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.show_all_interface = (((CButton*)GetDlgItem(IDC_SHOW_ALL_CONNECTION_CHECK))->GetCheck() != 0);
+    SetControlEnable();
 }
 
 
