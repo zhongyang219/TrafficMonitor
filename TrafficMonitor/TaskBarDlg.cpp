@@ -58,6 +58,7 @@ END_MESSAGE_MAP()
 
 void CTaskBarDlg::ShowInfo(CDC* pDC)
 {
+    m_item_rects.clear();   //绘图前先清除所有项目的矩形区域
     HWND current_hwnd = this->GetSafeHwnd();
     if (current_hwnd == NULL || !IsWindow(this->GetSafeHwnd()))
         return;
