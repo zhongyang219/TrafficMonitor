@@ -305,10 +305,15 @@ void CSkinFile::LoadFromIni(const wstring& file_path)
     //获取皮肤作者
     m_skin_info.skin_author = ini.GetString(_T("skin"), _T("skin_author"), _T("unknow"));
     //获取显示文本
-    m_skin_info.display_text.Get(TDI_UP) = ini.GetString(_T("skin"), _T("up_string"), NONE_STR);
-    m_skin_info.display_text.Get(TDI_DOWN) = ini.GetString(_T("skin"), _T("down_string"), NONE_STR);
-    m_skin_info.display_text.Get(TDI_CPU) = ini.GetString(_T("skin"), _T("cpu_string"), NONE_STR);
-    m_skin_info.display_text.Get(TDI_MEMORY) = ini.GetString(_T("skin"), _T("memory_string"), NONE_STR);
+    auto getDisplayTextFromIni = [&](DisplayItem display_item, const wchar_t* key_name) {
+        std::wstring str;
+        if (ini.GetString(L"skin", key_name, str))
+            m_skin_info.display_text.Get(display_item) = str;
+    };
+    getDisplayTextFromIni(TDI_UP, L"up_string");
+    getDisplayTextFromIni(TDI_DOWN, L"down_string");
+    getDisplayTextFromIni(TDI_CPU, L"cpu_string");
+    getDisplayTextFromIni(TDI_MEMORY, L"memory_string");
     //获取预览区大小
     m_preview_info.width = theApp.DPI(ini.GetInt(_T("layout"), _T("preview_width"), 238));
     m_preview_info.height = theApp.DPI(ini.GetInt(_T("layout"), _T("preview_height"), 105));

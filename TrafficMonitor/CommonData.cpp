@@ -74,19 +74,6 @@ const std::map<CommonDisplayItem, wstring>& DispStrings::GetAllItems() const
     return map_str;
 }
 
-void DispStrings::operator=(const DispStrings& disp_str)
-{
-    std::map<CommonDisplayItem, wstring> tmp = disp_str.map_str;
-    //如果赋值的字符串是定义的无效字符串，则不赋值
-    for (auto iter = tmp.begin(); iter != tmp.end(); ++iter)
-    {
-        if (iter->second == NONE_STR)
-            iter->second = map_str[iter->first];
-    }
-
-    map_str = tmp;
-}
-
 bool DispStrings::operator==(const DispStrings& disp_str) const
 {
     return map_str == disp_str.map_str;
@@ -94,14 +81,7 @@ bool DispStrings::operator==(const DispStrings& disp_str) const
 
 bool DispStrings::IsInvalid() const
 {
-    if (map_str.empty())
-        return true;
-    for (auto iter = map_str.begin(); iter != map_str.end(); ++iter)
-    {
-        if (iter->second == NONE_STR)
-            return true;
-    }
-    return false;
+    return map_str.empty();
 }
 
 std::wstring DispStrings::DefaultString(CommonDisplayItem display_item, bool is_main_window)
