@@ -603,6 +603,7 @@ void CMainWndSettingsDlg::OnBnClickedResotreSkinDefaultButton()
 
         SetDlgItemText(IDC_FONT_NAME_EDIT, m_data.font.name);
         SetDlgItemText(IDC_FONT_SIZE_EDIT, std::to_wstring(m_data.font.size).c_str());
+        CheckDlgButton(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK, m_data.specify_each_item_color);
         DrawStaticColor();
     }
 }
