@@ -189,13 +189,11 @@
 #define IDC_STATIC_COPYRIGHT            1074
 #define IDC_LANGUAGE_COMBO              1075
 #define IDC_CPU_TEMP_LABLE_STATIC       1076
-#define IDC_CPU_TEMP_TIP_EDIT           1076
 #define IDC_YEAR_COMBO                  1077
 #define IDC_CPU_TEMP_VALUE_STATIC       1077
 #define IDC_GPU_TEMP_TIP_CHECK          1077
 #define IDC_MONTH_COMBO                 1078
 #define IDC_GPU_TEMP_LABLE_STATIC       1078
-#define IDC_GPU_TEMP_TIP_EDIT           1078
 #define IDC_PREVIOUS_BUTTON             1079
 #define IDC_GPU_TEMP_VALUE_STATIC       1079
 #define IDC_NEXT_BUTTON                 1080
@@ -203,13 +201,11 @@
 #define IDC_HDD_TEMP_LABLE_STATIC       1080
 #define IDC_DIGIT_NUMBER_COMBO          1081
 #define IDC_HDD_TEMP_VALUE_STATIC       1081
-#define IDC_HDD_TIP_EDIT                1081
 #define IDC_HORIZONTAL_ARRANGE_CHECK    1082
 #define IDC_MAIN_BOARD_TEMP_LABLE_STATIC 1082
 #define IDC_MBD_TEMP_TIP_CHECK          1082
 #define IDC_PREVIEW_BUTTON              1083
 #define IDC_MAIN_BOARD_TEMP_VALUE_STATIC 1083
-#define IDC_MBD_TEMP_TIP_EDIT           1083
 #define IDC_INDEX_STATIC                1084
 #define IDC_STATIC_ACKNOWLEDGEMENT      1085
 #define IDC_TRADITIONAL_CHINESE_TRANSLATOR_STATIC 1086
@@ -348,6 +344,10 @@
 #define IDC_DISPLAY_TO_SHOW_TASKBAR_WND_COMBO 1213
 #define IDC_DISPLAY_TO_SHOW_TASKBAR_WND_STATIC 1214
 #define IDC_USAGE_GRAPH_FOLLOW_SYSTEM_CHECK 1215
+#define IDC_CPU_TEMP_TIP_EDIT           1216
+#define IDC_GPU_TEMP_TIP_EDIT           1217
+#define IDC_HDD_TIP_EDIT                1218
+#define IDC_MBD_TEMP_TIP_EDIT           1219
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -469,7 +469,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        348
 #define _APS_NEXT_COMMAND_VALUE         33665
-#define _APS_NEXT_CONTROL_VALUE         1216
+#define _APS_NEXT_CONTROL_VALUE         1220
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
