@@ -121,7 +121,7 @@ void CSettingsHelper::LoadDisplayStr(const wchar_t* AppName, DispStrings& disp_s
     for (auto display_item : AllDisplayItems)
     {
         std::wstring str{ CommonDisplayItem(display_item).DefaultString(is_main_window)};
-        bool exist = GetString(AppName, DispStrings::GetItemIniKeyName(display_item), str);
+        bool exist = GetString(AppName, CommonDisplayItem(display_item).GetItemIniKeyName(), str);
         //主窗口只读取配置文件中存在的项，任务栏窗口读取所有项
         if (!is_main_window || exist)
             disp_str.Get(display_item) = str;
@@ -134,7 +134,7 @@ void CSettingsHelper::SaveDisplayStr(const wchar_t* AppName, const DispStrings& 
     {
         if (!item.first.is_plugin)
         {
-            WriteString(AppName, DispStrings::GetItemIniKeyName(item.first.item_type), item.second);
+            WriteString(AppName, item.first.GetItemIniKeyName(), item.second);
         }
     }
 }

@@ -84,28 +84,6 @@ bool DispStrings::IsInvalid() const
     return map_str.empty();
 }
 
-const wchar_t* DispStrings::GetItemIniKeyName(DisplayItem display_item)
-{
-    switch (display_item)
-    {
-    case TDI_UP: return L"up_string";
-    case TDI_DOWN: return L"down_string";
-    case TDI_CPU: return L"cpu_string";
-    case TDI_MEMORY: return L"memory_string";
-    case TDI_GPU_USAGE: return L"gpu_string";
-    case TDI_CPU_TEMP: return L"cpu_temp_string";
-    case TDI_GPU_TEMP: return L"gpu_temp_string";
-    case TDI_HDD_TEMP: return L"hdd_temp_string";
-    case TDI_MAIN_BOARD_TEMP: return L"main_board_temp_string";
-    case TDI_HDD_USAGE: return L"hdd_string";
-    case TDI_TOTAL_SPEED: return L"total_speed_string";
-    case TDI_CPU_FREQ: return L"cpu_freq_string";
-    case TDI_TODAY_TRAFFIC: return L"today_traffic_string";
-    }
-    ASSERT(FALSE);
-    return L"";
-}
-
 void DispStrings::Load(const std::wstring& plugin_id, const std::wstring& disp_str)
 {
     auto plugin = theApp.m_plugins.GetItemById(plugin_id);

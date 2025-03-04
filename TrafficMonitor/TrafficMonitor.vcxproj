@@ -789,6 +789,7 @@
     <ClInclude Include="D2D1Support.h" />
     <ClInclude Include="D3D10Support1.h" />
     <ClInclude Include="DCompositionSupport.h" />
+    <ClInclude Include="DisplayItem.h" />
     <ClInclude Include="DisplayTextSettingDlg.h" />
     <ClInclude Include="DllFunctions.h" />
     <ClInclude Include="DrawCommonEx.h" />
@@ -885,6 +886,7 @@
     <ClCompile Include="D2D1Support.cpp" />
     <ClCompile Include="D3D10Support1.cpp" />
     <ClCompile Include="DCompositionSupport.cpp" />
+    <ClCompile Include="DisplayItem.cpp" />
     <ClCompile Include="DisplayTextSettingDlg.cpp" />
     <ClCompile Include="DllFunctions.cpp" />
     <ClCompile Include="DrawCommonEx.cpp" />

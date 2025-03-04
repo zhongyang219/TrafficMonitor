@@ -541,6 +541,9 @@
     <ClInclude Include="SettingsHelper.h">
       <Filter>源文件和头文件\公共的类\IniHelper</Filter>
     </ClInclude>
+    <ClInclude Include="DisplayItem.h">
+      <Filter>源文件和头文件\公共的类\CommonData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -800,6 +803,9 @@
     </ClCompile>
     <ClCompile Include="SettingsHelper.cpp">
       <Filter>源文件和头文件\公共的类\IniHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="DisplayItem.cpp">
+      <Filter>源文件和头文件\公共的类\CommonData</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
