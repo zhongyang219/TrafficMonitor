@@ -27,23 +27,22 @@ CGeneralSettingsDlg::~CGeneralSettingsDlg()
 void CGeneralSettingsDlg::CheckTaskbarDisplayItem()
 {
     //如果选项设置中关闭了某个硬件监控，则不显示对应的温度监控相关项目
-    int taskbar_displat_item_ori = theApp.m_taskbar_data.m_tbar_display_item;
     if (!theApp.m_general_data.IsHardwareEnable(HI_CPU))
     {
-        theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_CPU_TEMP;
+        theApp.m_taskbar_data.display_item.Remove(TDI_CPU_TEMP);
     }
     if (!theApp.m_general_data.IsHardwareEnable(HI_GPU))
     {
-        theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_GPU_USAGE;
-        theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_GPU_TEMP;
+        theApp.m_taskbar_data.display_item.Remove(TDI_GPU_USAGE);
+        theApp.m_taskbar_data.display_item.Remove(TDI_GPU_TEMP);
     }
     if (!theApp.m_general_data.IsHardwareEnable(HI_HDD))
     {
-        theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_HDD_TEMP;
-        theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_HDD_USAGE;
+        theApp.m_taskbar_data.display_item.Remove(TDI_HDD_TEMP);
+        theApp.m_taskbar_data.display_item.Remove(TDI_HDD_USAGE);
     }
     if (!theApp.m_general_data.IsHardwareEnable(HI_MBD))
-        theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_MAIN_BOARD_TEMP;
+        theApp.m_taskbar_data.display_item.Remove(TDI_MAIN_BOARD_TEMP);
 }
 
 void CGeneralSettingsDlg::SetControlMouseWheelEnable(bool enable)
@@ -499,7 +498,7 @@ void CGeneralSettingsDlg::OnOK()
         MessageBox(CCommon::LoadText(IDS_CFG_DIR_CHANGED_INFO), NULL, MB_ICONINFORMATION | MB_OK);
     }
 
-    //m_taskbar_item_modified = (theApp.m_taskbar_data.m_tbar_display_item != taskbar_displat_item_ori);
+    //m_taskbar_item_modified = (theApp.m_taskbar_data.display_item != taskbar_displat_item_ori);
 
     CTabDlg::OnOK();
 }

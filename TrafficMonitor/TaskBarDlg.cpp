@@ -904,8 +904,8 @@ void CTaskBarDlg::ApplySettings()
 void CTaskBarDlg::CalculateWindowSize()
 {
     bool horizontal_arrange = theApp.m_taskbar_data.horizontal_arrange && m_taskbar_on_top_or_bottom;
-    if (theApp.m_taskbar_data.m_tbar_display_item == 0 && theApp.m_taskbar_data.plugin_display_item.data().empty())
-        theApp.m_taskbar_data.m_tbar_display_item |= TDI_UP;        //至少显示一项
+    if (theApp.m_taskbar_data.display_item.IsEmpty() && theApp.m_taskbar_data.plugin_display_item.data().empty())
+        theApp.m_taskbar_data.display_item.Add(TDI_UP);        //至少显示一项
 
     m_item_widths.clear();
     //显示项目的宽度
@@ -1129,17 +1129,17 @@ void CTaskBarDlg::UpdateToolTips()
 
 bool CTaskBarDlg::IsItemShow(DisplayItem item)
 {
-    return (theApp.m_taskbar_data.m_tbar_display_item & item);
+    return (theApp.m_taskbar_data.display_item.Contains(item));
 }
 
 bool CTaskBarDlg::IsShowCpuMemory()
 {
-    return ((theApp.m_taskbar_data.m_tbar_display_item & TDI_CPU) || (theApp.m_taskbar_data.m_tbar_display_item & TDI_MEMORY));
+    return (theApp.m_taskbar_data.display_item.Contains(TDI_CPU) || theApp.m_taskbar_data.display_item.Contains(TDI_MEMORY));
 }
 
 bool CTaskBarDlg::IsShowNetSpeed()
 {
-    return ((theApp.m_taskbar_data.m_tbar_display_item & TDI_UP) || (theApp.m_taskbar_data.m_tbar_display_item & TDI_DOWN));
+    return (theApp.m_taskbar_data.display_item.Contains(TDI_UP) || theApp.m_taskbar_data.display_item.Contains(TDI_DOWN));
 }
 
 bool CTaskBarDlg::IsTaskbarCloseToIconEnable(bool taskbar_wnd_on_left)

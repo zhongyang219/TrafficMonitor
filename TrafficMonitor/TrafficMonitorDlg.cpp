@@ -933,14 +933,14 @@ void CTrafficMonitorDlg::TaskbarShowHideItem(DisplayItem type)
 {
     if (IsTaskbarWndValid())
     {
-        bool show = (theApp.m_taskbar_data.m_tbar_display_item & type);
+        bool show = (theApp.m_taskbar_data.display_item.Contains(type));
         if (show)
         {
-            theApp.m_taskbar_data.m_tbar_display_item &= ~type;
+            theApp.m_taskbar_data.display_item.Remove(type);
         }
         else
         {
-            theApp.m_taskbar_data.m_tbar_display_item |= type;
+            theApp.m_taskbar_data.display_item.Add(type);
         }
         //CloseTaskBarWnd();
         //OpenTaskBarWnd();
@@ -2417,16 +2417,16 @@ void CTrafficMonitorDlg::OnShowCpuMemory2()
     // TODO: 在此添加命令处理程序代码
     if (IsTaskbarWndValid())
     {
-        bool show_cpu_memory = ((theApp.m_taskbar_data.m_tbar_display_item & TDI_CPU) || (theApp.m_taskbar_data.m_tbar_display_item & TDI_MEMORY));
+        bool show_cpu_memory = (theApp.m_taskbar_data.display_item.Contains(TDI_CPU) || theApp.m_taskbar_data.display_item.Contains(TDI_MEMORY));
         if (show_cpu_memory)
         {
-            theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_CPU;
-            theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_MEMORY;
+            theApp.m_taskbar_data.display_item.Remove(TDI_CPU);
+            theApp.m_taskbar_data.display_item.Remove(TDI_MEMORY);
         }
         else
         {
-            theApp.m_taskbar_data.m_tbar_display_item |= TDI_CPU;
-            theApp.m_taskbar_data.m_tbar_display_item |= TDI_MEMORY;
+            theApp.m_taskbar_data.display_item.Add(TDI_CPU);
+            theApp.m_taskbar_data.display_item.Add(TDI_MEMORY);
         }
         //theApp.m_cfg_data.m_tbar_show_cpu_memory = !theApp.m_cfg_data.m_tbar_show_cpu_memory;
         //切换显示CPU和内存利用率时，删除任务栏窗口，再重新显示
@@ -2688,16 +2688,16 @@ void CTrafficMonitorDlg::OnShowNetSpeed()
     // TODO: 在此添加命令处理程序代码
     if (IsTaskbarWndValid())
     {
-        bool show_net_speed = ((theApp.m_taskbar_data.m_tbar_display_item & TDI_UP) || (theApp.m_taskbar_data.m_tbar_display_item & TDI_DOWN));
+        bool show_net_speed = (theApp.m_taskbar_data.display_item.Contains(TDI_UP) || theApp.m_taskbar_data.display_item.Contains(TDI_DOWN));
         if (show_net_speed)
         {
-            theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_UP;
-            theApp.m_taskbar_data.m_tbar_display_item &= ~TDI_DOWN;
+            theApp.m_taskbar_data.display_item.Remove(TDI_UP);
+            theApp.m_taskbar_data.display_item.Remove(TDI_DOWN);
         }
         else
         {
-            theApp.m_taskbar_data.m_tbar_display_item |= TDI_UP;
-            theApp.m_taskbar_data.m_tbar_display_item |= TDI_DOWN;
+            theApp.m_taskbar_data.display_item.Add(TDI_UP);
+            theApp.m_taskbar_data.display_item.Add(TDI_DOWN);
         }
         //CloseTaskBarWnd();
         //OpenTaskBarWnd();
@@ -2862,12 +2862,12 @@ void CTrafficMonitorDlg::OnDisplaySettings()
     // TODO: 在此添加命令处理程序代码
     CSetItemOrderDlg dlg;
     dlg.SetItemOrder(theApp.m_taskbar_data.item_order.GetItemOrderConst());
-    dlg.SetDisplayItem(theApp.m_taskbar_data.m_tbar_display_item);
+    dlg.SetDisplayItem(theApp.m_taskbar_data.display_item);
     dlg.SetPluginDisplayItem(theApp.m_taskbar_data.plugin_display_item);
     if (dlg.DoModal() == IDOK)
     {
         theApp.m_taskbar_data.item_order.SetOrder(dlg.GetItemOrder());
-        theApp.m_taskbar_data.m_tbar_display_item = dlg.GetDisplayItem();
+        theApp.m_taskbar_data.display_item = dlg.GetDisplayItem();
         theApp.m_taskbar_data.plugin_display_item = dlg.GetPluginDisplayItem();
         //CloseTaskBarWnd();
         //OpenTaskBarWnd();

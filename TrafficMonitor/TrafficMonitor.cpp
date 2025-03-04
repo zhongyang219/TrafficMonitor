@@ -178,35 +178,35 @@ void CTrafficMonitorApp::LoadConfig()
     ini.LoadTaskbarWndColors(_T("task_bar"), _T("task_bar_text_color"), m_taskbar_data.text_colors, m_taskbar_data.dft_text_colors);
     m_taskbar_data.specify_each_item_color = ini.GetBool(L"task_bar", L"specify_each_item_color", false);
     //m_cfg_data.m_tbar_show_cpu_memory = ini.GetBool(_T("task_bar"), _T("task_bar_show_cpu_memory"), false);
-    m_taskbar_data.m_tbar_display_item = ini.GetInt(L"task_bar", L"tbar_display_item", TDI_UP | TDI_DOWN);
+    m_taskbar_data.display_item.FromInt(ini.GetInt(L"task_bar", L"tbar_display_item", DisplayItemSet{ TDI_UP, TDI_DOWN }.ToInt()));
     m_taskbar_data.show_taskbar_wnd_in_secondary_display = ini.GetBool(L"task_bar", L"show_taskbar_wnd_in_secondary_display", false);
     m_taskbar_data.secondary_display_index = ini.GetInt(L"task_bar", L"secondary_display_index", 0);
 
     //不含温度监控的版本，不显示温度监控相关项目
 #ifdef WITHOUT_TEMPERATURE
-    m_taskbar_data.m_tbar_display_item &= ~TDI_GPU_USAGE;
-    m_taskbar_data.m_tbar_display_item &= ~TDI_CPU_TEMP;
-    m_taskbar_data.m_tbar_display_item &= ~TDI_GPU_TEMP;
-    m_taskbar_data.m_tbar_display_item &= ~TDI_HDD_TEMP;
-    m_taskbar_data.m_tbar_display_item &= ~TDI_MAIN_BOARD_TEMP;
-    m_taskbar_data.m_tbar_display_item &= ~TDI_HDD_USAGE;
+    m_taskbar_data.display_item.Remove(TDI_GPU_USAGE);
+    m_taskbar_data.display_item.Remove(TDI_CPU_TEMP);
+    m_taskbar_data.display_item.Remove(TDI_GPU_TEMP);
+    m_taskbar_data.display_item.Remove(TDI_HDD_TEMP);
+    m_taskbar_data.display_item.Remove(TDI_MAIN_BOARD_TEMP);
+    m_taskbar_data.display_item.Remove(TDI_HDD_USAGE);
 #endif
 
     //如果选项设置中关闭了某个硬件监控，则不显示对应的温度监控相关项目
     if (!m_general_data.IsHardwareEnable(HI_CPU))
-        m_taskbar_data.m_tbar_display_item &= ~TDI_CPU_TEMP;
+        m_taskbar_data.display_item.Remove(TDI_CPU_TEMP);
     if (!m_general_data.IsHardwareEnable(HI_GPU))
     {
-        m_taskbar_data.m_tbar_display_item &= ~TDI_GPU_USAGE;
-        m_taskbar_data.m_tbar_display_item &= ~TDI_GPU_TEMP;
+        m_taskbar_data.display_item.Remove(TDI_GPU_USAGE);
+        m_taskbar_data.display_item.Remove(TDI_GPU_TEMP);
     }
     if (!m_general_data.IsHardwareEnable(HI_HDD))
     {
-        m_taskbar_data.m_tbar_display_item &= ~TDI_HDD_TEMP;
-        m_taskbar_data.m_tbar_display_item &= ~TDI_HDD_USAGE;
+        m_taskbar_data.display_item.Remove(TDI_HDD_TEMP);
+        m_taskbar_data.display_item.Remove(TDI_HDD_USAGE);
     }
     if (!m_general_data.IsHardwareEnable(HI_MBD))
-        m_taskbar_data.m_tbar_display_item &= ~TDI_MAIN_BOARD_TEMP;
+        m_taskbar_data.display_item.Remove(TDI_MAIN_BOARD_TEMP);
 
     //m_taskbar_data.swap_up_down = ini.GetBool(_T("task_bar"), _T("task_bar_swap_up_down"), false);
 
@@ -383,7 +383,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.SaveTaskbarWndColors(L"task_bar", L"task_bar_text_color", m_taskbar_data.text_colors);
     ini.WriteBool(L"task_bar", L"specify_each_item_color", m_taskbar_data.specify_each_item_color);
     //ini.WriteBool(L"task_bar", L"task_bar_show_cpu_memory", m_cfg_data.m_tbar_show_cpu_memory);
-    ini.WriteInt(L"task_bar", L"tbar_display_item", m_taskbar_data.m_tbar_display_item);
+    ini.WriteInt(L"task_bar", L"tbar_display_item", m_taskbar_data.display_item.ToInt());
     ini.SaveFontData(L"task_bar", m_taskbar_data.font);
     //ini.WriteBool(L"task_bar", L"task_bar_swap_up_down", m_taskbar_data.swap_up_down);
     ini.WriteBool(L"task_bar", L"show_taskbar_wnd_in_secondary_display", m_taskbar_data.show_taskbar_wnd_in_secondary_display);
@@ -1226,7 +1226,7 @@ bool CTrafficMonitorApp::IsTaksbarItemDisplayed(CommonDisplayItem item) const
     }
     else
     {
-        return m_taskbar_data.m_tbar_display_item & item.item_type;
+        return m_taskbar_data.display_item.Contains(item.item_type);
     }
     return false;
 }

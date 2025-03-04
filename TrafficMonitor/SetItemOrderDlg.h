@@ -15,9 +15,9 @@ public:
     void SetItemOrder(const std::vector<int>& item_order);
     const std::vector<int>& GetItemOrder() const;
 
-    //设置/获取显示项目，使用unsigned int的每个bit表示对应项目是否显示
-    void SetDisplayItem(unsigned int display_item);
-    unsigned int GetDisplayItem() const;
+    //设置/获取显示项目
+    void SetDisplayItem(const DisplayItemSet& display_item);
+    DisplayItemSet GetDisplayItem() const;
 
     void SetPluginDisplayItem(const StringSet& plugin_item);
     const StringSet& GetPluginDisplayItem() const;
@@ -30,7 +30,7 @@ public:
 private:
     CTaskbarItemOrderHelper m_item_order;   //显示项目的顺序
     CCheckListBox m_list_ctrl;
-    unsigned int m_display_item;        //使用每个bit位表示的要显示的内置项目
+    DisplayItemSet m_display_item;        //要显示的内置项目
     StringSet m_plugin_item;            //要显示的插件项目
     std::vector<CommonDisplayItem> m_all_displayed_item;    //在列表中显示的所有项目
 

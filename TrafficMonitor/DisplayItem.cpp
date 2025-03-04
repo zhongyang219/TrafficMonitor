@@ -165,3 +165,53 @@ const wchar_t* CommonDisplayItem::GetItemIniKeyName() const
         return L"";
     }
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+DisplayItemSet::DisplayItemSet(std::initializer_list<DisplayItem> items)
+    : data(items)
+{
+}
+
+void DisplayItemSet::Add(DisplayItem item)
+{
+    data.insert(item);
+}
+
+void DisplayItemSet::Remove(DisplayItem item)
+{
+    data.erase(item);
+}
+
+bool DisplayItemSet::Contains(DisplayItem item) const
+{
+    auto iter = data.find(item);
+    return iter != data.end();
+}
+
+int DisplayItemSet::ToInt() const
+{
+    int value = 0;
+    //将set中的枚举值转换成int的每个bit位
+    for (const auto& item : data)
+    {
+        if (item <= 31)     //int左移不超过31位
+            value |= (1 << item);
+    }
+    return value;
+}
+
+void DisplayItemSet::FromInt(int value)
+{
+    data.clear();
+    //将int的每个bit位转换成set中的枚举值
+    for (const auto& item : AllDisplayItems)
+    {
+        if (value <= 31 && (value & (1 << item)))
+            data.insert(item);
+    }
+}
+
+bool DisplayItemSet::IsEmpty() const
+{
+    return data.empty();
+}

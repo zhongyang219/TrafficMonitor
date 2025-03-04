@@ -4,19 +4,19 @@
 //内置的显示的项目
 enum DisplayItem
 {
-    TDI_UP = 1 << 0,
-    TDI_DOWN = 1 << 1,
-    TDI_CPU = 1 << 2,
-    TDI_MEMORY = 1 << 3,
-    TDI_GPU_USAGE = 1 << 4,
-    TDI_CPU_TEMP = 1 << 5,
-    TDI_GPU_TEMP = 1 << 6,
-    TDI_HDD_TEMP = 1 << 7,
-    TDI_MAIN_BOARD_TEMP = 1 << 8,
-    TDI_HDD_USAGE = 1 << 9,
-    TDI_TOTAL_SPEED = 1 << 10,
-    TDI_CPU_FREQ = 1 << 11,
-    TDI_TODAY_TRAFFIC = 1 << 12
+    TDI_UP,
+    TDI_DOWN,
+    TDI_CPU,
+    TDI_MEMORY,
+    TDI_GPU_USAGE,
+    TDI_CPU_TEMP,
+    TDI_GPU_TEMP,
+    TDI_HDD_TEMP,
+    TDI_MAIN_BOARD_TEMP,
+    TDI_HDD_USAGE,
+    TDI_TOTAL_SPEED,
+    TDI_CPU_FREQ,
+    TDI_TODAY_TRAFFIC
 };
 
 //所有内置显示项目的集合
@@ -51,4 +51,23 @@ struct CommonDisplayItem
 
     //获取一个显示项目的显示文本保存在ini文件中的key的名称
     const wchar_t* GetItemIniKeyName() const;
+};
+
+
+class DisplayItemSet
+{
+public:
+    DisplayItemSet(){}
+    DisplayItemSet(std::initializer_list<DisplayItem> items);
+
+    void Add(DisplayItem item);
+    void Remove(DisplayItem item);
+    bool Contains(DisplayItem item) const;
+
+    int ToInt() const;
+    void FromInt(int value);
+    bool IsEmpty() const;
+
+private:
+    std::set<DisplayItem> data;
 };
