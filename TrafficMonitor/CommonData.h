@@ -77,7 +77,8 @@ public:
     //是否无效
     bool IsInvalid() const;
 
-    static std::wstring DefaultString(CommonDisplayItem display_item, bool is_main_window);
+    //获取一个显示项目的显示文本保存在ini文件中的key的名称
+    static const wchar_t* GetItemIniKeyName(DisplayItem display_item);
 };
 
 //鼠标双击窗口的动作

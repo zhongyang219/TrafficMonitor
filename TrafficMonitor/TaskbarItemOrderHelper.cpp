@@ -30,62 +30,102 @@ bool CommonDisplayItem::operator<(const CommonDisplayItem& item) const
 
 CString CommonDisplayItem::GetItemName() const
 {
-    CString item_name;
     if (is_plugin)
     {
         if (plugin_item != nullptr)
-            item_name = plugin_item->GetItemName();
+            return plugin_item->GetItemName();
+        else
+            return CString();
     }
     else
     {
         switch (item_type)
         {
-        case TDI_UP:
-            item_name = CCommon::LoadText(IDS_UPLOAD);
-            break;
-        case TDI_DOWN:
-            item_name = CCommon::LoadText(IDS_DOWNLOAD);
-            break;
-        case TDI_TOTAL_SPEED:
-            item_name = CCommon::LoadText(IDS_TOTAL_NET_SPEED);
-            break;
-        case TDI_CPU:
-            item_name = CCommon::LoadText(IDS_CPU_USAGE);
-            break;
-        case TDI_MEMORY:
-            item_name = CCommon::LoadText(IDS_MEMORY_USAGE);
-            break;
-        case TDI_TODAY_TRAFFIC:
-            item_name = CCommon::LoadText(IDS_TRAFFIC_USED);
-            break;
-        case TDI_CPU_FREQ:
-            item_name = CCommon::LoadText(IDS_CPU_FREQ);
-            break;
-#ifndef WITHOUT_TEMPERATURE
-        case TDI_GPU_USAGE:
-            item_name = CCommon::LoadText(IDS_GPU_USAGE);
-            break;
-        case TDI_CPU_TEMP:
-            item_name = CCommon::LoadText(IDS_CPU_TEMPERATURE);
-            break;
-        case TDI_GPU_TEMP:
-            item_name = CCommon::LoadText(IDS_GPU_TEMPERATURE);
-            break;
-        case TDI_HDD_TEMP:
-            item_name = CCommon::LoadText(IDS_HDD_TEMPERATURE);
-            break;
-        case TDI_MAIN_BOARD_TEMP:
-            item_name = CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
-            break;
-        case TDI_HDD_USAGE:
-            item_name = CCommon::LoadText(IDS_HDD_USAGE);
-            break;
-#endif
+        case TDI_UP: return CCommon::LoadText(IDS_UPLOAD);
+        case TDI_DOWN: return CCommon::LoadText(IDS_DOWNLOAD);
+        case TDI_TOTAL_SPEED: return CCommon::LoadText(IDS_TOTAL_NET_SPEED);
+        case TDI_CPU: return CCommon::LoadText(IDS_CPU_USAGE);
+        case TDI_MEMORY: return CCommon::LoadText(IDS_MEMORY_USAGE);
+        case TDI_GPU_USAGE: return CCommon::LoadText(IDS_GPU_USAGE);
+        case TDI_CPU_TEMP: return CCommon::LoadText(IDS_CPU_TEMPERATURE);
+        case TDI_GPU_TEMP: return CCommon::LoadText(IDS_GPU_TEMPERATURE);
+        case TDI_HDD_TEMP: return CCommon::LoadText(IDS_HDD_TEMPERATURE);
+        case TDI_MAIN_BOARD_TEMP: return CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
+        case TDI_HDD_USAGE: return CCommon::LoadText(IDS_HDD_USAGE);
+        case TDI_CPU_FREQ: return CCommon::LoadText(IDS_CPU_FREQ);
+        case TDI_TODAY_TRAFFIC: return CCommon::LoadText(IDS_TRAFFIC_USED);
         default:
+            ASSERT(false);
             break;
         }
     }
-    return item_name;
+    return CString();
+}
+
+std::wstring CommonDisplayItem::DefaultString(bool is_main_window) const
+{
+    std::wstring default_text;
+    if (is_plugin)
+    {
+        default_text = plugin_item->GetItemLableText();
+    }
+    else
+    {
+        if (is_main_window)
+        switch (item_type)
+        {
+        case TDI_UP:
+            if (is_main_window)
+                default_text = CCommon::LoadText(IDS_UPLOAD_DISP, _T(": "));
+            else
+                default_text = _T("↑: ");
+            break;
+        case TDI_DOWN:
+            if (is_main_window)
+                default_text = CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": "));
+            else
+                default_text = _T("↓: ");
+            break;
+        case TDI_TOTAL_SPEED:
+            default_text = _T("↑↓: ");
+            break;
+        case TDI_TODAY_TRAFFIC:
+            default_text = CCommon::LoadText(IDS_TRAFFIC_USED, _T(": "));
+            break;
+        case TDI_CPU:
+            default_text = _T("CPU: ");
+            break;
+        case TDI_CPU_TEMP:
+            default_text = _T("CPU: ");
+            break;
+        case TDI_CPU_FREQ:
+            default_text = CCommon::LoadText(IDS_CPU_FREQ, _T(": "));
+            break;
+        case TDI_MEMORY:
+            default_text = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
+            break;
+        case TDI_GPU_USAGE:
+            default_text = CCommon::LoadText(IDS_GPU_DISP, _T(": "));
+            break;
+        case TDI_GPU_TEMP:
+            default_text = CCommon::LoadText(IDS_GPU_DISP, _T(": "));
+            break;
+        case TDI_HDD_TEMP:
+            default_text = CCommon::LoadText(IDS_HDD_DISP, _T(": "));
+            break;
+        case TDI_MAIN_BOARD_TEMP:
+            default_text = CCommon::LoadText(IDS_MAINBOARD_DISP, _T(": "));
+            break;
+        case TDI_HDD_USAGE:
+            default_text = CCommon::LoadText(IDS_HDD_DISP, _T(": "));
+            break;
+        default:
+            ASSERT(false);
+            break;
+        }
+    }
+
+    return default_text;
 }
 
 bool CommonDisplayItem::operator==(const CommonDisplayItem& item) const
@@ -176,48 +216,7 @@ vector<int>& CTaskbarItemOrderHelper::GetItemOrder()
 
 CString CTaskbarItemOrderHelper::GetItemDisplayName(CommonDisplayItem item)
 {
-    if (item.is_plugin)
-    {
-        if (item.plugin_item != nullptr)
-            return item.plugin_item->GetItemName();
-        else
-            return CString();
-    }
-    else
-    {
-        switch (item.item_type)
-        {
-        case TDI_UP:
-            return CCommon::LoadText(IDS_UPLOAD);
-        case TDI_DOWN:
-            return CCommon::LoadText(IDS_DOWNLOAD);
-        case TDI_TOTAL_SPEED:
-            return CCommon::LoadText(IDS_TOTAL_NET_SPEED);
-        case TDI_CPU:
-            return CCommon::LoadText(IDS_CPU_USAGE);
-        case TDI_MEMORY:
-            return CCommon::LoadText(IDS_MEMORY_USAGE);
-        case TDI_GPU_USAGE:
-            return CCommon::LoadText(IDS_GPU_USAGE);
-        case TDI_CPU_TEMP:
-            return CCommon::LoadText(IDS_CPU_TEMPERATURE);
-        case TDI_GPU_TEMP:
-            return CCommon::LoadText(IDS_GPU_TEMPERATURE);
-        case TDI_HDD_TEMP:
-            return CCommon::LoadText(IDS_HDD_TEMPERATURE);
-        case TDI_MAIN_BOARD_TEMP:
-            return CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
-        case TDI_HDD_USAGE:
-            return CCommon::LoadText(IDS_HDD_USAGE);
-        case TDI_CPU_FREQ:
-            return CCommon::LoadText(IDS_CPU_FREQ);
-        case TDI_TODAY_TRAFFIC:
-            return CCommon::LoadText(IDS_TRAFFIC_USED);
-        default:
-            break;
-        }
-    }
-    return CString();
+    return item.GetItemName();
 }
 
 bool CTaskbarItemOrderHelper::IsItemDisplayed(CommonDisplayItem item)

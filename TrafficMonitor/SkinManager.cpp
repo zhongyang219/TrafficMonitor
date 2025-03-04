@@ -186,7 +186,7 @@ void CSkinManager::SkinSettingDataFronSkin(SkinSettingData& skin_setting_data, c
         {
             //获取所有显示项目的默认显示文本
             for (const auto& display_item : skin_all_items)
-                skin_setting_data.disp_str.Get(display_item) = DispStrings::DefaultString(display_item, true);
+                skin_setting_data.disp_str.Get(display_item) = display_item.DefaultString(true);
         }
     }
 }

@@ -460,7 +460,7 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
         if (!m_layout_info.no_label)
         {
             if (m_setting_data.disp_str.IsInvalid())
-                draw_str.label = DispStrings::DefaultString(*iter, true).c_str();
+                draw_str.label = iter->DefaultString(true).c_str();
             else
                 draw_str.label = m_setting_data.disp_str.GetConst(*iter).c_str();
         }
@@ -617,25 +617,16 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info)
 }
 
 
-void CSkinFile::DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font)
+void CSkinFile::DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font) const
 {
     //获取每个项目显示的文本
     std::map<DisplayItem, DrawStr> map_str;
     if (!m_layout_info.no_label)
     {
-        map_str[TDI_UP].label = theApp.m_main_wnd_data.disp_str.GetConst(TDI_UP).c_str();
-        map_str[TDI_DOWN].label = theApp.m_main_wnd_data.disp_str.GetConst(TDI_DOWN).c_str();
-        map_str[TDI_TOTAL_SPEED].label = theApp.m_main_wnd_data.disp_str.GetConst(TDI_TOTAL_SPEED).c_str();
-        map_str[TDI_CPU].label = theApp.m_main_wnd_data.disp_str.GetConst(TDI_CPU).c_str();
-        map_str[TDI_MEMORY].label = theApp.m_main_wnd_data.disp_str.GetConst(TDI_MEMORY).c_str();
-        map_str[TDI_GPU_USAGE].label = theApp.m_main_wnd_data.disp_str.GetConst(TDI_GPU_USAGE).c_str();
-        map_str[TDI_HDD_USAGE].label = theApp.m_main_wnd_data.disp_str.GetConst(TDI_HDD_USAGE).c_str();
-        map_str[TDI_CPU_TEMP].label = theApp.m_main_wnd_data.disp_str.GetConst(TDI_CPU_TEMP).c_str();
-        map_str[TDI_CPU_FREQ].label = theApp.m_main_wnd_data.disp_str.GetConst(TDI_CPU_FREQ).c_str();
-        map_str[TDI_GPU_TEMP].label = theApp.m_main_wnd_data.disp_str.GetConst(TDI_GPU_TEMP).c_str();
-        map_str[TDI_HDD_TEMP].label = theApp.m_main_wnd_data.disp_str.GetConst(TDI_HDD_TEMP).c_str();
-        map_str[TDI_MAIN_BOARD_TEMP].label = theApp.m_main_wnd_data.disp_str.GetConst(TDI_MAIN_BOARD_TEMP).c_str();
-        map_str[TDI_TODAY_TRAFFIC].label = theApp.m_main_wnd_data.disp_str.GetConst(TDI_TODAY_TRAFFIC).c_str();
+        for (const auto& display_item : AllDisplayItems)
+        {
+            map_str[display_item].label = theApp.m_main_wnd_data.disp_str.GetConst(display_item).c_str();
+        }
     }
 
     //上传/下载

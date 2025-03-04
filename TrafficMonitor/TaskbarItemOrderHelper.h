@@ -33,7 +33,11 @@ struct CommonDisplayItem
     bool operator<(const CommonDisplayItem&) const;
     bool operator==(const CommonDisplayItem&) const;
 
+    //获取显示项目的名称
     CString GetItemName() const;
+
+    //获取一个显示项目的默认显示文本
+    std::wstring DefaultString(bool is_main_window) const;
 };
 
 //所有显示项目的集合

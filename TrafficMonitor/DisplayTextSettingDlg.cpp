@@ -138,7 +138,7 @@ void CDisplayTextSettingDlg::OnBnClickedRestoreDefaultButton()
         for (int i{}; i < item_count; i++)
         {
             CommonDisplayItem display_item = GetDisplayItem(i);
-            std::wstring default_text = DispStrings::DefaultString(display_item, m_main_window_text);
+            std::wstring default_text = display_item.DefaultString(m_main_window_text);
             m_list_ctrl.SetItemText(i, 1, default_text.c_str());
         }
     }

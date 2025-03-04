@@ -130,7 +130,7 @@ private:
     static void DrawSkinText(IDrawCommon& drawer, DrawStr draw_str, CRect rect, COLORREF color, Alignment align);
 
     //绘制主界面中除背景图外所有显示项目
-    void DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font);
+    void DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font) const;
 
 private:
     SkinInfo m_skin_info;
