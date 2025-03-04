@@ -801,13 +801,13 @@ CString CTaskBarDlg::GetMouseTipsInfo()
     if (!IsItemShow(TDI_UP))
     {
         temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_UPLOAD),
-            CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data));
+            CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data));
         tip_info += temp;
     }
     if (!IsItemShow(TDI_DOWN))
     {
         temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_DOWNLOAD),
-            CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data));
+            CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data));
         tip_info += temp;
     }
     if (!IsItemShow(TDI_CPU))
