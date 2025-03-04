@@ -6,6 +6,7 @@
 #include "SettingsHelper.h"
 #include "DrawCommon.h"
 #include "DrawCommonEx.h"
+#include "SkinManager.h"
 
 
 CSkinFile::CSkinFile()
@@ -90,6 +91,8 @@ bool CSkinFile::Load(const wstring& skin_name)
         LoadFromIni(file_path);
     else
         LoadFromXml(file_path);
+
+    CSkinManager::SkinSettingDataFronSkin(m_setting_data, *this);
 
     if (m_font.m_hObject)
         m_font.DeleteObject();
@@ -371,11 +374,16 @@ void CSkinFile::SetAlpha(int alpha)
     m_alpha = alpha;
 }
 
-void CSkinFile::SetFont(const FontInfo& font_info)
+void CSkinFile::SetSettingData(const SkinSettingData& setting_data)
 {
-    if (m_font.m_hObject)   //如果m_font已经关联了一个字体资源对象，则释放它
-        m_font.DeleteObject();
-    font_info.Create(m_font, theApp.GetDpi());
+    //如果字体有变化，则重新创建字体
+    if (m_setting_data.font != setting_data.font)
+    {
+        if (m_font.m_hObject)   //如果m_font已经关联了一个字体资源对象，则释放它
+            m_font.DeleteObject();
+        setting_data.font.Create(m_font, theApp.GetDpi());
+    }
+    m_setting_data = setting_data;
 }
 
 void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
@@ -404,15 +412,17 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
         draw.DrawBitmap(m_background_l, rect_l.TopLeft(), rect_l.Size());
     }
 
+    std::set<CommonDisplayItem> all_skin_items;
+    GetSkinDisplayItems(all_skin_items);
+
     //获取每个项目显示的文本
     std::map<DisplayItem, DrawStr> map_str;
-    for (auto iter = AllDisplayItems.begin(); iter != AllDisplayItems.end(); ++iter)
+    for (auto iter = all_skin_items.begin(); iter != all_skin_items.end(); ++iter)
     {
-        //wstring disp_text = m_skin_info.display_text.Get(*iter);
-        //if (disp_text == NONE_STR)
-        //    disp_text = theApp.m_main_wnd_data.disp_str.Get(*iter);
+        if (iter->is_plugin)
+            continue;
         DrawStr draw_str;
-        switch (*iter)
+        switch (iter->item_type)
         {
         case TDI_UP:
             draw_str.value = _T("88.8 KB/s");
@@ -442,36 +452,27 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
             draw_str.value = _T("99");
             break;
         }
-        if (m_skin_info.display_text.GetConst(*iter) == NONE_STR)
-            m_skin_info.display_text.Get(*iter) = theApp.m_main_wnd_data.disp_str.GetConst(*iter);
         if (!m_layout_info.no_label)
         {
-            if (m_skin_info.display_text.IsInvalid())
+            if (m_setting_data.disp_str.IsInvalid())
                 draw_str.label = DispStrings::DefaultString(*iter, true).c_str();
             else
-                draw_str.label = m_skin_info.display_text.GetConst(*iter).c_str();
+                draw_str.label = m_setting_data.disp_str.GetConst(*iter).c_str();
         }
-        map_str[*iter] = draw_str;
+        map_str[iter->item_type] = draw_str;
     }
 
     //获取文本颜色
     std::map<CommonDisplayItem, COLORREF> text_colors{};
-    if (m_skin_info.specify_each_item_color)
+    if (m_setting_data.specify_each_item_color)
     {
-        int i{};
-        for (const auto& item : theApp.m_plugins.AllDisplayItemsWithPlugins())
-        {
-            if (i < static_cast<int>(m_skin_info.text_color.size()))
-                text_colors[item] = m_skin_info.text_color[i];
-            i++;
-        }
+        text_colors = m_setting_data.text_colors;
     }
-    else if (!m_skin_info.text_color.empty())
+    else if (!m_setting_data.text_colors.empty())
     {
-        for (const auto& item : theApp.m_plugins.AllDisplayItemsWithPlugins())
+        for (const auto& item : all_skin_items)
         {
-            if (!m_skin_info.text_color.empty())
-                text_colors[item] = m_skin_info.text_color[0];
+            text_colors[item] = m_setting_data.text_colors.begin()->second;
         }
     }
 

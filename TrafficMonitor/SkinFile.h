@@ -96,7 +96,7 @@ public:
     bool IsPNG() const { return m_is_png; }
     void SetAlpha(int alpha);       //设置主窗口的不透明度，alpha:0~255，仅当使用png背景时有效
 
-    void SetFont(const FontInfo& font_info);
+    void SetSettingData(const SkinSettingData& setting_data);
 
     //绘制预览图
     //pDC: 绘图的CDC
@@ -145,4 +145,5 @@ private:
     Gdiplus::Image* m_background_png_s{};
     Gdiplus::Image* m_background_png_l{};
     int m_alpha{ 255 };     //不透明度，仅当背景为png时有效
+    SkinSettingData m_setting_data;
 };

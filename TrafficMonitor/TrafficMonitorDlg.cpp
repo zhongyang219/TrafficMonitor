@@ -921,7 +921,7 @@ void CTrafficMonitorDlg::LoadBackGroundImage()
 
 void CTrafficMonitorDlg::SetTextFont()
 {
-    m_skin.SetFont(theApp.m_main_wnd_data.font);
+    m_skin.SetSettingData(theApp.m_main_wnd_data.ToSkinSettingData());
 }
 
 bool CTrafficMonitorDlg::IsTaskbarWndValid() const

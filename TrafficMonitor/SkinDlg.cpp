@@ -63,7 +63,7 @@ void CSkinDlg::ShowPreview()
     SkinSettingData cur_skin_data;
     if (CSkinManager::Instance().GetSkinSettingDataByIndex(m_skin_selected, cur_skin_data))
     {
-        m_skin_data.SetFont(cur_skin_data.font);
+        m_skin_data.SetSettingData(cur_skin_data);
     }
     //获取预览区大小
     m_view->SetSize(m_skin_data.GetPreviewInfo().width, m_skin_data.GetPreviewInfo().height);

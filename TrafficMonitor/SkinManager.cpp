@@ -163,11 +163,7 @@ void CSkinManager::SkinSettingDataFronSkin(SkinSettingData& skin_setting_data, c
     //获取皮肤的字体
     if (!skin_file.GetSkinInfo().font_info.name.IsEmpty())
     {
-        skin_setting_data.font.name = skin_file.GetSkinInfo().font_info.name;
-        skin_setting_data.font.bold = skin_file.GetSkinInfo().font_info.bold;
-        skin_setting_data.font.italic = skin_file.GetSkinInfo().font_info.italic;
-        skin_setting_data.font.underline = skin_file.GetSkinInfo().font_info.underline;
-        skin_setting_data.font.strike_out = skin_file.GetSkinInfo().font_info.strike_out;
+        skin_setting_data.font = skin_file.GetSkinInfo().font_info;
     }
     else
     {

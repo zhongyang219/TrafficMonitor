@@ -94,6 +94,8 @@ bool DispStrings::operator==(const DispStrings& disp_str) const
 
 bool DispStrings::IsInvalid() const
 {
+    if (map_str.empty())
+        return true;
     for (auto iter = map_str.begin(); iter != map_str.end(); ++iter)
     {
         if (iter->second == NONE_STR)
