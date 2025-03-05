@@ -52,6 +52,7 @@ BEGIN_MESSAGE_MAP(CTaskBarDlg, CDialogEx)
     ON_WM_LBUTTONUP()
     ON_MESSAGE(WM_EXITMENULOOP, &CTaskBarDlg::OnExitmenuloop)
     ON_MESSAGE(WM_TABLET_QUERYSYSTEMGESTURESTATUS, &CTaskBarDlg::OnTabletQuerysystemgesturestatus)
+    ON_WM_MOUSEWHEEL()
 END_MESSAGE_MAP()
 
 // CTaskBarDlg 消息处理程序
@@ -1633,4 +1634,32 @@ afx_msg LRESULT CTaskBarDlg::OnExitmenuloop(WPARAM wParam, LPARAM lParam)
 afx_msg LRESULT CTaskBarDlg::OnTabletQuerysystemgesturestatus(WPARAM wParam, LPARAM lParam)
 {
     return 0;
+}
+
+
+BOOL CTaskBarDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+    if (zDelta >= 120 || zDelta <= -120)
+    {
+        CPoint point = pt;
+        ScreenToClient(&point);
+        ITMPlugin* plugin{};
+        bool is_plugin_item_clicked = (CheckClickedItem(point) && m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr);
+        if (is_plugin_item_clicked)
+        {
+            plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+            if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
+            {
+                IPluginItem::MouseEventType type;
+                if (zDelta > 0)
+                    type = IPluginItem::MT_WHEEL_UP;
+                else
+                    type = IPluginItem::MT_WHEEL_DOWN;
+                if (m_clicked_item.plugin_item->OnMouseEvent(type, point.x, point.y, (void*)GetSafeHwnd(), IPluginItem::MF_TASKBAR_WND) != 0)
+                    return TRUE;
+            }
+        }
+    }
+
+    return CDialogEx::OnMouseWheel(nFlags, zDelta, pt);
 }

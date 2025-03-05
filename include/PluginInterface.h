@@ -93,6 +93,8 @@ public:
         MT_LCLICKED,    /**< 点击了鼠标左键 */
         MT_RCLICKED,    /**< 点击了鼠标右键 */
         MT_DBCLICKED,   /**< 双击了鼠标左键 */
+        MT_WHEEL_UP,    /**< 向上滚动了鼠标滚轮 */
+        MT_WHEEL_DOWN,  /**< 向下滚动了鼠标滚轮 */
     };
 
     enum MouseEventFlag
