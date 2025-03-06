@@ -829,6 +829,7 @@
     <ClInclude Include="PluginInfoDlg.h" />
     <ClInclude Include="PluginManager.h" />
     <ClInclude Include="PluginManagerDlg.h" />
+    <ClInclude Include="PluginUpdateHelper.h" />
     <ClInclude Include="RenderAPISupport.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SelectConnectionsDlg.h" />
@@ -921,6 +922,7 @@
     <ClCompile Include="PluginInfoDlg.cpp" />
     <ClCompile Include="PluginManager.cpp" />
     <ClCompile Include="PluginManagerDlg.cpp" />
+    <ClCompile Include="PluginUpdateHelper.cpp" />
     <ClCompile Include="SelectConnectionsDlg.cpp" />
     <ClCompile Include="SetItemOrderDlg.cpp" />
     <ClCompile Include="SettingsHelper.cpp" />

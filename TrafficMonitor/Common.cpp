@@ -641,7 +641,7 @@ wstring CCommon::GetJsonValueSimple(const wstring& json_str, const wstring& name
     return result;
 }
 
-bool CCommon::GetURL(const wstring& url, wstring& result, bool utf8, const wstring& user_agent)
+bool CCommon::GetURL(const wstring& url, std::string& result, const wstring& user_agent)
 {
     bool succeed{ false };
     CInternetSession* pSession{};
@@ -660,7 +660,7 @@ bool CCommon::GetURL(const wstring& url, wstring& result, bool utf8, const wstri
             {
                 content += data;
             }
-            result = StrToUnicode((const char*)content.GetString(), utf8);
+            result = std::string((const char*)content.GetString());
             succeed = true;
         }
         pfile->Close();
@@ -687,6 +687,17 @@ bool CCommon::GetURL(const wstring& url, wstring& result, bool utf8, const wstri
         SAFE_DELETE(pSession);
     }
     SAFE_DELETE(pSession);
+    return succeed;
+}
+
+bool CCommon::GetURL(const wstring& url, wstring& result, bool utf8, const wstring& user_agent)
+{
+    std::string str_result;
+    bool succeed = GetURL(url, str_result, user_agent);
+    if (succeed)
+    {
+        result = CCommon::StrToUnicode(str_result.c_str(), utf8);
+    }
     return succeed;
 }
 

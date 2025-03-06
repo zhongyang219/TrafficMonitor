@@ -4,7 +4,85 @@
 #include "SkinFile.h"
 #include "TrafficMonitor.h"
 #include "IniHelper.h"
+#include "PluginUpdateHelper.h"
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void TestHttpQequest()
+{
+    wstring result;
+    bool rtn = CCommon::GetURL(L"https://v4.yinghualuo.cn/bejson", result, true, L"TrafficMonitor_V1.78");
+    int a = 0;
+}
+
+static void TestGetLicense()
+{
+    CString license_str;
+    HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(IDR_LICENSE), _T("TEXT"));
+    if (hRes != NULL)
+    {
+        HGLOBAL hglobal = LoadResource(NULL, hRes);
+        if (hglobal != NULL)
+        {
+            license_str = CCommon::StrToUnicode((const char*)hglobal, true).c_str();
+            int a = 0;
+        }
+    }
+}
+
+static void TestSkin()
+{
+    CSkinFile skin;
+    skin.Load(L"0默认皮肤");
+    int a = 0;
+}
+
+static void TestCrash()
+{
+    CString* pStr = nullptr;
+    int a = pStr->GetLength();
+    printf("%d", a);
+
+}
+
+static void TestPlugin()
+{
+    if (!theApp.m_plugins.GetPlugins().empty())
+    {
+        theApp.m_plugins.GetPlugins()[0].plugin->ShowOptionsDialog(theApp.m_pMainWnd->m_hWnd);
+    }
+}
+
+static void TestDate()
+{
+    Date d;
+    d.year = 2021;
+    d.month = 1;
+    d.day = 4;
+    int week = d.week();
+    int a = 0;
+}
+
+static void TestIni()
+{
+    CIniHelper ini(L"D:\\Temp\\config.ini");
+    ini.RemoveSection(L"skin_360悬浮窗dark");
+    ini.Save();
+    int a = 0;
+}
+
+static void TestPluginVersion()
+{
+    ASSERT(PluginVersion(L"1.0.0") == PluginVersion(L"1.00"));
+    ASSERT(PluginVersion(L"1.2") < PluginVersion(L"1.20"));
+    ASSERT(PluginVersion(L"0.8.0") < PluginVersion(L"1.00"));
+    ASSERT(PluginVersion(L"1.0.3") < PluginVersion(L"1.03"));
+
+    //CPluginUpdateHelper helper;
+    //helper.CheckForUpdate();
+    //int a = 0;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CTest::CTest()
 {
 }
@@ -21,72 +99,10 @@ void CTest::Test()
     //TestCrash();
     //TestDate();
     //TestIni();
+    TestPluginVersion();
 }
 
 void CTest::TestCommand()
 {
     //TestPlugin();
-}
-
-void CTest::TestHttpQequest()
-{
-    wstring result;
-    bool rtn = CCommon::GetURL(L"https://v4.yinghualuo.cn/bejson", result, true, L"TrafficMonitor_V1.78");
-    int a = 0;
-}
-
-void CTest::TestGetLicense()
-{
-    CString license_str;
-    HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(IDR_LICENSE), _T("TEXT"));
-    if (hRes != NULL)
-    {
-        HGLOBAL hglobal = LoadResource(NULL, hRes);
-        if (hglobal != NULL)
-        {
-            license_str = CCommon::StrToUnicode((const char*)hglobal, true).c_str();
-            int a = 0;
-        }
-    }
-}
-
-void CTest::TestSkin()
-{
-    CSkinFile skin;
-    skin.Load(L"0默认皮肤");
-    int a = 0;
-}
-
-void CTest::TestCrash()
-{
-    CString* pStr = nullptr;
-    int a = pStr->GetLength();
-    printf("%d", a);
-
-}
-
-void CTest::TestPlugin()
-{
-    if (!theApp.m_plugins.GetPlugins().empty())
-    {
-        theApp.m_plugins.GetPlugins()[0].plugin->ShowOptionsDialog(theApp.m_pMainWnd->m_hWnd);
-    }
-}
-
-void CTest::TestDate()
-{
-    Date d;
-    d.year = 2021;
-    d.month = 1;
-    d.day = 4;
-    int week = d.week();
-    int a = 0;
-}
-
-void CTest::TestIni()
-{
-    CIniHelper ini(L"D:\\Temp\\config.ini");
-    ini.RemoveSection(L"skin_360悬浮窗dark");
-    ini.Save();
-    int a = 0;
 }

@@ -619,7 +619,14 @@ void CTrafficMonitorApp::CheckUpdateInThread(bool message)
 UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
 {
     CCommon::SetThreadLanguage(theApp.m_general_data.language);     //设置线程语言
+#ifndef _DEBUG      //DEBUG下不在启动时检查更新
     theApp.CheckUpdate(lpParam);        //检查更新
+#endif
+    //检测插件更新
+    if (!theApp.m_plugins.GetPlugins().empty())
+    {
+        theApp.m_plugin_update.CheckForUpdate();
+    }
     return 0;
 }
 
@@ -1046,12 +1053,10 @@ BOOL CTrafficMonitorApp::InitInstance()
     //SetRegistryKey(_T("应用程序向导生成的本地应用程序"));        //暂不使用注册表保存数据
 
     //启动时检查更新
-#ifndef _DEBUG      //DEBUG下不在启动时检查更新
     if (m_general_data.check_update_when_start)
     {
         CheckUpdateInThread(false);
     }
-#endif // !_DEBUG
 
 #ifndef WITHOUT_TEMPERATURE
     //检测是否安装.net framework 4.5
