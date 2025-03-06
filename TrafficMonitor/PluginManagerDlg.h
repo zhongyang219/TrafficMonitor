@@ -33,6 +33,15 @@ protected:
     bool IsSelectedValid();
     bool IsSelectedPluginEnable();     //选中插件是否可用
 
+    enum Column
+    {
+        COL_FILE_NAME,
+        COL_NAME,
+        COL_VERSION,
+        COL_STATUS,
+        COL_MAX
+    };
+
     DECLARE_MESSAGE_MAP()
 
     // 通过 CBaseDialog 继承

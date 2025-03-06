@@ -105,12 +105,14 @@ BOOL CPluginManagerDlg::OnInitDialog()
     CRect rect;
     m_list_ctrl.GetClientRect(rect);
     m_list_ctrl.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
-    int width0, width1, width2;
-    width0 = width1 = rect.Width() / 3;
-    width2 = rect.Width() - width0 - width1 - theApp.DPI(20) - 1;
-    m_list_ctrl.InsertColumn(0, CCommon::LoadText(IDS_FILE_NAME), LVCFMT_LEFT, width0);
-    m_list_ctrl.InsertColumn(1, CCommon::LoadText(IDS_PLUGIN_NAME), LVCFMT_LEFT, width1);
-    m_list_ctrl.InsertColumn(2, CCommon::LoadText(IDS_STATUS), LVCFMT_LEFT, width2);
+    int width0, width1, width2, width3;
+    width0 = width1 = rect.Width() * 3 / 10;
+    width3 = rect.Width() * 2 / 10;
+    width2 = rect.Width() - width0 - width1 - width3 - theApp.DPI(20) - 1;
+    m_list_ctrl.InsertColumn(COL_FILE_NAME, CCommon::LoadText(IDS_FILE_NAME), LVCFMT_LEFT, width0);
+    m_list_ctrl.InsertColumn(COL_NAME, CCommon::LoadText(IDS_PLUGIN_NAME), LVCFMT_LEFT, width1);
+    m_list_ctrl.InsertColumn(COL_VERSION, CCommon::LoadText(IDS_VERSION), LVCFMT_LEFT, width2);
+    m_list_ctrl.InsertColumn(COL_STATUS, CCommon::LoadText(IDS_STATUS), LVCFMT_LEFT, width3);
 
     //添加图标
     int item_num = theApp.m_plugins.GetPlugins().size();
@@ -160,8 +162,9 @@ BOOL CPluginManagerDlg::OnInitDialog()
         }
         int index = m_list_ctrl.GetItemCount();
         m_list_ctrl.InsertItem(index, file_name.c_str(), m_list_ctrl.GetItemCount());
-        m_list_ctrl.SetItemText(index, 1, plugin.Property(ITMPlugin::TMI_NAME).c_str());
-        m_list_ctrl.SetItemText(index, 2, status);
+        m_list_ctrl.SetItemText(index, COL_NAME, plugin.Property(ITMPlugin::TMI_NAME).c_str());
+        m_list_ctrl.SetItemText(index, COL_VERSION, plugin.Property(ITMPlugin::TMI_VERSION).c_str());
+        m_list_ctrl.SetItemText(index, COL_STATUS, status);
     }
 
     m_plugin_download_lnk.SetURL(L"https://github.com/zhongyang219/TrafficMonitorPlugins/blob/main/download/plugin_download.md");
