@@ -206,7 +206,7 @@ void DisplayItemSet::FromInt(int value)
     //将int的每个bit位转换成set中的枚举值
     for (const auto& item : AllDisplayItems)
     {
-        if (value <= 31 && (value & (1 << item)))
+        if (item <= 31 && (value & (1 << item)))
             data.insert(item);
     }
 }
