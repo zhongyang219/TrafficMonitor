@@ -4,13 +4,12 @@
 #include "TrafficMonitor.h"
 #include "TinyXml2Helper.h"
 
-template<class StringType>
-static void VersionFromString(const StringType& version_str, std::vector<int>& versions)
+static void VersionFromString(const std::string& version_str, std::vector<int>& versions)
 {
     versions.clear();
     //拆分字符串
-    std::vector<StringType> vec_version;
-    CCommon::StringSplit(version_str, L'.', vec_version);
+    std::vector<std::string> vec_version;
+    CCommon::StringSplit(version_str, '.', vec_version);
     //转换为整数保存
     for (const auto& str : vec_version)
     {
@@ -25,12 +24,14 @@ PluginVersion::PluginVersion()
 
 PluginVersion::PluginVersion(const std::wstring& version)
 {
-    VersionFromString(version, m_version);
+    m_version_str = CCommon::AsciiToStr(version);
+    VersionFromString(m_version_str, m_version);
 }
 
 PluginVersion::PluginVersion(const std::string& version)
 {
-    VersionFromString(version, m_version);
+    m_version_str = version;
+    VersionFromString(m_version_str, m_version);
 }
 
 bool PluginVersion::operator<(const PluginVersion& another) const
@@ -53,16 +54,14 @@ bool PluginVersion::operator==(const PluginVersion& another) const
     return true;
 }
 
-std::wstring PluginVersion::ToString() const
+std::string PluginVersion::GetVersionString() const
 {
-    std::wstring str;
-    for (size_t i{}; i < m_version.size(); i++)
-    {
-        str += std::to_wstring(m_version[i]);
-        if (i < m_version.size() - 1)
-            str += L'.';
-    }
-    return str;
+    return m_version_str;
+}
+
+std::wstring PluginVersion::GetVersionWString() const
+{
+    return CCommon::AsciiToUnicode(m_version_str);
 }
 
 int PluginVersion::GetSubVersion(size_t index) const

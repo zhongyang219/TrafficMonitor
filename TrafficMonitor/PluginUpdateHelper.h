@@ -10,13 +10,15 @@ public:
     bool operator<(const PluginVersion& another) const;
     bool operator==(const PluginVersion& another) const;
 
-    std::wstring ToString() const;
+    std::string GetVersionString() const;
+    std::wstring GetVersionWString() const;
 
 protected:
     int GetSubVersion(size_t index) const;
 
 private:
     std::vector<int> m_version;
+    std::string m_version_str;
 };
 
 class CPluginUpdateHelper

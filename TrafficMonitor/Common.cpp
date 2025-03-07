@@ -38,6 +38,24 @@ string CCommon::UnicodeToStr(const wchar_t* wstr, bool utf8)
     return result;
 }
 
+wstring CCommon::AsciiToUnicode(const string& str)
+{
+    std::wstring result;
+    result.resize(str.size());
+    for (size_t i{}; i < str.size(); i++)
+        result[i] = str[i];
+    return result;
+}
+
+string CCommon::AsciiToStr(const std::wstring& wstr)
+{
+    std::string result;
+    result.resize(wstr.size());
+    for (size_t i{}; i < wstr.size(); i++)
+        result[i] = static_cast<char>(wstr[i]);
+    return result;
+}
+
 bool CCommon::GetFileContent(const wchar_t* file_path, string& contents_buff, bool binary /*= true*/)
 {
     std::ifstream file{ file_path, (binary ? std::ios::binary : std::ios::in) };

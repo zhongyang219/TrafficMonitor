@@ -14,6 +14,9 @@ public:
 
     static string UnicodeToStr(const wchar_t* wstr, bool utf8 = false);
 
+    static wstring AsciiToUnicode(const string& str);
+    static string AsciiToStr(const std::wstring& wstr);
+
     template<class T>
     static void StringNormalize(T& str)
     {
