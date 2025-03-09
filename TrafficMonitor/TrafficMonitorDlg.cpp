@@ -2951,7 +2951,7 @@ void CTrafficMonitorDlg::OnPluginOptionsTaksbar()
         if (plugin != nullptr)
         {
             //显示插件的选项设置
-            auto rtn = plugin->ShowOptionsDialog(GetSafeHwnd());
+            auto rtn = plugin->ShowOptionsDialog(m_tBarDlg->GetSafeHwnd());
             if (rtn == ITMPlugin::OR_OPTION_CHANGED)    //选项设置有更改，重新打开任务栏窗口
             {
                 //CloseTaskBarWnd();
