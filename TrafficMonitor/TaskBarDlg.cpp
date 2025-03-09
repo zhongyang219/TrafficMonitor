@@ -521,6 +521,10 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
         value_text_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
     }
 
+    if (plugin != nullptr && plugin->GetAPIVersion() >= 2)
+    {
+        plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_TASKBAR_WND, L"1");
+    }
     if (item->IsCustomDraw())
     {
         //根据背景色的亮度判断深色还是浅色模式
@@ -531,7 +535,6 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
         {
             plugin->OnExtenedInfo(ITMPlugin::EI_LABEL_TEXT_COLOR, std::to_wstring(label_text_color).c_str());
             plugin->OnExtenedInfo(ITMPlugin::EI_VALUE_TEXT_COLOR, std::to_wstring(value_text_color).c_str());
-            plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_TASKBAR_WND, L"1");
         }
         drawer.SetTextColor(value_text_color);
         //需要rtti

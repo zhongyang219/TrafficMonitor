@@ -515,14 +515,17 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
                 point.SetPoint(layout_item.x, layout_item.y);
                 point.Offset(pos.x, pos.y);
                 CRect rect(point, CSize(layout_item.width, m_layout_info.text_height));
+                ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(plugin_item);
+                if (plugin != nullptr && plugin->GetAPIVersion() >= 2)
+                {
+                    plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_TASKBAR_WND, L"0");
+                }
                 if (plugin_item->IsCustomDraw())
                 {
                     int brightness{ (GetRValue(cl) + GetGValue(cl) + GetBValue(cl)) / 2 };
-                    ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(plugin_item);
                     if (plugin != nullptr && plugin->GetAPIVersion() >= 2)
                     {
                         plugin->OnExtenedInfo(ITMPlugin::EI_VALUE_TEXT_COLOR, std::to_wstring(cl).c_str());
-                        plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_TASKBAR_WND, L"0");
                     }
                     draw.GetDC()->SetTextColor(cl);
                     plugin_item->DrawItem(draw.GetDC()->GetSafeHdc(), point.x, point.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
@@ -726,6 +729,11 @@ void CSkinFile::DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font) 
                 cl = iter->second;
             else if (!text_colors.empty())
                 cl = text_colors.begin()->second;
+            ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(plugin_item);
+            if (plugin != nullptr && plugin->GetAPIVersion() >= 2)
+            {
+                plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_TASKBAR_WND, L"0");
+            }
             if (plugin_item->IsCustomDraw())
             {
                 int brightness{ (GetRValue(cl) + GetGValue(cl) + GetBValue(cl)) / 2 };
@@ -733,7 +741,6 @@ void CSkinFile::DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font) 
                 if (plugin != nullptr && plugin->GetAPIVersion() >= 2)
                 {
                     plugin->OnExtenedInfo(ITMPlugin::EI_VALUE_TEXT_COLOR, std::to_wstring(cl).c_str());
-                    plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_TASKBAR_WND, L"0");
                 }
                 drawer.GetDC()->SetTextColor(cl);
                 drawer.GetDC()->SetBkMode(TRANSPARENT);
