@@ -87,16 +87,22 @@ public:
         // 初始化堆栈帧
 #if defined _M_IX86
         DWORD machineType = IMAGE_FILE_MACHINE_I386;
-#elif defined _M_ARM64EC
-        DWORD machineType = IMAGE_FILE_MACHINE_ARM64;
+        stackFrame.AddrPC.Offset = context.Eip;    // x86 使用 EIP
+        stackFrame.AddrFrame.Offset = context.Ebp; // x86 使用 EBP
+        stackFrame.AddrStack.Offset = context.Esp; // x86 使用 ESP
+//#elif defined _M_ARM64EC
+//        DWORD machineType = IMAGE_FILE_MACHINE_ARM64;
+//        stackFrame.AddrPC.Offset = context.Pc;     // ARM64 使用 PC
+//        stackFrame.AddrFrame.Offset = context.Fp;  // ARM64 使用 FP
+//        stackFrame.AddrStack.Offset = context.Sp;  // ARM64 使用 SP
 #else
         DWORD machineType = IMAGE_FILE_MACHINE_AMD64;
+        stackFrame.AddrPC.Offset = context.Rip;    // x64 使用 RIP
+        stackFrame.AddrFrame.Offset = context.Rbp; // x64 使用 RBP
+        stackFrame.AddrStack.Offset = context.Rsp; // x64 使用 RSP
 #endif
-        stackFrame.AddrPC.Offset = context.Rip;
         stackFrame.AddrPC.Mode = AddrModeFlat;
-        stackFrame.AddrFrame.Offset = context.Rbp;
         stackFrame.AddrFrame.Mode = AddrModeFlat;
-        stackFrame.AddrStack.Offset = context.Rsp;
         stackFrame.AddrStack.Mode = AddrModeFlat;
 
         // 遍历堆栈帧
