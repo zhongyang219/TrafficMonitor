@@ -19,6 +19,14 @@ In Windows 11, this option is only available when the taskbar is align centered.
 
 Because when the taskbar is displayed on the left, there is no space on the left side for TrafficMonitor to display.
 
+### In Windows 11, the taskbar window of TrafficMonitor overlaps with the taskbar icons when taskbar is full
+
+<img src="images/image-20250310173257156.png" alt="image-20250310173257156" style="zoom:80%;" />
+
+This problem cannot be fixed at present. It is recommended to try not to fill the taskbar, or change "Merge taskbar buttons and tabs" to "Always" in the system settings.
+
+Please do not send feedback to me on this issue.
+
 ### How to show the CPU and memory usage?
 
 Right click the main window and check "Show More Info". If you also need to display the CPU and memory usage in the taskbar window, right click the taskbar window and select "Display Settings<img src="./Screenshots/images/item.png" style="zoom: 80%;" />", check "CPU and Memory Usage" in the  pop-up dialog box.
