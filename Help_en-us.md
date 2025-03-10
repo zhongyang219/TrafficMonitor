@@ -1,17 +1,27 @@
 **[简体中文](./Help.md) | English**
 
 # TrafficMonitor Frequently Asked Questions
-This is the page about the Frequently Asked Questions of TrafficMonitor. If you want to view the detailed introduction of the functions and usage of TrafficMonitor, please [click here](https://github.com/zhongyang219/TrafficMonitor/wiki) to go the the TraffinMonitor Wiki page (Only Chinese Available).
+This is the page about the Frequently Asked Questions of TrafficMonitor. If you want to view the detailed introduction of the functions and usage of TrafficMonitor, please [click here](https://github.com/zhongyang219/TrafficMonitor/wiki) to go the the TraffinMonitor Wiki page.
 
-### "Taskbar window appears to the left of the taskbar" dose not work in Windows 11 when using version 1.84
+### In Windows 11, the taskbar window overlapped with the windows Widgets
 
-In version 1.84, if the taskbar window is aligned to the left, the taskbar window will always appear on the right because it overlaps the original taskbar button when shown on the left.
-The program detects taskbar alignment by reading the key value of "TaskbarAl" in the registry "\HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced". But if you never change the alignment settings of the taskbar, this key is not exist and TrafficMonitor mistakenly thinks the taskbar is left aligned. This is a bug. The solution is:
-Click the right mouse button in the taskbar, select Taskbar Settings, and change the alignment method of the taskbar once. After generating the above key value, for example, change "center" to "Align left", and then change it back to "center".
+In Windows 11, this issue can be fixed with the following steps:
+
+Open "Option Settings"-"Taskbar Window Settings", click the "Settings related to Windows 11" button, and check "Avoid overlapping with right Widgets" option. As shown in the picture bellow.
+
+<img src="Screenshots/image-20250310121048889.png" alt="image-20250310121048889" style="zoom:80%;" />
+
+If the Widgets is not showing on the taskbar, this option is grayed.
+
+### In Windows 11, "The taskbar window appears to the left of the taskbar" is grayed
+
+In Windows 11, this option is only available when the taskbar is align centered.
+
+Because when the taskbar is displayed on the left, there is no space on the left side for TrafficMonitor to display.
 
 ### How to show the CPU and memory usage?
 
-Right click the main window and check "Show More Info". If you also need to display the CPU and memory usage in the taskbar window, right click the taskbar window and check "CPU and Memory Usage" in the "Display Settings<img src="./Screenshots/images/item.png" style="zoom: 80%;" />" sub menu.
+Right click the main window and check "Show More Info". If you also need to display the CPU and memory usage in the taskbar window, right click the taskbar window and select "Display Settings<img src="./Screenshots/images/item.png" style="zoom: 80%;" />", check "CPU and Memory Usage" in the  pop-up dialog box.
 
 ### How do I change the text such as "CPU" and "MEM" in the taskbar
 
@@ -47,11 +57,11 @@ Starting from version 1.80, the version with temperature monitoring and the vers
 * Versions without temperature monitoring and versions before 1.80:
 
   The auto run function of the versions without temperature monitoring and versions before 1.80 is achieved by creating the "TrafficMonitor" key in the registry path of "Computer\HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run".
-  If you encounter the problem of auto run dose not work, please check that the registry exists, and then check the program path is correct. If you move the location of the program, the auto run will be invalid because of the program location being invalid. In this case, you only need to uncheck "Auto run when Windows start" in the option settings, and then check it on.<br>
+  If you encounter the problem of auto run dose not work, please check that the registry exists, and then check the program path is correct. If you move the location of the program, the auto run will be invalid because of the program location being invalid. In this case, you only need to uncheck "Auto run when Windows start" in the option settings, and then check it on.
 
   Note that some third-party security software may prevent TrafficMonitor from booting up automatically. Please try to allow TrafficMonitor to boot up automatically in the security software.
 
-  If you set the program to run as an administrator, the auto run function will also not work. Please try to remove running as an administrator.<br>
+  If you set the program to run as an administrator, the auto run function will also not work. Please try to remove running as an administrator.
 
 * Version with temperature monitoring:
 
@@ -66,8 +76,9 @@ A common reason why the "Auto run when Windows start" dose not work is that you 
 It should be noted that if you use the version without temperature monitoring to create a auto-start item in the registry, and then use the version that with temperature monitoring to turn on the "Auto run when Windows start" function, it will automatically delete the auto-start item in the registry, and then create a auto-start item in the task plan. vice versa.
 
 ### The program pops up the "Unable to Save Settings" message box.
-If you encountered this problem, that means the program does not have permission to write data to its directory, causing the settings data cannot be saved. Try to move the program to another folder that has write permissions will save this problem. <br>
-You can also change the save path of the configuration and data file to the C:\Users\\<username\>\AppData\Roaming\TrafficMonitor directory by the following steps. <br>
+If you encountered this problem, that means the program does not have permission to write data to its directory, causing the settings data cannot be saved. Try to move the program to another folder that has write permissions will save this problem. 
+You can also change the save path of the configuration and data file to the C:\Users\\<username\>\AppData\Roaming\TrafficMonitor directory by the following steps. 
+
 * Exit TrafficMonitor and restart TrafficMonitor as an administrator.
 * Select "Options" in the right-click menu, switch to the "General Settings" tab, and select "Save to AppData Directory" in "Configuration and data files".
 
@@ -75,12 +86,12 @@ If it still pops up the "Unable to Save Settings" message box, open the director
 
 ```
 [config]
-portable_mode = true
+portable_mode = false
 ```
 
 If the file cannot be created, you can create the file in a different location, such as the desktop, and then move to the directory where the program is located.
 
-If the `global_cfg.ini` file already exists, change the value of `portable_mode` to `true` and save, then restart TrafficMonitor.
+If the `global_cfg.ini` file already exists, change the value of `portable_mode` to `false` and save, then restart TrafficMonitor.
 
 If `global_cfg.ini` does not have write permission, you can try copying the file to the desktop, and then copying it back to the original path to overwrite the original file after modified.
 
@@ -99,18 +110,14 @@ The method to solve this problem is:
 1. Change the save location of the configuration files to AppData directory in "Option Settings" > "General Settings" > "Configuration and data file".
 2. Delete the TrafficMonitor application files you don't need on your computer, start TrafficMonitor, open "Option Settings" > "General Settings", click "Reset autorun" button. 
 
-### The suspension window can only be displayed on the main monitor when multiple monitors are present.
-By default, the suspension window cannot be moved out of the screen boundaries. If you need to move the suspension window to other monitors, please open "Options" > "Main Window Settings" by right click the suspension window, check "Allow Out of Screen Boundaries", and click "OK" button. At this time the suspension window is no longer limited to the screen, it can be also move to any monitors. 
-
-If you remove the extra monitor, then the suspension window may appear outside the screen area to cause the invisible. At this time, you only need to right click the the icon in the notification area, select "Options", uncheck "Allow Out of Screen Boundaries" in "Main Window Settings", the suspension window will appear in the screen area again.
-
 ### The net speed value is not fully displayed.
 Because the width of each character in different fonts is not the same, in some cases, it does appear the problem of the net speed value is not fully displayed. If this problem occurs, open "Options"-"Taskbar Window Settings", and select a larger value in the "Number of digits" drop down list.
 ### How to cancel after setting the mouse penetrate?
-Right click the TrafficMonitor icon in the notification area, uncheck the "Mouse Penetrate".<br>
-After the mouse penetrate is set, the suspension window will not be able to respond to any mouse messages, or pop-up right-click menu. But the menu can be poped up by right click the icon in notification area. The right-click menu of the main window and which of the notification area icon is exactly the same.<br>
-In addition, even if you have previously set the hidden notify icon, when the "mouse penetrate" is set, the notify icon will also automatically appear to prevent the right-click menu cannot be displayed. <br>
-Note: The notification area icon will be automatically displayed in the following situations: <br>
+Right click the TrafficMonitor icon in the notification area, uncheck the "Mouse Penetrate".
+After the mouse penetrate is set, the suspension window will not be able to respond to any mouse messages, or pop-up right-click menu. But the menu can be popped up by right click the icon in notification area. The right-click menu of the main window and which of the notification area icon is exactly the same.
+In addition, even if you have previously set the hidden notify icon, when the "mouse penetrate" is set, the notify icon will also automatically appear to prevent the right-click menu cannot be displayed. 
+Note: The notification area icon will be automatically displayed in the following situations: 
+
 * After the "Mouse Penetrate" is set;
 * Hide the main window without displaying the taskbar window;
 * Close the taskbar window when the main window is hidden;
@@ -126,6 +133,12 @@ At the same time, you may also check "Auto adapt to Windows 10 dark/light theme"
 
 Some users have reported that turning on the HDR function in Windows 10 will cause the taskbar window to fail to display. If you encounter this problem, you can try turning off the "Background Transparent" option in ["Option Settings" - "Taskbar Window Settings"](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#任务栏窗口设置).
 
+Since version 1.85, this can be fixed by changing to Direct2D rendering in "Options Settings" - "Taskbar Window Settings" - "Rendering Settings".
+
+### The CPU usage displayed is inconsistent with Task Manager
+
+Since Windows 10, if you want to make the CPU usage shown by TrafficMonitor consistent with Task Manager, please go to "Option Settings"-"General Settings"-"Advanced"-"CPU usage acquisition method", and select "Use the performance counter".
+
 ### About the temperature monitoring of TrafficMonitor
 
 Due to some problems occurred in some computers caused by the temperature monitoring function, the temperature monitoring function is turned off by default. If you want to use the temperature monitoring function of TrafficMonitor, please go to ["Option Settings"-"General Settings"-"Hardware Monitoring"](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#硬件监控) to enable it. After it is turned on, temperature-related items will appear under the "Display Settings" submenu in the taskbar right-click menu.
@@ -134,7 +147,7 @@ The temperature monitoring function of TrafficMonitor relies on a third-party op
 
 If LibreHardwareMonitor cannot display the temperature of the corresponding hardware, then I cannot solve this problem. You can report your problem to the author of LibreHardwareMonitor.
 
-If LibreHardwareMonitor can display the temperature of the corresponding hardware normally, please report this problem to me, and provide a screenshot of LibreHardwareMonitor so that I can investigate your problem. 
+If the latest version of LibreHardwareMonitor can display the hardware temperature normally, replace the LibreHardwareMonitorLib.dll files in the TrafficMonitor folder with the downloaded the LibreHardwareMonitorLib.dll files may solve this problem.
 
 **Note: The hardware monitoring function (including temperature monitoring and GPU usage monitoring) may have some problems, which may cause more CPU and memory usage. According to feedback from some users, turning on the temperature function will cause problems such as program crashes and system crashes. Please decide to turn on the hardware monitoring function after you are aware of the above risks. Otherwise, please do not use the hardware monitoring function.**
 
@@ -144,11 +157,21 @@ Click the link below to download and install the Microsoft Visual C++ runtime en
 
 [Latest supported Visual C++ Redistributable downloads | Microsoft Docs](https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)
 
-<br><br>
+### I want to have more hardware information on the taskbar, such an fan speed, power, etc
 
->If you encounter the problem of program crash, please turn off all the items in "Options" - "General Settings" - "Hardware Monitoring" after restarting the program, because based on the DMP file provided by the user, most crash problems are related to the hardware monitoring function. I cannot solve the crash problem related to the hardware monitoring function, please do not send me email feedback. If you have excluded the hardware monitoring problem, but the crash problem still exists, please go to "Options" - "General Settings" - "Advanced" - "Plug-in Management" to disable all plugins, and then restart the program. If you have excluded the plugin problem, but the crash problem still exists, please send me the email according to the prompts in the crash window.
->
->If you have encountered any other problems, you can also click "Contact Author" in the "About" dialog box, or directly [click here](mailto:zhongyang219@hotmail.com) to send me an email.<br>
->Please describe the problems you have encountered in detail, the error prompts, what operations you have tried, it is better to attach the screenshots and configuration files ("Options"-"General Settings"-"Open configuration file path"). <br>
->Note: Please confirm the email address that you used before sending the email. If your email address is form like "Outlook_\<random string\>@outlook.com", then such email address is unable to reply.
->This may be due to the fact that you are using a third-party e-mail address as the Microsoft account to log on to Windows. If this is the case, be sure to enclose the correct email address in the message.
+The Hardware Monitor plug in is now available. It can display all the monitoring items in LibreHardwareMonitor.
+
+![](images/420555677-53bd3ac9-1c55-4212-aa68-1fe5711e9fbc.png)
+
+For instructions and download links, please click the link below to go to the plug-in download page:
+
+[TrafficMonitorPlugins/download/plugin_download.md at main · zhongyang219/TrafficMonitorPlugins](https://github.com/zhongyang219/TrafficMonitorPlugins/blob/main/download/plugin_download.md)
+
+### About the crash issue
+
+If you encounter the problem of program crash, please turn off all the items in "Options" - "General Settings" - "Hardware Monitoring" after restarting the program, because based on the DMP file provided by the user, most crash problems are related to the hardware monitoring function. I cannot solve the crash problem related to the hardware monitoring function, please do not send me email feedback. If you have excluded the hardware monitoring problem, but the crash problem still exists, please go to "Options" - "General Settings" - "Advanced" - "Plug-in Management" to disable all plugins, and then restart the program. (If the program fails to start, please delete all the `dll` files in the `plugins` in the directory where TrafficMonitor is located). If you have excluded the plugin problem, but the crash problem still exists, please send me the email according to the prompts in the crash window.
+
+If you have encountered any other problems, you can also click "Contact Author" in the "About" dialog box, or directly [click here](mailto:zhongyang219@hotmail.com) to send me an email.
+Please describe the problems you have encountered in detail, the error prompts, what operations you have tried, it is better to attach the screenshots and configuration files ("Options"-"General Settings"-"Open configuration file path"). 
+Note: Please confirm the email address that you used before sending the email. If your email address is form like "Outlook_\<random string\>@outlook.com", then such email address is unable to reply.
+This may be due to the fact that you are using a third-party e-mail address as the Microsoft account to log on to Windows. If this is the case, be sure to enclose the correct email address in the message.
