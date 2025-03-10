@@ -102,7 +102,7 @@ private:
 
 namespace DrawCommonHelper
 {
-    UINT ProccessTextFormat(CRect rect, CSize text_length, Alignment align, bool multi_line) noexcept;
+    UINT ProccessTextFormat(CRect rect, CSize text_length, IDrawCommon::Alignment align, bool multi_line) noexcept;
 
     //根据图片拉伸模式，计算绘制图片的实际位置
     //image_size[int]：图片的原始大小

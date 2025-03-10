@@ -394,14 +394,6 @@ struct GeneralSettingData
 #define MONITOR_TIME_SPAN_MIN 200
 #define MONITOR_TIME_SPAN_MAX 30000
 
-enum class Alignment
-{
-    LEFT,       //左对齐
-    RIGHT,      //右对齐
-    CENTER,     //居中
-    SIDE        //两端对齐
-};
-
 //通过构造函数传递一个bool变量的引用，在构造时将其置为true，析构时置为false
 class CFlagLocker
 {

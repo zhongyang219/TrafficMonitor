@@ -38,6 +38,15 @@ public:
         }
     };
 
+    //对齐方式
+    enum class Alignment
+    {
+        LEFT,       //左对齐
+        RIGHT,      //右对齐
+        CENTER,     //居中
+        SIDE        //两端对齐
+    };
+
     //皮肤中每一项的布局信息
     struct LayoutItem
     {

@@ -26,7 +26,7 @@ static CSkinFile::LayoutItem LayoutItemFromXmlNode(tinyxml2::XMLElement* ele)
     layout_item.x = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(ele, "x")));
     layout_item.y = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(ele, "y")));
     layout_item.width = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(ele, "width")));
-    layout_item.align = static_cast<Alignment>(atoi(CTinyXml2Helper::ElementAttribute(ele, "align")));
+    layout_item.align = static_cast<CSkinFile::Alignment>(atoi(CTinyXml2Helper::ElementAttribute(ele, "align")));
     layout_item.show = CTinyXml2Helper::StringToBool(CTinyXml2Helper::ElementAttribute(ele, "show"));
     return layout_item;
 }
@@ -70,13 +70,18 @@ void CSkinFile::DrawSkinText(IDrawCommon& drawer, DrawStr draw_str, CRect rect, 
     if (align == Alignment::SIDE && text_width < rect.Width())      //只有文本宽度小于矩形的宽度时才使用两端对齐
     {
         //绘制标签
-        drawer.DrawWindowText(rect, draw_str.label, color, Alignment::LEFT);
+        drawer.DrawWindowText(rect, draw_str.label, color, IDrawCommon::Alignment::LEFT);
         //绘制数值
-        drawer.DrawWindowText(rect, draw_str.value, color, Alignment::RIGHT);
+        drawer.DrawWindowText(rect, draw_str.value, color, IDrawCommon::Alignment::RIGHT);
     }
     else
     {
-        drawer.DrawWindowText(rect, draw_str.GetStr(), color, align);
+        IDrawCommon::Alignment text_align = IDrawCommon::Alignment::LEFT;
+        if (align == Alignment::RIGHT)
+            text_align = IDrawCommon::Alignment::RIGHT;
+        else if (align == Alignment::CENTER)
+            text_align = IDrawCommon::Alignment::CENTER;
+        drawer.DrawWindowText(rect, draw_str.GetStr(), color, text_align);
     }
 }
 

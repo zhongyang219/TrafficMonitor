@@ -18,6 +18,14 @@ public:
         FIT      // 适应，不会改变比例，不裁剪
     };
 
+    //对齐方式
+    enum class Alignment
+    {
+        LEFT,       //左对齐
+        RIGHT,      //右对齐
+        CENTER,     //居中
+    };
+
     virtual void SetBackColor(COLORREF back_color, BYTE alpha = 255) = 0;
     // 设置绘制文本的字体
     virtual void SetFont(CFont* pfont) = 0;

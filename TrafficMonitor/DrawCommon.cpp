@@ -220,7 +220,7 @@ int CDrawCommon::GetTextWidth(LPCTSTR lpszString)
     return m_pDC->GetTextExtent(lpszString).cx;
 }
 
-UINT DrawCommonHelper::ProccessTextFormat(CRect rect, CSize text_length, Alignment align, bool multi_line) noexcept
+UINT DrawCommonHelper::ProccessTextFormat(CRect rect, CSize text_length, IDrawCommon::Alignment align, bool multi_line) noexcept
 {
     UINT result; // CDC::DrawText()函数的文本格式
     if (multi_line)
@@ -230,17 +230,17 @@ UINT DrawCommonHelper::ProccessTextFormat(CRect rect, CSize text_length, Alignme
 
     if (text_length.cx > rect.Width()) //如果文本宽度超过了矩形区域的宽度，设置了居中时左对齐
     {
-        if (align == Alignment::RIGHT)
+        if (align == IDrawCommon::Alignment::RIGHT)
             result |= DT_RIGHT;
     }
     else
     {
         switch (align)
         {
-        case Alignment::RIGHT:
+        case IDrawCommon::Alignment::RIGHT:
             result |= DT_RIGHT;
             break;
-        case Alignment::CENTER:
+        case IDrawCommon::Alignment::CENTER:
             result |= DT_CENTER;
             break;
         }

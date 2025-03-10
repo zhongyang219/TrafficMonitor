@@ -225,7 +225,7 @@ void CHistoryTrafficCalendarDlg::OnPaint()
         else
             draw.SetBackColor(RGB(1, 107, 191));
         CString str = GetWeekdayString(i);
-        draw.DrawWindowText(rect, str, RGB(255, 255, 255), Alignment::CENTER, true);
+        draw.DrawWindowText(rect, str, RGB(255, 255, 255), IDrawCommon::Alignment::CENTER, true);
     }
 
     //绘制日历
@@ -263,7 +263,7 @@ void CHistoryTrafficCalendarDlg::OnPaint()
             else
                 text_color = RGB(0, 57, 107);
             if (m_calendar[i][j].day != 0)
-                draw.DrawWindowText(day_rect, CCommon::IntToString(m_calendar[i][j].day), text_color, Alignment::CENTER, true);
+                draw.DrawWindowText(day_rect, CCommon::IntToString(m_calendar[i][j].day), text_color, IDrawCommon::Alignment::CENTER, true);
             //在今天的日期上画一个矩形框
             COLORREF frame_color;
             if (IsWeekend(j))
@@ -311,7 +311,7 @@ void CHistoryTrafficCalendarDlg::OnPaint()
     info_rect.right = info_rect.left + m_draw_rect.Width();
     info_rect.bottom = info_rect.top + theApp.DPI(36);
     draw.SetBackColor(RGB(255, 255, 255));
-    draw.DrawWindowText(info_rect, info, text_color, Alignment::LEFT, true, true);
+    draw.DrawWindowText(info_rect, info, text_color, IDrawCommon::Alignment::LEFT, true, true);
 
     //画图例
     CRect rc_legend{ info_rect };
@@ -319,7 +319,7 @@ void CHistoryTrafficCalendarDlg::OnPaint()
     rc_legend.right = m_draw_rect.Width();
     rc_legend.bottom = rc_legend.top + theApp.DPI(16);
 
-    draw.DrawWindowText(rc_legend, CCommon::LoadText(IDS_LEGEND, _T(":")), text_color, Alignment::LEFT, true, true);
+    draw.DrawWindowText(rc_legend, CCommon::LoadText(IDS_LEGEND, _T(":")), text_color, IDrawCommon::Alignment::LEFT, true, true);
     rc_legend.MoveToY(rc_legend.bottom + theApp.DPI(6));
     CRect rc_legend_box{ rc_legend };
     const int box_side{ theApp.DPI(12) };

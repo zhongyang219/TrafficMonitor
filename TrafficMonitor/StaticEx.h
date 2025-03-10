@@ -5,13 +5,20 @@ CStatic类的派生类，用作带颜色的文本控件：
 */
 #pragma once
 #include "afxwin.h"
-#include "CommonData.h"
 class CStaticEx :
 	public CStatic
 {
 public:
 	CStaticEx();
 	~CStaticEx();
+
+	//对齐方式
+	enum Alignment
+	{
+		LEFT,       //左对齐
+		RIGHT,      //右对齐
+		CENTER,     //居中
+	};
 
 	//将Static控件用作绘制有颜色的文本时
 public:

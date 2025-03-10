@@ -374,14 +374,14 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
         //    else if (type == TDI_DOWN)
         //        str_label = theApp.m_taskbar_data.disp_str.Get(TDI_UP);
         //}
-        drawer.DrawWindowText(rect_label, str_label.c_str(), label_color, (vertical ? Alignment::CENTER : Alignment::LEFT));
+        drawer.DrawWindowText(rect_label, str_label.c_str(), label_color, (vertical ? IDrawCommon::Alignment::CENTER : IDrawCommon::Alignment::LEFT));
     }
 
     //绘制数值
     CString str_value;
-    Alignment value_alignment{ theApp.m_taskbar_data.value_right_align ? Alignment::RIGHT : Alignment::LEFT };      //数值的对齐方式
+    IDrawCommon::Alignment value_alignment{ theApp.m_taskbar_data.value_right_align ? IDrawCommon::Alignment::RIGHT : IDrawCommon::Alignment::LEFT };      //数值的对齐方式
     if (vertical)
-        value_alignment = Alignment::CENTER;
+        value_alignment = IDrawCommon::Alignment::CENTER;
     //绘制上传或下载速度
     if (type == TDI_UP || type == TDI_DOWN || type == TDI_TOTAL_SPEED)
     {
@@ -577,11 +577,11 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
         //画标签
         CString lable_text = theApp.m_taskbar_data.disp_str.GetConst(item).c_str();
         lable_text += L' ';
-        drawer.DrawWindowText(rect_label, lable_text, label_text_color, (vertical ? Alignment::CENTER : Alignment::LEFT));
+        drawer.DrawWindowText(rect_label, lable_text, label_text_color, (vertical ? IDrawCommon::Alignment::CENTER : IDrawCommon::Alignment::LEFT));
         //画数值
-        Alignment value_alignment{ theApp.m_taskbar_data.value_right_align ? Alignment::RIGHT : Alignment::LEFT };      //数值的对齐方式
+        IDrawCommon::Alignment value_alignment{ theApp.m_taskbar_data.value_right_align ? IDrawCommon::Alignment::RIGHT : IDrawCommon::Alignment::LEFT };      //数值的对齐方式
         if (vertical)
-            value_alignment = Alignment::CENTER;
+            value_alignment = IDrawCommon::Alignment::CENTER;
         drawer.DrawWindowText(rect_value, item->GetItemValueText(), value_text_color, value_alignment);
     }
 }
