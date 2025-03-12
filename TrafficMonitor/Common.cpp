@@ -944,8 +944,17 @@ void CCommon::SetColorMode(ColorMode mode)
     switch (mode)
     {
     case ColorMode::Default:
-        CTrafficMonitorApp::self->m_taskbar_data.dft_back_color = 0;
-        CTrafficMonitorApp::self->m_taskbar_data.dft_transparent_color = 0;
+        //Win8/8.1下背景色和透明色不使用纯黑色
+        if (theApp.m_win_version.IsWindows8Or8point1())
+        {
+            CTrafficMonitorApp::self->m_taskbar_data.dft_back_color = RGB(0, 0, 1);
+            CTrafficMonitorApp::self->m_taskbar_data.dft_transparent_color = RGB(0, 0, 1);
+        }
+        else
+        {
+            CTrafficMonitorApp::self->m_taskbar_data.dft_back_color = 0;
+            CTrafficMonitorApp::self->m_taskbar_data.dft_transparent_color = 0;
+        }
         CTrafficMonitorApp::self->m_taskbar_data.dft_status_bar_color = 0x005A5A5A;
         CTrafficMonitorApp::self->m_taskbar_data.dft_text_colors = 0x00ffffffU;
         CTrafficMonitorApp::self->m_cfg_data.m_dft_notify_icon = 0;
