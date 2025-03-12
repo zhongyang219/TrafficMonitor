@@ -255,7 +255,10 @@ CString CCommon::FreqToString(float freq, const PublicSettingData& cfg)
     if (freq < 0)
         str_val = _T("--");
     else
-        str_val.Format(_T("%.2f GHz"), freq);
+        str_val.Format(_T("%.2f"), freq);
+    if (cfg.separate_value_unit_with_space)
+        str_val += _T(' ');
+    str_val += _T("GHz");
     return str_val;
 }
 //CString CCommon::KBytesToString(unsigned int kb_size)
