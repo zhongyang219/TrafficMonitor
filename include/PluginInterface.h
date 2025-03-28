@@ -221,11 +221,11 @@ public:
         int memory_usage{};
         int gpu_usage{};
         int hdd_usage{};
-        int cpu_temperature{};
-        int gpu_temperature{};
-        int hdd_temperature{};
-        int main_board_temperature{};
-        int cpu_freq{};
+        float cpu_temperature{};
+        float gpu_temperature{};
+        float hdd_temperature{};
+        float main_board_temperature{};
+        float cpu_freq{};
     };
 
     /**
