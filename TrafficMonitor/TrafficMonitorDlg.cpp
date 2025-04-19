@@ -541,6 +541,12 @@ void CTrafficMonitorDlg::SetConnectionMenuState(CMenu* pMenu)
         pMenu->CheckMenuRadioItem(0, m_connections.size() + 1, 0, MF_BYPOSITION | MF_CHECKED);
     else        //m_auto_select为false时非自动选择，根据m_connection_selected的值选择对应的项
         pMenu->CheckMenuRadioItem(0, m_connections.size() + 1, m_connection_selected + 2, MF_BYPOSITION | MF_CHECKED);
+
+    //没有设置为“选择全部”时，将当前选择项设置为默认菜单项（加粗显示）
+    if (!theApp.m_cfg_data.m_select_all)
+        pMenu->SetDefaultItem(m_connection_selected + 2, TRUE);
+    else
+        pMenu->SetDefaultItem(-1, TRUE);
 }
 
 void CTrafficMonitorDlg::CloseTaskBarWnd()
