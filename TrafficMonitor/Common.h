@@ -165,7 +165,7 @@ public:
     //获取path路径下的文件或文件夹，并将文件或文件夹名称保存在files容器中。
     static void GetFiles(const wchar_t* path, vector<wstring>& files);
 
-    //获取path路径下的文件或文件夹，每次遍历时调用函数对数func
+    //获取path路径下的文件或文件夹，每次遍历时调用函数对象func
     //path: 查找的路径
     //func: 可以是一个函数对象或lambda表达式，参数是遍历到的文件或文件夹名
     static void GetFiles(const wchar_t* path, std::function<void(const wstring&)> func);
@@ -359,6 +359,7 @@ public:
     //获取Windows主题颜色
     static COLORREF GetWindowsThemeColor();
 
+    static CString GetErrorMessage(DWORD error_code);
 };
 
 /**

@@ -1157,3 +1157,28 @@ COLORREF CCommon::GetWindowsThemeColor()
     }
     return theme_color;
 }
+
+CString CCommon::GetErrorMessage(DWORD error_code)
+{
+    CString error_msg;
+    if (error_code != 0)
+    {
+        LPVOID lpMsgBuf = nullptr;
+        FormatMessage(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER |
+            FORMAT_MESSAGE_FROM_SYSTEM |
+            FORMAT_MESSAGE_IGNORE_INSERTS,
+            NULL,
+            error_code,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            (LPTSTR)&lpMsgBuf,
+            0,
+            NULL);
+
+        if (lpMsgBuf != nullptr)
+            error_msg = (LPCTSTR)lpMsgBuf;
+
+        LocalFree(lpMsgBuf);
+    }
+    return error_msg;
+}

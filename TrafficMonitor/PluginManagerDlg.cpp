@@ -139,6 +139,8 @@ BOOL CPluginManagerDlg::OnInitDialog()
     for (const auto& plugin : theApp.m_plugins.GetPlugins())
     {
         std::wstring file_name = CFilePathHelper(plugin.file_path).GetFileName();
+        CString error_info;
+        error_info.Format(_T("%u %s"), plugin.error_code, CCommon::GetErrorMessage(plugin.error_code).GetString());
         CString status;
         switch (plugin.state)
         {
@@ -146,10 +148,10 @@ BOOL CPluginManagerDlg::OnInitDialog()
             status = CCommon::LoadText(IDS_PLUGIN_LOAD_SUCCEED);
             break;
         case CPluginManager::PluginState::PS_MUDULE_LOAD_FAILED:
-            status = CCommon::LoadTextFormat(IDS_PLUGIN_MODULE_LOAD_FAILED, { static_cast<int>(plugin.error_code) });
+            status = CCommon::LoadTextFormat(IDS_PLUGIN_MODULE_LOAD_FAILED, { error_info });
             break;
         case CPluginManager::PluginState::PS_FUNCTION_GET_FAILED:
-            status = CCommon::LoadTextFormat(IDS_PLUGIN_FUNCTION_GET_FAILED, { static_cast<int>(plugin.error_code) });
+            status = CCommon::LoadTextFormat(IDS_PLUGIN_FUNCTION_GET_FAILED, { error_info });
             break;
         case CPluginManager::PluginState::PS_DISABLE:
             status = CCommon::LoadText(IDS_DISABLED);
