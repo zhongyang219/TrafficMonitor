@@ -145,7 +145,10 @@ BOOL CSkinDlg::OnInitDialog()
 
     //设置超链接
     m_skin_course.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor/wiki/%E7%9A%AE%E8%82%A4%E5%88%B6%E4%BD%9C%E6%95%99%E7%A8%8B"));
-    m_skin_download.SetURL(_T("https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md"));
+    if (theApp.m_general_data.update_source == 1)
+        m_skin_download.SetURL(_T("https://gitee.com/zhongyang219/TrafficMonitorSkin/blob/master/%E7%9A%AE%E8%82%A4%E4%B8%8B%E8%BD%BD.md"));
+    else
+        m_skin_download.SetURL(_T("https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md"));
     m_open_skin_dir_lnk.SetLinkIsURL(false);
 
     return TRUE;  // return TRUE unless you set the focus to a control
