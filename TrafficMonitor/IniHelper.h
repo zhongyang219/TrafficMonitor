@@ -7,7 +7,10 @@
 class CIniHelper
 {
 public:
-	CIniHelper(const wstring& file_path);
+	// 从磁盘加载ini文件
+	// file_path：文件路径
+	// force_utf8：如果为true，则强制以UTF8编码解析，否则，仅当含有UTF8 BOM时才以UTF8编码解析
+	CIniHelper(const wstring& file_path, bool force_utf8 = false);
     // 从资源文件加载ini (只能读取)
     CIniHelper(UINT id, bool is_utf8 = true);
     CIniHelper();

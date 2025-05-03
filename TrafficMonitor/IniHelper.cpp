@@ -2,7 +2,7 @@
 #include "IniHelper.h"
 #include "Common.h"
 
-CIniHelper::CIniHelper(const wstring& file_path)
+CIniHelper::CIniHelper(const wstring& file_path, bool force_utf8)
 {
     m_file_path = file_path;
     ifstream file_stream{ file_path };
@@ -19,17 +19,24 @@ CIniHelper::CIniHelper(const wstring& file_path)
     // 检查并添加末尾的空行
     if (!ini_str.empty() && ini_str.back() != L'\n')
         ini_str.push_back(L'\n');
-    //判断文件是否是utf8编码
     bool is_utf8;
-    if (ini_str.size() >= 3 && ini_str[0] == -17 && ini_str[1] == -69 && ini_str[2] == -65)
+    if (force_utf8)
     {
-        //如果有UTF8的BOM，则删除BOM
         is_utf8 = true;
-        ini_str = ini_str.substr(3);
     }
     else
     {
-        is_utf8 = false;
+        //判断文件是否是utf8编码
+        if (ini_str.size() >= 3 && ini_str[0] == -17 && ini_str[1] == -69 && ini_str[2] == -65)
+        {
+            //如果有UTF8的BOM，则删除BOM
+            is_utf8 = true;
+            ini_str = ini_str.substr(3);
+        }
+        else
+        {
+            is_utf8 = false;
+        }
     }
     //转换成Unicode
     m_ini_str = CCommon::StrToUnicode(ini_str.c_str(), is_utf8);

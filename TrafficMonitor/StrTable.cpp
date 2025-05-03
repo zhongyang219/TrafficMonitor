@@ -91,7 +91,7 @@ void CStrTable::Init()
     for (const wstring& file_name : files)
     {
         std::wstring file_path{ language_dir + file_name };
-        CIniHelper ini_file(file_path);
+        CIniHelper ini_file(file_path, true);
         LanguageInfo language_info;
         LanguageInfoFromIni(language_info, ini_file);
         language_info.language_id = LocaleNameToLCID(language_info.bcp_47.c_str(), 0);  //根据语言bcp-47代码获取语言id
