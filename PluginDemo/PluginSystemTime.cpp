@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include <wchar.h>
 #include "PluginSystemTime.h"
 #include "DataManager.h"

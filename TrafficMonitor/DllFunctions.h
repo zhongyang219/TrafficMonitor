@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <shellscalingapi.h> // 包含::GetDpiForMonitor
 #include <d3dcompiler.h> // 包含D3DCompile
 #include <dcomp.h> // 包含DCompositionCreateDevice

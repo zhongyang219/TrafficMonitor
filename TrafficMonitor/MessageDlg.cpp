@@ -1,4 +1,4 @@
-﻿// HelpDlg.cpp : 实现文件
+// HelpDlg.cpp : 实现文件
 //
 
 #include "stdafx.h"

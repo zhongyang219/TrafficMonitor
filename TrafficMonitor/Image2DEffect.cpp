@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "Image2DEffect.h"
 #include "Common.h"
 

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "DataManager.h"
 
 // COptionsDlg 对话框

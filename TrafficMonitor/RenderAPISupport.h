@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <utility>
 #include <type_traits>
 #include <memory>

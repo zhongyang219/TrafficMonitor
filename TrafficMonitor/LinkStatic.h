@@ -1,4 +1,4 @@
-﻿/*继承于CStatic类，用作超链接：
+/*继承于CStatic类，用作超链接：
 调用SetURL函数设置超链接；
 调用SetLinkIsURL函数设置点击控件后是打开超链接还是响应命令
 如果调用SetLinkIsURL(false)，则点击控件后会向父窗口发送一个WM_LINK_CLICKED消息，

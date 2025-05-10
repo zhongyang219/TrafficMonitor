@@ -1,4 +1,4 @@
-﻿// DonateDlg.cpp : 实现文件
+// DonateDlg.cpp : 实现文件
 //
 
 #include "stdafx.h"

@@ -1,4 +1,4 @@
-﻿// TaskBarDlg.cpp : 实现文件
+// TaskBarDlg.cpp : 实现文件
 //
 
 #include "stdafx.h"

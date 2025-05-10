@@ -1,4 +1,4 @@
-﻿// SpinEdit.cpp: 实现文件
+// SpinEdit.cpp: 实现文件
 //
 
 #include "stdafx.h"

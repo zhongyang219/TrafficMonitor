@@ -1,4 +1,4 @@
-﻿// CLinkStatic.cpp: 实现文件
+// CLinkStatic.cpp: 实现文件
 
 #include "stdafx.h"
 #include "TrafficMonitor.h"

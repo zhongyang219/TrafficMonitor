@@ -1,4 +1,4 @@
-﻿//这是用于Tab标签中的子对话框类
+//这是用于Tab标签中的子对话框类
 #pragma once
 #include "BaseDialog.h"
 

@@ -1,4 +1,4 @@
-﻿// CColorStatic
+// CColorStatic
 //派生自CStatic，用于显示颜色的Static控件
 #pragma once
 #define WM_STATIC_CLICKED (WM_USER + 1001)

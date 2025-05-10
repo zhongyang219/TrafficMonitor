@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "BaseDialog.h"
 
 // CAppAlreadyRuningDlg 对话框

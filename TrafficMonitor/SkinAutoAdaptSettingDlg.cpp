@@ -1,4 +1,4 @@
-﻿// SkinAutoAdaptSettingDlg.cpp: 实现文件
+// SkinAutoAdaptSettingDlg.cpp: 实现文件
 //
 
 #include "stdafx.h"

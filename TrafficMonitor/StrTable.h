@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "CVariant.h"
 #include <map>
 class CStrTable

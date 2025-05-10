@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "DCompositionSupport.h"
 #include "Common.h"
 #include "DllFunctions.h"

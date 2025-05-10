@@ -15,7 +15,7 @@ void CHistoryTrafficFile::Save() const
 {
 	ofstream file{ m_file_path };
 	char buff[64];
-	sprintf_s(buff, "lines: \"%u\"", static_cast<unsigned int>(m_history_traffics.size()));			//ÔÚµÚÒ»ĞĞĞ´Èë×ÜĞĞÊı
+	sprintf_s(buff, "lines: \"%u\"", static_cast<unsigned int>(m_history_traffics.size()));			//åœ¨ç¬¬ä¸€è¡Œå†™å…¥æ€»è¡Œæ•°
 	file << buff << std::endl;
 	for (const auto& history_traffic : m_history_traffics)
 	{
@@ -38,7 +38,7 @@ void CHistoryTrafficFile::Load()
 	{
 		while (!file.eof())
 		{
-			if (m_history_traffics.size() > 9999) break;		//×î¶à¶ÁÈ¡10000ÌìµÄÀúÊ·¼ÇÂ¼
+			if (m_history_traffics.size() > 9999) break;		//æœ€å¤šè¯»å–10000å¤©çš„å†å²è®°å½•
 			std::getline(file, current_line);
 			//if (first_line)
 			//{
@@ -97,7 +97,7 @@ void CHistoryTrafficFile::LoadSize()
 	string current_line, temp;
 	if (CCommon::FileExist(m_file_path.c_str()))
 	{
-		std::getline(file, current_line);			//¶ÁÈ¡µÚÒ»ĞĞ
+		std::getline(file, current_line);			//è¯»å–ç¬¬ä¸€è¡Œ
 		size_t index = current_line.find("lines:");
 		if (index != wstring::npos)
 		{
@@ -115,7 +115,7 @@ void CHistoryTrafficFile::Merge(const CHistoryTrafficFile& history_traffic, bool
 	{
 		if(ignore_same_data)
 		{
-			//Èç¹ûÒªºöÂÔÏàÍ¬ÈÕÆÚµÄÏî£¬ÔòÊ¹ÓÃ¶ş·Ö·¨²éÕÒÈÕÆÚÏàÍ¬µÄÏî£¬Èç¹ûÕÒµ½ÁË£¬ÔòÌø¹ıËü
+			//å¦‚æœè¦å¿½ç•¥ç›¸åŒæ—¥æœŸçš„é¡¹ï¼Œåˆ™ä½¿ç”¨äºŒåˆ†æ³•æŸ¥æ‰¾æ—¥æœŸç›¸åŒçš„é¡¹ï¼Œå¦‚æœæ‰¾åˆ°äº†ï¼Œåˆ™è·³è¿‡å®ƒ
 			if (std::binary_search(m_history_traffics.begin(), m_history_traffics.end(), traffic, HistoryTraffic::DateGreater))
 			{
 				auto iter = std::lower_bound(m_history_traffics.begin(), m_history_traffics.end(), traffic, HistoryTraffic::DateGreater);
@@ -149,10 +149,10 @@ void CHistoryTrafficFile::MormalizeData()
 
 	if (m_history_traffics.size() >= 2)
 	{
-		//½«¶ÁÈ¡µ½µÄÀúÊ·Á÷Á¿ÁĞ±í°´ÈÕÆÚ´Ó´óµ½Ğ¡ÅÅĞò
+		//å°†è¯»å–åˆ°çš„å†å²æµé‡åˆ—è¡¨æŒ‰æ—¥æœŸä»å¤§åˆ°å°æ’åº
 		std::sort(m_history_traffics.begin(), m_history_traffics.end(), HistoryTraffic::DateGreater);
 
-		//Èç¹ûÁĞ±íÖĞÓĞÏàÍ¬ÈÕÆÚµÄÏîÄ¿£¬Ôò½«ËüºÏ²¢
+		//å¦‚æœåˆ—è¡¨ä¸­æœ‰ç›¸åŒæ—¥æœŸçš„é¡¹ç›®ï¼Œåˆ™å°†å®ƒåˆå¹¶
 		for (int i{}; i < static_cast<int>(m_history_traffics.size() - 1); i++)
 		{
 			if (HistoryTraffic::DateEqual(m_history_traffics[i], m_history_traffics[i + 1]))
@@ -164,7 +164,7 @@ void CHistoryTrafficFile::MormalizeData()
 		}
 	}
 
-	//Èç¹ûÁĞ±íµÚÒ»¸öÏîÄ¿µÄÈÕÆÚÊÇ½ñÌì£¬Ôò½«µÚÒ»¸öÏîÄ¿Í³¼ÆµÄÁ÷Á¿×÷Îª½ñÌìÊ¹ÓÃµÄÁ÷Á¿£¬·ñÔò£¬ÔÚÁĞ±íµÄÇ°Ãæ²åÈëÒ»¸öÈÕÆÚÎª½ñÌìµÄÏîÄ¿
+	//å¦‚æœåˆ—è¡¨ç¬¬ä¸€ä¸ªé¡¹ç›®çš„æ—¥æœŸæ˜¯ä»Šå¤©ï¼Œåˆ™å°†ç¬¬ä¸€ä¸ªé¡¹ç›®ç»Ÿè®¡çš„æµé‡ä½œä¸ºä»Šå¤©ä½¿ç”¨çš„æµé‡ï¼Œå¦åˆ™ï¼Œåœ¨åˆ—è¡¨çš„å‰é¢æ’å…¥ä¸€ä¸ªæ—¥æœŸä¸ºä»Šå¤©çš„é¡¹ç›®
 	if (HistoryTraffic::DateEqual(m_history_traffics[0], traffic))
 	{
 		m_today_up_traffic = static_cast<__int64>(m_history_traffics[0].up_kBytes) * 1024;

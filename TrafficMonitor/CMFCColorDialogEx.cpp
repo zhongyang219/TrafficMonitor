@@ -1,4 +1,4 @@
-﻿// CMFCColorDialogEx.cpp: 实现文件
+// CMFCColorDialogEx.cpp: 实现文件
 //
 
 #include "stdafx.h"

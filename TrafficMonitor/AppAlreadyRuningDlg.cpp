@@ -1,4 +1,4 @@
-﻿// AppAlreadyRuningDlg.cpp: 实现文件
+// AppAlreadyRuningDlg.cpp: 实现文件
 //
 
 #include "stdafx.h"

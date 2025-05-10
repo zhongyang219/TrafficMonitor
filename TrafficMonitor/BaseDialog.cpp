@@ -1,4 +1,4 @@
-﻿// BaseDialog.cpp : 实现文件
+// BaseDialog.cpp : 实现文件
 //
 
 #include "stdafx.h"

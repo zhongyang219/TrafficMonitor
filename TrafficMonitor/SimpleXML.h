@@ -1,4 +1,4 @@
-//一个简易的XML解析的类
+//涓�涓畝鏄撶殑XML瑙ｆ瀽鐨勭被
 #pragma once
 #include "Common.h"
 

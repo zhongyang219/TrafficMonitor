@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "IniHelper.h"
 #include "CommonData.h"
 

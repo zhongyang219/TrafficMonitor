@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "auto_start_helper.h"
 
 #include <Lmcons.h>

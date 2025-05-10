@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "CommonData.h"
 #include "TinyXml2Helper.h"
 #include "DrawCommon.h"

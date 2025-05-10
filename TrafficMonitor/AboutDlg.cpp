@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "TrafficMonitor.h"
 #include "AboutDlg.h"
 #include "MessageDlg.h"

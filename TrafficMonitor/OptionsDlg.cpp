@@ -1,4 +1,4 @@
-﻿// OptionsDlg.cpp : 实现文件
+// OptionsDlg.cpp : 实现文件
 //
 
 #include "stdafx.h"

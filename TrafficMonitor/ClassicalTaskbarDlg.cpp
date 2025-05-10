@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "ClassicalTaskbarDlg.h"
 
 void CClassicalTaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)

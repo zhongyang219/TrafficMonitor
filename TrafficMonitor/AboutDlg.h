@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "DonateDlg.h"
 #include "LinkStatic.h"
 #include "BaseDialog.h"

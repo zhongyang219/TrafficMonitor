@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "Win11TaskbarDlg.h"
 #include "WindowsSettingHelper.h"
 

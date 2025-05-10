@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "CommonData.h"
 
 #define TASKBAR_DEFAULT_STYLE_NUM 4

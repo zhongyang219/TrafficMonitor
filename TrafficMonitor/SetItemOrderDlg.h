@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "BaseDialog.h"
 
 // CSetItemOrderDlg 对话框

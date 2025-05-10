@@ -11,7 +11,7 @@ public:
 	CTabCtrlEx();
 	virtual ~CTabCtrlEx();
 
-	void AddWindow(CWnd* pWnd, LPCTSTR lable_text);		//向当前tab控件添加一个子窗口
+	void AddWindow(CWnd* pWnd, LPCTSTR lable_text);		//鍚戝綋鍓峵ab鎺т欢娣诲姞涓�涓瓙绐楀彛
 	void SetCurTab(int index);
     CWnd* GetCurrentTab();
     void AdjustTabWindowSize();
@@ -22,7 +22,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	vector<CWnd*> m_tab_list;		//保存tab控件每个子窗口的指针
+	vector<CWnd*> m_tab_list;		//淇濆瓨tab鎺т欢姣忎釜瀛愮獥鍙ｇ殑鎸囬拡
 public:
 	afx_msg void OnTcnSelchange(NMHDR *pNMHDR, LRESULT *pResult);
 	virtual void PreSubclassWindow();

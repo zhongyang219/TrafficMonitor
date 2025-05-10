@@ -3,10 +3,10 @@
 namespace CRASHREPORT
 {
     /**@brief
-        ¿ªÆôdmupÄ£Ê½
-        ¿ªÆôºó£¬µ±³ÌÐò±ÀÀ£Ê±£¬»áÉú³ÉÒ»¸ödumpÎÄ¼þ£¬¸ÃÎÄ¼þÔÚC:\Users\<ÓÃ»§Ãû>\AppData\Local\TempÄ¿Â¼
-        ÎÄ¼þÃû¸ñÊ½£º±ÀÀ£Ê±¼ä_³ÌÐòÃû³Æ.exe.dmp
-        ÈçÏÂ
+        å¼€å¯dmupæ¨¡å¼
+        å¼€å¯åŽï¼Œå½“ç¨‹åºå´©æºƒæ—¶ï¼Œä¼šç”Ÿæˆä¸€ä¸ªdumpæ–‡ä»¶ï¼Œè¯¥æ–‡ä»¶åœ¨C:\Users\<ç”¨æˆ·å>\AppData\Local\Tempç›®å½•
+        æ–‡ä»¶åæ ¼å¼ï¼šå´©æºƒæ—¶é—´_ç¨‹åºåç§°.exe.dmp
+        å¦‚ä¸‹
         20150116174802_CrashShare.exe.dmp
     */
     void StartCrashReport();

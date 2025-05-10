@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "DrawCommon.h"
 #include "SkinFile.h"
 

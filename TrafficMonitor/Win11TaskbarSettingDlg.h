@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "afxdialogex.h"
 #include "SpinEdit.h"
 #include "BaseDialog.h"

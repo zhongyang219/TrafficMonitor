@@ -1,4 +1,4 @@
-﻿#pragma once 
+#pragma once 
  
 #define IDS_CHECK_UPDATE_FAILD L"IDS_CHECK_UPDATE_FAILD"
 #define IDS_CHECK_UPDATE_ERROR L"IDS_CHECK_UPDATE_ERROR"

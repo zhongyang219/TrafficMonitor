@@ -1,4 +1,4 @@
-﻿// IconSelectDlg.cpp : 实现文件
+// IconSelectDlg.cpp : 实现文件
 //
 
 #include "stdafx.h"

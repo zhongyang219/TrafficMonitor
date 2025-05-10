@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "TaskBarDlg.h"
 class CClassicalTaskbarDlg :
     public CTaskBarDlg
