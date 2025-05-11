@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "BaseDialog.h"
 #include "LinkStatic.h"
 #include "ListCtrlEx.h"

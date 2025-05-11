@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include"Common.h"
 #include "afxcmn.h"
 #include "AdapterCommon.h"

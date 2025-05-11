@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "ColorStatic.h"
 #include "afxwin.h"
 #include "ColorSettingListCtrl.h"

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "DisplayItem.h"
 
 class CTaskbarItemOrderHelper

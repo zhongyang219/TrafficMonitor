@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "D2D1Support.h"
 #include "Common.h"
 

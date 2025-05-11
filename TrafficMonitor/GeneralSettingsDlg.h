@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "TabDlg.h"
 #include "SpinEdit.h"
 #include "ComboBox2.h"

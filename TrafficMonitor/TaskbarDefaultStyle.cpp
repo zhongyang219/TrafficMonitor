@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "TaskbarDefaultStyle.h"
 #include "SettingsHelper.h"
 #include "TrafficMonitor.h"

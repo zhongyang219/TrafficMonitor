@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "ColorSettingListCtrl.h"
 
 IMPLEMENT_DYNAMIC(CColorSettingListCtrl, CListCtrl)

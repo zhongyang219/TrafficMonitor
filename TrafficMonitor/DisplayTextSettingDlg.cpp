@@ -1,4 +1,4 @@
-﻿// DisplayTextSettingDlg.cpp: 实现文件
+// DisplayTextSettingDlg.cpp: 实现文件
 //
 
 #include "stdafx.h"

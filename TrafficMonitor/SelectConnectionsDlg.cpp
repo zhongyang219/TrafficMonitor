@@ -1,4 +1,4 @@
-﻿// SelectConnectionsDlg.cpp: 实现文件
+// SelectConnectionsDlg.cpp: 实现文件
 //
 
 #include "stdafx.h"
