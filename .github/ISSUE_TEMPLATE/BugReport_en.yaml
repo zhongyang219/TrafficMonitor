@@ -8,6 +8,8 @@ body:
       options:
         - label: I have searched for related issues in the [issues](https://github.com/halo-dev/halo/issues) list.
           required: true
+        - label: I have read the [FAQ](https://github.com/zhongyang219/TrafficMonitor/blob/master/Help_en-us.md) in detail and searched for related issues in FAQ list.
+          required: true
   - type: input
     attributes:
       label: Current TrafficMonitor Version

@@ -8,6 +8,8 @@ body:
       options:
         - label: 已经在[issue](https://github.com/zhongyang219/TrafficMonitor/issues)列表中搜索了相关问题。
           required: true
+        - label: 已经阅读了[wiki](https://github.com/zhongyang219/TrafficMonitor/wiki)页面并确保当前版本TrafficMonitor没有提供此功能。
+          required: true
   - type: input
     attributes:
       label: 您当前使用的TrafficMonitor版本

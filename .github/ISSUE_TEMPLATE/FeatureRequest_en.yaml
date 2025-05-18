@@ -8,6 +8,8 @@ body:
       options:
         - label: I have searched for related issues in the [issues](https://github.com/zhongyang219/TrafficMonitor/issues) list.
           required: true
+        - label: I have read the [wiki](https://github.com/zhongyang219/TrafficMonitor/wiki/Home_en) page and make sure that the current version of TrafficMonitor does not provide this feature.
+          required: true
   - type: input
     attributes:
       label: Current TrafficMonitor Version
