@@ -36,6 +36,10 @@ CString CDisplayTextSettingDlg::GetDialogName() const
 
 BEGIN_MESSAGE_MAP(CDisplayTextSettingDlg, CBaseDialog)
     ON_BN_CLICKED(IDC_RESTORE_DEFAULT_BUTTON, &CDisplayTextSettingDlg::OnBnClickedRestoreDefaultButton)
+    ON_COMMAND(ID_RESTORE_DEFAULT, &CDisplayTextSettingDlg::OnRestoreDefault)
+    ON_NOTIFY(NM_RCLICK, IDC_LIST1, &CDisplayTextSettingDlg::OnNMRClickList1)
+    ON_WM_INITMENU()
+    ON_NOTIFY(NM_CLICK, IDC_LIST1, &CDisplayTextSettingDlg::OnNMClickList1)
 END_MESSAGE_MAP()
 
 
@@ -90,6 +94,8 @@ BOOL CDisplayTextSettingDlg::OnInitDialog()
     m_list_ctrl.SetEditColMethod(CListCtrlEx::EC_SPECIFIED);        //设置列表可编辑
     m_list_ctrl.SetEditableCol({ 1 });                              //设置可编辑的列
 
+    CCommon::LoadMenuResource(m_menu, IDR_DISPLAY_ITEM_CONTEXT_MENU); //装载右键菜单
+
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE
 }
@@ -142,4 +148,55 @@ void CDisplayTextSettingDlg::OnBnClickedRestoreDefaultButton()
             m_list_ctrl.SetItemText(i, 1, default_text.c_str());
         }
     }
+}
+
+void CDisplayTextSettingDlg::OnRestoreDefault()
+{
+    if (m_item_selected >= 0)
+    {
+        CTrafficMonitorDlg* pMainWnd = CTrafficMonitorDlg::Instance();
+        if (m_main_window_text && pMainWnd != nullptr)
+        {
+            //主窗口恢复默认显示文本时，从皮肤获取
+            SkinSettingData skin_setting_data;
+            CSkinManager::SkinSettingDataFronSkin(skin_setting_data, pMainWnd->GetCurSkin());
+            CommonDisplayItem display_item = GetDisplayItem(m_item_selected);
+            std::wstring default_text = skin_setting_data.disp_str.GetConst(display_item);
+            m_list_ctrl.SetItemText(m_item_selected, 1, default_text.c_str());
+        }
+        else
+        {
+            CommonDisplayItem display_item = GetDisplayItem(m_item_selected);
+            std::wstring default_text = display_item.DefaultString(m_main_window_text);
+            m_list_ctrl.SetItemText(m_item_selected, 1, default_text.c_str());
+        }
+    }
+}
+
+void CDisplayTextSettingDlg::OnNMRClickList1(NMHDR* pNMHDR, LRESULT* pResult)
+{
+    LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+    m_item_selected = pNMItemActivate->iItem;
+    //弹出右键菜单
+    CMenu* pContextMenu = m_menu.GetSubMenu(0);	//获取第一个弹出菜单
+    CPoint point1;	//定义一个用于确定光标位置的位置
+    GetCursorPos(&point1);	//获取当前光标的位置，以便使得菜单可以跟随光标
+    pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
+
+    *pResult = 0;
+}
+
+void CDisplayTextSettingDlg::OnInitMenu(CMenu* pMenu)
+{
+    CBaseDialog::OnInitMenu(pMenu);
+
+    bool selected_enable{ m_item_selected >= 0 };
+    pMenu->EnableMenuItem(ID_RESTORE_DEFAULT, MF_BYCOMMAND | (selected_enable ? MF_ENABLED : MF_GRAYED));
+}
+
+void CDisplayTextSettingDlg::OnNMClickList1(NMHDR* pNMHDR, LRESULT* pResult)
+{
+    LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+    m_item_selected = pNMItemActivate->iItem;
+    *pResult = 0;
 }
