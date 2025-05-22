@@ -39,7 +39,7 @@ CString CStaticEx::GetString() const
 
 LRESULT CStaticEx::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
 	if (message == WM_SETTEXT)
 	{
 		CRect rect;
@@ -59,8 +59,8 @@ END_MESSAGE_MAP()
 void CStaticEx::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
-					   // TODO: ÔÚ´Ë´¦Ìí¼ÓÏûÏ¢´¦Àí³ÌÐò´úÂë
-					   // ²»Îª»æÍ¼ÏûÏ¢µ÷ÓÃ CStatic::OnPaint()
+					   // TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
+					   // ä¸ä¸ºç»˜å›¾æ¶ˆæ¯è°ƒç”¨ CStatic::OnPaint()
 	dc.SetTextColor(m_text_color);
 	dc.SetBkMode(TRANSPARENT);
 	dc.SelectObject(this->GetFont());
@@ -69,10 +69,10 @@ void CStaticEx::OnPaint()
 	if (m_draw_background_color)
 		dc.FillSolidRect(rect, m_back_color);
 	else
-		DrawThemeParentBackground(m_hWnd, dc.GetSafeHdc(), &rect);	//ÖØ»æ¿Ø¼þÇøÓòÒÔ½â¾öÎÄ×ÖÖØµþµÄÎÊÌâ
+		DrawThemeParentBackground(m_hWnd, dc.GetSafeHdc(), &rect);	//é‡ç»˜æŽ§ä»¶åŒºåŸŸä»¥è§£å†³æ–‡å­—é‡å çš„é—®é¢˜
 	CSize text_size = dc.GetTextExtent(m_text);
-	UINT format{ DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX };		//CDC::DrawText()º¯ÊýµÄÎÄ±¾¸ñÊ½
-	if (text_size.cx > rect.Width())		//Èç¹ûÎÄ±¾¿í¶È³¬¹ýÁË¾ØÐÎÇøÓòµÄ¿í¶È£¬ÉèÖÃÁË¾ÓÖÐÊ±×ó¶ÔÆë
+	UINT format{ DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX };		//CDC::DrawText()å‡½æ•°çš„æ–‡æœ¬æ ¼å¼
+	if (text_size.cx > rect.Width())		//å¦‚æžœæ–‡æœ¬å®½åº¦è¶…è¿‡äº†çŸ©å½¢åŒºåŸŸçš„å®½åº¦ï¼Œè®¾ç½®äº†å±…ä¸­æ—¶å·¦å¯¹é½
 	{
 		if (m_align == Alignment::RIGHT)
 			format |= DT_RIGHT;
@@ -91,7 +91,7 @@ void CStaticEx::OnPaint()
 
 void CStaticEx::PreSubclassWindow()
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
 	GetWindowText(m_text);
 
 	CStatic::PreSubclassWindow();

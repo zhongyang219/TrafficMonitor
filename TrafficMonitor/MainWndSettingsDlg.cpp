@@ -1,4 +1,4 @@
-﻿// MainWndSettingsDlg.cpp : 实现文件
+// MainWndSettingsDlg.cpp : 实现文件
 //
 
 #include "stdafx.h"

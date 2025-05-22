@@ -1,4 +1,4 @@
-﻿// MainWndColorDlg.cpp : 实现文件
+// MainWndColorDlg.cpp : 实现文件
 //
 
 #include "stdafx.h"

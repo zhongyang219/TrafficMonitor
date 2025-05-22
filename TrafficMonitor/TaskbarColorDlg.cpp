@@ -1,4 +1,4 @@
-﻿// TaskbarColorDlg.cpp : 实现文件
+// TaskbarColorDlg.cpp : 实现文件
 //
 
 #include "stdafx.h"

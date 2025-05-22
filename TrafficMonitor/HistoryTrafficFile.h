@@ -8,8 +8,8 @@ public:
 
 	void Save() const;
 	void Load();
-	void LoadSize();			//½ö¶ÁÈ¡ÎÄ¼şµÄ´óĞ¡
-	void Merge(const CHistoryTrafficFile& history_traffic, bool ignore_same_data = false);		//ºÏ²¢ÁíÒ»¸öCHistoryTrafficFile¶ÔÏó¡£Èç¹ûignore_same_dataÎªtrue£¬ÔòºöÂÔÏàÍ¬ÈÕÆÚµÄÏî£¬·ñÔò½«ÏàÍ¬ÈÕÆÚµÄÁ÷Á¿Êı¾İÏà¼Ó
+	void LoadSize();			//ä»…è¯»å–æ–‡ä»¶çš„å¤§å°
+	void Merge(const CHistoryTrafficFile& history_traffic, bool ignore_same_data = false);		//åˆå¹¶å¦ä¸€ä¸ªCHistoryTrafficFileå¯¹è±¡ã€‚å¦‚æœignore_same_dataä¸ºtrueï¼Œåˆ™å¿½ç•¥ç›¸åŒæ—¥æœŸçš„é¡¹ï¼Œå¦åˆ™å°†ç›¸åŒæ—¥æœŸçš„æµé‡æ•°æ®ç›¸åŠ 
 
 	const wstring& GetFilePath() const { return m_file_path; }
 	const void SetFilePath(const wstring& file_path) { m_file_path = file_path; }
@@ -19,13 +19,13 @@ public:
 	size_t Size() { return m_size; }
 
 private:
-	void MormalizeData();		//½«ÀúÊ·Á÷Á¿Êı¾İÅÅĞò²¢ºÏ²¢ÏàÍ¬Ïî
+	void MormalizeData();		//å°†å†å²æµé‡æ•°æ®æ’åºå¹¶åˆå¹¶ç›¸åŒé¡¹
 
 private:
 	wstring m_file_path;
-	deque<HistoryTraffic> m_history_traffics;	//´¢´æÀúÊ·Á÷Á¿
-	__int64 m_today_up_traffic{};	//½ñÌìÒÑÊ¹ÓÃµÄÉÏ´«Á÷Á¿
-	__int64 m_today_down_traffic{};	//½ñÌìÒÑÊ¹ÓÃµÄÏÂÔØÁ÷Á¿
-	size_t m_size{};				//Á÷Á¿Êı¾İµÄÊıÁ¿
+	deque<HistoryTraffic> m_history_traffics;	//å‚¨å­˜å†å²æµé‡
+	__int64 m_today_up_traffic{};	//ä»Šå¤©å·²ä½¿ç”¨çš„ä¸Šä¼ æµé‡
+	__int64 m_today_down_traffic{};	//ä»Šå¤©å·²ä½¿ç”¨çš„ä¸‹è½½æµé‡
+	size_t m_size{};				//æµé‡æ•°æ®çš„æ•°é‡
 };
 
