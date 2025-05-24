@@ -315,6 +315,7 @@ struct TaskBarSettingData : public PublicSettingData
     void ValidWindowOffsetLeft();
     bool avoid_overlap_with_widgets{ false };   //避免与右侧小组件重叠
     int taskbar_left_space_win11{};         //Windows11下，任务栏小工具的宽度
+    int taskbar_right_space_win11{};        //Windows11下，任务栏窗口距离任务栏右侧的宽度（仅当无法获取到任务栏TrayNotifyWnd窗口的位置时有效）
 
     bool show_netspeed_figure{ false };     //是否显示网速占用图
     int netspeed_figure_max_value;          //网速占用图的最大值

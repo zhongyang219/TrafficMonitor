@@ -29,12 +29,16 @@ void CWin11TaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
             //{
             //通知区窗口的水平位置
             int notify_x_pos = m_rcNotify.left;
-            //Win11副屏没有通知区窗口，这里使用固定的值
-            if (m_is_secondary_display)
-                notify_x_pos = m_rcTaskbar.Width() - DPI(88);
-            //如果不是副屏，但是没有获取到通知区域的位置，也使用一个固定值
-            else if (notify_x_pos == 0)
-                notify_x_pos = m_rcTaskbar.Width() - DPI(220);
+            //没有获取到通知区位置的情况
+            if (notify_x_pos == 0)
+            {
+                //Win11副屏没有通知区窗口，这里使用固定的值（88像素的系统时间区域）
+                if (m_is_secondary_display)
+                    notify_x_pos = m_rcTaskbar.Width() - DPI(88);
+                //如果不是副屏，但是仍然没有获取到通知区域的位置，使用配置文件中taskbar_right_space_win11指定的值
+                else
+                    notify_x_pos = m_rcTaskbar.Width() - DPI(theApp.m_taskbar_data.taskbar_right_space_win11);
+            }
             //如果显示了小组件，并且任务栏靠左显示，则留出小组件的位置
             if (theApp.m_taskbar_data.avoid_overlap_with_widgets && CWindowsSettingHelper::IsTaskbarWidgetsBtnShown() && !CWindowsSettingHelper::IsTaskbarCenterAlign())
                 m_rect.MoveToX(notify_x_pos - m_rect.Width() + 2 - DPI(theApp.m_taskbar_data.taskbar_left_space_win11));

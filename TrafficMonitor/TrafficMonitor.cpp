@@ -252,6 +252,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.ValidWindowOffsetLeft();
     m_taskbar_data.avoid_overlap_with_widgets = ini.GetBool(_T("task_bar"), _T("avoid_overlap_with_widgets"), false);
     m_taskbar_data.taskbar_left_space_win11 = ini.GetInt(L"task_bar", L"taskbar_left_space_win11", 160);
+    m_taskbar_data.taskbar_right_space_win11 = ini.GetInt(L"task_bar", L"taskbar_right_space_win11", 280);
 
     if (m_win_version.IsWindows10OrLater())     //只有Win10才支持自动适应系统深色/浅色主题
         m_taskbar_data.auto_adapt_light_theme = ini.GetBool(L"task_bar", L"auto_adapt_light_theme", false);
@@ -416,6 +417,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"task_bar", L"window_offset_left", m_taskbar_data.window_offset_left);
     ini.WriteBool(L"task_bar", L"avoid_overlap_with_widgets", m_taskbar_data.avoid_overlap_with_widgets);
     ini.WriteInt(L"task_bar", L"taskbar_left_space_win11", m_taskbar_data.taskbar_left_space_win11);
+    ini.WriteInt(L"task_bar", L"taskbar_right_space_win11", m_taskbar_data.taskbar_right_space_win11);
 
     ini.WriteBool(L"task_bar", L"auto_adapt_light_theme", m_taskbar_data.auto_adapt_light_theme);
     ini.WriteInt(L"task_bar", L"dark_default_style", m_taskbar_data.dark_default_style);
