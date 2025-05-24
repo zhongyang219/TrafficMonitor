@@ -16,6 +16,11 @@ body:
       description: Right-click the TrafficMonitor tray icon, select `Help` → `About`.
     validations: 
       required: true
+  - type: input
+    attributes:
+      label: Current Operating System Version
+    validations: 
+      required: true
   - type: textarea
     attributes:
       label: What happened?

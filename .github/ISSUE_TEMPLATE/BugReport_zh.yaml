@@ -16,6 +16,11 @@ body:
       description: 右键TrafficMonitor托盘图标，选择`帮助` → `关于`。
     validations: 
       required: true
+  - type: input
+    attributes:
+      label: 您当前使用的操作系统版本
+    validations: 
+      required: true
   - type: textarea
     attributes:
       label: 发生了什么?
