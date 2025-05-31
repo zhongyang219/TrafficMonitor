@@ -710,9 +710,9 @@ void CTrafficMonitorDlg::BackupHistoryTrafficFile()
     }
 }
 
-void CTrafficMonitorDlg::_OnOptions(int tab)
+void CTrafficMonitorDlg::_OnOptions(int tab, CWnd* pParent)
 {
-    COptionsDlg optionsDlg(tab, this);
+    COptionsDlg optionsDlg(tab, pParent);
 
     //将选项设置数据传递给选项设置对话框
     if (COptionsDlg::GetUniqueHandel(OPTION_DLG_NAME) == NULL)     //确保此时选项设置对话框已经关闭
@@ -2624,14 +2624,17 @@ void CTrafficMonitorDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 
 void CTrafficMonitorDlg::OnOptions()
 {
-    _OnOptions(0);
+    _OnOptions(0, this);
 }
 
 
 //通过任务栏窗口的右键菜单打开“选项”对话框
 void CTrafficMonitorDlg::OnOptions2()
 {
-    _OnOptions(1);
+    CWnd* pParent = this;
+    if (IsTaskbarWndValid())
+        pParent = m_tBarDlg;
+    _OnOptions(1, pParent);
 }
 
 
