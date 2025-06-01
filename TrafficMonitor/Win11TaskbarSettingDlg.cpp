@@ -84,10 +84,10 @@ BOOL CWin11TaskbarSettingDlg::OnInitDialog()
     m_window_offset_left_edit.SetRange(-800, 800);
     m_window_offset_left_edit.SetValue(m_data.window_offset_left);
     CheckDlgButton(IDC_AVOID_OVERLAP_RIGHT_WIDGETS_CHECK, m_data.avoid_overlap_with_widgets);
-    EnableDlgCtrl(IDC_AVOID_OVERLAP_RIGHT_WIDGETS_CHECK, CWindowsSettingHelper::IsTaskbarWidgetsBtnShown());
+    //EnableDlgCtrl(IDC_AVOID_OVERLAP_RIGHT_WIDGETS_CHECK, CWindowsSettingHelper::IsTaskbarWidgetsBtnShown());
     m_widgets_width_edit.SetRange(0, 300);
     m_widgets_width_edit.SetValue(m_data.taskbar_left_space_win11);
-    m_widgets_width_edit.EnableWindow(CWindowsSettingHelper::IsTaskbarWidgetsBtnShown());
+    //m_widgets_width_edit.EnableWindow(CWindowsSettingHelper::IsTaskbarWidgetsBtnShown());
 
     return TRUE;  // return TRUE unless you set the focus to a control
     // 异常: OCX 属性页应返回 FALSE
