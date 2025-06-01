@@ -13,7 +13,15 @@ static void VersionFromString(const std::string& version_str, std::vector<int>& 
     //转换为整数保存
     for (const auto& str : vec_version)
     {
-        versions.push_back(std::stoi(str));
+        //去掉除数字以外的字符
+        std::string str_ver;
+        for (auto ch : str)
+        {
+            if (ch >= '0' && ch <= '9')
+                str_ver.push_back(ch);
+        }
+
+        versions.push_back(atoi(str_ver.c_str()));
     }
 }
 
