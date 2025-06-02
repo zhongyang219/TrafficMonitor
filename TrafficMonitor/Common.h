@@ -202,16 +202,12 @@ public:
     ////设置绘图的剪辑区域
     //static void SetDrawArea(CDC* pDC, CRect rect);
 
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    * 函数名称：IsForegroundFullscreen
-    * 功能说明：判断当前正在与用户交互的前台窗口是否是全屏的。
-    * 参数说明：无
-    * 返回说明：true：是。
-    false：否。
-    * 线程安全：是
-    * 调用样例：IsForegroundFullscreen ()，表示判断当前正在与用户交互的前台窗口是否是全屏的。
-    * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-    static bool IsForegroundFullscreen();
+    /**
+     * 判断当前正在与用户交互的前台窗口是否是全屏的
+     * @param[in] hMonitor 要判断的显示器（如果为空，则指定为主显示器）
+     * @return 
+     */
+    static bool IsForegroundFullscreen(HMONITOR hMonitor = NULL);
 
     //将一个字符串保存到剪贴板
     static bool CopyStringToClipboard(const wstring& str);

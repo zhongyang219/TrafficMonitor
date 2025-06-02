@@ -1591,7 +1591,10 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
         if (theApp.m_main_wnd_data.m_always_on_top && !theApp.m_cfg_data.m_hide_main_window)
         {
             //每隔1秒钟就判断一下前台窗口是否全屏
-            m_is_foreground_fullscreen = CCommon::IsForegroundFullscreen();
+            CRect rect;
+            GetWindowRect(rect);
+            HMONITOR h_current_monitor = ::MonitorFromRect(&rect, MONITOR_DEFAULTTONEAREST);
+            m_is_foreground_fullscreen = CCommon::IsForegroundFullscreen(h_current_monitor);
             if (theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen)       //当设置了全屏时隐藏悬浮窗时
             {
                 if (m_is_foreground_fullscreen || theApp.m_cfg_data.m_hide_main_window)

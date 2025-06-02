@@ -601,12 +601,20 @@ void CCommon::DrawWindowText(CDC* pDC, CRect rect, LPCTSTR lpszString, COLORREF 
 //}
 
 
-bool CCommon::IsForegroundFullscreen()
+bool CCommon::IsForegroundFullscreen(HMONITOR hMonitor)
 {
+    if (hMonitor == NULL)
+        hMonitor = MonitorFromWindow(NULL, MONITOR_DEFAULTTOPRIMARY);
     bool bFullscreen{ false };      //用于指示前台窗口是否是全屏
-    HWND hWnd;
-    RECT rcApp;
-    RECT rcDesk;
+    HWND hWnd{};
+    RECT rcApp{};
+
+    // 获取显示器信息
+    MONITORINFOEX monitorInfo{};
+    monitorInfo.cbSize = sizeof(monitorInfo);
+    GetMonitorInfo(hMonitor, &monitorInfo);
+    RECT monitorRect = monitorInfo.rcMonitor;
+
     hWnd = GetForegroundWindow();   //获取当前正在与用户交互的前台窗口句柄
     TCHAR buff[256];
     GetClassName(hWnd, buff, 256);      //获取前台窗口的类名
@@ -614,11 +622,10 @@ bool CCommon::IsForegroundFullscreen()
     if (hWnd != GetDesktopWindow() && class_name != _T("WorkerW") && hWnd != GetShellWindow())//如果前台窗口不是桌面窗口，也不是控制台窗口
     {
         GetWindowRect(hWnd, &rcApp);    //获取前台窗口的坐标
-        GetWindowRect(GetDesktopWindow(), &rcDesk); //根据桌面窗口句柄，获取整个屏幕的坐标
-        if (rcApp.left <= rcDesk.left && //如果前台窗口的坐标完全覆盖住桌面窗口，就表示前台窗口是全屏的
-            rcApp.top <= rcDesk.top &&
-            rcApp.right >= rcDesk.right &&
-            rcApp.bottom >= rcDesk.bottom)
+        if (rcApp.left <= monitorRect.left && //如果前台窗口的坐标完全覆盖住桌面窗口，就表示前台窗口是全屏的
+            rcApp.top <= monitorRect.top &&
+            rcApp.right >= monitorRect.right &&
+            rcApp.bottom >= monitorRect.bottom)
         {
             bFullscreen = true;
         }
