@@ -337,7 +337,7 @@ public:
     template<class T>
     static void RemoveVectorDuplicateItem(vector<T>& vec)
     {
-        std::set<int> si;
+        std::set<T> si;
         for (auto it = vec.begin(); it != vec.end();)
         {
             if (si.count(*it) == 0)//这里判断当前元素是否已经出现过，若没有出现过则将该元素保留，并做标记
