@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include <algorithm>
 #include <memory>
 #include <tuple>

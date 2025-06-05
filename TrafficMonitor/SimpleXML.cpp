@@ -9,20 +9,20 @@ CSimpleXML::CSimpleXML(const wstring & xml_path)
 	{
 		return;
 	}
-	//读取文件内容
+	//璇诲彇鏂囦欢鍐呭
 	string xml_str;
 	while (!file_stream.eof())
 	{
 		xml_str.push_back(file_stream.get());
 	}
 	xml_str.pop_back();
-	if (!xml_str.empty() && xml_str.back() != L'\n')		//确保文件末尾有回车符
+	if (!xml_str.empty() && xml_str.back() != L'\n')		//纭繚鏂囦欢鏈熬鏈夊洖杞︾
 		xml_str.push_back(L'\n');
-	//判断文件是否是utf8编码
+	//鍒ゆ柇鏂囦欢鏄惁鏄痷tf8缂栫爜
 	bool is_utf8;
 	if (xml_str.size() >= 3 && xml_str[0] == -17 && xml_str[1] == -69 && xml_str[2] == -65)
 	{
-		//如果有UTF8的BOM，则删除BOM
+		//濡傛灉鏈塙TF8鐨凚OM锛屽垯鍒犻櫎BOM
 		is_utf8 = true;
 		xml_str = xml_str.substr(3);
 	}
@@ -30,7 +30,7 @@ CSimpleXML::CSimpleXML(const wstring & xml_path)
 	{
 		is_utf8 = false;
 	}
-	//转换成Unicode
+	//杞崲鎴怳nicode
 	m_xml_content = CCommon::StrToUnicode(xml_str.c_str(), is_utf8);
 }
 

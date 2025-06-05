@@ -13,7 +13,7 @@ CPdhQuery::CPdhQuery(LPCTSTR _fullCounterPath)
 
 CPdhQuery::~CPdhQuery()
 {
-    //¹Ø±Õ²éÑ¯
+    //å…³é—­æŸ¥è¯¢
     PdhCloseQuery(query);
 }
 
@@ -23,14 +23,14 @@ bool CPdhQuery::Initialize()
         return true;
 
     PDH_STATUS status;
-    //´ò¿ª²éÑ¯
+    //æ‰“å¼€æŸ¥è¯¢
     status = PdhOpenQuery(NULL, NULL, &query);
     if (status != ERROR_SUCCESS)
         return false;
 
-    //Ìí¼Ó¼ÆÊıÆ÷
+    //æ·»åŠ è®¡æ•°å™¨
     status = PdhAddCounter(query, fullCounterPath.GetString(), NULL, &counter);
-    //ÏÈµ÷ÓÃPdhAddCounter£¬Èç¹ûÊ§°ÜÊ¹ÓÃPdhAddEnglishCounterÔÙÊÔÒ»´Î
+    //å…ˆè°ƒç”¨PdhAddCounterï¼Œå¦‚æœå¤±è´¥ä½¿ç”¨PdhAddEnglishCounterå†è¯•ä¸€æ¬¡
     if (status != ERROR_SUCCESS)
     {
         status = PdhAddEnglishCounter(query, fullCounterPath.GetString(), NULL, &counter);
@@ -42,7 +42,7 @@ bool CPdhQuery::Initialize()
         }
     }
 
-    //³õÊ¼»¯¼ÆÊıÆ÷
+    //åˆå§‹åŒ–è®¡æ•°å™¨
     PdhCollectQueryData(query);
     isInitialized = true;
     return true;
@@ -53,7 +53,7 @@ bool CPdhQuery::QueryValue(double& value)
     if (!isInitialized)
         return false;
 
-    //¸üĞÂÊı¾İ
+    //æ›´æ–°æ•°æ®
     PdhCollectQueryData(query);
     PDH_FMT_COUNTERVALUE pdhValue;
     DWORD dwValue;
@@ -91,11 +91,11 @@ int CCPUUsage::GetCpuUsage()
     }
     else
     {
-        //Èç¹ûÍ¨¹ıpdh»ñÈ¡CPUÀûÓÃÂÊÊ§°Ü£¬²ÉÓÃGetSystemTimes»ñÈ¡
+        //å¦‚æœé€šè¿‡pdhè·å–CPUåˆ©ç”¨ç‡å¤±è´¥ï¼Œé‡‡ç”¨GetSystemTimesè·å–
         if (!GetCPUUsageByPdh(cpu_usage))
         {
             cpu_usage = GetCpuUsageByGetSystemTimes();
-            //Ğ´ÈëÈÕÖ¾
+            //å†™å…¥æ—¥å¿—
             //static bool write_log = false;
             //if (!write_log)
             //{
@@ -126,7 +126,7 @@ int CCPUUsage::GetCpuUsageByGetSystemTimes()
     }
     else
     {
-        //£¨×ÜµÄÊ±¼ä-¿ÕÏĞÊ±¼ä£©/×ÜµÄÊ±¼ä=Õ¼ÓÃcpuµÄÊ±¼ä¾ÍÊÇÊ¹ÓÃÂÊ
+        //ï¼ˆæ€»çš„æ—¶é—´-ç©ºé—²æ—¶é—´ï¼‰/æ€»çš„æ—¶é—´=å ç”¨cpuçš„æ—¶é—´å°±æ˜¯ä½¿ç”¨ç‡
         cpu_usage = static_cast<int>(abs((kernel + user - idle) * 100 / (kernel + user)));
     }
     m_preidleTime = idleTime;
@@ -164,7 +164,7 @@ typedef struct _PROCESSOR_POWER_INFORMATION {
 CCpuFreq::CCpuFreq()
     : CPdhQuery(_T("\\Processor Information(_Total)\\% Processor Performance"))
 {
-    //»ñÈ¡max_cpu_freq
+    //è·å–max_cpu_freq
     SYSTEM_INFO si;
     GetSystemInfo(&si);
     auto ppInfo = std::vector<PROCESSOR_POWER_INFORMATION>(si.dwNumberOfProcessors);

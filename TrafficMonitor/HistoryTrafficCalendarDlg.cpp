@@ -1,4 +1,4 @@
-﻿// HistoryTrafficCalendarDlg.cpp: 实现文件
+// HistoryTrafficCalendarDlg.cpp: 实现文件
 //
 
 #include "stdafx.h"
