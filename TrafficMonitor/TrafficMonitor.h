@@ -21,13 +21,14 @@
 #include "DllFunctions.h"
 #include "StrTable.h"
 #include "PluginUpdateHelper.h"
+#include "PluginInterface.h"
 
 // CTrafficMonitorApp:
 // 有关此类的实现，请参阅 TrafficMonitor.cpp
 //
 
 
-class CTrafficMonitorApp : public CWinApp
+class CTrafficMonitorApp : public CWinApp, public ITrafficMonitor
 {
 public:
     //各种路径
@@ -168,7 +169,7 @@ public:
 
     bool DPIFromRect(const RECT& rect, UINT* out_dpi_x, UINT* out_dpi_y);
 
-    COLORREF GetThemeColor() const;
+    virtual unsigned int GetThemeColor() const override;
     void SetThemeColor(COLORREF color);
 
 private:
@@ -197,6 +198,13 @@ public:
     afx_msg void OnFrequentyAskedQuestions();
     afx_msg void OnUpdateLog();
     virtual int ExitInstance();
+
+    // 通过 ITrafficMonitor 继承
+    double GetMonitorData(MonitorItem item) override;
+    void ShowNotifyMessage(const wchar_t* strMsg) override;
+    unsigned short GetLanguageId() const override;
+    const wchar_t* GetConfigDir() const override;
+    int GetDPI(DPIType type) const override;
 };
 
 extern CTrafficMonitorApp theApp;

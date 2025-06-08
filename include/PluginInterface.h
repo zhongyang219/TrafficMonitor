@@ -151,7 +151,9 @@ public:
     virtual float GetResourceUsageGraphValue() const { return 0.0; }
 };
 
+class ITrafficMonitor;
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 //插件接口
 class ITMPlugin
 {
@@ -161,7 +163,7 @@ public:
      * @attention 插件开发者不应该修改这里的返回值，也不应该重写此虚函数。
      * @return  int
      */
-    virtual int GetAPIVersion() const { return 6; }
+    virtual int GetAPIVersion() const { return 7; }
 
     /**
      * @brief   获取插件显示项目的对象
@@ -313,7 +315,84 @@ public:
     */
     virtual int IsCommandChecked(int command_index) { return false; }
 
+    /**
+     * @brief   插件初始化
+     * @detail  当插件被加载时被调用，传递ITrafficMonitor接口的指针。插件可以保存此指针以调用ITrafficMonitor接口中的函数
+     * @param   pApp
+     */
+    virtual void OnInitialize(ITrafficMonitor* pApp) {}
 };
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+//主程序接口
+class ITrafficMonitor
+{
+public:
+    /** 主程序的所有监控信息 */
+    enum MonitorItem
+    {
+        MI_UP,                  /**< 上传速度 */
+        MI_DOWN,                /**< 下载速度 */
+        MI_CPU,                 /**< CPU利用率 */
+        MI_MEMORY,              /**< 内存利用率 */
+        MI_GPU_USAGE,           /**< 显卡利用率 */
+        MI_CPU_TEMP,            /**< CPU温度 */
+        MI_GPU_TEMP,            /**< 显卡温度 */
+        MI_HDD_TEMP,            /**< 硬盘温度 */
+        MI_MAIN_BOARD_TEMP,     /**< 主板温度 */
+        MI_HDD_USAGE,           /**< 硬盘利用率 */
+        MI_CPU_FREQ,            /**< CPU频率 */
+        MI_TODAY_UP_TRAFFIC,    /**< 今日上传流量 */
+        MI_TODAY_DOWN_TRAFFIC   /**< 今日下载流量 */
+    };
+
+    /**
+     * @brief   获取一个主程序的监控信息
+     *          （ITMPlugin::OnMonitorInfo将被弃用）
+     * @param   item 要获取监控信息的项目
+     * @return  获取到监控信息
+     */
+    virtual double GetMonitorData(MonitorItem item) = 0;
+
+    /**
+     * @brief   显示一个通知消息
+     * @param   strMsg 要显示的通知消息
+     */
+    virtual void ShowNotifyMessage(const wchar_t* strMsg) = 0;
+
+    /**
+     * @brief   获取当前语言id
+     * @return  当前主程序的语言id
+     */
+    virtual unsigned short GetLanguageId() const = 0;
+
+    /**
+     * @brief   获取配置文件目录
+     * @return  配置文件目录
+     */
+    virtual const wchar_t* GetConfigDir() const = 0;
+
+    /** 主程序DPI类型 */
+    enum DPIType
+    {
+        DPI_MAIN_WND,   /**< 主窗口的DPI */
+        DPI_TASKBAR     /**< 任务栏窗口的DPI */
+    };
+
+    /**
+     * @brief   获取主程序DPI
+     * @return  主程序DPI
+     */
+    virtual int GetDPI(DPIType type) const = 0;
+
+    /**
+     * @brief   获取当前系统主题颜色
+     * @return  COLORREF格式的颜色值
+     */
+    virtual unsigned int GetThemeColor() const = 0;
+};
+
 
 /*
 * 注意：插件dll需导出以下函数
@@ -339,5 +418,7 @@ public:
 *     5       | 新增 ITMPlugin::GetCommandName ITMPlugin::GetCommandIcon ITMPlugin::OnPluginCommand 函数
 * -------------------------------------------------------------------------
 *     6       | 新增 IPluginItem::GetResourceUsageGraphType IPluginItem::GetResourceUsageGraphValue 函数
+* -------------------------------------------------------------------------
+*     7       | 新增 ITMPlugin::OnInitialize 函数
 * -------------------------------------------------------------------------
 */

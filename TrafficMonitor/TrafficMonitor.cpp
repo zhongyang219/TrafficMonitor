@@ -1316,7 +1316,7 @@ bool CTrafficMonitorApp::DPIFromRect(const RECT& rect, UINT* out_dpi_x, UINT* ou
     return hr == S_OK;
 }
 
-COLORREF CTrafficMonitorApp::GetThemeColor() const
+unsigned int CTrafficMonitorApp::GetThemeColor() const
 {
     return m_theme_color;
 }
@@ -1385,4 +1385,65 @@ int CTrafficMonitorApp::ExitInstance()
     Gdiplus::GdiplusShutdown(m_gdiplusToken);
 
     return CWinApp::ExitInstance();
+}
+
+double CTrafficMonitorApp::GetMonitorData(MonitorItem item)
+{
+    switch (item)
+    {
+    case MI_UP: return m_out_speed;
+    case MI_DOWN: return m_in_speed;
+    case MI_CPU: return m_cpu_usage;
+    case MI_MEMORY: return m_memory_usage;
+    case MI_GPU_USAGE: return m_gpu_usage;
+    case MI_CPU_TEMP: return m_cpu_temperature;
+    case MI_GPU_TEMP: return m_gpu_temperature;
+    case MI_HDD_TEMP: return m_hdd_temperature;
+    case MI_MAIN_BOARD_TEMP: return m_main_board_temperature;
+    case MI_HDD_USAGE: return m_hdd_usage;
+    case MI_CPU_FREQ: return m_cpu_freq;
+    case MI_TODAY_UP_TRAFFIC: return m_today_up_traffic;
+    case MI_TODAY_DOWN_TRAFFIC: return m_today_down_traffic;
+    }
+    return 0.0;
+}
+
+void CTrafficMonitorApp::ShowNotifyMessage(const wchar_t* strMsg)
+{
+    CTrafficMonitorDlg* pMainWnd = dynamic_cast<CTrafficMonitorDlg*>(m_pMainWnd);
+    if (pMainWnd != nullptr)
+    {
+        pMainWnd->ShowNotifyTip(CCommon::LoadText(IDS_TRAFFICMONITOR_PLUGIN_NITIFICATION), strMsg);
+    }
+}
+
+unsigned short CTrafficMonitorApp::GetLanguageId() const
+{
+    return m_general_data.language;
+}
+
+const wchar_t* CTrafficMonitorApp::GetConfigDir() const
+{
+    static std::wstring config_dir;
+    config_dir = m_config_dir;
+    config_dir += L"plugins\\";
+    return config_dir.c_str();
+}
+
+int CTrafficMonitorApp::GetDPI(DPIType type) const
+{
+    CTrafficMonitorDlg* pMainWnd = dynamic_cast<CTrafficMonitorDlg*>(m_pMainWnd);
+    switch (type)
+    {
+    case DPI_MAIN_WND:
+        return m_dpi;
+    case DPI_TASKBAR:
+        if (pMainWnd != nullptr)
+        {
+            if (pMainWnd->IsTaskbarWndValid())
+                return pMainWnd->GetTaskbarWindow()->GetDPI();
+        }
+        return m_dpi;
+    }
+    return 0;
 }
