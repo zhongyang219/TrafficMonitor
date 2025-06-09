@@ -94,6 +94,12 @@ void CPluginManager::LoadPlugins()
             plugin_info.plugin->OnExtenedInfo(ITMPlugin::EI_CONFIG_DIR, config_dir.c_str());
         }
 
+        //调用初始化函数
+        if (version >= 7)
+        {
+            plugin_info.plugin->OnInitialize(&theApp);
+        }
+
         //获取插件信息
         for (int i{}; i < ITMPlugin::TMI_MAX; i++)
         {
