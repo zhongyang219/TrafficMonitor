@@ -1387,6 +1387,16 @@ int CTrafficMonitorApp::ExitInstance()
     return CWinApp::ExitInstance();
 }
 
+int CTrafficMonitorApp::GetAPIVersion()
+{
+    return 0;
+}
+
+const wchar_t* CTrafficMonitorApp::GetTrafficMonitorVersion()
+{
+    return VERSION;
+}
+
 double CTrafficMonitorApp::GetMonitorData(MonitorItem item)
 {
     switch (item)

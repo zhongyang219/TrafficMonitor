@@ -329,6 +329,19 @@ public:
 class ITrafficMonitor
 {
 public:
+    /**
+     * @brief   获取此接口的版本。
+     * @attention 插件在调用ITrafficMonitor中的函数时需要先判断接口的版本
+     * @return  int
+     */
+    virtual int GetAPIVersion() = 0;
+
+    /**
+     * @brief   获取TrafficMonitor的版本。
+     * @return  const wchar_t*
+     */
+    virtual const wchar_t* GetTrafficMonitorVersion() = 0;
+
     /** 主程序的所有监控信息 */
     enum MonitorItem
     {
@@ -404,6 +417,7 @@ public:
 
 /*
 * 更新记录：
+* ITMPlugin
 * -------------------------------------------------------------------------
 * API version |                       更新内容
 * -------------------------------------------------------------------------

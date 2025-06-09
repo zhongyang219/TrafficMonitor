@@ -200,6 +200,10 @@ public:
     virtual int ExitInstance();
 
     // 通过 ITrafficMonitor 继承
+private:
+    virtual int GetAPIVersion() override;
+    virtual const wchar_t* GetTrafficMonitorVersion() override;
+public:
     double GetMonitorData(MonitorItem item) override;
     void ShowNotifyMessage(const wchar_t* strMsg) override;
     unsigned short GetLanguageId() const override;
