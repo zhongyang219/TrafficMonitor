@@ -1,4 +1,4 @@
-﻿// OpenHardwareMonitorApi.h
+// OpenHardwareMonitorApi.h
 
 #pragma once
 #include <string>

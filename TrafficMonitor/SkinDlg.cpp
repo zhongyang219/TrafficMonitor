@@ -1,4 +1,4 @@
-﻿// SkinDlg.cpp : 实现文件
+// SkinDlg.cpp : 实现文件
 //
 
 #include "stdafx.h"

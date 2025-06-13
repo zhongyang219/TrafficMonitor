@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "StrTable.h"
 #include "Common.h"
 #include "IniHelper.h"

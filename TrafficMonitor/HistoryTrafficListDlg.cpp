@@ -1,4 +1,4 @@
-﻿// HistoryTrafficList.cpp: 实现文件
+// HistoryTrafficList.cpp: 实现文件
 //
 
 #include "stdafx.h"
