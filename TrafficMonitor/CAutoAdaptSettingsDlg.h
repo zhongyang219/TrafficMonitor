@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "BaseDialog.h"
 
 // CAutoAdaptSettingsDlg 对话框

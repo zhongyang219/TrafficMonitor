@@ -27,7 +27,7 @@ void CDrawCommonEx::Create(CDC* pDC)
 
 void CDrawCommonEx::SetFont(CFont * pFont)
 {
-    //½«×ÖÌåÉèÖÃµ½CDC£¬»æÍ¼Ê±´ÓCDC´´½¨GDI+×ÖÌå
+    //å°†å­—ä½“è®¾ç½®åˆ°CDCï¼Œç»˜å›¾æ—¶ä»ŽCDCåˆ›å»ºGDI+å­—ä½“
     m_pDC->SelectObject(pFont);
 }
 
@@ -45,35 +45,35 @@ void CDrawCommonEx::SetBackColor(COLORREF back_color, BYTE alpha)
 
 void CDrawCommonEx::DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align, bool draw_back_ground, bool multi_line, BYTE alpha)
 {
-    //¾ØÐÎÇøÓò
+    //çŸ©å½¢åŒºåŸŸ
     Gdiplus::RectF rect_gdiplus = CGdiPlusHelper::CRectToGdiplusRect(rect);
 
-    //»æÖÆ±³¾°
+    //ç»˜åˆ¶èƒŒæ™¯
     if (draw_back_ground)
     {
         Gdiplus::SolidBrush brush(m_back_color);
         m_pGraphics->FillRectangle(&brush, rect_gdiplus);
     }
-    //ÉèÖÃ×ÖÌå
+    //è®¾ç½®å­—ä½“
     Gdiplus::Font font(m_pDC->GetSafeHdc());
-    //ÉèÖÃÎÄ±¾ÑÕÉ«
+    //è®¾ç½®æ–‡æœ¬é¢œè‰²
     Gdiplus::SolidBrush brush(CGdiPlusHelper::COLORREFToGdiplusColor(color, alpha));
-    //ÉèÖÃ¶ÔÆë·½Ê½
+    //è®¾ç½®å¯¹é½æ–¹å¼
     Gdiplus::StringFormat format;
     Gdiplus::StringAlignment alignment = Gdiplus::StringAlignmentNear;
     if (align == Alignment::CENTER)
         alignment = Gdiplus::StringAlignmentCenter;
     else if (align == Alignment::RIGHT)
         alignment = Gdiplus::StringAlignmentFar;
-    format.SetAlignment(alignment);    //Ë®Æ½¶ÔÆë·½Ê½
-    format.SetLineAlignment(Gdiplus::StringAlignmentCenter);    //´¹Ö±¶ÔÆë·½Ê½
+    format.SetAlignment(alignment);    //æ°´å¹³å¯¹é½æ–¹å¼
+    format.SetLineAlignment(Gdiplus::StringAlignmentCenter);    //åž‚ç›´å¯¹é½æ–¹å¼
     UINT flags = Gdiplus::StringFormatFlagsNoFitBlackBox;
     if (!multi_line)
-        flags |= Gdiplus::StringFormatFlagsNoWrap;      //²»×Ô¶¯»»ÐÐ
-    format.SetTrimming(Gdiplus::StringTrimmingNone);    //½ûÖ¹ÎÄ±¾½Ø¶Ï
+        flags |= Gdiplus::StringFormatFlagsNoWrap;      //ä¸è‡ªåŠ¨æ¢è¡Œ
+    format.SetTrimming(Gdiplus::StringTrimmingNone);    //ç¦æ­¢æ–‡æœ¬æˆªæ–­
     format.SetFormatFlags(flags);
 
-    //»æÖÆÎÄ±¾
+    //ç»˜åˆ¶æ–‡æœ¬
     m_pGraphics->DrawString(lpszString, -1, &font, rect_gdiplus, &format, &brush);
 }
 

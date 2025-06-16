@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "ListCtrlEx.h"
 
 IMPLEMENT_DYNAMIC(CListCtrlEx, CListCtrl)

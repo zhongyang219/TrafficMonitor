@@ -11,11 +11,11 @@ public:
 
     void SetItemColor(int row, int col, COLORREF color);
     COLORREF GetItemColor(int row, int col);
-	void SetDrawItemRangMargin(int margin) { m_margin = margin; }			//ÉèÖÃ»æÖÆ»æÖÆµÄ¾ØĞÎµÄ±ßÔµµ½µ¥Ôª¸ñ±ß¿òµÄ¾ØĞÎ£¬´ËÖµÔ½´óÔò»æÖÆµÄ¾ØĞÎÔ½Ï¸£¬µ«ÊÇ²»ÄÜ³¬¹ıÁĞ±íĞĞ¾àµÄÒ»°ë
+	void SetDrawItemRangMargin(int margin) { m_margin = margin; }			//è®¾ç½®ç»˜åˆ¶ç»˜åˆ¶çš„çŸ©å½¢çš„è¾¹ç¼˜åˆ°å•å…ƒæ ¼è¾¹æ¡†çš„çŸ©å½¢ï¼Œæ­¤å€¼è¶Šå¤§åˆ™ç»˜åˆ¶çš„çŸ©å½¢è¶Šç»†ï¼Œä½†æ˜¯ä¸èƒ½è¶…è¿‡åˆ—è¡¨è¡Œè·çš„ä¸€åŠ
 
 protected:
 	int m_margin{};
-	std::map<int, std::map<int, COLORREF>> m_colors;	//ÓÃÓÚ±£´æÃ¿Ò»ĞĞÃ¿Ò»ÁĞµÄÑÕÉ«
+	std::map<int, std::map<int, COLORREF>> m_colors;	//ç”¨äºä¿å­˜æ¯ä¸€è¡Œæ¯ä¸€åˆ—çš„é¢œè‰²
 
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);

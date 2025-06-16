@@ -1,7 +1,7 @@
 /*
-CStaticÀàµÄÅÉÉúÀà£¬ÓÃ×÷´øÑÕÉ«µÄÎÄ±¾¿Ø¼ş£º
-µ÷ÓÃSetTextColorÉèÖÃÎÄ±¾ÑÕÉ«£»
-ÔÚĞèÒªµÄÊ±ºòµ÷ÓÃSetWindowTextExÉèÖÃ¿Ø¼şÎÄ±¾
+CStaticç±»çš„æ´¾ç”Ÿç±»ï¼Œç”¨ä½œå¸¦é¢œè‰²çš„æ–‡æœ¬æ§ä»¶ï¼š
+è°ƒç”¨SetTextColorè®¾ç½®æ–‡æœ¬é¢œè‰²ï¼›
+åœ¨éœ€è¦çš„æ—¶å€™è°ƒç”¨SetWindowTextExè®¾ç½®æ§ä»¶æ–‡æœ¬
 */
 #pragma once
 #include "afxwin.h"
@@ -12,28 +12,28 @@ public:
 	CStaticEx();
 	~CStaticEx();
 
-	//¶ÔÆë·½Ê½
+	//å¯¹é½æ–¹å¼
 	enum Alignment
 	{
-		LEFT,       //×ó¶ÔÆë
-		RIGHT,      //ÓÒ¶ÔÆë
-		CENTER,     //¾ÓÖĞ
+		LEFT,       //å·¦å¯¹é½
+		RIGHT,      //å³å¯¹é½
+		CENTER,     //å±…ä¸­
 	};
 
-	//½«Static¿Ø¼şÓÃ×÷»æÖÆÓĞÑÕÉ«µÄÎÄ±¾Ê±
+	//å°†Staticæ§ä»¶ç”¨ä½œç»˜åˆ¶æœ‰é¢œè‰²çš„æ–‡æœ¬æ—¶
 public:
-	void SetWindowTextEx(LPCTSTR lpszString, Alignment align = Alignment::LEFT);	//Îª¿Ø¼şÉèÖÃÓĞÑÕÉ«µÄÎÄ±¾£¨ĞèÒªÅäºÏSetTextColorÊ¹ÓÃ£©
-	void SetTextColor(COLORREF textColor);		//ÉèÖÃ¿Ø¼şÎÄ±¾ÑÕÉ«
-	void SetBackColor(COLORREF back_color);		//ÉèÖÃ¿Ø¼ş±³¾°ÑÕÉ«
-	CString GetString() const;			//»ñÈ¡¿Ø¼şÎÄ±¾
+	void SetWindowTextEx(LPCTSTR lpszString, Alignment align = Alignment::LEFT);	//ä¸ºæ§ä»¶è®¾ç½®æœ‰é¢œè‰²çš„æ–‡æœ¬ï¼ˆéœ€è¦é…åˆSetTextColorä½¿ç”¨ï¼‰
+	void SetTextColor(COLORREF textColor);		//è®¾ç½®æ§ä»¶æ–‡æœ¬é¢œè‰²
+	void SetBackColor(COLORREF back_color);		//è®¾ç½®æ§ä»¶èƒŒæ™¯é¢œè‰²
+	CString GetString() const;			//è·å–æ§ä»¶æ–‡æœ¬
 
 protected:
 	bool m_color_text{ false };
-	COLORREF m_text_color;	//¿Ø¼şÎÄ×ÖÑÕÉ«
+	COLORREF m_text_color;	//æ§ä»¶æ–‡å­—é¢œè‰²
 	COLORREF m_back_color;
-	CString m_text;			//¿Ø¼şÉÏµÄÎÄ±¾
-	Alignment m_align{};		//ÎÄ±¾µÄ¶ÔÆë·½Ê½
-	bool m_draw_background_color{ false };	//ÊÇ·ñĞèÒªÎª¿Ø¼şÌî³ä±³¾°ÑÕÉ«
+	CString m_text;			//æ§ä»¶ä¸Šçš„æ–‡æœ¬
+	Alignment m_align{};		//æ–‡æœ¬çš„å¯¹é½æ–¹å¼
+	bool m_draw_background_color{ false };	//æ˜¯å¦éœ€è¦ä¸ºæ§ä»¶å¡«å……èƒŒæ™¯é¢œè‰²
 
 protected:
 	virtual LRESULT DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam);

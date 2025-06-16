@@ -1,4 +1,4 @@
-﻿// CAutoAdaptSettingsDlg.cpp: 实现文件
+// CAutoAdaptSettingsDlg.cpp: 实现文件
 //
 
 #include "stdafx.h"
