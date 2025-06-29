@@ -509,6 +509,11 @@ void CTaskBarDlg::DisableRenderFeatureIfNecessary(CSupportedRenderEnums& ref_sup
 
 void CTaskBarDlg::TryDrawStatusBar(IDrawCommon& drawer, const CRect& rect_bar, int usage_percent)
 {
+    //限制范围
+    if (usage_percent > 100)
+        usage_percent = 100;
+    if (usage_percent < 0)
+        usage_percent = 0;
     COLORREF graph_color = theApp.m_taskbar_data.GetUsageGraphColor();
     CSize fill_size = CSize(rect_bar.Width() * usage_percent / 100, rect_bar.Height());
     CRect rect_fill(rect_bar.TopLeft(), fill_size);
