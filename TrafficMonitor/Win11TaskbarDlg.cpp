@@ -82,8 +82,6 @@ void CWin11TaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
         //if (m_rcTaskbar.Height() > m_rect.Height() && m_rect.bottom > m_rcTaskbar.Height())
         //    m_rect.MoveToY(m_rcTaskbar.Height() - m_rect.Height());
 
-        if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())
-            m_rect.MoveToY(m_rect.top + DPI(1));
         MoveWindow(m_rect);
     }
 }

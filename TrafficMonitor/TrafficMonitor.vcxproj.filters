@@ -250,6 +250,9 @@
     <Filter Include="源文件和头文件\公共的类\PluginUpdateHelper">
       <UniqueIdentifier>{4d4d9bb2-17eb-4f13-978b-c204a1b227db}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\DisplayItem">
+      <UniqueIdentifier>{4785624f-2ca9-4f92-8cfc-c7a7c3bfba74}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -544,11 +547,11 @@
     <ClInclude Include="SettingsHelper.h">
       <Filter>源文件和头文件\公共的类\IniHelper</Filter>
     </ClInclude>
-    <ClInclude Include="DisplayItem.h">
-      <Filter>源文件和头文件\公共的类\CommonData</Filter>
-    </ClInclude>
     <ClInclude Include="PluginUpdateHelper.h">
       <Filter>源文件和头文件\公共的类\PluginUpdateHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayItem.h">
+      <Filter>源文件和头文件\公共的类\DisplayItem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -810,11 +813,11 @@
     <ClCompile Include="SettingsHelper.cpp">
       <Filter>源文件和头文件\公共的类\IniHelper</Filter>
     </ClCompile>
-    <ClCompile Include="DisplayItem.cpp">
-      <Filter>源文件和头文件\公共的类\CommonData</Filter>
-    </ClCompile>
     <ClCompile Include="PluginUpdateHelper.cpp">
       <Filter>源文件和头文件\公共的类\PluginUpdateHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="DisplayItem.cpp">
+      <Filter>源文件和头文件\公共的类\DisplayItem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

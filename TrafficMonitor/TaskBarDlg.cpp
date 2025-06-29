@@ -367,116 +367,14 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
     if (label_width > 0)
     {
         wstring str_label = theApp.m_taskbar_data.disp_str.GetConst(type);
-        //if (theApp.m_taskbar_data.swap_up_down)
-        //{
-        //    if (type == TDI_UP)
-        //        str_label = theApp.m_taskbar_data.disp_str.Get(TDI_DOWN);
-        //    else if (type == TDI_DOWN)
-        //        str_label = theApp.m_taskbar_data.disp_str.Get(TDI_UP);
-        //}
         drawer.DrawWindowText(rect_label, str_label.c_str(), label_color, (vertical ? IDrawCommon::Alignment::CENTER : IDrawCommon::Alignment::LEFT));
     }
 
     //绘制数值
-    CString str_value;
     IDrawCommon::Alignment value_alignment{ theApp.m_taskbar_data.value_right_align ? IDrawCommon::Alignment::RIGHT : IDrawCommon::Alignment::LEFT };      //数值的对齐方式
     if (vertical)
         value_alignment = IDrawCommon::Alignment::CENTER;
-    //绘制上传或下载速度
-    if (type == TDI_UP || type == TDI_DOWN || type == TDI_TOTAL_SPEED)
-    {
-        CString format_str;
-        if (theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO)
-            format_str = _T("%s");
-        else
-            format_str = _T("%s/s");
-        CString str_in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data);
-        CString str_out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data);
-        CString str_total_speed = CCommon::DataSizeToString(theApp.m_in_speed + theApp.m_out_speed, theApp.m_taskbar_data);
-        //if (theApp.m_taskbar_data.swap_up_down)
-        //    std::swap(str_in_speed, str_out_speed);
-        if (type == TDI_UP)
-        {
-            str_value.Format(format_str, str_out_speed.GetString());
-        }
-        else if (type == TDI_DOWN)
-        {
-            str_value.Format(format_str, str_in_speed.GetString());
-        }
-        else
-        {
-            str_value.Format(format_str, str_total_speed.GetString());
-        }
-    }
-
-    //当内存显示为已使用内存或可用内存时
-    if (type == TDI_MEMORY && (theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_USED || theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_AVAILABLE))
-    {
-        if (theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_USED)
-            str_value = CCommon::DataSizeToString(static_cast<unsigned long long>(theApp.m_used_memory) * 1024, theApp.m_taskbar_data.separate_value_unit_with_space);
-        else
-            str_value = CCommon::DataSizeToString((static_cast<unsigned long long>(theApp.m_total_memory) - static_cast<unsigned long long>(theApp.m_used_memory)) * 1024, theApp.m_taskbar_data.separate_value_unit_with_space);
-    }
-    //绘制CPU或内存利用率
-    else if (type == TDI_CPU || type == TDI_MEMORY || type == TDI_GPU_USAGE || type == TDI_HDD_USAGE)
-    {
-        int usage{};
-        switch (type)
-        {
-        case TDI_CPU:
-            usage = theApp.m_cpu_usage;
-            break;
-        case TDI_MEMORY:
-            usage = theApp.m_memory_usage;
-            break;
-        case TDI_GPU_USAGE:
-            usage = theApp.m_gpu_usage;
-            break;
-        case TDI_HDD_USAGE:
-            usage = theApp.m_hdd_usage;
-            break;
-        default:
-            break;
-        }
-        str_value = CCommon::UsageToString(usage, theApp.m_taskbar_data);
-
-        //如果CPU或内存利用率达到100%，会导致显示不全，此时将绘图区域向右扩展一些
-        int text_width = m_pDC->GetTextExtent(str_value).cx;
-        if (usage >= 100 && rect_value.Width() < text_width)
-            rect_value.right = rect_value.left + text_width;
-    }
-
-    //绘制温度
-    else if (type == TDI_CPU_TEMP || type == TDI_GPU_TEMP || type == TDI_HDD_TEMP || type == TDI_MAIN_BOARD_TEMP)
-    {
-        int temperature{};
-        switch (type)
-        {
-        case TDI_CPU_TEMP:
-            temperature = theApp.m_cpu_temperature;
-            break;
-        case TDI_GPU_TEMP:
-            temperature = theApp.m_gpu_temperature;
-            break;
-        case TDI_HDD_TEMP:
-            temperature = theApp.m_hdd_temperature;
-            break;
-        case TDI_MAIN_BOARD_TEMP:
-            temperature = theApp.m_main_board_temperature;
-            break;
-        default:
-            break;
-        }
-        str_value = CCommon::TemperatureToString(temperature, theApp.m_taskbar_data);
-    }
-    else if (type == TDI_CPU_FREQ) {
-        str_value = CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_taskbar_data);
-    }
-    else if (type == TDI_TODAY_TRAFFIC)
-    {
-        str_value = CCommon::KBytesToString((theApp.m_today_up_traffic + theApp.m_today_down_traffic) / 1024u);
-    }
-
+    CString str_value = CommonDisplayItem(type).GetItemValueText(false);
     drawer.DrawWindowText(rect_value, str_value, text_color, value_alignment);
 }
 
@@ -916,19 +814,23 @@ void CTaskBarDlg::CalculateWindowSize()
     std::map<CommonDisplayItem, ItemWidth> item_widths;
 
     m_pDC->SelectObject(&m_font);
-    //计算标签宽度
+    //计算标签和数值的宽度
     //const auto& item_map = theApp.m_taskbar_data.disp_str.GetAllItems();
     for (auto iter = theApp.m_plugins.AllDisplayItemsWithPlugins().begin(); iter != theApp.m_plugins.AllDisplayItemsWithPlugins().end(); ++iter)
     {
         if (iter->is_plugin)
         {
             auto plugin = iter->plugin_item;
-            if (plugin != nullptr)
+            if (plugin != nullptr && theApp.m_taskbar_data.plugin_display_item.Contains(plugin->GetItemId()))
             {
+                //标签宽度
                 int& label_width{ item_widths[*iter].label_width };
+                //数值宽度
+                int& value_width{ item_widths[plugin].value_width };
                 if (plugin->IsCustomDraw())
                 {
                     label_width = 0;
+                    value_width = theApp.m_plugins.GetItemWidth(plugin, m_pDC);
                 }
                 else
                 {
@@ -936,104 +838,17 @@ void CTaskBarDlg::CalculateWindowSize()
                     if (!lable_text.IsEmpty())
                         lable_text += L' ';
                     label_width = m_pDC->GetTextExtent(lable_text).cx;
+                    value_width = m_pDC->GetTextExtent(plugin->GetItemValueSampleText()).cx;
                 }
             }
         }
         else
         {
+            //标签宽度
             item_widths[*iter].label_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.GetConst(*iter).c_str()).cx;
-        }
-    }
-
-    //计算数值部分宽度
-
-    //计算显示上传下载部分所需要的宽度
-    CString sample_str;
-    int value_width{};
-    wstring digits(theApp.m_taskbar_data.digits_number, L'8');      //根据数据位数生成指定个数的“8”
-    bool hide_unit{ theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO };
-    if (theApp.m_taskbar_data.speed_short_mode)
-    {
-        if (hide_unit)
-            sample_str.Format(_T("%s."), digits.c_str());
-        else
-            sample_str.Format(_T("%s.M/s"), digits.c_str());
-    }
-    else
-    {
-        if (hide_unit)
-            sample_str.Format(_T("%s.8"), digits.c_str());
-        else
-            sample_str.Format(_T("%s.8MB/s"), digits.c_str());
-    }
-    if (!hide_unit && theApp.m_taskbar_data.separate_value_unit_with_space)
-        sample_str += _T(' ');
-    if (theApp.m_taskbar_data.speed_short_mode && !theApp.m_taskbar_data.unit_byte && !theApp.m_taskbar_data.hide_unit)
-        sample_str += _T('b');
-    value_width = m_pDC->GetTextExtent(sample_str).cx;      //计算使用当前字体显示文本需要的宽度值
-    item_widths[TDI_UP].value_width = value_width;
-    item_widths[TDI_DOWN].value_width = value_width;
-    item_widths[TDI_TOTAL_SPEED].value_width = value_width;
-
-    //计算显示CPU、内存部分所需要的宽度
-    CString str;
-    if (theApp.m_taskbar_data.hide_percent)
-    {
-        str = _T("99");
-    }
-    else if (theApp.m_taskbar_data.separate_value_unit_with_space)
-    {
-        str = _T("99 %");
-    }
-    else
-    {
-        str = _T("99%");
-    }
-    value_width = m_pDC->GetTextExtent(str).cx;
-    //内存显示的宽度
-    int memory_width{ value_width };
-    if (theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_USED || theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_AVAILABLE)
-    {
-        //宽度为总内存的宽度
-        str = CCommon::DataSizeToString(static_cast<unsigned long long>(theApp.m_total_memory) * 1024, theApp.m_taskbar_data.separate_value_unit_with_space);
-        memory_width = m_pDC->GetTextExtent(str).cx;
-    }
-    item_widths[TDI_CPU].value_width = value_width;
-    item_widths[TDI_MEMORY].value_width = memory_width;
-    item_widths[TDI_GPU_USAGE].value_width = value_width;
-    item_widths[TDI_HDD_USAGE].value_width = value_width;
-
-    item_widths[TDI_CPU_FREQ].value_width = m_pDC->GetTextExtent(_T("1.00 GHz")).cx;
-
-    //计算温度显示的宽度
-    if (theApp.m_taskbar_data.separate_value_unit_with_space)
-        str = _T("99 °C");
-    else
-        str = _T("99°C");
-    value_width = m_pDC->GetTextExtent(str).cx;
-    value_width += DPI(2);
-    item_widths[TDI_CPU_TEMP].value_width = value_width;
-    item_widths[TDI_GPU_TEMP].value_width = value_width;
-    item_widths[TDI_HDD_TEMP].value_width = value_width;
-    item_widths[TDI_MAIN_BOARD_TEMP].value_width = value_width;
-
-    //今日已使用流量宽度
-    item_widths[TDI_TODAY_TRAFFIC].value_width = m_pDC->GetTextExtent(_T("999.99 MB")).cx;
-
-    //计算插件项目的宽度
-    for (const auto& plugin : theApp.m_plugins.GetPluginItems())
-    {
-        int& value_width{ item_widths[plugin].value_width };
-        if (plugin != nullptr && theApp.m_taskbar_data.plugin_display_item.Contains(plugin->GetItemId()))
-        {
-            if (plugin->IsCustomDraw())
-            {
-                value_width = theApp.m_plugins.GetItemWidth(plugin, m_pDC);
-            }
-            else
-            {
-                value_width = m_pDC->GetTextExtent(plugin->GetItemValueSampleText()).cx;
-            }
+            //数值宽度
+            CString sample_str = iter->GetItemValueSampleText(false);
+            item_widths[*iter].value_width = m_pDC->GetTextExtent(sample_str).cx;
         }
     }
 
@@ -1589,16 +1404,21 @@ void CTaskBarDlg::TryDrawGraph(IDrawCommon& drawer, const CRect& value_rect, Com
     if (theApp.m_taskbar_data.show_graph_dashed_box)
         drawer.DrawRectOutLine(value_rect, graph_color, 1, true);
     int i{ -1 };
-    for (const auto& item : list)
+    for (int value : list)
     {
         i++;
         if (i == 0)     //不绘制链表头部的数据，因为在累加中，还未取平均数
             continue;
         if (i >= value_rect.Width())
             break;
+        //限制范围
+        if (value > 100)
+            value = 100;
+        if (value < 0)
+            value = 0;
         //从右往左画线
         CPoint start_point = CPoint(value_rect.right - i, value_rect.bottom);
-        int height = item * value_rect.Height() / 100;
+        int height = value * value_rect.Height() / 100;
         drawer.DrawLine(start_point, height, graph_color);
     }
 }

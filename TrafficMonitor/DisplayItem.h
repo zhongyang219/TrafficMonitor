@@ -51,6 +51,20 @@ struct CommonDisplayItem
 
     //获取一个显示项目的显示文本保存在ini文件中的key的名称
     const wchar_t* GetItemIniKeyName() const;
+
+    /**
+     * @brief   获取一个显示项目的数值文本
+     * @param   is_main_window 如果为true则为主窗口，否则为任务栏窗口
+     * @return  显示的文本
+     */
+    CString GetItemValueText(bool is_main_window) const;
+
+    /**
+     * @brief   获取一个显示项目的数值示例文本
+     * @param   is_main_window 如果为true则为主窗口，否则为任务栏窗口
+     * @return  示例文本
+     */
+    CString GetItemValueSampleText(bool is_main_window) const;
 };
 
 
