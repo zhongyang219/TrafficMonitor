@@ -340,7 +340,7 @@ public:
      * @brief   获取TrafficMonitor的版本。
      * @return  const wchar_t*
      */
-    virtual const wchar_t* GetTrafficMonitorVersion() = 0;
+    virtual const wchar_t* GetVersion() = 0;
 
     /** 主程序的所有监控信息 */
     enum MonitorItem
@@ -384,7 +384,7 @@ public:
      * @brief   获取配置文件目录
      * @return  配置文件目录
      */
-    virtual const wchar_t* GetConfigDir() const = 0;
+    virtual const wchar_t* GetPluginConfigDir() const = 0;
 
     /** 主程序DPI类型 */
     enum DPIType

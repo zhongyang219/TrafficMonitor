@@ -202,12 +202,12 @@ public:
     // 通过 ITrafficMonitor 继承
 private:
     virtual int GetAPIVersion() override;
-    virtual const wchar_t* GetTrafficMonitorVersion() override;
+    virtual const wchar_t* GetVersion() override;
 public:
     double GetMonitorData(MonitorItem item) override;
     void ShowNotifyMessage(const wchar_t* strMsg) override;
     unsigned short GetLanguageId() const override;
-    const wchar_t* GetConfigDir() const override;
+    const wchar_t* GetPluginConfigDir() const override;
     int GetDPI(DPIType type) const override;
 };
 

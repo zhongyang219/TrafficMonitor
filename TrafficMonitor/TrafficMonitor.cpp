@@ -1392,7 +1392,7 @@ int CTrafficMonitorApp::GetAPIVersion()
     return 0;
 }
 
-const wchar_t* CTrafficMonitorApp::GetTrafficMonitorVersion()
+const wchar_t* CTrafficMonitorApp::GetVersion()
 {
     return VERSION;
 }
@@ -1432,7 +1432,7 @@ unsigned short CTrafficMonitorApp::GetLanguageId() const
     return m_general_data.language;
 }
 
-const wchar_t* CTrafficMonitorApp::GetConfigDir() const
+const wchar_t* CTrafficMonitorApp::GetPluginConfigDir() const
 {
     static std::wstring config_dir;
     config_dir = m_config_dir;
