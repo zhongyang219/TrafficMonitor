@@ -201,10 +201,10 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                     item_rect.MoveToX(item_rect.right + DPI(theApp.m_taskbar_data.item_space));
                 item_rect.right = item_rect.left + iter->item_width.TotalWidth();
                 item_rect.bottom = item_rect.top + m_window_height;
-                if (iter->is_plugin)
-                    DrawPluginItem(draw, iter->plugin_item, item_rect, iter->item_width.label_width);
+                if (iter->IsPlugin())
+                    DrawPluginItem(draw, iter->PluginItem(), item_rect, iter->item_width.label_width);
                 else
-                    DrawDisplayItem(draw, iter->item_type, item_rect, iter->item_width.label_width);
+                    DrawDisplayItem(draw, iter->ItemType(), item_rect, iter->item_width.label_width);
             }
             else //非水平排列时，每两个一组显示
             {
@@ -223,14 +223,14 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                     item_rect.right = item_rect.left + width;
                     item_rect_up.right = item_rect_up.left + width;
                     //绘制信息
-                    if (last_iter->is_plugin)
-                        DrawPluginItem(draw, last_iter->plugin_item, item_rect_up, last_item_width.label_width);
+                    if (last_iter->IsPlugin())
+                        DrawPluginItem(draw, last_iter->PluginItem(), item_rect_up, last_item_width.label_width);
                     else
-                        DrawDisplayItem(draw, last_iter->item_type, item_rect_up, last_item_width.label_width);
-                    if (iter->is_plugin)
-                        DrawPluginItem(draw, iter->plugin_item, item_rect, iter->item_width.label_width);
+                        DrawDisplayItem(draw, last_iter->ItemType(), item_rect_up, last_item_width.label_width);
+                    if (iter->IsPlugin())
+                        DrawPluginItem(draw, iter->PluginItem(), item_rect, iter->item_width.label_width);
                     else
-                        DrawDisplayItem(draw, iter->item_type, item_rect, iter->item_width.label_width);
+                        DrawDisplayItem(draw, iter->ItemType(), item_rect, iter->item_width.label_width);
                 }
                 //要绘制的项目为奇数时绘制最后一个
                 else if (item_count % 2 == 1 && index == item_count - 1)
@@ -238,10 +238,10 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                     item_rect.MoveToXY(item_rect.right + DPI(theApp.m_taskbar_data.item_space), 0);
                     item_rect.bottom = TASKBAR_WND_HEIGHT;
                     item_rect.right = item_rect.left + iter->item_width.MaxWidth();
-                    if (iter->is_plugin)
-                        DrawPluginItem(draw, iter->plugin_item, item_rect, iter->item_width.label_width, true);
+                    if (iter->IsPlugin())
+                        DrawPluginItem(draw, iter->PluginItem(), item_rect, iter->item_width.label_width, true);
                     else
-                        DrawDisplayItem(draw, iter->item_type, item_rect, iter->item_width.label_width, true);
+                        DrawDisplayItem(draw, iter->ItemType(), item_rect, iter->item_width.label_width, true);
                 }
             }
         }
@@ -252,10 +252,10 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                 item_rect.MoveToXY(0, item_rect.bottom + DPI(theApp.m_taskbar_data.item_space));
             item_rect.bottom = item_rect.top + TASKBAR_WND_HEIGHT / 2;
             item_rect.right = item_rect.left + min(m_window_width, m_rcTaskbar.Width() - DPI(theApp.m_taskbar_data.item_space));
-            if (iter->is_plugin)
-                DrawPluginItem(draw, iter->plugin_item, item_rect, iter->item_width.label_width);
+            if (iter->IsPlugin())
+                DrawPluginItem(draw, iter->PluginItem(), item_rect, iter->item_width.label_width);
             else
-                DrawDisplayItem(draw, iter->item_type, item_rect, iter->item_width.label_width);
+                DrawDisplayItem(draw, iter->ItemType(), item_rect, iter->item_width.label_width);
         }
         index++;
         last_iter = iter;
@@ -818,9 +818,9 @@ void CTaskBarDlg::CalculateWindowSize()
     //const auto& item_map = theApp.m_taskbar_data.disp_str.GetAllItems();
     for (auto iter = theApp.m_plugins.AllDisplayItemsWithPlugins().begin(); iter != theApp.m_plugins.AllDisplayItemsWithPlugins().end(); ++iter)
     {
-        if (iter->is_plugin)
+        if (iter->IsPlugin())
         {
-            auto plugin = iter->plugin_item;
+            auto plugin = iter->PluginItem();
             if (plugin != nullptr && theApp.m_taskbar_data.plugin_display_item.Contains(plugin->GetItemId()))
             {
                 //标签宽度
@@ -1063,13 +1063,13 @@ void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
     m_menu_popuped = true;
     m_tool_tips.Pop();
     ITMPlugin* plugin{};
-    bool is_plugin_item_clicked = (CheckClickedItem(point) && m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr);
+    bool is_plugin_item_clicked = (CheckClickedItem(point) && m_clicked_item.IsPlugin() && m_clicked_item.PluginItem() != nullptr);
     if (is_plugin_item_clicked)
     {
-        plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+        plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.PluginItem());
         if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
         {
-            if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_RCLICKED, point.x, point.y, (void*)GetSafeHwnd(), IPluginItem::MF_TASKBAR_WND) != 0)
+            if (m_clicked_item.PluginItem()->OnMouseEvent(IPluginItem::MT_RCLICKED, point.x, point.y, (void*)GetSafeHwnd(), IPluginItem::MF_TASKBAR_WND) != 0)
                 return;
         }
     }
@@ -1135,7 +1135,7 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
     }
 
     //设置插件命令的勾选状态
-    ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+    ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.PluginItem());
     if (plugin != nullptr && plugin->GetAPIVersion() >= 5)
     {
         for (int i = ID_PLUGIN_COMMAND_START; i <= ID_PLUGIN_COMMAND_MAX; i++)
@@ -1168,10 +1168,10 @@ BOOL CTaskBarDlg::PreTranslateMessage(MSG* pMsg)
         bool ctrl = (GetKeyState(VK_CONTROL) & 0x80);
         bool shift = (GetKeyState(VK_SHIFT) & 0x8000);
         bool alt = (GetKeyState(VK_MENU) & 0x8000);
-        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.PluginItem());
         if (plugin != nullptr && plugin->GetAPIVersion() >= 4)
         {
-            if (m_clicked_item.plugin_item->OnKeboardEvent(pMsg->wParam, ctrl, shift, alt, (void*)GetSafeHwnd(), IPluginItem::KF_TASKBAR_WND) != 0)
+            if (m_clicked_item.PluginItem()->OnKeboardEvent(pMsg->wParam, ctrl, shift, alt, (void*)GetSafeHwnd(), IPluginItem::KF_TASKBAR_WND) != 0)
                 return TRUE;
         }
     }
@@ -1189,12 +1189,12 @@ void CTaskBarDlg::OnMouseMove(UINT nFlags, CPoint point)
 void CTaskBarDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
-    if (CheckClickedItem(point) && m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+    if (CheckClickedItem(point) && m_clicked_item.IsPlugin() && m_clicked_item.PluginItem() != nullptr)
     {
-        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.PluginItem());
         if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
         {
-            if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_DBCLICKED, point.x, point.y, (void*)GetSafeHwnd(), IPluginItem::MF_TASKBAR_WND) != 0)
+            if (m_clicked_item.PluginItem()->OnMouseEvent(IPluginItem::MT_DBCLICKED, point.x, point.y, (void*)GetSafeHwnd(), IPluginItem::MF_TASKBAR_WND) != 0)
                 return;
         }
     }
@@ -1275,9 +1275,9 @@ BOOL CTaskBarDlg::OnCommand(WPARAM wParam, LPARAM lParam)
     if (uMsg >= ID_PLUGIN_COMMAND_START && uMsg <= ID_PLUGIN_COMMAND_MAX)
     {
         int index = uMsg - ID_PLUGIN_COMMAND_START;
-        if (m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+        if (m_clicked_item.IsPlugin() && m_clicked_item.PluginItem() != nullptr)
         {
-            ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+            ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.PluginItem());
             if (plugin != nullptr && plugin->GetAPIVersion() >= 5)
             {
                 plugin->OnPluginCommand(index, (void*)GetSafeHwnd(), nullptr);
@@ -1434,12 +1434,12 @@ void CTaskBarDlg::OnClose()
 void CTaskBarDlg::OnLButtonUp(UINT nFlags, CPoint point)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
-    if (CheckClickedItem(point) && m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr)
+    if (CheckClickedItem(point) && m_clicked_item.IsPlugin() && m_clicked_item.PluginItem() != nullptr)
     {
-        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+        ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.PluginItem());
         if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
         {
-            if (m_clicked_item.plugin_item->OnMouseEvent(IPluginItem::MT_LCLICKED, point.x, point.y, (void*)GetSafeHwnd(), IPluginItem::MF_TASKBAR_WND) != 0)
+            if (m_clicked_item.PluginItem()->OnMouseEvent(IPluginItem::MT_LCLICKED, point.x, point.y, (void*)GetSafeHwnd(), IPluginItem::MF_TASKBAR_WND) != 0)
                 return;
         }
     }
@@ -1467,10 +1467,10 @@ BOOL CTaskBarDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
         CPoint point = pt;
         ScreenToClient(&point);
         ITMPlugin* plugin{};
-        bool is_plugin_item_clicked = (CheckClickedItem(point) && m_clicked_item.is_plugin && m_clicked_item.plugin_item != nullptr);
+        bool is_plugin_item_clicked = (CheckClickedItem(point) && m_clicked_item.IsPlugin() && m_clicked_item.PluginItem() != nullptr);
         if (is_plugin_item_clicked)
         {
-            plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.plugin_item);
+            plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.PluginItem());
             if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
             {
                 IPluginItem::MouseEventType type;
@@ -1478,7 +1478,7 @@ BOOL CTaskBarDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
                     type = IPluginItem::MT_WHEEL_UP;
                 else
                     type = IPluginItem::MT_WHEEL_DOWN;
-                if (m_clicked_item.plugin_item->OnMouseEvent(type, point.x, point.y, (void*)GetSafeHwnd(), IPluginItem::MF_TASKBAR_WND) != 0)
+                if (m_clicked_item.PluginItem()->OnMouseEvent(type, point.x, point.y, (void*)GetSafeHwnd(), IPluginItem::MF_TASKBAR_WND) != 0)
                     return TRUE;
             }
         }

@@ -429,10 +429,10 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
     std::map<DisplayItem, DrawStr> map_str;
     for (auto iter = all_skin_items.begin(); iter != all_skin_items.end(); ++iter)
     {
-        if (iter->is_plugin)
+        if (iter->IsPlugin())
             continue;
         DrawStr draw_str;
-        draw_str.value = CommonDisplayItem(iter->item_type).GetItemValueSampleText(true);
+        draw_str.value = CommonDisplayItem(iter->ItemType()).GetItemValueSampleText(true);
         if (!m_layout_info.no_label)
         {
             if (m_setting_data.disp_str.IsInvalid())
@@ -440,7 +440,7 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
             else
                 draw_str.label = m_setting_data.disp_str.GetConst(*iter).c_str();
         }
-        map_str[iter->item_type] = draw_str;
+        map_str[iter->ItemType()] = draw_str;
     }
 
     //获取文本颜色

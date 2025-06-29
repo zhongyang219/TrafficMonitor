@@ -1226,14 +1226,14 @@ std::wstring CTrafficMonitorApp::GetPlauginTooltipInfo() const
 
 bool CTrafficMonitorApp::IsTaksbarItemDisplayed(CommonDisplayItem item) const
 {
-    if (item.is_plugin)
+    if (item.IsPlugin())
     {
-        if (item.plugin_item != nullptr)
-            return m_taskbar_data.plugin_display_item.Contains(item.plugin_item->GetItemId());
+        if (item.PluginItem() != nullptr)
+            return m_taskbar_data.plugin_display_item.Contains(item.PluginItem()->GetItemId());
     }
     else
     {
-        return m_taskbar_data.display_item.Contains(item.item_type);
+        return m_taskbar_data.display_item.Contains(item.ItemType());
     }
     return false;
 }

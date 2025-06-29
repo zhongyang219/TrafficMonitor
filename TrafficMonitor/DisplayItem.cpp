@@ -38,6 +38,21 @@ bool CommonDisplayItem::operator==(const CommonDisplayItem& item) const
         return plugin_item == item.plugin_item;
 }
 
+bool CommonDisplayItem::IsPlugin() const
+{
+    return is_plugin;
+}
+
+DisplayItem CommonDisplayItem::ItemType() const
+{
+    return item_type;
+}
+
+IPluginItem* CommonDisplayItem::PluginItem() const
+{
+    return plugin_item;
+}
+
 CString CommonDisplayItem::GetItemName() const
 {
     if (is_plugin)
