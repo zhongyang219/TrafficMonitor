@@ -203,8 +203,9 @@ public:
 private:
     virtual int GetAPIVersion() override;
     virtual const wchar_t* GetVersion() override;
+    double GetMonitorValue(MonitorItem item) override;
+    virtual const wchar_t* GetMonitorValueString(MonitorItem item, int is_main_window = false) override;
 public:
-    double GetMonitorData(MonitorItem item) override;
     void ShowNotifyMessage(const wchar_t* strMsg) override;
     unsigned short GetLanguageId() const override;
     const wchar_t* GetPluginConfigDir() const override;

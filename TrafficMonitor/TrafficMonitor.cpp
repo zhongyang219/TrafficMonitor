@@ -1397,7 +1397,7 @@ const wchar_t* CTrafficMonitorApp::GetVersion()
     return VERSION;
 }
 
-double CTrafficMonitorApp::GetMonitorData(MonitorItem item)
+double CTrafficMonitorApp::GetMonitorValue(MonitorItem item)
 {
     switch (item)
     {
@@ -1416,6 +1416,39 @@ double CTrafficMonitorApp::GetMonitorData(MonitorItem item)
     case MI_TODAY_DOWN_TRAFFIC: return m_today_down_traffic;
     }
     return 0.0;
+}
+
+const wchar_t* CTrafficMonitorApp::GetMonitorValueString(MonitorItem item, int is_main_window)
+{
+    static CString str_value;
+    if (item == MI_TODAY_UP_TRAFFIC)
+    {
+        str_value = CCommon::KBytesToString(theApp.m_today_up_traffic / 1024u);
+    }
+    else if (item == MI_TODAY_DOWN_TRAFFIC)
+    {
+        str_value = CCommon::KBytesToString(theApp.m_today_down_traffic / 1024u);
+    }
+    else
+    {
+        DisplayItem display_item{};
+        switch (item)
+        {
+        case MI_UP: display_item = DisplayItem::TDI_UP; break;
+        case MI_DOWN: display_item = DisplayItem::TDI_DOWN; break;
+        case MI_CPU: display_item = DisplayItem::TDI_CPU; break;
+        case MI_MEMORY: display_item = DisplayItem::TDI_MEMORY; break;
+        case MI_GPU_USAGE: display_item = DisplayItem::TDI_GPU_USAGE; break;
+        case MI_CPU_TEMP: display_item = DisplayItem::TDI_CPU_TEMP; break;
+        case MI_GPU_TEMP: display_item = DisplayItem::TDI_GPU_TEMP; break;
+        case MI_HDD_TEMP: display_item = DisplayItem::TDI_HDD_TEMP; break;
+        case MI_MAIN_BOARD_TEMP: display_item = DisplayItem::TDI_MAIN_BOARD_TEMP; break;
+        case MI_HDD_USAGE: display_item = DisplayItem::TDI_HDD_USAGE; break;
+        case MI_CPU_FREQ: display_item = DisplayItem::TDI_CPU_FREQ; break;
+        }
+        str_value = CommonDisplayItem(display_item).GetItemValueText(is_main_window);
+    }
+    return str_value.GetString();
 }
 
 void CTrafficMonitorApp::ShowNotifyMessage(const wchar_t* strMsg)

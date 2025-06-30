@@ -361,12 +361,20 @@ public:
     };
 
     /**
-     * @brief   获取一个主程序的监控信息
+     * @brief   获取一个主程序的监控信息的数值
      *          （ITMPlugin::OnMonitorInfo将被弃用）
      * @param   item 要获取监控信息的项目
      * @return  获取到监控信息
      */
-    virtual double GetMonitorData(MonitorItem item) = 0;
+    virtual double GetMonitorValue(MonitorItem item) = 0;
+
+    /**
+     * @brief   以字符串的形式获取一个主程序监控信息的数值
+     * @param   item 要获取监控信息的项目
+     * @param   is_main_window 是否为主窗口的数值
+     * @return  获取到监控信息
+     */
+    virtual const wchar_t* GetMonitorValueString(MonitorItem item, int is_main_window = false) = 0;
 
     /**
      * @brief   显示一个通知消息
