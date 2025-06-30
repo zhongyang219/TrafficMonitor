@@ -600,13 +600,11 @@ void CSkinFile::DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font) 
 {
     //获取每个项目显示的文本和数值文本
     std::map<DisplayItem, DrawStr> map_str;
-    if (!m_layout_info.no_label)
+    for (const auto& display_item : AllDisplayItems)
     {
-        for (const auto& display_item : AllDisplayItems)
-        {
+        if (!m_layout_info.no_label)
             map_str[display_item].label = theApp.m_main_wnd_data.disp_str.GetConst(display_item).c_str();
-            map_str[display_item].value = CommonDisplayItem(display_item).GetItemValueText(true);
-        }
+        map_str[display_item].value = CommonDisplayItem(display_item).GetItemValueText(true);
     }
 
     //获取文本颜色
