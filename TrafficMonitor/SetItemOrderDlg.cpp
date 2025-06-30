@@ -115,31 +115,31 @@ void CSetItemOrderDlg::EnableDlgCtrl(UINT id, bool enable)
 
 bool CSetItemOrderDlg::GetItemChecked(CommonDisplayItem item)
 {
-    if (item.is_plugin)
+    if (item.IsPlugin())
     {
-        if (item.plugin_item != nullptr)
-            return m_plugin_item.Contains(item.plugin_item->GetItemId());
+        if (item.PluginItem() != nullptr)
+            return m_plugin_item.Contains(item.PluginItem()->GetItemId());
     }
     else
     {
-        return m_display_item.Contains(item.item_type);
+        return m_display_item.Contains(item.ItemType());
     }
     return false;
 }
 
 void CSetItemOrderDlg::SaveItemChecked(CommonDisplayItem item, bool checked)
 {
-    if (item.is_plugin)
+    if (item.IsPlugin())
     {
-        if (item.plugin_item != nullptr)
-            m_plugin_item.SetStrContained(item.plugin_item->GetItemId(), checked);
+        if (item.PluginItem() != nullptr)
+            m_plugin_item.SetStrContained(item.PluginItem()->GetItemId(), checked);
     }
     else
     {
         if (checked)
-            m_display_item.Add(item.item_type);
+            m_display_item.Add(item.ItemType());
         else
-            m_display_item.Remove(item.item_type);
+            m_display_item.Remove(item.ItemType());
     }
 }
 

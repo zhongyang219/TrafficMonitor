@@ -38,6 +38,21 @@ bool CommonDisplayItem::operator==(const CommonDisplayItem& item) const
         return plugin_item == item.plugin_item;
 }
 
+bool CommonDisplayItem::IsPlugin() const
+{
+    return is_plugin;
+}
+
+DisplayItem CommonDisplayItem::ItemType() const
+{
+    return item_type;
+}
+
+IPluginItem* CommonDisplayItem::PluginItem() const
+{
+    return plugin_item;
+}
+
 CString CommonDisplayItem::GetItemName() const
 {
     if (is_plugin)
@@ -163,6 +178,249 @@ const wchar_t* CommonDisplayItem::GetItemIniKeyName() const
         }
         ASSERT(FALSE);
         return L"";
+    }
+}
+
+CString CommonDisplayItem::GetItemValueText(bool is_main_window) const
+{
+    if (is_plugin)
+    {
+        return plugin_item->GetItemValueText();
+    }
+    else
+    {
+        const PublicSettingData* cfg_data{};
+        if (is_main_window)
+            cfg_data = &theApp.m_main_wnd_data;
+        else
+            cfg_data = &theApp.m_taskbar_data;
+        CString str_value;
+        switch (item_type)
+        {
+        //上传、下载、总网速
+        case TDI_UP:
+        case TDI_DOWN:
+        case TDI_TOTAL_SPEED:
+        {
+            CString str_in_speed = CCommon::DataSizeToString(theApp.m_in_speed, *cfg_data);
+            CString str_out_speed = CCommon::DataSizeToString(theApp.m_out_speed, *cfg_data);
+            CString str_total_speed = CCommon::DataSizeToString(theApp.m_in_speed + theApp.m_out_speed, *cfg_data);
+            if (!cfg_data->hide_unit || cfg_data->speed_unit == SpeedUnit::AUTO)
+            {
+                str_in_speed += _T("/s");
+                str_out_speed += _T("/s");
+                str_total_speed += _T("/s");
+            }
+            //交换上传和下载位置
+            if (is_main_window && theApp.m_main_wnd_data.swap_up_down)
+                std::swap(str_in_speed, str_out_speed);
+            if (item_type == TDI_UP)
+                str_value = str_out_speed;
+            else if (item_type == TDI_DOWN)
+                str_value = str_in_speed;
+            else
+                str_value = str_total_speed;
+        }
+            break;
+        //CPU利用率
+        case TDI_CPU:
+            str_value = CCommon::UsageToString(theApp.m_cpu_usage, *cfg_data);
+            break;
+        //内存利用率
+        case TDI_MEMORY:
+            if (cfg_data->memory_display == MemoryDisplay::MEMORY_USED)
+                str_value = CCommon::DataSizeToString(static_cast<unsigned long long>(theApp.m_used_memory) * 1024, cfg_data->separate_value_unit_with_space);
+            else if (cfg_data->memory_display == MemoryDisplay::MEMORY_AVAILABLE)
+                str_value = CCommon::DataSizeToString((static_cast<unsigned long long>(theApp.m_total_memory) - static_cast<unsigned long long>(theApp.m_used_memory)) * 1024, cfg_data->separate_value_unit_with_space);
+            else
+                str_value = CCommon::UsageToString(theApp.m_memory_usage, *cfg_data);
+            break;
+        //显卡利用率
+        case TDI_GPU_USAGE:
+            str_value = CCommon::UsageToString(theApp.m_gpu_usage, *cfg_data);
+            break;
+        //硬盘利用率
+        case TDI_HDD_USAGE:
+            str_value = CCommon::UsageToString(theApp.m_hdd_usage, *cfg_data);
+            break;
+        //CPU温度
+        case TDI_CPU_TEMP:
+            str_value = CCommon::TemperatureToString(theApp.m_cpu_temperature, *cfg_data);
+            break;
+        //显卡温度
+        case TDI_GPU_TEMP:
+            str_value = CCommon::TemperatureToString(theApp.m_gpu_temperature, *cfg_data);
+            break;
+        //硬盘温度
+        case TDI_HDD_TEMP:
+            str_value = CCommon::TemperatureToString(theApp.m_hdd_temperature, *cfg_data);
+            break;
+        //主板温度
+        case TDI_MAIN_BOARD_TEMP:
+            str_value = CCommon::TemperatureToString(theApp.m_main_board_temperature, *cfg_data);
+            break;
+        //CPU频率
+        case TDI_CPU_FREQ:
+            str_value = CCommon::FreqToString(theApp.m_cpu_freq, *cfg_data);
+            break;
+        //总流量
+        case TDI_TODAY_TRAFFIC:
+            str_value = CCommon::KBytesToString((theApp.m_today_up_traffic + theApp.m_today_down_traffic) / 1024u);
+            break;
+        default:
+            break;
+        }
+        return str_value;
+    }
+}
+
+CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
+{
+    if (is_plugin)
+    {
+        return plugin_item->GetItemValueSampleText();
+    }
+    //主窗口（用于绘制预览图）
+    else if (is_main_window)
+    {
+        CString sample_str;
+        switch (item_type)
+        {
+        case TDI_UP:
+            sample_str = _T("88.8 KB/s");
+            break;
+        case TDI_DOWN:
+            sample_str = _T("88.9 KB/s");
+            break;
+        case TDI_TOTAL_SPEED:
+            sample_str = _T("90 KB/s");
+            break;
+        case TDI_TODAY_TRAFFIC:
+            sample_str = _T("100 MB");
+            break;
+        case TDI_CPU:
+            sample_str = _T("50 %");
+            break;
+        case TDI_MEMORY:
+            sample_str = _T("51 %");
+            break;
+        case TDI_CPU_TEMP: case TDI_GPU_TEMP: case TDI_HDD_TEMP: case TDI_MAIN_BOARD_TEMP:
+            sample_str = _T("40 °C");
+            break;
+        case TDI_CPU_FREQ:
+            sample_str = _T("1.0 GHz");
+            break;
+        default:
+            sample_str = _T("99");
+            break;
+        }
+        return sample_str;
+    }
+    //任务栏窗口（用于计算任务栏窗口宽度）
+    else
+    {
+        CString sample_str;
+        switch (item_type)
+        {
+        //网速
+        case TDI_UP:
+        case TDI_DOWN:
+        case TDI_TOTAL_SPEED:
+        {
+            wstring digits(theApp.m_taskbar_data.digits_number, L'8');      //根据数据位数生成指定个数的“8”
+            bool hide_unit{ theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO };
+            if (theApp.m_taskbar_data.speed_short_mode)
+            {
+                if (hide_unit)
+                    sample_str.Format(_T("%s."), digits.c_str());
+                else
+                    sample_str.Format(_T("%s.M/s"), digits.c_str());
+            }
+            else
+            {
+                if (hide_unit)
+                    sample_str.Format(_T("%s.8"), digits.c_str());
+                else
+                    sample_str.Format(_T("%s.8MB/s"), digits.c_str());
+            }
+            if (!hide_unit && theApp.m_taskbar_data.separate_value_unit_with_space)
+                sample_str += _T(' ');
+            if (theApp.m_taskbar_data.speed_short_mode && !theApp.m_taskbar_data.unit_byte && !theApp.m_taskbar_data.hide_unit)
+                sample_str += _T('b');
+        }
+            break;
+        //占用率百分比
+        case TDI_CPU:
+        case TDI_MEMORY:
+        case TDI_GPU_USAGE:
+        case TDI_HDD_USAGE:
+        {
+            //获取当前数值
+            int value = 0;
+            if (item_type == TDI_CPU)
+                value = theApp.m_cpu_usage;
+            else if (item_type == TDI_MEMORY)
+                value = theApp.m_memory_usage;
+            else if (item_type == TDI_GPU_USAGE)
+                value = theApp.m_gpu_usage;
+            else if (item_type == TDI_HDD_USAGE)
+                value = theApp.m_hdd_usage;
+
+            //当数值达到100时，使用字符串“100”作为宽度，防止显示不全
+            if (value >= 100)
+                sample_str = _T("100");
+            else
+                sample_str = _T("99");
+            if (!theApp.m_taskbar_data.hide_percent)
+            {
+                if (theApp.m_taskbar_data.separate_value_unit_with_space)
+                    sample_str += _T(" %");
+                else
+                    sample_str += _T("%");
+            }
+            //内存显示不为已使用百分比时
+            if (item_type == TDI_MEMORY)
+            {
+                if (theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_USED || theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_AVAILABLE)
+                {
+                    //宽度为总内存的宽度
+                    sample_str = CCommon::DataSizeToString(static_cast<unsigned long long>(theApp.m_total_memory) * 1024, theApp.m_taskbar_data.separate_value_unit_with_space);
+                }
+            }
+        }
+            break;
+        //温度
+        case TDI_CPU_TEMP:
+        case TDI_GPU_TEMP:
+        case TDI_HDD_TEMP:
+        case TDI_MAIN_BOARD_TEMP:
+        {
+            if (theApp.m_taskbar_data.separate_value_unit_with_space)
+                sample_str = _T("99 °C");
+            else
+                sample_str = _T("99°C");
+        }
+            break;
+        //CPU频率
+        case TDI_CPU_FREQ:
+        {
+            if (theApp.m_taskbar_data.separate_value_unit_with_space)
+                sample_str = _T("1.00 GHz");
+            else
+                sample_str = _T("1.00GHz");
+        }
+            break;
+        //流量
+        case TDI_TODAY_TRAFFIC:
+        {
+            if (theApp.m_taskbar_data.separate_value_unit_with_space)
+                sample_str = _T("999.99 MB");
+            else
+                sample_str = _T("999.99MB");
+        }
+            break;
+        }
+        return sample_str;
     }
 }
 

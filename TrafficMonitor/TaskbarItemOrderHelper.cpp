@@ -86,7 +86,7 @@ CString CTaskbarItemOrderHelper::GetItemDisplayName(CommonDisplayItem item)
 bool CTaskbarItemOrderHelper::IsItemDisplayed(CommonDisplayItem item)
 {
     bool displayed = true;
-    if (!item.is_plugin)
+    if (!item.IsPlugin())
     {
         if ((item == TDI_CPU_TEMP) && !theApp.m_general_data.IsHardwareEnable(HI_CPU))
             displayed = false;

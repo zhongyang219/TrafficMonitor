@@ -132,7 +132,7 @@ void CSettingsHelper::SaveDisplayStr(const wchar_t* AppName, const DispStrings& 
 {
     for (const auto& item : disp_str.GetAllItems())
     {
-        if (!item.first.is_plugin)
+        if (!item.first.IsPlugin())
         {
             WriteString(AppName, item.first.GetItemIniKeyName(), item.second);
         }

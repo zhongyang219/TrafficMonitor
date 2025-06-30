@@ -429,39 +429,10 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
     std::map<DisplayItem, DrawStr> map_str;
     for (auto iter = all_skin_items.begin(); iter != all_skin_items.end(); ++iter)
     {
-        if (iter->is_plugin)
+        if (iter->IsPlugin())
             continue;
         DrawStr draw_str;
-        switch (iter->item_type)
-        {
-        case TDI_UP:
-            draw_str.value = _T("88.8 KB/s");
-            break;
-        case TDI_DOWN:
-            draw_str.value = _T("88.9 KB/s");
-            break;
-        case TDI_TOTAL_SPEED:
-            draw_str.value = _T("90 KB/s");
-            break;
-        case TDI_TODAY_TRAFFIC:
-            draw_str.value = _T("100 MB");
-            break;
-        case TDI_CPU:
-            draw_str.value = _T("50 %");
-            break;
-        case TDI_MEMORY:
-            draw_str.value = _T("51 %");
-            break;
-        case TDI_CPU_TEMP: case TDI_GPU_TEMP: case TDI_HDD_TEMP: case TDI_MAIN_BOARD_TEMP:
-            draw_str.value = _T("40 °C");
-            break;
-        case TDI_CPU_FREQ:
-            draw_str.value = _T("1.0 GHz");
-            break;
-        default:
-            draw_str.value = _T("99");
-            break;
-        }
+        draw_str.value = CommonDisplayItem(iter->ItemType()).GetItemValueSampleText(true);
         if (!m_layout_info.no_label)
         {
             if (m_setting_data.disp_str.IsInvalid())
@@ -469,7 +440,7 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
             else
                 draw_str.label = m_setting_data.disp_str.GetConst(*iter).c_str();
         }
-        map_str[iter->item_type] = draw_str;
+        map_str[iter->ItemType()] = draw_str;
     }
 
     //获取文本颜色
@@ -627,63 +598,16 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info)
 
 void CSkinFile::DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font) const
 {
-    //获取每个项目显示的文本
+    //获取每个项目显示的文本和数值文本
     std::map<DisplayItem, DrawStr> map_str;
     if (!m_layout_info.no_label)
     {
         for (const auto& display_item : AllDisplayItems)
         {
             map_str[display_item].label = theApp.m_main_wnd_data.disp_str.GetConst(display_item).c_str();
+            map_str[display_item].value = CommonDisplayItem(display_item).GetItemValueText(true);
         }
     }
-
-    //上传/下载
-    CString in_speed = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data);
-    CString out_speed = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data);
-    CString total_speed = CCommon::DataSizeToString(theApp.m_in_speed + theApp.m_out_speed, theApp.m_main_wnd_data);
-    if (!theApp.m_main_wnd_data.hide_unit || theApp.m_main_wnd_data.speed_unit == SpeedUnit::AUTO)
-    {
-        in_speed += _T("/s");
-        out_speed += _T("/s");
-        total_speed += _T("/s");
-    }
-    map_str[TDI_UP].value = out_speed.GetString();
-    map_str[TDI_DOWN].value = in_speed.GetString();
-    map_str[TDI_TOTAL_SPEED].value = total_speed.GetString();
-
-    if (theApp.m_main_wnd_data.swap_up_down) //交换上传和下载位置
-    {
-        std::swap(map_str[TDI_UP], map_str[TDI_DOWN]);
-    }
-
-    //CPU/内存/显卡利用率
-    map_str[TDI_CPU].value = CCommon::UsageToString(theApp.m_cpu_usage, theApp.m_main_wnd_data);
-
-    map_str[TDI_CPU_FREQ].value = CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_main_wnd_data);
-    CString str_memory_value;
-    if (theApp.m_main_wnd_data.memory_display == MemoryDisplay::MEMORY_USED)
-        str_memory_value = CCommon::DataSizeToString(static_cast<unsigned long long>(theApp.m_used_memory) * 1024, theApp.m_main_wnd_data.separate_value_unit_with_space);
-    else if (theApp.m_main_wnd_data.memory_display == MemoryDisplay::MEMORY_AVAILABLE)
-        str_memory_value = CCommon::DataSizeToString((static_cast<unsigned long long>(theApp.m_total_memory) - static_cast<unsigned long long>(theApp.m_used_memory)) * 1024, theApp.m_main_wnd_data.separate_value_unit_with_space);
-    else
-        str_memory_value = CCommon::UsageToString(theApp.m_memory_usage, theApp.m_main_wnd_data);
-    map_str[TDI_MEMORY].value = str_memory_value;
-    map_str[TDI_GPU_USAGE].value = CCommon::UsageToString(theApp.m_gpu_usage, theApp.m_main_wnd_data);
-    map_str[TDI_HDD_USAGE].value = CCommon::UsageToString(theApp.m_hdd_usage, theApp.m_main_wnd_data);
-
-    //温度
-    auto getTemperatureStr = [&](DisplayItem display_item, float temperature)
-        {
-            map_str[display_item].value = CCommon::TemperatureToString(temperature, theApp.m_main_wnd_data);
-        };
-    getTemperatureStr(TDI_CPU_TEMP, theApp.m_cpu_temperature);
-    getTemperatureStr(TDI_GPU_TEMP, theApp.m_gpu_temperature);
-    getTemperatureStr(TDI_HDD_TEMP, theApp.m_hdd_temperature);
-    getTemperatureStr(TDI_MAIN_BOARD_TEMP, theApp.m_main_board_temperature);
-
-    //总流量
-    CString str_traffic = CCommon::KBytesToString((theApp.m_today_up_traffic + theApp.m_today_down_traffic) / 1024u);
-    map_str[TDI_TODAY_TRAFFIC].value = str_traffic.GetString();
 
     //获取文本颜色
     std::map<CommonDisplayItem, COLORREF> text_colors{};
