@@ -355,22 +355,7 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
         case TDI_GPU_USAGE:
         case TDI_HDD_USAGE:
         {
-            //获取当前数值
-            int value = 0;
-            if (item_type == TDI_CPU)
-                value = theApp.m_cpu_usage;
-            else if (item_type == TDI_MEMORY)
-                value = theApp.m_memory_usage;
-            else if (item_type == TDI_GPU_USAGE)
-                value = theApp.m_gpu_usage;
-            else if (item_type == TDI_HDD_USAGE)
-                value = theApp.m_hdd_usage;
-
-            //当数值达到100时，使用字符串“100”作为宽度，防止显示不全
-            if (value >= 100)
-                sample_str = _T("100");
-            else
-                sample_str = _T("99");
+            sample_str = _T("100");
             if (!theApp.m_taskbar_data.hide_percent)
             {
                 if (theApp.m_taskbar_data.separate_value_unit_with_space)
