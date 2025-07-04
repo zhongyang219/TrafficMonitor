@@ -1,4 +1,4 @@
-//Ê¹ÓÃ Windows Ó³Ïñ×é¼ş£¨WIC£©½«Í¼±ê£¨HICON£©×ª»»Îª¾ßÓĞÍ¸Ã÷¶ÈµÄPARGB32Î»Í¼£¬²¢Ìí¼Óµ½²Ëµ¥ÏîÖĞ
+//ä½¿ç”¨ Windows æ˜ åƒç»„ä»¶ï¼ˆWICï¼‰å°†å›¾æ ‡ï¼ˆHICONï¼‰è½¬æ¢ä¸ºå…·æœ‰é€æ˜åº¦çš„PARGB32ä½å›¾ï¼Œå¹¶æ·»åŠ åˆ°èœå•é¡¹ä¸­
 //https://docs.microsoft.com/en-us/previous-versions/bb757020(v=msdn.10)
 
 #pragma once
@@ -14,7 +14,7 @@ private:
     HRESULT _hrOleInit{};
     IWICImagingFactory *m_pWICFactory{};
 
-    static CWICFactory m_instance;      //CWICFactoryÀàÎ¨Ò»µÄ¶ÔÏó
+    static CWICFactory m_instance;      //CWICFactoryç±»å”¯ä¸€çš„å¯¹è±¡
 
 private:
     CWICFactory();
@@ -26,7 +26,7 @@ public:
     CMenuIcon();
     ~CMenuIcon();
 
-    //ÏòÒ»¸ö²Ëµ¥ÏîÌí¼ÓÍ¼±ê
+    //å‘ä¸€ä¸ªèœå•é¡¹æ·»åŠ å›¾æ ‡
     static HRESULT AddIconToMenuItem(HMENU hmenu, int iMenuItem, BOOL fByPosition, HICON hicon);
 
 private:

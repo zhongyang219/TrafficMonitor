@@ -1,4 +1,4 @@
-﻿// CTabCtrlEx.cpp: 实现文件
+// CTabCtrlEx.cpp: 实现文件
 //
 
 #include "stdafx.h"

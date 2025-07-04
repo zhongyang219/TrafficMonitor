@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "SkinFile.h"
 #include "Common.h"
 #include "FilePathHelper.h"

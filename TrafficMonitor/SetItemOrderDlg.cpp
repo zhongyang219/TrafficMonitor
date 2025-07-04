@@ -1,4 +1,4 @@
-﻿// SetItemOrderDlg.cpp: 实现文件
+// SetItemOrderDlg.cpp: 实现文件
 //
 
 #include "stdafx.h"

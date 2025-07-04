@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "MainWndSettingsDlg.h"
 #include "TaskBarSettingsDlg.h"
 #include "GeneralSettingsDlg.h"

@@ -22,15 +22,15 @@ public:
 	CCalendarHelper();
 	~CCalendarHelper();
 
-	//ÊÇ·ñÎªÈòÄê
+	//æ˜¯å¦ä¸ºé—°å¹´
 	static bool IsLeapYear(int year);
-	//¸ù¾İÈÕÆÚ¼ÆËãĞÇÆÚ(0~6£ºĞÇÆÚÈÕ~ĞÇÆÚÁù)
+	//æ ¹æ®æ—¥æœŸè®¡ç®—æ˜ŸæœŸ(0~6ï¼šæ˜ŸæœŸæ—¥~æ˜ŸæœŸå…­)
 	static int CaculateWeekDay(int y, int m, int d);
-	//¼ÆËãÒ»¸öÔÂÓĞ¶àÉÙÌì
+	//è®¡ç®—ä¸€ä¸ªæœˆæœ‰å¤šå°‘å¤©
 	static int DaysInMonth(int year, int month);
 
-	//»ñÈ¡Ö¸¶¨ÔÂ·İµÄÈÕÀúÊı¾İ£¬²¢±£´æÔÚÊı×écalendarÖĞ
-	//Èç¹ûsunday_firstÎªtrue£¬Ôò½«ÖÜÈÕ×÷ÎªÃ¿ÖÜµÄµÚÒ»Ìì£¬·ñÔò£¬½«ÖÜÒ»×÷ÎªÃ¿ÖÜµÄµÚÒ»Ìì
+	//è·å–æŒ‡å®šæœˆä»½çš„æ—¥å†æ•°æ®ï¼Œå¹¶ä¿å­˜åœ¨æ•°ç»„calendarä¸­
+	//å¦‚æœsunday_firstä¸ºtrueï¼Œåˆ™å°†å‘¨æ—¥ä½œä¸ºæ¯å‘¨çš„ç¬¬ä¸€å¤©ï¼Œå¦åˆ™ï¼Œå°†å‘¨ä¸€ä½œä¸ºæ¯å‘¨çš„ç¬¬ä¸€å¤©
 	static void GetCalendar(int year, int month, DayTraffic calendar[CALENDAR_HEIGHT][CALENDAR_WIDTH], bool sunday_first = true);
 
 };
