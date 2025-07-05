@@ -111,7 +111,34 @@ namespace DrawCommonHelper
     //stretch_mode[int]：拉伸模式
     void ImageDrawAreaConvert(CSize image_size, CPoint& start_point, CSize& size, IDrawCommon::StretchMode stretch_mode);
 
+    struct Point
+    {
+    public:
+        Point() {}
+        Point(int x, int y)
+            : m_x(x), m_y(y)
+        {}
+        bool operator==(const Point& a) const
+        {
+            return m_x == a.m_x && m_y == a.m_y;
+        }
+        bool operator<(const Point& a) const
+        {
+            if (m_x == a.m_x)
+                return m_y < a.m_y;
+            else
+                return m_x < a.m_x;
+        }
+
+    private:
+        int m_x{};
+        int m_y{};
+    };
+
+    //获取一个位置中完全透明的点，并保存到points中
+    void GetBitmapAlphaPixel(HBITMAP hBitmap, std::set<Point>& points);
+
     //修正位图中文本部分的Alpha通道
-    //使用了UpdateLayeredWindow后，使用GDI绘制的文本也会变得透明，此函数会遍历bitmap中alpha值为0的部分，将其修正为正确的alpha值
-    void FixBitmapTextAlpha(HBITMAP hBitmap, BYTE alpha, const std::vector<CRect>& rects);
+    //使用了UpdateLayeredWindow后，使用GDI绘制的文本也会变得透明，此函数会遍历bitmap中alpha值为0，但是不在alpha_points中的像素，将其修正为正确的alpha值
+    void FixBitmapTextAlpha(HBITMAP hBitmap, BYTE alpha, std::set<Point> alpha_points);
 };
