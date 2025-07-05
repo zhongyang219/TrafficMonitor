@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "WIC.h"
+#include "TrafficMonitor.h"
 
 CWICFactory CWICFactory::m_instance;
 
@@ -44,6 +45,10 @@ CMenuIcon::~CMenuIcon()
 
 HRESULT CMenuIcon::AddIconToMenuItem(HMENU hmenu, int iMenuItem, BOOL fByPosition, HICON hicon)
 {
+    //由于Wine环境下菜单图标会出现异常，因此不为菜单添加图标
+    if (theApp.m_win_version.IsWine())
+        return 0;
+
 #ifndef COMPILE_IN_WIN_XP
     HBITMAP hbmp{};
     HRESULT hr = GetBitmapByIcon(hicon, hbmp);

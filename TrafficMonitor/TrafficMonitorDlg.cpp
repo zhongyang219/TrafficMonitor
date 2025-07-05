@@ -1660,7 +1660,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
         if (!theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_show_task_bar_wnd)
         {
             //每隔10秒钟检测一次是否可以嵌入任务栏
-            if (IsTaskbarWndValid() && m_timer_cnt % 10 == 1)
+            if (!theApp.m_win_version.IsWine() && IsTaskbarWndValid() && m_timer_cnt % 10 == 1)
             {
                 if (m_tBarDlg->GetCannotInsertToTaskBar() && m_insert_to_taskbar_cnt < MAX_INSERT_TO_TASKBAR_CNT)
                 {

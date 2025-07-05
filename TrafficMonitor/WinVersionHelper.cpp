@@ -17,6 +17,14 @@ CWinVersionHelper::CWinVersionHelper()
 			pfRtlGetNtVersionNumbers(&dwMajorVer, &dwMinorVer, &dwBuildNumber);
 			dwBuildNumber &= 0x0ffff;
 		}
+
+		//判断是否在Wine环境中
+		FARPROC pProc = GetProcAddress(hModNtdll, "wine_get_version");
+		if (pProc != NULL)
+		{
+			m_is_wine = true;
+		}
+
 		::FreeLibrary(hModNtdll);
 		hModNtdll = NULL;
 	}
@@ -89,4 +97,9 @@ bool CWinVersionHelper::IsWindows8OrLater() const
 bool CWinVersionHelper::IsWindows10OrLater() const
 {
     return m_major_version >= 10;
+}
+
+bool CWinVersionHelper::IsWine() const
+{
+	return m_is_wine;
 }
