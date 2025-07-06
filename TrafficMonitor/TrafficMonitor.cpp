@@ -1302,10 +1302,10 @@ void CTrafficMonitorApp::UpdatePluginMenu(CMenu* pMenu, ITMPlugin* plugin, int p
 
 void CTrafficMonitorApp::CheckWindows11Taskbar()
 {
-    HWND hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL);
     // 在“Shell_TrayWnd”的子窗口找到类名为“Windows.UI.Composition.DesktopWindowContentBridge”的窗口则认为是Windows11的任务栏
     if (m_win_version.IsWindows11OrLater())
     {
+        HWND hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL);
         m_is_windows11_taskbar = (::FindWindowExW(hTaskbar, 0, L"Windows.UI.Composition.DesktopWindowContentBridge", NULL) != NULL);
     }
     else

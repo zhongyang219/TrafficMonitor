@@ -865,6 +865,7 @@
     <ClInclude Include="Win11TaskbarSettingDlg.h" />
     <ClInclude Include="WindowsSettingHelper.h" />
     <ClInclude Include="WindowsWebExperienceDetector.h" />
+    <ClInclude Include="WineTaskbarDlg.h" />
     <ClInclude Include="WinVersionHelper.h" />
   </ItemGroup>
   <ItemGroup>
@@ -981,6 +982,7 @@
     <ClCompile Include="Win11TaskbarSettingDlg.cpp" />
     <ClCompile Include="WindowsSettingHelper.cpp" />
     <ClCompile Include="WindowsWebExperienceDetector.cpp" />
+    <ClCompile Include="WineTaskbarDlg.cpp" />
     <ClCompile Include="WinVersionHelper.cpp" />
   </ItemGroup>
   <ItemGroup>

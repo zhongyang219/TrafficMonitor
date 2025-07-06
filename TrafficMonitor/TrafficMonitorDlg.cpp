@@ -15,6 +15,7 @@
 #include "SupportedRenderEnums.h"
 #include "ClassicalTaskbarDlg.h"
 #include "Win11TaskbarDlg.h"
+#include "WineTaskbarDlg.h"
 #include "TaskbarHelper.h"
 #include "SkinManager.h"
 
@@ -565,7 +566,9 @@ void CTrafficMonitorDlg::OpenTaskBarWnd()
 {
     // 强制初始化theApp.m_is_windows11_taskbar的值
     theApp.CheckWindows11Taskbar();
-    if (theApp.IsWindows11Taskbar())
+    if (theApp.m_win_version.IsWine())
+        m_tBarDlg = new CWineTaskbarDlg();
+    else if (theApp.IsWindows11Taskbar())
         m_tBarDlg = new CWin11TaskbarDlg();
     else
         m_tBarDlg = new CClassicalTaskbarDlg();
