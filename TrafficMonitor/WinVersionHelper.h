@@ -12,6 +12,7 @@ public:
     bool IsWindows8Point1OrLater() const;       //判断Windows版本是否大于等于Windows8.1
     bool IsWindows8OrLater() const;
     bool IsWindows10OrLater() const;
+	bool IsWine() const;						//判断是否在Wine环境下
 
 	int GetMajorVersion() const { return m_major_version; }
 	int GetMinorVersion() const { return m_minor_version; }
@@ -20,4 +21,5 @@ protected:
 	int m_major_version{};
 	int m_minor_version{};
 	int m_build_number{};
+	bool m_is_wine{};
 };

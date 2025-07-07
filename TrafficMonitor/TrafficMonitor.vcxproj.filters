@@ -553,6 +553,9 @@
     <ClInclude Include="DisplayItem.h">
       <Filter>源文件和头文件\公共的类\DisplayItem</Filter>
     </ClInclude>
+    <ClInclude Include="WineTaskbarDlg.h">
+      <Filter>源文件和头文件\TaskBarDlg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -818,6 +821,9 @@
     </ClCompile>
     <ClCompile Include="DisplayItem.cpp">
       <Filter>源文件和头文件\公共的类\DisplayItem</Filter>
+    </ClCompile>
+    <ClCompile Include="WineTaskbarDlg.cpp">
+      <Filter>源文件和头文件\TaskBarDlg</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

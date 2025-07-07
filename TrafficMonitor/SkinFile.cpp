@@ -555,23 +555,15 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info)
         Gdiplus::Image* background_image{ show_more_info ? m_background_png_l : m_background_png_s };
         gdiplus_drawer.DrawImage(background_image, CPoint(0, 0), rect.Size(), CDrawCommon::StretchMode::FILL);
         
+        //保存完全透明的像素点
+        std::set<DrawCommonHelper::Point> alpha_points;
+        DrawCommonHelper::GetBitmapAlphaPixel(hBitMap, alpha_points);
+
         //绘制显示项目
         DrawItemsInfo(gdiplus_drawer, layout, m_font);
 
-        //重新设置自绘插件区域的alpha值。
-        //插件自绘时可能会使用GDI绘制文本，由于使用了UpdateLayeredWindow函数，使用GDI的绘图函数绘制文本时会导致文本变得透明。
-        //这里遍历所有插件自绘区域，将alpha值为0的部分修正为正确的alpha值。
-        std::vector<CRect> rects;
-        for (const auto& plugin_item : theApp.m_plugins.GetPluginItems())
-        {
-            const auto& layout_item = layout.GetItem(plugin_item);
-            if (plugin_item->IsCustomDraw() && layout_item.show)
-            {
-                CRect rect(CPoint(layout_item.x, layout_item.y), CSize(layout_item.width, m_layout_info.text_height));
-                rects.push_back(rect);
-            }
-        }
-        DrawCommonHelper::FixBitmapTextAlpha(hBitMap, m_alpha, rects);
+        //找出绘制显示项目前不透明，但是绘制后透明的点，并修正其alpha值
+        DrawCommonHelper::FixBitmapTextAlpha(hBitMap, m_alpha, alpha_points);
 
         SIZE sizeWindow = rect.Size();
         POINT ptSrc = { 0,0 };
