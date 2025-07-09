@@ -440,6 +440,7 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
         {
             auto* p_dc = static_cast<CDrawCommon&>(drawer).GetDC();
             item->DrawItem(p_dc->GetSafeHdc(), rect.left, rect.top, rect.Width(), rect.Height(), background_brightness < 128);
+            p_dc->SelectObject(&m_font);
         }
         else if (typeid(drawer) == typeid(CTaskBarDlgDrawCommon))
         {
