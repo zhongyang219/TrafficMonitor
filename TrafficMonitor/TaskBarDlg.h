@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Common.h"
 #include "afxwin.h"
 #include "DrawCommon.h"

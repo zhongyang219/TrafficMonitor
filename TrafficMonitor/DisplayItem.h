@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "PluginInterface.h"
 
 //内置的显示的项目

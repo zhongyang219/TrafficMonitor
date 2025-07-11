@@ -9,23 +9,23 @@ public:
 	CHistoryTrafficListCtrl();
 	~CHistoryTrafficListCtrl();
 
-	void EnableDrawItemRange(bool draw = true) { m_draw_item_range = draw; }	//ÉèÖÃÊÇ·ñÒªÔÚÄ³Ò»ÁĞµ¥Ôª¸ñÖĞ»æÖÆ±íÊ¾ÊıÖµ´óĞ¡µÄ¾ØĞÎ
-	void SetDrawItemRangeRow(int row) { m_draw_item_range_row = row; }			//ÉèÖÃÒª»æÖÆ±íÊ¾ÊıÖµ´óĞ¡µÄ¾ØĞÎµÄÁĞ£¬×¢Òâ´ËÁĞ±ØĞëÎª×îÓÒ±ßµÄÁĞ£¬·ñÔò£¬´ËÁĞÓÒ±ßµÄËùÓĞÁĞ½«ÎŞ·¨ÏÔÊ¾
-	void SetDrawItemRangeData(int item, double range, COLORREF color);			//ÉèÖÃÄ³Ò»ĞĞµÄÏîÄ¿Êı¾İ´óĞ¡£¨È¡ÖµÎª1~1000£©ºÍÑÕÉ«
-	void SetDrawItemRangMargin(int margin) { m_margin = margin; }			//ÉèÖÃ»æÖÆ»æÖÆµÄ¾ØĞÎµÄ±ßÔµµ½µ¥Ôª¸ñ±ß¿òµÄ¾ØĞÎ£¬´ËÖµÔ½´óÔò»æÖÆµÄ¾ØĞÎÔ½Ï¸£¬µ«ÊÇ²»ÄÜ³¬¹ıÁĞ±íĞĞ¾àµÄÒ»°ë
-	void SetDrawItemRangInLogScale(bool log_scale);				//ÉèÖÃÒª»æÖÆ±íÊ¾ÊıÖµ´óĞ¡µÄ¾ØĞÎÊ±ÊÇ·ñÊ¹ÓÃ¶ÔÊı±ÈÀı£¬·ñÔòÊ¹ÓÃÏßĞÔ±ÈÀı
+	void EnableDrawItemRange(bool draw = true) { m_draw_item_range = draw; }	//è®¾ç½®æ˜¯å¦è¦åœ¨æŸä¸€åˆ—å•å…ƒæ ¼ä¸­ç»˜åˆ¶è¡¨ç¤ºæ•°å€¼å¤§å°çš„çŸ©å½¢
+	void SetDrawItemRangeRow(int row) { m_draw_item_range_row = row; }			//è®¾ç½®è¦ç»˜åˆ¶è¡¨ç¤ºæ•°å€¼å¤§å°çš„çŸ©å½¢çš„åˆ—ï¼Œæ³¨æ„æ­¤åˆ—å¿…é¡»ä¸ºæœ€å³è¾¹çš„åˆ—ï¼Œå¦åˆ™ï¼Œæ­¤åˆ—å³è¾¹çš„æ‰€æœ‰åˆ—å°†æ— æ³•æ˜¾ç¤º
+	void SetDrawItemRangeData(int item, double range, COLORREF color);			//è®¾ç½®æŸä¸€è¡Œçš„é¡¹ç›®æ•°æ®å¤§å°ï¼ˆå–å€¼ä¸º1~1000ï¼‰å’Œé¢œè‰²
+	void SetDrawItemRangMargin(int margin) { m_margin = margin; }			//è®¾ç½®ç»˜åˆ¶ç»˜åˆ¶çš„çŸ©å½¢çš„è¾¹ç¼˜åˆ°å•å…ƒæ ¼è¾¹æ¡†çš„çŸ©å½¢ï¼Œæ­¤å€¼è¶Šå¤§åˆ™ç»˜åˆ¶çš„çŸ©å½¢è¶Šç»†ï¼Œä½†æ˜¯ä¸èƒ½è¶…è¿‡åˆ—è¡¨è¡Œè·çš„ä¸€åŠ
+	void SetDrawItemRangInLogScale(bool log_scale);				//è®¾ç½®è¦ç»˜åˆ¶è¡¨ç¤ºæ•°å€¼å¤§å°çš„çŸ©å½¢æ—¶æ˜¯å¦ä½¿ç”¨å¯¹æ•°æ¯”ä¾‹ï¼Œå¦åˆ™ä½¿ç”¨çº¿æ€§æ¯”ä¾‹
 
 protected:
 	struct ItemData
 	{
-		double data_value;		//Òª»æÖÆµÄ¾ØĞÎ±íÊ¾µÄÊıÖµ´óĞ¡£¬·¶Î§Îª0~1000
-		COLORREF color;		//Òª»æÖÆµÄ¾ØĞÎµÄÑÕÉ«
+		double data_value;		//è¦ç»˜åˆ¶çš„çŸ©å½¢è¡¨ç¤ºçš„æ•°å€¼å¤§å°ï¼ŒèŒƒå›´ä¸º0~1000
+		COLORREF color;		//è¦ç»˜åˆ¶çš„çŸ©å½¢çš„é¢œè‰²
 	};
-	bool m_draw_item_range{ false };		//ÊÇ·ñĞèÒªÔÚÄ³Ò»ÁĞµ¥Ôª¸ñÖĞ»æÖÆ±íÊ¾ÊıÖµ´óĞ¡µÄ¾ØĞÎ
-	int m_draw_item_range_row{};		//ĞèÒª»æÖÆ±íÊ¾ÊıÖµ´óĞ¡µÄ¾ØĞÎµÄÁĞ
+	bool m_draw_item_range{ false };		//æ˜¯å¦éœ€è¦åœ¨æŸä¸€åˆ—å•å…ƒæ ¼ä¸­ç»˜åˆ¶è¡¨ç¤ºæ•°å€¼å¤§å°çš„çŸ©å½¢
+	int m_draw_item_range_row{};		//éœ€è¦ç»˜åˆ¶è¡¨ç¤ºæ•°å€¼å¤§å°çš„çŸ©å½¢çš„åˆ—
 	int m_margin{};
-	vector<ItemData> m_item_rage_data;	//ÓÃÓÚ±íÊ¾Ã¿Ò»ÏîĞèÒª»æÖÆµÄÊı¾İ´óĞ¡ºÍ»æÍ¼µÄÑÕÉ«
-	bool m_use_log_scale{ false };		//Èç¹ûÎªtrueÔòÊ¹ÓÃ¶ÔÊı±ÈÀı»æÖÆ¾ØĞÎ£¬·ñÔòÊ¹ÓÃÏßĞÔ±ÈÀı
+	vector<ItemData> m_item_rage_data;	//ç”¨äºè¡¨ç¤ºæ¯ä¸€é¡¹éœ€è¦ç»˜åˆ¶çš„æ•°æ®å¤§å°å’Œç»˜å›¾çš„é¢œè‰²
+	bool m_use_log_scale{ false };		//å¦‚æœä¸ºtrueåˆ™ä½¿ç”¨å¯¹æ•°æ¯”ä¾‹ç»˜åˆ¶çŸ©å½¢ï¼Œå¦åˆ™ä½¿ç”¨çº¿æ€§æ¯”ä¾‹
 
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);

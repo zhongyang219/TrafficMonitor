@@ -1,4 +1,4 @@
-﻿// BaseDialog.cpp : 实现文件
+// BaseDialog.cpp : 实现文件
 //
 
 #include "stdafx.h"
@@ -362,6 +362,9 @@ BOOL CBaseDialog::OnInitDialog()
     {
         SetWindowPos(nullptr, 0, 0, m_window_size.cx, m_window_size.cy, SWP_NOZORDER | SWP_NOMOVE);
     }
+
+    // 置顶所有的对话框，防止用户在打开部分对话框后，转移到其他窗口，失去所有置顶特性
+    SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE
