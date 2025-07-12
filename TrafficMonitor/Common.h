@@ -17,96 +17,21 @@ public:
     static wstring AsciiToUnicode(const string& str);
     static string AsciiToStr(const std::wstring& wstr);
 
-    template<class T>
-    static void StringNormalize(T& str)
-    {
-        if (str.empty()) return;
-
-        int size = static_cast<int>(str.size());  //字符串的长度
-        if (size < 0) return;
-        int index1 = 0;     //字符串中第1个不是空格或控制字符的位置
-        int index2 = size - 1;  //字符串中最后一个不是空格或控制字符的位置
-        while (index1 < size && str[index1] >= 0 && str[index1] <= 32)
-            index1++;
-        while (index2 >= 0 && str[index2] >= 0 && str[index2] <= 32)
-            index2--;
-        if (index1 > index2)    //如果index1 > index2，说明字符串全是空格或控制字符
-            str.clear();
-        else if (index1 == 0 && index2 == size - 1) //如果index1和index2的值分别为0和size - 1，说明字符串前后没有空格或控制字符，直接返回
-            return;
-        else
-            str = str.substr(index1, index2 - index1 + 1);
-    }
+    static void StringNormalize(std::string& str);
+    static void StringNormalize(std::wstring& str);
 
     //将一个字符串分割成若干个字符（模板类型只能为string或wstring）
     //str: 原始字符串
     //div_ch: 用于分割的字符
     //result: 接收分割后的结果
-    template<class T>
-    static void StringSplit(const T& str, wchar_t div_ch, vector<T>& results, bool skip_empty = true, bool trim = true)
-    {
-        results.clear();
-        size_t split_index = -1;
-        size_t last_split_index = -1;
-        while (true)
-        {
-            split_index = str.find(div_ch, split_index + 1);
-            T split_str = str.substr(last_split_index + 1, split_index - last_split_index - 1);
-            if (trim)
-                StringNormalize(split_str);
-            if (!split_str.empty() || !skip_empty)
-                results.push_back(split_str);
-            if (split_index == wstring::npos)
-                break;
-            last_split_index = split_index;
-        }
-    }
+    static void StringSplit(const std::string& str, char div_ch, vector<std::string>& results, bool skip_empty = true, bool trim = true);
+    static void StringSplit(const std::wstring& str, wchar_t div_ch, vector<std::wstring>& results, bool skip_empty = true, bool trim = true);
 
-    template<class T>
-    static void StringSplit(const T& str, const T& div_str, vector<T>& results, bool skip_empty = true, bool trim = true)
-    {
-        results.clear();
-        size_t split_index = 0 - div_str.size();
-        size_t last_split_index = 0 - div_str.size();
-        while (true)
-        {
-            split_index = str.find(div_str, split_index + div_str.size());
-            T split_str = str.substr(last_split_index + div_str.size(), split_index - last_split_index - div_str.size());
-            if (trim)
-                StringNormalize(split_str);
-            if (!split_str.empty() || !skip_empty)
-                results.push_back(split_str);
-            if (split_index == wstring::npos)
-                break;
-            last_split_index = split_index;
-        }
-    }
+    static void StringSplit(const std::string& str, const std::string& div_str, vector<std::string>& results, bool skip_empty = true, bool trim = true);
+    static void StringSplit(const std::wstring& str, const std::wstring& div_str, vector<std::wstring>& results, bool skip_empty = true, bool trim = true);
 
-
-    template<class T>
-    static bool StringTransform(T& str, bool upper)
-    {
-        if (str.empty()) return false;
-        if (upper)
-        {
-            for (auto& ch : str)
-            {
-                {
-                    if (ch >= 'a' && ch <= 'z')
-                        ch -= 32;
-                }
-            }
-        }
-        else
-        {
-            for (auto& ch : str)
-            {
-                if (ch >= 'A' && ch <= 'Z')
-                    ch += 32;
-            }
-        }
-        return true;
-    }
+    static bool StringTransform(std::string& str, bool upper);
+    static bool StringTransform(std::wstring& str, bool upper);
 
     //读取文件内容
     static bool GetFileContent(const wchar_t* file_path, string& contents_buff, bool binary = true);
@@ -254,46 +179,9 @@ public:
     /// 字符串相似度算法-编辑距离法
     /// </summary>
     /// <returns>返回的值为0~1，越大相似度越高</returns>
-    template<class T>
-    static double StringSimilarDegree_LD(const T& srcString, const T& matchString)
-    {
-        int n = static_cast<int>(srcString.size());
-        int m = static_cast<int>(matchString.size());
-        //int[, ] d = new int[n + 1, m + 1]; // matrix
-        vector<vector<int>> d(n + 1, vector<int>(m + 1));
-        int cost; // cost
-        // Step 1（如果其中一个字符串长度为0，则相似度为1）？
-        //if (n == 0) return (double)m / max(srcString.size(), matchString.size());
-        //if (m == 0) return (double)n / max(srcString.size(), matchString.size());
-        if (n == 0 || m == 0) return 0.0;   //如果其中一个字符串长度为0，则相似度为0
-        // Step 2
-        for (int i = 0; i <= n; i++)
-        {
-            d[i][0] = i;
-        }
-        for (int j = 0; j <= m; j++)
-        {
-            d[0][j] = j;
-        }
-        // Step 3
-        for (int i = 1; i <= n; i++)
-        {
-            //Step 4
-            for (int j = 1; j <= m; j++)
-            {
-                // Step 5
-                cost = (matchString.substr(j - 1, 1) == srcString.substr(i - 1, 1) ? 0 : 1);
-                // Step 6
-                d[i][j] = min(min(d[i - 1][j] + 1, d[i][j - 1] + 1), d[i - 1][j - 1] + cost);
-            }
-        }
-
-        // Step 7
-        double ds = 1 - (double)d[n][m] / max(srcString.size(), matchString.size());
-
-        return ds;
-    }
-
+    static double StringSimilarDegree_LD(const std::string& srcString, const std::string& matchString);
+    static double StringSimilarDegree_LD(const std::wstring& srcString, const std::wstring& matchString);
+    
     //设置线程语言
     static void SetThreadLanguage(WORD language);
 
