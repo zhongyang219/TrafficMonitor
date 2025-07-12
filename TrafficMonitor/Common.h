@@ -240,6 +240,21 @@ public:
         }
     }
 
+    /**
+     * @brief   限制一个数的范围
+     * @param   value 要限制范围的值
+     * @param   min_value 最小值
+     * @param   max_value 最大值
+     */
+    template<class T>
+    static void ValidatValue(T& value, const T& min_value, const T& max_value)
+    {
+        if (value < min_value)
+            value = min_value;
+        if (value > max_value)
+            value = max_value;
+    }
+
     //获取Windows主题颜色
     static COLORREF GetWindowsThemeColor();
 
