@@ -156,14 +156,7 @@ public:
         }
 		info += theApp.GetSystemInfoString();
 		dlg.SetMessageText(info);
-
-        //设置图标
-        HICON hIcon;
-        HRESULT hr = LoadIconWithScaleDown(NULL, IDI_ERROR, theApp.DPI(32), theApp.DPI(32), &hIcon);
-
-        if (SUCCEEDED(hr))
-            dlg.SetMessageIcon(hIcon);
-
+        dlg.SetStandarnMessageIcon(CMessageDlg::SI_ERROR);
         dlg.DoModal();
 	}
 

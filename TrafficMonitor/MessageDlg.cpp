@@ -10,6 +10,7 @@
 // CMessageDlg 对话框
 
 #define MESSAGE_DLG_ICON_SIZE (theApp.DPI(32))
+#define MESSAGE_DLG_ICON_VERTIAL_MARGIN (theApp.DPI(12))
 
 IMPLEMENT_DYNAMIC(CMessageDlg, CBaseDialog)
 
@@ -49,14 +50,38 @@ void CMessageDlg::SetMessageIcon(HICON hIcon)
     m_icon = hIcon;
 }
 
+void CMessageDlg::SetStandarnMessageIcon(StandardIcon standard_icon)
+{
+	HICON hIcon;
+	PCWSTR icon{};
+	switch (standard_icon)
+	{
+	case SI_INFORMATION:
+		icon = IDI_INFORMATION;
+		break;
+	case SI_WARNING:
+		icon = IDI_WARNING;
+		break;
+	case SI_ERROR:
+		icon = IDI_ERROR;
+		break;
+	}
+	HRESULT hr = LoadIconWithScaleDown(NULL, icon, theApp.DPI(32), theApp.DPI(32), &hIcon);
+	if (SUCCEEDED(hr))
+		SetMessageIcon(hIcon);
+}
+
 void CMessageDlg::SetInfoStaticSize(int cx)
 {
     if (m_icon != NULL && m_info_static.GetSafeHwnd() != NULL)
     {
         CRect rc_info{ m_rc_info };
+		//设置Static控件水平位置，为图标腾出空间
         rc_info.left = m_rc_info.left + MESSAGE_DLG_ICON_SIZE + theApp.DPI(8);
         if (cx > 0)
             rc_info.right = cx;
+		//设置Static控件的垂直位置
+		rc_info.MoveToY(rc_info.top + MESSAGE_DLG_ICON_VERTIAL_MARGIN);
         m_info_static.MoveWindow(rc_info);
     }
 }
@@ -108,16 +133,32 @@ BOOL CMessageDlg::OnInitDialog()
     //设置图标的位置
     if (m_icon != NULL)
     {
-        CRect rc_edit;
+		CRect rc_edit;
         m_message_edit.GetWindowRect(rc_edit);
+		rc_edit.top += (MESSAGE_DLG_ICON_VERTIAL_MARGIN * 2);
         ScreenToClient(rc_edit);
         m_icon_pos.x = rc_edit.left;
         m_icon_pos.y = (rc_edit.top - MESSAGE_DLG_ICON_SIZE) / 2;
+		m_message_edit.MoveWindow(rc_edit);
 
         m_info_static.GetWindowRect(m_rc_info);
         ScreenToClient(m_rc_info);
         SetInfoStaticSize(0);
     }
+
+	//没有图标，且消息标题为空时，隐藏Static控件
+	if (m_icon == NULL && m_info.IsEmpty())
+	{
+		CRect rc_edit;
+		m_message_edit.GetWindowRect(rc_edit);
+		ScreenToClient(rc_edit);
+		m_info_static.GetWindowRect(m_rc_info);
+		ScreenToClient(m_rc_info);
+		rc_edit.top = m_rc_info.top;
+		m_message_edit.MoveWindow(rc_edit);
+		m_info_static.ShowWindow(SW_HIDE);
+
+	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE

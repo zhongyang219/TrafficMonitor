@@ -5,6 +5,7 @@
 #include "TrafficMonitor.h"
 #include "IniHelper.h"
 #include "PluginUpdateHelper.h"
+#include "MessageDlg.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void TestHttpQequest()
@@ -105,4 +106,12 @@ void CTest::Test()
 void CTest::TestCommand()
 {
     //TestPlugin();
+
+    //测试消息对话框
+    CMessageDlg dlg;
+    dlg.SetWindowTitle(_T("System Info"));
+    dlg.SetInfoText(_T("System Information for TrafficMonitor."));
+    dlg.SetMessageText(theApp.GetSystemInfoString().GetString());
+    dlg.SetStandarnMessageIcon(CMessageDlg::SI_INFORMATION);
+    dlg.DoModal();
 }
