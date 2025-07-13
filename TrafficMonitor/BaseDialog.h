@@ -79,6 +79,8 @@ protected:
     void EnableDlgCtrl(UINT id, bool enable);
     void SetButtonIcon(UINT id, HICON hIcon);
     void SetRememberDlgSize(bool enable) { m_remember_dlg_size = enable; }
+    CRect GetControlRect(CWnd* pCtrl);
+    CRect GetControlRect(UINT id);
 
     //遍历所有子控件
     void IterateControls(std::function<void(CWnd*)> func);

@@ -260,6 +260,24 @@ void CBaseDialog::SetButtonIcon(UINT id, HICON hIcon)
         btn->SetIcon(hIcon);
 }
 
+CRect CBaseDialog::GetControlRect(CWnd* pCtrl)
+{
+    if (pCtrl != nullptr)
+    {
+        CRect rect;
+        pCtrl->GetWindowRect(rect);
+        ScreenToClient(rect);
+        return rect;
+    }
+    return CRect();
+}
+
+CRect CBaseDialog::GetControlRect(UINT id)
+{
+    CWnd* pCtrl = GetDlgItem(id);
+    return GetControlRect(pCtrl);
+}
+
 void CBaseDialog::IterateControls(std::function<void(CWnd*)> func)
 {
     func(this);

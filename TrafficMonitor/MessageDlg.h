@@ -49,13 +49,10 @@ protected:
 
     HICON m_icon{};
     CPoint m_icon_pos{};        //图标的位置
-    CRect m_rc_info{};          //错误信息Static控件的初始区域
 
 	//bool m_show_link_ctrl{ false };
 
 protected:
-    void SetInfoStaticSize(int cx);     //如果设置了图标，则需要将错误信息Static控件向右移动一些
-
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 	DECLARE_MESSAGE_MAP()
