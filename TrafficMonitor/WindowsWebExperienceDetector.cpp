@@ -5,6 +5,7 @@
 #include <winrt/Windows.ApplicationModel.h>
 #include <winrt/Windows.Management.Deployment.h>
 #include <winrt/Windows.Storage.h>
+#pragma comment(lib, "RuntimeObject.lib")
 #endif
 #include "TrafficMonitor.h"
 

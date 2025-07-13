@@ -288,7 +288,7 @@
       <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
-      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>powrprof.dll;api-ms-win-core-winrt-error-l1-1-1.dll;api-ms-win-core-winrt-l1-1-0.dll</DelayLoadDLLs>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -327,7 +327,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
-      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>powrprof.dll;api-ms-win-core-winrt-error-l1-1-1.dll;api-ms-win-core-winrt-l1-1-0.dll</DelayLoadDLLs>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -366,7 +366,7 @@
       <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
-      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>powrprof.dll;api-ms-win-core-winrt-error-l1-1-1.dll;api-ms-win-core-winrt-l1-1-0.dll</DelayLoadDLLs>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -443,7 +443,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
-      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>powrprof.dll;api-ms-win-core-winrt-error-l1-1-1.dll;api-ms-win-core-winrt-l1-1-0.dll</DelayLoadDLLs>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -525,7 +525,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
-      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>powrprof.dll;api-ms-win-core-winrt-error-l1-1-1.dll;api-ms-win-core-winrt-l1-1-0.dll</DelayLoadDLLs>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -568,7 +568,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
-      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>powrprof.dll;api-ms-win-core-winrt-error-l1-1-1.dll;api-ms-win-core-winrt-l1-1-0.dll</DelayLoadDLLs>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -611,7 +611,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>OpenHardwareMonitorApi.lib;%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
-      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>powrprof.dll;api-ms-win-core-winrt-error-l1-1-1.dll;api-ms-win-core-winrt-l1-1-0.dll</DelayLoadDLLs>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -696,7 +696,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>%(AdditionalDependencies);pdh.lib;Powrprof.lib;Dwmapi.lib</AdditionalDependencies>
-      <DelayLoadDLLs>powrprof.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>powrprof.dll;api-ms-win-core-winrt-error-l1-1-1.dll;api-ms-win-core-winrt-l1-1-0.dll</DelayLoadDLLs>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
