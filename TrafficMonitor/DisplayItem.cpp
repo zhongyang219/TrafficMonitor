@@ -93,6 +93,7 @@ std::wstring CommonDisplayItem::DefaultString(bool is_main_window) const
     if (is_plugin)
     {
         default_text = plugin_item->GetItemLableText();
+        default_text += L' ';
     }
     else
     {

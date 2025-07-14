@@ -475,7 +475,6 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
         }
         //画标签
         CString lable_text = theApp.m_taskbar_data.disp_str.GetConst(item).c_str();
-        lable_text += L' ';
         drawer.DrawWindowText(rect_label, lable_text, label_text_color, (vertical ? IDrawCommon::Alignment::CENTER : IDrawCommon::Alignment::LEFT));
         //画数值
         IDrawCommon::Alignment value_alignment{ theApp.m_taskbar_data.value_right_align ? IDrawCommon::Alignment::RIGHT : IDrawCommon::Alignment::LEFT };      //数值的对齐方式
@@ -841,8 +840,6 @@ void CTaskBarDlg::CalculateWindowSize()
                 else
                 {
                     CString lable_text = theApp.m_taskbar_data.disp_str.GetConst(plugin).c_str();
-                    if (!lable_text.IsEmpty())
-                        lable_text += L' ';
                     label_width = m_pDC->GetTextExtent(lable_text).cx;
                     value_width = m_pDC->GetTextExtent(plugin->GetItemValueSampleText()).cx;
                 }
