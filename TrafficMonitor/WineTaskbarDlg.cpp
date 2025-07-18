@@ -3,6 +3,7 @@
 
 void CWineTaskbarDlg::InitTaskbarWnd()
 {
+    SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 }
 
 void CWineTaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
@@ -11,7 +12,10 @@ void CWineTaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
     int screen_width = GetSystemMetrics(SM_CXSCREEN);
     int screen_height = GetSystemMetrics(SM_CYSCREEN);
     CRect rect{ m_rect };
-    rect.MoveToXY(screen_width - m_rect.Width(), screen_height - m_rect.Height());
+    if (theApp.m_taskbar_data.tbar_wnd_on_left)
+        rect.MoveToXY(0, screen_height - m_rect.Height());
+    else
+        rect.MoveToXY(screen_width - m_rect.Width(), screen_height - m_rect.Height());
     this->MoveWindow(rect);
 }
 
