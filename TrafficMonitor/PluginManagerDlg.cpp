@@ -1,4 +1,4 @@
-﻿// PluginManagerDlg.cpp: 实现文件
+// PluginManagerDlg.cpp: 实现文件
 //
 
 #include "stdafx.h"

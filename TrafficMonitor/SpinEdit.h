@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 // 这是一个带微调按钮的Edit控件，在CEdit右侧附加一个微调按钮，请预留空间
 // CSpinEdit
 

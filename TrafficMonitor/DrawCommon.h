@@ -1,4 +1,4 @@
-﻿//封装的绘图类
+//封装的绘图类
 #pragma once
 #include "IDrawCommon.h"
 #include "D2D1Support.h"

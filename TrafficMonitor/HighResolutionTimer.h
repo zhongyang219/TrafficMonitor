@@ -1,4 +1,4 @@
-﻿#include <MMSYSTEM.H>
+#include <MMSYSTEM.H>
 #pragma comment(lib, "WINMM.LIB")
 
 class CHighResolutionTimer
