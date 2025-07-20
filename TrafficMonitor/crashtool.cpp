@@ -115,6 +115,8 @@ public:
             pSymbol->SizeOfStruct = sizeof(SYMBOL_INFO);
             pSymbol->MaxNameLen = MAX_SYM_NAME;
 
+            stream << L"--------------------------------------\r\n";
+
             DWORD64 displacement = 0;
             if (SymFromAddr(GetCurrentProcess(), stackFrame.AddrPC.Offset, &displacement, pSymbol)) {
                 stream << L"Function: " << CCommon::AsciiToUnicode(pSymbol->Name) << L" (Displacement: " << displacement << L")\r\n";
