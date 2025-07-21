@@ -1,4 +1,4 @@
-﻿// CSkinPreviewView.cpp: 实现文件
+// CSkinPreviewView.cpp: 实现文件
 //
 
 #include "stdafx.h"

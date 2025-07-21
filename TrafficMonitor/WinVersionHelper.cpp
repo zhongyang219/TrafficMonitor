@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "WinVersionHelper.h"
 #include "WindowsSettingHelper.h"
 

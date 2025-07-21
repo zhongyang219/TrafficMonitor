@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "afxwin.h"
 #include "PictureStatic.h"
 #include "BaseDialog.h"

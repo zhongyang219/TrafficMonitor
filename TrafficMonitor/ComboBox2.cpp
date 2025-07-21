@@ -1,4 +1,4 @@
-﻿// ComboBox2.cpp: 实现文件
+// ComboBox2.cpp: 实现文件
 //
 
 #include "stdafx.h"

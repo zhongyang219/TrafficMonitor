@@ -27,7 +27,7 @@ public:
     ~CCPUUsage()
     {}
 
-    void SetUseCPUTimes(bool use_get_system_times);		//ÉèÖÃ»ñÈ¡CPUÀûÓÃÂÊµÄ·½Ê½£¬ÊÇÍ¨¹ıGetSystemTimes»¹ÊÇPdh
+    void SetUseCPUTimes(bool use_get_system_times);		//è®¾ç½®è·å–CPUåˆ©ç”¨ç‡çš„æ–¹å¼ï¼Œæ˜¯é€šè¿‡GetSystemTimesè¿˜æ˜¯Pdh
     int GetCpuUsage();
 
 private:
@@ -35,7 +35,7 @@ private:
     bool GetCPUUsageByPdh(int& cpu_usage);
 
 private:
-    bool m_use_get_system_times{ true };		//ÊÇ·ñÊ¹ÓÃGetSysTimeÕâ¸öAPIÀ´»ñÈ¡CPUÀûÓÃÂÊ
+    bool m_use_get_system_times{ true };		//æ˜¯å¦ä½¿ç”¨GetSysTimeè¿™ä¸ªAPIæ¥è·å–CPUåˆ©ç”¨ç‡
 
     FILETIME m_preidleTime{};
     FILETIME m_prekernelTime{};
@@ -48,8 +48,8 @@ class CCpuFreq : public CPdhQuery
 public:
     CCpuFreq();
 
-    // µ÷ÓÃ´Ëº¯Êı»ñÈ¡CPUÆµÂÊ¡£
-    // ×¢Òâ£ºµÚ¶ş´Îµ÷ÓÃ´Ëº¯Êı¿ªÊ¼²ÅÄÜ»ñÈ¡µ½Öµ£¬Á½´Îµ÷ÓÃµÄÊ±¼ä²»Ó¦¹ı¶Ì£¬×îºÃ´óÓÚ200ºÁÃë
+    // è°ƒç”¨æ­¤å‡½æ•°è·å–CPUé¢‘ç‡ã€‚
+    // æ³¨æ„ï¼šç¬¬äºŒæ¬¡è°ƒç”¨æ­¤å‡½æ•°å¼€å§‹æ‰èƒ½è·å–åˆ°å€¼ï¼Œä¸¤æ¬¡è°ƒç”¨çš„æ—¶é—´ä¸åº”è¿‡çŸ­ï¼Œæœ€å¥½å¤§äº200æ¯«ç§’
     bool GetCpuFreq(float& freq);
 
 private:

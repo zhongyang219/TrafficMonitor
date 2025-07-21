@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "TinyXml2Helper.h"
 #include "Common.h"
 

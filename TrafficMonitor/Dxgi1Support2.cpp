@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "Dxgi1Support2.h"
 #include "Common.h"
 #include "DllFunctions.h"

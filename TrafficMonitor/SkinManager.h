@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "CommonData.h"
 #include "SkinFile.h"
 
