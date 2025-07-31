@@ -181,14 +181,13 @@ bool CSkinFile::LoadFromXml(const wstring& file_path)
                         {
                             m_skin_info.text_color.push_back(atoi(str.c_str()));
                         }
-                    }
-
-                    if (m_skin_info.text_color.size() < theApp.m_plugins.AllDisplayItemsWithPlugins().size())
-                    {
-                        COLORREF default_color{};
-                        if (!m_skin_info.text_color.empty())
-                            default_color = m_skin_info.text_color.front();
-                        m_skin_info.text_color.resize(theApp.m_plugins.AllDisplayItemsWithPlugins().size(), default_color);
+                        if (m_skin_info.text_color.size() < theApp.m_plugins.AllDisplayItemsWithPlugins().size())
+                        {
+                            COLORREF default_color{};
+                            if (!m_skin_info.text_color.empty())
+                                default_color = m_skin_info.text_color.front();
+                            m_skin_info.text_color.resize(theApp.m_plugins.AllDisplayItemsWithPlugins().size(), default_color);
+                        }
                     }
                     //指定每个项目的颜色
                     else if (skin_item_name == "specify_each_item_color")
@@ -203,7 +202,7 @@ bool CSkinFile::LoadFromXml(const wstring& file_path)
                     //字体
                     else if (skin_item_name == "font")
                     {
-                        m_skin_info.font_info.name = CTinyXml2Helper::ElementAttribute(skin_item, "name");
+                        m_skin_info.font_info.name = CCommon::StrToUnicode(CTinyXml2Helper::ElementAttribute(skin_item, "name"), true).c_str();
                         m_skin_info.font_info.size = atoi(CTinyXml2Helper::ElementAttribute(skin_item, "size"));
                         int font_style = atoi(CTinyXml2Helper::ElementAttribute(skin_item, "style"));
                         m_skin_info.font_info.bold = CCommon::GetNumberBit(font_style, 0);
@@ -480,18 +479,22 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
         }
 
         //绘制预览图文本
-        auto drawPreviewText = [&](Layout& layout, const PreviewInfo::Pos& pos) {
+        auto drawPreviewText = [&](const Layout& layout, const PreviewInfo::Pos& pos) {
             for (auto iter = map_str.begin(); iter != map_str.end(); ++iter)
             {
-                if (layout.layout_items[iter->first].show)
+                auto layout_iter = layout.layout_items.find(iter->first);
+                if (layout_iter == layout.layout_items.end())
+                    continue;
+                auto layout_item = layout_iter->second;
+                if (layout_item.show)
                 {
                     CPoint point;
-                    point.SetPoint(layout.layout_items[iter->first].x, layout.layout_items[iter->first].y);
+                    point.SetPoint(layout_item.x, layout_item.y);
                     point.Offset(pos.x, pos.y);
-                    CRect rect(point, CSize(layout.layout_items[iter->first].width, m_layout_info.text_height));
+                    CRect rect(point, CSize(layout_item.width, m_layout_info.text_height));
                     COLORREF text_color{};
                     text_color = text_colors[iter->first];
-                    DrawSkinText(draw, iter->second, rect, text_color, layout.layout_items[iter->first].align);
+                    DrawSkinText(draw, iter->second, rect, text_color, layout_item.align);
                 }
             }
 
