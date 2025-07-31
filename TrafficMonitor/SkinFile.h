@@ -121,7 +121,7 @@ public:
     void GetSkinDisplayItems(std::set<CommonDisplayItem>& skin_all_items) const;
 
 private:
-    void LoadFromXml(const wstring& file_path);     //从xml文件读取皮肤数据
+    bool LoadFromXml(const wstring& file_path);     //从xml文件读取皮肤数据
     void LoadFromIni(const wstring& file_path);     //从ini文件读取皮肤数据（用于兼容旧版皮肤）
 
     CSkinFile::Layout LayoutFromXmlNode(tinyxml2::XMLElement* ele);
@@ -155,4 +155,5 @@ private:
     Gdiplus::Image* m_background_png_l{};
     int m_alpha{ 255 };     //不透明度，仅当背景为png时有效
     SkinSettingData m_setting_data;
+    bool m_is_error{ false };
 };

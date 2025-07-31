@@ -92,10 +92,20 @@ bool CSkinFile::Load(const wstring& skin_name)
         file_path = theApp.m_skin_path + skin_name + L"\\skin.ini";
     CFilePathHelper file_path_helper{ file_path };
     wstring ext = file_path_helper.GetFileExtension();
+    m_is_error = false;
     if (ext == L"ini")
+    {
         LoadFromIni(file_path);
+    }
     else
-        LoadFromXml(file_path);
+    {
+        if (!LoadFromXml(file_path))
+        {
+            LoadFromIni(std::wstring());
+            m_skin_info.text_color = { RGB(255, 255, 255) };
+            m_is_error = true;
+        }
+    }
 
     CSkinManager::SkinSettingDataFronSkin(m_setting_data, *this);
 
@@ -144,7 +154,7 @@ bool CSkinFile::Load(const wstring& skin_name)
     return CCommon::FileExist(file_path.c_str());
 }
 
-void CSkinFile::LoadFromXml(const wstring& file_path)
+bool CSkinFile::LoadFromXml(const wstring& file_path)
 {
     m_skin_info = SkinInfo();
     m_layout_info = LayoutInfo();
@@ -255,6 +265,11 @@ void CSkinFile::LoadFromXml(const wstring& file_path)
             }
         });
     }
+    else
+    {
+        //xml解析失败
+        return false;
+    }
 
     //载入显示文本
     for (const auto& display_text_item : display_text_map)
@@ -282,7 +297,7 @@ void CSkinFile::LoadFromXml(const wstring& file_path)
             }
         }
     }
-
+    return true;
 }
 
 void CSkinFile::LoadFromIni(const wstring& file_path)
@@ -402,130 +417,136 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
     draw.Create(pDC, nullptr);
     //设置字体
     draw.SetFont(&m_font);
-    //绘制背景
-    CRect rect_s(CPoint(m_preview_info.s_pos.x, m_preview_info.s_pos.y), CSize(m_layout_info.layout_s.width, m_layout_info.layout_s.height));
-    CRect rect_l(CPoint(m_preview_info.l_pos.x, m_preview_info.l_pos.y), CSize(m_layout_info.layout_l.width, m_layout_info.layout_l.height));
-    if (IsPNG())    //png背景使用GDI+绘制
+    if (m_is_error)
     {
-        CDrawCommonEx gdiplus_drawer(pDC);
-        gdiplus_drawer.DrawImage(m_background_png_s, rect_s.TopLeft(), rect_s.Size(), IDrawCommon::StretchMode::STRETCH);
-        gdiplus_drawer.DrawImage(m_background_png_l, rect_l.TopLeft(), rect_l.Size(), IDrawCommon::StretchMode::STRETCH);
+        //显示错误信息
+        draw.DrawWindowText(rect, CCommon::LoadText(IDS_SKIN_FILE_ERROR_INFO), RGB(252, 128, 45));
     }
     else
     {
-        if (m_background_s.IsNull())
-            draw.FillRect(rect_s, RGB(230, 230, 230));
+        //绘制背景
+        CRect rect_s(CPoint(m_preview_info.s_pos.x, m_preview_info.s_pos.y), CSize(m_layout_info.layout_s.width, m_layout_info.layout_s.height));
+        CRect rect_l(CPoint(m_preview_info.l_pos.x, m_preview_info.l_pos.y), CSize(m_layout_info.layout_l.width, m_layout_info.layout_l.height));
+        if (IsPNG())    //png背景使用GDI+绘制
+        {
+            CDrawCommonEx gdiplus_drawer(pDC);
+            gdiplus_drawer.DrawImage(m_background_png_s, rect_s.TopLeft(), rect_s.Size(), IDrawCommon::StretchMode::STRETCH);
+            gdiplus_drawer.DrawImage(m_background_png_l, rect_l.TopLeft(), rect_l.Size(), IDrawCommon::StretchMode::STRETCH);
+        }
         else
-            draw.DrawBitmap(m_background_s, rect_s.TopLeft(), rect_s.Size());
-        if (m_background_l.IsNull())
-            draw.FillRect(rect_l, RGB(230, 230, 230));
-        draw.DrawBitmap(m_background_l, rect_l.TopLeft(), rect_l.Size());
-    }
-
-    std::set<CommonDisplayItem> all_skin_items;
-    GetSkinDisplayItems(all_skin_items);
-
-    //获取每个项目显示的文本
-    std::map<DisplayItem, DrawStr> map_str;
-    for (auto iter = all_skin_items.begin(); iter != all_skin_items.end(); ++iter)
-    {
-        if (iter->IsPlugin())
-            continue;
-        DrawStr draw_str;
-        draw_str.value = CommonDisplayItem(iter->ItemType()).GetItemValueSampleText(true);
-        if (!m_layout_info.no_label)
         {
-            if (m_setting_data.disp_str.IsInvalid())
-                draw_str.label = iter->DefaultString(true).c_str();
+            if (m_background_s.IsNull())
+                draw.FillRect(rect_s, RGB(230, 230, 230));
             else
-                draw_str.label = m_setting_data.disp_str.GetConst(*iter).c_str();
+                draw.DrawBitmap(m_background_s, rect_s.TopLeft(), rect_s.Size());
+            if (m_background_l.IsNull())
+                draw.FillRect(rect_l, RGB(230, 230, 230));
+            draw.DrawBitmap(m_background_l, rect_l.TopLeft(), rect_l.Size());
         }
-        map_str[iter->ItemType()] = draw_str;
-    }
 
-    //获取文本颜色
-    std::map<CommonDisplayItem, COLORREF> text_colors{};
-    if (m_setting_data.specify_each_item_color)
-    {
-        text_colors = m_setting_data.text_colors;
-    }
-    else if (!m_setting_data.text_colors.empty())
-    {
-        for (const auto& item : all_skin_items)
-        {
-            text_colors[item] = m_setting_data.text_colors.begin()->second;
-        }
-    }
+        std::set<CommonDisplayItem> all_skin_items;
+        GetSkinDisplayItems(all_skin_items);
 
-    //绘制预览图文本
-    auto drawPreviewText = [&](Layout& layout, const PreviewInfo::Pos& pos)
-    {
-        for (auto iter = map_str.begin(); iter != map_str.end(); ++iter)
+        //获取每个项目显示的文本
+        std::map<DisplayItem, DrawStr> map_str;
+        for (auto iter = all_skin_items.begin(); iter != all_skin_items.end(); ++iter)
         {
-            if (layout.layout_items[iter->first].show)
+            if (iter->IsPlugin())
+                continue;
+            DrawStr draw_str;
+            draw_str.value = CommonDisplayItem(iter->ItemType()).GetItemValueSampleText(true);
+            if (!m_layout_info.no_label)
             {
-                CPoint point;
-                point.SetPoint(layout.layout_items[iter->first].x, layout.layout_items[iter->first].y);
-                point.Offset(pos.x, pos.y);
-                CRect rect(point, CSize(layout.layout_items[iter->first].width, m_layout_info.text_height));
-                COLORREF text_color{};
-                text_color = text_colors[iter->first];
-                DrawSkinText(draw, iter->second, rect, text_color, layout.layout_items[iter->first].align);
+                if (m_setting_data.disp_str.IsInvalid())
+                    draw_str.label = iter->DefaultString(true).c_str();
+                else
+                    draw_str.label = m_setting_data.disp_str.GetConst(*iter).c_str();
+            }
+            map_str[iter->ItemType()] = draw_str;
+        }
+
+        //获取文本颜色
+        std::map<CommonDisplayItem, COLORREF> text_colors{};
+        if (m_setting_data.specify_each_item_color)
+        {
+            text_colors = m_setting_data.text_colors;
+        }
+        else if (!m_setting_data.text_colors.empty())
+        {
+            for (const auto& item : all_skin_items)
+            {
+                text_colors[item] = m_setting_data.text_colors.begin()->second;
             }
         }
 
-        //绘制插件项目
-        for (const auto& plugin_item : theApp.m_plugins.GetPluginItems())
-        {
-            LayoutItem layout_item = layout.GetItem(plugin_item);
-            if (layout_item.show)
+        //绘制预览图文本
+        auto drawPreviewText = [&](Layout& layout, const PreviewInfo::Pos& pos) {
+            for (auto iter = map_str.begin(); iter != map_str.end(); ++iter)
             {
-                COLORREF cl{};
-                auto iter = text_colors.find(plugin_item);
-                if (iter != text_colors.end())
-                    cl = iter->second;
-                else if (!text_colors.empty())
-                    cl = text_colors.begin()->second;
-                //矩形区域
-                CPoint point;
-                point.SetPoint(layout_item.x, layout_item.y);
-                point.Offset(pos.x, pos.y);
-                CRect rect(point, CSize(layout_item.width, m_layout_info.text_height));
-                ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(plugin_item);
-                if (plugin != nullptr && plugin->GetAPIVersion() >= 2)
+                if (layout.layout_items[iter->first].show)
                 {
-                    plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_TASKBAR_WND, L"0");
+                    CPoint point;
+                    point.SetPoint(layout.layout_items[iter->first].x, layout.layout_items[iter->first].y);
+                    point.Offset(pos.x, pos.y);
+                    CRect rect(point, CSize(layout.layout_items[iter->first].width, m_layout_info.text_height));
+                    COLORREF text_color{};
+                    text_color = text_colors[iter->first];
+                    DrawSkinText(draw, iter->second, rect, text_color, layout.layout_items[iter->first].align);
                 }
-                if (plugin_item->IsCustomDraw())
+            }
+
+            //绘制插件项目
+            for (const auto& plugin_item : theApp.m_plugins.GetPluginItems())
+            {
+                LayoutItem layout_item = layout.GetItem(plugin_item);
+                if (layout_item.show)
                 {
-                    int brightness{ (GetRValue(cl) + GetGValue(cl) + GetBValue(cl)) / 2 };
+                    COLORREF cl{};
+                    auto iter = text_colors.find(plugin_item);
+                    if (iter != text_colors.end())
+                        cl = iter->second;
+                    else if (!text_colors.empty())
+                        cl = text_colors.begin()->second;
+                    //矩形区域
+                    CPoint point;
+                    point.SetPoint(layout_item.x, layout_item.y);
+                    point.Offset(pos.x, pos.y);
+                    CRect rect(point, CSize(layout_item.width, m_layout_info.text_height));
+                    ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(plugin_item);
                     if (plugin != nullptr && plugin->GetAPIVersion() >= 2)
                     {
-                        plugin->OnExtenedInfo(ITMPlugin::EI_VALUE_TEXT_COLOR, std::to_wstring(cl).c_str());
+                        plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_TASKBAR_WND, L"0");
                     }
-                    draw.GetDC()->SetTextColor(cl);
-                    plugin_item->DrawItem(draw.GetDC()->GetSafeHdc(), point.x, point.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
-                }
-                else
-                {
-                    //绘制文本
-                    DrawStr draw_str;
-                    if (m_skin_info.display_text.IsInvalid())
-                        draw_str.label = plugin_item->GetItemLableText();
+                    if (plugin_item->IsCustomDraw())
+                    {
+                        int brightness{ (GetRValue(cl) + GetGValue(cl) + GetBValue(cl)) / 2 };
+                        if (plugin != nullptr && plugin->GetAPIVersion() >= 2)
+                        {
+                            plugin->OnExtenedInfo(ITMPlugin::EI_VALUE_TEXT_COLOR, std::to_wstring(cl).c_str());
+                        }
+                        draw.GetDC()->SetTextColor(cl);
+                        plugin_item->DrawItem(draw.GetDC()->GetSafeHdc(), point.x, point.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
+                    }
                     else
-                        draw_str.label = m_skin_info.display_text.GetConst(plugin_item).c_str();
-                    draw_str.value = plugin_item->GetItemValueSampleText();
-                    DrawSkinText(draw, draw_str, rect, cl, layout_item.align);
+                    {
+                        //绘制文本
+                        DrawStr draw_str;
+                        if (m_skin_info.display_text.IsInvalid())
+                            draw_str.label = plugin_item->GetItemLableText();
+                        else
+                            draw_str.label = m_skin_info.display_text.GetConst(plugin_item).c_str();
+                        draw_str.value = plugin_item->GetItemValueSampleText();
+                        DrawSkinText(draw, draw_str, rect, cl, layout_item.align);
+                    }
                 }
             }
-        }
+        };
 
-    };
-
-    //绘制小预览图文本
-    drawPreviewText(m_layout_info.layout_s, m_preview_info.s_pos);
-    //绘制大预览图文本
-    drawPreviewText(m_layout_info.layout_l, m_preview_info.l_pos);
+        //绘制小预览图文本
+        drawPreviewText(m_layout_info.layout_s, m_preview_info.s_pos);
+        //绘制大预览图文本
+        drawPreviewText(m_layout_info.layout_l, m_preview_info.l_pos);
+    }
 }
 
 void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info)
