@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "PluginDemo.h"
 #include "DataManager.h"
 #include "OptionsDlg.h"

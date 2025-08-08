@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <dxgi1_3.h>
 #include "HResultException.h"
 #include "RenderAPISupport.h"

@@ -16,16 +16,16 @@ CPictureStatic::~CPictureStatic()
 void CPictureStatic::SetPicture(UINT pic_id)
 {
 	m_memDC.DeleteDC();
-	if (!m_bitmap.LoadBitmap(pic_id))		//ÔØÈëÎ»Í¼
+	if (!m_bitmap.LoadBitmap(pic_id))		//è½½å…¥ä½å›¾
 		return;
-	//»ñÈ¡Í¼ÏñÊµ¼Ê´óÐ¡
+	//èŽ·å–å›¾åƒå®žé™…å¤§å°
 	GetObject(m_bitmap, sizeof(BITMAP), &m_bm);
 	CDC* pDC = GetDC();
 	m_memDC.CreateCompatibleDC(pDC);
 	m_memDC.SelectObject(&m_bitmap);
-	//»ñÈ¡¿Ø¼þ´óÐ¡
+	//èŽ·å–æŽ§ä»¶å¤§å°
 	GetClientRect(m_rect);
-	//ÊÖ¶¯ÖØ»æ
+	//æ‰‹åŠ¨é‡ç»˜
 	Invalidate();
 }
 
@@ -35,14 +35,14 @@ void CPictureStatic::SetPicture(HBITMAP hBitmap)
 	m_bitmap.Detach();
 	if (!m_bitmap.Attach(hBitmap))
 		return;
-	//»ñÈ¡Í¼ÏñÊµ¼Ê´óÐ¡
+	//èŽ·å–å›¾åƒå®žé™…å¤§å°
 	GetObject(m_bitmap, sizeof(BITMAP), &m_bm);
 	CDC* pDC = GetDC();
 	m_memDC.CreateCompatibleDC(pDC);
 	m_memDC.SelectObject(&m_bitmap);
-	//»ñÈ¡¿Ø¼þ´óÐ¡
+	//èŽ·å–æŽ§ä»¶å¤§å°
 	GetClientRect(m_rect);
-	//ÊÖ¶¯ÖØ»æ
+	//æ‰‹åŠ¨é‡ç»˜
 	Invalidate();
 }
 
@@ -54,17 +54,17 @@ END_MESSAGE_MAP()
 void CPictureStatic::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
-					   // TODO: ÔÚ´Ë´¦Ìí¼ÓÏûÏ¢´¦Àí³ÌÐò´úÂë
-					   // ²»Îª»æÍ¼ÏûÏ¢µ÷ÓÃ CStatic::OnPaint()
+					   // TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
+					   // ä¸ä¸ºç»˜å›¾æ¶ˆæ¯è°ƒç”¨ CStatic::OnPaint()
 	if (m_bitmap.m_hObject != NULL)
 	{
-		// ÒÔÏÂÁ½ÐÐ±ÜÃâÍ¼Æ¬Ê§Õæ
+		// ä»¥ä¸‹ä¸¤è¡Œé¿å…å›¾ç‰‡å¤±çœŸ
 		dc.SetStretchBltMode(HALFTONE);
 		dc.SetBrushOrg(0, 0);
-		//»æÖÆ½«ÄÚ´æDCÖÐµÄÍ¼Ïñ
+		//ç»˜åˆ¶å°†å†…å­˜DCä¸­çš„å›¾åƒ
 		dc.StretchBlt(0, 0, m_rect.Width(), m_rect.Height(), &m_memDC, 0, 0, m_bm.bmWidth, m_bm.bmHeight, SRCCOPY);
 
-		//Ïò¸¸´°¿Ú·¢ËÍÖØ»æµÄÏûÏ¢
+		//å‘çˆ¶çª—å£å‘é€é‡ç»˜çš„æ¶ˆæ¯
 		CWnd* pParent{ GetParent() };
 		if (pParent != nullptr)
 			pParent->SendMessage(WM_CONTROL_REPAINT, (WPARAM)this, LPARAM(&dc));

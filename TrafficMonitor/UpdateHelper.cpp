@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "UpdateHelper.h"
 #include "SimpleXML.h"
 #include "Common.h"

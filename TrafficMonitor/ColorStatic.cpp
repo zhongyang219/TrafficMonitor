@@ -1,4 +1,4 @@
-﻿// ColorStatic.cpp : 实现文件
+// ColorStatic.cpp : 实现文件
 //
 
 #include "stdafx.h"

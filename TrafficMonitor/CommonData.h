@@ -1,4 +1,4 @@
-﻿//此文件包含全局结构体、枚举类型的定义
+//此文件包含全局结构体、枚举类型的定义
 #pragma once
 #include "stdafx.h"
 #include "TaskbarItemOrderHelper.h"
