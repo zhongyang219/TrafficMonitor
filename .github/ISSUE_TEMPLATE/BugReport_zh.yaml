@@ -1,6 +1,5 @@
 name: Bug反馈
 description: 提交Bug反馈
-labels: ["bug"]
 body:
   - type: checkboxes
     attributes: 
