@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "DonateDlg.h"
 #include "LinkStatic.h"
 #include "BaseDialog.h"
 
@@ -20,7 +19,6 @@ protected:
     CLinkStatic m_acknowledgement;  //“鸣谢”超链接
     CLinkStatic m_github;           //“GitHub”超链接
     CLinkStatic m_gitee;            //“Gitee”超链接
-    CLinkStatic m_donate;           //“捐助”超链接
     CLinkStatic m_license;          //“开源协议”超链接
     CToolTipCtrl m_tool_tip;            //鼠标指向时的工具提示
     CLinkStatic m_translator_static;

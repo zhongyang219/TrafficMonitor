@@ -811,7 +811,6 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="CommonData.h" />
     <ClInclude Include="CSkinPreviewView.h" />
-    <ClInclude Include="DonateDlg.h" />
     <ClInclude Include="DrawCommon.h" />
     <ClInclude Include="GeneralSettingsDlg.h" />
     <ClInclude Include="HistoryTrafficDlg.h" />
@@ -906,7 +905,6 @@
     <ClCompile Include="ColorStatic.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="CSkinPreviewView.cpp" />
-    <ClCompile Include="DonateDlg.cpp" />
     <ClCompile Include="DrawCommon.cpp" />
     <ClCompile Include="GeneralSettingsDlg.cpp" />
     <ClCompile Include="HistoryTrafficDlg.cpp" />
@@ -1000,8 +998,6 @@
     <Image Include="res\about_background.bmp" />
     <Image Include="res\about_background_hd.bmp" />
     <Image Include="res\bitmap3.bmp" />
-    <Image Include="res\donate.bmp" />
-    <Image Include="res\donate_wechart.bmp" />
     <Image Include="res\menu_icon\close.ico" />
     <Image Include="res\menu_icon\connection.ico" />
     <Image Include="res\menu_icon\exit.ico" />

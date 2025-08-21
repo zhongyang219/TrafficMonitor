@@ -30,9 +30,6 @@
     <Filter Include="源文件和头文件\stdafx">
       <UniqueIdentifier>{ee6e7f72-a080-4020-92ff-432b8dcdad2f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件和头文件\对话框类\DonateDlg">
-      <UniqueIdentifier>{9085ed32-5818-45d1-836b-bae3c63952d0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件和头文件\对话框类\选项设置对话框">
       <UniqueIdentifier>{98909116-8f3b-47d0-8e3f-ef90b29a2acc}</UniqueIdentifier>
     </Filter>
@@ -285,9 +282,6 @@
     </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>源文件和头文件\stdafx</Filter>
-    </ClInclude>
-    <ClInclude Include="DonateDlg.h">
-      <Filter>源文件和头文件\对话框类\DonateDlg</Filter>
     </ClInclude>
     <ClInclude Include="MainWndSettingsDlg.h">
       <Filter>源文件和头文件\对话框类\选项设置对话框</Filter>
@@ -572,9 +566,6 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件和头文件\stdafx</Filter>
-    </ClCompile>
-    <ClCompile Include="DonateDlg.cpp">
-      <Filter>源文件和头文件\对话框类\DonateDlg</Filter>
     </ClCompile>
     <ClCompile Include="GeneralSettingsDlg.cpp">
       <Filter>源文件和头文件\对话框类\选项设置对话框</Filter>
@@ -933,12 +924,6 @@
       <Filter>资源文件\bitmaps</Filter>
     </Image>
     <Image Include="res\bitmap3.bmp">
-      <Filter>资源文件\bitmaps</Filter>
-    </Image>
-    <Image Include="res\donate.bmp">
-      <Filter>资源文件\bitmaps</Filter>
-    </Image>
-    <Image Include="res\donate_wechart.bmp">
       <Filter>资源文件\bitmaps</Filter>
     </Image>
     <Image Include="res\notify_preview.bmp">

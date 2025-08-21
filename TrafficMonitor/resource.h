@@ -12,7 +12,6 @@
 #define IDD_SKIN_DIALOG                 138
 #define IDB_BITMAP1                     140
 #define IDD_HISTORY_TRAFFIC_DIALOG      141
-#define IDD_DONATE_DIALOG               143
 #define IDB_BITMAP2                     145
 #define IDB_DONATE_BITMAP               145
 #define IDI_NOFITY_ICON                 146
@@ -225,7 +224,6 @@
 #define IDC_BROWSE_BUTTON               1100
 #define IDC_EXE_PATH_EDIT               1101
 #define IDC_EXE_PATH_STATIC             1102
-#define IDC_TEXT_STATIC                 1103
 #define IDC_CM_GRAPH_BAR_RADIO          1104
 #define IDC_CM_GRAPH_PLOT_RADIO         1105
 #define IDC_USE_CPU_TIME_RADIO          1106

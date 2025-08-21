@@ -22,7 +22,6 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_STATIC_MAIL, m_mail);
     DDX_Control(pDX, IDC_STATIC_ACKNOWLEDGEMENT, m_acknowledgement);
     DDX_Control(pDX, IDC_STATIC_GITHUB, m_github);
-    DDX_Control(pDX, IDC_STATIC_DONATE, m_donate);
     DDX_Control(pDX, IDC_TRANSLATOR_STATIC, m_translator_static);
     DDX_Control(pDX, IDC_STATIC_LICENSE, m_license);
     DDX_Control(pDX, IDC_OPENHARDWAREMONITOR_LINK, m_openhardwaremonitor_link);
@@ -79,7 +78,6 @@ BOOL CAboutDlg::OnInitDialog()
     //m_check_update.SetURL(_T("http://pan.baidu.com/s/1c1LkPQ4"));
     m_github.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor"));
     m_gitee.SetURL(_T("https://gitee.com/zhongyang219/TrafficMonitor"));
-    m_donate.SetLinkIsURL(false);
     m_acknowledgement.SetLinkIsURL(false);
     m_license.SetLinkIsURL(false);
 
@@ -95,7 +93,6 @@ BOOL CAboutDlg::OnInitDialog()
     m_acknowledgement.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
     m_github.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
     m_gitee.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
-    m_donate.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
     m_license.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
 
     //设置版本信息
@@ -135,7 +132,6 @@ BOOL CAboutDlg::OnInitDialog()
     //m_tool_tip.AddTool(&m_check_update, _T("到百度网盘链接查看是否有更新\r\nhttp://pan.baidu.com/s/1c1LkPQ4"));
     m_tool_tip.AddTool(&m_github, CCommon::LoadText(IDS_GOTO_GITHUB, _T("\r\nhttps://github.com/zhongyang219/TrafficMonitor")));
     m_tool_tip.AddTool(&m_gitee, CCommon::LoadText(IDS_GOTO_GITEE, _T("\r\nhttps://gitee.com/zhongyang219/TrafficMonitor")));
-    m_tool_tip.AddTool(&m_donate, CCommon::LoadText(IDS_DONATE_ATHOUR));
     m_tool_tip.AddTool(&m_openhardwaremonitor_link, m_openhardwaremonitor_link.GetURL());
     m_tool_tip.AddTool(&m_tinyxml2_link, m_tinyxml2_link.GetURL());
     m_tool_tip.AddTool(&m_musicplayer2_link, CCommon::LoadText(IDS_MUSICPLAYER2_DESCRIPTION) + _T("\r\n") + m_musicplayer2_link.GetURL());
@@ -191,12 +187,7 @@ BOOL CAboutDlg::PreTranslateMessage(MSG* pMsg)
 afx_msg LRESULT CAboutDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
 {
     CWnd* pCtrl = (CWnd*)wParam;
-    if (pCtrl == &m_donate)
-    {
-        CDonateDlg donateDlg;
-        donateDlg.DoModal();
-    }
-    else if (pCtrl == &m_acknowledgement)
+    if (pCtrl == &m_acknowledgement)
     {
         CString strContent = GetDonateList();
         //strContent += _T("\r\n");
