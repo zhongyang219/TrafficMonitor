@@ -268,10 +268,14 @@ void CTrafficMonitorDlg::SetMousePenetrate()
     if (theApp.m_main_wnd_data.m_mouse_penetrate)
     {
         SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_TRANSPARENT);     //设置鼠标穿透
+        if (IsTaskbarWndValid())
+            SetWindowLong(m_tBarDlg->GetSafeHwnd(), GWL_EXSTYLE, GetWindowLong(m_tBarDlg->GetSafeHwnd(), GWL_EXSTYLE) | WS_EX_TRANSPARENT);     //设置任务栏窗口鼠标穿透
     }
     else
     {
         SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) & (~WS_EX_TRANSPARENT));      //取消鼠标穿透
+        if (IsTaskbarWndValid())
+            SetWindowLong(m_tBarDlg->GetSafeHwnd(), GWL_EXSTYLE, GetWindowLong(m_tBarDlg->GetSafeHwnd(), GWL_EXSTYLE) & (~WS_EX_TRANSPARENT));      //取消任务栏窗口鼠标穿透
     }
 }
 
