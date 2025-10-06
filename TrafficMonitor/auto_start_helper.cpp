@@ -182,7 +182,7 @@ bool create_auto_start_task_for_this_user(bool runElevated)
 
         // Get the task action collection pointer.
         hr = pTask->get_Actions(&pActionCollection);
-        ExitOnFailure(hr, "Cannot get Task collection pointer: %x", hr);
+        ExitOnFailure(hr, "Cannot get Action collection pointer: %x", hr);
 
         // Create the action, specifying that it is an executable action.
         hr = pActionCollection->Create(TASK_ACTION_EXEC, &pAction);
