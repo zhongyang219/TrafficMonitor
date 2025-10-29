@@ -275,6 +275,7 @@
 #define IDC_SELECT_CPU_STATIC           1146
 #define IDC_APPLY_BUTTON                1147
 #define IDC_TASKBAR_WND_SNAP_CHECK      1148
+#define IDC_TASKBAR_WND_CENTER_CHECK    11480
 #define IDC_ITEM_SPACE_EDIT             1149
 #define IDC_EXIT_INST_BUTTON            1150
 #define IDC_OPEN_SETTINGS_BUTTON        1151

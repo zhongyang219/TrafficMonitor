@@ -66,6 +66,8 @@ void CWin11TaskbarSettingDlg::EnableDlgCtrl(UINT id, bool enable)
 
 BEGIN_MESSAGE_MAP(CWin11TaskbarSettingDlg, CBaseDialog)
     ON_BN_CLICKED(IDC_RESTORE_DEFAULT_BUTTON, &CWin11TaskbarSettingDlg::OnBnClickedRestoreDefaultButton)
+    ON_BN_CLICKED(IDC_TASKBAR_WND_SNAP_CHECK, &CWin11TaskbarSettingDlg::OnBnClickedTaskbarWndSnapCheck)
+    ON_BN_CLICKED(IDC_TASKBAR_WND_CENTER_CHECK, &CWin11TaskbarSettingDlg::OnBnClickedTaskbarWndCenterCheck)
 END_MESSAGE_MAP()
 
 
@@ -77,8 +79,14 @@ BOOL CWin11TaskbarSettingDlg::OnInitDialog()
     CBaseDialog::OnInitDialog();
     SetIcon(theApp.GetMenuIcon(IDI_TASKBAR_WINDOW), FALSE);
 
+
+    // 互斥组使用同一个Enable条件
     EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, CTaskBarDlg::IsTaskbarCloseToIconEnable(m_data.tbar_wnd_on_left));
     CheckDlgButton(IDC_TASKBAR_WND_SNAP_CHECK, m_data.tbar_wnd_snap);
+    EnableDlgCtrl(IDC_TASKBAR_WND_CENTER_CHECK, CTaskBarDlg::IsTaskbarCloseToIconEnable(m_data.tbar_wnd_on_left));
+    CheckDlgButton(IDC_TASKBAR_WND_CENTER_CHECK, m_data.tbar_wnd_on_center);
+
+
     m_window_offset_top_edit.SetRange(-20, 20);
     m_window_offset_top_edit.SetValue(m_data.window_offset_top);
     m_window_offset_left_edit.SetRange(-800, 800);
@@ -97,6 +105,7 @@ BOOL CWin11TaskbarSettingDlg::OnInitDialog()
 void CWin11TaskbarSettingDlg::OnOK()
 {
     m_data.tbar_wnd_snap = (IsDlgButtonChecked(IDC_TASKBAR_WND_SNAP_CHECK) != 0);
+    m_data.tbar_wnd_on_center = (IsDlgButtonChecked(IDC_TASKBAR_WND_CENTER_CHECK) != 0);
 
     m_data.window_offset_top = m_window_offset_top_edit.GetValue();
     m_data.ValidWindowOffsetTop();
@@ -120,4 +129,17 @@ void CWin11TaskbarSettingDlg::OnBnClickedRestoreDefaultButton()
     m_window_offset_top_edit.SetValue(0);
     m_window_offset_left_edit.SetValue(0);
     m_widgets_width_edit.SetValue(160);
+}
+
+
+void CWin11TaskbarSettingDlg::OnBnClickedTaskbarWndSnapCheck()
+{
+    if (IsDlgButtonChecked(IDC_TASKBAR_WND_SNAP_CHECK))
+        CheckDlgButton(IDC_TASKBAR_WND_CENTER_CHECK, FALSE);
+}
+
+void CWin11TaskbarSettingDlg::OnBnClickedTaskbarWndCenterCheck()
+{
+    if (IsDlgButtonChecked(IDC_TASKBAR_WND_CENTER_CHECK))
+        CheckDlgButton(IDC_TASKBAR_WND_SNAP_CHECK, FALSE);
 }

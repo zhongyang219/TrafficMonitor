@@ -46,6 +46,12 @@ void CWin11TaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
                 m_rect.MoveToX(notify_x_pos - m_rect.Width() + 2);
             //}
         }
+        // 居中显示
+        else if (theApp.m_taskbar_data.tbar_wnd_on_center)
+        {
+            int center_x = (m_rcTaskbar.Width() - m_rect.Width()) / 2;
+            m_rect.MoveToX(center_x);
+        }
         //任务栏窗口显示在左侧时
         else
         {
