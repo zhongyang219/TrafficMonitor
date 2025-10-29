@@ -79,13 +79,10 @@ BOOL CWin11TaskbarSettingDlg::OnInitDialog()
     CBaseDialog::OnInitDialog();
     SetIcon(theApp.GetMenuIcon(IDI_TASKBAR_WINDOW), FALSE);
 
-
-    // 互斥组使用同一个Enable条件
     EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, CTaskBarDlg::IsTaskbarCloseToIconEnable(m_data.tbar_wnd_on_left));
     CheckDlgButton(IDC_TASKBAR_WND_SNAP_CHECK, m_data.tbar_wnd_snap);
-    EnableDlgCtrl(IDC_TASKBAR_WND_CENTER_CHECK, CTaskBarDlg::IsTaskbarCloseToIconEnable(m_data.tbar_wnd_on_left));
+    EnableDlgCtrl(IDC_TASKBAR_WND_CENTER_CHECK, CTaskBarDlg::IsTaskbarCloseToIconEnable(true));
     CheckDlgButton(IDC_TASKBAR_WND_CENTER_CHECK, m_data.tbar_wnd_on_center);
-
 
     m_window_offset_top_edit.SetRange(-20, 20);
     m_window_offset_top_edit.SetValue(m_data.window_offset_top);
