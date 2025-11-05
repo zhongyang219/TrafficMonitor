@@ -36,4 +36,7 @@ public:
     virtual BOOL OnInitDialog();
     virtual void OnOK();
     afx_msg void OnBnClickedRestoreDefaultButton();
+    // 设置互斥组
+    afx_msg void OnBnClickedTaskbarWndSnapCheck();
+    afx_msg void OnBnClickedTaskbarWndCenterCheck();
 };
