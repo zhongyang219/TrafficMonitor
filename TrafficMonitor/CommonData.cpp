@@ -226,8 +226,8 @@ void TaskBarSettingData::SetTaskabrTransparent(bool transparent)
 
 void TaskBarSettingData::ValidItemSpace()
 {
-    if (item_space < 0)
-        item_space = 0;
+    if (item_space < -20)
+        item_space = -20;
     if (item_space > 32)
         item_space = 32;
 }

@@ -385,7 +385,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     CheckDlgButton(IDC_SHOW_DASHED_BOX, m_data.show_graph_dashed_box);
     CheckDlgButton(IDC_USAGE_GRAPH_FOLLOW_SYSTEM_CHECK, m_data.graph_color_following_system);
 
-    m_item_space_edit.SetRange(0, 32);
+    m_item_space_edit.SetRange(-20, 32);
     m_item_space_edit.SetValue(m_data.item_space);
     CTaskBarDlg* taskbar_dlg{ CTrafficMonitorDlg::Instance()->GetTaskbarWindow() };
     m_vertical_margin_edit.SetRange(-10, 10);
