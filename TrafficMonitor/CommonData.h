@@ -389,6 +389,10 @@ struct GeneralSettingData
     }
 
     StringSet connections_hide;     //用于保存哪些网络要从“选择网络连接”子菜单项中隐藏
+    
+    // Ping settings
+    CString ping_server = _T("1.1.1.1");  // Ping目标服务器
+    bool enable_ping = true;              // 是否启用Ping监控
 };
 
 //定义监控时间间隔有效的最大值和最小值

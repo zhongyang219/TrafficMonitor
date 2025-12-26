@@ -52,6 +52,7 @@ protected:
     CComboBox2 m_select_cpu_combo;
     CButton m_plugin_manager_btn;
     CButton m_select_connection_btn;
+    CEdit m_ping_server_edit;
 
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 

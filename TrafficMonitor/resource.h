@@ -347,6 +347,7 @@
 #define IDC_GPU_TEMP_TIP_EDIT           1217
 #define IDC_HDD_TIP_EDIT                1218
 #define IDC_MBD_TEMP_TIP_EDIT           1219
+#define IDC_PING_SERVER_EDIT            1220
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -469,7 +470,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        349
 #define _APS_NEXT_COMMAND_VALUE         33666
-#define _APS_NEXT_CONTROL_VALUE         1220
+#define _APS_NEXT_CONTROL_VALUE         1221
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -91,6 +91,10 @@ void CTrafficMonitorApp::LoadConfig()
     ini.GetStringList(L"general", L"connections_hide", connections_hide, std::vector<std::wstring>{});
     m_general_data.connections_hide.FromVector(connections_hide);
 
+    // 加载Ping设置
+    m_general_data.ping_server = ini.GetString(L"general", L"ping_server", L"1.1.1.1").c_str();
+    m_general_data.enable_ping = ini.GetBool(L"general", L"enable_ping", true);
+
     //Windows10颜色模式设置
     bool is_windows10_light_theme = CWindowsSettingHelper::IsWindows10LightTheme();
     if (is_windows10_light_theme)
@@ -317,6 +321,10 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"general", L"hardware_monitor_item", m_general_data.hardware_monitor_item);
     ini.WriteStringList(L"general", L"connections_hide", m_general_data.connections_hide.ToVector());
 
+    // 保存Ping设置
+    ini.WriteString(L"general", L"ping_server", wstring(m_general_data.ping_server));
+    ini.WriteBool(L"general", L"enable_ping", m_general_data.enable_ping);
+
     //主窗口设置
     ini.WriteInt(L"config", L"transparency", m_cfg_data.m_transparency);
     ini.WriteBool(L"config", L"always_on_top", m_main_wnd_data.m_always_on_top);
@@ -333,7 +341,7 @@ void CTrafficMonitorApp::SaveConfig()
     //ini.WriteBool(_T("config"), _T("specify_each_item_color"), m_main_wnd_data.specify_each_item_color);
     ini.WriteInt(L"config", L"hide_main_window", m_cfg_data.m_hide_main_window);
     ini.WriteString(L"connection", L"connection_name", CCommon::StrToUnicode(m_cfg_data.m_connection_name.c_str()));
-    ini.WriteString(_T("config"), _T("skin_selected"), m_cfg_data.m_skin_name.c_str());
+    ini.WriteString(_T("config"), _T("skin_selected"), m_cfg_data.m_skin_name);
 
     ini.WriteBool(L"skins", L"skin_auto_adapt", m_cfg_data.skin_auto_adapt);
     ini.WriteString(L"skins", L"skin_name_dark_mode", m_cfg_data.skin_name_dark_mode);
@@ -681,7 +689,7 @@ bool CTrafficMonitorApp::GetAutoRun(wstring* auto_run_path)
             //去掉前后的引号
             if (auto_run_path->front() == L'\"')
                 *auto_run_path = auto_run_path->substr(1);
-            if (auto_run_path->back() = L'\"')
+            if (auto_run_path->back() == L'\"')
                 auto_run_path->pop_back();
         }
         return (m_module_path_reg == buff); //如果“TrafficMonitor”的值是当前程序的路径，就返回true，否则返回false
