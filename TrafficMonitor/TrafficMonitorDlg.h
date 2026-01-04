@@ -161,7 +161,8 @@ public:
 protected:
     void UpdateNotifyIconTip();     //更新通知区图标的鼠标提示
 
-    void SaveHistoryTraffic();
+    void SaveHistoryTraffic();        // 增量保存，只更新第一行和今天的记录
+    void SaveHistoryTrafficFull();    // 完整保存，用于程序退出时确保所有数据都保存
     void LoadHistoryTraffic();
     void BackupHistoryTrafficFile();
 

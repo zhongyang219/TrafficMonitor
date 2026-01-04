@@ -680,6 +680,13 @@ void CTrafficMonitorDlg::UpdateNotifyIconTip()
 
 void CTrafficMonitorDlg::SaveHistoryTraffic()
 {
+    // 使用增量保存，只更新第一行和今天的记录，减少I/O操作
+    m_history_traffic.SaveTodayOnly();
+}
+
+void CTrafficMonitorDlg::SaveHistoryTrafficFull()
+{
+    // 完整保存，用于程序退出时确保所有数据都保存
     m_history_traffic.Save();
 }
 
@@ -688,13 +695,28 @@ void CTrafficMonitorDlg::LoadHistoryTraffic()
     m_history_traffic.Load();
     CHistoryTrafficFile backup_file(theApp.m_history_traffic_path + L".bak");
     backup_file.LoadSize();     //读取备份文件中流量记录的数量
-    if (backup_file.Size() > m_history_traffic.Size())      //如果备份文件中流量记录的数量大于当前的数量，则从备份文件中恢复
+    
+    // 如果备份文件中流量记录的数量大于当前的数量，尝试从备份文件中恢复
+    if (backup_file.Size() > m_history_traffic.Size())
     {
-        backup_file.Load();
         size_t size_before = m_history_traffic.Size();
-        m_history_traffic.Merge(backup_file, true);
-        CString log_info = CCommon::LoadTextFormat(IDS_HISTORY_TRAFFIC_LOST_ERROR_LOG, { size_before, backup_file.Size() });
-        CCommon::WriteLog(log_info, theApp.m_log_path.c_str());
+        backup_file.Load();     //加载备份文件（会清理"未来"的记录）
+        size_t backup_size_after_load = backup_file.Size();  //加载后实际的记录数（可能因为清理"未来"记录而减少）
+        
+        // 加载后，如果备份文件的记录数仍然大于当前文件，才进行恢复
+        if (backup_size_after_load > m_history_traffic.Size())
+        {
+            m_history_traffic.Merge(backup_file, true);
+            size_t size_after = m_history_traffic.Size();
+            size_t recovered_count = size_after - size_before;  //实际恢复的记录数
+            
+            // 只有当实际恢复了记录时才记录日志
+            if (recovered_count > 0)
+            {
+                CString log_info = CCommon::LoadTextFormat(IDS_HISTORY_TRAFFIC_LOST_ERROR_LOG, { size_before, recovered_count });
+                CCommon::WriteLog(log_info, theApp.m_log_path.c_str());
+            }
+        }
     }
 
     theApp.m_today_up_traffic = m_history_traffic.GetTodayUpTraffic();
@@ -703,14 +725,19 @@ void CTrafficMonitorDlg::LoadHistoryTraffic()
 
 void CTrafficMonitorDlg::BackupHistoryTrafficFile()
 {
-    CHistoryTrafficFile backup_file(theApp.m_history_traffic_path + L".bak");
-    CHistoryTrafficFile latest_file(theApp.m_history_traffic_path);
-    backup_file.LoadSize();
-    latest_file.LoadSize();
-    if (backup_file.Size() < latest_file.Size())
+    // 确保文件已保存到磁盘
+    wstring latest_file_path = theApp.m_history_traffic_path;
+    wstring backup_file_path = latest_file_path + L".bak";
+    
+    // 检查当前文件是否存在
+    if (!CCommon::FileExist(latest_file_path.c_str()))
     {
-        CopyFile(latest_file.GetFilePath().c_str(), backup_file.GetFilePath().c_str(), FALSE);
+        return; // 当前文件不存在，无需备份
     }
+    
+    // 直接备份当前文件（当前文件是最新的，包含最新的数据）
+    // 备份文件可能包含"未来"的记录，但恢复时会自动清理，所以总是备份当前文件即可
+    CopyFile(latest_file_path.c_str(), backup_file_path.c_str(), FALSE);
 }
 
 void CTrafficMonitorDlg::_OnOptions(int tab, CWnd* pParent)
@@ -1266,31 +1293,49 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     //检测当前日期是否改变，如果已改变，就向历史流量列表插入一个新的日期
     SYSTEMTIME current_time;
     GetLocalTime(&current_time);
-    if (m_history_traffic.GetTraffics()[0].day != current_time.wDay)
+    static int last_check_day = -1;  //用于检测日期变化，重置保存状态
+    if (m_history_traffic.GetTodayTraffic().day != current_time.wDay)
     {
-        HistoryTraffic traffic;
-        traffic.year = current_time.wYear;
-        traffic.month = current_time.wMonth;
-        traffic.day = current_time.wDay;
-        traffic.mixed = false;
-        m_history_traffic.GetTraffics().push_front(traffic);
+        m_history_traffic.OnDateChanged();
         theApp.m_today_up_traffic = 0;
         theApp.m_today_down_traffic = 0;
+        last_check_day = -1;  //重置日期标记，下次检查时会重新初始化保存状态
     }
 
     //统计今天已使用的流量
     theApp.m_today_up_traffic += cur_out_speed;
     theApp.m_today_down_traffic += cur_in_speed;
-    m_history_traffic.GetTraffics()[0].up_kBytes = theApp.m_today_up_traffic / 1024u;
-    m_history_traffic.GetTraffics()[0].down_kBytes = theApp.m_today_down_traffic / 1024u;
+    m_history_traffic.GetTodayTraffic().up_kBytes = theApp.m_today_up_traffic / 1024u;
+    m_history_traffic.GetTodayTraffic().down_kBytes = theApp.m_today_down_traffic / 1024u;
     //每隔30秒保存一次流量历史记录
     if (m_monitor_time_cnt % GetMonitorTimerCount(30) == GetMonitorTimerCount(30) - 1)
     {
-        static unsigned __int64 last_today_kbytes;
-        if (m_history_traffic.GetTraffics()[0].kBytes() - last_today_kbytes >= 100u) //只有当流量变化超过100KB时才保存历史流量记录，防止磁盘写入过于频繁
+        static unsigned __int64 last_today_kbytes = 0;
+        static bool last_today_kbytes_initialized = false;
+        unsigned __int64 current_kbytes = m_history_traffic.GetTodayTraffic().kBytes();
+        
+        //如果日期改变了，重置初始化状态
+        if (last_check_day != current_time.wDay)
         {
-            SaveHistoryTraffic();
-            last_today_kbytes = m_history_traffic.GetTraffics()[0].kBytes();
+            last_today_kbytes_initialized = false;
+            last_check_day = current_time.wDay;
+        }
+        
+        //首次检查时初始化，不保存
+        if (!last_today_kbytes_initialized)
+        {
+            last_today_kbytes = current_kbytes;
+            last_today_kbytes_initialized = true;
+        }
+        else
+        {
+            //只有当30秒内流量变化超过10MB时才保存历史流量记录，防止磁盘写入过于频繁
+            unsigned __int64 change_kbytes = current_kbytes - last_today_kbytes;
+            if (change_kbytes >= 10240u) // 10MB = 10240KB
+            {
+                SaveHistoryTraffic();
+                last_today_kbytes = current_kbytes;
+            }
         }
     }
 
@@ -2110,7 +2155,7 @@ void CTrafficMonitorDlg::OnClose()
     theApp.m_cannot_save_global_config_warning = true;
     theApp.SaveConfig();    //退出前保存设置到ini文件
     theApp.SaveGlobalConfig();
-    SaveHistoryTraffic();
+    SaveHistoryTrafficFull();  // 退出时使用完整保存，确保所有数据都保存
     BackupHistoryTrafficFile();
 
     if (IsTaskbarWndValid())
@@ -2729,7 +2774,7 @@ BOOL CTrafficMonitorDlg::OnQueryEndSession()
     // TODO:  在此添加专用的查询结束会话代码
     theApp.SaveConfig();
     theApp.SaveGlobalConfig();
-    SaveHistoryTraffic();
+    SaveHistoryTrafficFull();  // 系统关机时使用完整保存，确保所有数据都保存
     BackupHistoryTrafficFile();
 
     if (theApp.m_debug_log)
