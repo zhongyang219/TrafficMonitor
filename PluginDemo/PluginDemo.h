@@ -18,11 +18,13 @@ public:
     virtual const wchar_t* GetInfo(PluginInfoIndex index) override;
     virtual OptionReturn ShowOptionsDialog(void* hParent) override;
     virtual void OnExtenedInfo(ExtendedInfoIndex index, const wchar_t* data) override;
+    virtual void OnInitialize(ITrafficMonitor* pApp) override;
 
 private:
     CPluginSystemDate m_system_date;
     CPluginSystemTime m_system_time;
     CCustomDrawItem m_custom_draw_item;
+    ITrafficMonitor* m_app{};
 
     static CPluginDemo m_instance;
 };

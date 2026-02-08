@@ -101,6 +101,14 @@ void CPluginDemo::OnExtenedInfo(ExtendedInfoIndex index, const wchar_t* data)
     }
 }
 
+void CPluginDemo::OnInitialize(ITrafficMonitor* pApp)
+{
+    m_app = pApp;
+    std::wstring str = m_app->GetStringRes(L"IDS_MEMORY_USAGE", L"text");
+    std::wstring str1 = m_app->GetStringRes(L"BCP_47", L"general");
+    int a = 0;
+}
+
 ITMPlugin* TMPluginGetInstance()
 {
     AFX_MANAGE_STATE(AfxGetStaticModuleState());

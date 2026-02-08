@@ -1495,3 +1495,8 @@ int CTrafficMonitorApp::GetDPI(DPIType type) const
     }
     return 0;
 }
+
+const wchar_t* CTrafficMonitorApp::GetStringRes(const wchar_t* key, const wchar_t* section)
+{
+    return m_str_table.LoadText(key, section).c_str();
+}
