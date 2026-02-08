@@ -65,7 +65,7 @@ See below for the functions comparison of the two versions.
 
 **[Click here](https://github.com/zhongyang219/TrafficMonitor/wiki) to go to the Wiki page to view detailed documentation on TrafficMonitor (Only Available in Chinese).**
 
-# Screen Shots
+# Screenshots
 
 Main Floating Window:  
 ![](./Screenshots/en_us/main1.png)  
@@ -98,7 +98,7 @@ Users can customize displayed items on the embedded taskbar window. By default, 
 <img src="./Screenshots/en_us/taskbar_item_settings.png" style="zoom:80%;" />
 
 # Customizable Skin
-<img src="./Screenshots/selecte_skin.png" style="zoom:80%;" />
+<img src="./Screenshots/en_us/selecte_skin.png" style="zoom:80%;" />
 
 You can select “Other Functions”-“Change Skin” on the right-click menu of the main window or notification area icon to open the interface of changing skin. Users can also download more skins and customize the skins [here](https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md) according to their own needs.
 
@@ -115,7 +115,7 @@ Click the link below for detailed instruction on skin making:
 [皮肤制作教程 · zhongyang219/TrafficMonitor Wiki (github.com)](https://github.com/zhongyang219/TrafficMonitor/wiki/皮肤制作教程)
 
 # Configuring Options
-<img src="./Screenshots/option.jpg" style="zoom:80%;" /><br>
+<img src="./Screenshots/en_us/option.jpg" style="zoom:80%;" /><br>
 Choosing "Options..." in the pop-up menu allows users to access the options configuration. In the dialog box of options configuration, the user can set the text color, text font, background color, net speed unit, and displayed text etc. for the main window and task window separately. 
 
 In "Regular Configurations", users can change the settings on whether the program conducts auto-update and whether the program runs automatically when the computer starts up. Users can also configure when notifications need to be sent. 
