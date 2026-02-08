@@ -780,6 +780,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
         {
             m_tBarDlg->WidthChanged();
         }
+        m_tBarDlg->ApplyWindowTransparentColor();
     }
 
     if (optionsDlg.m_tab3_dlg.IsAutoRunModified())
@@ -1849,7 +1850,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
         //根据任务栏颜色自动设置任务栏窗口背景色
         if (theApp.m_taskbar_data.auto_set_background_color && theApp.m_win_version.IsWindows8OrLater()
             && IsTaskbarWndValid() && theApp.m_taskbar_data.transparent_color != 0
-            && !m_is_foreground_fullscreen)
+            && !m_is_foreground_fullscreen && theApp.m_taskbar_data.disable_d2d)
         {
             CRect rect;
             ::GetWindowRect(m_tBarDlg->GetSafeHwnd(), rect);
