@@ -936,7 +936,7 @@ void CTaskBarDlg::CalculateWindowSize()
 
 void CTaskBarDlg::SetToolTipsTopMost()
 {
-    m_tool_tips.SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+    m_tool_tips.SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_SHOWWINDOW);
 }
 
 void CTaskBarDlg::UpdateToolTips()
