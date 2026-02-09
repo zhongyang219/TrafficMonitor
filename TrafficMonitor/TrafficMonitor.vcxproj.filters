@@ -112,9 +112,6 @@
     <Filter Include="源文件和头文件\公共的类\UpdateHelper">
       <UniqueIdentifier>{2b0e9f5d-dbce-4ba7-a158-7d9b705fcc02}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件和头文件\公共的类\CPUUsage">
-      <UniqueIdentifier>{926ebc77-cc7f-431a-896d-3a4019b41991}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件和头文件\对话框类\BaseDialog">
       <UniqueIdentifier>{6f91f987-8834-4e89-b14e-d3ae15040848}</UniqueIdentifier>
     </Filter>
@@ -250,6 +247,9 @@
     <Filter Include="源文件和头文件\公共的类\DisplayItem">
       <UniqueIdentifier>{4785624f-2ca9-4f92-8cfc-c7a7c3bfba74}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件和头文件\公共的类\PdhHardwareQuery">
+      <UniqueIdentifier>{649b4ef9-4692-43a6-9365-c4445ec48c22}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -381,9 +381,6 @@
     </ClInclude>
     <ClInclude Include="UpdateHelper.h">
       <Filter>源文件和头文件\公共的类\UpdateHelper</Filter>
-    </ClInclude>
-    <ClInclude Include="CPUUsage.h">
-      <Filter>源文件和头文件\公共的类\CPUUsage</Filter>
     </ClInclude>
     <ClInclude Include="BaseDialog.h">
       <Filter>源文件和头文件\对话框类\BaseDialog</Filter>
@@ -550,6 +547,18 @@
     <ClInclude Include="WineTaskbarDlg.h">
       <Filter>源文件和头文件\TaskBarDlg</Filter>
     </ClInclude>
+    <ClInclude Include="PdhHardwareQuery\CPUUsage.h">
+      <Filter>源文件和头文件\公共的类\PdhHardwareQuery</Filter>
+    </ClInclude>
+    <ClInclude Include="PdhHardwareQuery\CpuFreq.h">
+      <Filter>源文件和头文件\公共的类\PdhHardwareQuery</Filter>
+    </ClInclude>
+    <ClInclude Include="PdhHardwareQuery\GpuUsage.h">
+      <Filter>源文件和头文件\公共的类\PdhHardwareQuery</Filter>
+    </ClInclude>
+    <ClInclude Include="PdhHardwareQuery\PdhQuery.h">
+      <Filter>源文件和头文件\公共的类\PdhHardwareQuery</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -665,9 +674,6 @@
     </ClCompile>
     <ClCompile Include="UpdateHelper.cpp">
       <Filter>源文件和头文件\公共的类\UpdateHelper</Filter>
-    </ClCompile>
-    <ClCompile Include="CPUUsage.cpp">
-      <Filter>源文件和头文件\公共的类\CPUUsage</Filter>
     </ClCompile>
     <ClCompile Include="BaseDialog.cpp">
       <Filter>源文件和头文件\对话框类\BaseDialog</Filter>
@@ -815,6 +821,18 @@
     </ClCompile>
     <ClCompile Include="WineTaskbarDlg.cpp">
       <Filter>源文件和头文件\TaskBarDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="PdhHardwareQuery\CPUUsage.cpp">
+      <Filter>源文件和头文件\公共的类\PdhHardwareQuery</Filter>
+    </ClCompile>
+    <ClCompile Include="PdhHardwareQuery\CpuFreq.cpp">
+      <Filter>源文件和头文件\公共的类\PdhHardwareQuery</Filter>
+    </ClCompile>
+    <ClCompile Include="PdhHardwareQuery\GpuUsage.cpp">
+      <Filter>源文件和头文件\公共的类\PdhHardwareQuery</Filter>
+    </ClCompile>
+    <ClCompile Include="PdhHardwareQuery\PdhQuery.cpp">
+      <Filter>源文件和头文件\公共的类\PdhHardwareQuery</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

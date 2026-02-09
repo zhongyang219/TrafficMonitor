@@ -748,15 +748,16 @@ CString CTaskBarDlg::GetMouseTipsInfo()
         tip_info += temp;
     }
 
+    if (!IsItemShow(TDI_GPU_USAGE) && theApp.m_gpu_usage >= 0)
+    {
+        temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
+        tip_info += temp;
+    }
+
 #ifndef WITHOUT_TEMPERATURE
     CTrafficMonitorDlg* pMainWnd = dynamic_cast<CTrafficMonitorDlg*>(theApp.m_pMainWnd);
     if (pMainWnd->IsTemperatureNeeded())
     {
-        if (!IsItemShow(TDI_GPU_USAGE) && theApp.m_gpu_usage >= 0)
-        {
-            temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
-            tip_info += temp;
-        }
         if (!IsItemShow(TDI_CPU_TEMP) && theApp.m_cpu_temperature > 0)
         {
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_taskbar_data));

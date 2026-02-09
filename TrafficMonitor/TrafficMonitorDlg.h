@@ -20,7 +20,9 @@
 #include "LinkStatic.h"
 #include "AdapterCommon.h"
 #include "AboutDlg.h"
-#include "CPUUsage.h"
+#include "PdhHardwareQuery/CPUUsage.h"
+#include "PdhHardwareQuery/CpuFreq.h"
+#include "PdhHardwareQuery/GpuUsage.h"
 #include "HistoryTrafficFile.h"
 
 // CTrafficMonitorDlg 对话框
@@ -61,7 +63,8 @@ protected:
     unsigned __int64 m_last_out_bytes{};    //上次已发送的字节数
 
     CCPUUsage m_cpu_usage_helper;
-    CCpuFreq m_cpu_freq_helper;
+    CPdhCpuFreq m_cpu_freq_helper;
+    CPdhGPUUsage m_gpu_usage_helper;
 
     bool m_first_start{ true };     //初始时为true，在定时器第一次启动后置为flase
 
