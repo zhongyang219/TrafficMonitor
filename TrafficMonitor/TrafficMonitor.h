@@ -22,6 +22,7 @@
 #include "StrTable.h"
 #include "PluginUpdateHelper.h"
 #include "PluginInterface.h"
+#include "PingMonitor.h"
 
 // CTrafficMonitorApp:
 // 有关此类的实现，请参阅 TrafficMonitor.cpp
@@ -62,6 +63,9 @@ public:
     unsigned __int64 m_today_up_traffic{};  //今天已使用的上传流量
     unsigned __int64 m_today_down_traffic{};    //今天已使用的下载流量
 
+    int m_ping_ms{};                // Ping延迟（毫秒）
+    bool m_ping_available{ false }; // Ping是否可用
+
     bool m_cannot_save_config_warning{ true };  //指示是否会在无法保存设置时弹出提示框
     bool m_cannot_save_global_config_warning{ true };   //指示是否会在无法保存设置时弹出提示框
 
@@ -90,6 +94,7 @@ public:
     CDllFunctions m_dll_functions;
     CStrTable m_str_table;
     CPluginUpdateHelper m_plugin_update;
+    CPingMonitor m_ping_monitor;    // Ping监控对象
 
     CMenu m_main_menu;          //主窗口右键菜单
     CMenu m_main_menu_plugin;   //右击主窗口插件区域的右键菜单

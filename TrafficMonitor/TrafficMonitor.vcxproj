@@ -918,6 +918,7 @@
     <ClCompile Include="NetworkInfoDlg.cpp" />
     <ClCompile Include="OptionsDlg.cpp" />
     <ClCompile Include="PictureStatic.cpp" />
+    <ClCompile Include="PingMonitor.cpp" />
     <ClCompile Include="PluginInfoDlg.cpp" />
     <ClCompile Include="PluginManager.cpp" />
     <ClCompile Include="PluginManagerDlg.cpp" />

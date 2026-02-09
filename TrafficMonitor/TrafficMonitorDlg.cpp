@@ -753,6 +753,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     theApp.m_main_wnd_data = optionsDlg.m_tab1_dlg.m_data;
     theApp.m_taskbar_data = optionsDlg.m_tab2_dlg.m_data;
     theApp.m_general_data = optionsDlg.m_tab3_dlg.m_data;
+    theApp.m_ping_monitor.SetPingServer(theApp.m_general_data.ping_server);
     theApp.SendSettingsToPlugin();
 
     CGeneralSettingsDlg::CheckTaskbarDisplayItem();
@@ -1140,6 +1141,9 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     //设置获取CPU利用率的方式
     m_cpu_usage_helper.SetUseCPUTimes(theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_PDH);
 
+    // 初始化Ping监控
+    theApp.m_ping_monitor.SetPingServer(theApp.m_general_data.ping_server);
+
     //如果程序启动时设置了隐藏主窗口，或窗口的位置在左上角，则先将其不透明度设为0
     if (theApp.m_cfg_data.m_hide_main_window || (theApp.m_cfg_data.m_position_x == 0 && theApp.m_cfg_data.m_position_y == 0))
         SetTransparency(0);
@@ -1375,6 +1379,18 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     theApp.m_memory_usage = statex.dwMemoryLoad;
     theApp.m_used_memory = static_cast<int>((statex.ullTotalPhys - statex.ullAvailPhys) / 1024);
     theApp.m_total_memory = static_cast<int>(statex.ullTotalPhys / 1024);
+
+    // Ping监控
+    if (theApp.m_general_data.enable_ping)
+    {
+        theApp.m_ping_monitor.DoPing();
+        theApp.m_ping_ms = theApp.m_ping_monitor.GetPingResult();
+        theApp.m_ping_available = !theApp.m_ping_monitor.IsPingFailed();
+    }
+    else
+    {
+        theApp.m_ping_available = false;
+    }
 
 #ifndef WITHOUT_TEMPERATURE
     //获取温度

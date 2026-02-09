@@ -188,6 +188,7 @@ void CGeneralSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_SELECT_CPU_COMBO, m_select_cpu_combo);
     DDX_Control(pDX, IDC_PLUGIN_MANAGE_BUTTON, m_plugin_manager_btn);
     DDX_Control(pDX, IDC_SELECT_CONNECTIONS_BUTTON, m_select_connection_btn);
+    DDX_Control(pDX, IDC_PING_SERVER_EDIT, m_ping_server_edit);
 }
 
 void CGeneralSettingsDlg::SetControlEnable()
@@ -413,6 +414,8 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     m_plugin_manager_btn.SetIcon(theApp.GetMenuIcon(IDI_PLUGINS));
     m_select_connection_btn.SetIcon(theApp.GetMenuIcon(IDI_CONNECTION));
 
+    m_ping_server_edit.SetWindowText(m_data.ping_server);
+
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE
 }
@@ -499,6 +502,8 @@ void CGeneralSettingsDlg::OnOK()
     }
 
     //m_taskbar_item_modified = (theApp.m_taskbar_data.display_item != taskbar_displat_item_ori);
+
+    m_ping_server_edit.GetWindowText(m_data.ping_server);
 
     CTabDlg::OnOK();
 }
