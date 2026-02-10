@@ -23,6 +23,7 @@
 #include "PdhHardwareQuery/CPUUsage.h"
 #include "PdhHardwareQuery/CpuFreq.h"
 #include "PdhHardwareQuery/GpuUsage.h"
+#include "PdhHardwareQuery/DiskUsage.h"
 #include "HistoryTrafficFile.h"
 
 // CTrafficMonitorDlg 对话框
@@ -42,6 +43,9 @@ public:
 #endif
 
     const CSkinFile& GetCurSkin() const { return m_skin; }
+
+    CPdhDiskUsage& GetPdhDiskUsageHelper() { return m_disk_usage_helper; }
+    bool IsGetDiskUsageByPdh() const { return m_get_disk_usage_by_pdh; }
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
@@ -65,6 +69,9 @@ protected:
     CCPUUsage m_cpu_usage_helper;
     CPdhCpuFreq m_cpu_freq_helper;
     CPdhGPUUsage m_gpu_usage_helper;
+    CPdhDiskUsage m_disk_usage_helper;
+
+    bool m_get_disk_usage_by_pdh{};
 
     bool m_first_start{ true };     //初始时为true，在定时器第一次启动后置为flase
 

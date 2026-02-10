@@ -62,8 +62,9 @@ bool CPdhQuery::QueryValue(double& value)
     return true;
 }
 
-bool CPdhQuery::QueryValues(std::vector<ValueItem>& values)
+bool CPdhQuery::QueryValues(std::vector<CounterValueItem>& values)
 {
+    values.clear();
     if (!isInitialized)
         return false;
 
@@ -84,7 +85,7 @@ bool CPdhQuery::QueryValues(std::vector<ValueItem>& values)
                 // Loop through the array and print the instance name and counter value.
                 for (DWORD i = 0; i < dwItemCount; i++)
                 {
-                    ValueItem value_item;
+                    CounterValueItem value_item;
                     value_item.name = pItems[i].szName;
                     value_item.value = pItems[i].FmtValue.doubleValue;
                     values.push_back(value_item);

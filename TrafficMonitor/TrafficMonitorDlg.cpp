@@ -205,13 +205,14 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_main_board_temperature, theApp.m_main_wnd_data));
             tip_info += temp;
         }
-        if (theApp.m_general_data.IsHardwareEnable(HI_HDD) && !skin_layout.GetItem(TDI_HDD_USAGE).show && theApp.m_hdd_usage >= 0)
-        {
-            temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_HDD_USAGE), theApp.m_hdd_usage);
-            tip_info += temp;
-        }
     }
 #endif
+    if (!skin_layout.GetItem(TDI_HDD_USAGE).show && theApp.m_hdd_usage >= 0)
+    {
+        temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_HDD_USAGE), theApp.m_hdd_usage);
+        tip_info += temp;
+}
+
     //添加插件项目的鼠标提示
     tip_info += theApp.GetPlauginTooltipInfo().c_str();
 
@@ -1354,6 +1355,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     bool cpu_usage_acquired = false;
     bool cpu_freq_acquired = false;
     bool gpu_usage_acquired = false;
+    m_get_disk_usage_by_pdh = false;
 
     //获取CPU使用率
     if (lite_version || theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_HARDWARE_MONITOR || !theApp.m_general_data.IsHardwareEnable(HI_CPU))
@@ -1374,6 +1376,23 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     {
         if (m_gpu_usage_helper.GetGpuUsage(theApp.m_gpu_usage))
             gpu_usage_acquired = true;
+    }
+
+    //获取硬盘利用率
+    if (lite_version /*|| is_arm64ec*/ || !theApp.m_general_data.IsHardwareEnable(HI_HDD))
+    {
+        const auto& disk_names = m_disk_usage_helper.GetDiskNames();
+        int disk_index = 0;
+        for (int i = 0; i < static_cast<int>(disk_names.size()); i++)
+        {
+            if (theApp.m_general_data.hard_disk_name == disk_names[i].GetString())
+            {
+                disk_index = i;
+                break;
+            }
+        }
+        if (m_disk_usage_helper.GetDiskUsage(disk_index, theApp.m_hdd_usage))
+            m_get_disk_usage_by_pdh = true;
     }
 
     //获取内存利用率
@@ -1412,7 +1431,8 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         theApp.m_gpu_temperature = theApp.m_pMonitor->GpuTemperature();
         //theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
         theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
-        theApp.m_gpu_usage = theApp.m_pMonitor->GpuUsage();
+        if (!gpu_usage_acquired)
+            theApp.m_gpu_usage = theApp.m_pMonitor->GpuUsage();
         if (!cpu_freq_acquired)
             theApp.m_cpu_freq = theApp.m_pMonitor->CpuFreq();
         if (!cpu_usage_acquired)
@@ -1455,7 +1475,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
             theApp.m_hdd_temperature = -1;
         }
         //获取硬盘利用率
-        if (!theApp.m_pMonitor->AllHDDUsage().empty())
+        if (!m_get_disk_usage_by_pdh && !theApp.m_pMonitor->AllHDDUsage().empty())
         {
             auto iter = theApp.m_pMonitor->AllHDDUsage().find(theApp.m_general_data.hard_disk_name);
             if (iter == theApp.m_pMonitor->AllHDDUsage().end())

@@ -778,13 +778,13 @@ CString CTaskBarDlg::GetMouseTipsInfo()
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_main_board_temperature, theApp.m_taskbar_data));
             tip_info += temp;
         }
-        if (!IsItemShow(TDI_HDD_USAGE) && theApp.m_hdd_usage >= 0)
-        {
-            temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_HDD_USAGE), theApp.m_hdd_usage);
-            tip_info += temp;
-        }
     }
 #endif
+    if (!IsItemShow(TDI_HDD_USAGE) && theApp.m_hdd_usage >= 0)
+    {
+        temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_HDD_USAGE), theApp.m_hdd_usage);
+        tip_info += temp;
+    }
 
     //添加插件项目的鼠标提示
     tip_info += theApp.GetPlauginTooltipInfo().c_str();

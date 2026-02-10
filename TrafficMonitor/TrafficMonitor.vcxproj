@@ -826,6 +826,7 @@
     <ClInclude Include="PdhHardwareQuery\CPUUsage.h" />
     <ClInclude Include="PdhHardwareQuery\CpuFreq.h" />
     <ClInclude Include="PdhHardwareQuery\GpuUsage.h" />
+    <ClInclude Include="PdhHardwareQuery\DiskUsage.h" />
     <ClInclude Include="PdhHardwareQuery\PdhQuery.h" />
     <ClInclude Include="PictureStatic.h" />
     <ClInclude Include="PluginInfoDlg.h" />
@@ -922,6 +923,7 @@
     <ClCompile Include="PdhHardwareQuery\CPUUsage.cpp" />
     <ClCompile Include="PdhHardwareQuery\CpuFreq.cpp" />
     <ClCompile Include="PdhHardwareQuery\GpuUsage.cpp" />
+    <ClCompile Include="PdhHardwareQuery\DiskUsage.cpp" />
     <ClCompile Include="PdhHardwareQuery\PdhQuery.cpp" />
     <ClCompile Include="PictureStatic.cpp" />
     <ClCompile Include="PluginInfoDlg.cpp" />

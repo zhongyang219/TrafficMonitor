@@ -17,7 +17,7 @@ bool CPdhGPUUsage::GetGpuUsage(int& usage)
 {
     if (isInitialized)
     {
-        std::vector<ValueItem> valueItems;
+        std::vector<CounterValueItem> valueItems;
         if (QueryValues(valueItems))
         {
             if (!valueItems.empty())

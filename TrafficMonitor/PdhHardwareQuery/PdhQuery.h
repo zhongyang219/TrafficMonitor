@@ -11,12 +11,12 @@ public:
 protected:
     bool Initialize();
     bool QueryValue(double& value);
-    struct ValueItem
+    struct CounterValueItem
     {
         std::wstring name;
         double value{};
     };
-    bool QueryValues(std::vector<ValueItem>& values);
+    bool QueryValues(std::vector<CounterValueItem>& values);
 
 protected:
     HQUERY query = nullptr;

@@ -188,7 +188,6 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.display_item.Remove(TDI_GPU_TEMP);
     m_taskbar_data.display_item.Remove(TDI_HDD_TEMP);
     m_taskbar_data.display_item.Remove(TDI_MAIN_BOARD_TEMP);
-    m_taskbar_data.display_item.Remove(TDI_HDD_USAGE);
 #endif
 
     //如果选项设置中关闭了某个硬件监控，则不显示对应的温度监控相关项目
@@ -201,7 +200,6 @@ void CTrafficMonitorApp::LoadConfig()
     if (!m_general_data.IsHardwareEnable(HI_HDD))
     {
         m_taskbar_data.display_item.Remove(TDI_HDD_TEMP);
-        m_taskbar_data.display_item.Remove(TDI_HDD_USAGE);
     }
     if (!m_general_data.IsHardwareEnable(HI_MBD))
         m_taskbar_data.display_item.Remove(TDI_MAIN_BOARD_TEMP);

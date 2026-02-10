@@ -559,6 +559,9 @@
     <ClInclude Include="PdhHardwareQuery\PdhQuery.h">
       <Filter>源文件和头文件\公共的类\PdhHardwareQuery</Filter>
     </ClInclude>
+    <ClInclude Include="PdhHardwareQuery\DiskUsage.h">
+      <Filter>源文件和头文件\公共的类\PdhHardwareQuery</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StaticEx.cpp">
@@ -832,6 +835,9 @@
       <Filter>源文件和头文件\公共的类\PdhHardwareQuery</Filter>
     </ClCompile>
     <ClCompile Include="PdhHardwareQuery\PdhQuery.cpp">
+      <Filter>源文件和头文件\公共的类\PdhHardwareQuery</Filter>
+    </ClCompile>
+    <ClCompile Include="PdhHardwareQuery\DiskUsage.cpp">
       <Filter>源文件和头文件\公共的类\PdhHardwareQuery</Filter>
     </ClCompile>
   </ItemGroup>
