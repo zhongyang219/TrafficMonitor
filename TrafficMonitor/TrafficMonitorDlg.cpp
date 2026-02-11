@@ -1382,7 +1382,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     if (lite_version /*|| is_arm64ec*/ || !theApp.m_general_data.IsHardwareEnable(HI_HDD))
     {
         const auto& disk_names = m_disk_usage_helper.GetDiskNames();
-        int disk_index = 0;
+        int disk_index = -1;
         for (int i = 0; i < static_cast<int>(disk_names.size()); i++)
         {
             if (theApp.m_general_data.hard_disk_name == disk_names[i].GetString())
@@ -1390,6 +1390,12 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
                 disk_index = i;
                 break;
             }
+        }
+        //没有找到要监控的硬盘时默认使用第1个
+        if (disk_index < 0 && !disk_names.empty())
+        {
+            disk_index = 0;
+            theApp.m_general_data.hard_disk_name = disk_names.front();
         }
         if (m_disk_usage_helper.GetDiskUsage(disk_index, theApp.m_hdd_usage))
             m_get_disk_usage_by_pdh = true;
