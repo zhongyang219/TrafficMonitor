@@ -1,4 +1,4 @@
-﻿// GeneralSettingsDlg.cpp : implementation file
+// GeneralSettingsDlg.cpp : implementation file
 //
 
 #include "stdafx.h"
@@ -376,12 +376,13 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     if (theApp.m_pMonitor != nullptr)
     {
         CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
+        int cur_index;
         //初始化选择硬盘下拉列表
-        if (！CTrafficMonitorDlg::Instance()->IsGetDiskUsageByPdh())
+        if (!CTrafficMonitorDlg::Instance()->IsGetDiskUsageByPdh())
         {
             for (const auto& hdd_item : theApp.m_pMonitor->AllHDDTemperature())
                 m_hard_disk_combo.AddString(hdd_item.first.c_str());
-            int cur_index = m_hard_disk_combo.FindString(-1, m_data.hard_disk_name.c_str());
+            cur_index = m_hard_disk_combo.FindString(-1, m_data.hard_disk_name.c_str());
             m_hard_disk_combo.SetCurSel(cur_index);
         }
         //初始化选择CPU下拉列表
