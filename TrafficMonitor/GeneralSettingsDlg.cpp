@@ -377,7 +377,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     {
         CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
         //初始化选择硬盘下拉列表
-        if (！CTrafficMonitorDlg::Instance()->IsGetDiskUsageByPdh())
+        if (!CTrafficMonitorDlg::Instance()->IsGetDiskUsageByPdh())
         {
             for (const auto& hdd_item : theApp.m_pMonitor->AllHDDTemperature())
                 m_hard_disk_combo.AddString(hdd_item.first.c_str());
@@ -388,7 +388,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
         m_select_cpu_combo.AddString(CCommon::LoadText(IDS_AVREAGE_TEMPERATURE));
         for (const auto& cpu_item : theApp.m_pMonitor->AllCpuTemperature())
             m_select_cpu_combo.AddString(cpu_item.first.c_str());
-        cur_index = m_select_cpu_combo.FindString(-1, m_data.cpu_core_name.c_str());
+        int cur_index = m_select_cpu_combo.FindString(-1, m_data.cpu_core_name.c_str());
         if (cur_index < 0)
             cur_index = 0;
         m_select_cpu_combo.SetCurSel(cur_index);

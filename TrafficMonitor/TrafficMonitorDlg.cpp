@@ -1475,19 +1475,22 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
             theApp.m_hdd_temperature = -1;
         }
         //获取硬盘利用率
-        if (!m_get_disk_usage_by_pdh && !theApp.m_pMonitor->AllHDDUsage().empty())
+        if (!m_get_disk_usage_by_pdh)
         {
-            auto iter = theApp.m_pMonitor->AllHDDUsage().find(theApp.m_general_data.hard_disk_name);
-            if (iter == theApp.m_pMonitor->AllHDDUsage().end())
+            if (!theApp.m_pMonitor->AllHDDUsage().empty())
             {
-                iter = theApp.m_pMonitor->AllHDDUsage().begin();
-                theApp.m_general_data.hard_disk_name = iter->first;
+                auto iter = theApp.m_pMonitor->AllHDDUsage().find(theApp.m_general_data.hard_disk_name);
+                if (iter == theApp.m_pMonitor->AllHDDUsage().end())
+                {
+                    iter = theApp.m_pMonitor->AllHDDUsage().begin();
+                    theApp.m_general_data.hard_disk_name = iter->first;
+                }
+                theApp.m_hdd_usage = iter->second;
             }
-            theApp.m_hdd_usage = iter->second;
-        }
-        else
-        {
-            theApp.m_hdd_usage = -1;
+            else
+            {
+                theApp.m_hdd_usage = -1;
+            }
         }
     }
     else
