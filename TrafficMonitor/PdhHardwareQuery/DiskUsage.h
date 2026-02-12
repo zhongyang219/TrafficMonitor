@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "PdhQuery.h"
 
 class CPdhDiskUsage : public CPdhQuery
@@ -7,25 +7,28 @@ public:
     CPdhDiskUsage();
     ~CPdhDiskUsage();
 
-    // »ñÈ¡Ö¸¶¨ÎïÀí´ÅÅÌµÄÀûÓÃÂÊ£¨0-100£©
-    // diskIndex: 0=µÚÒ»¸öÎïÀí´ÅÅÌ, 1=µÚ¶ş¸ö...
-    // ·µ»ØÖµ: true=³É¹¦, false=Ê§°Ü£¨Ê×´Îµ÷ÓÃÍ¨³£Ê§°Ü£¬Ğè¼ä¸ô200ms+ÖØÊÔ£©
+    // è·å–æŒ‡å®šç‰©ç†ç£ç›˜çš„åˆ©ç”¨ç‡ï¼ˆ0-100ï¼‰
+    // diskIndex: 0=ç¬¬ä¸€ä¸ªç‰©ç†ç£ç›˜, 1=ç¬¬äºŒä¸ª...
+    // è¿”å›å€¼: true=æˆåŠŸ, false=å¤±è´¥ï¼ˆé¦–æ¬¡è°ƒç”¨é€šå¸¸å¤±è´¥ï¼Œéœ€é—´éš”200ms+é‡è¯•ï¼‰
     bool GetDiskUsage(int diskIndex, /*out*/ int& usage);
 
-    // »ñÈ¡ÎïÀí´ÅÅÌÃû³ÆÁĞ±í
+    // è·å–ç‰©ç†ç£ç›˜åç§°åˆ—è¡¨
     const std::vector<CString>& GetDiskNames() const { return m_diskNames; }
 
-    // ¼ì²é´ÅÅÌ¼à¿ØÊÇ·ñ¿ÉÓÃ
+    //æ ¹æ®åç§°æŸ¥æ‰¾ä¸€ä¸ªç¡¬ç›˜çš„åºå·
+    int FindDiskIndex(const std::wstring diskName);
+
+    // æ£€æŸ¥ç£ç›˜ç›‘æ§æ˜¯å¦å¯ç”¨
     bool IsAvailable() const { return m_isAvailable; }
 
 private:
-    // ´Ó¼ÆÊıÆ÷ÊµÀıÌáÈ¡´ÅÅÌÃû³Æ
+    // ä»è®¡æ•°å™¨å®ä¾‹æå–ç£ç›˜åç§°
     void ExtractDiskNames();
 
-    // ´¦Àí¿ÕÏĞÊ±¼ä
+    // å¤„ç†ç©ºé—²æ—¶é—´
     int CalculateUtilization(double idleTime) const;
 
 private:
     bool m_isAvailable{ false };
-    std::vector<CString> m_diskNames;  // ´ÅÅÌÃû³ÆÁĞ±í£¬°´PDH·µ»ØË³Ğò
+    std::vector<CString> m_diskNames;  // ç£ç›˜åç§°åˆ—è¡¨ï¼ŒæŒ‰PDHè¿”å›é¡ºåº
 };

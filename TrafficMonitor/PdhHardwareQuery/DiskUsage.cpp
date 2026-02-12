@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "DiskUsage.h"
 #include <algorithm>
 #include <cmath>
@@ -9,7 +9,7 @@ CPdhDiskUsage::CPdhDiskUsage()
     m_isAvailable = Initialize();
     if (m_isAvailable)
     {
-        // Ô¤ÈÈ£º´¥·¢PDHÄÚ²¿³õÊ¼»¯£¨Ê×´ÎQueryValues»áÌî³äÊµÀıÁĞ±í£©
+        // é¢„çƒ­ï¼šè§¦å‘PDHå†…éƒ¨åˆå§‹åŒ–ï¼ˆé¦–æ¬¡QueryValuesä¼šå¡«å……å®ä¾‹åˆ—è¡¨ï¼‰
         std::vector<CounterValueItem> dummy;
         QueryValues(dummy);
         ExtractDiskNames();
@@ -37,17 +37,17 @@ void CPdhDiskUsage::ExtractDiskNames()
 
 int CPdhDiskUsage::CalculateUtilization(double idleTime) const
 {
-    // ¹Ø¼ü´¦Àí£ºNVMe/RAIDµÈ¶à¶ÓÁĞ´ÅÅÌµÄ¿ÕÏĞÊ±¼ä¿ÉÄÜ >100%
-    // ÀıÈç: 4¶ÓÁĞ´ÅÅÌ¿ÕÏĞÊ±¼ä=400% ¡ú Êµ¼Ê¿ÕÏĞ=100% ¡ú ÀûÓÃÂÊ=0%
+    // å…³é”®å¤„ç†ï¼šNVMe/RAIDç­‰å¤šé˜Ÿåˆ—ç£ç›˜çš„ç©ºé—²æ—¶é—´å¯èƒ½ >100%
+    // ä¾‹å¦‚: 4é˜Ÿåˆ—ç£ç›˜ç©ºé—²æ—¶é—´=400% â†’ å®é™…ç©ºé—²=100% â†’ åˆ©ç”¨ç‡=0%
     if (idleTime > 100.0)
         idleTime = 100.0;
 
-    // È·±£·¶Î§ÔÚ0-100
+    // ç¡®ä¿èŒƒå›´åœ¨0-100
     idleTime = (std::max)(0.0, (std::min)(100.0, idleTime));
 
-    // ÀûÓÃÂÊ = 100% - ¿ÕÏĞÊ±¼ä
+    // åˆ©ç”¨ç‡ = 100% - ç©ºé—²æ—¶é—´
     double utilization = 100.0 - idleTime;
-    return static_cast<int>(utilization + 0.5); // ËÄÉáÎåÈë
+    return static_cast<int>(utilization + 0.5); // å››èˆäº”å…¥
 }
 
 bool CPdhDiskUsage::GetDiskUsage(int diskIndex, int& usage)
@@ -67,4 +67,18 @@ bool CPdhDiskUsage::GetDiskUsage(int diskIndex, int& usage)
     }
     return false;
 
+}
+
+int CPdhDiskUsage::FindDiskIndex(const std::wstring diskName)
+{
+    int disk_index = -1;
+    for (int i = 0; i < static_cast<int>(m_diskNames.size()); i++)
+    {
+        if (diskName == m_diskNames[i].GetString())
+        {
+            disk_index = i;
+            break;
+        }
+    }
+    return disk_index;
 }

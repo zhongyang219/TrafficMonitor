@@ -1388,21 +1388,25 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     //获取硬盘利用率
     if (lite_version /*|| is_arm64ec*/ || !theApp.m_general_data.IsHardwareEnable(HI_HDD))
     {
-        const auto& disk_names = m_disk_usage_helper.GetDiskNames();
-        int disk_index = -1;
-        for (int i = 0; i < static_cast<int>(disk_names.size()); i++)
+        int disk_index = m_disk_usage_helper.FindDiskIndex(theApp.m_general_data.hard_disk_name);
+        //没有找到要监控的硬盘时默认使用总体利用率
+        if (disk_index < 0)
         {
-            if (theApp.m_general_data.hard_disk_name == disk_names[i].GetString())
+            disk_index = m_disk_usage_helper.FindDiskIndex(L"_Total");
+            if (disk_index >= 0)
             {
-                disk_index = i;
-                break;
+                theApp.m_general_data.hard_disk_name = L"_Total";
             }
-        }
-        //没有找到要监控的硬盘时默认使用第1个
-        if (disk_index < 0 && !disk_names.empty())
-        {
-            disk_index = 0;
-            theApp.m_general_data.hard_disk_name = disk_names.front();
+            //仍然没有找到使用第1块硬盘
+            else
+            {
+                const auto& disk_names = m_disk_usage_helper.GetDiskNames();
+                if (!disk_names.empty())
+                {
+                    disk_index = 0;
+                    theApp.m_general_data.hard_disk_name = disk_names.front();
+                }
+            }
         }
         if (m_disk_usage_helper.GetDiskUsage(disk_index, theApp.m_hdd_usage))
             m_get_disk_usage_by_pdh = true;
