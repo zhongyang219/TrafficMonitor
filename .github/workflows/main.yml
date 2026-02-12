@@ -6,7 +6,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
       
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
@@ -22,7 +22,7 @@ jobs:
         utcOffset: "+08:00"
       
     - name : Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: x64_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
         path: |
@@ -30,7 +30,7 @@ jobs:
           Bin/x64/Release/*.dll
 
     - name : Upload pdb files
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: x64_${{ steps.current-time.outputs.formattedTime }}_pdb
         path: Bin/x64/Release/*.pdb
@@ -39,7 +39,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
       
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
@@ -55,7 +55,7 @@ jobs:
         utcOffset: "+08:00"
       
     - name : Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: x86_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
         path: |
@@ -63,7 +63,7 @@ jobs:
           Bin/Release/*.dll
       
     - name : Upload pdb files
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: x86_${{ steps.current-time.outputs.formattedTime }}_pdb
         path: Bin/Release/*.pdb
@@ -72,7 +72,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
       
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
@@ -91,7 +91,7 @@ jobs:
       run: mv Bin/x64/Release/*.dll  Bin/ARM64EC/Release/
 
     - name : Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: arm64EC_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
         path: |
@@ -99,7 +99,7 @@ jobs:
           Bin/ARM64EC/Release/*.dll
 
     - name : Upload pdb files
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: arm64EC_${{ steps.current-time.outputs.formattedTime }}_pdb
         path: Bin/ARM64EC/Release/*.pdb
@@ -107,7 +107,7 @@ jobs:
     # runs-on: windows-latest
 
     # steps:
-    # - uses: actions/checkout@v3
+    # - uses: actions/checkout@v6
       
     # - name: Add msbuild to PATH
       # uses: microsoft/setup-msbuild@v1.1.3
