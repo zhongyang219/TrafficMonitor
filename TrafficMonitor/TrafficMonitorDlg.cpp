@@ -1357,6 +1357,13 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     bool gpu_usage_acquired = false;
     m_get_disk_usage_by_pdh = false;
 
+    theApp.m_cpu_temperature = -1;
+    theApp.m_gpu_temperature = -1;
+    theApp.m_hdd_temperature = -1;
+    theApp.m_main_board_temperature = -1;
+    theApp.m_gpu_usage = -1;
+    theApp.m_hdd_usage = -1;
+
     //获取CPU使用率
     if (lite_version || theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_HARDWARE_MONITOR || !theApp.m_general_data.IsHardwareEnable(HI_CPU))
     {
@@ -1498,15 +1505,6 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
                 theApp.m_hdd_usage = -1;
             }
         }
-    }
-    else
-    {
-        theApp.m_cpu_temperature = -1;
-        theApp.m_gpu_temperature = -1;
-        theApp.m_hdd_temperature = -1;
-        theApp.m_main_board_temperature = -1;
-        theApp.m_gpu_usage = -1;
-        theApp.m_hdd_usage = -1;
     }
 #endif
 
