@@ -269,14 +269,10 @@ void CTrafficMonitorDlg::SetMousePenetrate()
     if (theApp.m_main_wnd_data.m_mouse_penetrate)
     {
         SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_TRANSPARENT);     //设置鼠标穿透
-        if (IsTaskbarWndValid())
-            SetWindowLong(m_tBarDlg->GetSafeHwnd(), GWL_EXSTYLE, GetWindowLong(m_tBarDlg->GetSafeHwnd(), GWL_EXSTYLE) | WS_EX_TRANSPARENT);     //设置任务栏窗口鼠标穿透
     }
     else
     {
         SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) & (~WS_EX_TRANSPARENT));      //取消鼠标穿透
-        if (IsTaskbarWndValid())
-            SetWindowLong(m_tBarDlg->GetSafeHwnd(), GWL_EXSTYLE, GetWindowLong(m_tBarDlg->GetSafeHwnd(), GWL_EXSTYLE) & (~WS_EX_TRANSPARENT));      //取消任务栏窗口鼠标穿透
     }
 }
 
@@ -742,6 +738,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     bool is_hardware_monitor_item_changed = (optionsDlg.m_tab3_dlg.m_data.hardware_monitor_item != theApp.m_general_data.hardware_monitor_item);
     bool is_always_on_top_changed = (optionsDlg.m_tab1_dlg.m_data.m_always_on_top != theApp.m_main_wnd_data.m_always_on_top);
     bool is_mouse_penerate_changed = (optionsDlg.m_tab1_dlg.m_data.m_mouse_penetrate != theApp.m_main_wnd_data.m_mouse_penetrate);
+    bool is_taskbar_mouse_penetrate_changed = (optionsDlg.m_tab2_dlg.m_data.m_mouse_penetrate != theApp.m_taskbar_data.m_mouse_penetrate);
     bool is_alow_out_of_border_changed = (optionsDlg.m_tab1_dlg.m_data.m_alow_out_of_border != theApp.m_main_wnd_data.m_alow_out_of_border);
     bool is_show_notify_icon_changed = (optionsDlg.m_tab3_dlg.m_data.show_notify_icon != theApp.m_general_data.show_notify_icon);
     bool is_connections_hide_changed = (optionsDlg.m_tab3_dlg.m_data.connections_hide.data() != theApp.m_general_data.connections_hide.data());
@@ -839,6 +836,16 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
         if (!theApp.m_general_data.show_notify_icon && theApp.IsForceShowNotifyIcon())   //鼠标穿透时，如果通知图标没有显示，则将它显示出来，否则无法呼出右键菜单
         {
             //添加通知栏图标
+            AddNotifyIcon();
+            theApp.m_general_data.show_notify_icon = true;
+        }
+    }
+
+    if (is_taskbar_mouse_penetrate_changed)
+    {
+        //任务栏鼠标穿透变化后，检查是否需要强制显示通知区图标
+        if (!theApp.m_general_data.show_notify_icon && theApp.IsForceShowNotifyIcon())
+        {
             AddNotifyIcon();
             theApp.m_general_data.show_notify_icon = true;
         }

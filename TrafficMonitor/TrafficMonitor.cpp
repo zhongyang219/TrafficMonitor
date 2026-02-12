@@ -277,6 +277,8 @@ void CTrafficMonitorApp::LoadConfig()
     else
         m_taskbar_data.disable_d2d = true;
     m_taskbar_data.enable_colorful_emoji = ini.GetBool(L"task_bar", L"enable_colorful_emoji", true);
+    // 迁移：如果 mouse_penetrate 键不存在，则继承主窗口的鼠标穿透设置
+    m_taskbar_data.m_mouse_penetrate = ini.GetBool(L"task_bar", L"mouse_penetrate", m_main_wnd_data.m_mouse_penetrate);
 
     //其他设置
     //m_cfg_data.m_show_internet_ip = ini.GetBool(L"connection_details", L"show_internet_ip", false);
@@ -431,6 +433,7 @@ void CTrafficMonitorApp::SaveConfig()
 
     ini.WriteBool(L"task_bar", L"disable_d2d", m_taskbar_data.disable_d2d);
     ini.WriteBool(L"task_bar", L"enable_colorful_emoji", m_taskbar_data.enable_colorful_emoji);
+    ini.WriteBool(L"task_bar", L"mouse_penetrate", m_taskbar_data.m_mouse_penetrate);
 
     //其他设置
     //ini.WriteBool(L"connection_details", L"show_internet_ip", m_cfg_data.m_show_internet_ip);
@@ -1202,8 +1205,10 @@ void CTrafficMonitorApp::UpdateOpenHardwareMonitorEnableState()
 
 bool CTrafficMonitorApp::IsForceShowNotifyIcon()
 {
-    return ((!m_cfg_data.m_show_task_bar_wnd /*|| m_win_version.IsWindows11OrLater()*/)
-        && (m_cfg_data.m_hide_main_window || m_main_wnd_data.m_mouse_penetrate));    //如果没有显示任务栏窗口，且隐藏了主窗口或设置了鼠标穿透，则禁用“显示通知区图标”菜单项
+    // 任务栏窗口可交互 = 已显示 且 未设置鼠标穿透
+    bool taskbar_interactive = m_cfg_data.m_show_task_bar_wnd && !m_taskbar_data.m_mouse_penetrate;
+    return (!taskbar_interactive
+        && (m_cfg_data.m_hide_main_window || m_main_wnd_data.m_mouse_penetrate));
 }
 
 std::wstring CTrafficMonitorApp::GetPlauginTooltipInfo() const

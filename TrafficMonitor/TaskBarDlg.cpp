@@ -50,6 +50,7 @@ BEGIN_MESSAGE_MAP(CTaskBarDlg, CDialogEx)
     ON_WM_PAINT()
     ON_WM_CLOSE()
     ON_WM_LBUTTONUP()
+    ON_WM_NCHITTEST()
     ON_MESSAGE(WM_EXITMENULOOP, &CTaskBarDlg::OnExitmenuloop)
     ON_MESSAGE(WM_TABLET_QUERYSYSTEMGESTURESTATUS, &CTaskBarDlg::OnTabletQuerysystemgesturestatus)
     ON_WM_MOUSEWHEEL()
@@ -1448,6 +1449,13 @@ void CTaskBarDlg::OnLButtonUp(UINT nFlags, CPoint point)
     }
 
     CDialogEx::OnLButtonUp(nFlags, point);
+}
+
+LRESULT CTaskBarDlg::OnNcHitTest(CPoint point)
+{
+    if (theApp.m_taskbar_data.m_mouse_penetrate)
+        return HTTRANSPARENT;
+    return CDialogEx::OnNcHitTest(point);
 }
 
 afx_msg LRESULT CTaskBarDlg::OnExitmenuloop(WPARAM wParam, LPARAM lParam)
