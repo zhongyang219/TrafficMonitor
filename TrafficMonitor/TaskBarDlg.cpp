@@ -748,15 +748,16 @@ CString CTaskBarDlg::GetMouseTipsInfo()
         tip_info += temp;
     }
 
+    if (!IsItemShow(TDI_GPU_USAGE) && theApp.m_gpu_usage >= 0)
+    {
+        temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
+        tip_info += temp;
+    }
+
 #ifndef WITHOUT_TEMPERATURE
     CTrafficMonitorDlg* pMainWnd = dynamic_cast<CTrafficMonitorDlg*>(theApp.m_pMainWnd);
     if (pMainWnd->IsTemperatureNeeded())
     {
-        if (!IsItemShow(TDI_GPU_USAGE) && theApp.m_gpu_usage >= 0)
-        {
-            temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
-            tip_info += temp;
-        }
         if (!IsItemShow(TDI_CPU_TEMP) && theApp.m_cpu_temperature > 0)
         {
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_taskbar_data));
@@ -777,13 +778,13 @@ CString CTaskBarDlg::GetMouseTipsInfo()
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_main_board_temperature, theApp.m_taskbar_data));
             tip_info += temp;
         }
-        if (!IsItemShow(TDI_HDD_USAGE) && theApp.m_hdd_usage >= 0)
-        {
-            temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_HDD_USAGE), theApp.m_hdd_usage);
-            tip_info += temp;
-        }
     }
 #endif
+    if (!IsItemShow(TDI_HDD_USAGE) && theApp.m_hdd_usage >= 0)
+    {
+        temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_HDD_USAGE), theApp.m_hdd_usage);
+        tip_info += temp;
+    }
 
     //添加插件项目的鼠标提示
     tip_info += theApp.GetPlauginTooltipInfo().c_str();
@@ -936,7 +937,7 @@ void CTaskBarDlg::CalculateWindowSize()
 
 void CTaskBarDlg::SetToolTipsTopMost()
 {
-    m_tool_tips.SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+    m_tool_tips.SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_SHOWWINDOW);
 }
 
 void CTaskBarDlg::UpdateToolTips()

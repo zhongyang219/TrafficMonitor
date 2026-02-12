@@ -90,9 +90,9 @@ bool CTaskbarItemOrderHelper::IsItemDisplayed(CommonDisplayItem item)
     {
         if ((item == TDI_CPU_TEMP) && !theApp.m_general_data.IsHardwareEnable(HI_CPU))
             displayed = false;
-        if ((item == TDI_GPU_TEMP || item == TDI_GPU_USAGE) && !theApp.m_general_data.IsHardwareEnable(HI_GPU))
+        if ((item == TDI_GPU_TEMP) && !theApp.m_general_data.IsHardwareEnable(HI_GPU))
             displayed = false;
-        if ((item == TDI_HDD_TEMP || item == TDI_HDD_USAGE) && !theApp.m_general_data.IsHardwareEnable(HI_HDD))
+        if ((item == TDI_HDD_TEMP) && !theApp.m_general_data.IsHardwareEnable(HI_HDD))
             displayed = false;
         if (item == TDI_MAIN_BOARD_TEMP && !theApp.m_general_data.IsHardwareEnable(HI_MBD))
             displayed = false;

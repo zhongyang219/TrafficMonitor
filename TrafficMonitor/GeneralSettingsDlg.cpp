@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "TrafficMonitor.h"
+#include "TrafficMonitorDlg.h"
 #include "GeneralSettingsDlg.h"
 #include "PluginManagerDlg.h"
 #include "SelectConnectionsDlg.h"
@@ -33,13 +34,11 @@ void CGeneralSettingsDlg::CheckTaskbarDisplayItem()
     }
     if (!theApp.m_general_data.IsHardwareEnable(HI_GPU))
     {
-        theApp.m_taskbar_data.display_item.Remove(TDI_GPU_USAGE);
         theApp.m_taskbar_data.display_item.Remove(TDI_GPU_TEMP);
     }
     if (!theApp.m_general_data.IsHardwareEnable(HI_HDD))
     {
         theApp.m_taskbar_data.display_item.Remove(TDI_HDD_TEMP);
-        theApp.m_taskbar_data.display_item.Remove(TDI_HDD_USAGE);
     }
     if (!theApp.m_general_data.IsHardwareEnable(HI_MBD))
         theApp.m_taskbar_data.display_item.Remove(TDI_MAIN_BOARD_TEMP);
@@ -200,7 +199,7 @@ void CGeneralSettingsDlg::SetControlEnable()
     m_hdd_temp_tip_edit.EnableWindow(m_data.hdd_temp_tip.enable);
     m_mbd_temp_tip_edit.EnableWindow(m_data.mainboard_temp_tip.enable);
 
-    m_hard_disk_combo.EnableWindow(m_data.IsHardwareEnable(HI_HDD));
+    //m_hard_disk_combo.EnableWindow(m_data.IsHardwareEnable(HI_HDD));
     m_select_cpu_combo.EnableWindow(m_data.IsHardwareEnable(HI_CPU));
 
     EnableDlgCtrl(IDC_SELECT_CONNECTIONS_BUTTON, !m_data.show_all_interface);
@@ -359,6 +358,14 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     m_monitor_time_span_ori = m_data.monitor_time_span;
     m_update_source_ori = m_data.update_source;
 
+    if (CTrafficMonitorDlg::Instance()->IsGetDiskUsageByPdh())
+    {
+        const auto& disk_names = CTrafficMonitorDlg::Instance()->GetPdhDiskUsageHelper().GetDiskNames();
+        for (const auto& hdd_name : disk_names)
+            m_hard_disk_combo.AddString(hdd_name);
+        int cur_index = m_hard_disk_combo.FindString(-1, m_data.hard_disk_name.c_str());
+        m_hard_disk_combo.SetCurSel(cur_index);
+    }
 #ifndef WITHOUT_TEMPERATURE
     //初始化硬件监控Check box
     CheckDlgButton(IDC_CPU_CHECK, m_data.IsHardwareEnable(HI_CPU));
@@ -370,15 +377,18 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     {
         CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
         //初始化选择硬盘下拉列表
-        for (const auto& hdd_item : theApp.m_pMonitor->AllHDDTemperature())
-            m_hard_disk_combo.AddString(hdd_item.first.c_str());
-        int cur_index = m_hard_disk_combo.FindString(-1, m_data.hard_disk_name.c_str());
-        m_hard_disk_combo.SetCurSel(cur_index);
+        if (!CTrafficMonitorDlg::Instance()->IsGetDiskUsageByPdh())
+        {
+            for (const auto& hdd_item : theApp.m_pMonitor->AllHDDTemperature())
+                m_hard_disk_combo.AddString(hdd_item.first.c_str());
+            int cur_index = m_hard_disk_combo.FindString(-1, m_data.hard_disk_name.c_str());
+            m_hard_disk_combo.SetCurSel(cur_index);
+        }
         //初始化选择CPU下拉列表
         m_select_cpu_combo.AddString(CCommon::LoadText(IDS_AVREAGE_TEMPERATURE));
         for (const auto& cpu_item : theApp.m_pMonitor->AllCpuTemperature())
             m_select_cpu_combo.AddString(cpu_item.first.c_str());
-        cur_index = m_select_cpu_combo.FindString(-1, m_data.cpu_core_name.c_str());
+        int cur_index = m_select_cpu_combo.FindString(-1, m_data.cpu_core_name.c_str());
         if (cur_index < 0)
             cur_index = 0;
         m_select_cpu_combo.SetCurSel(cur_index);
@@ -399,13 +409,13 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     EnableDlgCtrl(IDC_GPU_CHECK, false);
     EnableDlgCtrl(IDC_HDD_CHECK, false);
     EnableDlgCtrl(IDC_MBD_CHECK, false);
-    EnableDlgCtrl(IDC_SELECT_HARD_DISK_COMBO, false);
+    //EnableDlgCtrl(IDC_SELECT_HARD_DISK_COMBO, false);
     EnableDlgCtrl(IDC_SELECT_CPU_COMBO, false);
     EnableDlgCtrl(IDC_CPU_TEMP_STATIC, false);
     EnableDlgCtrl(IDC_GPU_TEMP_STATIC, false);
     EnableDlgCtrl(IDC_HDD_STATIC, false);
     EnableDlgCtrl(IDC_MBD_TEMP_STATIC, false);
-    EnableDlgCtrl(IDC_SELECT_HDD_STATIC, false);
+    //EnableDlgCtrl(IDC_SELECT_HDD_STATIC, false);
     EnableDlgCtrl(IDC_SELECT_CPU_STATIC, false);
     EnableDlgCtrl(IDC_HARDWARE_MONITOR_STATIC, false);
 #endif

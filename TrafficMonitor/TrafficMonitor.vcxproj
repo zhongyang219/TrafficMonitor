@@ -193,84 +193,84 @@
     <LinkIncremental>true</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Configuration)\</OutDir>
-    <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib\;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Configuration)\</OutDir>
-    <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib\;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64EC'">
     <LinkIncremental>true</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(SolutionDir)Bin\x64\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|x64'">
     <LinkIncremental>true</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (lite)|ARM64EC'">
     <LinkIncremental>true</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(SolutionDir)Bin\x64\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Configuration)\</OutDir>
-    <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib\;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release (lite)|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Configuration)\</OutDir>
-    <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib\;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64EC'">
     <LinkIncremental>false</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(SolutionDir)Bin\x64\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release (lite)|x64'">
     <LinkIncremental>false</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release (lite)|ARM64EC'">
     <LinkIncremental>false</LinkIncremental>
     <ExcludePath />
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib\x64;$(OutDir);$(SolutionDir)Bin\x64\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -782,7 +782,6 @@
     <ClInclude Include="CMFCColorDialogEx.h" />
     <ClInclude Include="ColorSettingListCtrl.h" />
     <ClInclude Include="ComboBox2.h" />
-    <ClInclude Include="CPUUsage.h" />
     <ClInclude Include="crashtool.h" />
     <ClInclude Include="CTabCtrlEx.h" />
     <ClInclude Include="CVariant.h" />
@@ -824,6 +823,11 @@
     <ClInclude Include="NetworkInfoDlg.h" />
     <ClInclude Include="Nullable.hpp" />
     <ClInclude Include="OptionsDlg.h" />
+    <ClInclude Include="PdhHardwareQuery\CPUUsage.h" />
+    <ClInclude Include="PdhHardwareQuery\CpuFreq.h" />
+    <ClInclude Include="PdhHardwareQuery\GpuUsage.h" />
+    <ClInclude Include="PdhHardwareQuery\DiskUsage.h" />
+    <ClInclude Include="PdhHardwareQuery\PdhQuery.h" />
     <ClInclude Include="PictureStatic.h" />
     <ClInclude Include="PluginInfoDlg.h" />
     <ClInclude Include="PluginManager.h" />
@@ -880,7 +884,6 @@
     <ClCompile Include="ColorSettingListCtrl.cpp" />
     <ClCompile Include="ComboBox2.cpp" />
     <ClCompile Include="CommonData.cpp" />
-    <ClCompile Include="CPUUsage.cpp" />
     <ClCompile Include="crashtool.cpp" />
     <ClCompile Include="CTabCtrlEx.cpp" />
     <ClCompile Include="CVariant.cpp" />
@@ -917,6 +920,11 @@
     <ClCompile Include="MessageDlg.cpp" />
     <ClCompile Include="NetworkInfoDlg.cpp" />
     <ClCompile Include="OptionsDlg.cpp" />
+    <ClCompile Include="PdhHardwareQuery\CPUUsage.cpp" />
+    <ClCompile Include="PdhHardwareQuery\CpuFreq.cpp" />
+    <ClCompile Include="PdhHardwareQuery\GpuUsage.cpp" />
+    <ClCompile Include="PdhHardwareQuery\DiskUsage.cpp" />
+    <ClCompile Include="PdhHardwareQuery\PdhQuery.cpp" />
     <ClCompile Include="PictureStatic.cpp" />
     <ClCompile Include="PluginInfoDlg.cpp" />
     <ClCompile Include="PluginManager.cpp" />

@@ -184,12 +184,10 @@ void CTrafficMonitorApp::LoadConfig()
 
     //不含温度监控的版本，不显示温度监控相关项目
 #ifdef WITHOUT_TEMPERATURE
-    m_taskbar_data.display_item.Remove(TDI_GPU_USAGE);
     m_taskbar_data.display_item.Remove(TDI_CPU_TEMP);
     m_taskbar_data.display_item.Remove(TDI_GPU_TEMP);
     m_taskbar_data.display_item.Remove(TDI_HDD_TEMP);
     m_taskbar_data.display_item.Remove(TDI_MAIN_BOARD_TEMP);
-    m_taskbar_data.display_item.Remove(TDI_HDD_USAGE);
 #endif
 
     //如果选项设置中关闭了某个硬件监控，则不显示对应的温度监控相关项目
@@ -197,13 +195,11 @@ void CTrafficMonitorApp::LoadConfig()
         m_taskbar_data.display_item.Remove(TDI_CPU_TEMP);
     if (!m_general_data.IsHardwareEnable(HI_GPU))
     {
-        m_taskbar_data.display_item.Remove(TDI_GPU_USAGE);
         m_taskbar_data.display_item.Remove(TDI_GPU_TEMP);
     }
     if (!m_general_data.IsHardwareEnable(HI_HDD))
     {
         m_taskbar_data.display_item.Remove(TDI_HDD_TEMP);
-        m_taskbar_data.display_item.Remove(TDI_HDD_USAGE);
     }
     if (!m_general_data.IsHardwareEnable(HI_MBD))
         m_taskbar_data.display_item.Remove(TDI_MAIN_BOARD_TEMP);
@@ -1494,4 +1490,9 @@ int CTrafficMonitorApp::GetDPI(DPIType type) const
         return m_dpi;
     }
     return 0;
+}
+
+const wchar_t* CTrafficMonitorApp::GetStringRes(const wchar_t* key, const wchar_t* section)
+{
+    return m_str_table.LoadText(key, section).c_str();
 }

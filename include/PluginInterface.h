@@ -412,6 +412,14 @@ public:
      * @return  COLORREF格式的颜色值
      */
     virtual unsigned int GetThemeColor() const = 0;
+
+    /**
+     * @brief   获取当前语言的字符串资源
+     * @param   str_id 字符串资源id
+     * @param   str_section 字符串资源在ini文件中的段名称
+     * @return 
+     */
+    virtual const wchar_t* GetStringRes(const wchar_t* key, const wchar_t* section) = 0;
 };
 
 
