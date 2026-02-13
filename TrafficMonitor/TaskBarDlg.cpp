@@ -1,4 +1,4 @@
-﻿// TaskBarDlg.cpp : 实现文件
+// TaskBarDlg.cpp : 实现文件
 //
 
 #include "stdafx.h"
@@ -139,8 +139,9 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                       this->m_taskbar_draw_common_window_support.Get(),
                       this->m_d2d1_device_context_support.Get(),
                       d2d_size);
-                  // 仅透明时，且UpdateLayeredWindowIndirect失败时，启用此渲染器，默认初始化为全黑，alpha=1
-                  p_draw_common->FillRect(draw_rect, 0x00000000, 1);
+                  // 仅透明时，且UpdateLayeredWindowIndirect失败时，启用此渲染器，默认初始化为全黑
+                  BYTE bg_alpha = theApp.m_taskbar_data.m_mouse_penetrate ? 0 : 1;
+                  p_draw_common->FillRect(draw_rect, 0x00000000, bg_alpha);
                   p_draw_common->SetFont(&m_font);
                   p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
                   // 构造buffer
@@ -164,8 +165,9 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                       this->m_taskbar_draw_common_window_support.Get(),
                       this->m_d2d1_device_context_support.Get(),
                       d2d_size);
-                  // 仅透明时启用此渲染器，默认初始化为全黑，alpha=1
-                  p_draw_common->FillRect(draw_rect, 0x00000000, 1);
+                  // 仅透明时启用此渲染器，默认初始化为全黑
+                  BYTE bg_alpha = theApp.m_taskbar_data.m_mouse_penetrate ? 0 : 1;
+                  p_draw_common->FillRect(draw_rect, 0x00000000, bg_alpha);
                   p_draw_common->SetFont(&m_font);
                   p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
                   // 构造buffer
