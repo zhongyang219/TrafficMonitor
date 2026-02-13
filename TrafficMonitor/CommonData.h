@@ -327,6 +327,7 @@ struct TaskBarSettingData : public PublicSettingData
     bool disable_d2d{ false };//是否禁用d2d绘图
     DWORD update_layered_window_error_code{0}; // 使用D2D1渲染时，UpdateLayeredWindowIndirect失败的错误代码，会在关闭任务栏窗口时被重置为0
     bool enable_colorful_emoji{ true };       //是否显示彩色emoji
+    bool m_mouse_penetrate{ false };          //任务栏窗口鼠标穿透
 
     bool is_windows_web_experience_detected{ false }; //是否检测到Windows Web Experience小组件安装信息
 };

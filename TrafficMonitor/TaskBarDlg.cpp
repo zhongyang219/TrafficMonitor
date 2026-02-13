@@ -50,6 +50,7 @@ BEGIN_MESSAGE_MAP(CTaskBarDlg, CDialogEx)
     ON_WM_PAINT()
     ON_WM_CLOSE()
     ON_WM_LBUTTONUP()
+    ON_WM_NCHITTEST()
     ON_MESSAGE(WM_EXITMENULOOP, &CTaskBarDlg::OnExitmenuloop)
     ON_MESSAGE(WM_TABLET_QUERYSYSTEMGESTURESTATUS, &CTaskBarDlg::OnTabletQuerysystemgesturestatus)
     ON_WM_MOUSEWHEEL()
@@ -138,8 +139,9 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                       this->m_taskbar_draw_common_window_support.Get(),
                       this->m_d2d1_device_context_support.Get(),
                       d2d_size);
-                  // 仅透明时，且UpdateLayeredWindowIndirect失败时，启用此渲染器，默认初始化为全黑，alpha=1
-                  p_draw_common->FillRect(draw_rect, 0x00000000, 1);
+                  // 仅透明时，且UpdateLayeredWindowIndirect失败时，启用此渲染器，默认初始化为全黑
+                  BYTE bg_alpha = theApp.m_taskbar_data.m_mouse_penetrate ? 0 : 1;
+                  p_draw_common->FillRect(draw_rect, 0x00000000, bg_alpha);
                   p_draw_common->SetFont(&m_font);
                   p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
                   // 构造buffer
@@ -163,8 +165,9 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                       this->m_taskbar_draw_common_window_support.Get(),
                       this->m_d2d1_device_context_support.Get(),
                       d2d_size);
-                  // 仅透明时启用此渲染器，默认初始化为全黑，alpha=1
-                  p_draw_common->FillRect(draw_rect, 0x00000000, 1);
+                  // 仅透明时启用此渲染器，默认初始化为全黑
+                  BYTE bg_alpha = theApp.m_taskbar_data.m_mouse_penetrate ? 0 : 1;
+                  p_draw_common->FillRect(draw_rect, 0x00000000, bg_alpha);
                   p_draw_common->SetFont(&m_font);
                   p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
                   // 构造buffer
@@ -1448,6 +1451,13 @@ void CTaskBarDlg::OnLButtonUp(UINT nFlags, CPoint point)
     }
 
     CDialogEx::OnLButtonUp(nFlags, point);
+}
+
+LRESULT CTaskBarDlg::OnNcHitTest(CPoint point)
+{
+    if (theApp.m_taskbar_data.m_mouse_penetrate)
+        return HTTRANSPARENT;
+    return CDialogEx::OnNcHitTest(point);
 }
 
 afx_msg LRESULT CTaskBarDlg::OnExitmenuloop(WPARAM wParam, LPARAM lParam)

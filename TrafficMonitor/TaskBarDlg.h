@@ -226,6 +226,7 @@ public:
     afx_msg void OnPaint();
     afx_msg void OnClose();
     afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+    afx_msg LRESULT OnNcHitTest(CPoint point);
 protected:
     afx_msg LRESULT OnExitmenuloop(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnTabletQuerysystemgesturestatus(WPARAM wParam, LPARAM lParam);
