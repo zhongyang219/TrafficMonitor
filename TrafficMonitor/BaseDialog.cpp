@@ -315,9 +315,14 @@ BOOL CBaseDialog::OnInitDialog()
     FontInfo font_info;
     font_info.name = theApp.m_str_table.GetLanguageInfo().default_font_name.c_str();
     font_info.size = 9;
-    UINT dpi_x{}, dpi_y{};
-    if (theApp.DPIFromRect(rect, &dpi_x, &dpi_y))
-        m_dpi = dpi_x;
+    // 对于子窗口（如TabDlg），不根据窗口位置重新检测DPI，因为创建时位置还未确定
+    // 保持构造函数中设置的 theApp.GetDpi() 值
+    if ((GetStyle() & WS_CHILD) == 0)
+    {
+        UINT dpi_x{}, dpi_y{};
+        if (theApp.DPIFromRect(rect, &dpi_x, &dpi_y))
+            m_dpi = dpi_x;
+    }
 
     font_info.Create(m_dlg_font, m_dpi);
 
