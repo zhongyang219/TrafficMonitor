@@ -229,6 +229,20 @@
   <ItemGroup>
     <ResourceCompile Include="app.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="HidSharp.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="DiskInfoToolkit.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="BlackSharp.Core.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="RAMSPDToolkit-NDD.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
