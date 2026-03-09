@@ -229,6 +229,53 @@
   <ItemGroup>
     <ResourceCompile Include="app.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="HidSharp.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="DiskInfoToolkit.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="BlackSharp.Core.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="RAMSPDToolkit-NDD.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="System.Memory.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="System.Buffers.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="System.Numerics.Vectors.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="System.Runtime.CompilerServices.Unsafe.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="System.IO.Pipelines.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="System.Text.Json.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="System.Text.Encodings.Web.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="System.Threading.Tasks.Extensions.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="System.Collections.Immutable.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Microsoft.Bcl.AsyncInterfaces.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Microsoft.Bcl.HashCode.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
