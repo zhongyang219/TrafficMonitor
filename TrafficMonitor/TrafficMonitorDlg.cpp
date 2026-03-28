@@ -1357,13 +1357,6 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     bool gpu_usage_acquired = false;
     m_get_disk_usage_by_pdh = false;
 
-    theApp.m_cpu_temperature = -1;
-    theApp.m_gpu_temperature = -1;
-    theApp.m_hdd_temperature = -1;
-    theApp.m_main_board_temperature = -1;
-    theApp.m_gpu_usage = -1;
-    theApp.m_hdd_usage = -1;
-
     //获取CPU使用率
     if (lite_version || theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_HARDWARE_MONITOR || !theApp.m_general_data.IsHardwareEnable(HI_CPU))
     {
@@ -1384,6 +1377,8 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         if (m_gpu_usage_helper.GetGpuUsage(theApp.m_gpu_usage))
             gpu_usage_acquired = true;
     }
+    if (!gpu_usage_acquired)
+        theApp.m_gpu_usage = -1;
 
     //获取硬盘利用率
     if (lite_version /*|| is_arm64ec*/ || !theApp.m_general_data.IsHardwareEnable(HI_HDD))
@@ -1411,6 +1406,8 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         if (m_disk_usage_helper.GetDiskUsage(disk_index, theApp.m_hdd_usage))
             m_get_disk_usage_by_pdh = true;
     }
+    if (!m_get_disk_usage_by_pdh)
+        theApp.m_hdd_usage = -1;
 
     //获取内存利用率
     MEMORYSTATUSEX statex;
@@ -1421,6 +1418,10 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     theApp.m_total_memory = static_cast<int>(statex.ullTotalPhys / 1024);
 
 #ifndef WITHOUT_TEMPERATURE
+    theApp.m_cpu_temperature = -1;
+    theApp.m_gpu_temperature = -1;
+    theApp.m_hdd_temperature = -1;
+    theApp.m_main_board_temperature = -1;
     //获取温度
     if (IsTemperatureNeeded() && theApp.m_pMonitor != nullptr)
     {
