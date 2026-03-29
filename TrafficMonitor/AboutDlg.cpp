@@ -124,7 +124,7 @@ BOOL CAboutDlg::OnInitDialog()
     CString temp_str;
     GetDlgItemText(IDC_STATIC_COPYRIGHT, temp_str);
     CString str_compile_time = CCommon::GetLastCompileTime();
-    temp_str.Replace(_T("<compile_date>"), str_compile_time);
+    temp_str = CCommon::StringFormat(temp_str, { COPYRITE_YEAR, str_compile_time });
     SetDlgItemText(IDC_STATIC_COPYRIGHT, temp_str);
 
     m_tool_tip.Create(this, TTS_ALWAYSTIP | TTS_NOPREFIX);
