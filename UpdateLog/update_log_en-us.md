@@ -1,6 +1,36 @@
 **[简体中文](./update_log.md) | [繁體中文](./update_log_zh-tw.md) | English**
 
 # TrafficMonitor Update log
+## V1.86(2026/03/29)
+
+**New Features**
+
+- Added the feature to display the taskbar window on secondary monitors. #2037 #1974 #1952 #1944 #1875 #1870 #1863 #1734
+- Refactored multilingual code; multilingual strings are now configured in external INI files for easier localization. Added support for new languages such as German, Italian, Russian, Polish, Brazilian Portuguese, Turkish, Hebrew.
+- Replaced the skin list control in the skin selection interface with a ListBox.
+- Controls in the Options Settings dialog now support dynamic resizing.
+- The vertical scrollbar in the Options Settings dialog no longer resets when resizing.
+- The width of items in the taskbar window now supports dynamic adjustment.
+- Added the feature for the taskbar resource usage graph background color to follow the Windows theme color.
+- Added the ability to save fonts, text colors, and display text separately for each skin.
+- Added a right-click menu in the Display Text Settings dialog to restore defaults for individual items.
+- Added the display of call stack in crash information dialog. Add the function of writing the crash information to the log file.
+- Added the display of GPU and hard disk utilization for the Lite version.
+
+**Bug Fixes**
+
+- Fixed the issue where the update source in "General Settings" was not saved. #2020 #1561 #1119
+- Fixed incorrect font size in the preview image of the skin selection dialog when DPI settings differ across multiple monitors.
+- Fixed incorrect DPI when the floating window moves between monitors with different DPI settings.
+- Fixed the issue where built-in items in the taskbar could not be fully removed when plugin items were displayed, leaving an upload speed item. #1965
+- Optimized the style of color display in the "Color Display" control in the Options Settings dialog. Fixed the issue where noticeable blank space appeared on the right side of the control when more than 8 colors were displayed.
+- Fixed the issue where changing the value in the "Font Size" text box in the main window and taskbar window settings did not take effect after clicking "Apply."
+- Fixed the inconsistency between the network speed unit in the taskbar window tooltip and the settings.
+- Fixed the issue where CPU frequency did not follow the "Separate value and unit with a space" option.
+- Added handling to reinitialize connections after resuming from sleep mode, resolving the issue where network speed could not be retrieved after waking from sleep.
+- Fixed the issue that the correct font could not be obtained when font name in the skin file contains Unicode characters. Fixed some logical problems when parsing the skin file.
+- Improved in other details.
+
 ## V1.85.1 (2025/02/10)
 
 * Fixed the problem that when using third-party software to change to the classical taskbar in Windows 11, the option "Taskbar window appears to the left of the taskbar" in the Taskbar Window Settings is not available.
