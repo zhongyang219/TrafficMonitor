@@ -158,7 +158,7 @@ NetWorkConection CNetworkInfoDlg::GetConnection(int connection_index)
 
 UINT CNetworkInfoDlg::GetInternetIPThreadFunc(LPVOID lpParam)
 {
-    CCommon::SetThreadLanguage(theApp.m_general_data.language);		//设置线程语言
+    CCommon::SetThreadLanguage(theApp.m_general_data.language.language_id);		//设置线程语言
     CNetworkInfoDlg* p_instance = (CNetworkInfoDlg*)lpParam;
     wstring ip_address, ip_location;
 

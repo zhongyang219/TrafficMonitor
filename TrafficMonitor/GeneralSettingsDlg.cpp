@@ -355,9 +355,9 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     int current_language_index{ -1 };       //当前语言在所有语言列表中的序号
     for (size_t i = 0; i < theApp.m_str_table.GetLanguageList().size(); i++)
     {
-        const CStrTable::LanguageInfo& language_info = theApp.m_str_table.GetLanguageList()[i];
+        const LanguageInfo& language_info = theApp.m_str_table.GetLanguageList()[i];
         m_language_combo.AddString(language_info.display_name.c_str());
-        if (language_info.language_id == m_data.language)
+        if (language_info == m_data.language)
             current_language_index = static_cast<int>(i);
     }
     m_language_combo.SetCurSel(current_language_index + 1);     //由于ComboBox第一项是“跟随系统”，因此ComboBox的序号需要加1
@@ -505,14 +505,14 @@ void CGeneralSettingsDlg::OnOK()
     checkTempTipValue(m_data.mainboard_temp_tip.tip_value);
 
     //获取语言的设置
-    m_data.language = 0;
+    m_data.language = LanguageInfo();
     if (m_language_combo.GetCurSel() > 0)
     {
         //选择的不是“跟随系统”
         int current_language_index = m_language_combo.GetCurSel() - 1;
         if (current_language_index >= 0 && current_language_index < static_cast<int>(theApp.m_str_table.GetLanguageList().size()))
         {
-            m_data.language = theApp.m_str_table.GetLanguageList()[current_language_index].language_id;
+            m_data.language = theApp.m_str_table.GetLanguageList()[current_language_index];
         }
     }
     if (m_data.language != theApp.m_general_data.language)

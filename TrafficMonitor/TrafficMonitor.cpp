@@ -59,7 +59,7 @@ CTrafficMonitorApp::CTrafficMonitorApp()
 void CTrafficMonitorApp::LoadLanguageConfig()
 {
     CIniHelper ini{ m_config_path };
-    m_general_data.language = static_cast<WORD>(ini.GetInt(_T("general"), _T("language"), 0));
+    m_general_data.language.fromConfigString(ini.GetString(_T("general"), _T("language"), L""));
 }
 
 void CTrafficMonitorApp::LoadConfig()
@@ -295,7 +295,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(_T("general"), _T("check_update_when_start"), m_general_data.check_update_when_start);
     //ini.WriteBool(_T("general"), _T("allow_skin_cover_font"), m_general_data.allow_skin_cover_font);
     //ini.WriteBool(_T("general"), _T("allow_skin_cover_text"), m_general_data.allow_skin_cover_text);
-    ini.WriteInt(_T("general"), _T("language"), static_cast<int>(m_general_data.language));
+    ini.WriteString(_T("general"), _T("language"), m_general_data.language.toConfigString());
     ini.WriteInt(L"general", L"update_source", m_general_data.update_source);
     ini.WriteBool(L"general", L"show_all_interface", m_general_data.show_all_interface);
     ini.WriteInt(L"general", L"monitor_time_span", m_general_data.monitor_time_span);
@@ -607,7 +607,7 @@ void CTrafficMonitorApp::CheckUpdateInThread(bool message)
 
 UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
 {
-    CCommon::SetThreadLanguage(theApp.m_general_data.language);     //设置线程语言
+    CCommon::SetThreadLanguage(theApp.m_general_data.language.language_id);     //设置线程语言
 #ifndef _DEBUG      //DEBUG下不在启动时检查更新
     theApp.CheckUpdate(lpParam);        //检查更新
 #endif
@@ -971,7 +971,7 @@ BOOL CTrafficMonitorApp::InitInstance()
     LoadLanguageConfig();
 
     //初始化界面语言
-    CCommon::SetThreadLanguage(m_general_data.language);
+    CCommon::SetThreadLanguage(m_general_data.language.language_id);
 
     //初始化字符串资源
     m_str_table.Init();
@@ -1461,7 +1461,7 @@ void CTrafficMonitorApp::ShowNotifyMessage(const wchar_t* strMsg)
 
 unsigned short CTrafficMonitorApp::GetLanguageId() const
 {
-    return m_general_data.language;
+    return m_general_data.language.language_id;
 }
 
 const wchar_t* CTrafficMonitorApp::GetPluginConfigDir() const

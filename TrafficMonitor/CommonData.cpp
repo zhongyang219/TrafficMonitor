@@ -292,3 +292,27 @@ COLORREF TaskBarSettingData::GetUsageGraphColor() const
         return status_bar_color;
     }
 }
+
+wstring LanguageInfo::toConfigString() const
+{
+    return bcp_47 + L"|" + display_name + L"|" + translator;
+}
+
+void LanguageInfo::fromConfigString(const wstring& config_str)
+{
+    std::vector<wstring> parts;
+    CCommon::StringSplit(config_str, L'|', parts, false);
+    if (parts.size() >= 1)
+    {
+        bcp_47 = parts[0];
+    }
+    if (parts.size() >= 2)
+    {
+        display_name = parts[1];
+    }
+    if (parts.size() >= 3)
+    {
+        translator = parts[2];
+    }
+    language_id = LocaleNameToLCID(bcp_47.c_str(), 0);
+}

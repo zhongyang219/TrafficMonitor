@@ -168,6 +168,24 @@ private:
     std::set<std::wstring> string_set;
 };
 
+struct LanguageInfo
+{
+    wstring display_name;           // 在语言设置下拉菜单显示的字符串
+    wstring bcp_47;                 // BCP-47代码
+    wstring default_font_name;      // 默认字体
+    wstring translator;
+    wstring translator_url;
+    WORD language_id{};
+
+    bool operator==(const LanguageInfo& another) const
+    {
+        return bcp_47 == another.bcp_47 && display_name == another.display_name && translator == another.translator;
+    }
+
+    wstring toConfigString() const;
+    void fromConfigString(const wstring& config_str);
+};
+
 //选项设置数据
 struct MainConfigData
 {
@@ -356,8 +374,8 @@ struct GeneralSettingData
     NotifyTipSettings mainboard_temp_tip;   //主板温度超出提示
 
 
-    //语言id
-    WORD language;
+    //语言
+    LanguageInfo language;
 
     bool show_all_interface{ true };
     bool portable_mode{ false };        //便携模式，如果为true，则程序所有数据都保存到exe所在目录下，否则保存到Appdata\Romaing目录下

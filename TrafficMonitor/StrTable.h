@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "CVariant.h"
 #include <map>
+#include "CommonData.h"
 class CIniHelper;
 
 class CStrTable
@@ -8,21 +9,6 @@ class CStrTable
 public:
     CStrTable();
     ~CStrTable();
-
-    struct LanguageInfo
-    {
-        wstring display_name;           // 在语言设置下拉菜单显示的字符串
-        wstring bcp_47;                 // BCP-47代码
-        wstring default_font_name;      // 默认字体
-        wstring translator;
-        wstring translator_url;
-        WORD language_id{};
-
-        bool operator==(const LanguageInfo& another) const
-        {
-            return bcp_47 == another.bcp_47;
-        }
-    };
 
     void Init();
 
