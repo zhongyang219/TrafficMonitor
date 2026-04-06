@@ -43,12 +43,14 @@ See below for the functions comparison of the two versions.
 | CPU and RAM usage monitoring                  | ✔                | ✔            |
 | CPU, GPU, hard disk, mother board temperature | ✔                | ❌            |
 | CPU frequency monitoring                      | ✔                | ✔            |
-| GPU usage monitoring                          | ✔                | ❌            |
-| Hard disk usage monitoring                    | ✔                | ❌            |
+| GPU usage monitoring                          | ✔                | ✔            |
+| Hard disk usage monitoring                    | ✔                | ✔            |
 | Network connection details                    | ✔                | ✔            |
 | Plug-in system                                | ✔                | ✔            |
 | Change the skin of the main window            | ✔                | ✔            |
 | Administrator privilege required              | Yes              | No           |
+
+Note: Since version 1.86, the TrafficMonitor Lite version also provides monitoring functions for GPU and hard disk usage. Compared to the standard version, it only lacks the temperature monitoring function. The temperature monitoring function in subsequent versions of TrafficMonitor will no longer be maintained. TrafficMonitor will no longer provide the standard version but only the Lite version. The temperature monitoring function has been moved to the [Hardware Monitor plugin](https://github.com/zhongyang219/TrafficMonitorPlugins/blob/main/download/plugin_download_en.md#hardware-monitor-plugin). If you need to use the temperature monitoring function, please download the Hardware Monitor plugin.
 
 # Main Features
 
