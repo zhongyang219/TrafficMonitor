@@ -214,8 +214,6 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_MEMORY_USAGE_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedMemoryUsageTipCheck)
     ON_BN_CLICKED(IDC_OPEN_CONFIG_PATH_BUTTON, &CGeneralSettingsDlg::OnBnClickedOpenConfigPathButton)
     ON_BN_CLICKED(IDC_SHOW_ALL_CONNECTION_CHECK, &CGeneralSettingsDlg::OnBnClickedShowAllConnectionCheck)
-    ON_BN_CLICKED(IDC_USE_CPU_TIME_RADIO, &CGeneralSettingsDlg::OnBnClickedUseCpuTimeRadio)
-    ON_BN_CLICKED(IDC_USE_PDH_RADIO, &CGeneralSettingsDlg::OnBnClickedUsePdhRadio)
     ON_EN_KILLFOCUS(IDC_MONITOR_SPAN_EDIT, &CGeneralSettingsDlg::OnEnKillfocusMonitorSpanEdit)
     ON_BN_CLICKED(IDC_CPU_TEMP_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedCpuTempTipCheck)
     ON_BN_CLICKED(IDC_GPU_TEMP_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedGpuTempTipCheck)
@@ -234,7 +232,6 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_SHOW_NOTIFY_ICON_CHECK, &CGeneralSettingsDlg::OnBnClickedShowNotifyIconCheck)
     ON_BN_CLICKED(IDC_SELECT_CONNECTIONS_BUTTON, &CGeneralSettingsDlg::OnBnClickedSelectConnectionsButton)
     ON_BN_CLICKED(IDC_RESET_AUTO_RUN_BUTTON, &CGeneralSettingsDlg::OnBnClickedResetAutoRunButton)
-    ON_BN_CLICKED(IDC_USE_HARDWARE_MONITOR_RADIO, &CGeneralSettingsDlg::OnBnClickedUseHardwareMonitorRadio)
     ON_EN_CHANGE(IDC_MONITOR_SPAN_EDIT, &CGeneralSettingsDlg::OnEnChangeMonitorSpanEdit)
     ON_MESSAGE(WM_SPIN_EDIT_POS_CHANGED, &CGeneralSettingsDlg::OnSpinEditPosChanged)
 END_MESSAGE_MAP()
@@ -329,28 +326,6 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     m_toolTip.AddTool(GetDlgItem(IDC_SAVE_TO_APPDATA_RADIO), theApp.m_appdata_dir.c_str());
     m_toolTip.AddTool(GetDlgItem(IDC_SAVE_TO_PROGRAM_DIR_RADIO), theApp.m_module_dir.c_str());
     AddOrUpdateAutoRunTooltip(true);
-
-    if (m_data.cpu_usage_acquire_method == GeneralSettingData::CA_CPU_TIME)
-    {
-        CheckDlgButton(IDC_USE_CPU_TIME_RADIO, TRUE);
-    }
-    else if (m_data.cpu_usage_acquire_method == GeneralSettingData::CA_PDH)
-    {
-        CheckDlgButton(IDC_USE_PDH_RADIO, TRUE);
-    }
-    else if (m_data.cpu_usage_acquire_method == GeneralSettingData::CA_HARDWARE_MONITOR)
-    {
-        if (m_data.IsHardwareEnable(HI_CPU))
-            CheckDlgButton(IDC_USE_HARDWARE_MONITOR_RADIO, TRUE);
-        else
-            CheckDlgButton(IDC_USE_CPU_TIME_RADIO, TRUE);
-    }
-
-#ifndef WITHOUT_TEMPERATURE
-    EnableDlgCtrl(IDC_USE_HARDWARE_MONITOR_RADIO, m_data.IsHardwareEnable(HI_CPU));
-#else
-    EnableDlgCtrl(IDC_USE_HARDWARE_MONITOR_RADIO, false);
-#endif
 
     m_monitor_span_edit.SetRange(MONITOR_TIME_SPAN_MIN, MONITOR_TIME_SPAN_MAX, MONITOR_SPAN_STEP);
     m_monitor_span_edit.SetValue(m_data.monitor_time_span);
@@ -554,23 +529,6 @@ BOOL CGeneralSettingsDlg::PreTranslateMessage(MSG* pMsg)
     return CTabDlg::PreTranslateMessage(pMsg);
 }
 
-
-void CGeneralSettingsDlg::OnBnClickedUseCpuTimeRadio()
-{
-    m_data.cpu_usage_acquire_method = GeneralSettingData::CA_CPU_TIME;
-}
-
-
-void CGeneralSettingsDlg::OnBnClickedUsePdhRadio()
-{
-    m_data.cpu_usage_acquire_method = GeneralSettingData::CA_PDH;
-}
-
-void CGeneralSettingsDlg::OnBnClickedUseHardwareMonitorRadio()
-{
-    m_data.cpu_usage_acquire_method = GeneralSettingData::CA_HARDWARE_MONITOR;
-}
-
 afx_msg LRESULT CGeneralSettingsDlg::OnSpinEditPosChanged(WPARAM wParam, LPARAM lParam)
 {
     CSpinButtonCtrl* pSpin = (CSpinButtonCtrl*)wParam;
@@ -710,7 +668,6 @@ void CGeneralSettingsDlg::OnBnClickedCpuCheck()
         CheckDlgButton(IDC_CPU_CHECK, FALSE);
     }
     m_data.SetHardwareEnable(HI_CPU, checked);
-    EnableDlgCtrl(IDC_USE_HARDWARE_MONITOR_RADIO, checked);
 }
 
 
