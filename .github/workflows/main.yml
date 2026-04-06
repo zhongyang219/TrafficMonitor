@@ -1,6 +1,8 @@
 name: Release CI
 on:
-  push: workflow_dispatch
+  push:
+    tags: ['v*']
+  workflow_dispatch:
 
 jobs:
 
