@@ -276,7 +276,6 @@ void CTrafficMonitorApp::LoadConfig()
     m_cfg_data.m_sunday_first = ini.GetBool(_T("histroy_traffic"), _T("sunday_first"), true);
     m_cfg_data.m_view_type = static_cast<HistoryTrafficViewType>(ini.GetInt(_T("histroy_traffic"), _T("view_type"), static_cast<int>(HistoryTrafficViewType::HV_DAY)));
 
-    m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), false);
     m_notify_interval = ini.GetInt(_T("other"), _T("notify_interval"), 60);
     m_exit_when_start_by_restart_manager = ini.GetBool(_T("other"), _T("exit_when_start_by_restart_manager"), true);
     m_debug_log = ini.GetBool(_T("other"), _T("debug_log"), false);
@@ -976,14 +975,9 @@ BOOL CTrafficMonitorApp::InitInstance()
     //初始化字符串资源
     m_str_table.Init();
 
-    //载入插件
-    LoadPluginDisabledSettings();
-    m_plugins.LoadPlugins();
-
-    //从ini文件载入设置
-    LoadConfig();
-
     //检查是否已有实例正在运行
+    CIniHelper ini{ m_config_path };
+    m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), false);
     LPCTSTR mutex_name{};
 #ifdef _DEBUG
     mutex_name = _T("TrafficMonitor-e8Ahk24HP6JC8hDy");
@@ -1017,6 +1011,13 @@ BOOL CTrafficMonitorApp::InitInstance()
             return FALSE;
         }
     }
+
+    //载入插件
+    LoadPluginDisabledSettings();
+    m_plugins.LoadPlugins();
+
+    //从ini文件载入设置
+    LoadConfig();
 
     m_taskbar_default_style.LoadConfig();
 
