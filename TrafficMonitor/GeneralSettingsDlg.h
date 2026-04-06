@@ -103,4 +103,7 @@ public:
     afx_msg void OnBnClickedResetAutoRunButton();
     afx_msg void OnEnChangeMonitorSpanEdit();
 protected:
+public:
+    afx_msg void OnBnClickedAutoRunMethodRegestryRadio();
+    afx_msg void OnBnClickedAutoRunMethodTaskScheduleRadio();
 };

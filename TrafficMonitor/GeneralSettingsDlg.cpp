@@ -147,23 +147,31 @@ bool CGeneralSettingsDlg::ShowHardwareMonitorWarning()
 
 void CGeneralSettingsDlg::AddOrUpdateAutoRunTooltip(bool add)
 {
-    CString str_tool_tip;
-#ifdef WITHOUT_TEMPERATURE
-    str_tool_tip = CCommon::LoadText(IDS_AUTO_RUN_METHOD_REGESTRY);
-#else
-    str_tool_tip = CCommon::LoadText(IDS_AUTO_RUN_METHOD_TASK_SCHEDULE);
-#endif
-    if (!m_auto_run_path.empty())
+    if (m_data.auto_run)
     {
-        str_tool_tip += _T("\r\n");
-        str_tool_tip += CCommon::LoadText(IDS_PATH, _T(": "));
-        str_tool_tip += m_auto_run_path.c_str();
+        CString str_tool_tip;
+        if (m_data.auto_run_by_task_scheduler)
+            str_tool_tip = CCommon::LoadText(IDS_AUTO_RUN_METHOD_TASK_SCHEDULE);
+        else
+            str_tool_tip = CCommon::LoadText(IDS_AUTO_RUN_METHOD_REGESTRY);
+        if (!m_auto_run_path.empty())
+        {
+            str_tool_tip += _T("\r\n");
+            str_tool_tip += CCommon::LoadText(IDS_PATH, _T(": "));
+            str_tool_tip += m_auto_run_path.c_str();
+        }
+        if (add)
+            m_toolTip.AddTool(GetDlgItem(IDC_AUTO_RUN_CHECK), str_tool_tip);
+        else
+            m_toolTip.UpdateTipText(str_tool_tip, GetDlgItem(IDC_AUTO_RUN_CHECK));
     }
-    if (add)
-        m_toolTip.AddTool(GetDlgItem(IDC_AUTO_RUN_CHECK), str_tool_tip);
     else
-        m_toolTip.UpdateTipText(str_tool_tip, GetDlgItem(IDC_AUTO_RUN_CHECK));
-
+    {
+        if (add)
+            m_toolTip.AddTool(GetDlgItem(IDC_AUTO_RUN_CHECK), CString());
+        else
+            m_toolTip.UpdateTipText(CString(), GetDlgItem(IDC_AUTO_RUN_CHECK));
+    }
 }
 
 bool CGeneralSettingsDlg::IsMonitorTimeSpanModified() const
@@ -203,6 +211,10 @@ void CGeneralSettingsDlg::SetControlEnable()
     m_select_cpu_combo.EnableWindow(m_data.IsHardwareEnable(HI_CPU));
 
     EnableDlgCtrl(IDC_SELECT_CONNECTIONS_BUTTON, !m_data.show_all_interface);
+
+    EnableDlgCtrl(IDC_RESET_AUTO_RUN_BUTTON, m_data.auto_run);
+    EnableDlgCtrl(IDC_AUTO_RUN_METHOD_REGESTRY_RADIO, m_data.auto_run);
+    EnableDlgCtrl(IDC_AUTO_RUN_METHOD_TASK_SCHEDULE_RADIO, m_data.auto_run);
 }
 
 
@@ -234,6 +246,8 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_RESET_AUTO_RUN_BUTTON, &CGeneralSettingsDlg::OnBnClickedResetAutoRunButton)
     ON_EN_CHANGE(IDC_MONITOR_SPAN_EDIT, &CGeneralSettingsDlg::OnEnChangeMonitorSpanEdit)
     ON_MESSAGE(WM_SPIN_EDIT_POS_CHANGED, &CGeneralSettingsDlg::OnSpinEditPosChanged)
+    ON_BN_CLICKED(IDC_AUTO_RUN_METHOD_REGESTRY_RADIO, &CGeneralSettingsDlg::OnBnClickedAutoRunMethodRegestryRadio)
+    ON_BN_CLICKED(IDC_AUTO_RUN_METHOD_TASK_SCHEDULE_RADIO, &CGeneralSettingsDlg::OnBnClickedAutoRunMethodTaskScheduleRadio)
 END_MESSAGE_MAP()
 
 
@@ -262,16 +276,46 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     //检查开始菜单的“启动”目录下有没有程序的快捷方式，如果有则设置开机自启动，然后删除快捷方式
     wstring start_up_path = CCommon::GetStartUpPath();
     bool shortcut_exist = CCommon::FileExist((start_up_path + L"\\TrafficMonitor.lnk").c_str());
+    m_data.auto_run = false;
+#ifdef WITHOUT_TEMPERATURE
+    m_data.auto_run_by_task_scheduler = false;
+#else
+    m_data.auto_run_by_task_scheduler = true;
+#endif
+
     if (shortcut_exist)
     {
-        theApp.SetAutoRun(true);
+        theApp.SetAutoRun(true, false);
         m_data.auto_run = true;
         DeleteFile((start_up_path + L"\\TrafficMonitor.lnk").c_str());
+        CheckDlgButton(IDC_AUTO_RUN_METHOD_REGESTRY_RADIO, TRUE);
     }
+    //检查开机自动运行的设置是通过注册表还是任务计划程序实现的，并设置相应的选项
     else
     {
-        m_data.auto_run = theApp.GetAutoRun(&m_auto_run_path);
+        bool auto_run_by_registry = theApp.GetAutoRun(&m_auto_run_path, false);
+        if (auto_run_by_registry)
+        {
+            CheckDlgButton(IDC_AUTO_RUN_METHOD_REGESTRY_RADIO, TRUE);
+            m_data.auto_run = true;
+            m_data.auto_run_by_task_scheduler = false;
+        }
+        else
+        {
+            bool auto_run_by_task_scheduler = theApp.GetAutoRun(&m_auto_run_path, true);
+            if (auto_run_by_task_scheduler)
+            {
+                CheckDlgButton(IDC_AUTO_RUN_METHOD_TASK_SCHEDULE_RADIO, TRUE);
+                m_data.auto_run = true;
+                m_data.auto_run_by_task_scheduler = true;
+            }
+        }
     }
+    if (m_data.auto_run_by_task_scheduler)
+        CheckDlgButton(IDC_AUTO_RUN_METHOD_TASK_SCHEDULE_RADIO, TRUE);
+    else
+        CheckDlgButton(IDC_AUTO_RUN_METHOD_REGESTRY_RADIO, TRUE);
+
 
     ((CButton*)GetDlgItem(IDC_SAVE_TO_APPDATA_RADIO))->SetCheck(!m_data.portable_mode);
     ((CButton*)GetDlgItem(IDC_SAVE_TO_PROGRAM_DIR_RADIO))->SetCheck(m_data.portable_mode);
@@ -413,15 +457,16 @@ void CGeneralSettingsDlg::OnBnClickedCheckNowButton()
 void CGeneralSettingsDlg::OnBnClickedCheckUpdateCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
-    m_data.check_update_when_start = (((CButton*)GetDlgItem(IDC_CHECK_UPDATE_CHECK))->GetCheck() != 0);
+    m_data.check_update_when_start = (IsDlgButtonChecked(IDC_CHECK_UPDATE_CHECK) != 0);
 }
 
 
 void CGeneralSettingsDlg::OnBnClickedAutoRunCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
-    m_data.auto_run = (((CButton*)GetDlgItem(IDC_AUTO_RUN_CHECK))->GetCheck() != 0);
+    m_data.auto_run = (IsDlgButtonChecked(IDC_AUTO_RUN_CHECK) != 0);
     m_auto_run_modified = true;
+    SetControlEnable();
 }
 
 
@@ -492,7 +537,7 @@ void CGeneralSettingsDlg::OnOK()
 void CGeneralSettingsDlg::OnBnClickedTodayTrafficTipCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
-    m_data.traffic_tip_enable = (((CButton*)GetDlgItem(IDC_TODAY_TRAFFIC_TIP_CHECK))->GetCheck() != 0);
+    m_data.traffic_tip_enable = (IsDlgButtonChecked(IDC_TODAY_TRAFFIC_TIP_CHECK) != 0);
     SetControlEnable();
 }
 
@@ -500,7 +545,7 @@ void CGeneralSettingsDlg::OnBnClickedTodayTrafficTipCheck()
 void CGeneralSettingsDlg::OnBnClickedMemoryUsageTipCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
-    m_data.memory_usage_tip.enable = (((CButton*)GetDlgItem(IDC_MEMORY_USAGE_TIP_CHECK))->GetCheck() != 0);
+    m_data.memory_usage_tip.enable = (IsDlgButtonChecked(IDC_MEMORY_USAGE_TIP_CHECK) != 0);
     SetControlEnable();
 }
 
@@ -515,7 +560,7 @@ void CGeneralSettingsDlg::OnBnClickedOpenConfigPathButton()
 void CGeneralSettingsDlg::OnBnClickedShowAllConnectionCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
-    m_data.show_all_interface = (((CButton*)GetDlgItem(IDC_SHOW_ALL_CONNECTION_CHECK))->GetCheck() != 0);
+    m_data.show_all_interface = (IsDlgButtonChecked(IDC_SHOW_ALL_CONNECTION_CHECK) != 0);
     SetControlEnable();
 }
 
@@ -751,13 +796,13 @@ void CGeneralSettingsDlg::OnBnClickedResetAutoRunButton()
     //先删除开机自动运行
     theApp.SetAutoRunByRegistry(false);
     theApp.SetAutoRunByTaskScheduler(false);
-    if (!theApp.SetAutoRun(true))    //重新设置开机自动运行
+    if (!theApp.SetAutoRun(true, m_data.auto_run_by_task_scheduler))    //重新设置开机自动运行
     {
         MessageBox(CCommon::LoadText(IDS_SET_AUTO_RUN_FAILED_WARNING), NULL, MB_ICONWARNING | MB_OK);
         return;
     }
     //获取开机自动运行的路径
-    bool auto_run = theApp.GetAutoRun(&m_auto_run_path);
+    bool auto_run = theApp.GetAutoRun(&m_auto_run_path, m_data.auto_run_by_task_scheduler);
     //重新勾选“开机自动运行”复选框
     CheckDlgButton(IDC_AUTO_RUN_CHECK, auto_run);
     //更新鼠标提示
@@ -768,4 +813,18 @@ void CGeneralSettingsDlg::OnBnClickedResetAutoRunButton()
 void CGeneralSettingsDlg::OnEnChangeMonitorSpanEdit()
 {
     m_data.monitor_time_span = m_monitor_span_edit.GetValue();
+}
+
+void CGeneralSettingsDlg::OnBnClickedAutoRunMethodRegestryRadio()
+{
+    m_data.auto_run_by_task_scheduler = false;
+    m_auto_run_modified = true;
+    SetControlEnable();
+}
+
+void CGeneralSettingsDlg::OnBnClickedAutoRunMethodTaskScheduleRadio()
+{
+    m_data.auto_run_by_task_scheduler = true;
+    m_auto_run_modified = true;
+    SetControlEnable();
 }

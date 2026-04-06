@@ -130,8 +130,8 @@ public:
     static UINT CheckUpdateThreadFunc(LPVOID lpParam);
     static UINT InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam);
 
-    bool SetAutoRun(bool auto_run);
-    bool GetAutoRun(wstring* auto_run_path);        //判断是否开机自动进行，如果是，将开机自动运行的路径写入auto_run_path
+    bool SetAutoRun(bool auto_run, bool task_scheduler);
+    bool GetAutoRun(wstring* auto_run_path, bool task_scheduler);        //判断是否开机自动进行，如果是，将开机自动运行的路径写入auto_run_path
 
     bool SetAutoRunByRegistry(bool auto_run);       //通过注册表实现开机自启动
     bool SetAutoRunByTaskScheduler(bool auto_run);  //通过任务计划实现开机自启动

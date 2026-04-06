@@ -786,7 +786,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
 
     if (optionsDlg.m_tab3_dlg.IsAutoRunModified())
     {
-        if (!theApp.SetAutoRun(theApp.m_general_data.auto_run))
+        if (!theApp.SetAutoRun(theApp.m_general_data.auto_run, theApp.m_general_data.auto_run_by_task_scheduler))
             MessageBox(CCommon::LoadText(IDS_SET_AUTO_RUN_FAILED_WARNING), NULL, MB_ICONWARNING | MB_OK);
     }
 

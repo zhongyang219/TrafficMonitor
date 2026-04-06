@@ -634,53 +634,60 @@ UINT CTrafficMonitorApp::InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam)
     return 0;
 }
 
-bool  CTrafficMonitorApp::SetAutoRun(bool auto_run)
+bool  CTrafficMonitorApp::SetAutoRun(bool auto_run, bool task_scheduler)
 {
-    //不含温度监控的版本使用添加注册表项的方式实现开机自启动
-#ifdef WITHOUT_TEMPERATURE
-    return SetAutoRunByRegistry(auto_run);
-#else
-    //包含温度监控的版本使用任务计划的方式实现开机自启动
-    return SetAutoRunByTaskScheduler(auto_run);
-#endif
-}
-
-bool CTrafficMonitorApp::GetAutoRun(wstring* auto_run_path)
-{
-    if (auto_run_path != nullptr)
-        auto_run_path->clear();
-    //不含温度监控的版本使用添加注册表项的方式实现开机自启动
-#ifdef WITHOUT_TEMPERATURE
-    CRegKey key;
-    if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
+    if (task_scheduler)
     {
-        //打开注册表“Software\\Microsoft\\Windows\\CurrentVersion\\Run”失败，则返回false
-        return false;
-    }
-    wchar_t buff[256];
-    ULONG size{ 256 };
-    if (key.QueryStringValue(APP_NAME, buff, &size) == ERROR_SUCCESS)       //如果找到了“TrafficMonitor”键
-    {
-        if (auto_run_path != nullptr)
-        {
-            //保存路径
-            *auto_run_path = buff;
-            //去掉前后的引号
-            if (auto_run_path->front() == L'\"')
-                *auto_run_path = auto_run_path->substr(1);
-            if (auto_run_path->back() = L'\"')
-                auto_run_path->pop_back();
-        }
-        return (m_module_path_reg == buff); //如果“TrafficMonitor”的值是当前程序的路径，就返回true，否则返回false
+        //使用任务计划的方式设置开机自启动
+        return SetAutoRunByTaskScheduler(auto_run);
     }
     else
     {
-        return false;       //没有找到“TrafficMonitor”键，返回false
+        //使用添加注册表项的方式实现开机自启动
+        return SetAutoRunByRegistry(auto_run);
     }
-#else
-    //包含温度监控的版本使用任务计划的方式实现开机自启动
-    return is_auto_start_task_active_for_this_user(auto_run_path);
-#endif
+}
+
+bool CTrafficMonitorApp::GetAutoRun(wstring* auto_run_path, bool task_scheduler)
+{
+    if (auto_run_path != nullptr)
+        auto_run_path->clear();
+
+    if (task_scheduler)
+    {
+        //使用任务计划的方式实现开机自启动
+        return is_auto_start_task_active_for_this_user(auto_run_path);
+    }
+    else
+    {
+        //使用添加注册表项的方式实现开机自启动
+        CRegKey key;
+        if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
+        {
+            //打开注册表“Software\\Microsoft\\Windows\\CurrentVersion\\Run”失败，则返回false
+            return false;
+        }
+        wchar_t buff[256];
+        ULONG size{ 256 };
+        if (key.QueryStringValue(APP_NAME, buff, &size) == ERROR_SUCCESS)       //如果找到了“TrafficMonitor”键
+        {
+            if (auto_run_path != nullptr)
+            {
+                //保存路径
+                *auto_run_path = buff;
+                //去掉前后的引号
+                if (auto_run_path->front() == L'\"')
+                    *auto_run_path = auto_run_path->substr(1);
+                if (auto_run_path->back() = L'\"')
+                    auto_run_path->pop_back();
+            }
+            return (m_module_path_reg == buff); //如果“TrafficMonitor”的值是当前程序的路径，就返回true，否则返回false
+        }
+        else
+        {
+            return false;       //没有找到“TrafficMonitor”键，返回false
+        }
+    }
 }
 
 bool CTrafficMonitorApp::SetAutoRunByRegistry(bool auto_run)
