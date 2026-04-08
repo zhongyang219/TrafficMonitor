@@ -786,6 +786,9 @@ CString CTaskBarDlg::GetMouseTipsInfo()
         tip_info += temp;
     }
 
+    temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_SYSTEM_UPTIME), CCommon::GetSystemUpTimeString().GetString());
+    tip_info += temp;
+
     //添加插件项目的鼠标提示
     tip_info += theApp.GetPlauginTooltipInfo().c_str();
 
