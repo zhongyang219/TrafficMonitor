@@ -13,9 +13,10 @@
 
 IMPLEMENT_DYNAMIC(CWin11TaskbarSettingDlg, CBaseDialog)
 
-CWin11TaskbarSettingDlg::CWin11TaskbarSettingDlg(TaskBarSettingData& data, CWnd* pParent /*=nullptr*/)
+CWin11TaskbarSettingDlg::CWin11TaskbarSettingDlg(TaskBarSettingData& data, int display_index, CWnd* pParent /*=nullptr*/)
 	: CBaseDialog(IDD_WIN11_TASKBAR_SETTING_DLG, pParent)
     , m_data(data)
+    , m_display_index(display_index)
 {
 
 }
@@ -77,16 +78,27 @@ BOOL CWin11TaskbarSettingDlg::OnInitDialog()
     CBaseDialog::OnInitDialog();
     SetIcon(theApp.GetMenuIcon(IDI_TASKBAR_WINDOW), FALSE);
 
+    CString title;
+    GetWindowText(title);
+    CString display_name;
+    if (m_display_index <= 0)
+        display_name = CCommon::LoadText(IDS_PRIMARY_DISPLAY);
+    else
+        display_name = CCommon::LoadTextFormat(IDS_SECONDARY_DISPLAY, { m_display_index });
+    title += _T(" - ");
+    title += display_name;
+    SetWindowText(title);
+
     EnableDlgCtrl(IDC_TASKBAR_WND_SNAP_CHECK, CTaskBarDlg::IsTaskbarCloseToIconEnable(m_data.tbar_wnd_on_left));
-    CheckDlgButton(IDC_TASKBAR_WND_SNAP_CHECK, m_data.tbar_wnd_snap);
+    CheckDlgButton(IDC_TASKBAR_WND_SNAP_CHECK, m_data.IsTaskbarWndSnapForDisplay(m_display_index));
     m_window_offset_top_edit.SetRange(-20, 20);
-    m_window_offset_top_edit.SetValue(m_data.window_offset_top);
+    m_window_offset_top_edit.SetValue(m_data.GetWindowOffsetTopForDisplay(m_display_index));
     m_window_offset_left_edit.SetRange(-800, 800);
-    m_window_offset_left_edit.SetValue(m_data.window_offset_left);
-    CheckDlgButton(IDC_AVOID_OVERLAP_RIGHT_WIDGETS_CHECK, m_data.avoid_overlap_with_widgets);
+    m_window_offset_left_edit.SetValue(m_data.GetWindowOffsetLeftForDisplay(m_display_index));
+    CheckDlgButton(IDC_AVOID_OVERLAP_RIGHT_WIDGETS_CHECK, m_data.IsAvoidOverlapWithWidgetsForDisplay(m_display_index));
     //EnableDlgCtrl(IDC_AVOID_OVERLAP_RIGHT_WIDGETS_CHECK, CWindowsSettingHelper::IsTaskbarWidgetsBtnShown());
     m_widgets_width_edit.SetRange(0, 300);
-    m_widgets_width_edit.SetValue(m_data.taskbar_left_space_win11);
+    m_widgets_width_edit.SetValue(m_data.GetTaskbarLeftSpaceForDisplay(m_display_index));
     //m_widgets_width_edit.EnableWindow(CWindowsSettingHelper::IsTaskbarWidgetsBtnShown());
 
     return TRUE;  // return TRUE unless you set the focus to a control
@@ -96,20 +108,13 @@ BOOL CWin11TaskbarSettingDlg::OnInitDialog()
 
 void CWin11TaskbarSettingDlg::OnOK()
 {
-    m_data.tbar_wnd_snap = (IsDlgButtonChecked(IDC_TASKBAR_WND_SNAP_CHECK) != 0);
+    m_data.SetTaskbarWndSnapForDisplay(m_display_index, (IsDlgButtonChecked(IDC_TASKBAR_WND_SNAP_CHECK) != 0));
 
-    m_data.window_offset_top = m_window_offset_top_edit.GetValue();
-    m_data.ValidWindowOffsetTop();
-    m_data.window_offset_left = m_window_offset_left_edit.GetValue();
-    m_data.ValidWindowOffsetLeft();
+    m_data.SetWindowOffsetTopForDisplay(m_display_index, m_window_offset_top_edit.GetValue());
+    m_data.SetWindowOffsetLeftForDisplay(m_display_index, m_window_offset_left_edit.GetValue());
 
-    m_data.avoid_overlap_with_widgets = (IsDlgButtonChecked(IDC_AVOID_OVERLAP_RIGHT_WIDGETS_CHECK) != 0);
-
-    m_data.taskbar_left_space_win11 = m_widgets_width_edit.GetValue();
-    if (m_data.taskbar_left_space_win11 < 0)
-        m_data.taskbar_left_space_win11 = 0;
-    if (m_data.taskbar_left_space_win11 > 300)
-        m_data.taskbar_left_space_win11 = 300;
+    m_data.SetAvoidOverlapWithWidgetsForDisplay(m_display_index, (IsDlgButtonChecked(IDC_AVOID_OVERLAP_RIGHT_WIDGETS_CHECK) != 0));
+    m_data.SetTaskbarLeftSpaceForDisplay(m_display_index, m_widgets_width_edit.GetValue());
 
     CBaseDialog::OnOK();
 }

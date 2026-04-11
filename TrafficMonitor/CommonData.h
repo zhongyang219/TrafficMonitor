@@ -312,27 +312,71 @@ struct TaskBarSettingData : public PublicSettingData
     DisplayItemSet display_item{ TDI_UP, TDI_DOWN };      //任务栏窗口显示的项目
     StringSet plugin_display_item;                  //任务窗口显示的插件项目
 
-    bool show_taskbar_wnd_in_secondary_display{ false };    //是否在副显示器上显示任务栏窗口
-    int secondary_display_index{};      //在第几个副显示器上显示任务栏窗口
+    std::set<int> taskbar_display_indices{ 0 };    //显示任务栏窗口的显示器序号：0为主显示器，1及以上为副显示器序号+1
+    std::map<int, int> display_item_per_display;    //各显示器显示项目覆盖值，key: 显示器序号, value: DisplayItemSet::ToInt()
+    std::map<int, bool> speed_short_mode_per_display;    //网速简洁模式覆盖值，key: 显示器序号
     bool value_right_align{ false };    //数值是否右对齐
+    std::map<int, bool> value_right_align_per_display;   //数值右对齐覆盖值，key: 显示器序号
     int digits_number{ 4 };             //数据位数
+    std::map<int, int> digits_number_per_display;    //数据位数覆盖值，key: 显示器序号
     bool horizontal_arrange{ true };    //水平排列
+    std::map<int, bool> horizontal_arrange_per_display;  //水平排列覆盖值，key: 显示器序号
     bool show_status_bar{ true };       //显示 CPU/内存的状态条
+    std::map<int, bool> separate_value_unit_with_space_per_display; //数值和单位空格分隔覆盖值，key: 显示器序号
+    std::map<int, bool> show_tool_tip_per_display;   //鼠标提示覆盖值，key: 显示器序号
+    std::map<int, int> memory_display_per_display;   //内存显示方式覆盖值，key: 显示器序号，value: MemoryDisplay
     bool tbar_wnd_on_left{ false };     //如果为true，则任务栏窗口显示在任务栏的左侧（或上方）
     bool tbar_wnd_snap{ false };     	//如果为true，则在Win11中任务栏窗口贴靠中间任务栏，否则靠近边缘
+    std::map<int, bool> tbar_wnd_snap_per_display; //Win11下任务栏窗口贴靠方式覆盖值，key: 显示器序号
     bool cm_graph_type{ false };        //如果为false，默认原样式，柱状图显示占用率，如为true，滚动显示占用率
     bool show_graph_dashed_box{ true }; //显示占用图虚线框
 
     int item_space{};                   //项目间距
+    std::map<int, int> item_space_per_display;      //各显示器项目间距覆盖值，key: 显示器序号
     int vertical_margin{};              //项目垂直间距
+    std::map<int, int> vertical_margin_per_display; //各显示器垂直间距覆盖值，key: 显示器序号
     int window_offset_top{};            //任务栏窗口顶部边距
+    std::map<int, int> window_offset_top_per_display;   //Win11任务栏窗口顶部偏移覆盖值，key: 显示器序号
     int window_offset_left{};           //任务栏窗口左侧边距
+    std::map<int, int> window_offset_left_per_display;  //Win11任务栏窗口左侧偏移覆盖值，key: 显示器序号
     void ValidItemSpace();
     void ValidVerticalMargin();
     void ValidWindowOffsetTop();
     void ValidWindowOffsetLeft();
+    DisplayItemSet GetDisplayItemForDisplay(int display_index) const;
+    void SetDisplayItemForDisplay(int display_index, const DisplayItemSet& display_item_value);
+    int GetItemSpaceForDisplay(int display_index) const;
+    void SetItemSpaceForDisplay(int display_index, int value);
+    int GetVerticalMarginForDisplay(int display_index) const;
+    void SetVerticalMarginForDisplay(int display_index, int value);
+    bool IsSpeedShortModeForDisplay(int display_index) const;
+    void SetSpeedShortModeForDisplay(int display_index, bool speed_short_mode);
+    bool IsValueRightAlignForDisplay(int display_index) const;
+    void SetValueRightAlignForDisplay(int display_index, bool value_right_align);
+    int GetDigitsNumberForDisplay(int display_index) const;
+    void SetDigitsNumberForDisplay(int display_index, int digits_number);
+    bool IsHorizontalArrangeForDisplay(int display_index) const;
+    void SetHorizontalArrangeForDisplay(int display_index, bool horizontal_arrange);
+    bool IsSeparateValueUnitWithSpaceForDisplay(int display_index) const;
+    void SetSeparateValueUnitWithSpaceForDisplay(int display_index, bool separate_value_unit_with_space);
+    bool IsShowToolTipForDisplay(int display_index) const;
+    void SetShowToolTipForDisplay(int display_index, bool show_tool_tip);
+    MemoryDisplay GetMemoryDisplayForDisplay(int display_index) const;
+    void SetMemoryDisplayForDisplay(int display_index, MemoryDisplay memory_display);
+    int GetWindowOffsetTopForDisplay(int display_index) const;
+    void SetWindowOffsetTopForDisplay(int display_index, int value);
+    int GetWindowOffsetLeftForDisplay(int display_index) const;
+    void SetWindowOffsetLeftForDisplay(int display_index, int value);
+    bool IsTaskbarWndSnapForDisplay(int display_index) const;
+    void SetTaskbarWndSnapForDisplay(int display_index, bool snap);
     bool avoid_overlap_with_widgets{ false };   //避免与右侧小组件重叠
+    std::map<int, bool> avoid_overlap_with_widgets_per_display; //Win11下避免与右侧小组件重叠覆盖值，key: 显示器序号
+    bool IsAvoidOverlapWithWidgetsForDisplay(int display_index) const;
+    void SetAvoidOverlapWithWidgetsForDisplay(int display_index, bool avoid_overlap);
     int taskbar_left_space_win11{};         //Windows11下，任务栏小工具的宽度
+    std::map<int, int> taskbar_left_space_win11_per_display; //Win11下小工具宽度覆盖值，key: 显示器序号
+    int GetTaskbarLeftSpaceForDisplay(int display_index) const;
+    void SetTaskbarLeftSpaceForDisplay(int display_index, int value);
     int taskbar_right_space_win11{};        //Windows11下，任务栏窗口距离任务栏右侧的宽度（仅当无法获取到任务栏TrayNotifyWnd窗口的位置时有效）
 
     bool show_netspeed_figure{ false };     //是否显示网速占用图

@@ -10,7 +10,7 @@ class CWin11TaskbarSettingDlg : public CBaseDialog
 	DECLARE_DYNAMIC(CWin11TaskbarSettingDlg)
 
 public:
-	CWin11TaskbarSettingDlg(TaskBarSettingData& data, CWnd* pParent = nullptr);   // 标准构造函数
+    CWin11TaskbarSettingDlg(TaskBarSettingData& data, int display_index, CWnd* pParent = nullptr);   // 标准构造函数
 	virtual ~CWin11TaskbarSettingDlg();
 
 // 对话框数据
@@ -20,6 +20,7 @@ public:
 
 private:
     TaskBarSettingData& m_data;
+    int m_display_index{};
     CSpinEdit m_window_offset_top_edit;
     CSpinEdit m_window_offset_left_edit;
     CSpinEdit m_widgets_width_edit;

@@ -27,21 +27,29 @@ CGeneralSettingsDlg::~CGeneralSettingsDlg()
 
 void CGeneralSettingsDlg::CheckTaskbarDisplayItem()
 {
+    auto filter_display_item_set = [](DisplayItemSet& display_item_set)
+    {
+        //如果选项设置中关闭了某个硬件监控，则不显示对应的温度监控相关项目
+        if (!theApp.m_general_data.IsHardwareEnable(HI_CPU))
+            display_item_set.Remove(TDI_CPU_TEMP);
+        if (!theApp.m_general_data.IsHardwareEnable(HI_GPU))
+            display_item_set.Remove(TDI_GPU_TEMP);
+        if (!theApp.m_general_data.IsHardwareEnable(HI_HDD))
+            display_item_set.Remove(TDI_HDD_TEMP);
+        if (!theApp.m_general_data.IsHardwareEnable(HI_MBD))
+            display_item_set.Remove(TDI_MAIN_BOARD_TEMP);
+    };
+
     //如果选项设置中关闭了某个硬件监控，则不显示对应的温度监控相关项目
-    if (!theApp.m_general_data.IsHardwareEnable(HI_CPU))
+    filter_display_item_set(theApp.m_taskbar_data.display_item);
+
+    for (auto& item : theApp.m_taskbar_data.display_item_per_display)
     {
-        theApp.m_taskbar_data.display_item.Remove(TDI_CPU_TEMP);
+        DisplayItemSet display_item_set;
+        display_item_set.FromInt(item.second);
+        filter_display_item_set(display_item_set);
+        item.second = display_item_set.ToInt();
     }
-    if (!theApp.m_general_data.IsHardwareEnable(HI_GPU))
-    {
-        theApp.m_taskbar_data.display_item.Remove(TDI_GPU_TEMP);
-    }
-    if (!theApp.m_general_data.IsHardwareEnable(HI_HDD))
-    {
-        theApp.m_taskbar_data.display_item.Remove(TDI_HDD_TEMP);
-    }
-    if (!theApp.m_general_data.IsHardwareEnable(HI_MBD))
-        theApp.m_taskbar_data.display_item.Remove(TDI_MAIN_BOARD_TEMP);
 }
 
 void CGeneralSettingsDlg::SetControlMouseWheelEnable(bool enable)

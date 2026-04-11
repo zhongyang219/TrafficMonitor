@@ -21,6 +21,12 @@ class CTaskBarDlg : public CDialogEx
     DECLARE_DYNAMIC(CTaskBarDlg)
 
 public:
+    enum class DisplayTarget
+    {
+        PRIMARY_DISPLAY,
+        SECONDARY_DISPLAY
+    };
+
     CTaskBarDlg(CWnd* pParent = NULL);   // 标准构造函数
     virtual ~CTaskBarDlg();
 
@@ -37,6 +43,21 @@ public:
     //bool IsTaskbarChanged();
 
     void WidthChanged();    //调用此函数通知任务栏窗口宽度改变以强制调整一次任务栏窗口位置
+
+    void SetDisplayTarget(DisplayTarget target, int secondary_display_index = 0)
+    {
+        m_display_target = target;
+        m_secondary_display_index = secondary_display_index;
+        InvalidateDisplayTaskbarDataCache();
+    }
+    DisplayTarget GetDisplayTarget() const { return m_display_target; }
+    int GetSecondaryDisplayIndex() const { return m_secondary_display_index; }
+    int GetDisplayIndex() const
+    {
+        if (m_display_target == DisplayTarget::SECONDARY_DISPLAY)
+            return m_secondary_display_index + 1;
+        return 0;
+    }
 
     //获取用于检查DPI的矩形区域
     const CRect& GetRectForDpiCheck() const;
@@ -148,6 +169,13 @@ protected:
     bool m_menu_popuped{ false };               //指示当前是否有菜单处于弹出状态
     bool m_is_secondary_display{ false };       //是否显示在副显示器中
     bool m_is_width_changed{ false };
+    bool m_last_taskbar_on_top_or_bottom{ true };
+    int m_last_window_width_for_timer{};
+    int m_last_window_height_for_timer{};
+    DisplayTarget m_display_target{ DisplayTarget::PRIMARY_DISPLAY };
+    int m_secondary_display_index{};
+    mutable TaskBarSettingData m_display_taskbar_data_cache{};
+    mutable bool m_display_taskbar_data_cache_valid{};
 
     UINT m_taskbar_dpi{};//TaskBarDlg自身专用dpi
 
@@ -173,7 +201,7 @@ protected:
     //  rect: 绘制矩形区域
     //  label_width: 标签区域的宽度
     //  vertical: 如果为true，则标签和数值上下显示
-    void DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical = false);
+    void DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, const TaskBarSettingData& display_data, bool vertical = false);
 
     //绘制任务栏窗口中的一个插件项目
    //  drawer: 绘图类的对象
@@ -181,7 +209,10 @@ protected:
    //  rect: 绘制矩形区域
    //  label_width: 标签区域的宽度
    //  vertical: 如果为true，则标签和数值上下显示
-    void DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect rect, int label_width, bool vertical = false);
+    void DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect rect, int label_width, const TaskBarSettingData& display_data, bool vertical = false);
+
+    const TaskBarSettingData& GetDisplayTaskbarData() const;
+    void InvalidateDisplayTaskbarDataCache();
 
     void MoveWindow(CRect rect);
 
@@ -198,9 +229,9 @@ public:
     int GetErrorCode() const { return m_error_code; }
     bool IsTasksbarOnTopOrBottom() const { return m_taskbar_on_top_or_bottom; }
 
-    static bool IsItemShow(DisplayItem item);
-    static bool IsShowCpuMemory();
-    static bool IsShowNetSpeed();
+    bool IsItemShow(DisplayItem item);
+    bool IsShowCpuMemory();
+    bool IsShowNetSpeed();
 
     CommonDisplayItem GetClickedItem() const { return m_clicked_item; }
 

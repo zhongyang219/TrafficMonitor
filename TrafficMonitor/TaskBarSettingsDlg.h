@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "ColorStatic.h"
 #include "afxwin.h"
+#include "afxcmn.h"
 #include "SpinEdit.h"
 #include "TabDlg.h"
 #include "TaskbarColorDlg.h"
@@ -53,13 +54,21 @@ protected:
     CSpinEdit m_vertical_margin_edit;
     CSpinEdit m_net_speed_figure_max_val_edit;
     CComboBox2 m_net_speed_figure_max_val_unit_combo;
-    CComboBox2 m_displays_combo;
+    CCheckListBox m_displays_list;
+    CString m_win11_settings_button_text;
+    CString m_layout_settings_prefix_text;
+    bool m_updating_per_display_controls{};
+    int m_current_display_index{};
 
     bool m_style_modified{};
 
 protected:
     void DrawStaticColor();
     void IniUnitCombo();
+    int GetCurrentDisplayIndex();
+    CString GetDisplayNameText(int display_index) const;
+    void UpdateTaskbarDisplaySelection();
+    void UpdatePerDisplayLayoutEditControls();
 
     void ApplyDefaultStyle(int index);      //应用一个预设方案
 
@@ -120,8 +129,7 @@ public:
     afx_msg void OnBnClickedEnableColorEmojiCheck();
     afx_msg void OnCbnSelchangeDigitNumberCombo();
     afx_msg void OnBnClickedWin11SettingsButton();
-    afx_msg void OnBnClickedTaskbarWndInSecondaryDisplayCheck();
-    afx_msg void OnCbnSelchangeDisplayToShowTaskbarWndCombo();
+    afx_msg void OnLbnSelchangeDisplayToShowTaskbarWndList();
     afx_msg void OnBnClickedUsageGraphFollowSystemCheck();
     afx_msg void OnEnChangeFontSizeEdit1();
 };

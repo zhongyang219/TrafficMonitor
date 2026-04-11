@@ -251,9 +251,298 @@ void TaskBarSettingData::ValidWindowOffsetTop()
 void TaskBarSettingData::ValidWindowOffsetLeft()
 {
     if (window_offset_left < -800)
-        window_offset_top = -800;
-    if (window_offset_top > 800)
-        window_offset_top = 800;
+        window_offset_left = -800;
+    if (window_offset_left > 800)
+        window_offset_left = 800;
+}
+
+DisplayItemSet TaskBarSettingData::GetDisplayItemForDisplay(int display_index) const
+{
+    auto iter = display_item_per_display.find(display_index);
+    if (iter != display_item_per_display.end())
+    {
+        DisplayItemSet display_item_set;
+        display_item_set.FromInt(iter->second);
+        return display_item_set;
+    }
+    return display_item;
+}
+
+void TaskBarSettingData::SetDisplayItemForDisplay(int display_index, const DisplayItemSet& display_item_value)
+{
+    display_item_per_display[display_index] = display_item_value.ToInt();
+    if (display_index == 0)
+        display_item = display_item_value;
+}
+
+int TaskBarSettingData::GetItemSpaceForDisplay(int display_index) const
+{
+    auto iter = item_space_per_display.find(display_index);
+    if (iter != item_space_per_display.end())
+        return iter->second;
+    return item_space;
+}
+
+void TaskBarSettingData::SetItemSpaceForDisplay(int display_index, int value)
+{
+    int clamped_value = value;
+    if (clamped_value < 0)
+        clamped_value = 0;
+    if (clamped_value > 32)
+        clamped_value = 32;
+
+    item_space_per_display[display_index] = clamped_value;
+    if (display_index == 0)
+        item_space = clamped_value;
+}
+
+int TaskBarSettingData::GetVerticalMarginForDisplay(int display_index) const
+{
+    auto iter = vertical_margin_per_display.find(display_index);
+    if (iter != vertical_margin_per_display.end())
+        return iter->second;
+    return vertical_margin;
+}
+
+void TaskBarSettingData::SetVerticalMarginForDisplay(int display_index, int value)
+{
+    int clamped_value = value;
+    if (clamped_value < -10)
+        clamped_value = -10;
+    if (clamped_value > 10)
+        clamped_value = 10;
+
+    vertical_margin_per_display[display_index] = clamped_value;
+    if (display_index == 0)
+        vertical_margin = clamped_value;
+}
+
+bool TaskBarSettingData::IsSpeedShortModeForDisplay(int display_index) const
+{
+    auto iter = speed_short_mode_per_display.find(display_index);
+    if (iter != speed_short_mode_per_display.end())
+        return iter->second;
+    return speed_short_mode;
+}
+
+void TaskBarSettingData::SetSpeedShortModeForDisplay(int display_index, bool speed_short_mode_value)
+{
+    speed_short_mode_per_display[display_index] = speed_short_mode_value;
+    if (display_index == 0)
+        speed_short_mode = speed_short_mode_value;
+}
+
+bool TaskBarSettingData::IsValueRightAlignForDisplay(int display_index) const
+{
+    auto iter = value_right_align_per_display.find(display_index);
+    if (iter != value_right_align_per_display.end())
+        return iter->second;
+    return value_right_align;
+}
+
+void TaskBarSettingData::SetValueRightAlignForDisplay(int display_index, bool value_right_align_value)
+{
+    value_right_align_per_display[display_index] = value_right_align_value;
+    if (display_index == 0)
+        value_right_align = value_right_align_value;
+}
+
+int TaskBarSettingData::GetDigitsNumberForDisplay(int display_index) const
+{
+    auto iter = digits_number_per_display.find(display_index);
+    if (iter != digits_number_per_display.end())
+    {
+        int value = iter->second;
+        if (value < 3)
+            value = 3;
+        if (value > 7)
+            value = 7;
+        return value;
+    }
+
+    int value = digits_number;
+    if (value < 3)
+        value = 3;
+    if (value > 7)
+        value = 7;
+    return value;
+}
+
+void TaskBarSettingData::SetDigitsNumberForDisplay(int display_index, int digits_number_value)
+{
+    int clamped_value = digits_number_value;
+    if (clamped_value < 3)
+        clamped_value = 3;
+    if (clamped_value > 7)
+        clamped_value = 7;
+
+    digits_number_per_display[display_index] = clamped_value;
+    if (display_index == 0)
+        digits_number = clamped_value;
+}
+
+bool TaskBarSettingData::IsHorizontalArrangeForDisplay(int display_index) const
+{
+    auto iter = horizontal_arrange_per_display.find(display_index);
+    if (iter != horizontal_arrange_per_display.end())
+        return iter->second;
+    return horizontal_arrange;
+}
+
+void TaskBarSettingData::SetHorizontalArrangeForDisplay(int display_index, bool horizontal_arrange_value)
+{
+    horizontal_arrange_per_display[display_index] = horizontal_arrange_value;
+    if (display_index == 0)
+        horizontal_arrange = horizontal_arrange_value;
+}
+
+bool TaskBarSettingData::IsSeparateValueUnitWithSpaceForDisplay(int display_index) const
+{
+    auto iter = separate_value_unit_with_space_per_display.find(display_index);
+    if (iter != separate_value_unit_with_space_per_display.end())
+        return iter->second;
+    return separate_value_unit_with_space;
+}
+
+void TaskBarSettingData::SetSeparateValueUnitWithSpaceForDisplay(int display_index, bool separate_value_unit_with_space_value)
+{
+    separate_value_unit_with_space_per_display[display_index] = separate_value_unit_with_space_value;
+    if (display_index == 0)
+        separate_value_unit_with_space = separate_value_unit_with_space_value;
+}
+
+bool TaskBarSettingData::IsShowToolTipForDisplay(int display_index) const
+{
+    auto iter = show_tool_tip_per_display.find(display_index);
+    if (iter != show_tool_tip_per_display.end())
+        return iter->second;
+    return show_tool_tip;
+}
+
+void TaskBarSettingData::SetShowToolTipForDisplay(int display_index, bool show_tool_tip_value)
+{
+    show_tool_tip_per_display[display_index] = show_tool_tip_value;
+    if (display_index == 0)
+        show_tool_tip = show_tool_tip_value;
+}
+
+MemoryDisplay TaskBarSettingData::GetMemoryDisplayForDisplay(int display_index) const
+{
+    auto iter = memory_display_per_display.find(display_index);
+    if (iter != memory_display_per_display.end())
+    {
+        int value = iter->second;
+        if (value < static_cast<int>(MemoryDisplay::USAGE_PERCENTAGE) || value > static_cast<int>(MemoryDisplay::MEMORY_AVAILABLE))
+            return memory_display;
+        return static_cast<MemoryDisplay>(value);
+    }
+    return memory_display;
+}
+
+void TaskBarSettingData::SetMemoryDisplayForDisplay(int display_index, MemoryDisplay memory_display_value)
+{
+    int value = static_cast<int>(memory_display_value);
+    if (value < static_cast<int>(MemoryDisplay::USAGE_PERCENTAGE))
+        value = static_cast<int>(MemoryDisplay::USAGE_PERCENTAGE);
+    if (value > static_cast<int>(MemoryDisplay::MEMORY_AVAILABLE))
+        value = static_cast<int>(MemoryDisplay::MEMORY_AVAILABLE);
+
+    memory_display_per_display[display_index] = value;
+    if (display_index == 0)
+        memory_display = static_cast<MemoryDisplay>(value);
+}
+
+int TaskBarSettingData::GetWindowOffsetTopForDisplay(int display_index) const
+{
+    auto iter = window_offset_top_per_display.find(display_index);
+    if (iter != window_offset_top_per_display.end())
+        return iter->second;
+    return window_offset_top;
+}
+
+void TaskBarSettingData::SetWindowOffsetTopForDisplay(int display_index, int value)
+{
+    int clamped_value = value;
+    if (clamped_value < -20)
+        clamped_value = -20;
+    if (clamped_value > 20)
+        clamped_value = 20;
+
+    window_offset_top_per_display[display_index] = clamped_value;
+    if (display_index == 0)
+        window_offset_top = clamped_value;
+}
+
+int TaskBarSettingData::GetWindowOffsetLeftForDisplay(int display_index) const
+{
+    auto iter = window_offset_left_per_display.find(display_index);
+    if (iter != window_offset_left_per_display.end())
+        return iter->second;
+    return window_offset_left;
+}
+
+void TaskBarSettingData::SetWindowOffsetLeftForDisplay(int display_index, int value)
+{
+    int clamped_value = value;
+    if (clamped_value < -800)
+        clamped_value = -800;
+    if (clamped_value > 800)
+        clamped_value = 800;
+
+    window_offset_left_per_display[display_index] = clamped_value;
+    if (display_index == 0)
+        window_offset_left = clamped_value;
+}
+
+bool TaskBarSettingData::IsTaskbarWndSnapForDisplay(int display_index) const
+{
+    auto iter = tbar_wnd_snap_per_display.find(display_index);
+    if (iter != tbar_wnd_snap_per_display.end())
+        return iter->second;
+    return tbar_wnd_snap;
+}
+
+void TaskBarSettingData::SetTaskbarWndSnapForDisplay(int display_index, bool snap)
+{
+    tbar_wnd_snap_per_display[display_index] = snap;
+    if (display_index == 0)
+        tbar_wnd_snap = snap;
+}
+
+bool TaskBarSettingData::IsAvoidOverlapWithWidgetsForDisplay(int display_index) const
+{
+    auto iter = avoid_overlap_with_widgets_per_display.find(display_index);
+    if (iter != avoid_overlap_with_widgets_per_display.end())
+        return iter->second;
+    return avoid_overlap_with_widgets;
+}
+
+void TaskBarSettingData::SetAvoidOverlapWithWidgetsForDisplay(int display_index, bool avoid_overlap)
+{
+    avoid_overlap_with_widgets_per_display[display_index] = avoid_overlap;
+    if (display_index == 0)
+        avoid_overlap_with_widgets = avoid_overlap;
+}
+
+int TaskBarSettingData::GetTaskbarLeftSpaceForDisplay(int display_index) const
+{
+    auto iter = taskbar_left_space_win11_per_display.find(display_index);
+    if (iter != taskbar_left_space_win11_per_display.end())
+        return iter->second;
+    return taskbar_left_space_win11;
+}
+
+void TaskBarSettingData::SetTaskbarLeftSpaceForDisplay(int display_index, int value)
+{
+    int clamped_value = value;
+    if (clamped_value < 0)
+        clamped_value = 0;
+    if (clamped_value > 300)
+        clamped_value = 300;
+
+    taskbar_left_space_win11_per_display[display_index] = clamped_value;
+    if (display_index == 0)
+        taskbar_left_space_win11 = clamped_value;
 }
 
 unsigned __int64 TaskBarSettingData::GetNetspeedFigureMaxValueInBytes() const

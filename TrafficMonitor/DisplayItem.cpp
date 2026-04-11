@@ -182,7 +182,7 @@ const wchar_t* CommonDisplayItem::GetItemIniKeyName() const
     }
 }
 
-CString CommonDisplayItem::GetItemValueText(bool is_main_window) const
+CString CommonDisplayItem::GetItemValueText(bool is_main_window, const TaskBarSettingData* taskbar_data) const
 {
     if (is_plugin)
     {
@@ -193,6 +193,8 @@ CString CommonDisplayItem::GetItemValueText(bool is_main_window) const
         const PublicSettingData* cfg_data{};
         if (is_main_window)
             cfg_data = &theApp.m_main_wnd_data;
+        else if (taskbar_data != nullptr)
+            cfg_data = taskbar_data;
         else
             cfg_data = &theApp.m_taskbar_data;
         CString str_value;
@@ -275,7 +277,7 @@ CString CommonDisplayItem::GetItemValueText(bool is_main_window) const
     }
 }
 
-CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
+CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window, const TaskBarSettingData* taskbar_data) const
 {
     if (is_plugin)
     {
@@ -320,6 +322,7 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
     //任务栏窗口（用于计算任务栏窗口宽度）
     else
     {
+        const TaskBarSettingData* cfg_data = (taskbar_data != nullptr ? taskbar_data : &theApp.m_taskbar_data);
         CString sample_str;
         switch (item_type)
         {
@@ -328,9 +331,9 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
         case TDI_DOWN:
         case TDI_TOTAL_SPEED:
         {
-            wstring digits(theApp.m_taskbar_data.digits_number, L'8');      //根据数据位数生成指定个数的“8”
-            bool hide_unit{ theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO };
-            if (theApp.m_taskbar_data.speed_short_mode)
+            wstring digits(cfg_data->digits_number, L'8');      //根据数据位数生成指定个数的“8”
+            bool hide_unit{ cfg_data->hide_unit && cfg_data->speed_unit != SpeedUnit::AUTO };
+            if (cfg_data->speed_short_mode)
             {
                 if (hide_unit)
                     sample_str.Format(_T("%s."), digits.c_str());
@@ -344,9 +347,9 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
                 else
                     sample_str.Format(_T("%s.8MB/s"), digits.c_str());
             }
-            if (!hide_unit && theApp.m_taskbar_data.separate_value_unit_with_space)
+            if (!hide_unit && cfg_data->separate_value_unit_with_space)
                 sample_str += _T(' ');
-            if (theApp.m_taskbar_data.speed_short_mode && !theApp.m_taskbar_data.unit_byte && !theApp.m_taskbar_data.hide_unit)
+            if (cfg_data->speed_short_mode && !cfg_data->unit_byte && !cfg_data->hide_unit)
                 sample_str += _T('b');
         }
             break;
@@ -357,9 +360,9 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
         case TDI_HDD_USAGE:
         {
             sample_str = _T("100");
-            if (!theApp.m_taskbar_data.hide_percent)
+            if (!cfg_data->hide_percent)
             {
-                if (theApp.m_taskbar_data.separate_value_unit_with_space)
+                if (cfg_data->separate_value_unit_with_space)
                     sample_str += _T(" %");
                 else
                     sample_str += _T("%");
@@ -367,10 +370,10 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
             //内存显示不为已使用百分比时
             if (item_type == TDI_MEMORY)
             {
-                if (theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_USED || theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_AVAILABLE)
+                if (cfg_data->memory_display == MemoryDisplay::MEMORY_USED || cfg_data->memory_display == MemoryDisplay::MEMORY_AVAILABLE)
                 {
                     //宽度为总内存的宽度
-                    sample_str = CCommon::DataSizeToString(static_cast<unsigned long long>(theApp.m_total_memory) * 1024, theApp.m_taskbar_data.separate_value_unit_with_space);
+                    sample_str = CCommon::DataSizeToString(static_cast<unsigned long long>(theApp.m_total_memory) * 1024, cfg_data->separate_value_unit_with_space);
                 }
             }
         }
@@ -381,7 +384,7 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
         case TDI_HDD_TEMP:
         case TDI_MAIN_BOARD_TEMP:
         {
-            if (theApp.m_taskbar_data.separate_value_unit_with_space)
+            if (cfg_data->separate_value_unit_with_space)
                 sample_str = _T("99 °C");
             else
                 sample_str = _T("99°C");
@@ -390,7 +393,7 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
         //CPU频率
         case TDI_CPU_FREQ:
         {
-            if (theApp.m_taskbar_data.separate_value_unit_with_space)
+            if (cfg_data->separate_value_unit_with_space)
                 sample_str = _T("1.00 GHz");
             else
                 sample_str = _T("1.00GHz");
@@ -399,7 +402,7 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
         //流量
         case TDI_TODAY_TRAFFIC:
         {
-            if (theApp.m_taskbar_data.separate_value_unit_with_space)
+            if (cfg_data->separate_value_unit_with_space)
                 sample_str = _T("999.99 MB");
             else
                 sample_str = _T("999.99MB");

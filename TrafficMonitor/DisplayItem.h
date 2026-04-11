@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "PluginInterface.h"
 
+struct TaskBarSettingData;
+
 //内置的显示的项目
 enum DisplayItem
 {
@@ -63,14 +65,14 @@ public:
      * @param   is_main_window 如果为true则为主窗口，否则为任务栏窗口
      * @return  显示的文本
      */
-    CString GetItemValueText(bool is_main_window) const;
+    CString GetItemValueText(bool is_main_window, const TaskBarSettingData* taskbar_data = nullptr) const;
 
     /**
      * @brief   获取一个显示项目的数值示例文本
      * @param   is_main_window 如果为true则为主窗口，否则为任务栏窗口
      * @return  示例文本
      */
-    CString GetItemValueSampleText(bool is_main_window) const;
+    CString GetItemValueSampleText(bool is_main_window, const TaskBarSettingData* taskbar_data = nullptr) const;
 
 private:
     bool is_plugin{};           //是否为插件项目
