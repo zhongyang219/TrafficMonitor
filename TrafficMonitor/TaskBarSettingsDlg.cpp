@@ -98,6 +98,108 @@ void CTaskBarSettingsDlg::ModifyDefaultStyle(int index)
     theApp.m_taskbar_default_style.ModifyDefaultStyle(index, m_data);
 }
 
+int CTaskBarSettingsDlg::GetCurrentDisplayIndex()
+{
+    int item_count = m_displays_list.GetCount();
+    if (item_count <= 0)
+        return 0;
+
+    int index = m_displays_list.GetCurSel();
+    if (index == LB_ERR && m_current_display_index >= 0 && m_current_display_index < item_count)
+        index = m_current_display_index;
+    if (index == LB_ERR)
+        index = 0;
+
+    m_current_display_index = index;
+    return index;
+}
+
+CString CTaskBarSettingsDlg::GetDisplayNameText(int display_index) const
+{
+    if (display_index <= 0)
+        return CCommon::LoadText(IDS_PRIMARY_DISPLAY);
+    return CCommon::LoadTextFormat(IDS_SECONDARY_DISPLAY, { display_index });
+}
+
+void CTaskBarSettingsDlg::UpdateTaskbarDisplaySelection()
+{
+    m_data.taskbar_display_indices.clear();
+    int item_count = m_displays_list.GetCount();
+    if (item_count <= 0)
+        return;
+
+    for (int i = 0; i < item_count; i++)
+    {
+        if (m_displays_list.GetCheck(i) != 0)
+            m_data.taskbar_display_indices.insert(i);
+    }
+
+    //至少保留一个显示器，避免任务栏窗口配置为空
+    if (m_data.taskbar_display_indices.empty())
+    {
+        m_displays_list.SetCheck(0, TRUE);
+        m_data.taskbar_display_indices.insert(0);
+    }
+}
+
+void CTaskBarSettingsDlg::UpdatePerDisplayLayoutEditControls()
+{
+    int display_index = GetCurrentDisplayIndex();
+    CString display_name = GetDisplayNameText(display_index);
+
+    m_updating_per_display_controls = true;
+    ((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK))->SetCheck(m_data.IsSpeedShortModeForDisplay(display_index));
+    ((CButton*)GetDlgItem(IDC_VALUE_RIGHT_ALIGN_CHECK))->SetCheck(m_data.IsValueRightAlignForDisplay(display_index));
+    ((CButton*)GetDlgItem(IDC_HORIZONTAL_ARRANGE_CHECK))->SetCheck(m_data.IsHorizontalArrangeForDisplay(display_index));
+    ((CButton*)GetDlgItem(IDC_SEPARATE_VALUE_UNIT_CHECK))->SetCheck(m_data.IsSeparateValueUnitWithSpaceForDisplay(display_index));
+    ((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->SetCheck(m_data.IsShowToolTipForDisplay(display_index));
+
+    int digit_number_index = m_data.GetDigitsNumberForDisplay(display_index) - 3;
+    if (digit_number_index < 0)
+        digit_number_index = 0;
+    if (digit_number_index > 4)
+        digit_number_index = 4;
+    m_digit_number_combo.SetCurSel(digit_number_index);
+
+    int memory_display_index = static_cast<int>(m_data.GetMemoryDisplayForDisplay(display_index));
+    if (memory_display_index < 0)
+        memory_display_index = 0;
+    if (memory_display_index > 2)
+        memory_display_index = 2;
+    m_memory_display_combo.SetCurSel(memory_display_index);
+
+    m_item_space_edit.SetValue(m_data.GetItemSpaceForDisplay(display_index));
+    m_vertical_margin_edit.SetValue(m_data.GetVerticalMarginForDisplay(display_index));
+
+    if (m_layout_settings_prefix_text.IsEmpty())
+    {
+        GetDlgItemText(IDC_DISPLAY_SETTINGS_GROUP_STATIC, m_layout_settings_prefix_text);
+        if (m_layout_settings_prefix_text.IsEmpty())
+            m_layout_settings_prefix_text = CCommon::LoadText(L"TXT_DISPLAY_SETTINGS");
+    }
+
+    CString group_text;
+    group_text.Format(_T("%s - %s"), m_layout_settings_prefix_text.GetString(), display_name.GetString());
+    SetDlgItemText(IDC_DISPLAY_SETTINGS_GROUP_STATIC, group_text);
+
+    if (m_win11_settings_button_text.IsEmpty())
+        GetDlgItemText(IDC_WIN11_SETTINGS_BUTTON, m_win11_settings_button_text);
+
+    CString button_text;
+    button_text.Format(_T("%s - %s"), m_win11_settings_button_text.GetString(), display_name.GetString());
+    SetDlgItemText(IDC_WIN11_SETTINGS_BUTTON, button_text);
+
+    CWnd* p_win11_button = GetDlgItem(IDC_WIN11_SETTINGS_BUTTON);
+    if (p_win11_button != nullptr)
+    {
+        CString tip_text;
+        tip_text.Format(_T("%s: %s"), m_win11_settings_button_text.GetString(), display_name.GetString());
+        m_toolTip.UpdateTipText(tip_text, p_win11_button);
+    }
+
+    m_updating_per_display_controls = false;
+}
+
 void CTaskBarSettingsDlg::EnableControl()
 {
     bool exe_path_enable = (m_data.double_click_action == DoubleClickAction::SEPCIFIC_APP);
@@ -129,7 +231,6 @@ void CTaskBarSettingsDlg::SetControlMouseWheelEnable(bool enable)
     m_vertical_margin_edit.SetMouseWheelEnable(enable);
     m_net_speed_figure_max_val_edit.SetMouseWheelEnable(enable);
     m_net_speed_figure_max_val_unit_combo.SetMouseWheelEnable(enable);
-    m_displays_combo.SetMouseWheelEnable(enable);
 }
 
 bool CTaskBarSettingsDlg::InitializeControls()
@@ -176,7 +277,7 @@ bool CTaskBarSettingsDlg::InitializeControls()
         { CtrlTextInfo::C0, IDC_DISPLAY_TO_SHOW_TASKBAR_WND_COMBO }
     });
     RepositionTextBasedControls({
-        { CtrlTextInfo::L4, IDC_WIN11_SETTINGS_BUTTON, CtrlTextInfo::W16 }
+        { CtrlTextInfo::L4, IDC_WIN11_SETTINGS_BUTTON, CtrlTextInfo::W128 }
     });
     RepositionTextBasedControls({
         { CtrlTextInfo::L1, IDC_DOUBLE_CLICK_ACTION_STATIC },
@@ -224,7 +325,7 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_VERTICAL_MARGIN_EDIT, m_vertical_margin_edit);
     DDX_Control(pDX, IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, m_net_speed_figure_max_val_edit);
     DDX_Control(pDX, IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO, m_net_speed_figure_max_val_unit_combo);
-    DDX_Control(pDX, IDC_DISPLAY_TO_SHOW_TASKBAR_WND_COMBO, m_displays_combo);
+    DDX_Control(pDX, IDC_DISPLAY_TO_SHOW_TASKBAR_WND_COMBO, m_displays_list);
 }
 
 
@@ -268,8 +369,8 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_ENABLE_COLOR_EMOJI_CHECK, &CTaskBarSettingsDlg::OnBnClickedEnableColorEmojiCheck)
     ON_CBN_SELCHANGE(IDC_DIGIT_NUMBER_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeDigitNumberCombo)
     ON_BN_CLICKED(IDC_WIN11_SETTINGS_BUTTON, &CTaskBarSettingsDlg::OnBnClickedWin11SettingsButton)
-    ON_BN_CLICKED(IDC_TASKBAR_WND_IN_SECONDARY_DISPLAY_CHECK, &CTaskBarSettingsDlg::OnBnClickedTaskbarWndInSecondaryDisplayCheck)
-    ON_CBN_SELCHANGE(IDC_DISPLAY_TO_SHOW_TASKBAR_WND_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeDisplayToShowTaskbarWndCombo)
+    ON_CLBN_CHKCHANGE(IDC_DISPLAY_TO_SHOW_TASKBAR_WND_COMBO, &CTaskBarSettingsDlg::OnLbnSelchangeDisplayToShowTaskbarWndList)
+    ON_LBN_SELCHANGE(IDC_DISPLAY_TO_SHOW_TASKBAR_WND_COMBO, &CTaskBarSettingsDlg::OnLbnSelchangeDisplayToShowTaskbarWndList)
     ON_BN_CLICKED(IDC_USAGE_GRAPH_FOLLOW_SYSTEM_CHECK, &CTaskBarSettingsDlg::OnBnClickedUsageGraphFollowSystemCheck)
     ON_EN_CHANGE(IDC_FONT_SIZE_EDIT1, &CTaskBarSettingsDlg::OnEnChangeFontSizeEdit1)
 END_MESSAGE_MAP()
@@ -301,14 +402,12 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 
     //((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK1))->SetCheck(m_data.swap_up_down);
     ((CButton*)GetDlgItem(IDC_TASKBAR_WND_ON_LEFT_CHECK))->SetCheck(m_data.tbar_wnd_on_left);
-    ((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK))->SetCheck(m_data.speed_short_mode);
-    ((CButton*)GetDlgItem(IDC_VALUE_RIGHT_ALIGN_CHECK))->SetCheck(m_data.value_right_align);
-    ((CButton*)GetDlgItem(IDC_HORIZONTAL_ARRANGE_CHECK))->SetCheck(m_data.horizontal_arrange);
+    ((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK))->SetCheck(m_data.IsSpeedShortModeForDisplay(0));
+    ((CButton*)GetDlgItem(IDC_VALUE_RIGHT_ALIGN_CHECK))->SetCheck(m_data.IsValueRightAlignForDisplay(0));
+    ((CButton*)GetDlgItem(IDC_HORIZONTAL_ARRANGE_CHECK))->SetCheck(m_data.IsHorizontalArrangeForDisplay(0));
     ((CButton*)GetDlgItem(IDC_SHOW_STATUS_BAR_CHECK))->SetCheck(m_data.show_status_bar);
-    ((CButton*)GetDlgItem(IDC_SEPARATE_VALUE_UNIT_CHECK))->SetCheck(m_data.separate_value_unit_with_space);
-    ((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->SetCheck(m_data.show_tool_tip);
-
-    CheckDlgButton(IDC_TASKBAR_WND_IN_SECONDARY_DISPLAY_CHECK, m_data.show_taskbar_wnd_in_secondary_display);
+    ((CButton*)GetDlgItem(IDC_SEPARATE_VALUE_UNIT_CHECK))->SetCheck(m_data.IsSeparateValueUnitWithSpaceForDisplay(0));
+    ((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->SetCheck(m_data.IsShowToolTipForDisplay(0));
 
     m_text_color_static.SetLinkCursor();
     m_back_color_static.SetLinkCursor();
@@ -329,6 +428,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     m_toolTip.AddTool(&m_atuo_adapt_light_theme_chk, CCommon::LoadText(IDS_AUTO_ADAPT_TIP_INFO));
     m_toolTip.AddTool(GetDlgItem(IDC_SHOW_STATUS_BAR_CHECK), CCommon::LoadText(IDS_SHOW_RESOURCE_USAGE_GRAPH_TIP));
     m_toolTip.AddTool(GetDlgItem(IDC_SHOW_NET_SPEED_FIGURE_CHECK), CCommon::LoadText(IDS_SHOW_NET_SPEED_GRAPH_TIP));
+    m_toolTip.AddTool(GetDlgItem(IDC_WIN11_SETTINGS_BUTTON), _T(""));
 
 
     if (m_data.unit_byte)
@@ -346,6 +446,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
         m_hide_unit_chk.EnableWindow(FALSE);
     }
     ((CButton*)GetDlgItem(IDC_HIDE_PERCENTAGE_CHECK))->SetCheck(m_data.hide_percent);
+
     ((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->SetCheck(m_data.specify_each_item_color);
     m_background_transparent_chk.SetCheck(m_data.IsTaskbarTransparent());
     m_atuo_adapt_light_theme_chk.SetCheck(m_data.auto_adapt_light_theme);
@@ -367,12 +468,14 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     m_double_click_combo.AddString(CCommon::LoadText(IDS_NONE));
     m_double_click_combo.SetCurSel(static_cast<int>(m_data.double_click_action));
 
+    ShowDlgCtrl(IDC_LAYOUT_SETTINGS_FOR_DISPLAY_STATIC, false);
+
     m_digit_number_combo.AddString(_T("3"));
     m_digit_number_combo.AddString(_T("4"));
     m_digit_number_combo.AddString(_T("5"));
     m_digit_number_combo.AddString(_T("6"));
     m_digit_number_combo.AddString(_T("7"));
-    m_digit_number_combo.SetCurSel(m_data.digits_number - 3);
+    m_digit_number_combo.SetCurSel(m_data.GetDigitsNumberForDisplay(0) - 3);
 
     SetDlgItemText(IDC_EXE_PATH_EDIT, m_data.double_click_exe.c_str());
 
@@ -386,10 +489,8 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     CheckDlgButton(IDC_USAGE_GRAPH_FOLLOW_SYSTEM_CHECK, m_data.graph_color_following_system);
 
     m_item_space_edit.SetRange(0, 32);
-    m_item_space_edit.SetValue(m_data.item_space);
     CTaskBarDlg* taskbar_dlg{ CTrafficMonitorDlg::Instance()->GetTaskbarWindow() };
     m_vertical_margin_edit.SetRange(-10, 10);
-    m_vertical_margin_edit.SetValue(m_data.vertical_margin);
     if (taskbar_dlg != nullptr)
         m_vertical_margin_edit.EnableWindow(taskbar_dlg->IsTasksbarOnTopOrBottom());
 
@@ -397,7 +498,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_USAGE_PERCENTAGE));
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_MEMORY_USED));
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_MEMORY_AVAILABLE));
-    m_memory_display_combo.SetCurSel(static_cast<int>(m_data.memory_display));
+    m_memory_display_combo.SetCurSel(static_cast<int>(m_data.GetMemoryDisplayForDisplay(0)));
 
     CheckDlgButton(IDC_SHOW_NET_SPEED_FIGURE_CHECK, m_data.show_netspeed_figure);
     m_net_speed_figure_max_val_edit.SetRange(1, 1024);
@@ -419,29 +520,52 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
         m_modify_default_style_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_MODIFY_DEFAULT_STYLE1 + i, item_name);
     }
     m_default_style_menu.AppendMenu(MF_SEPARATOR);
-    m_default_style_menu.AppendMenu(MF_POPUP | MF_STRING, (UINT)m_modify_default_style_menu.m_hMenu, CCommon::LoadText(IDS_MODIFY_PRESET));
+    m_default_style_menu.AppendMenu(MF_POPUP | MF_STRING, reinterpret_cast<UINT_PTR>(m_modify_default_style_menu.m_hMenu), CCommon::LoadText(IDS_MODIFY_PRESET));
 
     //获取副显示器的数量
     std::vector<HWND> secondary_displays;
     CTaskbarHelper::GetAllSecondaryDisplayTaskbar(secondary_displays);
-    //初始化“显示任务栏窗口的显示器”下拉列表
-    m_displays_combo.AddString(CCommon::LoadText(IDS_PRIMARY_DISPLAY));
+    //初始化“显示任务栏窗口的显示器”列表
+    m_displays_list.ResetContent();
+    m_displays_list.SetCheckStyle(BS_AUTOCHECKBOX);
+    CString primary_display_text = CCommon::LoadText(IDS_PRIMARY_DISPLAY);
+    m_displays_list.AddString(primary_display_text);
     for (size_t i = 0; i < secondary_displays.size(); i++)
     {
-        m_displays_combo.AddString(CCommon::LoadTextFormat(IDS_SECONDARY_DISPLAY, { i + 1 }));
+        CString secondary_display_text = CCommon::LoadTextFormat(IDS_SECONDARY_DISPLAY, { i + 1 });
+        m_displays_list.AddString(secondary_display_text);
     }
-    if (!m_data.show_taskbar_wnd_in_secondary_display)
+
+    int display_count = m_displays_list.GetCount();
+
+    //为当前检测到的每个显示器初始化覆盖值，确保每个显示器设置独立。
+    for (int i = 0; i < display_count; i++)
     {
-        m_displays_combo.SetCurSel(0);
+        m_data.SetDisplayItemForDisplay(i, m_data.GetDisplayItemForDisplay(i));
+        m_data.SetSpeedShortModeForDisplay(i, m_data.IsSpeedShortModeForDisplay(i));
+        m_data.SetValueRightAlignForDisplay(i, m_data.IsValueRightAlignForDisplay(i));
+        m_data.SetHorizontalArrangeForDisplay(i, m_data.IsHorizontalArrangeForDisplay(i));
+        m_data.SetSeparateValueUnitWithSpaceForDisplay(i, m_data.IsSeparateValueUnitWithSpaceForDisplay(i));
+        m_data.SetShowToolTipForDisplay(i, m_data.IsShowToolTipForDisplay(i));
+        m_data.SetDigitsNumberForDisplay(i, m_data.GetDigitsNumberForDisplay(i));
+        m_data.SetMemoryDisplayForDisplay(i, m_data.GetMemoryDisplayForDisplay(i));
+        m_data.SetItemSpaceForDisplay(i, m_data.GetItemSpaceForDisplay(i));
+        m_data.SetVerticalMarginForDisplay(i, m_data.GetVerticalMarginForDisplay(i));
     }
-    else
+
+    for (int i = 0; i < display_count; i++)
     {
-        int combo_index = m_data.secondary_display_index + 1;
-        int combo_item_count = m_displays_combo.GetCount();
-        if (combo_index >= combo_item_count)
-            combo_index = combo_item_count - 1;
-        m_displays_combo.SetCurSel(combo_index);
+        bool checked = (m_data.taskbar_display_indices.find(i) != m_data.taskbar_display_indices.end());
+        m_displays_list.SetCheck(i, checked ? TRUE : FALSE);
     }
+    UpdateTaskbarDisplaySelection();
+    if (display_count > 0)
+    {
+        m_current_display_index = 0;
+        m_displays_list.SetCurSel(0);
+        m_displays_list.SetCaretIndex(0);
+    }
+    UpdatePerDisplayLayoutEditControls();
 
     //设置是否禁用D2D
     if (!CTaskBarDlgDrawCommonSupport::CheckSupport())
@@ -508,7 +632,10 @@ void CTaskBarSettingsDlg::OnBnClickedTaskbarWndOnLeftCheck()
 void CTaskBarSettingsDlg::OnBnClickedSpeedShortModeCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
-    m_data.speed_short_mode = (((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK))->GetCheck() != 0);
+    if (m_updating_per_display_controls)
+        return;
+    int display_index = GetCurrentDisplayIndex();
+    m_data.SetSpeedShortModeForDisplay(display_index, (((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK))->GetCheck() != 0));
 }
 
 
@@ -586,7 +713,10 @@ void CTaskBarSettingsDlg::SaveColorSettingToDefaultStyle()
 void CTaskBarSettingsDlg::OnBnClickedValueRightAlignCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
-    m_data.value_right_align = (((CButton*)GetDlgItem(IDC_VALUE_RIGHT_ALIGN_CHECK))->GetCheck() != 0);
+    if (m_updating_per_display_controls)
+        return;
+    int display_index = GetCurrentDisplayIndex();
+    m_data.SetValueRightAlignForDisplay(display_index, (((CButton*)GetDlgItem(IDC_VALUE_RIGHT_ALIGN_CHECK))->GetCheck() != 0));
 }
 
 
@@ -702,7 +832,10 @@ void CTaskBarSettingsDlg::OnCbnSelchangeDoubleClickCombo()
 void CTaskBarSettingsDlg::OnBnClickedHorizontalArrangeCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
-    m_data.horizontal_arrange = (((CButton*)GetDlgItem(IDC_HORIZONTAL_ARRANGE_CHECK))->GetCheck() != 0);
+    if (m_updating_per_display_controls)
+        return;
+    int display_index = GetCurrentDisplayIndex();
+    m_data.SetHorizontalArrangeForDisplay(display_index, (((CButton*)GetDlgItem(IDC_HORIZONTAL_ARRANGE_CHECK))->GetCheck() != 0));
 }
 
 
@@ -717,7 +850,10 @@ void CTaskBarSettingsDlg::OnBnClickedShowStatusBarCheck()
 void CTaskBarSettingsDlg::OnBnClickedSeparateValueUnitCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
-    m_data.separate_value_unit_with_space = (((CButton*)GetDlgItem(IDC_SEPARATE_VALUE_UNIT_CHECK))->GetCheck() != 0);
+    if (m_updating_per_display_controls)
+        return;
+    int display_index = GetCurrentDisplayIndex();
+    m_data.SetSeparateValueUnitWithSpaceForDisplay(display_index, (((CButton*)GetDlgItem(IDC_SEPARATE_VALUE_UNIT_CHECK))->GetCheck() != 0));
 }
 
 
@@ -740,7 +876,10 @@ void CTaskBarSettingsDlg::OnBnClickedUnitBitRadio()
 void CTaskBarSettingsDlg::OnBnClickedShowToolTipChk()
 {
     // TODO: 在此添加控件通知处理程序代码
-    m_data.show_tool_tip = (((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->GetCheck() != 0);
+    if (m_updating_per_display_controls)
+        return;
+    int display_index = GetCurrentDisplayIndex();
+    m_data.SetShowToolTipForDisplay(display_index, (((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->GetCheck() != 0));
 }
 
 
@@ -835,7 +974,10 @@ void CTaskBarSettingsDlg::OnBnClickedDisplayTextSettingButton()
 void CTaskBarSettingsDlg::OnCbnSelchangeMemoryDisplayCombo()
 {
     // TODO: 在此添加控件通知处理程序代码
-    m_data.memory_display = static_cast<MemoryDisplay>(m_memory_display_combo.GetCurSel());
+    if (m_updating_per_display_controls)
+        return;
+    int display_index = GetCurrentDisplayIndex();
+    m_data.SetMemoryDisplayForDisplay(display_index, static_cast<MemoryDisplay>(m_memory_display_combo.GetCurSel()));
 }
 
 
@@ -849,14 +991,15 @@ void CTaskBarSettingsDlg::OnBnClickedShowDashedBox()
 void CTaskBarSettingsDlg::OnBnClickedSetOrderButton()
 {
     // TODO: 在此添加控件通知处理程序代码
+    int display_index = GetCurrentDisplayIndex();
     CSetItemOrderDlg dlg;
     dlg.SetItemOrder(m_data.item_order.GetItemOrderConst());
-    dlg.SetDisplayItem(m_data.display_item);
+    dlg.SetDisplayItem(m_data.GetDisplayItemForDisplay(display_index));
     dlg.SetPluginDisplayItem(m_data.plugin_display_item);
     if (dlg.DoModal() == IDOK)
     {
         m_data.item_order.SetOrder(dlg.GetItemOrder());
-        m_data.display_item = dlg.GetDisplayItem();
+        m_data.SetDisplayItemForDisplay(display_index, dlg.GetDisplayItem());
         m_data.plugin_display_item = dlg.GetPluginDisplayItem();
     }
 }
@@ -870,14 +1013,18 @@ void CTaskBarSettingsDlg::OnEnChangeItemSpaceEdit()
     // 同时将 ENM_CHANGE 标志“或”运算到掩码中。
 
     // TODO:  在此添加控件通知处理程序代码
-    m_data.item_space = m_item_space_edit.GetValue();
-    m_data.ValidItemSpace();
+    if (m_updating_per_display_controls)
+        return;
+    int display_index = GetCurrentDisplayIndex();
+    m_data.SetItemSpaceForDisplay(display_index, m_item_space_edit.GetValue());
 }
 
 void CTaskBarSettingsDlg::OnEnChangeVerticalMarginEdit()
 {
-    m_data.vertical_margin = m_vertical_margin_edit.GetValue();
-    m_data.ValidVerticalMargin();
+    if (m_updating_per_display_controls)
+        return;
+    int display_index = GetCurrentDisplayIndex();
+    m_data.SetVerticalMarginForDisplay(display_index, m_vertical_margin_edit.GetValue());
 }
 
 BOOL CTaskBarSettingsDlg::OnCommand(WPARAM wParam, LPARAM lParam)
@@ -945,37 +1092,41 @@ void CTaskBarSettingsDlg::OnBnClickedEnableColorEmojiCheck()
 void CTaskBarSettingsDlg::OnCbnSelchangeDigitNumberCombo()
 {
     //获取数据位数的设置
-    m_data.digits_number = m_digit_number_combo.GetCurSel() + 3;
+    if (m_updating_per_display_controls)
+        return;
+    int display_index = GetCurrentDisplayIndex();
+    m_data.SetDigitsNumberForDisplay(display_index, m_digit_number_combo.GetCurSel() + 3);
 }
 
 
 void CTaskBarSettingsDlg::OnBnClickedWin11SettingsButton()
 {
-    CWin11TaskbarSettingDlg dlg(m_data);
+    CWin11TaskbarSettingDlg dlg(m_data, GetCurrentDisplayIndex());
     dlg.DoModal();
 }
 
 
-void CTaskBarSettingsDlg::OnBnClickedTaskbarWndInSecondaryDisplayCheck()
+void CTaskBarSettingsDlg::OnLbnSelchangeDisplayToShowTaskbarWndList()
 {
-    m_data.show_taskbar_wnd_in_secondary_display = (IsDlgButtonChecked(IDC_TASKBAR_WND_IN_SECONDARY_DISPLAY_CHECK) != FALSE);
-}
+    UpdateTaskbarDisplaySelection();
 
+    int item_count = m_displays_list.GetCount();
+    int display_index = m_displays_list.GetCurSel();
+    if (display_index == LB_ERR)
+        display_index = m_displays_list.GetCaretIndex();
 
-void CTaskBarSettingsDlg::OnCbnSelchangeDisplayToShowTaskbarWndCombo()
-{
-    
-    int combo_index = m_displays_combo.GetCurSel();
-    if (combo_index == 0)
+    if (display_index == LB_ERR && m_current_display_index >= 0 && m_current_display_index < item_count)
+        display_index = m_current_display_index;
+    if (display_index == LB_ERR)
+        display_index = 0;
+
+    if (item_count > 0)
     {
-        m_data.show_taskbar_wnd_in_secondary_display = false;
+        m_current_display_index = display_index;
+        m_displays_list.SetCurSel(display_index);
+        m_displays_list.SetCaretIndex(display_index);
     }
-    else
-    {
-        m_data.show_taskbar_wnd_in_secondary_display = true;
-        m_data.secondary_display_index = combo_index - 1;
-
-    }
+    UpdatePerDisplayLayoutEditControls();
 }
 
 

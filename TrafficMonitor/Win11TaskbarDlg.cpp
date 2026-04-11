@@ -4,6 +4,10 @@
 
 void CWin11TaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
 {
+    const int display_index = GetDisplayIndex();
+    const bool taskbar_wnd_snap = theApp.m_taskbar_data.IsTaskbarWndSnapForDisplay(display_index);
+    const bool avoid_overlap_with_widgets = theApp.m_taskbar_data.IsAvoidOverlapWithWidgetsForDisplay(display_index);
+    const int taskbar_left_space_win11 = theApp.m_taskbar_data.GetTaskbarLeftSpaceForDisplay(display_index);
     ::GetWindowRect(m_hNotify, m_rcNotify);
     ::GetWindowRect(m_hStart, m_rcStart);
     m_rcStart.MoveToXY(m_rcStart.left - m_rcTaskbar.left, m_rcStart.top - m_rcTaskbar.top);
@@ -40,8 +44,8 @@ void CWin11TaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
                     notify_x_pos = m_rcTaskbar.Width() - DPI(theApp.m_taskbar_data.taskbar_right_space_win11);
             }
             //如果显示了小组件，并且任务栏靠左显示，则留出小组件的位置
-            if (theApp.m_taskbar_data.avoid_overlap_with_widgets && CWindowsSettingHelper::IsTaskbarWidgetsBtnShown() && !CWindowsSettingHelper::IsTaskbarCenterAlign())
-                m_rect.MoveToX(notify_x_pos - m_rect.Width() + 2 - DPI(theApp.m_taskbar_data.taskbar_left_space_win11));
+            if (avoid_overlap_with_widgets && CWindowsSettingHelper::IsTaskbarWidgetsBtnShown() && !CWindowsSettingHelper::IsTaskbarCenterAlign())
+                m_rect.MoveToX(notify_x_pos - m_rect.Width() + 2 - DPI(taskbar_left_space_win11));
             else
                 m_rect.MoveToX(notify_x_pos - m_rect.Width() + 2);
             //}
@@ -50,7 +54,7 @@ void CWin11TaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
         else
         {
             //靠近“开始”按钮
-            if (theApp.m_taskbar_data.tbar_wnd_snap)
+            if (taskbar_wnd_snap)
             {
                 m_rect.MoveToX(m_rcStart.left - m_rect.Width() - 2);
             }
@@ -58,13 +62,13 @@ void CWin11TaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
             else
             {
                 if (CWindowsSettingHelper::IsTaskbarWidgetsBtnShown())
-                    m_rect.MoveToX(2 + DPI(theApp.m_taskbar_data.taskbar_left_space_win11));
+                    m_rect.MoveToX(2 + DPI(taskbar_left_space_win11));
                 else
                     m_rect.MoveToX(2);
             }
         }
         //水平偏移
-        m_rect.MoveToX(m_rect.left + DPI(theApp.m_taskbar_data.window_offset_left));
+        m_rect.MoveToX(m_rect.left + DPI(theApp.m_taskbar_data.GetWindowOffsetLeftForDisplay(display_index)));
         ////确保水平方向不超出屏幕边界
         //if (m_rect.left < 0)
         //    m_rect.MoveToX(0);
@@ -75,7 +79,7 @@ void CWin11TaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
         //注：这里加上(m_rcTaskbar.Height() - rcStart.Height())用于修正Windows11 build 22621版本后触屏设备任务栏窗口位置不正确的问题。
         //在这种情况下m_rcTaskbar的高度要大于m_rcBar的高度，正常情况下，它们的高度相同
         //但是当任务栏上没有任何图标时，m_rcBar的高度会变为0，因此使用rcStart代替
-        m_rect.MoveToY((m_rcStart.Height() - m_rect.Height()) / 2 + (m_rcTaskbar.Height() - m_rcStart.Height()) + DPI(theApp.m_taskbar_data.window_offset_top));
+        m_rect.MoveToY((m_rcStart.Height() - m_rect.Height()) / 2 + (m_rcTaskbar.Height() - m_rcStart.Height()) + DPI(theApp.m_taskbar_data.GetWindowOffsetTopForDisplay(display_index)));
         ////确保垂直方向不超出屏幕边界
         //if (m_rect.top < 0)
         //    m_rect.MoveToY(0);

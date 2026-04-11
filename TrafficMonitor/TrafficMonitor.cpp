@@ -171,8 +171,40 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.specify_each_item_color = ini.GetBool(L"task_bar", L"specify_each_item_color", false);
     //m_cfg_data.m_tbar_show_cpu_memory = ini.GetBool(_T("task_bar"), _T("task_bar_show_cpu_memory"), false);
     m_taskbar_data.display_item.FromInt(ini.GetInt(L"task_bar", L"tbar_display_item", DisplayItemSet{ TDI_UP, TDI_DOWN }.ToInt()));
-    m_taskbar_data.show_taskbar_wnd_in_secondary_display = ini.GetBool(L"task_bar", L"show_taskbar_wnd_in_secondary_display", false);
-    m_taskbar_data.secondary_display_index = ini.GetInt(L"task_bar", L"secondary_display_index", 0);
+    m_taskbar_data.taskbar_display_indices.clear();
+    std::wstring taskbar_display_indices_str = ini.GetString(L"task_bar", L"taskbar_display_indices", L"");
+    if (taskbar_display_indices_str.empty())
+    {
+        //兼容旧版本配置：主显示器/副显示器/主+副
+        bool show_taskbar_wnd_in_secondary_display = ini.GetBool(L"task_bar", L"show_taskbar_wnd_in_secondary_display", false);
+        bool show_taskbar_wnd_in_both_displays = ini.GetBool(L"task_bar", L"show_taskbar_wnd_in_both_displays", false);
+        int secondary_display_index = ini.GetInt(L"task_bar", L"secondary_display_index", 0);
+        if (secondary_display_index < 0)
+            secondary_display_index = 0;
+
+        if (!show_taskbar_wnd_in_secondary_display)
+            m_taskbar_data.taskbar_display_indices.insert(0);
+        else if (show_taskbar_wnd_in_both_displays)
+        {
+            m_taskbar_data.taskbar_display_indices.insert(0);
+            m_taskbar_data.taskbar_display_indices.insert(secondary_display_index + 1);
+        }
+        else
+            m_taskbar_data.taskbar_display_indices.insert(secondary_display_index + 1);
+    }
+    else
+    {
+        std::vector<std::wstring> display_index_str_list;
+        CCommon::StringSplit(taskbar_display_indices_str, L',', display_index_str_list);
+        for (const auto& display_index_str : display_index_str_list)
+        {
+            int display_index = _wtoi(display_index_str.c_str());
+            if (display_index >= 0)
+                m_taskbar_data.taskbar_display_indices.insert(display_index);
+        }
+    }
+    if (m_taskbar_data.taskbar_display_indices.empty())
+        m_taskbar_data.taskbar_display_indices.insert(0);
 
     //不含温度监控的版本，不显示温度监控相关项目
 #ifdef WITHOUT_TEMPERATURE
@@ -235,11 +267,112 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.vertical_margin = ini.GetInt(L"task_bar", L"vertical_margin", 0);
     m_taskbar_data.window_offset_top = ini.GetInt(L"task_bar", L"window_offset_top", 0);
     m_taskbar_data.window_offset_left = ini.GetInt(L"task_bar", L"window_offset_left", 0);
-    m_taskbar_data.ValidItemSpace();
-    m_taskbar_data.ValidWindowOffsetTop();
-    m_taskbar_data.ValidWindowOffsetLeft();
     m_taskbar_data.avoid_overlap_with_widgets = ini.GetBool(_T("task_bar"), _T("avoid_overlap_with_widgets"), false);
     m_taskbar_data.taskbar_left_space_win11 = ini.GetInt(L"task_bar", L"taskbar_left_space_win11", 160);
+
+    auto parse_display_value_map = [&](const std::wstring& config_value, std::map<int, int>& value_map, int min_value, int max_value)
+    {
+        value_map.clear();
+        if (config_value.empty())
+            return;
+
+        std::vector<std::wstring> parts;
+        CCommon::StringSplit(config_value, L',', parts);
+        for (const auto& part : parts)
+        {
+            size_t separator_index = part.find(L':');
+            if (separator_index == std::wstring::npos)
+                continue;
+
+            std::wstring display_index_str = part.substr(0, separator_index);
+            std::wstring value_str = part.substr(separator_index + 1);
+            int display_index = _wtoi(display_index_str.c_str());
+            int value = _wtoi(value_str.c_str());
+            if (display_index < 0)
+                continue;
+            if (value < min_value)
+                value = min_value;
+            if (value > max_value)
+                value = max_value;
+            value_map[display_index] = value;
+        }
+    };
+
+    auto parse_display_bool_map = [&](const std::wstring& config_value, std::map<int, bool>& value_map)
+    {
+        value_map.clear();
+        if (config_value.empty())
+            return;
+
+        std::vector<std::wstring> parts;
+        CCommon::StringSplit(config_value, L',', parts);
+        for (const auto& part : parts)
+        {
+            size_t separator_index = part.find(L':');
+            if (separator_index == std::wstring::npos)
+                continue;
+
+            std::wstring display_index_str = part.substr(0, separator_index);
+            std::wstring value_str = part.substr(separator_index + 1);
+            int display_index = _wtoi(display_index_str.c_str());
+            if (display_index < 0)
+                continue;
+            value_map[display_index] = (_wtoi(value_str.c_str()) != 0);
+        }
+    };
+
+    parse_display_value_map(ini.GetString(L"task_bar", L"item_space_per_display", L""), m_taskbar_data.item_space_per_display, 0, 32);
+    parse_display_value_map(ini.GetString(L"task_bar", L"vertical_margin_per_display", L""), m_taskbar_data.vertical_margin_per_display, -10, 10);
+    parse_display_value_map(ini.GetString(L"task_bar", L"window_offset_top_per_display", L""), m_taskbar_data.window_offset_top_per_display, -20, 20);
+    parse_display_value_map(ini.GetString(L"task_bar", L"window_offset_left_per_display", L""), m_taskbar_data.window_offset_left_per_display, -800, 800);
+    parse_display_bool_map(ini.GetString(L"task_bar", L"task_bar_wnd_snap_per_display", L""), m_taskbar_data.tbar_wnd_snap_per_display);
+    parse_display_bool_map(ini.GetString(L"task_bar", L"avoid_overlap_with_widgets_per_display", L""), m_taskbar_data.avoid_overlap_with_widgets_per_display);
+    parse_display_value_map(ini.GetString(L"task_bar", L"taskbar_left_space_win11_per_display", L""), m_taskbar_data.taskbar_left_space_win11_per_display, 0, 300);
+    parse_display_bool_map(ini.GetString(L"task_bar", L"task_bar_speed_short_mode_per_display", L""), m_taskbar_data.speed_short_mode_per_display);
+    parse_display_bool_map(ini.GetString(L"task_bar", L"value_right_align_per_display", L""), m_taskbar_data.value_right_align_per_display);
+    parse_display_value_map(ini.GetString(L"task_bar", L"digits_number_per_display", L""), m_taskbar_data.digits_number_per_display, 3, 7);
+    parse_display_bool_map(ini.GetString(L"task_bar", L"horizontal_arrange_per_display", L""), m_taskbar_data.horizontal_arrange_per_display);
+    parse_display_bool_map(ini.GetString(L"task_bar", L"separate_value_unit_with_space_per_display", L""), m_taskbar_data.separate_value_unit_with_space_per_display);
+    parse_display_bool_map(ini.GetString(L"task_bar", L"show_tool_tip_per_display", L""), m_taskbar_data.show_tool_tip_per_display);
+    parse_display_value_map(ini.GetString(L"task_bar", L"memory_display_per_display", L""), m_taskbar_data.memory_display_per_display,
+        static_cast<int>(MemoryDisplay::USAGE_PERCENTAGE), static_cast<int>(MemoryDisplay::MEMORY_AVAILABLE));
+    parse_display_value_map(ini.GetString(L"task_bar", L"display_item_per_display", L""), m_taskbar_data.display_item_per_display, 0, 0x7fffffff);
+
+    auto sanitize_display_item_set = [&]()
+    {
+        auto apply_filter = [&](DisplayItemSet& display_item_set)
+        {
+#ifdef WITHOUT_TEMPERATURE
+            display_item_set.Remove(TDI_CPU_TEMP);
+            display_item_set.Remove(TDI_GPU_TEMP);
+            display_item_set.Remove(TDI_HDD_TEMP);
+            display_item_set.Remove(TDI_MAIN_BOARD_TEMP);
+#endif
+            if (!m_general_data.IsHardwareEnable(HI_CPU))
+                display_item_set.Remove(TDI_CPU_TEMP);
+            if (!m_general_data.IsHardwareEnable(HI_GPU))
+                display_item_set.Remove(TDI_GPU_TEMP);
+            if (!m_general_data.IsHardwareEnable(HI_HDD))
+                display_item_set.Remove(TDI_HDD_TEMP);
+            if (!m_general_data.IsHardwareEnable(HI_MBD))
+                display_item_set.Remove(TDI_MAIN_BOARD_TEMP);
+        };
+
+        for (auto& item : m_taskbar_data.display_item_per_display)
+        {
+            DisplayItemSet display_item_set;
+            display_item_set.FromInt(item.second);
+            apply_filter(display_item_set);
+            item.second = display_item_set.ToInt();
+        }
+    };
+    sanitize_display_item_set();
+    m_taskbar_data.display_item = m_taskbar_data.GetDisplayItemForDisplay(0);
+
+    m_taskbar_data.ValidItemSpace();
+    m_taskbar_data.ValidVerticalMargin();
+    m_taskbar_data.ValidWindowOffsetTop();
+    m_taskbar_data.ValidWindowOffsetLeft();
     m_taskbar_data.taskbar_right_space_win11 = ini.GetInt(L"task_bar", L"taskbar_right_space_win11", 280);
 
     if (m_win_version.IsWindows10OrLater())     //只有Win10才支持自动适应系统深色/浅色主题
@@ -364,6 +497,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"notify_tip", L"mainboard_temperature_tip_value", m_general_data.mainboard_temp_tip.tip_value);
 
     //任务栏窗口设置
+    m_taskbar_data.display_item = m_taskbar_data.GetDisplayItemForDisplay(0);
     ini.WriteInt(L"task_bar", L"task_bar_back_color", m_taskbar_data.back_color);
     ini.WriteInt(L"task_bar", L"transparent_color", m_taskbar_data.transparent_color);
     ini.WriteInt(L"task_bar", L"status_bar_color", m_taskbar_data.status_bar_color);
@@ -373,11 +507,48 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"task_bar", L"tbar_display_item", m_taskbar_data.display_item.ToInt());
     ini.SaveFontData(L"task_bar", m_taskbar_data.font);
     //ini.WriteBool(L"task_bar", L"task_bar_swap_up_down", m_taskbar_data.swap_up_down);
-    ini.WriteBool(L"task_bar", L"show_taskbar_wnd_in_secondary_display", m_taskbar_data.show_taskbar_wnd_in_secondary_display);
-    ini.WriteInt(L"task_bar", L"secondary_display_index", m_taskbar_data.secondary_display_index);
+    std::wstring taskbar_display_indices_str;
+    for (const auto& display_index : m_taskbar_data.taskbar_display_indices)
+    {
+        if (!taskbar_display_indices_str.empty())
+            taskbar_display_indices_str += L",";
+        taskbar_display_indices_str += std::to_wstring(display_index);
+    }
+    if (taskbar_display_indices_str.empty())
+        taskbar_display_indices_str = L"0";
+    ini.WriteString(L"task_bar", L"taskbar_display_indices", taskbar_display_indices_str);
+
+    //兼容旧版本配置
+    bool has_primary_display{ false };
+    int first_secondary_display_index{ -1 };
+    for (const auto& display_index : m_taskbar_data.taskbar_display_indices)
+    {
+        if (display_index == 0)
+            has_primary_display = true;
+        else if (display_index > 0 && first_secondary_display_index < 0)
+            first_secondary_display_index = display_index - 1;
+    }
+    bool show_taskbar_wnd_in_secondary_display = (first_secondary_display_index >= 0);
+    bool show_taskbar_wnd_in_both_displays = (show_taskbar_wnd_in_secondary_display && has_primary_display);
+    ini.WriteBool(L"task_bar", L"show_taskbar_wnd_in_secondary_display", show_taskbar_wnd_in_secondary_display);
+    ini.WriteBool(L"task_bar", L"show_taskbar_wnd_in_both_displays", show_taskbar_wnd_in_both_displays);
+    ini.WriteInt(L"task_bar", L"secondary_display_index", show_taskbar_wnd_in_secondary_display ? first_secondary_display_index : 0);
 
     ini.SaveDisplayStr(L"task_bar", m_taskbar_data.disp_str);
     ini.SavePluginDisplayStr(L"plugin_display_str_taskbar_window", m_taskbar_data.disp_str);
+
+    //保留旧配置字段并同步主显示器值，确保与旧版本兼容
+    m_taskbar_data.SetDisplayItemForDisplay(0, m_taskbar_data.display_item);
+    m_taskbar_data.tbar_wnd_snap = m_taskbar_data.IsTaskbarWndSnapForDisplay(0);
+    m_taskbar_data.avoid_overlap_with_widgets = m_taskbar_data.IsAvoidOverlapWithWidgetsForDisplay(0);
+    m_taskbar_data.taskbar_left_space_win11 = m_taskbar_data.GetTaskbarLeftSpaceForDisplay(0);
+    m_taskbar_data.speed_short_mode = m_taskbar_data.IsSpeedShortModeForDisplay(0);
+    m_taskbar_data.value_right_align = m_taskbar_data.IsValueRightAlignForDisplay(0);
+    m_taskbar_data.digits_number = m_taskbar_data.GetDigitsNumberForDisplay(0);
+    m_taskbar_data.horizontal_arrange = m_taskbar_data.IsHorizontalArrangeForDisplay(0);
+    m_taskbar_data.separate_value_unit_with_space = m_taskbar_data.IsSeparateValueUnitWithSpaceForDisplay(0);
+    m_taskbar_data.show_tool_tip = m_taskbar_data.IsShowToolTipForDisplay(0);
+    m_taskbar_data.memory_display = m_taskbar_data.GetMemoryDisplayForDisplay(0);
 
     ini.WriteBool(L"task_bar", L"task_bar_wnd_on_left", m_taskbar_data.tbar_wnd_on_left);
     ini.WriteBool(L"task_bar", L"task_bar_wnd_snap", m_taskbar_data.tbar_wnd_snap);
@@ -397,10 +568,66 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteString(L"task_bar", L"double_click_exe", m_taskbar_data.double_click_exe);
     ini.WriteBool(L"task_bar", L"cm_graph_type", m_taskbar_data.cm_graph_type);
     ini.WriteBool(L"task_bar", L"show_graph_dashed_box", m_taskbar_data.show_graph_dashed_box);
+
+    //保留旧配置字段并同步主显示器值，确保与旧版本兼容
+    m_taskbar_data.item_space = m_taskbar_data.GetItemSpaceForDisplay(0);
+    m_taskbar_data.vertical_margin = m_taskbar_data.GetVerticalMarginForDisplay(0);
+    m_taskbar_data.window_offset_top = m_taskbar_data.GetWindowOffsetTopForDisplay(0);
+    m_taskbar_data.window_offset_left = m_taskbar_data.GetWindowOffsetLeftForDisplay(0);
+
     ini.WriteInt(L"task_bar", L"item_space", m_taskbar_data.item_space);
     ini.WriteInt(L"task_bar", L"vertical_margin", m_taskbar_data.vertical_margin);
     ini.WriteInt(L"task_bar", L"window_offset_top", m_taskbar_data.window_offset_top);
     ini.WriteInt(L"task_bar", L"window_offset_left", m_taskbar_data.window_offset_left);
+
+    auto serialize_display_value_map = [](const std::map<int, int>& value_map)
+    {
+        std::wstring config_value;
+        for (const auto& item : value_map)
+        {
+            if (item.first < 0)
+                continue;
+            if (!config_value.empty())
+                config_value += L",";
+            config_value += std::to_wstring(item.first);
+            config_value += L":";
+            config_value += std::to_wstring(item.second);
+        }
+        return config_value;
+    };
+
+    auto serialize_display_bool_map = [](const std::map<int, bool>& value_map)
+    {
+        std::wstring config_value;
+        for (const auto& item : value_map)
+        {
+            if (item.first < 0)
+                continue;
+            if (!config_value.empty())
+                config_value += L",";
+            config_value += std::to_wstring(item.first);
+            config_value += L":";
+            config_value += (item.second ? L"1" : L"0");
+        }
+        return config_value;
+    };
+
+    ini.WriteString(L"task_bar", L"item_space_per_display", serialize_display_value_map(m_taskbar_data.item_space_per_display));
+    ini.WriteString(L"task_bar", L"vertical_margin_per_display", serialize_display_value_map(m_taskbar_data.vertical_margin_per_display));
+    ini.WriteString(L"task_bar", L"window_offset_top_per_display", serialize_display_value_map(m_taskbar_data.window_offset_top_per_display));
+    ini.WriteString(L"task_bar", L"window_offset_left_per_display", serialize_display_value_map(m_taskbar_data.window_offset_left_per_display));
+    ini.WriteString(L"task_bar", L"task_bar_wnd_snap_per_display", serialize_display_bool_map(m_taskbar_data.tbar_wnd_snap_per_display));
+    ini.WriteString(L"task_bar", L"avoid_overlap_with_widgets_per_display", serialize_display_bool_map(m_taskbar_data.avoid_overlap_with_widgets_per_display));
+    ini.WriteString(L"task_bar", L"taskbar_left_space_win11_per_display", serialize_display_value_map(m_taskbar_data.taskbar_left_space_win11_per_display));
+    ini.WriteString(L"task_bar", L"task_bar_speed_short_mode_per_display", serialize_display_bool_map(m_taskbar_data.speed_short_mode_per_display));
+    ini.WriteString(L"task_bar", L"value_right_align_per_display", serialize_display_bool_map(m_taskbar_data.value_right_align_per_display));
+    ini.WriteString(L"task_bar", L"digits_number_per_display", serialize_display_value_map(m_taskbar_data.digits_number_per_display));
+    ini.WriteString(L"task_bar", L"horizontal_arrange_per_display", serialize_display_bool_map(m_taskbar_data.horizontal_arrange_per_display));
+    ini.WriteString(L"task_bar", L"separate_value_unit_with_space_per_display", serialize_display_bool_map(m_taskbar_data.separate_value_unit_with_space_per_display));
+    ini.WriteString(L"task_bar", L"show_tool_tip_per_display", serialize_display_bool_map(m_taskbar_data.show_tool_tip_per_display));
+    ini.WriteString(L"task_bar", L"memory_display_per_display", serialize_display_value_map(m_taskbar_data.memory_display_per_display));
+    ini.WriteString(L"task_bar", L"display_item_per_display", serialize_display_value_map(m_taskbar_data.display_item_per_display));
+
     ini.WriteBool(L"task_bar", L"avoid_overlap_with_widgets", m_taskbar_data.avoid_overlap_with_widgets);
     ini.WriteInt(L"task_bar", L"taskbar_left_space_win11", m_taskbar_data.taskbar_left_space_win11);
     ini.WriteInt(L"task_bar", L"taskbar_right_space_win11", m_taskbar_data.taskbar_right_space_win11);
@@ -795,7 +1022,7 @@ void CTrafficMonitorApp::InitMenuResourse()
     CMenuIcon::AddIconToMenuItem(m_main_menu_plugin_sub_menu.GetSafeHmenu(), ID_PLUGIN_DETAIL, FALSE, GetMenuIcon(IDI_INFO));
     CMenu* main_menu_plugin = m_main_menu_plugin.GetSubMenu(0);
     main_menu_plugin->AppendMenu(MF_SEPARATOR);
-    main_menu_plugin->AppendMenu(MF_POPUP | MF_STRING, (UINT)m_main_menu_plugin_sub_menu.m_hMenu, _T("<plugin name>"));
+    main_menu_plugin->AppendMenu(MF_POPUP | MF_STRING, reinterpret_cast<UINT_PTR>(m_main_menu_plugin_sub_menu.m_hMenu), _T("<plugin name>"));
 
     m_taskbar_menu_plugin_sub_menu.CreatePopupMenu();
     m_taskbar_menu_plugin_sub_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_OPTIONS_TASKBAR, CCommon::LoadText(IDS_PLUGIN_OPTIONS, _T("...")));
@@ -804,7 +1031,7 @@ void CTrafficMonitorApp::InitMenuResourse()
     CMenuIcon::AddIconToMenuItem(m_taskbar_menu_plugin_sub_menu.GetSafeHmenu(), ID_PLUGIN_DETAIL_TASKBAR, FALSE, GetMenuIcon(IDI_INFO));
     CMenu* taskbar_menu_plugin = m_taskbar_menu_plugin.GetSubMenu(0);
     taskbar_menu_plugin->AppendMenu(MF_SEPARATOR);
-    taskbar_menu_plugin->AppendMenu(MF_POPUP | MF_STRING, (UINT)m_taskbar_menu_plugin_sub_menu.m_hMenu, _T("<plugin name>"));
+    taskbar_menu_plugin->AppendMenu(MF_POPUP | MF_STRING, reinterpret_cast<UINT_PTR>(m_taskbar_menu_plugin_sub_menu.m_hMenu), _T("<plugin name>"));
 
     //为菜单项添加图标
     auto addIconsForMainWindowMenu = [&](const CMenu& menu)

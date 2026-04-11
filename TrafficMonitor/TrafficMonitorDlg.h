@@ -25,6 +25,9 @@
 #include "PdhHardwareQuery/GpuUsage.h"
 #include "PdhHardwareQuery/DiskUsage.h"
 #include "HistoryTrafficFile.h"
+#include <functional>
+#include <memory>
+#include <vector>
 
 // CTrafficMonitorDlg 对话框
 class CTrafficMonitorDlg : public CDialog
@@ -55,7 +58,8 @@ protected:
 protected:
     HICON m_hIcon;
     NOTIFYICONDATA m_ntIcon;    //通知区域图标
-    CTaskBarDlg* m_tBarDlg{};     //任务栏窗口的指针
+    std::vector<std::unique_ptr<CTaskBarDlg>> m_taskbar_windows;  //任务栏窗口集合
+    CTaskBarDlg* m_taskbar_menu_invoker{};    //当前弹出任务栏右键菜单的窗口
 
     vector<NetWorkConection> m_connections; //保存获取到的要显示到“选择网卡”菜单项中的所有网络连接
     MIB_IFTABLE* m_pIfTable;
@@ -163,6 +167,15 @@ protected:
 
     void CloseTaskBarWnd(); //关闭任务栏窗口
     void OpenTaskBarWnd();  //打开任务栏窗口
+    struct TaskbarWndTarget
+    {
+        CTaskBarDlg::DisplayTarget display_target{};
+        int secondary_display_index{};
+    };
+    std::vector<TaskbarWndTarget> BuildTaskbarWndTargets() const;
+    void CloseSingleTaskBarWnd(std::unique_ptr<CTaskBarDlg>& taskbar_wnd);
+    void OpenSingleTaskBarWnd(std::unique_ptr<CTaskBarDlg>& taskbar_wnd, const TaskbarWndTarget& target);
+    void ForEachTaskbarWnd(const std::function<void(CTaskBarDlg*)>& fn);
 
     void AddNotifyIcon();       //添加通知区图标
     void DeleteNotifyIcon();
@@ -187,6 +200,8 @@ protected:
 
 public:
     bool IsTaskbarWndValid() const;
+    bool IsTaskbarWndValid(const CTaskBarDlg* taskbar_wnd) const;
+    CTaskBarDlg* GetTaskbarWndForMenuCommand() const;
 protected:
 
     void TaskbarShowHideItem(DisplayItem type);

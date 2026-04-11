@@ -33,7 +33,7 @@ void CClassicalTaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
 
             //设置任务栏窗口的垂直位置
             m_rect.MoveToY((m_rcBar.Height() - m_rect.Height()) / 2);
-            if (theApp.m_taskbar_data.horizontal_arrange && theApp.m_win_version.IsWindows7())
+            if (theApp.m_taskbar_data.IsHorizontalArrangeForDisplay(GetDisplayIndex()) && theApp.m_win_version.IsWindows7())
                 m_rect.MoveToY(m_rect.top + DPI(1));
             MoveWindow(m_rect);
         }
