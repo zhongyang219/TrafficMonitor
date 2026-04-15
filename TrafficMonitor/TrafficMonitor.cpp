@@ -59,7 +59,7 @@ CTrafficMonitorApp::CTrafficMonitorApp()
 void CTrafficMonitorApp::LoadLanguageConfig()
 {
     CIniHelper ini{ m_config_path };
-    m_general_data.language = static_cast<WORD>(ini.GetInt(_T("general"), _T("language"), 0));
+    m_general_data.language.fromConfigString(ini.GetString(_T("general"), _T("language"), L""));
 }
 
 void CTrafficMonitorApp::LoadConfig()
@@ -73,14 +73,6 @@ void CTrafficMonitorApp::LoadConfig()
     m_general_data.show_all_interface = ini.GetBool(L"general", L"show_all_interface", false);
     bool is_chinese_language{ m_str_table.IsSimplifiedChinese() };     //当前语言是否为简体中文
     m_general_data.update_source = ini.GetInt(L"general", L"update_source", is_chinese_language ? 1 : 0);   //如果当前语言为简体，则默认更新源为Gitee，否则为GitHub
-    //载入获取CPU利用率的方式，默认使用性能计数器获取
-    m_general_data.cpu_usage_acquire_method = static_cast<GeneralSettingData::CpuUsageAcquireMethod>(ini.GetInt(L"general", L"cpu_usage_acquire_method", GeneralSettingData::CA_PDH));
-    //Lite版获取CPU利用率的方式不能为“通过硬件监控”
-#ifdef WITHOUT_TEMPERATURE
-    if (m_general_data.cpu_usage_acquire_method == GeneralSettingData::CA_HARDWARE_MONITOR)
-        m_general_data.cpu_usage_acquire_method = GeneralSettingData::CA_CPU_TIME;
-#endif
-
     m_general_data.monitor_time_span = ini.GetInt(L"general", L"monitor_time_span", 1000);
     if (m_general_data.monitor_time_span < MONITOR_TIME_SPAN_MIN || m_general_data.monitor_time_span > MONITOR_TIME_SPAN_MAX)
         m_general_data.monitor_time_span = 1000;
@@ -286,7 +278,6 @@ void CTrafficMonitorApp::LoadConfig()
     m_cfg_data.m_sunday_first = ini.GetBool(_T("histroy_traffic"), _T("sunday_first"), true);
     m_cfg_data.m_view_type = static_cast<HistoryTrafficViewType>(ini.GetInt(_T("histroy_traffic"), _T("view_type"), static_cast<int>(HistoryTrafficViewType::HV_DAY)));
 
-    m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), false);
     m_notify_interval = ini.GetInt(_T("other"), _T("notify_interval"), 60);
     m_exit_when_start_by_restart_manager = ini.GetBool(_T("other"), _T("exit_when_start_by_restart_manager"), true);
     m_debug_log = ini.GetBool(_T("other"), _T("debug_log"), false);
@@ -305,10 +296,9 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(_T("general"), _T("check_update_when_start"), m_general_data.check_update_when_start);
     //ini.WriteBool(_T("general"), _T("allow_skin_cover_font"), m_general_data.allow_skin_cover_font);
     //ini.WriteBool(_T("general"), _T("allow_skin_cover_text"), m_general_data.allow_skin_cover_text);
-    ini.WriteInt(_T("general"), _T("language"), static_cast<int>(m_general_data.language));
+    ini.WriteString(_T("general"), _T("language"), m_general_data.language.toConfigString());
     ini.WriteInt(L"general", L"update_source", m_general_data.update_source);
     ini.WriteBool(L"general", L"show_all_interface", m_general_data.show_all_interface);
-    ini.WriteInt(L"general", L"cpu_usage_acquire_method", m_general_data.cpu_usage_acquire_method);
     ini.WriteInt(L"general", L"monitor_time_span", m_general_data.monitor_time_span);
     ini.WriteString(L"general", L"hard_disk_name", m_general_data.hard_disk_name);
     ini.WriteString(L"general", L"cpu_core_name", m_general_data.cpu_core_name);
@@ -619,7 +609,7 @@ void CTrafficMonitorApp::CheckUpdateInThread(bool message)
 
 UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
 {
-    CCommon::SetThreadLanguage(theApp.m_general_data.language);     //设置线程语言
+    CCommon::SetThreadLanguage(theApp.m_general_data.language.language_id);     //设置线程语言
 #ifndef _DEBUG      //DEBUG下不在启动时检查更新
     theApp.CheckUpdate(lpParam);        //检查更新
 #endif
@@ -646,53 +636,60 @@ UINT CTrafficMonitorApp::InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam)
     return 0;
 }
 
-bool  CTrafficMonitorApp::SetAutoRun(bool auto_run)
+bool  CTrafficMonitorApp::SetAutoRun(bool auto_run, bool task_scheduler)
 {
-    //不含温度监控的版本使用添加注册表项的方式实现开机自启动
-#ifdef WITHOUT_TEMPERATURE
-    return SetAutoRunByRegistry(auto_run);
-#else
-    //包含温度监控的版本使用任务计划的方式实现开机自启动
-    return SetAutoRunByTaskScheduler(auto_run);
-#endif
-}
-
-bool CTrafficMonitorApp::GetAutoRun(wstring* auto_run_path)
-{
-    if (auto_run_path != nullptr)
-        auto_run_path->clear();
-    //不含温度监控的版本使用添加注册表项的方式实现开机自启动
-#ifdef WITHOUT_TEMPERATURE
-    CRegKey key;
-    if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
+    if (task_scheduler)
     {
-        //打开注册表“Software\\Microsoft\\Windows\\CurrentVersion\\Run”失败，则返回false
-        return false;
-    }
-    wchar_t buff[256];
-    ULONG size{ 256 };
-    if (key.QueryStringValue(APP_NAME, buff, &size) == ERROR_SUCCESS)       //如果找到了“TrafficMonitor”键
-    {
-        if (auto_run_path != nullptr)
-        {
-            //保存路径
-            *auto_run_path = buff;
-            //去掉前后的引号
-            if (auto_run_path->front() == L'\"')
-                *auto_run_path = auto_run_path->substr(1);
-            if (auto_run_path->back() = L'\"')
-                auto_run_path->pop_back();
-        }
-        return (m_module_path_reg == buff); //如果“TrafficMonitor”的值是当前程序的路径，就返回true，否则返回false
+        //使用任务计划的方式设置开机自启动
+        return SetAutoRunByTaskScheduler(auto_run);
     }
     else
     {
-        return false;       //没有找到“TrafficMonitor”键，返回false
+        //使用添加注册表项的方式实现开机自启动
+        return SetAutoRunByRegistry(auto_run);
     }
-#else
-    //包含温度监控的版本使用任务计划的方式实现开机自启动
-    return is_auto_start_task_active_for_this_user(auto_run_path);
-#endif
+}
+
+bool CTrafficMonitorApp::GetAutoRun(wstring* auto_run_path, bool task_scheduler)
+{
+    if (auto_run_path != nullptr)
+        auto_run_path->clear();
+
+    if (task_scheduler)
+    {
+        //使用任务计划的方式实现开机自启动
+        return is_auto_start_task_active_for_this_user(auto_run_path);
+    }
+    else
+    {
+        //使用添加注册表项的方式实现开机自启动
+        CRegKey key;
+        if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
+        {
+            //打开注册表“Software\\Microsoft\\Windows\\CurrentVersion\\Run”失败，则返回false
+            return false;
+        }
+        wchar_t buff[256];
+        ULONG size{ 256 };
+        if (key.QueryStringValue(APP_NAME, buff, &size) == ERROR_SUCCESS)       //如果找到了“TrafficMonitor”键
+        {
+            if (auto_run_path != nullptr)
+            {
+                //保存路径
+                *auto_run_path = buff;
+                //去掉前后的引号
+                if (auto_run_path->front() == L'\"')
+                    *auto_run_path = auto_run_path->substr(1);
+                if (auto_run_path->back() = L'\"')
+                    auto_run_path->pop_back();
+            }
+            return (m_module_path_reg == buff); //如果“TrafficMonitor”的值是当前程序的路径，就返回true，否则返回false
+        }
+        else
+        {
+            return false;       //没有找到“TrafficMonitor”键，返回false
+        }
+    }
 }
 
 bool CTrafficMonitorApp::SetAutoRunByRegistry(bool auto_run)
@@ -976,19 +973,14 @@ BOOL CTrafficMonitorApp::InitInstance()
     LoadLanguageConfig();
 
     //初始化界面语言
-    CCommon::SetThreadLanguage(m_general_data.language);
+    CCommon::SetThreadLanguage(m_general_data.language.language_id);
 
     //初始化字符串资源
     m_str_table.Init();
 
-    //载入插件
-    LoadPluginDisabledSettings();
-    m_plugins.LoadPlugins();
-
-    //从ini文件载入设置
-    LoadConfig();
-
     //检查是否已有实例正在运行
+    CIniHelper ini{ m_config_path };
+    m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), false);
     LPCTSTR mutex_name{};
 #ifdef _DEBUG
     mutex_name = _T("TrafficMonitor-e8Ahk24HP6JC8hDy");
@@ -1022,6 +1014,13 @@ BOOL CTrafficMonitorApp::InitInstance()
             return FALSE;
         }
     }
+
+    //载入插件
+    LoadPluginDisabledSettings();
+    m_plugins.LoadPlugins();
+
+    //从ini文件载入设置
+    LoadConfig();
 
     m_taskbar_default_style.LoadConfig();
 
@@ -1468,7 +1467,7 @@ void CTrafficMonitorApp::ShowNotifyMessage(const wchar_t* strMsg)
 
 unsigned short CTrafficMonitorApp::GetLanguageId() const
 {
-    return m_general_data.language;
+    return m_general_data.language.language_id;
 }
 
 const wchar_t* CTrafficMonitorApp::GetPluginConfigDir() const

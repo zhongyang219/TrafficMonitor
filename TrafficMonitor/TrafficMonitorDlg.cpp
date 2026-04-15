@@ -787,7 +787,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
 
     if (optionsDlg.m_tab3_dlg.IsAutoRunModified())
     {
-        if (!theApp.SetAutoRun(theApp.m_general_data.auto_run))
+        if (!theApp.SetAutoRun(theApp.m_general_data.auto_run, theApp.m_general_data.auto_run_by_task_scheduler))
             MessageBox(CCommon::LoadText(IDS_SET_AUTO_RUN_FAILED_WARNING), NULL, MB_ICONWARNING | MB_OK);
     }
 
@@ -799,9 +799,6 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
         KillTimer(MONITOR_TIMER);
         SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, NULL);
     }
-
-    //设置获取CPU利用率的方式
-    m_cpu_usage_helper.SetUseCPUTimes(theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_PDH);
 
 #ifndef WITHOUT_TEMPERATURE
     if (is_hardware_monitor_item_changed)
@@ -1149,9 +1146,6 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     m_tool_tips.SetMaxTipWidth(600);
     m_tool_tips.AddTool(this, _T(""));
 
-    //设置获取CPU利用率的方式
-    m_cpu_usage_helper.SetUseCPUTimes(theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_PDH);
-
     //如果程序启动时设置了隐藏主窗口，或窗口的位置在左上角，则先将其不透明度设为0
     if (theApp.m_cfg_data.m_hide_main_window || (theApp.m_cfg_data.m_position_x == 0 && theApp.m_cfg_data.m_position_y == 0))
         SetTransparency(0);
@@ -1363,24 +1357,12 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     lite_version = true;
 #endif
 
-    bool cpu_usage_acquired = false;
     bool cpu_freq_acquired = false;
     bool gpu_usage_acquired = false;
     m_get_disk_usage_by_pdh = false;
 
-    theApp.m_cpu_temperature = -1;
-    theApp.m_gpu_temperature = -1;
-    theApp.m_hdd_temperature = -1;
-    theApp.m_main_board_temperature = -1;
-    theApp.m_gpu_usage = -1;
-    theApp.m_hdd_usage = -1;
-
     //获取CPU使用率
-    if (lite_version || theApp.m_general_data.cpu_usage_acquire_method != GeneralSettingData::CA_HARDWARE_MONITOR || !theApp.m_general_data.IsHardwareEnable(HI_CPU))
-    {
-        theApp.m_cpu_usage = m_cpu_usage_helper.GetCpuUsage();
-        cpu_usage_acquired = true;
-    }
+    theApp.m_cpu_usage = m_cpu_usage_helper.GetCpuUsage();
 
     //获取CPU频率
     //if (lite_version || is_arm64ec || !theApp.m_general_data.IsHardwareEnable(HI_CPU))
@@ -1394,6 +1376,8 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     {
         if (m_gpu_usage_helper.GetGpuUsage(theApp.m_gpu_usage))
             gpu_usage_acquired = true;
+        else
+            theApp.m_gpu_usage = -1;
     }
 
     //获取硬盘利用率
@@ -1421,6 +1405,8 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         }
         if (m_disk_usage_helper.GetDiskUsage(disk_index, theApp.m_hdd_usage))
             m_get_disk_usage_by_pdh = true;
+        else
+            theApp.m_hdd_usage = -1;
     }
 
     //获取内存利用率
@@ -1463,8 +1449,6 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
             theApp.m_gpu_usage = theApp.m_pMonitor->GpuUsage();
         if (!cpu_freq_acquired)
             theApp.m_cpu_freq = theApp.m_pMonitor->CpuFreq();
-        if (!cpu_usage_acquired)
-            theApp.m_cpu_usage = theApp.m_pMonitor->CpuUsage();
         //获取CPU温度
         if (!theApp.m_pMonitor->AllCpuTemperature().empty())
         {

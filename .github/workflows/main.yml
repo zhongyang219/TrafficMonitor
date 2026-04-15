@@ -1,5 +1,9 @@
 name: Release CI
-on: push
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
 jobs:
 
   x64_build:
@@ -12,7 +16,7 @@ jobs:
       uses: microsoft/setup-msbuild@v2
       
     - name: Run msbuild
-      run: msbuild -p:configuration=release -p:platform=x64 -p:platformToolset=v143
+      run: msbuild TrafficMonitor_Lite.sln -p:configuration="Release (lite)" -p:platform=x64 -p:platformToolset=v143
       
     - name: Get current time
       uses: josStorer/get-current-time@v2.0.2
@@ -26,14 +30,14 @@ jobs:
       with:
         name: x64_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
         path: |
-          Bin/x64/Release/TrafficMonitor.exe
-          Bin/x64/Release/*.dll
+          Bin/x64/Release (lite)/TrafficMonitor.exe
+          Bin/x64/Release (lite)/*.dll
 
     - name : Upload pdb files
       uses: actions/upload-artifact@v4
       with:
         name: x64_${{ steps.current-time.outputs.formattedTime }}_pdb
-        path: Bin/x64/Release/*.pdb
+        path: Bin/x64/Release (lite)/*.pdb
 
   x86_build:
     runs-on: windows-latest
@@ -45,7 +49,7 @@ jobs:
       uses: microsoft/setup-msbuild@v2
       
     - name: Run msbuild
-      run: msbuild -p:configuration=release -p:platform=x86 -p:platformToolset=v143
+      run: msbuild TrafficMonitor_Lite.sln -p:configuration="Release (lite)" -p:platform=x86 -p:platformToolset=v143
       
     - name: Get current time
       uses: josStorer/get-current-time@v2.0.2
@@ -59,14 +63,14 @@ jobs:
       with:
         name: x86_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
         path: |
-          Bin/Release/TrafficMonitor.exe
-          Bin/Release/*.dll
+          Bin/Release (lite)/TrafficMonitor.exe
+          Bin/Release (lite)/*.dll
       
     - name : Upload pdb files
       uses: actions/upload-artifact@v4
       with:
         name: x86_${{ steps.current-time.outputs.formattedTime }}_pdb
-        path: Bin/Release/*.pdb
+        path: Bin/Release (lite)/*.pdb
 
   arm64ec_build:
     runs-on: windows-latest
@@ -78,7 +82,7 @@ jobs:
       uses: microsoft/setup-msbuild@v2
       
     - name: Run msbuild
-      run: msbuild -p:configuration=release -p:platform=ARM64EC -p:platformToolset=v143
+      run: msbuild TrafficMonitor_Lite.sln -p:configuration="Release (lite)" -p:platform=ARM64EC -p:platformToolset=v143
       
     - name: Get current time
       uses: josStorer/get-current-time@v2.0.2
@@ -87,46 +91,19 @@ jobs:
         format: YYYYMMDD_HHmmss
         utcOffset: "+08:00"
 
-    - name: Move dll file path 
-      run: mv Bin/x64/Release/*.dll  Bin/ARM64EC/Release/
+    # - name: Move dll file path 
+    #   run: mv Bin/x64/Release/*.dll  Bin/ARM64EC/Release/
 
     - name : Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: arm64EC_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
         path: |
-          Bin/ARM64EC/Release/TrafficMonitor.exe
-          Bin/ARM64EC/Release/*.dll
+          Bin/ARM64EC/Release (lite)/TrafficMonitor.exe
+          Bin/ARM64EC/Release (lite)/*.dll
 
     - name : Upload pdb files
       uses: actions/upload-artifact@v4
       with:
         name: arm64EC_${{ steps.current-time.outputs.formattedTime }}_pdb
-        path: Bin/ARM64EC/Release/*.pdb
-  # winXP_build:
-    # runs-on: windows-latest
-
-    # steps:
-    # - uses: actions/checkout@v3
-      
-    # - name: Add msbuild to PATH
-      # uses: microsoft/setup-msbuild@v1.1.3
-      
-    # - name: Run msbuild
-      # run: |
-        # set ExternalCompilerOptions=/DCOMPILE_FOR_WINXP
-        # msbuild -p:configuration=release -p:platform=x86 -p:platformToolset=v140_xp
-      # shell: cmd
-      
-    # - name: Get current time
-      # uses: josStorer/get-current-time@v2.0.2
-      # id: current-time
-      # with:
-        # format: YYYYMMDD_HHmmss
-        # utcOffset: "+08:00"
-      
-    # - name : Upload artifact
-      # uses: actions/upload-artifact@v3
-      # with:
-        # name: winXP_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
-        # path: Bin/Release/TrafficMonitor.exe
+        path: Bin/ARM64EC/Release (lite)/*.pdb

@@ -96,7 +96,8 @@ using std::ofstream;
 #define APP_NAME _T("TrafficMonitor")
 #define TASKBAR_WINDOW_NAME _T("TrafficMonitorTaskbarWindow")
 #define APP_CLASS_NAME _T("TrafficMonitor_r7XZaS4p") //程序主窗口的类名
-#define VERSION L"1.85.1"
+#define VERSION L"1.86"
+#define COPYRITE_YEAR L"2017-2026"
 
 #define MAX_NOTIFY_ICON 6       //可选的通知区图标数量
 

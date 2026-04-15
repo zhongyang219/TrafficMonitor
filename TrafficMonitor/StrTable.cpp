@@ -11,7 +11,7 @@ CStrTable::~CStrTable()
 {
 }
 
-static void LanguageInfoFromIni(CStrTable::LanguageInfo& language_info, const CIniHelper& ini)
+static void LanguageInfoFromIni(LanguageInfo& language_info, const CIniHelper& ini)
 {
     language_info.display_name = ini.GetString(L"general", L"DISPLAY_NAME", L"");
     language_info.bcp_47 = ini.GetString(L"general", L"BCP_47", L"");
@@ -23,7 +23,7 @@ static void LanguageInfoFromIni(CStrTable::LanguageInfo& language_info, const CI
 // 回调函数，用于枚举资源语言
 static BOOL CALLBACK EnumResLangProc(HMODULE hModule, LPCTSTR lpType, LPCTSTR lpName, WORD wIDLanguage, LONG_PTR lParam)
 {
-    std::vector<CStrTable::LanguageInfo>* pLanguages = reinterpret_cast<std::vector<CStrTable::LanguageInfo>*>(lParam);
+    std::vector<LanguageInfo>* pLanguages = reinterpret_cast<std::vector<LanguageInfo>*>(lParam);
 
     // 获取资源句柄
     HRSRC hRes = FindResourceEx(hModule, lpType, lpName, wIDLanguage);
@@ -46,7 +46,7 @@ static BOOL CALLBACK EnumResLangProc(HMODULE hModule, LPCTSTR lpType, LPCTSTR lp
 
                 CIniHelper ini;
                 ini.FromDirectString(resData);
-                CStrTable::LanguageInfo lanugage_info;
+                LanguageInfo lanugage_info;
                 LanguageInfoFromIni(lanugage_info, ini);
                 lanugage_info.language_id = wIDLanguage;
                 pLanguages->push_back(lanugage_info);
@@ -92,9 +92,8 @@ void CStrTable::Init()
         LanguageInfo language_info;
         LanguageInfoFromIni(language_info, ini_file);
         language_info.language_id = LocaleNameToLCID(language_info.bcp_47.c_str(), 0);  //根据语言bcp-47代码获取语言id
-        WORD cur_language_id = GetThreadUILanguage();   //当前语言id
         //从外部语言文件读取到当前语言，先从外部语言文件加载
-        if (language_info.language_id == cur_language_id)
+        if (language_info == theApp.m_general_data.language)
         {
             m_language_info = language_info;
             ReadStringtableFronIni(ini_file);
