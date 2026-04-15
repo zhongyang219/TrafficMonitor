@@ -124,4 +124,5 @@ public:
     afx_msg void OnCbnSelchangeDisplayToShowTaskbarWndCombo();
     afx_msg void OnBnClickedUsageGraphFollowSystemCheck();
     afx_msg void OnEnChangeFontSizeEdit1();
+    afx_msg void OnBnClickedTaskbarMousePenetrateCheck();
 };
