@@ -13,13 +13,13 @@ jobs:
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
 
-      - name: Build TrafficMonitor (x64 Release)
-        run: msbuild TrafficMonitor.sln -p:Configuration=Release -p:Platform=x64 -p:PlatformToolset=v143
+      - name: Build TrafficMonitor (x64 Release Lite)
+        run: msbuild TrafficMonitor_Lite.sln -p:Configuration="Release (lite)" -p:Platform=x64 -p:PlatformToolset=v143
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: TrafficMonitor_x64_DNS_Latency
           path: |
-            Bin/x64/Release/TrafficMonitor.exe
-            Bin/x64/Release/*.dll
+            Bin/x64/Release (lite)/TrafficMonitor.exe
+            Bin/x64/Release (lite)/*.dll
