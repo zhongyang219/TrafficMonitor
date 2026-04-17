@@ -1,4 +1,5 @@
 #pragma once
+#include <winsock2.h>
 #include <icmpapi.h>
 #include <iphlpapi.h>
 
