@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug (lite)|ARM64EC">
@@ -800,6 +800,7 @@
     <ClInclude Include="HighResolutionTimer.h" />
     <ClInclude Include="HistoryTrafficCalendarDlg.h" />
     <ClInclude Include="HistoryTrafficFile.h" />
+    <ClInclude Include="DnsLatency.h" />
     <ClInclude Include="HistoryTrafficListDlg.h" />
     <ClInclude Include="HResultException.h" />
     <ClInclude Include="IDrawCommon.h" />
@@ -901,6 +902,7 @@
     <ClCompile Include="FilePathHelper.cpp" />
     <ClCompile Include="HistoryTrafficCalendarDlg.cpp" />
     <ClCompile Include="HistoryTrafficFile.cpp" />
+    <ClCompile Include="DnsLatency.cpp" />
     <ClCompile Include="HistoryTrafficListDlg.cpp" />
     <ClCompile Include="HResultException.cpp" />
     <ClCompile Include="Image2DEffect.cpp" />

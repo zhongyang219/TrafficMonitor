@@ -1,0 +1,25 @@
+name: Test Build DNS Latency
+on:
+  push:
+    branches: [ "**" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build TrafficMonitor (x64 Release)
+        run: msbuild TrafficMonitor.sln -p:Configuration=Release -p:Platform=x64 -p:PlatformToolset=v143
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TrafficMonitor_x64_DNS_Latency
+          path: |
+            Bin/x64/Release/TrafficMonitor.exe
+            Bin/x64/Release/*.dll
