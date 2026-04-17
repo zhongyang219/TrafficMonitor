@@ -1,4 +1,4 @@
-﻿
+
 // TrafficMonitorDlg.cpp : 实现文件
 //
 
@@ -6,6 +6,7 @@
 #include "TrafficMonitor.h"
 #include "TrafficMonitorDlg.h"
 #include "afxdialogex.h"
+#include "DnsLatency.h"
 #include "Test.h"
 #include "PluginManagerDlg.h"
 #include "SetItemOrderDlg.h"
@@ -1495,6 +1496,9 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         }
     }
 #endif
+
+    //获取DNS延迟 (Google DNS)
+    theApp.m_dns_latency = CDnsLatency::GetLatency("8.8.8.8", 1000);
 
     //通知插件获取数据，以及向插件传递监控数据
     for (const auto& plugin_info : theApp.m_plugins.GetPlugins())

@@ -1,6 +1,64 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "IniHelper.h"
 #include "Common.h"
+
+// 检查字符串是否包含非ASCII字节
+static bool ContainsNonAscii(const string& str)
+{
+    for (size_t i = 0; i < str.size(); i++)
+    {
+        if (static_cast<unsigned char>(str[i]) >= 0x80)
+            return true;
+    }
+    return false;
+}
+
+// 检查字符串是否像有效的UTF-8编码（包含合法的多字节序列）
+static bool IsLikelyUTF8(const string& str)
+{
+    bool found_multibyte = false;
+    for (size_t i = 0; i < str.size(); )
+    {
+        unsigned char c = static_cast<unsigned char>(str[i]);
+        if (c < 0x80)
+        {
+            i++;
+        }
+        else if (c < 0xC0)
+        {
+            return false;   // 无效的起始字节
+        }
+        else if (c < 0xE0)
+        {
+            if (i + 1 >= str.size() || (static_cast<unsigned char>(str[i + 1]) & 0xC0) != 0x80)
+                return false;
+            found_multibyte = true;
+            i += 2;
+        }
+        else if (c < 0xF0)
+        {
+            if (i + 2 >= str.size() || (static_cast<unsigned char>(str[i + 1]) & 0xC0) != 0x80
+                || (static_cast<unsigned char>(str[i + 2]) & 0xC0) != 0x80)
+                return false;
+            found_multibyte = true;
+            i += 3;
+        }
+        else if (c < 0xF8)
+        {
+            if (i + 3 >= str.size() || (static_cast<unsigned char>(str[i + 1]) & 0xC0) != 0x80
+                || (static_cast<unsigned char>(str[i + 2]) & 0xC0) != 0x80
+                || (static_cast<unsigned char>(str[i + 3]) & 0xC0) != 0x80)
+                return false;
+            found_multibyte = true;
+            i += 4;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return found_multibyte;
+}
 
 CIniHelper::CIniHelper(const wstring& file_path, bool force_utf8)
 {
@@ -35,7 +93,12 @@ CIniHelper::CIniHelper(const wstring& file_path, bool force_utf8)
         }
         else
         {
-            is_utf8 = false;
+            //没有BOM时，自动检测是否为UTF-8编码
+            //如果包含非ASCII字符且符合UTF-8多字节序列规则，则视为UTF-8
+            if (ContainsNonAscii(ini_str) && IsLikelyUTF8(ini_str))
+                is_utf8 = true;
+            else
+                is_utf8 = false;
         }
     }
     //转换成Unicode

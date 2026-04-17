@@ -1,4 +1,4 @@
-﻿
+
 // TrafficMonitor.h : PROJECT_NAME 应用程序的主头文件
 //
 
@@ -61,6 +61,8 @@ public:
 
     unsigned __int64 m_today_up_traffic{};  //今天已使用的上传流量
     unsigned __int64 m_today_down_traffic{};    //今天已使用的下载流量
+
+    int m_dns_latency{ -1 };            // DNS latency in ms
 
     bool m_cannot_save_config_warning{ true };  //指示是否会在无法保存设置时弹出提示框
     bool m_cannot_save_global_config_warning{ true };   //指示是否会在无法保存设置时弹出提示框
