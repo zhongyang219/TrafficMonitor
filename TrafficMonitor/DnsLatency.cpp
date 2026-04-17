@@ -5,7 +5,6 @@
 #include "DnsLatency.h"
 
 #pragma comment(lib, "iphlpapi.lib")
-#pragma comment(lib, "icmp.lib")
 
 HANDLE CDnsLatency::m_icmp_handle = INVALID_HANDLE_VALUE;
 
