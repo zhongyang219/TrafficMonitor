@@ -104,16 +104,16 @@ std::wstring CommonDisplayItem::DefaultString(bool is_main_window) const
             if (is_main_window)
                 default_text = CCommon::LoadText(IDS_UPLOAD_DISP, _T(": "));
             else
-                default_text = _T("↑: ");
+                default_text = _T("\x2191: ");
             break;
         case TDI_DOWN:
             if (is_main_window)
                 default_text = CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": "));
             else
-                default_text = _T("↓: ");
+                default_text = _T("\x2193: ");
             break;
         case TDI_TOTAL_SPEED:
-            default_text = _T("↑↓: ");
+            default_text = _T("\x2191\x2193: ");
             break;
         case TDI_TODAY_TRAFFIC:
             default_text = CCommon::LoadText(IDS_TRAFFIC_USED, _T(": "));
