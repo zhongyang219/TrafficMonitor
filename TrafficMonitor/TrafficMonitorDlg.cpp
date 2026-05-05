@@ -30,11 +30,18 @@
 //静态成员初始化
 unsigned int CTrafficMonitorDlg::m_WM_TASKBARCREATED{ ::RegisterWindowMessage(_T("TaskbarCreated")) };  //注册任务栏建立的消息
 
+namespace
+{
+    constexpr ULONGLONG HARDWARE_MONITOR_STARTUP_RETRY_DELAY = 10 * 1000;
+    constexpr ULONGLONG HARDWARE_MONITOR_RETRY_INTERVAL = 60 * 1000;
+}
+
 CTrafficMonitorDlg::CTrafficMonitorDlg(CWnd* pParent /*=NULL*/)
     : CDialog(IDD_TRAFFICMONITOR_DIALOG, pParent)
 {
     m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
     m_desktop_dc = ::GetDC(NULL);
+    m_next_hardware_monitor_retry_tick = ::GetTickCount64() + HARDWARE_MONITOR_STARTUP_RETRY_DELAY;
 }
 
 CTrafficMonitorDlg::~CTrafficMonitorDlg()
@@ -111,6 +118,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_MESSAGE(WM_DPICHANGED, &CTrafficMonitorDlg::OnDpichanged)
     ON_MESSAGE(WM_TASKBAR_WND_CLOSED, &CTrafficMonitorDlg::OnTaskbarWndClosed)
     ON_MESSAGE(WM_MONITOR_INFO_UPDATED, &CTrafficMonitorDlg::OnMonitorInfoUpdated)
+    ON_MESSAGE(WM_HARDWARE_MONITOR_FAILED, &CTrafficMonitorDlg::OnHardwareMonitorFailed)
     ON_MESSAGE(WM_DISPLAYCHANGE, &CTrafficMonitorDlg::OnDisplaychange)
     ON_WM_EXITSIZEMOVE()
     ON_COMMAND(ID_PLUGIN_MANAGE, &CTrafficMonitorDlg::OnPluginManage)
@@ -802,11 +810,15 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
 #ifndef WITHOUT_TEMPERATURE
     if (is_hardware_monitor_item_changed)
     {
+        m_hardware_monitor_suspended = false;
+        m_hardware_monitor_error_notified = false;
+        m_next_hardware_monitor_retry_tick = ::GetTickCount64() + HARDWARE_MONITOR_STARTUP_RETRY_DELAY;
         //如果关闭了硬件监控，则析构硬件监控类
         if (theApp.m_general_data.hardware_monitor_item == 0)
         {
             CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
             theApp.m_pMonitor.reset();
+            ResetHardwareMonitorValues();
         }
         else if (theApp.m_pMonitor != nullptr)
         {
@@ -1028,6 +1040,79 @@ bool CTrafficMonitorDlg::IsTemperatureNeeded() const
 
     return theApp.m_general_data.IsHardwareEnable(HI_CPU) || theApp.m_general_data.IsHardwareEnable(HI_GPU)
         || theApp.m_general_data.IsHardwareEnable(HI_HDD) || theApp.m_general_data.IsHardwareEnable(HI_MBD);
+}
+
+
+void CTrafficMonitorDlg::ResetHardwareMonitorValues()
+{
+#ifndef WITHOUT_TEMPERATURE
+    if (theApp.m_general_data.IsHardwareEnable(HI_CPU))
+        theApp.m_cpu_temperature = -1;
+    if (theApp.m_general_data.IsHardwareEnable(HI_GPU))
+    {
+        theApp.m_gpu_temperature = -1;
+        theApp.m_gpu_usage = -1;
+    }
+    if (theApp.m_general_data.IsHardwareEnable(HI_HDD))
+    {
+        theApp.m_hdd_temperature = -1;
+        if (!m_get_disk_usage_by_pdh)
+            theApp.m_hdd_usage = -1;
+    }
+    if (theApp.m_general_data.IsHardwareEnable(HI_MBD))
+        theApp.m_main_board_temperature = -1;
+#endif
+}
+
+
+bool CTrafficMonitorDlg::RetryOpenHardwareMonitorIfNeeded()
+{
+#ifndef WITHOUT_TEMPERATURE
+    if (theApp.m_pMonitor != nullptr || !IsTemperatureNeeded())
+        return theApp.m_pMonitor != nullptr;
+
+    ULONGLONG now = ::GetTickCount64();
+    if (m_next_hardware_monitor_retry_tick != 0 && now < m_next_hardware_monitor_retry_tick)
+        return false;
+
+    m_next_hardware_monitor_retry_tick = now + HARDWARE_MONITOR_RETRY_INTERVAL;
+    if (theApp.InitOpenHardwareLib())
+    {
+        m_hardware_monitor_suspended = false;
+        return true;
+    }
+
+    CString error_info{ OpenHardwareMonitorApi::GetErrorMessage().c_str() };
+    if (error_info.IsEmpty())
+        error_info = CCommon::LoadText(IDS_HARDWARE_MONITOR_INIT_FAILED);
+    HandleHardwareMonitorFailure(error_info);
+#endif
+    return false;
+}
+
+
+void CTrafficMonitorDlg::HandleHardwareMonitorFailure(const CString& error_info)
+{
+#ifndef WITHOUT_TEMPERATURE
+    ResetHardwareMonitorValues();
+    m_hardware_monitor_suspended = true;
+    m_next_hardware_monitor_retry_tick = ::GetTickCount64() + HARDWARE_MONITOR_RETRY_INTERVAL;
+
+    if (!error_info.IsEmpty())
+        CCommon::WriteLog(error_info.GetString(), theApp.m_log_path.c_str());
+
+    {
+        CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
+        theApp.m_pMonitor.reset();
+    }
+
+    if (!m_hardware_monitor_error_notified)
+    {
+        m_hardware_monitor_error_notified = true;
+        if (::IsWindow(GetSafeHwnd()))
+            PostMessage(WM_HARDWARE_MONITOR_FAILED);
+    }
+#endif
 }
 
 // CTrafficMonitorDlg 消息处理程序
@@ -1408,90 +1493,115 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
 
 #ifndef WITHOUT_TEMPERATURE
     //获取温度
-    if (IsTemperatureNeeded() && theApp.m_pMonitor != nullptr)
+    if (IsTemperatureNeeded())
     {
-        CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
+        RetryOpenHardwareMonitorIfNeeded();
+        bool hardware_monitor_failed = false;
         CString error_info = CCommon::LoadText(IDS_HARDWARE_INFO_ACQUIRE_FAILED_ERROR);
 
-        auto getHardwareInfo = [&]() {
-            __try
+        if (theApp.m_pMonitor != nullptr)
+        {
             {
-                theApp.m_pMonitor->GetHardwareInfo();
-            }
-            __except (EXCEPTION_EXECUTE_HANDLER)
-            {
-                AfxMessageBox(error_info, MB_ICONERROR | MB_OK);
-            }
-        };
+                CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
 
-        getHardwareInfo();
-        auto monitor_error_message{ OpenHardwareMonitorApi::GetErrorMessage() };
-        if (!monitor_error_message.empty())
-        {
-            AfxMessageBox(monitor_error_message.c_str(), MB_ICONERROR | MB_OK);
-        }
-        //theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
-        theApp.m_gpu_temperature = theApp.m_pMonitor->GpuTemperature();
-        //theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
-        theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
-        if (!gpu_usage_acquired)
-            theApp.m_gpu_usage = theApp.m_pMonitor->GpuUsage();
-        if (!cpu_freq_acquired)
-            theApp.m_cpu_freq = theApp.m_pMonitor->CpuFreq();
-        //获取CPU温度
-        if (!theApp.m_pMonitor->AllCpuTemperature().empty())
-        {
-            if (theApp.m_general_data.cpu_core_name == CCommon::LoadText(IDS_AVREAGE_TEMPERATURE).GetString())  //如果选择了平均温度
-            {
-                theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
-            }
-            else
-            {
-                auto iter = theApp.m_pMonitor->AllCpuTemperature().find(theApp.m_general_data.cpu_core_name);
-                if (iter == theApp.m_pMonitor->AllCpuTemperature().end())
+                auto getHardwareInfo = [&]() {
+                    __try
+                    {
+                        if (theApp.m_pMonitor != nullptr)
+                            theApp.m_pMonitor->GetHardwareInfo();
+                    }
+                    __except (EXCEPTION_EXECUTE_HANDLER)
+                    {
+                        hardware_monitor_failed = true;
+                    }
+                };
+
+                getHardwareInfo();
+                auto monitor_error_message{ OpenHardwareMonitorApi::GetErrorMessage() };
+                if (!monitor_error_message.empty())
                 {
-                    iter = theApp.m_pMonitor->AllCpuTemperature().begin();
-                    theApp.m_general_data.cpu_core_name = iter->first;
+                    hardware_monitor_failed = true;
+                    error_info = monitor_error_message.c_str();
                 }
-                theApp.m_cpu_temperature = iter->second;
+
+                if (!hardware_monitor_failed && theApp.m_pMonitor != nullptr)
+                {
+                    //theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
+                    theApp.m_gpu_temperature = theApp.m_pMonitor->GpuTemperature();
+                    //theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
+                    theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
+                    if (!gpu_usage_acquired)
+                        theApp.m_gpu_usage = theApp.m_pMonitor->GpuUsage();
+                    if (!cpu_freq_acquired)
+                        theApp.m_cpu_freq = theApp.m_pMonitor->CpuFreq();
+                    //获取CPU温度
+                    if (!theApp.m_pMonitor->AllCpuTemperature().empty())
+                    {
+                        if (theApp.m_general_data.cpu_core_name == CCommon::LoadText(IDS_AVREAGE_TEMPERATURE).GetString())  //如果选择了平均温度
+                        {
+                            theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
+                        }
+                        else
+                        {
+                            auto iter = theApp.m_pMonitor->AllCpuTemperature().find(theApp.m_general_data.cpu_core_name);
+                            if (iter == theApp.m_pMonitor->AllCpuTemperature().end())
+                            {
+                                iter = theApp.m_pMonitor->AllCpuTemperature().begin();
+                                theApp.m_general_data.cpu_core_name = iter->first;
+                            }
+                            theApp.m_cpu_temperature = iter->second;
+                        }
+                    }
+                    else
+                    {
+                        theApp.m_cpu_temperature = -1;
+                    }
+                    //获取硬盘温度
+                    if (!theApp.m_pMonitor->AllHDDTemperature().empty())
+                    {
+                        auto iter = theApp.m_pMonitor->AllHDDTemperature().find(theApp.m_general_data.hard_disk_name);
+                        if (iter == theApp.m_pMonitor->AllHDDTemperature().end())
+                        {
+                            iter = theApp.m_pMonitor->AllHDDTemperature().begin();
+                            theApp.m_general_data.hard_disk_name = iter->first;
+                        }
+                        theApp.m_hdd_temperature = iter->second;
+                    }
+                    else
+                    {
+                        theApp.m_hdd_temperature = -1;
+                    }
+                    //获取硬盘利用率
+                    if (!m_get_disk_usage_by_pdh)
+                    {
+                        if (!theApp.m_pMonitor->AllHDDUsage().empty())
+                        {
+                            auto iter = theApp.m_pMonitor->AllHDDUsage().find(theApp.m_general_data.hard_disk_name);
+                            if (iter == theApp.m_pMonitor->AllHDDUsage().end())
+                            {
+                                iter = theApp.m_pMonitor->AllHDDUsage().begin();
+                                theApp.m_general_data.hard_disk_name = iter->first;
+                            }
+                            theApp.m_hdd_usage = iter->second;
+                        }
+                        else
+                        {
+                            theApp.m_hdd_usage = -1;
+                        }
+                    }
+                    m_hardware_monitor_suspended = false;
+                    m_hardware_monitor_error_notified = false;
+                }
+            }
+
+            if (hardware_monitor_failed)
+            {
+                HandleHardwareMonitorFailure(error_info);
             }
         }
         else
         {
-            theApp.m_cpu_temperature = -1;
-        }
-        //获取硬盘温度
-        if (!theApp.m_pMonitor->AllHDDTemperature().empty())
-        {
-            auto iter = theApp.m_pMonitor->AllHDDTemperature().find(theApp.m_general_data.hard_disk_name);
-            if (iter == theApp.m_pMonitor->AllHDDTemperature().end())
-            {
-                iter = theApp.m_pMonitor->AllHDDTemperature().begin();
-                theApp.m_general_data.hard_disk_name = iter->first;
-            }
-            theApp.m_hdd_temperature = iter->second;
-        }
-        else
-        {
-            theApp.m_hdd_temperature = -1;
-        }
-        //获取硬盘利用率
-        if (!m_get_disk_usage_by_pdh)
-        {
-            if (!theApp.m_pMonitor->AllHDDUsage().empty())
-            {
-                auto iter = theApp.m_pMonitor->AllHDDUsage().find(theApp.m_general_data.hard_disk_name);
-                if (iter == theApp.m_pMonitor->AllHDDUsage().end())
-                {
-                    iter = theApp.m_pMonitor->AllHDDUsage().begin();
-                    theApp.m_general_data.hard_disk_name = iter->first;
-                }
-                theApp.m_hdd_usage = iter->second;
-            }
-            else
-            {
-                theApp.m_hdd_usage = -1;
-            }
+            ResetHardwareMonitorValues();
         }
     }
 #endif
@@ -2843,6 +2953,16 @@ afx_msg LRESULT CTrafficMonitorDlg::OnMonitorInfoUpdated(WPARAM wParam, LPARAM l
     //更新任务栏窗口鼠标提示
     if (IsTaskbarWndValid())
         m_tBarDlg->UpdateToolTips();
+    return 0;
+}
+
+
+afx_msg LRESULT CTrafficMonitorDlg::OnHardwareMonitorFailed(WPARAM wParam, LPARAM lParam)
+{
+#ifndef WITHOUT_TEMPERATURE
+    ShowNotifyTip(CCommon::LoadText(IDS_HARDWARE_INFO_ACQUIRE_FAILED_ERROR),
+        CCommon::LoadText(IDS_HARDWARE_MONITOR_SUSPENDED_TIP));
+#endif
     return 0;
 }
 
