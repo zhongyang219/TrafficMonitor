@@ -621,14 +621,7 @@ UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
 UINT CTrafficMonitorApp::InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam)
 {
 #ifndef WITHOUT_TEMPERATURE
-    CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
-    theApp.m_pMonitor = OpenHardwareMonitorApi::CreateInstance();
-    if (theApp.m_pMonitor == nullptr)
-    {
-        AfxMessageBox(OpenHardwareMonitorApi::GetErrorMessage().c_str(), MB_ICONERROR | MB_OK);
-    }
-    //设置硬件监控的启用状态
-    theApp.UpdateOpenHardwareMonitorEnableState();
+    theApp.InitOpenHardwareLib();
 #endif
     return 0;
 }
@@ -1134,6 +1127,34 @@ void CTrafficMonitorApp::InitOpenHardwareLibInThread()
 {
 #ifndef WITHOUT_TEMPERATURE
     AfxBeginThread(InitOpenHardwareMonitorLibThreadFunc, NULL);
+#endif
+}
+
+
+bool CTrafficMonitorApp::InitOpenHardwareLib()
+{
+#ifndef WITHOUT_TEMPERATURE
+    CSingleLock sync(&m_minitor_lib_critical, TRUE);
+    if (m_pMonitor == nullptr)
+        m_pMonitor = OpenHardwareMonitorApi::CreateInstance();
+    if (m_pMonitor != nullptr)
+    {
+        //设置硬件监控的启用状态
+        m_pMonitor->SetCpuEnable(m_general_data.IsHardwareEnable(HI_CPU));
+        m_pMonitor->SetGpuEnable(m_general_data.IsHardwareEnable(HI_GPU));
+        m_pMonitor->SetHddEnable(m_general_data.IsHardwareEnable(HI_HDD));
+        m_pMonitor->SetMainboardEnable(m_general_data.IsHardwareEnable(HI_MBD));
+    }
+
+    std::wstring error_message{ OpenHardwareMonitorApi::GetErrorMessage() };
+    if (!error_message.empty())
+    {
+        CCommon::WriteLog(error_message.c_str(), m_log_path.c_str());
+        m_pMonitor.reset();
+    }
+    return m_pMonitor != nullptr;
+#else
+    return false;
 #endif
 }
 

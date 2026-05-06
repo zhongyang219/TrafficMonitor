@@ -25,10 +25,16 @@ namespace OpenHardwareMonitorApi
         }
     }
 
+    static void SetMonitorNotInitializedError()
+    {
+        error_message = L"LibreHardwareMonitor is not initialized.";
+    }
+
 
     std::shared_ptr<IOpenHardwareMonitor> CreateInstance()
     {
         std::shared_ptr<IOpenHardwareMonitor> pMonitor;
+        error_message.clear();
         try
         {
             MonitorGlobal::Instance()->Init();
@@ -108,22 +114,66 @@ namespace OpenHardwareMonitorApi
 
     void COpenHardwareMonitor::SetCpuEnable(bool enable)
     {
-        MonitorGlobal::Instance()->computer->IsCpuEnabled = enable;
+        try
+        {
+            auto monitor = MonitorGlobal::Instance();
+            if (monitor->computer != nullptr)
+                monitor->computer->IsCpuEnabled = enable;
+            else
+                SetMonitorNotInitializedError();
+        }
+        catch (System::Exception^ e)
+        {
+            error_message = ClrStringToStdWstring(e->Message);
+        }
     }
 
     void COpenHardwareMonitor::SetGpuEnable(bool enable)
     {
-        MonitorGlobal::Instance()->computer->IsGpuEnabled = enable;
+        try
+        {
+            auto monitor = MonitorGlobal::Instance();
+            if (monitor->computer != nullptr)
+                monitor->computer->IsGpuEnabled = enable;
+            else
+                SetMonitorNotInitializedError();
+        }
+        catch (System::Exception^ e)
+        {
+            error_message = ClrStringToStdWstring(e->Message);
+        }
     }
 
     void COpenHardwareMonitor::SetHddEnable(bool enable)
     {
-        MonitorGlobal::Instance()->computer->IsStorageEnabled = enable;
+        try
+        {
+            auto monitor = MonitorGlobal::Instance();
+            if (monitor->computer != nullptr)
+                monitor->computer->IsStorageEnabled = enable;
+            else
+                SetMonitorNotInitializedError();
+        }
+        catch (System::Exception^ e)
+        {
+            error_message = ClrStringToStdWstring(e->Message);
+        }
     }
 
     void COpenHardwareMonitor::SetMainboardEnable(bool enable)
     {
-        MonitorGlobal::Instance()->computer->IsMotherboardEnabled = enable;
+        try
+        {
+            auto monitor = MonitorGlobal::Instance();
+            if (monitor->computer != nullptr)
+                monitor->computer->IsMotherboardEnabled = enable;
+            else
+                SetMonitorNotInitializedError();
+        }
+        catch (System::Exception^ e)
+        {
+            error_message = ClrStringToStdWstring(e->Message);
+        }
     }
 
     bool COpenHardwareMonitor::GetCPUFreq(IHardware^ hardware, float& freq) {
@@ -337,8 +387,15 @@ namespace OpenHardwareMonitorApi
         error_message.clear();
         try
         {
-            auto computer = MonitorGlobal::Instance()->computer;
-            computer->Accept(MonitorGlobal::Instance()->updateVisitor);
+            auto monitor = MonitorGlobal::Instance();
+            auto computer = monitor->computer;
+            auto updateVisitor = monitor->updateVisitor;
+            if (computer == nullptr || updateVisitor == nullptr)
+            {
+                SetMonitorNotInitializedError();
+                return;
+            }
+            computer->Accept(updateVisitor);
             for (int i = 0; i < computer->Hardware->Count; i++)
             {
                 //查找硬件类型
@@ -412,14 +469,34 @@ namespace OpenHardwareMonitorApi
 
     void MonitorGlobal::Init()
     {
-        updateVisitor = gcnew UpdateVisitor();
-        computer = gcnew Computer();
-        computer->Open();
+        try
+        {
+            updateVisitor = gcnew UpdateVisitor();
+            computer = gcnew Computer();
+            computer->Open();
+        }
+        catch (System::Exception^ e)
+        {
+            error_message = ClrStringToStdWstring(e->Message);
+            computer = nullptr;
+            updateVisitor = nullptr;
+            throw;
+        }
     }
 
     void MonitorGlobal::UnInit()
     {
-        computer->Close();
+        try
+        {
+            if (computer != nullptr)
+                computer->Close();
+        }
+        catch (System::Exception^ e)
+        {
+            error_message = ClrStringToStdWstring(e->Message);
+        }
+        computer = nullptr;
+        updateVisitor = nullptr;
     }
 
 }
