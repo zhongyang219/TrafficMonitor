@@ -32,6 +32,8 @@ protected:
     CColorStatic m_color_static;
     CToolTipCtrl m_toolTip;
     CComboBox2 m_unit_combo;
+    CStatic m_speed_precision_static;
+    CSpinEdit m_speed_precision_edit;
     CButton m_hide_unit_chk;
     CSpinEdit m_font_size_edit;
     CComboBox2 m_double_click_combo;
@@ -75,6 +77,7 @@ public:
     afx_msg void OnBnClickedBrowseButton();
     afx_msg void OnBnClickedDisplayTextSettingButton();
     afx_msg void OnCbnSelchangeMemoryDisplayCombo();
+    afx_msg void OnEnChangeSpeedDecimalPlacesEdit();
     afx_msg void OnBnClickedAlwaysOnTopCheck();
     afx_msg void OnBnClickedMousePenetrateCheck();
     afx_msg void OnBnClickedLockWindowPosCheck();

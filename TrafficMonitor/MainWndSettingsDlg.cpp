@@ -28,6 +28,7 @@ CMainWndSettingsDlg::~CMainWndSettingsDlg()
 void CMainWndSettingsDlg::SetControlMouseWheelEnable(bool enable)
 {
     m_unit_combo.SetMouseWheelEnable(enable);
+    m_speed_precision_edit.SetMouseWheelEnable(enable);
     m_double_click_combo.SetMouseWheelEnable(enable);
     m_font_size_edit.SetMouseWheelEnable(enable);
     m_memory_display_combo.SetMouseWheelEnable(enable);
@@ -132,6 +133,8 @@ void CMainWndSettingsDlg::DoDataExchange(CDataExchange* pDX)
     CTabDlg::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_HIDE_UNIT_CHECK, m_hide_unit_chk);
     DDX_Control(pDX, IDC_UNIT_COMBO, m_unit_combo);
+    DDX_Control(pDX, IDC_SPEED_DECIMAL_PLACES_STATIC, m_speed_precision_static);
+    DDX_Control(pDX, IDC_SPEED_DECIMAL_PLACES_EDIT, m_speed_precision_edit);
     DDX_Control(pDX, IDC_FONT_SIZE_EDIT, m_font_size_edit);
     DDX_Control(pDX, IDC_DOUBLE_CLICK_COMBO, m_double_click_combo);
     DDX_Control(pDX, IDC_MEMORY_DISPLAY_COMBO, m_memory_display_combo);
@@ -150,6 +153,7 @@ BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_FULLSCREEN_HIDE_CHECK, &CMainWndSettingsDlg::OnBnClickedFullscreenHideCheck)
     ON_BN_CLICKED(IDC_SPEED_SHORT_MODE_CHECK2, &CMainWndSettingsDlg::OnBnClickedSpeedShortModeCheck2)
     ON_CBN_SELCHANGE(IDC_UNIT_COMBO, &CMainWndSettingsDlg::OnCbnSelchangeUnitCombo)
+    ON_EN_CHANGE(IDC_SPEED_DECIMAL_PLACES_EDIT, &CMainWndSettingsDlg::OnEnChangeSpeedDecimalPlacesEdit)
     ON_BN_CLICKED(IDC_HIDE_UNIT_CHECK, &CMainWndSettingsDlg::OnBnClickedHideUnitCheck)
     ON_BN_CLICKED(IDC_HIDE_PERCENTAGE_CHECK, &CMainWndSettingsDlg::OnBnClickedHidePercentageCheck)
     ON_MESSAGE(WM_STATIC_CLICKED, &CMainWndSettingsDlg::OnStaticClicked)
@@ -212,6 +216,13 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
         ((CButton*)GetDlgItem(IDC_UNIT_BIT_RADIO))->SetCheck(TRUE);
 
     IniUnitCombo();
+
+    m_speed_precision_edit.SetRange(0, 8);
+    if (m_data.speed_decimal_places < 0)
+        m_data.speed_decimal_places = 0;
+    else if (m_data.speed_decimal_places > 8)
+        m_data.speed_decimal_places = 8;
+    m_speed_precision_edit.SetValue(m_data.speed_decimal_places);
 
     m_hide_unit_chk.SetCheck(m_data.hide_unit);
     if (m_data.speed_unit == SpeedUnit::AUTO)
@@ -405,6 +416,16 @@ void CMainWndSettingsDlg::OnCbnSelchangeUnitCombo()
     {
         m_hide_unit_chk.EnableWindow(TRUE);
     }
+}
+
+
+void CMainWndSettingsDlg::OnEnChangeSpeedDecimalPlacesEdit()
+{
+    m_data.speed_decimal_places = m_speed_precision_edit.GetValue();
+    if (m_data.speed_decimal_places < 0)
+        m_data.speed_decimal_places = 0;
+    else if (m_data.speed_decimal_places > 8)
+        m_data.speed_decimal_places = 8;
 }
 
 
