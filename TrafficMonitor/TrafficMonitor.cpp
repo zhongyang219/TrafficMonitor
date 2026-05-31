@@ -131,6 +131,11 @@ void CTrafficMonitorApp::LoadConfig()
     m_main_wnd_data.disp_str.Get(TDI_MEMORY) = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
 
     m_main_wnd_data.speed_short_mode = ini.GetBool(_T("config"), _T("speed_short_mode"), false);
+    m_main_wnd_data.speed_decimal_places = ini.GetInt(_T("config"), _T("speed_decimal_places"), 2);
+    if (m_main_wnd_data.speed_decimal_places < 0)
+        m_main_wnd_data.speed_decimal_places = 0;
+    else if (m_main_wnd_data.speed_decimal_places > 8)
+        m_main_wnd_data.speed_decimal_places = 8;
     m_main_wnd_data.separate_value_unit_with_space = ini.GetBool(_T("config"), _T("separate_value_unit_with_space"), true);
     m_main_wnd_data.show_tool_tip = ini.GetBool(_T("config"), _T("show_tool_tip"), true);
     m_main_wnd_data.memory_display = static_cast<MemoryDisplay>(ini.GetInt(L"config", L"memory_display", static_cast<int>(MemoryDisplay::USAGE_PERCENTAGE)));
@@ -215,6 +220,11 @@ void CTrafficMonitorApp::LoadConfig()
 
     m_taskbar_data.tbar_wnd_on_left = ini.GetBool(_T("task_bar"), _T("task_bar_wnd_on_left"), false);
     m_taskbar_data.speed_short_mode = ini.GetBool(_T("task_bar"), _T("task_bar_speed_short_mode"), false);
+    m_taskbar_data.speed_decimal_places = ini.GetInt(_T("task_bar"), _T("task_bar_speed_decimal_places"), 2);
+    if (m_taskbar_data.speed_decimal_places < 0)
+        m_taskbar_data.speed_decimal_places = 0;
+    else if (m_taskbar_data.speed_decimal_places > 8)
+        m_taskbar_data.speed_decimal_places = 8;
     m_taskbar_data.tbar_wnd_snap = ini.GetBool(_T("task_bar"), _T("task_bar_wnd_snap"), false);
     m_taskbar_data.unit_byte = ini.GetBool(_T("task_bar"), _T("unit_byte"), true);
     m_taskbar_data.speed_unit = static_cast<SpeedUnit>(ini.GetInt(_T("task_bar"), _T("task_bar_speed_unit"), 0));
@@ -337,6 +347,7 @@ void CTrafficMonitorApp::SaveConfig()
     //ini.SavePluginDisplayStr(L"plugin_display_str_main_window", m_main_wnd_data.disp_str);
 
     ini.WriteBool(L"config", L"speed_short_mode", m_main_wnd_data.speed_short_mode);
+    ini.WriteInt(L"config", L"speed_decimal_places", m_main_wnd_data.speed_decimal_places);
     ini.WriteBool(L"config", L"separate_value_unit_with_space", m_main_wnd_data.separate_value_unit_with_space);
     ini.WriteBool(L"config", L"show_tool_tip", m_main_wnd_data.show_tool_tip);
     ini.WriteInt(L"config", L"memory_display", static_cast<int>(m_main_wnd_data.memory_display));
@@ -382,6 +393,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(L"task_bar", L"task_bar_wnd_on_left", m_taskbar_data.tbar_wnd_on_left);
     ini.WriteBool(L"task_bar", L"task_bar_wnd_snap", m_taskbar_data.tbar_wnd_snap);
     ini.WriteBool(L"task_bar", L"task_bar_speed_short_mode", m_taskbar_data.speed_short_mode);
+    ini.WriteInt(L"task_bar", L"task_bar_speed_decimal_places", m_taskbar_data.speed_decimal_places);
     ini.WriteBool(L"task_bar", L"unit_byte", m_taskbar_data.unit_byte);
     ini.WriteInt(L"task_bar", L"task_bar_speed_unit", static_cast<int>(m_taskbar_data.speed_unit));
     ini.WriteBool(L"task_bar", L"task_bar_hide_unit", m_taskbar_data.hide_unit);

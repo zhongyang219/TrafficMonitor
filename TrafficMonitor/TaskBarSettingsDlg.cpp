@@ -115,12 +115,19 @@ void CTaskBarSettingsDlg::EnableControl()
     EnableDlgCtrl(IDC_TASKBAR_WND_ON_LEFT_CHECK, !theApp.IsWindows11Taskbar() || CWindowsSettingHelper::IsTaskbarCenterAlign());
     EnableDlgCtrl(IDC_ENABLE_COLOR_EMOJI_CHECK, !m_data.disable_d2d);
     EnableDlgCtrl(IDC_WIN11_SETTINGS_BUTTON, theApp.IsWindows11Taskbar());
+
+    // Keep speed precision controls visible and only enable them when short mode is off.
+    ShowDlgCtrl(IDC_SPEED_DECIMAL_PLACES_STATIC, true);
+    ShowDlgCtrl(IDC_SPEED_DECIMAL_PLACES_EDIT, true);
+    EnableDlgCtrl(IDC_SPEED_DECIMAL_PLACES_STATIC, !m_data.speed_short_mode);
+    EnableDlgCtrl(IDC_SPEED_DECIMAL_PLACES_EDIT, !m_data.speed_short_mode);
 }
 
 
 void CTaskBarSettingsDlg::SetControlMouseWheelEnable(bool enable)
 {
     m_unit_combo.SetMouseWheelEnable(enable);
+    m_speed_precision_edit.SetMouseWheelEnable(enable);
     m_double_click_combo.SetMouseWheelEnable(enable);
     m_digit_number_combo.SetMouseWheelEnable(enable);
     m_font_size_edit.SetMouseWheelEnable(enable);
@@ -211,6 +218,8 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_TEXT_COLOR_STATIC3, m_status_bar_color_static);
     CTabDlg::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_UNIT_COMBO, m_unit_combo);
+    DDX_Control(pDX, IDC_SPEED_DECIMAL_PLACES_STATIC, m_speed_precision_static);
+    DDX_Control(pDX, IDC_SPEED_DECIMAL_PLACES_EDIT, m_speed_precision_edit);
     DDX_Control(pDX, IDC_HIDE_UNIT_CHECK, m_hide_unit_chk);
     DDX_Control(pDX, IDC_FONT_SIZE_EDIT1, m_font_size_edit);
     DDX_Control(pDX, IDC_DOUBLE_CLICK_COMBO, m_double_click_combo);
@@ -233,6 +242,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_TASKBAR_WND_ON_LEFT_CHECK, &CTaskBarSettingsDlg::OnBnClickedTaskbarWndOnLeftCheck)
     ON_BN_CLICKED(IDC_SPEED_SHORT_MODE_CHECK, &CTaskBarSettingsDlg::OnBnClickedSpeedShortModeCheck)
     ON_CBN_SELCHANGE(IDC_UNIT_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeUnitCombo)
+    ON_EN_CHANGE(IDC_SPEED_DECIMAL_PLACES_EDIT, &CTaskBarSettingsDlg::OnEnChangeSpeedDecimalPlacesEdit)
     ON_BN_CLICKED(IDC_HIDE_UNIT_CHECK, &CTaskBarSettingsDlg::OnBnClickedHideUnitCheck)
     ON_BN_CLICKED(IDC_VALUE_RIGHT_ALIGN_CHECK, &CTaskBarSettingsDlg::OnBnClickedValueRightAlignCheck)
     ON_BN_CLICKED(IDC_HIDE_PERCENTAGE_CHECK, &CTaskBarSettingsDlg::OnBnClickedHidePercentageCheck)
@@ -337,6 +347,13 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
         ((CButton*)GetDlgItem(IDC_UNIT_BIT_RADIO))->SetCheck(TRUE);
 
     IniUnitCombo();
+
+    m_speed_precision_edit.SetRange(0, 8);
+    if (m_data.speed_decimal_places < 0)
+        m_data.speed_decimal_places = 0;
+    else if (m_data.speed_decimal_places > 8)
+        m_data.speed_decimal_places = 8;
+    m_speed_precision_edit.SetValue(m_data.speed_decimal_places);
 
     m_hide_unit_chk.SetCheck(m_data.hide_unit);
     if (m_data.speed_unit == SpeedUnit::AUTO)
@@ -509,6 +526,7 @@ void CTaskBarSettingsDlg::OnBnClickedSpeedShortModeCheck()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_data.speed_short_mode = (((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK))->GetCheck() != 0);
+    EnableControl();
 }
 
 
@@ -536,6 +554,16 @@ void CTaskBarSettingsDlg::OnCbnSelchangeUnitCombo()
     {
         m_hide_unit_chk.EnableWindow(TRUE);
     }
+}
+
+
+void CTaskBarSettingsDlg::OnEnChangeSpeedDecimalPlacesEdit()
+{
+    m_data.speed_decimal_places = m_speed_precision_edit.GetValue();
+    if (m_data.speed_decimal_places < 0)
+        m_data.speed_decimal_places = 0;
+    else if (m_data.speed_decimal_places > 8)
+        m_data.speed_decimal_places = 8;
 }
 
 
