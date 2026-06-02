@@ -869,6 +869,9 @@ void CTaskBarDlg::CalculateWindowSize()
 
     int item_count = static_cast<int>(m_item_widths.size());
 
+    auto last_window_width{ m_window_width };
+    auto last_window_height{ m_window_height };
+
     //计算窗口总宽度
     if (IsTasksbarOnTopOrBottom())  //任务栏在桌面的顶部或底部时
     {
@@ -930,6 +933,12 @@ void CTaskBarDlg::CalculateWindowSize()
         m_window_height = TASKBAR_WND_HEIGHT / 2 * item_count;
         m_window_height += (DPI(theApp.m_taskbar_data.item_space) * item_count);   //加上每个标签间的空隙
     }
+
+    // 如果窗口尺寸发生变化，则重新调整任务栏窗口位置
+    if (last_window_width != m_window_width || last_window_height != m_window_height) {
+        WidthChanged();
+    }
+
     m_rect.right = m_rect.left + m_window_width;
     m_rect.bottom = m_rect.top + m_window_height;
 
@@ -1237,16 +1246,8 @@ void CTaskBarDlg::OnTimer(UINT_PTR nIDEvent)
             m_tool_tips.Pop();
         }
         
-        //每秒钟重新计算窗口的宽度，如果发生变化，则重新调整任务栏窗口位置
-        static int last_window_width = m_window_width;
-        static int last_window_height = m_window_height;
+        //每秒钟重新计算窗口的宽度
         CalculateWindowSize();
-        if (last_window_width != m_window_width || last_window_height != m_window_height)
-        {
-            WidthChanged();
-            last_window_width = m_window_width;
-            last_window_height = m_window_height;
-        }
     }
 
     CDialogEx::OnTimer(nIDEvent);
