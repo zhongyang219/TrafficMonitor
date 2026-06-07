@@ -109,6 +109,7 @@ protected:
     unsigned int m_taskbar_timer_cnt{0}; //适用于TaskBarDlg的定时器触发次数（自程序启动以来的秒数）
     unsigned int m_monitor_time_cnt{};
     int m_zero_speed_cnt{}; //如果检测不到网速，该变量就会自加
+    bool m_hotkey_registered{ false };
     int m_insert_to_taskbar_cnt{};  //用来统计尝试嵌入任务栏的次数
     int m_cannot_insert_to_task_bar_warning{ true };   //指示是否会在无法嵌入任务栏时弹出提示框
 
@@ -237,6 +238,9 @@ public:
     afx_msg void OnAppAbout();
     afx_msg void OnShowCpuMemory2();
     afx_msg void OnShowMainWnd();
+    void RegisterGlobalHotKey();
+    void UnregisterGlobalHotKey();
+    afx_msg LRESULT OnHotKey(WPARAM wParam, LPARAM lParam);
     afx_msg void OnChangeSkin();
     afx_msg LRESULT OnTaskBarCreated(WPARAM wParam, LPARAM lParam);
     //afx_msg void OnSetFont();

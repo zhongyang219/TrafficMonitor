@@ -195,6 +195,7 @@ void CGeneralSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_SELECT_CPU_COMBO, m_select_cpu_combo);
     DDX_Control(pDX, IDC_PLUGIN_MANAGE_BUTTON, m_plugin_manager_btn);
     DDX_Control(pDX, IDC_SELECT_CONNECTIONS_BUTTON, m_select_connection_btn);
+    DDX_Control(pDX, IDC_HOTKEY_BUTTON, m_hotkey_button);
 }
 
 void CGeneralSettingsDlg::SetControlEnable()
@@ -215,6 +216,7 @@ void CGeneralSettingsDlg::SetControlEnable()
     EnableDlgCtrl(IDC_RESET_AUTO_RUN_BUTTON, m_data.auto_run);
     EnableDlgCtrl(IDC_AUTO_RUN_METHOD_REGESTRY_RADIO, m_data.auto_run);
     EnableDlgCtrl(IDC_AUTO_RUN_METHOD_TASK_SCHEDULE_RADIO, m_data.auto_run);
+    m_hotkey_button.EnableWindow(m_data.hotkey_enabled);
 }
 
 
@@ -248,6 +250,8 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_MESSAGE(WM_SPIN_EDIT_POS_CHANGED, &CGeneralSettingsDlg::OnSpinEditPosChanged)
     ON_BN_CLICKED(IDC_AUTO_RUN_METHOD_REGESTRY_RADIO, &CGeneralSettingsDlg::OnBnClickedAutoRunMethodRegestryRadio)
     ON_BN_CLICKED(IDC_AUTO_RUN_METHOD_TASK_SCHEDULE_RADIO, &CGeneralSettingsDlg::OnBnClickedAutoRunMethodTaskScheduleRadio)
+    ON_BN_CLICKED(IDC_HOTKEY_ENABLE_CHECK, &CGeneralSettingsDlg::OnBnClickedHotkeyEnableCheck)
+    ON_BN_CLICKED(IDC_HOTKEY_BUTTON, &CGeneralSettingsDlg::OnBnClickedHotkeyButton)
 END_MESSAGE_MAP()
 
 
@@ -442,6 +446,11 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     m_plugin_manager_btn.SetIcon(theApp.GetMenuIcon(IDI_PLUGINS));
     m_select_connection_btn.SetIcon(theApp.GetMenuIcon(IDI_CONNECTION));
 
+    //初始化热键控件
+    CheckDlgButton(IDC_HOTKEY_ENABLE_CHECK, m_data.hotkey_enabled);
+    SetHotKeyButtonText();
+    m_hotkey_button.EnableWindow(m_data.hotkey_enabled);
+
     return TRUE;  // return TRUE unless you set the focus to a control
                   // 异常: OCX 属性页应返回 FALSE
 }
@@ -567,11 +576,119 @@ void CGeneralSettingsDlg::OnBnClickedShowAllConnectionCheck()
 
 BOOL CGeneralSettingsDlg::PreTranslateMessage(MSG* pMsg)
 {
-    // TODO: 在此添加专用代码和/或调用基类
+    // 热键捕获模式
+    if (m_hotkey_capturing)
+    {
+        if (pMsg->message == WM_KEYDOWN || pMsg->message == WM_SYSKEYDOWN)
+        {
+            UINT vk = static_cast<UINT>(pMsg->wParam);
+
+            // ESC 取消捕获
+            if (vk == VK_ESCAPE)
+            {
+                EndHotKeyCapture(true);
+                return TRUE;
+            }
+
+            // 过滤纯修饰键
+            if (vk != VK_CONTROL && vk != VK_MENU && vk != VK_SHIFT &&
+                vk != VK_LWIN && vk != VK_RWIN &&
+                vk != VK_LCONTROL && vk != VK_RCONTROL &&
+                vk != VK_LMENU && vk != VK_RMENU &&
+                vk != VK_LSHIFT && vk != VK_RSHIFT)
+            {
+                // 获取当前修饰键状态
+                UINT modifiers = 0;
+                if (GetKeyState(VK_CONTROL) & 0x8000) modifiers |= MOD_CONTROL;
+                if (GetKeyState(VK_MENU) & 0x8000)    modifiers |= MOD_ALT;
+                if (GetKeyState(VK_SHIFT) & 0x8000)   modifiers |= MOD_SHIFT;
+                if (GetKeyState(VK_LWIN) & 0x8000 || GetKeyState(VK_RWIN) & 0x8000)
+                    modifiers |= MOD_WIN;
+
+                if (modifiers != 0)
+                {
+                    OnHotKeyCaptured(modifiers, vk);
+                    return TRUE;
+                }
+            }
+            return TRUE;  // 捕获期间拦截所有按键
+        }
+        // 点击按钮外区域取消捕获
+        if (pMsg->message == WM_LBUTTONDOWN || pMsg->message == WM_RBUTTONDOWN)
+        {
+            HWND hwndButton = m_hotkey_button.GetSafeHwnd();
+            if (pMsg->hwnd != hwndButton)
+            {
+                EndHotKeyCapture(true);
+            }
+        }
+    }
+
     if (pMsg->message == WM_MOUSEMOVE)
         m_toolTip.RelayEvent(pMsg);
 
     return CTabDlg::PreTranslateMessage(pMsg);
+}
+
+void CGeneralSettingsDlg::SetHotKeyButtonText()
+{
+    CString text;
+
+    if (m_data.hotkey_modifiers & MOD_CONTROL) text += _T("Ctrl+");
+    if (m_data.hotkey_modifiers & MOD_ALT)     text += _T("Alt+");
+    if (m_data.hotkey_modifiers & MOD_SHIFT)   text += _T("Shift+");
+    if (m_data.hotkey_modifiers & MOD_WIN)     text += _T("Win+");
+
+    // 使用 MapVirtualKey + GetKeyNameText 获取按键名称
+    UINT scan_code = MapVirtualKeyW(m_data.hotkey_vk, MAPVK_VK_TO_VSC);
+    if (m_data.hotkey_vk == VK_INSERT || m_data.hotkey_vk == VK_DELETE ||
+        m_data.hotkey_vk == VK_HOME || m_data.hotkey_vk == VK_END ||
+        m_data.hotkey_vk == VK_PRIOR || m_data.hotkey_vk == VK_NEXT ||
+        m_data.hotkey_vk == VK_LEFT || m_data.hotkey_vk == VK_RIGHT ||
+        m_data.hotkey_vk == VK_UP || m_data.hotkey_vk == VK_DOWN)
+    {
+        scan_code |= 0x100;  // 扩展键标志
+    }
+    wchar_t key_name_buf[64]{};
+    GetKeyNameTextW(scan_code << 16, key_name_buf, 64);
+
+    text += key_name_buf;
+    m_hotkey_button.SetWindowText(text);
+}
+
+void CGeneralSettingsDlg::StartHotKeyCapture()
+{
+    m_hotkey_capturing = true;
+    m_hotkey_button.GetWindowText(m_hotkey_original_text);
+    m_hotkey_button.SetWindowText(CCommon::LoadText(IDS_PRESS_HOTKEY, _T("Press a key combination...")));
+    m_hotkey_button.SetFocus();
+}
+
+void CGeneralSettingsDlg::EndHotKeyCapture(bool cancelled)
+{
+    m_hotkey_capturing = false;
+    if (cancelled)
+        m_hotkey_button.SetWindowText(m_hotkey_original_text);
+    else
+        SetHotKeyButtonText();
+}
+
+void CGeneralSettingsDlg::OnHotKeyCaptured(UINT modifiers, UINT vk)
+{
+    m_data.hotkey_modifiers = modifiers;
+    m_data.hotkey_vk = vk;
+    EndHotKeyCapture(false);
+}
+
+void CGeneralSettingsDlg::OnBnClickedHotkeyButton()
+{
+    StartHotKeyCapture();
+}
+
+void CGeneralSettingsDlg::OnBnClickedHotkeyEnableCheck()
+{
+    m_data.hotkey_enabled = (IsDlgButtonChecked(IDC_HOTKEY_ENABLE_CHECK) != 0);
+    SetControlEnable();
 }
 
 afx_msg LRESULT CGeneralSettingsDlg::OnSpinEditPosChanged(WPARAM wParam, LPARAM lParam)

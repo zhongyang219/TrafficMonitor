@@ -127,6 +127,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_COMMAND(ID_PLUGIN_DETAIL_TASKBAR, &CTrafficMonitorDlg::OnPluginDetailTaksbar)
     ON_WM_POWERBROADCAST()
     ON_WM_DWMCOLORIZATIONCOLORCHANGED()
+    ON_MESSAGE(WM_HOTKEY, &CTrafficMonitorDlg::OnHotKey)
 END_MESSAGE_MAP()
 
 
@@ -742,6 +743,9 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     bool is_show_notify_icon_changed = (optionsDlg.m_tab3_dlg.m_data.show_notify_icon != theApp.m_general_data.show_notify_icon);
     bool is_connections_hide_changed = (optionsDlg.m_tab3_dlg.m_data.connections_hide.data() != theApp.m_general_data.connections_hide.data());
     bool d2d_turned_on = (theApp.m_taskbar_data.disable_d2d && !optionsDlg.m_tab2_dlg.m_data.disable_d2d);
+    bool is_hotkey_changed = (optionsDlg.m_tab3_dlg.m_data.hotkey_enabled != theApp.m_general_data.hotkey_enabled
+        || optionsDlg.m_tab3_dlg.m_data.hotkey_modifiers != theApp.m_general_data.hotkey_modifiers
+        || optionsDlg.m_tab3_dlg.m_data.hotkey_vk != theApp.m_general_data.hotkey_vk);
     //需要重新关闭再打开任务栏窗口的情况
     bool taskbar_changed = (theApp.m_taskbar_data.show_taskbar_wnd_in_secondary_display != optionsDlg.m_tab2_dlg.m_data.show_taskbar_wnd_in_secondary_display
         || theApp.m_taskbar_data.secondary_display_index != optionsDlg.m_tab2_dlg.m_data.secondary_display_index
@@ -859,6 +863,10 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
         CSkinManager::Instance().AddSkinSettingData(theApp.m_cfg_data.m_skin_name, skin_data);
         CSkinManager::Instance().Save();
     }
+
+    //如果热键设置变化了，重新注册全局热键
+    if (is_hotkey_changed)
+        RegisterGlobalHotKey();
 
     theApp.SaveConfig();
     theApp.SaveGlobalConfig();
@@ -1140,6 +1148,9 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
         SetTransparency(0);
 
     SetTimer(TASKBAR_TIMER, 100, NULL);
+
+    //注册全局热键
+    RegisterGlobalHotKey();
 
     return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -2412,6 +2423,9 @@ void CTrafficMonitorDlg::OnDestroy()
 {
     CDialog::OnDestroy();
 
+    //注销全局热键
+    UnregisterGlobalHotKey();
+
     //程序退出时删除通知栏图标
     ::Shell_NotifyIcon(NIM_DELETE, &m_ntIcon);
 
@@ -2575,6 +2589,48 @@ void CTrafficMonitorDlg::OnShowMainWnd()
         theApp.m_cfg_data.m_hide_main_window = false;
     }
     theApp.SaveConfig();
+}
+
+void CTrafficMonitorDlg::RegisterGlobalHotKey()
+{
+    UnregisterGlobalHotKey();
+
+    if (!theApp.m_general_data.hotkey_enabled)
+        return;
+
+    UINT modifiers = 0;
+    if (theApp.m_general_data.hotkey_modifiers & MOD_ALT)
+        modifiers |= MOD_ALT;
+    if (theApp.m_general_data.hotkey_modifiers & MOD_CONTROL)
+        modifiers |= MOD_CONTROL;
+    if (theApp.m_general_data.hotkey_modifiers & MOD_SHIFT)
+        modifiers |= MOD_SHIFT;
+    if (theApp.m_general_data.hotkey_modifiers & MOD_WIN)
+        modifiers |= MOD_WIN;
+    modifiers |= MOD_NOREPEAT;
+
+    if (::RegisterHotKey(m_hWnd, 1, modifiers, theApp.m_general_data.hotkey_vk))
+    {
+        m_hotkey_registered = true;
+    }
+}
+
+void CTrafficMonitorDlg::UnregisterGlobalHotKey()
+{
+    if (m_hotkey_registered)
+    {
+        ::UnregisterHotKey(m_hWnd, 1);
+        m_hotkey_registered = false;
+    }
+}
+
+LRESULT CTrafficMonitorDlg::OnHotKey(WPARAM wParam, LPARAM lParam)
+{
+    if (wParam == 1)
+    {
+        OnShowMainWnd();
+    }
+    return 0;
 }
 
 

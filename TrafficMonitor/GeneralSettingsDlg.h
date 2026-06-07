@@ -13,6 +13,11 @@ public:
     CGeneralSettingsDlg(CWnd* pParent = NULL);   // standard constructor
     virtual ~CGeneralSettingsDlg();
 
+    void SetHotKeyButtonText();
+    void StartHotKeyCapture();
+    void EndHotKeyCapture(bool cancelled);
+    void OnHotKeyCaptured(UINT modifiers, UINT vk);
+
     static void CheckTaskbarDisplayItem();
 
     //选项设置数据
@@ -52,6 +57,9 @@ protected:
     CComboBox2 m_select_cpu_combo;
     CButton m_plugin_manager_btn;
     CButton m_select_connection_btn;
+    CButton m_hotkey_button;
+    bool m_hotkey_capturing{ false };
+    CString m_hotkey_original_text;
 
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
@@ -102,6 +110,8 @@ public:
     afx_msg void OnBnClickedSelectConnectionsButton();
     afx_msg void OnBnClickedResetAutoRunButton();
     afx_msg void OnEnChangeMonitorSpanEdit();
+    afx_msg void OnBnClickedHotkeyEnableCheck();
+    afx_msg void OnBnClickedHotkeyButton();
 protected:
 public:
     afx_msg void OnBnClickedAutoRunMethodRegestryRadio();
