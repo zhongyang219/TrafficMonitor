@@ -16,8 +16,12 @@ CSkinFile::CSkinFile()
 
 CSkinFile::~CSkinFile()
 {
-    SAFE_DELETE(m_background_png_s);
-    SAFE_DELETE(m_background_png_l);
+    for (auto* img : m_background_png_s)
+        SAFE_DELETE(img);
+    m_background_png_s.clear();
+    for (auto* img : m_background_png_l)
+        SAFE_DELETE(img);
+    m_background_png_l.clear();
 }
 
 static CSkinFile::LayoutItem LayoutItemFromXmlNode(tinyxml2::XMLElement* ele)
@@ -127,21 +131,60 @@ bool CSkinFile::Load(const wstring& skin_name)
 
     wstring path_dir = file_path_helper.GetDir();
 
-    //载入png背景图
+    //载入png背景图（支持多帧动画）
     m_is_png = true;
-    //先尝试加载png格式，失败则加载bmp格式
-    SAFE_DELETE(m_background_png_s);
-    m_background_png_s = new Gdiplus::Image((path_dir + BACKGROUND_IMAGE_S_PNG).c_str());
-    if (m_background_png_s->GetLastStatus() != Gdiplus::Ok)
+    //先清理旧帧
+    for (auto* img : m_background_png_s)
+        SAFE_DELETE(img);
+    m_background_png_s.clear();
+    for (auto* img : m_background_png_l)
+        SAFE_DELETE(img);
+    m_background_png_l.clear();
+    m_animation_frame = 0;
+
+    // 辅助lambda：尝试加载多帧PNG（background_0.png, background_1.png, ...）
+    // 若background_0.png不存在则回退到background.png单帧
+    auto LoadMultiFramePng = [&](const wstring& base_name, std::vector<Gdiplus::Image*>& out_frames) -> bool
     {
+        // 先尝试多帧格式 background_0.png
+        wstring frame0_path = path_dir + base_name + L"_0.png";
+        if (CCommon::FileExist(frame0_path.c_str()))
+        {
+            for (int i = 0; ; i++)
+            {
+                wstring frame_path = path_dir + base_name + L"_" + std::to_wstring(i) + L".png";
+                if (!CCommon::FileExist(frame_path.c_str()))
+                    break;
+                auto* img = new Gdiplus::Image(frame_path.c_str());
+                if (img->GetLastStatus() == Gdiplus::Ok)
+                    out_frames.push_back(img);
+                else
+                {
+                    delete img;
+                    break;
+                }
+            }
+            return !out_frames.empty();
+        }
+        // 回退到单帧 background.png
+        wstring single_path = path_dir + base_name + L".png";
+        if (CCommon::FileExist(single_path.c_str()))
+        {
+            auto* img = new Gdiplus::Image(single_path.c_str());
+            if (img->GetLastStatus() == Gdiplus::Ok)
+            {
+                out_frames.push_back(img);
+                return true;
+            }
+            delete img;
+        }
+        return false;
+    };
+
+    if (!LoadMultiFramePng(L"background", m_background_png_s))
         m_is_png = false;
-    }
-    SAFE_DELETE(m_background_png_l);
-    m_background_png_l = new Gdiplus::Image((path_dir + BACKGROUND_IMAGE_L_PNG).c_str());
-    if (m_background_png_l->GetLastStatus() != Gdiplus::Ok)
-    {
+    if (!LoadMultiFramePng(L"background_l", m_background_png_l))
         m_is_png = false;
-    }
 
     //png背景图加载失败，使用bmp背景图
     if (!m_is_png)
@@ -398,6 +441,18 @@ void CSkinFile::SetAlpha(int alpha)
     m_alpha = alpha;
 }
 
+Gdiplus::Image* CSkinFile::GetCurrentBackgroundFrame(bool show_more_info)
+{
+    auto& frames = show_more_info ? m_background_png_l : m_background_png_s;
+    if (frames.empty())
+        return nullptr;
+    // 循环切换帧，实现动画效果
+    size_t frame_idx = m_animation_frame % frames.size();
+    Gdiplus::Image* current = frames[frame_idx];
+    m_animation_frame++;
+    return current;
+}
+
 void CSkinFile::SetSettingData(const SkinSettingData& setting_data)
 {
     //如果字体有变化，则重新创建字体
@@ -429,8 +484,10 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
         if (IsPNG())    //png背景使用GDI+绘制
         {
             CDrawCommonEx gdiplus_drawer(pDC);
-            gdiplus_drawer.DrawImage(m_background_png_s, rect_s.TopLeft(), rect_s.Size(), IDrawCommon::StretchMode::STRETCH);
-            gdiplus_drawer.DrawImage(m_background_png_l, rect_l.TopLeft(), rect_l.Size(), IDrawCommon::StretchMode::STRETCH);
+            Gdiplus::Image* preview_s = m_background_png_s.empty() ? nullptr : m_background_png_s.front();
+            Gdiplus::Image* preview_l = m_background_png_l.empty() ? nullptr : m_background_png_l.front();
+            if (preview_s) gdiplus_drawer.DrawImage(preview_s, rect_s.TopLeft(), rect_s.Size(), IDrawCommon::StretchMode::STRETCH);
+            if (preview_l) gdiplus_drawer.DrawImage(preview_l, rect_l.TopLeft(), rect_l.Size(), IDrawCommon::StretchMode::STRETCH);
         }
         else
         {
@@ -576,8 +633,9 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info)
         //绘制背景
         CDrawCommonEx gdiplus_drawer;
         gdiplus_drawer.Create(CDC::FromHandle(hdcMemory));
-        Gdiplus::Image* background_image{ show_more_info ? m_background_png_l : m_background_png_s };
-        gdiplus_drawer.DrawImage(background_image, CPoint(0, 0), rect.Size(), CDrawCommon::StretchMode::FILL);
+        Gdiplus::Image* background_image{ GetCurrentBackgroundFrame(show_more_info) };
+        if (background_image)
+            gdiplus_drawer.DrawImage(background_image, CPoint(0, 0), rect.Size(), CDrawCommon::StretchMode::FILL);
         
         //保存完全透明的像素点
         std::set<DrawCommonHelper::Point> alpha_points;

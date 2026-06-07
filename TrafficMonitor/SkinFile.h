@@ -138,6 +138,9 @@ private:
 
     static void DrawSkinText(IDrawCommon& drawer, DrawStr draw_str, CRect rect, COLORREF color, Alignment align);
 
+    // 获取当前应显示的背景帧（按帧序列循环）
+    Gdiplus::Image* GetCurrentBackgroundFrame(bool show_more_info);
+
     //绘制主界面中除背景图外所有显示项目
     void DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font) const;
 
@@ -151,8 +154,9 @@ private:
     CImage m_background_s;
     CImage m_background_l;
     bool m_is_png{};
-    Gdiplus::Image* m_background_png_s{};
-    Gdiplus::Image* m_background_png_l{};
+    std::vector<Gdiplus::Image*> m_background_png_s;  // 小布局背景帧（至少1帧）
+    std::vector<Gdiplus::Image*> m_background_png_l;  // 大布局背景帧（至少1帧）
+    int m_animation_frame{};  // 当前动画帧索引，每次DrawInfo递增
     int m_alpha{ 255 };     //不透明度，仅当背景为png时有效
     SkinSettingData m_setting_data;
     bool m_is_error{ false };

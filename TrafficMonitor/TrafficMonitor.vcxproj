@@ -301,7 +301,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>print_compile_time.bat</Command>
+      <Command>call "$(ProjectDir)print_compile_time.bat"</Command>
     </PreBuildEvent>
     <FxCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -340,7 +340,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>print_compile_time.bat</Command>
+      <Command>call "$(ProjectDir)print_compile_time.bat"</Command>
     </PreBuildEvent>
     <FxCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -379,7 +379,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>print_compile_time.bat</Command>
+      <Command>call "$(ProjectDir)print_compile_time.bat"</Command>
     </PreBuildEvent>
     <FxCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -418,7 +418,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>print_compile_time.bat</Command>
+      <Command>call "$(ProjectDir)print_compile_time.bat"</Command>
     </PreBuildEvent>
     <FxCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -456,7 +456,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>print_compile_time.bat</Command>
+      <Command>call "$(ProjectDir)print_compile_time.bat"</Command>
     </PreBuildEvent>
     <FxCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -494,7 +494,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>print_compile_time.bat</Command>
+      <Command>call "$(ProjectDir)print_compile_time.bat"</Command>
     </PreBuildEvent>
     <FxCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -538,7 +538,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>print_compile_time.bat</Command>
+      <Command>call "$(ProjectDir)print_compile_time.bat"</Command>
     </PreBuildEvent>
     <FxCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -581,7 +581,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>print_compile_time.bat</Command>
+      <Command>call "$(ProjectDir)print_compile_time.bat"</Command>
     </PreBuildEvent>
     <FxCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -624,7 +624,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>print_compile_time.bat</Command>
+      <Command>call "$(ProjectDir)print_compile_time.bat"</Command>
     </PreBuildEvent>
     <FxCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -667,7 +667,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>print_compile_time.bat</Command>
+      <Command>call "$(ProjectDir)print_compile_time.bat"</Command>
     </PreBuildEvent>
     <FxCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -709,7 +709,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>print_compile_time.bat</Command>
+      <Command>call "$(ProjectDir)print_compile_time.bat"</Command>
     </PreBuildEvent>
     <FxCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -751,7 +751,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>print_compile_time.bat</Command>
+      <Command>call "$(ProjectDir)print_compile_time.bat"</Command>
     </PreBuildEvent>
     <FxCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
