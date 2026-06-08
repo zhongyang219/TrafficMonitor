@@ -1121,7 +1121,7 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     SetTimer(MAIN_TIMER, 1000, NULL);
 
     SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, NULL);
-    SetTimer(ANIMATION_TIMER, 66, NULL);  // 动画刷新定时器 15fps
+    SetTimer(ANIMATION_TIMER, 33, NULL);  // 动画刷新定时器 30fps
     AfxBeginThread(MonitorThreadCallback, (LPVOID)this);
 
     //初始化窗口位置

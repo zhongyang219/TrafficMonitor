@@ -454,7 +454,7 @@ Gdiplus::Image* CSkinFile::GetCurrentBackgroundFrame(bool show_more_info)
     if (m_animation_start_time == 0)
         m_animation_start_time = now;
     ULONGLONG elapsed = now - m_animation_start_time;
-    size_t frame_idx = static_cast<size_t>(elapsed / 66) % frames.size();
+    size_t frame_idx = static_cast<size_t>(elapsed / 33) % frames.size();
     return frames[frame_idx];
 }
 
