@@ -402,7 +402,7 @@ struct GeneralSettingData
     // Global hotkey
     bool hotkey_enabled{ true };                        // 全局热键功能开关
     UINT hotkey_modifiers{ MOD_CONTROL | MOD_SHIFT };   // 热键修饰键（MOD_ALT | MOD_CONTROL | MOD_SHIFT | MOD_WIN）
-    UINT hotkey_vk{ VK_F12 };                           // 热键虚拟键码
+    UINT hotkey_vk{ VK_F11 };                           // 热键虚拟键码
 };
 
 //定义监控时间间隔有效的最大值和最小值

@@ -86,7 +86,7 @@ void CTrafficMonitorApp::LoadConfig()
     //Global hotkey
     m_general_data.hotkey_enabled = ini.GetBool(L"general", L"hotkey_enabled", true);
     m_general_data.hotkey_modifiers = static_cast<UINT>(ini.GetInt(L"general", L"hotkey_modifiers", MOD_CONTROL | MOD_SHIFT));
-    m_general_data.hotkey_vk = static_cast<UINT>(ini.GetInt(L"general", L"hotkey_vk", VK_F12));
+    m_general_data.hotkey_vk = static_cast<UINT>(ini.GetInt(L"general", L"hotkey_vk", VK_F11));
 
     //Windows10颜色模式设置
     bool is_windows10_light_theme = CWindowsSettingHelper::IsWindows10LightTheme();
