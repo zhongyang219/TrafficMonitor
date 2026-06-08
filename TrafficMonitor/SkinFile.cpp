@@ -140,7 +140,7 @@ bool CSkinFile::Load(const wstring& skin_name)
     for (auto* img : m_background_png_l)
         SAFE_DELETE(img);
     m_background_png_l.clear();
-    m_animation_frame = 0;
+    m_animation_start_time = GetTickCount64();
 
     // 辅助lambda：尝试加载多帧PNG（background_0.png, background_1.png, ...）
     // 若background_0.png不存在则回退到background.png单帧
@@ -446,11 +446,16 @@ Gdiplus::Image* CSkinFile::GetCurrentBackgroundFrame(bool show_more_info)
     auto& frames = show_more_info ? m_background_png_l : m_background_png_s;
     if (frames.empty())
         return nullptr;
-    // 循环切换帧，实现动画效果
-    size_t frame_idx = m_animation_frame % frames.size();
-    Gdiplus::Image* current = frames[frame_idx];
-    m_animation_frame++;
-    return current;
+    if (frames.size() == 1)
+        return frames.front();
+
+    // 基于时间戳选择帧，帧率 10fps，独立于数据刷新率
+    ULONGLONG now = GetTickCount64();
+    if (m_animation_start_time == 0)
+        m_animation_start_time = now;
+    ULONGLONG elapsed = now - m_animation_start_time;
+    size_t frame_idx = static_cast<size_t>(elapsed / 66) % frames.size();
+    return frames[frame_idx];
 }
 
 void CSkinFile::SetSettingData(const SkinSettingData& setting_data)

@@ -89,6 +89,7 @@ using std::ofstream;
 #define RESTART_TASKBAR_TIMER 1240
 #define INIT_CONNECT_TIMER 1241
 #define DPI_CHANGE_TIMER 1242
+#define ANIMATION_TIMER 1243    //背景动画定时器（驱动多帧皮肤刷新）
 
 #define MAX_INSERT_TO_TASKBAR_CNT 200     //尝试嵌入任务栏的最大次数
 #define WARN_INSERT_TO_TASKBAR_CNT 20     //尝试嵌入任务栏的警告次数
