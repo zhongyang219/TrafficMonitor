@@ -2,9 +2,7 @@
 #include "DrawCommon.h"
 #include "SkinFile.h"
 
-
 // CSkinPreviewView 视图
-
 
 class CSkinPreviewView : public CScrollView
 {
@@ -15,14 +13,14 @@ protected:
 	virtual ~CSkinPreviewView();
 
 public:
-//#ifdef _DEBUG
-//	virtual void AssertValid() const;
-//#ifndef _WIN32_WCE
-//	virtual void Dump(CDumpContext& dc) const;
-//#endif
-//#endif
+	//#ifdef _DEBUG
+	//	virtual void AssertValid() const;
+	//#ifndef _WIN32_WCE
+	//	virtual void Dump(CDumpContext& dc) const;
+	//#endif
+	//#endif
 
-//成员函数
+	//成员函数
 public:
 	void InitialUpdate();
 	void SetSize(int width, int hight);
@@ -33,7 +31,7 @@ protected:
 	CSize m_size;
 	CPoint m_start_point;			//绘图的起始位置
 
-    CSkinFile* m_skin_data;
+	CSkinFile* m_skin_data;
 
 protected:
 	virtual void OnDraw(CDC* pDC);      // 重写以绘制该视图
@@ -41,5 +39,3 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 };
-
-

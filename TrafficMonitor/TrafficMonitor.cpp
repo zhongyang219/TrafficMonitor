@@ -241,6 +241,10 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.avoid_overlap_with_widgets = ini.GetBool(_T("task_bar"), _T("avoid_overlap_with_widgets"), false);
     m_taskbar_data.taskbar_left_space_win11 = ini.GetInt(L"task_bar", L"taskbar_left_space_win11", 160);
     m_taskbar_data.taskbar_right_space_win11 = ini.GetInt(L"task_bar", L"taskbar_right_space_win11", 280);
+    
+    m_taskbar_data.enable_plugin_scroll_mode = ini.GetBool(L"task_bar", L"enable_plugin_scroll_mode", false);
+    m_taskbar_data.scroll_plugin_id = ini.GetString(L"task_bar", L"scroll_plugin_id", L"");
+    m_taskbar_data.scroll_interval = ini.GetInt(L"task_bar", L"scroll_interval", 3000);
 
     if (m_win_version.IsWindows10OrLater())     //只有Win10才支持自动适应系统深色/浅色主题
         m_taskbar_data.auto_adapt_light_theme = ini.GetBool(L"task_bar", L"auto_adapt_light_theme", false);
@@ -421,6 +425,10 @@ void CTrafficMonitorApp::SaveConfig()
 
     ini.WriteBool(L"task_bar", L"disable_d2d", m_taskbar_data.disable_d2d);
     ini.WriteBool(L"task_bar", L"enable_colorful_emoji", m_taskbar_data.enable_colorful_emoji);
+    
+    ini.WriteBool(L"task_bar", L"enable_plugin_scroll_mode", m_taskbar_data.enable_plugin_scroll_mode);
+    ini.WriteString(L"task_bar", L"scroll_plugin_id", m_taskbar_data.scroll_plugin_id);
+    ini.WriteInt(L"task_bar", L"scroll_interval", m_taskbar_data.scroll_interval);
 
     //其他设置
     //ini.WriteBool(L"connection_details", L"show_internet_ip", m_cfg_data.m_show_internet_ip);

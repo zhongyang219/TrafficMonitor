@@ -17,7 +17,7 @@ CommonDisplayItem::CommonDisplayItem(IPluginItem* item)
 }
 
 bool CommonDisplayItem::operator<(const CommonDisplayItem& item) const
-{
+{    
     if (is_plugin && !item.is_plugin)
         return false;
     else if (!is_plugin && item.is_plugin)
