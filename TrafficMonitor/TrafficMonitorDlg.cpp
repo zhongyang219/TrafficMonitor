@@ -48,6 +48,17 @@ CTrafficMonitorDlg::~CTrafficMonitorDlg()
     }
 
     ::ReleaseDC(NULL, m_desktop_dc);
+
+    // Destroy notify area icon handles loaded via LoadImage in OnInitDialog
+    // LoadImage creates a copy of the icon resource; each must be freed with DestroyIcon
+    for (int i = 0; i < MAX_NOTIFY_ICON; i++)
+    {
+        if (theApp.m_notify_icons[i] != NULL)
+        {
+            ::DestroyIcon(theApp.m_notify_icons[i]);
+            theApp.m_notify_icons[i] = NULL;
+        }
+    }
 }
 
 CTaskBarDlg* CTrafficMonitorDlg::GetTaskbarWindow() const
