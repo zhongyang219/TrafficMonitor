@@ -635,7 +635,8 @@ UINT CTrafficMonitorApp::InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam)
     theApp.m_pMonitor = OpenHardwareMonitorApi::CreateInstance();
     if (theApp.m_pMonitor == nullptr)
     {
-        AfxMessageBox(OpenHardwareMonitorApi::GetErrorMessage().c_str(), MB_ICONERROR | MB_OK);
+        //初始化失败时只写日志，不弹出模态对话框（自动重新初始化时避免反复弹窗）
+        CCommon::WriteLog(OpenHardwareMonitorApi::GetErrorMessage().c_str(), theApp.m_log_path.c_str());
     }
     //设置硬件监控的启用状态
     theApp.UpdateOpenHardwareMonitorEnableState();

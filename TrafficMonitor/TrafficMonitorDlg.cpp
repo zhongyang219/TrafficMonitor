@@ -1424,23 +1424,20 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
         CString error_info = CCommon::LoadText(IDS_HARDWARE_INFO_ACQUIRE_FAILED_ERROR);
 
-        auto getHardwareInfo = [&]() {
+        auto getHardwareInfo = [&]() -> bool {
             __try
             {
                 theApp.m_pMonitor->GetHardwareInfo();
+                return true;
             }
             __except (EXCEPTION_EXECUTE_HANDLER)
             {
-                AfxMessageBox(error_info, MB_ICONERROR | MB_OK);
+                return false;
             }
         };
 
-        getHardwareInfo();
+        bool hardware_info_succeeded = getHardwareInfo();
         auto monitor_error_message{ OpenHardwareMonitorApi::GetErrorMessage() };
-        if (!monitor_error_message.empty())
-        {
-            AfxMessageBox(monitor_error_message.c_str(), MB_ICONERROR | MB_OK);
-        }
         //theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
         theApp.m_gpu_temperature = theApp.m_pMonitor->GpuTemperature();
         //theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
@@ -1505,6 +1502,40 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
             {
                 theApp.m_hdd_usage = -1;
             }
+        }
+
+        //获取硬件监控数据失败时不再弹出模态对话框（否则每个监控周期都会重新弹出，无法关闭），
+        //改为写入日志，并尝试重新初始化硬件监控，以便从独立显卡掉电等临时故障中自动恢复
+        static int hardware_monitor_error_count = 0;
+        if (!hardware_info_succeeded || !monitor_error_message.empty())
+        {
+            hardware_monitor_error_count++;
+            //第一次失败时立即处理，之后每30个监控周期重试一次
+            if (hardware_monitor_error_count == 1 || hardware_monitor_error_count % 30 == 0)
+            {
+                CString log_info = error_info;
+                if (!monitor_error_message.empty())
+                {
+                    log_info += _T(' ');
+                    log_info += monitor_error_message.c_str();
+                }
+                CCommon::WriteLog(log_info, theApp.m_log_path.c_str());
+                auto releaseMonitor = [&]() {
+                    __try
+                    {
+                        theApp.m_pMonitor.reset();
+                    }
+                    __except (EXCEPTION_EXECUTE_HANDLER)
+                    {
+                    }
+                };
+                releaseMonitor();
+                theApp.InitOpenHardwareLibInThread();
+            }
+        }
+        else
+        {
+            hardware_monitor_error_count = 0;
         }
     }
 #endif
