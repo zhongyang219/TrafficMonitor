@@ -50,7 +50,6 @@ BEGIN_MESSAGE_MAP(CTaskBarDlg, CDialogEx)
     ON_WM_PAINT()
     ON_WM_CLOSE()
     ON_WM_LBUTTONUP()
-    ON_WM_NCHITTEST()
     ON_MESSAGE(WM_EXITMENULOOP, &CTaskBarDlg::OnExitmenuloop)
     ON_MESSAGE(WM_TABLET_QUERYSYSTEMGESTURESTATUS, &CTaskBarDlg::OnTabletQuerysystemgesturestatus)
     ON_WM_MOUSEWHEEL()
@@ -139,9 +138,8 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                       this->m_taskbar_draw_common_window_support.Get(),
                       this->m_d2d1_device_context_support.Get(),
                       d2d_size);
-                  // 仅透明时，且UpdateLayeredWindowIndirect失败时，启用此渲染器，默认初始化为全黑
-                  BYTE bg_alpha = theApp.m_taskbar_data.m_mouse_penetrate ? 0 : 1;
-                  p_draw_common->FillRect(draw_rect, 0x00000000, bg_alpha);
+                  // 仅透明时，且UpdateLayeredWindowIndirect失败时，启用此渲染器，默认初始化为全黑，alpha=1
+                  p_draw_common->FillRect(draw_rect, 0x00000000, 1);
                   p_draw_common->SetFont(&m_font);
                   p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
                   // 构造buffer
@@ -165,9 +163,8 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
                       this->m_taskbar_draw_common_window_support.Get(),
                       this->m_d2d1_device_context_support.Get(),
                       d2d_size);
-                  // 仅透明时启用此渲染器，默认初始化为全黑
-                  BYTE bg_alpha = theApp.m_taskbar_data.m_mouse_penetrate ? 0 : 1;
-                  p_draw_common->FillRect(draw_rect, 0x00000000, bg_alpha);
+                  // 仅透明时启用此渲染器，默认初始化为全黑，alpha=1
+                  p_draw_common->FillRect(draw_rect, 0x00000000, 1);
                   p_draw_common->SetFont(&m_font);
                   p_draw_common->SetBackColor(theApp.m_taskbar_data.back_color);
                   // 构造buffer
@@ -602,6 +599,29 @@ void CTaskBarDlg::ApplyWindowTransparentColor()
     else
     {
         SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) & ~WS_EX_LAYERED);
+    }
+
+    //任务栏窗口鼠标穿透
+    //不能通过WM_NCHITTEST返回HTTRANSPARENT实现：该机制只在同一线程创建的窗口之间传递命中测试，
+    //而本窗口已被SetParent到资源管理器的任务栏中，下方的窗口都属于其他进程，鼠标消息会被直接丢弃。
+    //WS_EX_LAYERED|WS_EX_TRANSPARENT组合由系统在命中测试时直接跳过本窗口，可以跨进程穿透到任务栏。
+    LONG ex_style = GetWindowLong(m_hWnd, GWL_EXSTYLE);
+    if (theApp.m_taskbar_data.m_mouse_penetrate)
+    {
+        if (!(ex_style & WS_EX_LAYERED))
+        {
+            //背景不透明（GDI渲染）时窗口没有分层属性，需要补上WS_EX_LAYERED，并将不透明度设为255以保证窗口正常显示
+            SetWindowLong(m_hWnd, GWL_EXSTYLE, ex_style | WS_EX_LAYERED | WS_EX_TRANSPARENT);
+            SetLayeredWindowAttributes(0, 255, LWA_ALPHA);
+        }
+        else
+        {
+            SetWindowLong(m_hWnd, GWL_EXSTYLE, ex_style | WS_EX_TRANSPARENT);
+        }
+    }
+    else
+    {
+        SetWindowLong(m_hWnd, GWL_EXSTYLE, ex_style & ~WS_EX_TRANSPARENT);
     }
 #endif // !COMPILE_FOR_WINXP
 }
@@ -1451,13 +1471,6 @@ void CTaskBarDlg::OnLButtonUp(UINT nFlags, CPoint point)
     }
 
     CDialogEx::OnLButtonUp(nFlags, point);
-}
-
-LRESULT CTaskBarDlg::OnNcHitTest(CPoint point)
-{
-    if (theApp.m_taskbar_data.m_mouse_penetrate)
-        return HTTRANSPARENT;
-    return CDialogEx::OnNcHitTest(point);
 }
 
 afx_msg LRESULT CTaskBarDlg::OnExitmenuloop(WPARAM wParam, LPARAM lParam)
