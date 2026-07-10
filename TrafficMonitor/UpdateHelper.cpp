@@ -68,6 +68,20 @@ void CUpdateHelper::ParseUpdateInfo(wstring version_info)
     version_xml.LoadXMLContentDirect(version_info);
 
     m_version = version_xml.GetNode(L"version");
+
+    // Validate version string: must only contain digits, dots, and alphanumeric chars.
+    // An empty or malformed version string indicates a tampered/invalid manifest.
+    if (m_version.empty())
+        return;
+    for (wchar_t ch : m_version)
+    {
+        if (!iswalnum(ch) && ch != L'.' && ch != L'-')
+        {
+            m_version.clear();
+            return;
+        }
+    }
+
     wstring str_source_tag = (m_update_source == UpdateSource::GitHubSource ? L"GitHub" : L"Gitee");
     wstring str_link_tag, str_link_tag_x64, str_link_tag_arm64ec;
 #ifdef WITHOUT_TEMPERATURE
@@ -82,6 +96,32 @@ void CUpdateHelper::ParseUpdateInfo(wstring version_info)
     m_link64 = version_xml.GetNode(str_link_tag_x64.c_str(), str_source_tag.c_str());
     m_link = version_xml.GetNode(str_link_tag.c_str(), str_source_tag.c_str());
     m_link_arm64ec = version_xml.GetNode(str_link_tag_arm64ec.c_str(), str_source_tag.c_str());
+
+    // Validate all download URLs: must use HTTPS and originate from a trusted domain.
+    // This prevents a network-level attacker from injecting plain-HTTP or off-domain
+    // download links via a tampered update manifest (MITM / supply-chain protection).
+    auto IsValidDownloadUrl = [](const std::wstring& url) -> bool {
+        if (url.empty())
+            return true;
+        // Enforce HTTPS scheme
+        if (url.compare(0, 8, L"https://") != 0)
+            return false;
+        // Enforce trusted hosting domains (GitHub or Gitee)
+        const std::wstring host = url.substr(8);
+        return (host.compare(0, 11, L"github.com/") == 0 ||
+                host.compare(0, 10, L"gitee.com/") == 0);
+    };
+
+    if (!IsValidDownloadUrl(m_link) || !IsValidDownloadUrl(m_link64) || !IsValidDownloadUrl(m_link_arm64ec))
+    {
+        // Clear all update data to prevent MITM-injected URLs from being acted upon
+        m_version.clear();
+        m_link.clear();
+        m_link64.clear();
+        m_link_arm64ec.clear();
+        return;
+    }
+
     CString contents_zh_cn = version_xml.GetNode(L"contents_zh_cn", L"update_contents").c_str();
     CString contents_en = version_xml.GetNode(L"contents_en", L"update_contents").c_str();
     CString contents_zh_tw = version_xml.GetNode(L"contents_zh_tw", L"update_contents").c_str();
