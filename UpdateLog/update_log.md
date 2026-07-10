@@ -1,7 +1,7 @@
 **简体中文 | [繁體中文](./update_log_zh-tw.md) | [English](./update_log_en-us.md)**
 
 # TrafficMonitor 更新日志
-## V1.82 (2026/03/29)
+## V1.86 (2026/03/29)
 
 **功能新增**
 
