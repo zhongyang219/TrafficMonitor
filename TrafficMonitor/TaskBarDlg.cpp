@@ -600,6 +600,29 @@ void CTaskBarDlg::ApplyWindowTransparentColor()
     {
         SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) & ~WS_EX_LAYERED);
     }
+
+    //任务栏窗口鼠标穿透
+    //不能通过WM_NCHITTEST返回HTTRANSPARENT实现：该机制只在同一线程创建的窗口之间传递命中测试，
+    //而本窗口已被SetParent到资源管理器的任务栏中，下方的窗口都属于其他进程，鼠标消息会被直接丢弃。
+    //WS_EX_LAYERED|WS_EX_TRANSPARENT组合由系统在命中测试时直接跳过本窗口，可以跨进程穿透到任务栏。
+    LONG ex_style = GetWindowLong(m_hWnd, GWL_EXSTYLE);
+    if (theApp.m_taskbar_data.m_mouse_penetrate)
+    {
+        if (!(ex_style & WS_EX_LAYERED))
+        {
+            //背景不透明（GDI渲染）时窗口没有分层属性，需要补上WS_EX_LAYERED，并将不透明度设为255以保证窗口正常显示
+            SetWindowLong(m_hWnd, GWL_EXSTYLE, ex_style | WS_EX_LAYERED | WS_EX_TRANSPARENT);
+            SetLayeredWindowAttributes(0, 255, LWA_ALPHA);
+        }
+        else
+        {
+            SetWindowLong(m_hWnd, GWL_EXSTYLE, ex_style | WS_EX_TRANSPARENT);
+        }
+    }
+    else
+    {
+        SetWindowLong(m_hWnd, GWL_EXSTYLE, ex_style & ~WS_EX_TRANSPARENT);
+    }
 #endif // !COMPILE_FOR_WINXP
 }
 
