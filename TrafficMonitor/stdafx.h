@@ -41,6 +41,8 @@ using std::wstring;
 using std::vector;
 #include <deque>
 using std::deque;
+#include <list>
+using std::list;
 #include<iostream>
 #include<fstream>
 using std::ifstream;
