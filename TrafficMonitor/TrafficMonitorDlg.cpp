@@ -1739,7 +1739,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             {
                 if (last_value < setting_data.tip_value && value >= setting_data.tip_value && (m_timer_cnt - notify_time > static_cast<unsigned int>(theApp.m_notify_interval)))
                 {
-                    ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY), tip_str);
+                    ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY, _T("")), tip_str);
                     notify_time = m_timer_cnt;
                 }
                 last_value = value;
@@ -1792,7 +1792,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             if (last_today_traffic < traffic_tip_value && today_traffic >= traffic_tip_value)
             {
                 CString info = CCommon::LoadText(IDS_TODAY_TRAFFIC_EXCEED, CCommon::DataSizeToString(today_traffic));
-                ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY), info.GetString());
+                ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY, _T("")), info.GetString());
             }
             last_today_traffic = today_traffic;
         }
@@ -2194,7 +2194,7 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
     if (uMsg == ID_CMD_TEST)
     {
         CTest::TestCommand();
-        //ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY), _T("测试通知"));
+        //ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY, _T("")), _T("测试通知"));
 
     }
 #endif // DEBUG
