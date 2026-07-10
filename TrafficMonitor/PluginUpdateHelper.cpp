@@ -46,8 +46,14 @@ bool PluginVersion::operator<(const PluginVersion& another) const
 {
     for (size_t i{}; i < m_version.size() || i < another.m_version.size(); i++)
     {
-        if (GetSubVersion(i) < another.GetSubVersion(i))
+        const int lhs = GetSubVersion(i);
+        const int rhs = another.GetSubVersion(i);
+
+        if (lhs < rhs)
             return true;
+
+        if (lhs > rhs)
+            return false;
     }
     return false;
 }
