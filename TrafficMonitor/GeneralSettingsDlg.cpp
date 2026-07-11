@@ -226,6 +226,8 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_MEMORY_USAGE_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedMemoryUsageTipCheck)
     ON_BN_CLICKED(IDC_OPEN_CONFIG_PATH_BUTTON, &CGeneralSettingsDlg::OnBnClickedOpenConfigPathButton)
     ON_BN_CLICKED(IDC_SHOW_ALL_CONNECTION_CHECK, &CGeneralSettingsDlg::OnBnClickedShowAllConnectionCheck)
+    ON_BN_CLICKED(IDC_USE_CPU_TIME_RADIO, &CGeneralSettingsDlg::OnBnClickedUseCpuTimeRadio)
+    ON_BN_CLICKED(IDC_USE_PDH_RADIO, &CGeneralSettingsDlg::OnBnClickedUsePdhRadio)
     ON_EN_KILLFOCUS(IDC_MONITOR_SPAN_EDIT, &CGeneralSettingsDlg::OnEnKillfocusMonitorSpanEdit)
     ON_BN_CLICKED(IDC_CPU_TEMP_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedCpuTempTipCheck)
     ON_BN_CLICKED(IDC_GPU_TEMP_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedGpuTempTipCheck)
@@ -370,6 +372,15 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     m_toolTip.AddTool(GetDlgItem(IDC_SAVE_TO_APPDATA_RADIO), theApp.m_appdata_dir.c_str());
     m_toolTip.AddTool(GetDlgItem(IDC_SAVE_TO_PROGRAM_DIR_RADIO), theApp.m_module_dir.c_str());
     AddOrUpdateAutoRunTooltip(true);
+
+    if (m_data.cpu_usage_acquire_method == GeneralSettingData::CA_CPU_TIME)
+    {
+        CheckDlgButton(IDC_USE_CPU_TIME_RADIO, TRUE);
+    }
+    else if (m_data.cpu_usage_acquire_method == GeneralSettingData::CA_PDH)
+    {
+        CheckDlgButton(IDC_USE_PDH_RADIO, TRUE);
+    }
 
     m_monitor_span_edit.SetRange(MONITOR_TIME_SPAN_MIN, MONITOR_TIME_SPAN_MAX, MONITOR_SPAN_STEP);
     m_monitor_span_edit.SetValue(m_data.monitor_time_span);
@@ -572,6 +583,17 @@ BOOL CGeneralSettingsDlg::PreTranslateMessage(MSG* pMsg)
         m_toolTip.RelayEvent(pMsg);
 
     return CTabDlg::PreTranslateMessage(pMsg);
+}
+
+void CGeneralSettingsDlg::OnBnClickedUseCpuTimeRadio()
+{
+    m_data.cpu_usage_acquire_method = GeneralSettingData::CA_CPU_TIME;
+}
+
+
+void CGeneralSettingsDlg::OnBnClickedUsePdhRadio()
+{
+    m_data.cpu_usage_acquire_method = GeneralSettingData::CA_PDH;
 }
 
 afx_msg LRESULT CGeneralSettingsDlg::OnSpinEditPosChanged(WPARAM wParam, LPARAM lParam)

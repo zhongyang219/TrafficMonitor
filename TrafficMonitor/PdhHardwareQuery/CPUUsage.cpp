@@ -32,21 +32,28 @@ CCPUUsage::CCPUUsage()
 {
 }
 
-int CCPUUsage::GetCpuUsage()
+int CCPUUsage::GetCpuUsage(bool use_cpu_time)
 {
     int cpu_usage{};
-    //如果通过pdh获取CPU利用率失败，采用GetSystemTimes获取
-    if (!m_pdh_cup_usage_query.GetCPUUsage(cpu_usage))
+    if (use_cpu_time)
     {
         cpu_usage = GetCpuUsageByGetSystemTimes();
-        //写入日志
-        //static bool write_log = false;
-        //if (!write_log)
-        //{
-        //    CString str_log = CCommon::LoadTextFormat(IDS_GET_CPU_USAGE_BY_PDH_FAILED_LOG, { fullCounterPath });
-        //    CCommon::WriteLog(str_log, theApp.m_log_path.c_str());
-        //    write_log = true;
-        //}
+    }
+    else
+    {
+        //如果通过pdh获取CPU利用率失败，采用GetSystemTimes获取
+        if (!m_pdh_cup_usage_query.GetCPUUsage(cpu_usage))
+        {
+            cpu_usage = GetCpuUsageByGetSystemTimes();
+            //写入日志
+            //static bool write_log = false;
+            //if (!write_log)
+            //{
+            //    CString str_log = CCommon::LoadTextFormat(IDS_GET_CPU_USAGE_BY_PDH_FAILED_LOG, { fullCounterPath });
+            //    CCommon::WriteLog(str_log, theApp.m_log_path.c_str());
+            //    write_log = true;
+            //}
+        }
     }
     return cpu_usage;
 }

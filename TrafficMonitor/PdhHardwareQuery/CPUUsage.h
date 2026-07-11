@@ -25,7 +25,7 @@ public:
     ~CCPUUsage()
     {}
 
-    int GetCpuUsage();
+    int GetCpuUsage(bool use_cpu_time);
 
 private:
     int GetCpuUsageByGetSystemTimes();
