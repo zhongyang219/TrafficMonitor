@@ -15,7 +15,7 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
       
-    - name: Install required Visual Studio components (MFC, VC tools, Windows SDK)
+    - name: Install required Visual Studio components (Native Desktop workload: MFC, VC tools, Windows SDK)
       shell: pwsh
       run: |
         # find VS install path
@@ -32,13 +32,15 @@ jobs:
         }
         Write-Host "Found Visual Studio at: $vsPath"
         Write-Host "Running vs_installer: $installer"
-        # add components: MFC (ATLMFC), common VC tools, and Windows SDK (adjust component IDs if your project needs a specific SDK)
+
+        # Install Native Desktop workload which includes MFC, plus explicit VC tools and SDK component(s)
         $components = @(
-          "Microsoft.VisualStudio.Component.VC.ATLMFC",
-          "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
-          "Microsoft.VisualStudio.Component.Windows10SDK.19041"
+          "Microsoft.VisualStudio.Workload.NativeDesktop",            # Native Desktop workload (includes MFC)
+          "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",        # common VC tools
+          "Microsoft.VisualStudio.Component.VC.ATLMFC",               # explicit MFC component (redundant but safe)
+          "Microsoft.VisualStudio.Component.Windows10SDK.19041"       # explicit Windows SDK (adjust if needed)
         ) -join ","
-        Write-Host "Adding components: $components"
+        Write-Host "Adding components/workloads: $components"
         & $installer modify --installPath $vsPath --add $components --passive --norestart --wait
         $code = $LASTEXITCODE
         Write-Host "vs_installer exit code: $code"
@@ -46,7 +48,8 @@ jobs:
           Write-Error "Visual Studio installer failed. Inspect runner logs."
           exit $code
         }
-        # sanity-check presence of MFC headers/libraries
+
+        # sanity-check presence of VC Tools directory
         $mfcHeader = Join-Path $vsPath "VC\Tools\MSVC"
         if (-not (Get-ChildItem $mfcHeader -Directory -ErrorAction SilentlyContinue)) {
           Write-Warning "VC Tools directory not detected under $mfcHeader; build may still fail."
@@ -54,18 +57,18 @@ jobs:
           Write-Host "VC Tools installed at: $(Get-ChildItem $mfcHeader -Directory | Select-Object -First 1).Name"
         }
          
-    - name: Verify Visual Studio MFC component
+    - name: Verify Visual Studio Native Desktop / MFC installed
       shell: pwsh
       run: |
         $vswhere = Join-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer" "vswhere.exe"
         if (-not (Test-Path $vswhere)) {
           Write-Warning "vswhere.exe not found at $vswhere"
         } else {
-          $mfcPath = & $vswhere -products * -requires Microsoft.VisualStudio.Component.VC.ATLMFC -property installationPath 2>$null
+          $mfcPath = & $vswhere -products * -requires Microsoft.VisualStudio.Workload.NativeDesktop,Microsoft.VisualStudio.Component.VC.ATLMFC -property installationPath 2>$null
           if ([string]::IsNullOrWhiteSpace($mfcPath)) {
-            Write-Host "MFC component not detected by vswhere"
+            Write-Host "NativeDesktop/MFC not detected by vswhere"
           } else {
-            Write-Host "MFC component detected at: $mfcPath"
+            Write-Host "NativeDesktop/MFC detected at: $mfcPath"
           }
         }
 
@@ -102,7 +105,7 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
       
-    - name: Install required Visual Studio components (MFC, VC tools, Windows SDK)
+    - name: Install required Visual Studio components (Native Desktop workload: MFC, VC tools, Windows SDK)
       shell: pwsh
       run: |
         # find VS install path
@@ -119,13 +122,14 @@ jobs:
         }
         Write-Host "Found Visual Studio at: $vsPath"
         Write-Host "Running vs_installer: $installer"
-        # add components: MFC (ATLMFC), common VC tools, and Windows SDK (adjust component IDs if your project needs a specific SDK)
+
         $components = @(
-          "Microsoft.VisualStudio.Component.VC.ATLMFC",
+          "Microsoft.VisualStudio.Workload.NativeDesktop",
           "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+          "Microsoft.VisualStudio.Component.VC.ATLMFC",
           "Microsoft.VisualStudio.Component.Windows10SDK.19041"
         ) -join ","
-        Write-Host "Adding components: $components"
+        Write-Host "Adding components/workloads: $components"
         & $installer modify --installPath $vsPath --add $components --passive --norestart --wait
         $code = $LASTEXITCODE
         Write-Host "vs_installer exit code: $code"
@@ -133,26 +137,26 @@ jobs:
           Write-Error "Visual Studio installer failed. Inspect runner logs."
           exit $code
         }
-        # sanity-check presence of MFC headers/libraries
         $mfcHeader = Join-Path $vsPath "VC\Tools\MSVC"
         if (-not (Get-ChildItem $mfcHeader -Directory -ErrorAction SilentlyContinue)) {
           Write-Warning "VC Tools directory not detected under $mfcHeader; build may still fail."
         } else {
           Write-Host "VC Tools installed at: $(Get-ChildItem $mfcHeader -Directory | Select-Object -First 1).Name"
+       
         }
-         
-    - name: Verify Visual Studio MFC component
+
+    - name: Verify Visual Studio Native Desktop / MFC installed
       shell: pwsh
       run: |
         $vswhere = Join-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer" "vswhere.exe"
         if (-not (Test-Path $vswhere)) {
           Write-Warning "vswhere.exe not found at $vswhere"
         } else {
-          $mfcPath = & $vswhere -products * -requires Microsoft.VisualStudio.Component.VC.ATLMFC -property installationPath 2>$null
+          $mfcPath = & $vswhere -products * -requires Microsoft.VisualStudio.Workload.NativeDesktop,Microsoft.VisualStudio.Component.VC.ATLMFC -property installationPath 2>$null
           if ([string]::IsNullOrWhiteSpace($mfcPath)) {
-            Write-Host "MFC component not detected by vswhere"
+            Write-Host "NativeDesktop/MFC not detected by vswhere"
           } else {
-            Write-Host "MFC component detected at: $mfcPath"
+            Write-Host "NativeDesktop/MFC detected at: $mfcPath"
           }
         }
       
@@ -189,7 +193,7 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
       
-    - name: Install required Visual Studio components (MFC, VC tools, Windows SDK)
+    - name: Install required Visual Studio components (Native Desktop workload: MFC, VC tools, Windows SDK)
       shell: pwsh
       run: |
         # find VS install path
@@ -206,13 +210,15 @@ jobs:
         }
         Write-Host "Found Visual Studio at: $vsPath"
         Write-Host "Running vs_installer: $installer"
-        # add components: MFC (ATLMFC), common VC tools, and Windows SDK (adjust component IDs if your project needs a specific SDK)
+
+        # For ARM/ARM64 targets the NativeDesktop workload typically provides MFC; if you target ARM specifically you can add ARM tools here.
         $components = @(
-          "Microsoft.VisualStudio.Component.VC.ATLMFC",
+          "Microsoft.VisualStudio.Workload.NativeDesktop",
           "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+          "Microsoft.VisualStudio.Component.VC.ATLMFC",
           "Microsoft.VisualStudio.Component.Windows10SDK.19041"
         ) -join ","
-        Write-Host "Adding components: $components"
+        Write-Host "Adding components/workloads: $components"
         & $installer modify --installPath $vsPath --add $components --passive --norestart --wait
         $code = $LASTEXITCODE
         Write-Host "vs_installer exit code: $code"
@@ -220,7 +226,6 @@ jobs:
           Write-Error "Visual Studio installer failed. Inspect runner logs."
           exit $code
         }
-        # sanity-check presence of MFC headers/libraries
         $mfcHeader = Join-Path $vsPath "VC\Tools\MSVC"
         if (-not (Get-ChildItem $mfcHeader -Directory -ErrorAction SilentlyContinue)) {
           Write-Warning "VC Tools directory not detected under $mfcHeader; build may still fail."
@@ -228,18 +233,18 @@ jobs:
           Write-Host "VC Tools installed at: $(Get-ChildItem $mfcHeader -Directory | Select-Object -First 1).Name"
         }
          
-    - name: Verify Visual Studio MFC component
+    - name: Verify Visual Studio Native Desktop / MFC installed
       shell: pwsh
       run: |
         $vswhere = Join-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer" "vswhere.exe"
         if (-not (Test-Path $vswhere)) {
           Write-Warning "vswhere.exe not found at $vswhere"
         } else {
-          $mfcPath = & $vswhere -products * -requires Microsoft.VisualStudio.Component.VC.ATLMFC -property installationPath 2>$null
+          $mfcPath = & $vswhere -products * -requires Microsoft.VisualStudio.Workload.NativeDesktop,Microsoft.VisualStudio.Component.VC.ATLMFC -property installationPath 2>$null
           if ([string]::IsNullOrWhiteSpace($mfcPath)) {
-            Write-Host "MFC component not detected by vswhere"
+            Write-Host "NativeDesktop/MFC not detected by vswhere"
           } else {
-            Write-Host "MFC component detected at: $mfcPath"
+            Write-Host "NativeDesktop/MFC detected at: $mfcPath"
           }
         }
 
