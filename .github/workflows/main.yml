@@ -15,12 +15,50 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
       
-    - name: Install MFC components
+    - name: Install required Visual Studio components (MFC, VC tools, Windows SDK)
       shell: pwsh
       run: |
+        # find VS install path
         $vsPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
-        & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath $vsPath --add Microsoft.VisualStudio.Component.VC.ATLMFC --quiet --norestart --wait
-          
+        if (-not $vsPath) {
+          Write-Error "Visual Studio not found via vswhere. Contents of 'ProgramFiles(x86)\\Microsoft Visual Studio\\Installer':"
+          Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer" -Force | Format-List
+          exit 1
+        }
+        $installer = Join-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer" "vs_installer.exe"
+        if (-not (Test-Path $installer)) {
+          Write-Error "vs_installer.exe not found at $installer"
+          exit 1
+        }
+        Write-Host "Found Visual Studio at: $vsPath"
+        Write-Host "Running vs_installer: $installer"
+        # add components: MFC (ATLMFC), common VC tools, and Windows SDK (adjust component IDs if your project needs a specific SDK)
+        $components = @(
+          "Microsoft.VisualStudio.Component.VC.ATLMFC",
+          "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+          "Microsoft.VisualStudio.Component.Windows10SDK.19041"
+        ) -join ","
+        Write-Host "Adding components: $components"
+        & $installer modify --installPath $vsPath --add $components --passive --norestart --wait
+        $code = $LASTEXITCODE
+        Write-Host "vs_installer exit code: $code"
+        if ($code -ne 0) {
+          Write-Error "Visual Studio installer failed. Inspect runner logs."
+          exit $code
+        }
+        # sanity-check presence of MFC headers/libraries
+        $mfcHeader = Join-Path $vsPath "VC\Tools\MSVC"
+        if (-not (Get-ChildItem $mfcHeader -Directory -ErrorAction SilentlyContinue)) {
+          Write-Warning "VC Tools directory not detected under $mfcHeader; build may still fail."
+        } else {
+          Write-Host "VC Tools installed at: $(Get-ChildItem $mfcHeader -Directory | Select-Object -First 1).Name"
+        }
+         
+    - name: Verify Visual Studio MFC component
+      shell: pwsh
+      run: |
+        & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" --products * --requires Microsoft.VisualStudio.Component.VC.ATLMFC --property installationPath || Write-Host "MFC component not detected by vswhere"
+
     - name: Run msbuild
       run: msbuild TrafficMonitor_Lite.sln -p:configuration="Release (lite)" -p:platform=x64 -p:platformToolset=v143
       
@@ -54,12 +92,50 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
       
-    - name: Install MFC components
+    - name: Install required Visual Studio components (MFC, VC tools, Windows SDK)
       shell: pwsh
       run: |
+        # find VS install path
         $vsPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
-        & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath $vsPath --add Microsoft.VisualStudio.Component.VC.ATLMFC --quiet --norestart --wait
-          
+        if (-not $vsPath) {
+          Write-Error "Visual Studio not found via vswhere. Contents of 'ProgramFiles(x86)\\Microsoft Visual Studio\\Installer':"
+          Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer" -Force | Format-List
+          exit 1
+        }
+        $installer = Join-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer" "vs_installer.exe"
+        if (-not (Test-Path $installer)) {
+          Write-Error "vs_installer.exe not found at $installer"
+          exit 1
+        }
+        Write-Host "Found Visual Studio at: $vsPath"
+        Write-Host "Running vs_installer: $installer"
+        # add components: MFC (ATLMFC), common VC tools, and Windows SDK (adjust component IDs if your project needs a specific SDK)
+        $components = @(
+          "Microsoft.VisualStudio.Component.VC.ATLMFC",
+          "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+          "Microsoft.VisualStudio.Component.Windows10SDK.19041"
+        ) -join ","
+        Write-Host "Adding components: $components"
+        & $installer modify --installPath $vsPath --add $components --passive --norestart --wait
+        $code = $LASTEXITCODE
+        Write-Host "vs_installer exit code: $code"
+        if ($code -ne 0) {
+          Write-Error "Visual Studio installer failed. Inspect runner logs."
+          exit $code
+        }
+        # sanity-check presence of MFC headers/libraries
+        $mfcHeader = Join-Path $vsPath "VC\Tools\MSVC"
+        if (-not (Get-ChildItem $mfcHeader -Directory -ErrorAction SilentlyContinue)) {
+          Write-Warning "VC Tools directory not detected under $mfcHeader; build may still fail."
+        } else {
+          Write-Host "VC Tools installed at: $(Get-ChildItem $mfcHeader -Directory | Select-Object -First 1).Name"
+        }
+         
+    - name: Verify Visual Studio MFC component
+      shell: pwsh
+      run: |
+        & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" --products * --requires Microsoft.VisualStudio.Component.VC.ATLMFC --property installationPath || Write-Host "MFC component not detected by vswhere"
+      
     - name: Run msbuild
       run: msbuild TrafficMonitor_Lite.sln -p:configuration="Release (lite)" -p:platform=x86 -p:platformToolset=v143
       
@@ -93,12 +169,50 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
       
-    - name: Install MFC components
+    - name: Install required Visual Studio components (MFC, VC tools, Windows SDK)
       shell: pwsh
       run: |
+        # find VS install path
         $vsPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
-        & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath $vsPath --add Microsoft.VisualStudio.Component.VC.ATLMFC --quiet --norestart --wait
-          
+        if (-not $vsPath) {
+          Write-Error "Visual Studio not found via vswhere. Contents of 'ProgramFiles(x86)\\Microsoft Visual Studio\\Installer':"
+          Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer" -Force | Format-List
+          exit 1
+        }
+        $installer = Join-Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer" "vs_installer.exe"
+        if (-not (Test-Path $installer)) {
+          Write-Error "vs_installer.exe not found at $installer"
+          exit 1
+        }
+        Write-Host "Found Visual Studio at: $vsPath"
+        Write-Host "Running vs_installer: $installer"
+        # add components: MFC (ATLMFC), common VC tools, and Windows SDK (adjust component IDs if your project needs a specific SDK)
+        $components = @(
+          "Microsoft.VisualStudio.Component.VC.ATLMFC",
+          "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+          "Microsoft.VisualStudio.Component.Windows10SDK.19041"
+        ) -join ","
+        Write-Host "Adding components: $components"
+        & $installer modify --installPath $vsPath --add $components --passive --norestart --wait
+        $code = $LASTEXITCODE
+        Write-Host "vs_installer exit code: $code"
+        if ($code -ne 0) {
+          Write-Error "Visual Studio installer failed. Inspect runner logs."
+          exit $code
+        }
+        # sanity-check presence of MFC headers/libraries
+        $mfcHeader = Join-Path $vsPath "VC\Tools\MSVC"
+        if (-not (Get-ChildItem $mfcHeader -Directory -ErrorAction SilentlyContinue)) {
+          Write-Warning "VC Tools directory not detected under $mfcHeader; build may still fail."
+        } else {
+          Write-Host "VC Tools installed at: $(Get-ChildItem $mfcHeader -Directory | Select-Object -First 1).Name"
+        }
+         
+    - name: Verify Visual Studio MFC component
+      shell: pwsh
+      run: |
+        & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" --products * --requires Microsoft.VisualStudio.Component.VC.ATLMFC --property installationPath || Write-Host "MFC component not detected by vswhere"
+
     - name: Run msbuild
       run: msbuild TrafficMonitor_Lite.sln -p:configuration="Release (lite)" -p:platform=ARM64EC -p:platformToolset=v143
       
