@@ -15,7 +15,7 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
       
-    - name: Install required Visual Studio components (Native Desktop workload: MFC, VC tools, Windows SDK)
+    - name: Install required Visual Studio components (Native Desktop workload MFC, VC tools, Windows SDK)
       shell: pwsh
       run: |
         # find VS install path
@@ -105,7 +105,7 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
       
-    - name: Install required Visual Studio components (Native Desktop workload: MFC, VC tools, Windows SDK)
+    - name: Install required Visual Studio components (Native Desktop workload MFC, VC tools, Windows SDK)
       shell: pwsh
       run: |
         # find VS install path
@@ -193,7 +193,7 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
       
-    - name: Install required Visual Studio components (Native Desktop workload: MFC, VC tools, Windows SDK)
+    - name: Install required Visual Studio components (Native Desktop workload MFC, VC tools, Windows SDK)
       shell: pwsh
       run: |
         # find VS install path
