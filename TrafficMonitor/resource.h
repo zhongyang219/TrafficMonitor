@@ -346,6 +346,8 @@
 #define IDC_MBD_TEMP_TIP_EDIT           1219
 #define IDC_AUTO_RUN_METHOD_REGESTRY_RADIO 1220
 #define IDC_AUTO_RUN_METHOD_TASK_SCHEDULE_RADIO 1221
+#define IDC_SPEED_DECIMAL_PLACES_EDIT   1222
+#define IDC_SPEED_DECIMAL_PLACES_STATIC 1223
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
