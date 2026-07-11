@@ -176,7 +176,7 @@ private:
         {
             if (m_szDumpFilePath[nIndex] == TEXT('\\'))
             {
-                ::memmove(m_szModuleFileName, m_szDumpFilePath + nIndex + 1, (int)_tcslen(m_szDumpFilePath));
+                ::StringCchCopy(m_szModuleFileName, MAX_PATH, m_szDumpFilePath + nIndex + 1);
                 m_szDumpFilePath[nIndex + 1] = 0;
                 break;
             }
