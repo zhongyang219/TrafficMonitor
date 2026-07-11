@@ -85,6 +85,13 @@ void CPluginManager::LoadPlugins()
             plugin_info.state = PluginState::PS_VERSION_NOT_SUPPORT;
             continue;
         }
+
+        //调用初始化函数
+        if (version >= 7)
+        {
+            plugin_info.plugin->OnInitialize(&theApp);
+        }
+
         //向插件传递配置文件的路径
         std::wstring config_dir = theApp.m_config_dir;
         config_dir += L"plugins\\";
@@ -92,12 +99,6 @@ void CPluginManager::LoadPlugins()
         {
             CreateDirectory(config_dir.c_str(), NULL);       //如果plugins不存在，则创建它
             plugin_info.plugin->OnExtenedInfo(ITMPlugin::EI_CONFIG_DIR, config_dir.c_str());
-        }
-
-        //调用初始化函数
-        if (version >= 7)
-        {
-            plugin_info.plugin->OnInitialize(&theApp);
         }
 
         //获取插件信息
