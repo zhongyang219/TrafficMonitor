@@ -354,6 +354,7 @@ void CMainWndSettingsDlg::OnBnClickedSetFontButton()
     CCommon::WStringCopy(lf.lfFaceName, 32, m_data.font.name.GetString());
     CCommon::NormalizeFont(lf);
     CFontDialog fontDlg(&lf);   //构造字体对话框，初始选择字体为之前字体
+    fontDlg.m_cf.Flags |= CF_NOVERTFONTS;   //过滤掉以 "@" 开头的竖排字体
     if (IDOK == fontDlg.DoModal())     // 显示字体对话框
     {
         //获取字体信息
