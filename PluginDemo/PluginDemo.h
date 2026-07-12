@@ -3,6 +3,8 @@
 #include "PluginSystemDate.h"
 #include "PluginSystemTime.h"
 #include "CustomDrawItem.h"
+#include "CustomDrawItem2.h"
+#include <map>
 
 class CPluginDemo : public ITMPlugin
 {
@@ -11,6 +13,8 @@ private:
 
 public:
     static CPluginDemo& Instance();
+    HICON GetIcon(UINT id);
+    int DPI(int x, ITrafficMonitor::DPIType type = ITrafficMonitor::DPI_MAIN_WND);
 
     // 通过 ITMPlugin 继承
     virtual IPluginItem* GetItem(int index) override;
@@ -24,9 +28,11 @@ private:
     CPluginSystemDate m_system_date;
     CPluginSystemTime m_system_time;
     CCustomDrawItem m_custom_draw_item;
+    CCustomDrawItem2 m_custom_draw_item2;
     ITrafficMonitor* m_app{};
 
     static CPluginDemo m_instance;
+    std::map<UINT, HICON> m_icon_map;
 };
 
 #ifdef __cplusplus

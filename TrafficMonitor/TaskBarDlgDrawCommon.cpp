@@ -1962,6 +1962,19 @@ void CTaskBarDlgDrawCommon::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSiz
     m_p_device_context->DrawBitmap(p_d2d1_bitmap.Get(), draw_rect_f, opacity);
 }
 
+void CTaskBarDlgDrawCommon::DrawIcon(HICON hIcon, CPoint start_point, CSize size)
+{
+    // TODO: 这里直接使用GDI方式绘制图标，后续应替换成Direct2D的实现以获得更好的显示效果
+    ExecuteGdiOperation(CRect(start_point, size), [hIcon, start_point, size](HDC gdi_dc) {
+        if (gdi_dc == NULL)
+            return;
+        if (size.cx == 0 || size.cy == 0)
+            ::DrawIconEx(gdi_dc, start_point.x, start_point.y, hIcon, 0, 0, 0, NULL, DI_NORMAL | DI_DEFAULTSIZE);
+        else
+            ::DrawIconEx(gdi_dc, start_point.x, start_point.y, hIcon, size.cx, size.cy, 0, NULL, DI_NORMAL);
+    });
+}
+
 CTaskBarDlgDrawBuffer::CTaskBarDlgDrawBuffer(
     CTaskBarDlgDrawCommonWindowSupport& taskbar_dlg_draw_common_window_support,
     CD2D1DeviceContextWindowSupport& ref_d2d1_device_context_support,

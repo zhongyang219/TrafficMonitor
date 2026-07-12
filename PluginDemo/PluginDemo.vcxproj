@@ -244,6 +244,7 @@
   <ItemGroup>
     <ClInclude Include="..\include\PluginInterface.h" />
     <ClInclude Include="CustomDrawItem.h" />
+    <ClInclude Include="CustomDrawItem2.h" />
     <ClInclude Include="DataManager.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="OptionsDlg.h" />
@@ -255,6 +256,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CustomDrawItem.cpp" />
+    <ClCompile Include="CustomDrawItem2.cpp" />
     <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="OptionsDlg.cpp" />
     <ClCompile Include="pch.cpp">
@@ -271,6 +273,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PluginDemo.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -45,6 +45,9 @@
     <ClInclude Include="CustomDrawItem.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="CustomDrawItem2.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -68,10 +71,18 @@
     <ClCompile Include="CustomDrawItem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="CustomDrawItem2.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PluginDemo.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\icon.ico">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

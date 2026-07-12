@@ -5,6 +5,8 @@
 **********************************************************/
 #pragma once
 
+class IPluginDrawer;
+
 //插件显示项目的接口
 class IPluginItem
 {
@@ -149,6 +151,18 @@ public:
      * @return float 资源占用图的值，范围为0.0~1.0。
      */
     virtual float GetResourceUsageGraphValue() const { return 0.0; }
+
+    /**
+     * @brief   自定义绘制显示区域的函数，只有当CustomDraw()函数返回true时重写此函数才有效
+     * @param   IPluginDrawer* pDrawer 用于插件绘图接口的的指针
+     * @param   int x 绘图的矩形区域
+     * @param   int y
+     * @param   int w
+     * @param   int h
+     * @param   bool dark_mode 深色模式为true，浅色模式为false
+     * @return  bool 未实现返回false，如果实现了此函数并使用了pDrawer绘图，则应返回true
+     */
+    virtual bool DrawItemEx(IPluginDrawer* pDrawer, int x, int y, int w, int h, bool dark_mode) { return false; }
 };
 
 class ITrafficMonitor;
@@ -163,7 +177,7 @@ public:
      * @attention 插件开发者不应该修改这里的返回值，也不应该重写此虚函数。
      * @return  int
      */
-    virtual int GetAPIVersion() const { return 7; }
+    virtual int GetAPIVersion() const { return 8; }
 
     /**
      * @brief   获取插件显示项目的对象
@@ -423,6 +437,51 @@ public:
 };
 
 
+//插件绘图接口
+class IPluginDrawer
+{
+public:
+    // 拉伸模式
+    enum StretchMode
+    {
+        STRETCH, // 拉伸，会改变比例
+        FILL,    // 填充，不改变比例，会裁剪长边
+        FIT      // 适应，不会改变比例，不裁剪
+    };
+
+    //对齐方式
+    enum Alignment
+    {
+        LEFT,       //左对齐
+        RIGHT,      //右对齐
+        CENTER,     //居中
+    };
+
+    virtual void SetBackColor(unsigned long back_color, unsigned char alpha = 255) = 0;
+
+    // 在指定的矩形区域内绘制文本
+    virtual void DrawWindowText(int x, int y, int w, int h, const wchar_t* lpszString, unsigned long color, Alignment align = Alignment::LEFT, bool draw_back_ground = false, bool multi_line = false, unsigned char alpha = 255) = 0;
+
+    // 设置绘图剪辑区域
+    virtual void SetDrawRect(int x, int y, int w, int h) = 0;
+
+    // 用纯色填充矩形
+    virtual void FillRect(int x, int y, int w, int h, unsigned long color, unsigned char alpha = 255) = 0;
+    
+    // 绘制矩形边框。如果dot_line为true，则为虚线
+    virtual void DrawRectOutLine(int x, int y, int w, int h, unsigned long color, int width = 1, bool dot_line = false, unsigned char alpha = 255) = 0;
+
+    virtual void SetTextColor(const unsigned long color, unsigned char alpha = 255) = 0;
+
+    // 绘制一个位图
+    // （注意：当stretch_mode设置为StretchMode::FILL（填充）时，会设置绘图剪辑区域，如果之后需要绘制其他图形，
+    // 需要重新设置绘图剪辑区域，否则图片外的区域会无法绘制）
+    virtual void DrawBitmap(void* hbitmap, int x, int y, int w, int h, StretchMode stretch_mode = StretchMode::STRETCH, unsigned char alpha = 255) = 0;
+
+    virtual void DrawIcon(void* hIcon, int x, int y, int w, int h) = 0;
+};
+
+
 /*
 * 注意：插件dll需导出以下函数
 * ITMPlugin* TMPluginGetInstance();
@@ -450,5 +509,7 @@ public:
 *     6       | 新增 IPluginItem::GetResourceUsageGraphType IPluginItem::GetResourceUsageGraphValue 函数
 * -------------------------------------------------------------------------
 *     7       | 新增 ITMPlugin::OnInitialize 函数
+* -------------------------------------------------------------------------
+*     8       | 新增 IPluginItem::DrawItemEx 函数
 * -------------------------------------------------------------------------
 */

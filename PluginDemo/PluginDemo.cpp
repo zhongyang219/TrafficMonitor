@@ -14,6 +14,28 @@ CPluginDemo& CPluginDemo::Instance()
     return m_instance;
 }
 
+HICON CPluginDemo::GetIcon(UINT id)
+{
+    auto iter = m_icon_map.find(id);
+    if (iter != m_icon_map.end())
+    {
+        return iter->second;
+    }
+    else
+    {
+        AFX_MANAGE_STATE(AfxGetStaticModuleState());
+        HICON hIcon = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(id), IMAGE_ICON, DPI(16), DPI(16), 0);;
+        m_icon_map[id] = hIcon;
+        return hIcon;
+    }
+}
+
+int CPluginDemo::DPI(int x, ITrafficMonitor::DPIType type)
+{
+    int dpi = m_app->GetDPI(type);
+    return x * dpi / 96;
+}
+
 IPluginItem* CPluginDemo::GetItem(int index)
 {
     switch (index)
@@ -24,6 +46,8 @@ IPluginItem* CPluginDemo::GetItem(int index)
         return &m_system_time;
     case 2:
         return &m_custom_draw_item;
+    case 3:
+        return &m_custom_draw_item2;
     default:
         break;
     }

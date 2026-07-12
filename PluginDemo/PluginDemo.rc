@@ -133,6 +133,16 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON                    "res\\icon.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
@@ -143,6 +153,7 @@ BEGIN
     IDS_TIME                "时间"
     IDS_DATE                "日期"
     IDS_CUSTOM_DRAW_ITEM    "自绘示例"
+    IDS_CUSTOM_DRAW_ITEM2   "自绘图标和文本示例"
 END
 
 #endif    // 中文(简体，中国) resources
@@ -215,6 +226,7 @@ BEGIN
     IDS_TIME                "Time"
     IDS_DATE                "Date"
     IDS_CUSTOM_DRAW_ITEM    "Custom draw example"
+    IDS_CUSTOM_DRAW_ITEM2   "Custom draw icon and text example"
 END
 
 #endif    // 英语(美国) resources

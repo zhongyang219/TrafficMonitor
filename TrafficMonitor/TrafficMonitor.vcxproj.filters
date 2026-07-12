@@ -840,6 +840,9 @@
     <ClCompile Include="PdhHardwareQuery\DiskUsage.cpp">
       <Filter>源文件和头文件\公共的类\PdhHardwareQuery</Filter>
     </ClCompile>
+    <ClCompile Include="IDrawCommon.cpp">
+      <Filter>源文件和头文件\公共的类\DrawCommon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TrafficMonitor.rc">

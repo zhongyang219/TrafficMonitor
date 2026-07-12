@@ -18,6 +18,21 @@
 
 void LogWin32ApiErrorMessage(DWORD error_code) noexcept;
 
+template <class... Ts>
+class AlignedUnionStorage
+{
+private:
+    alignas(Ts...) std::byte m_buffer[(std::max)({ sizeof(Ts)... })]{};
+
+public:
+    AlignedUnionStorage() = default;
+    ~AlignedUnionStorage() = default;
+    std::byte* operator&() noexcept
+    {
+        return m_buffer;
+    }
+};
+
 namespace DrawCommonHelper
 {
     void LogDeviceRecreateReason(HRESULT hr);
@@ -803,6 +818,7 @@ public:
     // （注意：当stretch_mode设置为StretchMode::FILL（填充）时，会设置绘图剪辑区域，如果之后需要绘制其他图形，
     // 需要重新设置绘图剪辑区域，否则图片外的区域会无法绘制）
     void DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode = StretchMode::STRETCH, BYTE alpha = 255) override;
+    void DrawIcon(HICON hIcon, CPoint start_point, CSize size) override;
 
     void Create(
         CTaskBarDlgDrawCommonWindowSupport& taskbar_dlg_draw_common_window_support,

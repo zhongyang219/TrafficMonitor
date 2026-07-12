@@ -528,7 +528,12 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
                             plugin->OnExtenedInfo(ITMPlugin::EI_VALUE_TEXT_COLOR, std::to_wstring(cl).c_str());
                         }
                         draw.GetDC()->SetTextColor(cl);
-                        plugin_item->DrawItem(draw.GetDC()->GetSafeHdc(), point.x, point.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
+                        //插件API版本大于等于8时先调用DrawItemEx，返回false再调用DrawItem
+                        bool draw_item_ex_rtn = false;
+                        if (plugin != nullptr && plugin->GetAPIVersion() >= 8)
+                            draw_item_ex_rtn = plugin_item->DrawItemEx(&draw, rect.left, rect.top, rect.Width(), rect.Height(), brightness >= 128);
+                        if (!draw_item_ex_rtn)
+                            plugin_item->DrawItem(draw.GetDC()->GetSafeHdc(), point.x, point.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
                     }
                     else
                     {
@@ -687,7 +692,12 @@ void CSkinFile::DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font) 
                 }
                 drawer.GetDC()->SetTextColor(cl);
                 drawer.GetDC()->SetBkMode(TRANSPARENT);
-                plugin_item->DrawItem(drawer.GetDC()->GetSafeHdc(), layout_item.x, layout_item.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
+                //插件API版本大于等于8时先调用DrawItemEx，返回false再调用DrawItem
+                bool draw_item_ex_rtn = false;
+                if (plugin != nullptr && plugin->GetAPIVersion() >= 8)
+                    draw_item_ex_rtn = plugin_item->DrawItemEx(&drawer, layout_item.x, layout_item.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
+                if (!draw_item_ex_rtn)
+                    plugin_item->DrawItem(drawer.GetDC()->GetSafeHdc(), layout_item.x, layout_item.y, layout_item.width, m_layout_info.text_height, brightness >= 128);
             }
             else
             {

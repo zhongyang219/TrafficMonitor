@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "CommonData.h"
+#include "PluginInterface.h"
 
 class IDrawBuffer
 {
@@ -7,24 +8,9 @@ public:
     virtual ~IDrawBuffer() = default;
 };
 
-class IDrawCommon
+class IDrawCommon : public IPluginDrawer
 {
 public:
-    // 拉伸模式
-    enum class StretchMode
-    {
-        STRETCH, // 拉伸，会改变比例
-        FILL,    // 填充，不改变比例，会裁剪长边
-        FIT      // 适应，不会改变比例，不裁剪
-    };
-
-    //对齐方式
-    enum class Alignment
-    {
-        LEFT,       //左对齐
-        RIGHT,      //右对齐
-        CENTER,     //居中
-    };
 
     virtual void SetBackColor(COLORREF back_color, BYTE alpha = 255) = 0;
     // 设置绘制文本的字体
@@ -44,12 +30,21 @@ public:
     // （注意：当stretch_mode设置为StretchMode::FILL（填充）时，会设置绘图剪辑区域，如果之后需要绘制其他图形，
     // 需要重新设置绘图剪辑区域，否则图片外的区域会无法绘制）
     virtual void DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode = StretchMode::STRETCH, BYTE alpha = 255) = 0;
+    virtual void DrawIcon(HICON hIcon, CPoint start_point, CSize size) = 0;
     virtual ~IDrawCommon() = default;
 
     //获取绘图上下文句柄。仅在GDI或GDI+时有效
     virtual CDC* GetDC() { return nullptr; }
     //获取文本宽度
     virtual int GetTextWidth(LPCTSTR lpszString) { return 0; }
+
+    // 通过 IPluginDrawer 继承
+    virtual void DrawWindowText(int x, int y, int w, int h, const wchar_t* lpszString, unsigned long color, Alignment align, bool draw_back_ground, bool multi_line, unsigned char alpha) override;
+    virtual void SetDrawRect(int x, int y, int w, int h) override;
+    virtual void FillRect(int x, int y, int w, int h, unsigned long color, unsigned char alpha) override;
+    virtual void DrawRectOutLine(int x, int y, int w, int h, unsigned long color, int width, bool dot_line, unsigned char alpha) override;
+    virtual void DrawBitmap(void* hbitmap, int x, int y, int w, int h, StretchMode stretch_mode, unsigned char alpha) override;
+    virtual void DrawIcon(void* hIcon, int x, int y, int w, int h) override;
 };
 
 namespace DrawCommonHelper
@@ -74,18 +69,3 @@ namespace DrawCommonHelper
     constexpr BYTE AVAILABLE_MINIMUM_ALPHA = 0x02;
     constexpr BYTE GDI_MODIFIED_FLAG = 0x00;
 }
-
-template <class... Ts>
-class AlignedUnionStorage
-{
-private:
-    alignas(Ts...) std::byte m_buffer[(std::max)({sizeof(Ts)...})]{};
-
-public:
-    AlignedUnionStorage() = default;
-    ~AlignedUnionStorage() = default;
-    std::byte* operator&() noexcept
-    {
-        return m_buffer;
-    }
-};
