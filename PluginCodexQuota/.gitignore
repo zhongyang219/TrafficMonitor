@@ -1,0 +1,8 @@
+﻿dist/
+*.obj
+*.pdb
+*.ilk
+*.exp
+*.lib
+quota-state.json
+quota-refresh.log

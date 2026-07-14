@@ -1,0 +1,9 @@
+﻿{
+  "hasFiveHour": true,
+  "fiveHourRemaining": 0,
+  "fiveHourReset": "--:--",
+  "weeklyRemaining": 0,
+  "weeklyReset": "--/--",
+  "updatedAt": "",
+  "status": "loading"
+}
