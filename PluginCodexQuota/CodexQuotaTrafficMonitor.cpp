@@ -106,9 +106,9 @@ public:
         case TMI_NAME: return L"Codex Quota + Network";
         case TMI_DESCRIPTION: return L"Codex quota and TrafficMonitor network speed in one taskbar item.";
         case TMI_AUTHOR: return L"frey77";
-        case TMI_COPYRIGHT: return L"Apache-2.0";
+        case TMI_COPYRIGHT: return L"TrafficMonitor contributors";
         case TMI_VERSION: return L"0.1.0";
-        case TMI_URL: return L"https://github.com/frey77/codex-quota-trafficmonitor-plugin";
+        case TMI_URL: return L"https://github.com/zhongyang219/TrafficMonitor";
         default: return L"";
         }
     }

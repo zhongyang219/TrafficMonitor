@@ -1,4 +1,4 @@
-﻿# Codex Quota + Network plugin
+# Codex Quota + Network plugin
 
 This optional TrafficMonitor plugin renders the local Codex quota on the left and TrafficMonitor's host-provided upload/download speed on the right in one custom taskbar item. It does not change TrafficMonitor's core monitoring code.
 
