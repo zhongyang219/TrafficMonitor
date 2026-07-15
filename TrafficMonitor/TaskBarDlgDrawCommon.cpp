@@ -1975,6 +1975,20 @@ void CTaskBarDlgDrawCommon::DrawIcon(HICON hIcon, CPoint start_point, CSize size
     });
 }
 
+CDC* CTaskBarDlgDrawCommon::GetDC()
+{
+    auto& ref_gdi_interop_object = m_gdi_interop_object.Get();
+    return &ref_gdi_interop_object.m_gdi_interop_cdc;
+}
+
+void CTaskBarDlgDrawCommon::GetTextExtent(const wchar_t* lpszString, int& w, int& h)
+{
+    CDC* pDC = GetDC();
+    CSize size = pDC->GetTextExtent(lpszString);
+    w = size.cx;
+    h = size.cy;
+}
+
 CTaskBarDlgDrawBuffer::CTaskBarDlgDrawBuffer(
     CTaskBarDlgDrawCommonWindowSupport& taskbar_dlg_draw_common_window_support,
     CD2D1DeviceContextWindowSupport& ref_d2d1_device_context_support,

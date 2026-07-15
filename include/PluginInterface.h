@@ -444,41 +444,98 @@ public:
     // 拉伸模式
     enum StretchMode
     {
-        STRETCH, // 拉伸，会改变比例
-        FILL,    // 填充，不改变比例，会裁剪长边
-        FIT      // 适应，不会改变比例，不裁剪
+        STRETCH,    /**< 拉伸，会改变比例 */
+        FILL,       /**< 填充，不改变比例，会裁剪长边 */
+        FIT         /**< 适应，不会改变比例，不裁剪 */
     };
 
     //对齐方式
     enum Alignment
     {
-        LEFT,       //左对齐
-        RIGHT,      //右对齐
-        CENTER,     //居中
+        LEFT,       /**< 左对齐 */
+        RIGHT,      /**< 右对齐 */
+        CENTER,     /**< 居中 */
     };
 
-    virtual void SetBackColor(unsigned long back_color, unsigned char alpha = 255) = 0;
+    /**
+     * @brief   在指定的矩形区域内绘制文本
+     * @param   x 矩形区域的左侧坐标
+     * @param   y 矩形区域的顶部坐标
+     * @param   w 矩形区域的宽
+     * @param   h 矩形区域的高
+     * @param   lpszString 绘制的文本
+     * @param   color 文本的颜色，格式为0xBBGGRR
+     * @param   align 文本对齐方式
+     * @param   multi_line 是否多行显示
+     * @param   alpha 不透明度，0~255
+     */
+    virtual void DrawWindowText(int x, int y, int w, int h, const wchar_t* lpszString, unsigned long color, Alignment align = Alignment::LEFT, bool multi_line = false, unsigned char alpha = 255) = 0;
 
-    // 在指定的矩形区域内绘制文本
-    virtual void DrawWindowText(int x, int y, int w, int h, const wchar_t* lpszString, unsigned long color, Alignment align = Alignment::LEFT, bool draw_back_ground = false, bool multi_line = false, unsigned char alpha = 255) = 0;
-
-    // 设置绘图剪辑区域
+    /**
+     * @brief   设置绘图剪辑区域
+     * @param   x 矩形区域的左侧坐标
+     * @param   y 矩形区域的顶部坐标
+     * @param   w 矩形区域的宽
+     * @param   h 矩形区域的高
+     */
     virtual void SetDrawRect(int x, int y, int w, int h) = 0;
 
-    // 用纯色填充矩形
+    /**
+     * @brief   用纯色填充矩形
+     * @param   x 矩形区域的左侧坐标
+     * @param   y 矩形区域的顶部坐标
+     * @param   w 矩形区域的宽
+     * @param   h 矩形区域的高
+     * @param   color 填充的颜色，格式为0xBBGGRR
+     * @param   alpha 不透明度，0~255
+     */
     virtual void FillRect(int x, int y, int w, int h, unsigned long color, unsigned char alpha = 255) = 0;
     
-    // 绘制矩形边框。如果dot_line为true，则为虚线
+    /**
+     * @brief   绘制矩形边框
+     * @param   x 矩形区域的左侧坐标
+     * @param   y 矩形区域的顶部坐标
+     * @param   w 矩形区域的宽
+     * @param   h 矩形区域的高
+     * @param   color 边框的颜色，格式为0xBBGGRR
+     * @param   width 边框的线宽
+     * @param   dot_line 是否为虚线
+     * @param   alpha 不透明度，0~255
+     */
     virtual void DrawRectOutLine(int x, int y, int w, int h, unsigned long color, int width = 1, bool dot_line = false, unsigned char alpha = 255) = 0;
 
-    virtual void SetTextColor(const unsigned long color, unsigned char alpha = 255) = 0;
-
-    // 绘制一个位图
-    // （注意：当stretch_mode设置为StretchMode::FILL（填充）时，会设置绘图剪辑区域，如果之后需要绘制其他图形，
-    // 需要重新设置绘图剪辑区域，否则图片外的区域会无法绘制）
+    /**
+     * @brief   绘制一个位图
+     * @@detail    
+     *  注意：当stretch_mode设置为StretchMode::FILL（填充）时，会设置绘图剪辑区域，如果之后需要绘制其他图形，
+     *  需要重新设置绘图剪辑区域，否则图片外的区域会无法绘制
+     * @param   hbitmap 位图的句柄
+     * @param   x 矩形区域的左侧坐标
+     * @param   y 矩形区域的顶部坐标
+     * @param   w 矩形区域的宽
+     * @param   h 矩形区域的高
+     * @param   stretch_mode 绘图的拉伸模式
+     * @param   alpha 不透明度，0~255
+     */
     virtual void DrawBitmap(void* hbitmap, int x, int y, int w, int h, StretchMode stretch_mode = StretchMode::STRETCH, unsigned char alpha = 255) = 0;
 
+    /**
+     * @brief	绘制一个图标
+     * @param	hIcon 图标的句柄
+     * @param   x 矩形区域的左侧坐标
+     * @param   y 矩形区域的顶部坐标
+     * @param   w 矩形区域的宽
+     * @param   h 矩形区域的高
+     */
     virtual void DrawIcon(void* hIcon, int x, int y, int w, int h) = 0;
+
+    /**
+     * @brief   计算一个字符串的的宽度和高度
+     * @param   lpszString 字符串
+     * @param[out]  w 字符串的宽度
+     * @param[out]  h 字符串的高度
+     */
+    virtual void GetTextExtent(const wchar_t* lpszString, int& w, int& h) = 0;
 };
 
 

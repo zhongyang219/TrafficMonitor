@@ -33,13 +33,13 @@ public:
     virtual void DrawIcon(HICON hIcon, CPoint start_point, CSize size) = 0;
     virtual ~IDrawCommon() = default;
 
-    //获取绘图上下文句柄。仅在GDI或GDI+时有效
-    virtual CDC* GetDC() { return nullptr; }
+    //获取绘图上下文句柄。
+    virtual CDC* GetDC() = 0;
     //获取文本宽度
     virtual int GetTextWidth(LPCTSTR lpszString) { return 0; }
 
     // 通过 IPluginDrawer 继承
-    virtual void DrawWindowText(int x, int y, int w, int h, const wchar_t* lpszString, unsigned long color, Alignment align, bool draw_back_ground, bool multi_line, unsigned char alpha) override;
+    virtual void DrawWindowText(int x, int y, int w, int h, const wchar_t* lpszString, unsigned long color, Alignment align, bool multi_line, unsigned char alpha) override;
     virtual void SetDrawRect(int x, int y, int w, int h) override;
     virtual void FillRect(int x, int y, int w, int h, unsigned long color, unsigned char alpha) override;
     virtual void DrawRectOutLine(int x, int y, int w, int h, unsigned long color, int width, bool dot_line, unsigned char alpha) override;

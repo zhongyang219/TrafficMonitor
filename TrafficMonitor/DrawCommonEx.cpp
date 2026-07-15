@@ -1,6 +1,5 @@
 ﻿#include "stdafx.h"
 #include "DrawCommonEx.h"
-#include "DrawCommon.h"
 
 CDrawCommonEx::CDrawCommonEx(CDC* pDC)
 {
@@ -23,6 +22,7 @@ void CDrawCommonEx::Create(CDC* pDC)
     m_pDC = pDC;
     SAFE_DELETE(m_pGraphics);
     m_pGraphics = new Gdiplus::Graphics(pDC->GetSafeHdc());
+    m_gdi_drawer.Create(pDC, nullptr);
 }
 
 void CDrawCommonEx::SetFont(CFont * pFont)
@@ -91,10 +91,12 @@ void CDrawCommonEx::FillRect(CRect rect, COLORREF color, BYTE alpha)
 
 void CDrawCommonEx::DrawRectOutLine(CRect rect, COLORREF color, int width, bool dot_line, BYTE alpha)
 {
+    m_gdi_drawer.DrawRectOutLine(rect, color, width, dot_line, alpha);
 }
 
 void CDrawCommonEx::DrawLine(CPoint start_point, int height, COLORREF color, BYTE alpha)
 {
+    m_gdi_drawer.DrawLine(start_point, height, color, alpha);
 }
 
 void CDrawCommonEx::SetTextColor(const COLORREF color, BYTE alpha)
@@ -109,22 +111,28 @@ CDC* CDrawCommonEx::GetDC()
 
 int CDrawCommonEx::GetTextWidth(LPCTSTR lpszString)
 {
+    int w{}, h{};
+    GetTextExtent(lpszString, w, h);
+    return w;
+}
+
+void CDrawCommonEx::GetTextExtent(const wchar_t* lpszString, int& w, int& h)
+{
     Gdiplus::Font font(m_pDC->GetSafeHdc());
     Gdiplus::RectF textSize;
     m_pGraphics->MeasureString(lpszString, -1, &font, Gdiplus::PointF(0, 0), &textSize);
-    return textSize.Width;
+    w = textSize.Width + 0.5;
+    h = textSize.Height + 0.5;
 }
 
 void CDrawCommonEx::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode, BYTE alpha)
 {
+    m_gdi_drawer.DrawBitmap(hbitmap, start_point, size, stretch_mode, alpha);
 }
 
 void CDrawCommonEx::DrawIcon(HICON hIcon, CPoint start_point, CSize size)
 {
-    if (size.cx == 0 || size.cy == 0)
-        ::DrawIconEx(m_pDC->GetSafeHdc(), start_point.x, start_point.y, hIcon, 0, 0, 0, NULL, DI_NORMAL | DI_DEFAULTSIZE);
-    else
-        ::DrawIconEx(m_pDC->GetSafeHdc(), start_point.x, start_point.y, hIcon, size.cx, size.cy, 0, NULL, DI_NORMAL);
+    m_gdi_drawer.DrawIcon(hIcon, start_point, size);
 }
 
 

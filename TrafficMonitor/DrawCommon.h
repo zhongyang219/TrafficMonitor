@@ -51,6 +51,8 @@ public:
 
     virtual int GetTextWidth(LPCTSTR lpszString) override;
 
+    virtual void GetTextExtent(const wchar_t* lpszString, int& w, int& h) override;
+
 private:
     CDC* m_pDC{};		//用于绘图的CDC类的指针
     CWnd* m_pMainWnd{};	//绘图窗口的句柄

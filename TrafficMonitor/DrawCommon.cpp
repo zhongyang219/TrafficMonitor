@@ -220,6 +220,13 @@ int CDrawCommon::GetTextWidth(LPCTSTR lpszString)
     return m_pDC->GetTextExtent(lpszString).cx;
 }
 
+void CDrawCommon::GetTextExtent(const wchar_t* lpszString, int& w, int& h)
+{
+    CSize size = m_pDC->GetTextExtent(lpszString);
+    w = size.cx;
+    h = size.cy;
+}
+
 UINT DrawCommonHelper::ProccessTextFormat(CRect rect, CSize text_length, IDrawCommon::Alignment align, bool multi_line) noexcept
 {
     UINT result; // CDC::DrawText()函数的文本格式

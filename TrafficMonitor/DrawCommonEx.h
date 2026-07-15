@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "IDrawCommon.h"
+#include "DrawCommon.h"
 #include <gdiplus.h>
 
 //使用GDI+的绘图类
@@ -29,12 +29,14 @@ public:
     void DrawIcon(HICON hIcon, CPoint start_point, CSize size) override;
     virtual CDC* GetDC() override;
     virtual int GetTextWidth(LPCTSTR lpszString) override;
+    virtual void GetTextExtent(const wchar_t* lpszString, int& w, int& h) override;
 
 private:
     CDC* m_pDC{};
     Gdiplus::Graphics* m_pGraphics{};
     Gdiplus::Color m_text_color{};
     Gdiplus::Color m_back_color{};
+    CDrawCommon m_gdi_drawer;
 };
 
 class CGdiPlusHelper

@@ -819,6 +819,8 @@ public:
     // 需要重新设置绘图剪辑区域，否则图片外的区域会无法绘制）
     void DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode = StretchMode::STRETCH, BYTE alpha = 255) override;
     void DrawIcon(HICON hIcon, CPoint start_point, CSize size) override;
+    virtual CDC* GetDC() override;
+    virtual void GetTextExtent(const wchar_t* lpszString, int& w, int& h) override;
 
     void Create(
         CTaskBarDlgDrawCommonWindowSupport& taskbar_dlg_draw_common_window_support,
