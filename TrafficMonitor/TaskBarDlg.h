@@ -126,6 +126,7 @@ protected:
     struct ItemWidthInfo : public CommonDisplayItem
     {
         ItemWidth item_width;
+        bool is_double_line{};  //项目是否占两行
 
         ItemWidthInfo()
         {}
@@ -135,7 +136,7 @@ protected:
         {}
     };
 
-    std::vector<ItemWidthInfo> m_item_widths;   //任务栏窗口每个部分的宽度
+    std::vector<ItemWidthInfo> m_item_widths;   //任务栏窗口实际显示的每个部分的宽度
     std::map<CommonDisplayItem, CRect> m_item_rects;    //任务栏窗口每个部分的矩形区域
     CommonDisplayItem m_clicked_item;           //鼠标点击的任务栏项目
 
@@ -189,7 +190,7 @@ public:
     static void DisableRenderFeatureIfNecessary(CSupportedRenderEnums& ref_supported_render_enums);
     void SetTextFont();
     void ApplySettings();
-    void CalculateWindowSize();		//计算窗口每部分的大小，及各个部分的宽度。窗口大小保存到m_window_width和m_window_height中，各部分宽度保存到m_item_widths中
+    void CalculateWindowSize();		//计算窗口每部分的大小，及各个部分的宽度。窗口大小保存到m_window_width和m_window_height中，各部分宽度保存到m_item_widths中，各部分的矩形区域保存到m_item_rects中
 
     void SetToolTipsTopMost();			//设置鼠标提示置顶
     void UpdateToolTips();

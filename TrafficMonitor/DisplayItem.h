@@ -72,6 +72,9 @@ public:
      */
     CString GetItemValueSampleText(bool is_main_window) const;
 
+    //是否在任务栏中独占双行
+    bool IsDoubleLineExclusive() const;
+
 private:
     bool is_plugin{};           //是否为插件项目
     DisplayItem item_type{};    //内置的显示项目

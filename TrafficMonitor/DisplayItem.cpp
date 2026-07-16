@@ -410,6 +410,19 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
     }
 }
 
+bool CommonDisplayItem::IsDoubleLineExclusive() const
+{
+    if (is_plugin)
+    {
+        auto* plugin = theApp.m_plugins.GetPluginByItem(plugin_item);
+        if (plugin != nullptr && plugin->GetAPIVersion() >= 8)
+        {
+            return plugin_item->IsDoubleLineExclusive() == 1;
+        }
+    }
+    return false;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 DisplayItemSet::DisplayItemSet(std::initializer_list<DisplayItem> items)
     : data(items)

@@ -141,14 +141,14 @@ public:
     virtual void* OnItemInfo(ItemInfoType, void* para1, void* para2) { return 0; }
 
     /**
-     * @brief 是否在在任务栏中显示此项目的资源占用图
-     * @return 1：显示，0：不显示
+     * @brief   是否在在任务栏中显示此项目的资源占用图
+     * @return  1：显示，0：不显示
      */
     virtual int IsDrawResourceUsageGraph() const { return 0; }
 
     /**
-     * @brief 获取资源占用图的值。当IsDrawResourceUsageGraphType返回值不为0时有效
-     * @return float 资源占用图的值，范围为0.0~1.0。
+     * @brief   获取资源占用图的值。当IsDrawResourceUsageGraphType返回值不为0时有效
+     * @return  float 资源占用图的值，范围为0.0~1.0。
      */
     virtual float GetResourceUsageGraphValue() const { return 0.0; }
 
@@ -163,6 +163,12 @@ public:
      * @return  bool 未实现返回false，如果实现了此函数并使用了pDrawer绘图，则应返回true
      */
     virtual bool DrawItemEx(IPluginDrawer* pDrawer, int x, int y, int w, int h, bool dark_mode) { return false; }
+
+    /**
+     * @brief   是否在任务中独占双行
+     * @return  1：是，0：否
+     */
+    virtual int IsDoubleLineExclusive() const { return 0; }
 };
 
 class ITrafficMonitor;
@@ -567,6 +573,6 @@ public:
 * -------------------------------------------------------------------------
 *     7       | 新增 ITMPlugin::OnInitialize 函数
 * -------------------------------------------------------------------------
-*     8       | 新增 IPluginItem::DrawItemEx 函数
+*     8       | 新增 IPluginItem::DrawItemEx, IPluginItem::IsDoubleLineExclusive 函数
 * -------------------------------------------------------------------------
 */

@@ -13,18 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="PluginItems">
+      <UniqueIdentifier>{4d826e24-224d-44ba-9ace-010ea2d88a77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="PluginSystemTime.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="PluginSystemDate.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="PluginDemo.h">
@@ -43,20 +40,20 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="CustomDrawItem.h">
-      <Filter>头文件</Filter>
+      <Filter>PluginItems</Filter>
     </ClInclude>
     <ClInclude Include="CustomDrawItem2.h">
-      <Filter>头文件</Filter>
+      <Filter>PluginItems</Filter>
+    </ClInclude>
+    <ClInclude Include="PluginSystemDate.h">
+      <Filter>PluginItems</Filter>
+    </ClInclude>
+    <ClInclude Include="PluginSystemTime.h">
+      <Filter>PluginItems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="PluginSystemTime.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="PluginSystemDate.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DataManager.cpp">
@@ -69,10 +66,16 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CustomDrawItem.cpp">
-      <Filter>源文件</Filter>
+      <Filter>PluginItems</Filter>
     </ClCompile>
     <ClCompile Include="CustomDrawItem2.cpp">
-      <Filter>源文件</Filter>
+      <Filter>PluginItems</Filter>
+    </ClCompile>
+    <ClCompile Include="PluginSystemDate.cpp">
+      <Filter>PluginItems</Filter>
+    </ClCompile>
+    <ClCompile Include="PluginSystemTime.cpp">
+      <Filter>PluginItems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
