@@ -134,6 +134,12 @@ protected:
     bool m_monitor_data_required{ false };          //线程中需要获取监控数据标志，当需要获取监控数据时置为true，获取到一次监控数据时置为false
     bool m_is_thread_exit{ false }; //线程退出标志
     CEvent m_threadExitEvent;       //用于通知主线程工作线程已退出
+    bool m_hardware_monitor_suspended{ false };     //硬件监控发生错误后暂时停止访问LibreHardwareMonitor
+    bool m_hardware_monitor_error_notified{ false }; //硬件监控错误是否已经通知过用户
+    ULONGLONG m_next_hardware_monitor_retry_tick{}; //下次尝试恢复硬件监控的时间
+    void ResetHardwareMonitorValues();
+    bool RetryOpenHardwareMonitorIfNeeded();
+    void HandleHardwareMonitorFailure(const CString& error_info);
 public:
     void ExitMonitorThread();       //停止监控线程
 
@@ -262,6 +268,7 @@ protected:
     afx_msg LRESULT OnDpichanged(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnTaskbarWndClosed(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnMonitorInfoUpdated(WPARAM wParam, LPARAM lParam);
+    afx_msg LRESULT OnHardwareMonitorFailed(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnDisplaychange(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnReopenTaksbarWnd(WPARAM wParam, LPARAM lParam);
 public:
