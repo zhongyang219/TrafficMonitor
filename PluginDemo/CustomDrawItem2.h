@@ -3,6 +3,8 @@
 class CCustomDrawItem2 : public IPluginItem
 {
 public:
+    CCustomDrawItem2();
+
     // 通过 IPluginItem 继承
     virtual const wchar_t* GetItemName() const override;
     virtual const wchar_t* GetItemId() const override;
@@ -15,6 +17,6 @@ public:
     virtual int IsDoubleLineExclusive() const { return 1; }     //在任务栏中独占双行
 
 private:
-    HICON m_icon;
+    HBITMAP m_png{};
 };
 

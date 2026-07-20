@@ -299,3 +299,4 @@ __pycache__/
 /TrafficMonitor/compile_time.txt
 !/TrafficMonitor/language/*.ini
 *.diagsession
+enc_temp*
