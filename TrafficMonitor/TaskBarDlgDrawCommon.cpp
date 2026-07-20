@@ -1886,7 +1886,7 @@ void CTaskBarDlgDrawCommon::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSiz
     auto p_d2d1_bitmap = m_p_d2d1_device_context_support->GetCachedBitmap(hbitmap);
     if (!p_d2d1_bitmap)
     {
-        CD2D1BitmapCache::CreateD2D1BitmapFromHBitmap(m_p_device_context, hbitmap);
+        p_d2d1_bitmap = CD2D1BitmapCache::CreateD2D1BitmapFromHBitmap(m_p_device_context, hbitmap);
     }
 
     float opacity = static_cast<float>(alpha) / 255.f;
