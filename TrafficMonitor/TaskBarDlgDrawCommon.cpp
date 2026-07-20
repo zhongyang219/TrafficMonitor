@@ -1434,7 +1434,8 @@ void CD2D1BitmapCache::RebindRenderTarget(ComPtr<ID2D1RenderTarget> p_render_tar
 
 void CD2D1BitmapCache::AddHBitmap(HBITMAP hbitmap, CacheInitializer initializer)
 {
-    TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(m_sp_data);
+    //TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(m_sp_data);
+    //此函数在 GetCachedBitmap 中被调用，调用时已持有 m_sp_data->m_mutex 锁，因此此处不再重复加锁，避免死锁
     if (IsHBitmapExist(hbitmap))
     {
         return;
@@ -1560,11 +1561,7 @@ auto CD2D1BitmapCache::GetCachedBitmap(HBITMAP hbitmap)
 bool CD2D1BitmapCache::IsHBitmapExist(HBITMAP hbitmap) const
 {
     auto existing_it = m_sp_data->m_cache_map.find(hbitmap);
-    if (existing_it == m_sp_data->m_cache_map.end())
-    {
-        return true;
-    }
-    return false;
+    return existing_it != m_sp_data->m_cache_map.end();
 }
 
 void CD2D1BitmapCache::GCImpl(std::shared_ptr<HeapData> sp_data)
@@ -1584,6 +1581,8 @@ void CD2D1BitmapCache::GCImpl(std::shared_ptr<HeapData> sp_data)
         }
     }
 }
+
+static std::shared_ptr<CD2D1BitmapCache> sp_bitmap_cache;
 
 void CTaskBarDlgDrawCommon::ResetClippedStateIfSet()
 {
@@ -1611,6 +1610,12 @@ void CTaskBarDlgDrawCommon::Create(
     m_p_device_context->BeginDraw();
     m_p_device_context->SetTransform(D2D1::Matrix3x2F::Identity());
     m_p_device_context->Clear(transparent_black);
+
+    if (sp_bitmap_cache == nullptr)
+        sp_bitmap_cache = std::make_shared<CD2D1BitmapCache>(m_p_device_context);
+    else
+        sp_bitmap_cache->RebindRenderTarget(m_p_device_context);
+    m_p_d2d1_device_context_support->RebindD2D1BitmapCache(sp_bitmap_cache);
 }
 
 auto CTaskBarDlgDrawCommon::GetD3D10Device1RecreateRequester()
