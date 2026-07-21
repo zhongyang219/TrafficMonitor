@@ -1398,228 +1398,8 @@ namespace TaskBarDlgUser32DrawTextHook
     }
 }
 
-void CD2D1BitmapCache::Cache::Update(Microsoft::WRL::ComPtr<ID2D1RenderTarget> p_render_target, HBITMAP hbitmap)
-{
-    auto p_updated_cache = m_cache_initializer(p_render_target, hbitmap);
-    m_cache = p_updated_cache;
-    m_init_timestamp = std::chrono::steady_clock::now();
-}
-
-bool CD2D1BitmapCache::HeapData::IsCacheExpire(const Cache& cache, std::chrono::steady_clock::time_point now)
-{
-    auto survival_time = std::chrono::duration_cast<std::chrono::seconds>(
-        now - cache.m_init_timestamp);
-    if (survival_time > m_cache_expire_interval)
-    {
-        return true;
-    }
-    return false;
-}
-
-CD2D1BitmapCache::CD2D1BitmapCache(ComPtr<ID2D1RenderTarget> p_render_target)
-    : m_p_render_target{p_render_target}
-{
-}
-
-CD2D1BitmapCache::~CD2D1BitmapCache()
-{
-    m_gc_thread.detach();
-}
-
-void CD2D1BitmapCache::RebindRenderTarget(ComPtr<ID2D1RenderTarget> p_render_target)
-{
-    m_p_render_target = p_render_target;
-    RecreateAllHBitmaps();
-}
-
-void CD2D1BitmapCache::AddHBitmap(HBITMAP hbitmap, CacheInitializer initializer)
-{
-    //TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(m_sp_data);
-    //此函数在 GetCachedBitmap 中被调用，调用时已持有 m_sp_data->m_mutex 锁，因此此处不再重复加锁，避免死锁
-    if (IsHBitmapExist(hbitmap))
-    {
-        return;
-    }
-    try
-    {
-        auto p_d2d1_bitmap = initializer(m_p_render_target, hbitmap);
-        m_sp_data->m_cache_map[hbitmap] = {
-            p_d2d1_bitmap,
-            std::chrono::steady_clock::now(),
-            initializer};
-    }
-    catch (CWICException& ex)
-    {
-        LogHResultException(ex);
-    }
-}
-
-void CD2D1BitmapCache::AddHBitmap(HBITMAP hbitmap)
-{
-    AddHBitmap(hbitmap, CD2D1BitmapCache::CreateD2D1BitmapFromHBitmap);
-}
-
-void CD2D1BitmapCache::RemoveHBitmap(HBITMAP hbitmap)
-{
-    TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(m_sp_data);
-    auto it = m_sp_data->m_cache_map.find(hbitmap);
-    if (it != m_sp_data->m_cache_map.end())
-    {
-        m_sp_data->m_cache_map.erase(it);
-    }
-}
-
-void CD2D1BitmapCache::RecreateAllHBitmaps()
-{
-    CNullable<CD2D1Exception> nullable_d2d1exception{};
-
-    TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(m_sp_data);
-    for (auto& cache : m_sp_data->m_cache_map)
-    {
-        auto hbitmap = cache.first;
-
-        try
-        {
-            cache.second.Update(m_p_render_target, cache.first);
-        }
-        catch (CWICException& ex)
-        {
-            // 一般是HBITMAP失效导致的问题，直接忽略
-            (void)ex;
-        }
-        catch (CD2D1Exception& ex)
-        {
-            // 只会保存最后一次异常
-            nullable_d2d1exception.Construct(std::move(ex));
-        }
-    }
-    if (nullable_d2d1exception)
-    {
-        throw nullable_d2d1exception.GetUnsafe();
-    }
-}
-
-auto CD2D1BitmapCache::CreateD2D1BitmapFromHBitmap(ComPtr<ID2D1RenderTarget> p_render_target, HBITMAP hbitmap)
-    -> ComPtr<ID2D1Bitmap>
-{
-    ComPtr<IWICBitmap> p_wic_bitmap{};
-    ThrowIfFailed<CWICException>(
-        CWICFactory::GetWIC()->CreateBitmapFromHBITMAP(
-            hbitmap,
-            NULL,
-            WICBitmapUsePremultipliedAlpha,
-            &p_wic_bitmap),
-        TRAFFICMONITOR_ERROR_STR("Call IWICImagingFactory::CreateBitmapFromHBITMAP failed."));
-
-    ComPtr<ID2D1Bitmap> result{};
-    ThrowIfFailed<CD2D1Exception>(
-        p_render_target->CreateBitmapFromWicBitmap(
-            p_wic_bitmap.Get(),
-            &result),
-        TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::CreateBitmapFromWicBitmap failed."));
-
-    return result;
-}
-
-auto CD2D1BitmapCache::CreateD2D1BitmapFromHIcon(ComPtr<ID2D1RenderTarget> p_render_target, HICON hIcon)
-    -> ComPtr<ID2D1Bitmap>
-{
-    //HICON转换为IWICBitmap
-    ComPtr<IWICBitmap> p_wic_bitmap1{};
-    ThrowIfFailed<CWICException>(
-        CWICFactory::GetWIC()->CreateBitmapFromHICON(
-            hIcon,
-            &p_wic_bitmap1),
-        TRAFFICMONITOR_ERROR_STR("Call IWICImagingFactory::CreateBitmapFromHICON failed."));
-
-    // 使用格式转换器确保格式兼容
-    Microsoft::WRL::ComPtr<IWICFormatConverter> pConverter;
-    HRESULT hr = CWICFactory::GetWIC()->CreateFormatConverter(&pConverter);
-    ThrowIfFailed<CD2D1Exception>(hr, TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::CreateFormatConverter failed."));
-
-    hr = pConverter->Initialize(
-        p_wic_bitmap1.Get(),
-        GUID_WICPixelFormat32bppPBGRA,
-        WICBitmapDitherTypeNone,
-        nullptr,
-        0.0f,
-        WICBitmapPaletteTypeCustom
-    );
-    ThrowIfFailed<CD2D1Exception>(hr, TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::CreateFormatConverter::Initialize failed."));
-
-    //IWICBitmap转换为ID2D1Bitmap
-    ComPtr<ID2D1Bitmap> result{};
-    ThrowIfFailed<CD2D1Exception>(
-        p_render_target->CreateBitmapFromWicBitmap(
-            pConverter.Get(),
-            &result),
-        TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::CreateBitmapFromWicBitmap failed."));
-
-    return result;
-}
-
-void CD2D1BitmapCache::GC()
-{
-    GCImpl(m_sp_data);
-}
-
-void CD2D1BitmapCache::SetGCInterval(const std::chrono::seconds interval)
-{
-    TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_GC_INTERVAL(m_sp_data);
-    m_sp_data->m_gc_interval = interval;
-}
-
-void CD2D1BitmapCache::SetExpireInterval(const std::chrono::seconds interval)
-{
-    TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(m_sp_data);
-    m_sp_data->m_cache_expire_interval = interval;
-}
-
-auto CD2D1BitmapCache::GetCachedBitmap(HBITMAP hbitmap)
-    -> ComPtr<ID2D1Bitmap>
-{
-    TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(m_sp_data);
-    auto it = m_sp_data->m_cache_map.find(hbitmap);
-    if (it != m_sp_data->m_cache_map.end())
-    {
-        if (m_sp_data->IsCacheExpire(it->second))
-        {
-            it->second.Update(m_p_render_target, it->first);
-        }
-        return it->second.m_cache;
-    }
-    else
-    {
-        AddHBitmap(hbitmap);
-        return m_sp_data->m_cache_map[hbitmap].m_cache;
-    }
-}
-
-bool CD2D1BitmapCache::IsHBitmapExist(HBITMAP hbitmap) const
-{
-    auto existing_it = m_sp_data->m_cache_map.find(hbitmap);
-    return existing_it != m_sp_data->m_cache_map.end();
-}
-
-void CD2D1BitmapCache::GCImpl(std::shared_ptr<HeapData> sp_data)
-{
-    auto now = std::chrono::steady_clock::now();
-    TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(sp_data);
-    auto& ref_cache_map = sp_data->m_cache_map;
-    for (auto it = ref_cache_map.begin(); it != ref_cache_map.end();)
-    {
-        if (sp_data->IsCacheExpire(it->second, now))
-        {
-            it = ref_cache_map.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }
-}
-
 static std::shared_ptr<CD2D1BitmapCache> sp_bitmap_cache;
+static std::shared_ptr<CD2D1IconCache> sp_icon_cache;
 
 void CTaskBarDlgDrawCommon::ResetClippedStateIfSet()
 {
@@ -1653,6 +1433,11 @@ void CTaskBarDlgDrawCommon::Create(
     else
         sp_bitmap_cache->RebindRenderTarget(m_p_device_context);
     m_p_d2d1_device_context_support->RebindD2D1BitmapCache(sp_bitmap_cache);
+
+    if (sp_icon_cache == nullptr)
+        sp_icon_cache = std::make_shared<CD2D1IconCache>(m_p_device_context);
+    else
+        sp_icon_cache->RebindRenderTarget(m_p_device_context);
 }
 
 auto CTaskBarDlgDrawCommon::GetD3D10Device1RecreateRequester()
@@ -1923,7 +1708,7 @@ void CTaskBarDlgDrawCommon::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSiz
     auto p_d2d1_bitmap = m_p_d2d1_device_context_support->GetCachedBitmap(hbitmap);
     if (!p_d2d1_bitmap)
     {
-        p_d2d1_bitmap = CD2D1BitmapCache::CreateD2D1BitmapFromHBitmap(m_p_device_context, hbitmap);
+        p_d2d1_bitmap = ResourceBitmapCreator<HBITMAP>::Create(m_p_device_context, hbitmap);
     }
 
     float opacity = static_cast<float>(alpha) / 255.f;
@@ -2006,7 +1791,11 @@ void CTaskBarDlgDrawCommon::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSiz
 
 void CTaskBarDlgDrawCommon::DrawIcon(HICON hIcon, CPoint start_point, CSize size)
 {
-    auto p_d2d1_bitmap = CD2D1BitmapCache::CreateD2D1BitmapFromHIcon(m_p_device_context, hIcon);
+    auto p_d2d1_bitmap = sp_icon_cache->GetCachedIcon(hIcon);
+    if (!p_d2d1_bitmap) {
+        // 如果缓存获取失败（极少发生），直接创建
+        p_d2d1_bitmap = ResourceBitmapCreator<HICON>::Create(m_p_device_context, hIcon);
+    }
     D2D1_RECT_F draw_rect_f{};
     draw_rect_f.left = static_cast<float>(start_point.x);
     draw_rect_f.top = static_cast<float>(start_point.y);

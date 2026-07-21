@@ -15,6 +15,7 @@
 #include "Image2DEffect.h"
 #include "Nullable.hpp"
 #include "DrawTextManager.h"
+#include "WIC.h"
 
 void LogWin32ApiErrorMessage(DWORD error_code) noexcept;
 
@@ -681,24 +682,80 @@ namespace TaskBarDlgUser32DrawTextHook
 #define TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_GC_INTERVAL(sp_data) \
     std::lock_guard<std::mutex> gc_lock_guard(sp_data->m_gc_mutex)
 
-class CD2D1BitmapCache
+// ResourceBitmapCreator 主模板（只需声明）
+template <typename ResType>
+struct ResourceBitmapCreator;
+
+// 特化声明
+template <>
+struct ResourceBitmapCreator<HBITMAP> {
+    // 从HBITMAP创建ID2D1Bitmap对象
+    static Microsoft::WRL::ComPtr<ID2D1Bitmap> Create(Microsoft::WRL::ComPtr<ID2D1RenderTarget> pRT, HBITMAP hbitmap)
+    {
+        Microsoft::WRL::ComPtr<IWICBitmap> p_wic_bitmap;
+        ThrowIfFailed<CWICException>(
+            CWICFactory::GetWIC()->CreateBitmapFromHBITMAP(
+                hbitmap, NULL, WICBitmapUsePremultipliedAlpha, &p_wic_bitmap),
+            TRAFFICMONITOR_ERROR_STR("Call IWICImagingFactory::CreateBitmapFromHBITMAP failed."));
+        Microsoft::WRL::ComPtr<ID2D1Bitmap> result;
+        ThrowIfFailed<CD2D1Exception>(
+            pRT->CreateBitmapFromWicBitmap(p_wic_bitmap.Get(), &result),
+            TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::CreateBitmapFromWicBitmap failed."));
+        return result;
+    }
+};
+
+template <>
+struct ResourceBitmapCreator<HICON> {
+    // 从HICON创建ID2D1Bitmap对象
+    static Microsoft::WRL::ComPtr<ID2D1Bitmap> Create(Microsoft::WRL::ComPtr<ID2D1RenderTarget> pRT, HICON hIcon)
+    {
+        Microsoft::WRL::ComPtr<IWICBitmap> p_wic_bitmap;
+        ThrowIfFailed<CWICException>(
+            CWICFactory::GetWIC()->CreateBitmapFromHICON(hIcon, &p_wic_bitmap),
+            TRAFFICMONITOR_ERROR_STR("Call IWICImagingFactory::CreateBitmapFromHICON failed."));
+        // 格式转换
+        Microsoft::WRL::ComPtr<IWICFormatConverter> pConverter;
+        HRESULT hr = CWICFactory::GetWIC()->CreateFormatConverter(&pConverter);
+        ThrowIfFailed<CD2D1Exception>(hr, TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::CreateFormatConverter failed."));
+        hr = pConverter->Initialize(
+            p_wic_bitmap.Get(),
+            GUID_WICPixelFormat32bppPBGRA,
+            WICBitmapDitherTypeNone,
+            nullptr, 0.0f,
+            WICBitmapPaletteTypeCustom);
+        ThrowIfFailed<CD2D1Exception>(hr, TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::CreateFormatConverter::Initialize failed."));
+        Microsoft::WRL::ComPtr<ID2D1Bitmap> result;
+        ThrowIfFailed<CD2D1Exception>(
+            pRT->CreateBitmapFromWicBitmap(pConverter.Get(), &result),
+            TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::CreateBitmapFromWicBitmap failed."));
+        return result;
+    }
+};
+
+template <typename ResType>
+class CD2D1ResCacheBase
 {
 public:
-    using CacheInitializer =
-        std::function<Microsoft::WRL::ComPtr<ID2D1Bitmap>(Microsoft::WRL::ComPtr<ID2D1RenderTarget>, HBITMAP)>;
+    using CacheInitializer = 
+        std::function<Microsoft::WRL::ComPtr<ID2D1Bitmap>(Microsoft::WRL::ComPtr<ID2D1RenderTarget>, ResType)>;
 
 private:
     struct Cache
     {
-        Microsoft::WRL::ComPtr<ID2D1Bitmap> m_cache{};
-        std::chrono::steady_clock::time_point m_init_timestamp{std::chrono::steady_clock::now()};
-        CacheInitializer m_cache_initializer{CD2D1BitmapCache::CreateD2D1BitmapFromHBitmap};
-        void Update(Microsoft::WRL::ComPtr<ID2D1RenderTarget> p_render_target, HBITMAP hbitmap);
+        Microsoft::WRL::ComPtr<ID2D1Bitmap> m_cache;
+        std::chrono::steady_clock::time_point m_init_timestamp;
+        CacheInitializer m_cache_initializer;
+        void Update(Microsoft::WRL::ComPtr<ID2D1RenderTarget> pRT, ResType res) {
+            m_cache = m_cache_initializer(pRT, res);
+            m_init_timestamp = std::chrono::steady_clock::now();
+        }
     };
+
     struct HeapData
     {
         std::mutex m_mutex{};
-        std::unordered_map<HBITMAP, Cache> m_cache_map;
+        std::unordered_map<ResType, Cache> m_cache_map;
         std::chrono::seconds m_cache_expire_interval{std::chrono::seconds(10)};
         /**
          * @brief 检查缓存是否过期 ！！此函数不加锁！！
@@ -708,7 +765,9 @@ private:
          * @return true 缓存已过期
          * @return false 缓存未过期
          */
-        bool IsCacheExpire(const Cache& cache, std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now());
+        bool IsCacheExpire(const Cache& cache, std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now()) {
+            return (now - cache.m_init_timestamp) > m_cache_expire_interval;
+        }
 
         std::mutex m_gc_mutex{};
         std::chrono::seconds m_gc_interval{std::chrono::seconds(60)};
@@ -727,7 +786,7 @@ private:
                     break;
                 }
 
-                CD2D1BitmapCache::GCImpl(sp_data);
+                CD2D1ResCacheBase::GCImpl(sp_data);
 
                 decltype(sp_data->m_gc_interval) gc_interval;
                 {
@@ -739,26 +798,112 @@ private:
         }};
 
 public:
-    CD2D1BitmapCache(Microsoft::WRL::ComPtr<ID2D1RenderTarget> p_render_target);
-    ~CD2D1BitmapCache();
-    // 尚不支持复制或移动
-    CD2D1BitmapCache(const CD2D1BitmapCache&) = delete;
-    CD2D1BitmapCache& operator=(const CD2D1BitmapCache&) = delete;
+    CD2D1ResCacheBase(Microsoft::WRL::ComPtr<ID2D1RenderTarget> p_render_target)
+        : m_p_render_target{ p_render_target }
+    {}
 
-    void RebindRenderTarget(Microsoft::WRL::ComPtr<ID2D1RenderTarget> p_render_target);
-    void AddHBitmap(HBITMAP hbitmap, CacheInitializer initializer);
-    void AddHBitmap(HBITMAP hbitmap);
-    void RemoveHBitmap(HBITMAP hbitmap);
-    void RecreateAllHBitmaps();
-    static auto CreateD2D1BitmapFromHBitmap(Microsoft::WRL::ComPtr<ID2D1RenderTarget> p_render_target, HBITMAP hbitmap)
-        -> Microsoft::WRL::ComPtr<ID2D1Bitmap>;
-    static auto CreateD2D1BitmapFromHIcon(Microsoft::WRL::ComPtr<ID2D1RenderTarget> p_render_target, HICON hIcon)
-        -> Microsoft::WRL::ComPtr<ID2D1Bitmap>;
-    void GC();
-    void SetGCInterval(const std::chrono::seconds interval);
-    void SetExpireInterval(const std::chrono::seconds interval);
-    auto GetCachedBitmap(HBITMAP hbitmap)
-        -> Microsoft::WRL::ComPtr<ID2D1Bitmap>;
+    ~CD2D1ResCacheBase() {
+        m_gc_thread.detach();
+    }
+
+    // 尚不支持复制或移动
+    CD2D1ResCacheBase(const CD2D1ResCacheBase&) = delete;
+    CD2D1ResCacheBase& operator=(const CD2D1ResCacheBase&) = delete;
+
+    void RebindRenderTarget(Microsoft::WRL::ComPtr<ID2D1RenderTarget> p_render_target) {
+        m_p_render_target = p_render_target;
+        RecreateAllResources();
+    }
+
+    void AddResource(ResType res, CacheInitializer initializer = nullptr) {
+        //此函数在 GetCachedBitmap 中被调用，调用时已持有 m_sp_data->m_mutex 锁，因此此处不再重复加锁，避免死锁
+        if (IsResourceExist(res))
+        {
+            return;
+        }
+        try
+        {
+            auto bitmap = initializer ? initializer(m_p_render_target, res)
+                : ResourceBitmapCreator<ResType>::Create(m_p_render_target, res);
+            if (bitmap)
+            {
+                m_sp_data->m_cache_map[res] = {
+                    bitmap,
+                    std::chrono::steady_clock::now(),
+                    initializer ? initializer : ResourceBitmapCreator<ResType>::Create
+                };
+            }
+        }
+        catch (CWICException& ex)
+        {
+            LogHResultException(ex);
+        }
+    }
+
+    Microsoft::WRL::ComPtr<ID2D1Bitmap> GetResource(ResType res) {
+        TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(m_sp_data);
+        auto it = m_sp_data->m_cache_map.find(res);
+        if (it != m_sp_data->m_cache_map.end())
+        {
+            if (m_sp_data->IsCacheExpire(it->second))
+            {
+                it->second.Update(m_p_render_target, it->first);
+            }
+            return it->second.m_cache;
+        }
+        else
+        {
+            AddResource(res);
+            return m_sp_data->m_cache_map[res].m_cache;
+        }
+    }
+
+    void RemoveResource(ResType res) {
+        TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(m_sp_data);
+        auto it = m_sp_data->m_cache_map.find(res);
+        if (it != m_sp_data->m_cache_map.end())
+        {
+            m_sp_data->m_cache_map.erase(it);
+        }
+    }
+
+    void RecreateAllResources() {
+        CNullable<CD2D1Exception> nullable_d2d1exception{};
+        TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(m_sp_data);
+        for (auto& cache : m_sp_data->m_cache_map)
+        {
+            auto hbitmap = cache.first;
+
+            try
+            {
+                cache.second.Update(m_p_render_target, cache.first);
+            }
+            catch (CWICException& ex)
+            {
+                // 一般是HBITMAP失效导致的问题，直接忽略
+                (void)ex;
+            }
+            catch (CD2D1Exception& ex)
+            {
+                // 只会保存最后一次异常
+                nullable_d2d1exception.Construct(std::move(ex));
+            }
+        }
+        if (nullable_d2d1exception)
+        {
+            throw nullable_d2d1exception.GetUnsafe();
+        }
+    }
+
+    void GC() { GCImpl(m_sp_data); }
+    void SetGCInterval(const std::chrono::seconds interval) {
+        TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_GC_INTERVAL(m_sp_data);
+        m_sp_data->m_gc_interval = interval;
+    }
+    void SetExpireInterval(const std::chrono::seconds interval) {
+        TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(m_sp_data);
+        m_sp_data->m_cache_expire_interval = interval;
+    }
 
 private:
     /**
@@ -768,8 +913,59 @@ private:
      * @return true BITMAP已经被缓存
      * @return false BITMAP尚未缓存
      */
-    bool IsHBitmapExist(HBITMAP hbitmap) const;
-    static void GCImpl(std::shared_ptr<HeapData> sp_data);
+    bool IsResourceExist(ResType res) const {
+        auto existing_it = m_sp_data->m_cache_map.find(res);
+        return existing_it != m_sp_data->m_cache_map.end();
+    }
+    static void GCImpl(std::shared_ptr<HeapData> sp_data) {
+        auto now = std::chrono::steady_clock::now();
+        TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_CACHE_MAP_AND_EXPIRE_INTERVAL(sp_data);
+        auto& ref_cache_map = sp_data->m_cache_map;
+        for (auto it = ref_cache_map.begin(); it != ref_cache_map.end();)
+        {
+            if (sp_data->IsCacheExpire(it->second, now))
+            {
+                it = ref_cache_map.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+    }
+};
+
+class CD2D1BitmapCache : public CD2D1ResCacheBase<HBITMAP> {
+public:
+    using Base = CD2D1ResCacheBase<HBITMAP>;
+    using Base::Base;  // 继承构造函数
+
+    Microsoft::WRL::ComPtr<ID2D1Bitmap> GetCachedBitmap(HBITMAP hbitmap) {
+        return GetResource(hbitmap);
+    }
+    void AddHBitmap(HBITMAP hbitmap, CacheInitializer init = nullptr) {
+        AddResource(hbitmap, init);
+    }
+    void RemoveHBitmap(HBITMAP hbitmap) {
+        RemoveResource(hbitmap);
+    }
+    void RecreateAllHBitmaps() { RecreateAllResources(); }
+};
+
+class CD2D1IconCache : public CD2D1ResCacheBase<HICON> {
+public:
+    using Base = CD2D1ResCacheBase<HICON>;
+    using Base::Base;
+
+    Microsoft::WRL::ComPtr<ID2D1Bitmap> GetCachedIcon(HICON hIcon) {
+        return GetResource(hIcon);
+    }
+    void AddIcon(HICON hIcon, CacheInitializer init = nullptr) {
+        AddResource(hIcon, init);
+    }
+    void RemoveIcon(HICON hIcon) {
+        RemoveResource(hIcon);
+    }
 };
 
 class CTaskBarDlgDrawCommon final : public IDrawCommon
