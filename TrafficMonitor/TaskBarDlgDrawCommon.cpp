@@ -1521,6 +1521,43 @@ auto CD2D1BitmapCache::CreateD2D1BitmapFromHBitmap(ComPtr<ID2D1RenderTarget> p_r
     return result;
 }
 
+auto CD2D1BitmapCache::CreateD2D1BitmapFromHIcon(ComPtr<ID2D1RenderTarget> p_render_target, HICON hIcon)
+    -> ComPtr<ID2D1Bitmap>
+{
+    //HICON转换为IWICBitmap
+    ComPtr<IWICBitmap> p_wic_bitmap1{};
+    ThrowIfFailed<CWICException>(
+        CWICFactory::GetWIC()->CreateBitmapFromHICON(
+            hIcon,
+            &p_wic_bitmap1),
+        TRAFFICMONITOR_ERROR_STR("Call IWICImagingFactory::CreateBitmapFromHICON failed."));
+
+    // 使用格式转换器确保格式兼容
+    Microsoft::WRL::ComPtr<IWICFormatConverter> pConverter;
+    HRESULT hr = CWICFactory::GetWIC()->CreateFormatConverter(&pConverter);
+    ThrowIfFailed<CD2D1Exception>(hr, TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::CreateFormatConverter failed."));
+
+    hr = pConverter->Initialize(
+        p_wic_bitmap1.Get(),
+        GUID_WICPixelFormat32bppPBGRA,
+        WICBitmapDitherTypeNone,
+        nullptr,
+        0.0f,
+        WICBitmapPaletteTypeCustom
+    );
+    ThrowIfFailed<CD2D1Exception>(hr, TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::CreateFormatConverter::Initialize failed."));
+
+    //IWICBitmap转换为ID2D1Bitmap
+    ComPtr<ID2D1Bitmap> result{};
+    ThrowIfFailed<CD2D1Exception>(
+        p_render_target->CreateBitmapFromWicBitmap(
+            pConverter.Get(),
+            &result),
+        TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::CreateBitmapFromWicBitmap failed."));
+
+    return result;
+}
+
 void CD2D1BitmapCache::GC()
 {
     GCImpl(m_sp_data);
@@ -1969,15 +2006,22 @@ void CTaskBarDlgDrawCommon::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSiz
 
 void CTaskBarDlgDrawCommon::DrawIcon(HICON hIcon, CPoint start_point, CSize size)
 {
-    // TODO: 这里直接使用GDI方式绘制图标，后续应替换成Direct2D的实现以获得更好的显示效果
-    ExecuteGdiOperation(CRect(start_point, size), [hIcon, start_point, size](HDC gdi_dc) {
-        if (gdi_dc == NULL)
-            return;
-        if (size.cx == 0 || size.cy == 0)
-            ::DrawIconEx(gdi_dc, start_point.x, start_point.y, hIcon, 0, 0, 0, NULL, DI_NORMAL | DI_DEFAULTSIZE);
-        else
-            ::DrawIconEx(gdi_dc, start_point.x, start_point.y, hIcon, size.cx, size.cy, 0, NULL, DI_NORMAL);
-    });
+    auto p_d2d1_bitmap = CD2D1BitmapCache::CreateD2D1BitmapFromHIcon(m_p_device_context, hIcon);
+    D2D1_RECT_F draw_rect_f{};
+    draw_rect_f.left = static_cast<float>(start_point.x);
+    draw_rect_f.top = static_cast<float>(start_point.y);
+    if (size.cx == 0 || size.cy == 0)
+    {
+        auto bitmap_size = p_d2d1_bitmap->GetSize();
+        draw_rect_f.right = static_cast<float>(start_point.x) + bitmap_size.width;
+        draw_rect_f.bottom = static_cast<float>(start_point.y) + bitmap_size.height;
+    }
+    else
+    {
+        draw_rect_f.right = static_cast<float>(start_point.x + size.cx);
+        draw_rect_f.bottom = static_cast<float>(start_point.y + size.cy);
+    }
+    m_p_device_context->DrawBitmap(p_d2d1_bitmap.Get(), draw_rect_f);
 }
 
 CDC* CTaskBarDlgDrawCommon::GetDC()

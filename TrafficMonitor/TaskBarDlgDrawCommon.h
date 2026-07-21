@@ -752,6 +752,8 @@ public:
     void RecreateAllHBitmaps();
     static auto CreateD2D1BitmapFromHBitmap(Microsoft::WRL::ComPtr<ID2D1RenderTarget> p_render_target, HBITMAP hbitmap)
         -> Microsoft::WRL::ComPtr<ID2D1Bitmap>;
+    static auto CreateD2D1BitmapFromHIcon(Microsoft::WRL::ComPtr<ID2D1RenderTarget> p_render_target, HICON hIcon)
+        -> Microsoft::WRL::ComPtr<ID2D1Bitmap>;
     void GC();
     void SetGCInterval(const std::chrono::seconds interval);
     void SetExpireInterval(const std::chrono::seconds interval);

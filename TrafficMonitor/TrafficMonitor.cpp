@@ -1014,6 +1014,10 @@ BOOL CTrafficMonitorApp::InitInstance()
         }
     }
 
+    //初始化GDI+
+    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+    GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
+
     //载入插件
     LoadPluginDisabledSettings();
     m_plugins.LoadPlugins();
@@ -1091,10 +1095,6 @@ BOOL CTrafficMonitorApp::InitInstance()
 #ifdef _DEBUG
     CTest::Test();
 #endif
-
-    //初始化GDI+
-    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-    GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
 
     SendSettingsToPlugin();
 

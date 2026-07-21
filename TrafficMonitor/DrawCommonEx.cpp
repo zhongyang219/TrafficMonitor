@@ -127,7 +127,10 @@ void CDrawCommonEx::GetTextExtent(const wchar_t* lpszString, int& w, int& h)
 
 void CDrawCommonEx::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode, BYTE alpha)
 {
-    m_gdi_drawer.DrawBitmap(hbitmap, start_point, size, stretch_mode, alpha);
+    Gdiplus::Bitmap bm(hbitmap, NULL);
+    m_pGraphics->SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQuality);
+    DrawCommonHelper::ImageDrawAreaConvert(CSize(bm.GetWidth(), bm.GetHeight()), start_point, size, stretch_mode);
+    m_pGraphics->DrawImage(&bm, INT(start_point.x), INT(start_point.y), INT(size.cx), INT(size.cy));
 }
 
 void CDrawCommonEx::DrawIcon(HICON hIcon, CPoint start_point, CSize size)
