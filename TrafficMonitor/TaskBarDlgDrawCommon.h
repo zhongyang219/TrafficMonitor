@@ -1008,9 +1008,9 @@ public:
     // 用纯色填充矩形
     void FillRect(CRect rect, COLORREF color, BYTE alpha = 255) override;
     // 绘制矩形边框。如果dot_line为true，则为虚线
-    void DrawRectOutLine(CRect rect, COLORREF color, int width = 1, bool dot_line = false, BYTE alpha = 255) override;
+    void DrawRectOutLine(CRect rect, COLORREF color, int width = 1, bool dot_line = false, BYTE alpha = 255, int radius = 0) override;
     // 使用当前画笔画线
-    void DrawLine(CPoint start_point, int height, COLORREF color, BYTE alpha = 255) override;
+    void DrawLine(CPoint start_point, CPoint end_point, COLORREF color, BYTE alpha = 255) override;
     void SetTextColor(const COLORREF color, BYTE alpha = 255) override;
     // 绘制一个位图
     // （注意：当stretch_mode设置为StretchMode::FILL（填充）时，会设置绘图剪辑区域，如果之后需要绘制其他图形，

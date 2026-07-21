@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "DrawCommonEx.h"
+#include "DrawCommonHelper.h"
 
 CDrawCommonEx::CDrawCommonEx(CDC* pDC)
 {
@@ -22,7 +23,6 @@ void CDrawCommonEx::Create(CDC* pDC)
     m_pDC = pDC;
     SAFE_DELETE(m_pGraphics);
     m_pGraphics = new Gdiplus::Graphics(pDC->GetSafeHdc());
-    m_gdi_drawer.Create(pDC, nullptr);
 }
 
 void CDrawCommonEx::SetFont(CFont * pFont)
@@ -89,14 +89,83 @@ void CDrawCommonEx::FillRect(CRect rect, COLORREF color, BYTE alpha)
     m_pGraphics->FillRectangle(&brush, rect_gdiplus);
 }
 
-void CDrawCommonEx::DrawRectOutLine(CRect rect, COLORREF color, int width, bool dot_line, BYTE alpha)
+static void CreateRoundRectPath(Gdiplus::GraphicsPath* pPath, const Gdiplus::RectF& rect, float radius)
 {
-    m_gdi_drawer.DrawRectOutLine(rect, color, width, dot_line, alpha);
+    // 限制半径不超过矩形尺寸的一半
+    float half_w = rect.Width / 2.0f;
+    float half_h = rect.Height / 2.0f;
+    if (radius > half_w) radius = half_w;
+    if (radius > half_h) radius = half_h;
+
+    // 如果半径为零或负值，直接添加普通矩形
+    if (radius < 0.1f)
+    {
+        pPath->AddRectangle(rect);
+        return;
+    }
+
+    float x = rect.X;
+    float y = rect.Y;
+    float width = rect.Width;
+    float height = rect.Height;
+    
+    pPath->AddArc(x, y, radius * 2, radius * 2, 180, 90); // 左上角
+    pPath->AddArc(x + width - radius * 2, y, radius * 2, radius * 2, 270, 90); // 右上角
+    pPath->AddArc(x + width - radius * 2, y + height - radius * 2, radius * 2, radius * 2, 0, 90); // 右下角
+    pPath->AddArc(x, y + height - radius * 2, radius * 2, radius * 2, 90, 90); // 左下角
+    pPath->CloseFigure();
+
 }
 
-void CDrawCommonEx::DrawLine(CPoint start_point, int height, COLORREF color, BYTE alpha)
+void CDrawCommonEx::DrawRectOutLine(CRect rect, COLORREF color, int width, bool dot_line, BYTE alpha, int radius)
 {
-    m_gdi_drawer.DrawLine(start_point, height, color, alpha);
+    // 转换为 GDI+ 矩形
+    Gdiplus::RectF rect_gdiplus = CGdiPlusHelper::CRectToGdiplusRect(rect);
+
+    // 创建画笔
+    Gdiplus::Color gdi_color = CGdiPlusHelper::COLORREFToGdiplusColor(color, alpha);
+    Gdiplus::Pen pen(gdi_color, (Gdiplus::REAL)width);
+
+    // 设置虚线样式
+    if (dot_line)
+    {
+        // 使用点划线
+        pen.SetDashStyle(Gdiplus::DashStyleDash);
+    }
+
+    // 绘制
+    auto gdiplus_states = m_pGraphics->Save();
+    if (radius > 0)
+    {
+        // 使用路径绘制圆角矩形
+        Gdiplus::GraphicsPath path;
+        rect_gdiplus.Width -= width;
+        rect_gdiplus.Height -= width;
+        CreateRoundRectPath(&path, rect_gdiplus, (float)radius);
+        m_pGraphics->SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias); // 启用抗锯齿
+        m_pGraphics->DrawPath(&pen, &path);
+    }
+    else
+    {
+        // 普通矩形
+        m_pGraphics->DrawRectangle(&pen, rect_gdiplus);
+    }
+    m_pGraphics->Restore(gdiplus_states);
+}
+
+void CDrawCommonEx::DrawLine(CPoint start_point, CPoint end_point, COLORREF color, BYTE alpha)
+{
+    //使用GDI画线
+    CPen aPen, * pOldPen;
+    aPen.CreatePen(PS_SOLID, 1, color);
+    pOldPen = m_pDC->SelectObject(&aPen);
+    CBrush* pOldBrush{ dynamic_cast<CBrush*>(m_pDC->SelectStockObject(NULL_BRUSH)) };
+
+    m_pDC->MoveTo(start_point);
+    m_pDC->LineTo(end_point);
+    m_pDC->SelectObject(pOldPen);
+    m_pDC->SelectObject(pOldBrush);
+    aPen.DeleteObject();
 }
 
 void CDrawCommonEx::SetTextColor(const COLORREF color, BYTE alpha)
@@ -135,7 +204,13 @@ void CDrawCommonEx::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, 
 
 void CDrawCommonEx::DrawIcon(HICON hIcon, CPoint start_point, CSize size)
 {
-    m_gdi_drawer.DrawIcon(hIcon, start_point, size);
+    //直接使用GDI的方式绘制图标
+    if (m_pDC->GetSafeHdc() == NULL)
+        return;
+    if (size.cx == 0 || size.cy == 0)
+        ::DrawIconEx(m_pDC->GetSafeHdc(), start_point.x, start_point.y, hIcon, 0, 0, 0, NULL, DI_NORMAL | DI_DEFAULTSIZE);
+    else
+        ::DrawIconEx(m_pDC->GetSafeHdc(), start_point.x, start_point.y, hIcon, size.cx, size.cy, 0, NULL, DI_NORMAL);
 }
 
 

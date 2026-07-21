@@ -7,6 +7,7 @@
 #include "DrawCommon.h"
 #include "DrawCommonEx.h"
 #include "SkinManager.h"
+#include "DrawCommonHelper.h"
 
 
 CSkinFile::CSkinFile()

@@ -4,6 +4,7 @@
 #include "D2D1Support.h"
 #include "CommonData.h"
 #include "Nullable.hpp"
+#include "DrawCommonEx.h"
 
 class CDrawCommon final : public IDrawCommon
 {
@@ -41,13 +42,13 @@ public:
 
     void FillRect(CRect rect, COLORREF color, BYTE alpha = 255) override; //用纯色填充矩形
     void FillRectWithBackColor(CRect rect);			//使用背景色填充矩形
-    void DrawRectOutLine(CRect rect, COLORREF color, int width = 1, bool dot_line = false, BYTE alpha = 255) override; //绘制矩形边框。如果dot_line为true，则为虚线
+    void DrawRectOutLine(CRect rect, COLORREF color, int width = 1, bool dot_line = false, BYTE alpha = 255, int radius = 0) override; //绘制矩形边框。如果dot_line为true，则为虚线
 
     //从图像创建区域，如果像素点的亮度小于threshold（取值为0~255，0为黑色，255为白色），则该像素点在区域外
     //https://blog.csdn.net/tajon1226/article/details/6589180
     static void GetRegionFromImage(CRgn& rgn, CBitmap& cBitmap, int threshold);
 
-    void DrawLine(CPoint start_point, int height, COLORREF color, BYTE alpha = 255) override; //使用当前画笔画线
+    void DrawLine(CPoint start_point, CPoint end_point, COLORREF color, BYTE alpha = 255) override; //使用当前画笔画线
 
     virtual int GetTextWidth(LPCTSTR lpszString) override;
 
@@ -58,89 +59,8 @@ private:
     CWnd* m_pMainWnd{};	//绘图窗口的句柄
     CFont* m_pfont{};
     COLORREF m_back_color{};
+    CDrawCommonEx m_gdi_plus_drawer;
 
     static int GetColorBritness(COLORREF color);
 };
 
-
-//用于双缓冲绘图的类
-class CDrawDoubleBuffer final : public IDrawBuffer
-{
-public:
-    CDrawDoubleBuffer(CDC* pDC, CRect rect)
-        : m_pDC(pDC), m_rect(rect)
-    {
-        if (m_pDC != nullptr)
-        {
-            m_memDC.CreateCompatibleDC(NULL);
-            m_memBitmap.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
-            m_pOldBit = m_memDC.SelectObject(&m_memBitmap);
-        }
-    }
-
-    ~CDrawDoubleBuffer()
-    {
-        if (m_pDC != nullptr)
-        {
-            m_pDC->BitBlt(m_rect.left, m_rect.top, m_rect.Width(), m_rect.Height(), &m_memDC, 0, 0, SRCCOPY);
-            m_memDC.SelectObject(m_pOldBit);
-            m_memBitmap.DeleteObject();
-            m_memDC.DeleteDC();
-        }
-    }
-
-    CDC* GetMemDC()
-    {
-        return &m_memDC;
-    }
-
-private:
-    CDC* m_pDC;
-    CDC m_memDC;
-    CBitmap m_memBitmap;
-    CBitmap* m_pOldBit;
-    CRect m_rect;
-};
-
-namespace DrawCommonHelper
-{
-    UINT ProccessTextFormat(CRect rect, CSize text_length, IDrawCommon::Alignment align, bool multi_line) noexcept;
-
-    //根据图片拉伸模式，计算绘制图片的实际位置
-    //image_size[int]：图片的原始大小
-    //start_point[int][out]：绘制区域的起始位置
-    //size[int][out]：绘制区域的大小
-    //stretch_mode[int]：拉伸模式
-    void ImageDrawAreaConvert(CSize image_size, CPoint& start_point, CSize& size, IDrawCommon::StretchMode stretch_mode);
-
-    struct Point
-    {
-    public:
-        Point() {}
-        Point(int x, int y)
-            : m_x(x), m_y(y)
-        {}
-        bool operator==(const Point& a) const
-        {
-            return m_x == a.m_x && m_y == a.m_y;
-        }
-        bool operator<(const Point& a) const
-        {
-            if (m_x == a.m_x)
-                return m_y < a.m_y;
-            else
-                return m_x < a.m_x;
-        }
-
-    private:
-        int m_x{};
-        int m_y{};
-    };
-
-    //获取一个位置中完全透明的点，并保存到points中
-    void GetBitmapAlphaPixel(HBITMAP hBitmap, std::set<Point>& points);
-
-    //修正位图中文本部分的Alpha通道
-    //使用了UpdateLayeredWindow后，使用GDI绘制的文本也会变得透明，此函数会遍历bitmap中alpha值为0，但是不在alpha_points中的像素，将其修正为正确的alpha值
-    void FixBitmapTextAlpha(HBITMAP hBitmap, BYTE alpha, std::set<Point> alpha_points);
-};

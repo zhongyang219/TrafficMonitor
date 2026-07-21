@@ -1661,35 +1661,42 @@ void CTaskBarDlgDrawCommon::FillRect(CRect rect, COLORREF color, BYTE alpha)
     m_p_device_context->FillRectangle(rect_f, m_p_d2d1_device_context_support->GetRawForeSolidColorBruch());
 }
 
-void CTaskBarDlgDrawCommon::DrawRectOutLine(CRect rect, COLORREF color, int width, bool dot_line, BYTE alpha)
+void CTaskBarDlgDrawCommon::DrawRectOutLine(CRect rect, COLORREF color, int width, bool dot_line, BYTE alpha, int radius)
 {
+    // 缩进矩形，使边框居中绘制
     rect.DeflateRect(width / 2, width / 2);
     auto rect_f = Convert(rect);
     m_p_d2d1_device_context_support->SetForeColor(color, alpha);
     auto width_f = static_cast<float>(width);
+
+    // 构造圆角矩形结构（半径相等）
+    D2D1_ROUNDED_RECT rounded_rect = {
+        rect_f,
+        static_cast<float>(radius),
+        static_cast<float>(radius)
+    };
+
     if (dot_line)
     {
-        m_p_device_context
-            ->DrawRectangle(
-                rect_f,
-                m_p_d2d1_device_context_support->GetRawForeSolidColorBruch(),
-                width_f,
-                m_p_window_support->GetRawPsDotLikeStyle());
+        m_p_device_context->DrawRoundedRectangle(
+            rounded_rect,
+            m_p_d2d1_device_context_support->GetRawForeSolidColorBruch(),
+            width_f,
+            m_p_window_support->GetRawPsDotLikeStyle());
     }
     else
     {
-        m_p_device_context
-            ->DrawRectangle(
-                rect_f,
-                m_p_d2d1_device_context_support->GetRawForeSolidColorBruch(),
-                width_f);
+        m_p_device_context->DrawRoundedRectangle(
+            rounded_rect,
+            m_p_d2d1_device_context_support->GetRawForeSolidColorBruch(),
+            width_f);
     }
 }
 
-void CTaskBarDlgDrawCommon::DrawLine(CPoint start_point, int height, COLORREF color, BYTE alpha)
+void CTaskBarDlgDrawCommon::DrawLine(CPoint start_point, CPoint end_point, COLORREF color, BYTE alpha)
 {
     auto d2d1_start_point = Convert(start_point);
-    D2D1_POINT_2F d2d1_end_point{d2d1_start_point.x, d2d1_start_point.y - height};
+    auto d2d1_end_point = Convert(end_point);
     m_p_d2d1_device_context_support->SetForeColor(color, alpha);
     m_p_device_context->DrawLine(
         d2d1_start_point,

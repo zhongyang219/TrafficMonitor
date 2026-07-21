@@ -4,6 +4,7 @@
 #include "IDrawCommon.h"
 #include "DrawCommon.h"
 #include "TaskBarDlgDrawCommon.h"
+#include "DrawCommonHelper.h"
 
 template <class T>
 struct StackObjectDeleter

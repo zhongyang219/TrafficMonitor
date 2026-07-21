@@ -5,6 +5,7 @@
 #include "TrafficMonitor.h"
 #include "HistoryTrafficCalendarDlg.h"
 #include "afxdialogex.h"
+#include "DrawCommonHelper.h"
 
 
 // CHistoryTrafficCalendarDlg 对话框

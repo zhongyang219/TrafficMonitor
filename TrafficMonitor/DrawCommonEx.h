@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "DrawCommon.h"
+#include "IDrawCommon.h"
 #include <gdiplus.h>
 
 //使用GDI+的绘图类
@@ -22,8 +22,8 @@ public:
     void DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align, bool draw_back_ground, bool multi_line, BYTE alpha) override;
     void SetDrawRect(CRect rect) override;
     void FillRect(CRect rect, COLORREF color, BYTE alpha) override;
-    void DrawRectOutLine(CRect rect, COLORREF color, int width, bool dot_line, BYTE alpha) override;
-    void DrawLine(CPoint start_point, int height, COLORREF color, BYTE alpha) override;
+    void DrawRectOutLine(CRect rect, COLORREF color, int width, bool dot_line, BYTE alpha, int radius = 0) override;
+    void DrawLine(CPoint start_point, CPoint end_point, COLORREF color, BYTE alpha) override;
     void SetTextColor(const COLORREF color, BYTE alpha) override;
     void DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode, BYTE alpha) override;
     void DrawIcon(HICON hIcon, CPoint start_point, CSize size) override;
@@ -36,7 +36,6 @@ private:
     Gdiplus::Graphics* m_pGraphics{};
     Gdiplus::Color m_text_color{};
     Gdiplus::Color m_back_color{};
-    CDrawCommon m_gdi_drawer;
 };
 
 class CGdiPlusHelper

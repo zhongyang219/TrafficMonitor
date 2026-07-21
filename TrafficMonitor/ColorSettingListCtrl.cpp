@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "ColorSettingListCtrl.h"
+#include "DrawCommonHelper.h"
 
 IMPLEMENT_DYNAMIC(CColorSettingListCtrl, CListCtrl)
 

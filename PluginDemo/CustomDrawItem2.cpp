@@ -117,7 +117,10 @@ bool CCustomDrawItem2::DrawItemEx(IPluginDrawer* pDrawer, int x, int y, int w, i
     //绘制文本
     CRect text_rect(rect);
     text_rect.left = png_rect.right + CPluginDemo::Instance().DPI(4);
-    //pDrawer->DrawRectOutLine(text_rect.left, text_rect.top, text_rect.Width(), text_rect.Height(), text_color);
+    int text_height = CPluginDemo::Instance().DPI(16);
+    text_rect.top = rect.top + (rect.Height() - text_height) / 2;
+    text_rect.bottom = text_rect.top + text_height;
+    pDrawer->DrawRectOutLine(text_rect.left, text_rect.top, text_rect.Width(), text_rect.Height(), text_color, 1, false, 255, CPluginDemo::Instance().DPI(3));
     pDrawer->DrawWindowText(text_rect.left, text_rect.top, text_rect.Width(), text_rect.Height(), L"test", text_color);
     return true;
 }

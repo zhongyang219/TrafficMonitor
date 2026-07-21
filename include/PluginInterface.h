@@ -507,8 +507,9 @@ public:
      * @param   width 边框的线宽
      * @param   dot_line 是否为虚线
      * @param   alpha 不透明度，0~255
+     * @param   radius 圆角半径，如果为0则为直角矩形
      */
-    virtual void DrawRectOutLine(int x, int y, int w, int h, unsigned long color, int width = 1, bool dot_line = false, unsigned char alpha = 255) = 0;
+    virtual void DrawRectOutLine(int x, int y, int w, int h, unsigned long color, int width = 1, bool dot_line = false, unsigned char alpha = 255, int radius = 0) = 0;
 
     /**
      * @brief   绘制一个位图
@@ -542,6 +543,8 @@ public:
      * @param[out]  h 字符串的高度
      */
     virtual void GetTextExtent(const wchar_t* lpszString, int& w, int& h) = 0;
+
+    virtual void DrawLine(int x1, int y1, int x2, int y2, unsigned long color, unsigned char alpha = 255) = 0;
 };
 
 

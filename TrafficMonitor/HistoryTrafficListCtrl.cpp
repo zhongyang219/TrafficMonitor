@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "HistoryTrafficListCtrl.h"
+#include "DrawCommonHelper.h"
 
 IMPLEMENT_DYNAMIC(CHistoryTrafficListCtrl, CListCtrl)
 
