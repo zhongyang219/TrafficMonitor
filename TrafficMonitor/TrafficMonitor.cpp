@@ -1391,7 +1391,7 @@ int CTrafficMonitorApp::ExitInstance()
 
 int CTrafficMonitorApp::GetAPIVersion()
 {
-    return 0;
+    return 1;
 }
 
 const wchar_t* CTrafficMonitorApp::GetVersion()
@@ -1477,7 +1477,7 @@ const wchar_t* CTrafficMonitorApp::GetPluginConfigDir() const
 
 int CTrafficMonitorApp::GetDPI(DPIType type) const
 {
-    CTrafficMonitorDlg* pMainWnd = dynamic_cast<CTrafficMonitorDlg*>(m_pMainWnd);
+    CTrafficMonitorDlg* pMainWnd = CTrafficMonitorDlg::Instance();
     switch (type)
     {
     case DPI_MAIN_WND:
@@ -1491,6 +1491,16 @@ int CTrafficMonitorApp::GetDPI(DPIType type) const
         return m_dpi;
     }
     return 0;
+}
+
+void* CTrafficMonitorApp::GetMainWindowHwnd()
+{
+    return m_pMainWnd->GetSafeHwnd();
+}
+
+void* CTrafficMonitorApp::GetTaskbarWindowHwnd()
+{
+    return CTrafficMonitorDlg::Instance()->GetTaskbarWindow()->GetSafeHwnd();
 }
 
 const wchar_t* CTrafficMonitorApp::GetStringRes(const wchar_t* key, const wchar_t* section)

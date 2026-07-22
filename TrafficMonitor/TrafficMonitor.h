@@ -211,6 +211,8 @@ public:
     unsigned short GetLanguageId() const override;
     const wchar_t* GetPluginConfigDir() const override;
     int GetDPI(DPIType type) const override;
+    virtual void* GetMainWindowHwnd() override;
+    virtual void* GetTaskbarWindowHwnd() override;
 };
 
 extern CTrafficMonitorApp theApp;

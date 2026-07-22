@@ -39,6 +39,7 @@ public:
     virtual int GetTextWidth(LPCTSTR lpszString) { return 0; }
 
     // 通过 IPluginDrawer 继承
+    virtual int GetAPIVersion() override;
     virtual void DrawWindowText(int x, int y, int w, int h, const wchar_t* lpszString, unsigned long color, Alignment align, bool multi_line, unsigned char alpha) override;
     virtual void SetDrawRect(int x, int y, int w, int h) override;
     virtual void FillRect(int x, int y, int w, int h, unsigned long color, unsigned char alpha) override;

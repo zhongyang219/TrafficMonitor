@@ -440,6 +440,23 @@ public:
      * @return 
      */
     virtual const wchar_t* GetStringRes(const wchar_t* key, const wchar_t* section) = 0;
+
+    /**
+     * @brief   获取主窗口的句柄
+     * @return  
+     */
+    virtual void* GetMainWindowHwnd() = 0;
+
+    /**
+     * @brief   获取任务栏窗口的句柄。不显示任务栏窗口时，返回值为空
+     * @return  
+     */
+    virtual void* GetTaskbarWindowHwnd() = 0;
+
+    /**
+     * API Version
+     *      1       新增GetMainWindowHwnd、GetTaskbarWindowHwnd函数
+     */
 };
 
 
@@ -447,6 +464,12 @@ public:
 class IPluginDrawer
 {
 public:
+    /**
+     * @brief   获取此接口的版本。
+     * @return  int
+     */
+    virtual int GetAPIVersion() = 0;
+
     // 拉伸模式
     enum StretchMode
     {

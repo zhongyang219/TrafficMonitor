@@ -1,6 +1,11 @@
 ﻿#include "stdafx.h"
 #include "IDrawCommon.h"
 
+int IDrawCommon::GetAPIVersion()
+{
+    return 0;
+}
+
 void IDrawCommon::DrawWindowText(int x, int y, int w, int h, const wchar_t* lpszString, unsigned long color, Alignment align, bool multi_line, unsigned char alpha)
 {
     CRect rect(POINT(x, y), SIZE(w, h));
