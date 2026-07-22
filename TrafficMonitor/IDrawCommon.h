@@ -45,7 +45,8 @@ public:
     virtual void DrawRectOutLine(int x, int y, int w, int h, unsigned long color, int width, bool dot_line, unsigned char alpha, int radius) override;
     virtual void DrawBitmap(void* hbitmap, int x, int y, int w, int h, StretchMode stretch_mode, unsigned char alpha) override;
     virtual void DrawIcon(void* hIcon, int x, int y, int w, int h) override;
-    virtual void DrawLine(int x1, int y1, int x2, int y2, unsigned long color, unsigned char alpha = 255) override;
+    virtual void DrawLine(int x1, int y1, int x2, int y2, unsigned long color, int width = 1, bool dot_line = false, unsigned char alpha = 255) override;
+    virtual void* GetHDC() override;
 };
 
 namespace DrawCommonHelper

@@ -45,9 +45,15 @@ void IDrawCommon::DrawLine(CPoint start_point, int height, COLORREF color, BYTE 
     }
 }
 
-void IDrawCommon::DrawLine(int x1, int y1, int x2, int y2, unsigned long color, unsigned char alpha)
+void IDrawCommon::DrawLine(int x1, int y1, int x2, int y2, unsigned long color, int width, bool dot_line, unsigned char alpha)
 {
     CPoint start_point(x1, y1);
     CPoint end_point(x2, y2);
     DrawLine(start_point, end_point, color, alpha);
+}
+
+void* IDrawCommon::GetHDC()
+{
+    CDC* pDC = GetDC();
+    return pDC->GetSafeHdc();
 }

@@ -541,7 +541,22 @@ public:
      */
     virtual void GetTextExtent(const wchar_t* lpszString, int& w, int& h) = 0;
 
-    virtual void DrawLine(int x1, int y1, int x2, int y2, unsigned long color, unsigned char alpha = 255) = 0;
+    /**
+     * @brief   绘制一个线段
+     * @param   x1 第1个点的x坐标
+     * @param   y1 第1个点的y坐标
+     * @param   x2 第2个点的x坐标
+     * @param   y2 第2个点的7坐标
+     * @param   color 颜色
+     * @param   alpha 不透明度
+     */
+    virtual void DrawLine(int x1, int y1, int x2, int y2, unsigned long color, int width = 1, bool dot_line = false, unsigned char alpha = 255) = 0;
+
+    /**
+     * @brief   获取GDI绘图的句柄
+     * @return  HDC格式句柄
+     */
+    virtual void* GetHDC() = 0;
 };
 
 
