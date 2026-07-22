@@ -368,32 +368,27 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
             plugin->OnExtenedInfo(ITMPlugin::EI_VALUE_TEXT_COLOR, std::to_wstring(value_text_color).c_str());
         }
         drawer.SetTextColor(value_text_color);
-        //插件API版本大于等于8时先调用DrawItemEx，返回false再调用DrawItem
-        bool draw_item_ex_rtn = false;
-        if (plugin != nullptr && plugin->GetAPIVersion() >= 8)
-            draw_item_ex_rtn = item->DrawItemEx(&drawer, rect.left, rect.top, rect.Width(), rect.Height(), background_brightness < 128);
-        if (!draw_item_ex_rtn)
+        //需要rtti
+        if (typeid(drawer) == typeid(CDrawCommon))
         {
-            //需要rtti
-            if (typeid(drawer) == typeid(CDrawCommon))
-            {
-                auto* p_dc = static_cast<CDrawCommon&>(drawer).GetDC();
-                item->DrawItem(p_dc->GetSafeHdc(), rect.left, rect.top, rect.Width(), rect.Height(), background_brightness < 128);
-                p_dc->SelectObject(&m_font);
-            }
-            else if (typeid(drawer) == typeid(CTaskBarDlgDrawCommon))
-            {
-                auto& ref_d2d1_drawer = static_cast<CTaskBarDlgDrawCommon&>(drawer);
-                ref_d2d1_drawer.ExecuteGdiOperation(rect,
-                    [item, rect, background_brightness](HDC gdi_dc)
-                    { item->DrawItem(gdi_dc,
-                        rect.left,
-                        rect.top,
-                        rect.Width(),
-                        rect.Height(),
-                        background_brightness < 128); });
-            }
+            auto* p_dc = static_cast<CDrawCommon&>(drawer).GetDC();
+            item->DrawItem(p_dc->GetSafeHdc(), rect.left, rect.top, rect.Width(), rect.Height(), background_brightness < 128);
+            p_dc->SelectObject(&m_font);
         }
+        else if (typeid(drawer) == typeid(CTaskBarDlgDrawCommon))
+        {
+            auto& ref_d2d1_drawer = static_cast<CTaskBarDlgDrawCommon&>(drawer);
+            ref_d2d1_drawer.ExecuteGdiOperation(rect,
+                [item, rect, background_brightness](HDC gdi_dc)
+                { item->DrawItem(gdi_dc,
+                    rect.left,
+                    rect.top,
+                    rect.Width(),
+                    rect.Height(),
+                    background_brightness < 128); });
+        }
+        if (plugin != nullptr && plugin->GetAPIVersion() >= 8)
+            item->DrawItemEx(&drawer, rect.left, rect.top, rect.Width(), rect.Height(), background_brightness < 128);
     }
     else
     {

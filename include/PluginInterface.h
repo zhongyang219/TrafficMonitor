@@ -160,7 +160,7 @@ public:
      * @param   int w
      * @param   int h
      * @param   bool dark_mode 深色模式为true，浅色模式为false
-     * @return  bool 未实现返回false，如果实现了此函数并使用了pDrawer绘图，则应返回true
+     * @return  bool
      */
     virtual bool DrawItemEx(IPluginDrawer* pDrawer, int x, int y, int w, int h, bool dark_mode) { return false; }
 

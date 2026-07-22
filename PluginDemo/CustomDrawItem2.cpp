@@ -5,47 +5,25 @@
 #include <gdiplus.h>
 #pragma comment(lib, "gdiplus.lib")
 
-static HBITMAP LoadPngResource(HINSTANCE hInstance, int resourceId)
+Gdiplus::Image* LoadPngResource(HINSTANCE hInstance, int resourceId)
 {
-    HBITMAP hBitmap = NULL;
-
-    HRSRC hResource = FindResource(hInstance, MAKEINTRESOURCE(resourceId), L"PNG");
-    if (!hResource) return NULL;
-
-    HGLOBAL hMemory = LoadResource(hInstance, hResource);
-    if (!hMemory) return NULL;
-
-    DWORD size = SizeofResource(hInstance, hResource);
-    void* pData = LockResource(hMemory);
-    if (!pData) return NULL;
-
-    // 创建 IStream
-    IStream* pStream = NULL;
-    // 使用 CreateStreamOnHGlobal 将内存块包装成流
-    HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, size);
-    if (hGlobal) {
-        void* pBuffer = GlobalLock(hGlobal);
-        if (pBuffer) {
-            memcpy(pBuffer, pData, size);
-            GlobalUnlock(hGlobal);
-            // 创建流，第二个参数 TRUE 表示流拥有内存，自动释放
-            if (CreateStreamOnHGlobal(hGlobal, TRUE, &pStream) == S_OK) {
-                // 用 GDI+ 的 Bitmap 从流加载
-                Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(pStream);
-                if (pBitmap->GetLastStatus() == Gdiplus::Ok) {
-                    Gdiplus::Color background(0, 0, 0, 0);
-                    pBitmap->GetHBITMAP(background, &hBitmap);
-                }
-                delete pBitmap;
+    Gdiplus::Image* pImage = nullptr;
+    if (HRSRC hRes = ::FindResource(hInstance, MAKEINTRESOURCE(resourceId), _T("PNG")))
+    {
+        DWORD imageSize = ::SizeofResource(hInstance, hRes);
+        if (HGLOBAL hResData = ::LoadResource(hInstance, hRes))
+        {
+            LPVOID pResourceData = ::LockResource(hResData);
+            // 在缓冲区上创建内存流
+            if (IStream* pStream = SHCreateMemStream(static_cast<const BYTE*>(pResourceData), imageSize))
+            {
+                pImage = Gdiplus::Image::FromStream(pStream);
                 pStream->Release();
             }
+            ::FreeResource(hResData);
         }
     }
-
-    // 释放资源
-    FreeResource(hMemory);
-
-    return hBitmap;
+    return pImage;
 }
 
 CCustomDrawItem2::CCustomDrawItem2()
@@ -91,6 +69,22 @@ int CCustomDrawItem2::GetItemWidth() const
     return 80;
 }
 
+void CCustomDrawItem2::DrawItem(void* hDC, int x, int y, int w, int h, bool dark_mode)
+{
+    CRect rect(CPoint(x, y), CSize(w, h));
+    //绘制PNG图像
+    CRect png_rect(rect);
+    int icon_size = CPluginDemo::Instance().DPI(16);
+    png_rect.top = y + (h - icon_size) / 2;
+    png_rect.bottom = png_rect.top + icon_size;
+    png_rect.left += CPluginDemo::Instance().DPI(22);
+    png_rect.right = png_rect.left + icon_size;
+
+    Gdiplus::Graphics graphics((HDC)hDC);
+    graphics.SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQuality);
+    graphics.DrawImage(m_png, INT(png_rect.left), INT(png_rect.top), INT(png_rect.Width()), INT(png_rect.Height()));
+}
+
 bool CCustomDrawItem2::DrawItemEx(IPluginDrawer* pDrawer, int x, int y, int w, int h, bool dark_mode)
 {
     CRect rect(CPoint(x, y), CSize(w, h));
@@ -112,8 +106,9 @@ bool CCustomDrawItem2::DrawItemEx(IPluginDrawer* pDrawer, int x, int y, int w, i
     CRect png_rect(icon_rect);
     png_rect.MoveToX(icon_rect.right + CPluginDemo::Instance().DPI(4));
     //pDrawer->DrawRectOutLine(png_rect.left, png_rect.top, png_rect.Width(), png_rect.Height(), text_color);
-    pDrawer->DrawBitmap(m_png, png_rect.left, png_rect.top, png_rect.Width(), png_rect.Height());
-    
+    //pDrawer->DrawBitmap(m_png, png_rect.left, png_rect.top, png_rect.Width(), png_rect.Height());
+    //在DrawItem函数中直接使用GDI+绘制透明PNG图像
+
     //绘制文本
     CRect text_rect(rect);
     text_rect.left = png_rect.right + CPluginDemo::Instance().DPI(4);

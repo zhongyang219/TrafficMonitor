@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "PluginInterface.h"
+#include <gdiplus.h>
+
 class CCustomDrawItem2 : public IPluginItem
 {
 public:
@@ -13,10 +15,11 @@ public:
     virtual const wchar_t* GetItemValueSampleText() const override;
     virtual bool IsCustomDraw() const override;
     virtual int GetItemWidth() const override;
+    virtual void DrawItem(void* hDC, int x, int y, int w, int h, bool dark_mode) override;
     virtual bool DrawItemEx(IPluginDrawer* pDrawer, int x, int y, int w, int h, bool dark_mode) override;
     virtual int IsDoubleLineExclusive() const { return 1; }     //在任务栏中独占双行
 
 private:
-    HBITMAP m_png{};
+    Gdiplus::Image* m_png{};
 };
 
