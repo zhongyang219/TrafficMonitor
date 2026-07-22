@@ -1764,6 +1764,7 @@ void CTaskBarDlgDrawCommon::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSiz
             start_point.y -= ((image_height - draw_size.cy) / 2);
             draw_size.cy = image_height;
         }
+        ResetClippedStateIfSet();
         break;
     }
     case StretchMode::FIT:

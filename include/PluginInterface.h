@@ -513,9 +513,6 @@ public:
 
     /**
      * @brief   绘制一个位图
-     * @@detail    
-     *  注意：当stretch_mode设置为StretchMode::FILL（填充）时，会设置绘图剪辑区域，如果之后需要绘制其他图形，
-     *  需要重新设置绘图剪辑区域，否则图片外的区域会无法绘制
      * @param   hbitmap 位图的句柄
      * @param   x 矩形区域的左侧坐标
      * @param   y 矩形区域的顶部坐标

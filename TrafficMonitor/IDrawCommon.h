@@ -29,8 +29,6 @@ public:
     virtual void DrawLine(CPoint start_point, int height, COLORREF color, BYTE alpha = 255);
     virtual void SetTextColor(const COLORREF color, BYTE alpha = 255) = 0;
     // 绘制一个位图
-    // （注意：当stretch_mode设置为StretchMode::FILL（填充）时，会设置绘图剪辑区域，如果之后需要绘制其他图形，
-    // 需要重新设置绘图剪辑区域，否则图片外的区域会无法绘制）
     virtual void DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode = StretchMode::STRETCH, BYTE alpha = 255) = 0;
     virtual void DrawIcon(HICON hIcon, CPoint start_point, CSize size) = 0;
     virtual ~IDrawCommon() = default;
