@@ -1406,6 +1406,17 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     bool gpu_usage_acquired = false;
     m_get_disk_usage_by_pdh = false;
 
+    //检测电源状态变化：电池供电时自动暂停独显监控，让独立显卡能够正常下线
+#ifndef WITHOUT_TEMPERATURE
+    bool is_on_battery_power = CCommon::IsSystemOnBatteryPower();
+    if (is_on_battery_power != theApp.m_is_on_battery_power)
+    {
+        theApp.UpdateOpenHardwareMonitorEnableState();
+    }
+#else
+    const bool is_on_battery_power = false;
+#endif
+
     //获取CPU使用率
     theApp.m_cpu_usage = m_cpu_usage_helper.GetCpuUsage(theApp.m_general_data.cpu_usage_acquire_method == GeneralSettingData::CA_CPU_TIME);
 
@@ -1417,7 +1428,8 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     //}
 
     //获取GPU利用率
-    if (lite_version /*|| is_arm64ec*/ || !theApp.m_general_data.IsHardwareEnable(HI_GPU))
+    //电池供电时改走PDH轻量接口获取GPU利用率，避免通过LibreHardwareMonitor轮询独显导致独显无法休眠
+    if (lite_version || is_on_battery_power /*|| is_arm64ec*/ || !theApp.m_general_data.IsHardwareEnable(HI_GPU))
     {
         if (m_gpu_usage_helper.GetGpuUsage(theApp.m_gpu_usage))
             gpu_usage_acquired = true;

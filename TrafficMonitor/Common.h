@@ -134,6 +134,9 @@ public:
      */
     static bool IsForegroundFullscreen(HMONITOR hMonitor = NULL);
 
+    //判断当前是否使用电池供电（用于电池供电时自动暂停独立显卡监控）
+    static bool IsSystemOnBatteryPower();
+
     //将一个字符串保存到剪贴板
     static bool CopyStringToClipboard(const wstring& str);
 

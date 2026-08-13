@@ -1325,6 +1325,15 @@ bool CCommon::GetNumberBit(unsigned int num, int bit)
     return (num & (1 << bit)) != 0;
 }
 
+bool CCommon::IsSystemOnBatteryPower()
+{
+    SYSTEM_POWER_STATUS sps{};
+    if (!GetSystemPowerStatus(&sps))
+        return false;   //获取电源状态失败时按交流供电处理，避免误关闭独显监控
+    //ACLineStatus：0=电池供电，1=交流供电，255=未知。未知时按交流供电处理。
+    return sps.ACLineStatus == 0;
+}
+
 COLORREF CCommon::GetWindowsThemeColor()
 {
     DWORD crColorization;
