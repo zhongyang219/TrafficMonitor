@@ -8,8 +8,8 @@ on:
 
 jobs:
   build:
-    # 工程使用 v143 工具集（Visual Studio 2022），windows-latest 目前已是 VS2026/v180，需固定镜像
-    runs-on: windows-2025
+    # 工程使用 v143 工具集（Visual Studio 2022），需使用带 VS2022 + MFC + C++/CLI 的镜像
+    runs-on: windows-2022
     strategy:
       fail-fast: false
       matrix:
