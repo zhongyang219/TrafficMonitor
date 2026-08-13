@@ -1,0 +1,54 @@
+name: Build Standard Version
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'fix/**'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: x64
+            configuration: Release
+            output_dir: Bin/x64/Release
+          - platform: x86
+            configuration: Release
+            output_dir: Bin/Release
+          - platform: ARM64EC
+            configuration: Release
+            output_dir: Bin/ARM64EC/Release
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build
+        run: msbuild TrafficMonitor.sln -m -p:configuration=${{ matrix.configuration }} -p:platform=${{ matrix.platform }} -p:platformToolset=v143
+
+      - name: Stage package
+        shell: powershell
+        run: |
+          $stage = "pkg\TrafficMonitor"
+          New-Item -ItemType Directory -Force -Path $stage | Out-Null
+          Copy-Item "${{ matrix.output_dir }}\*" -Destination $stage -Recurse -Force
+          # ARM64EC 构建下 OpenHardwareMonitorApi 以 x64 输出，需要一并打入包
+          if (Test-Path "Bin\x64\Release\OpenHardwareMonitorApi.dll") { Copy-Item "Bin\x64\Release\OpenHardwareMonitorApi.dll" -Destination $stage -Force }
+          if (Test-Path "Bin\x64\Release\LibreHardwareMonitorLib.dll") { Copy-Item "Bin\x64\Release\LibreHardwareMonitorLib.dll" -Destination $stage -Force }
+          Copy-Item "OpenHardwareMonitorApi\LibreHardwareMonitorLib.dll" -Destination $stage -Force
+          Copy-Item "TrafficMonitor\language" -Destination $stage -Recurse -Force
+          Copy-Item "TrafficMonitor\skins" -Destination $stage -Recurse -Force
+          Compress-Archive -Path $stage -DestinationPath "TrafficMonitor_${{ matrix.platform }}_standard.zip" -Force
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TrafficMonitor-${{ matrix.platform }}-standard
+          path: TrafficMonitor_${{ matrix.platform }}_standard.zip
