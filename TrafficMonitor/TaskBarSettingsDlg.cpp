@@ -425,18 +425,23 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     std::vector<HWND> secondary_displays;
     CTaskbarHelper::GetAllSecondaryDisplayTaskbar(secondary_displays);
     //初始化“显示任务栏窗口的显示器”下拉列表
+    m_displays_combo.AddString(CCommon::LoadText(IDS_ALL_DISPLAYS));
     m_displays_combo.AddString(CCommon::LoadText(IDS_PRIMARY_DISPLAY));
     for (size_t i = 0; i < secondary_displays.size(); i++)
     {
         m_displays_combo.AddString(CCommon::LoadTextFormat(IDS_SECONDARY_DISPLAY, { i + 1 }));
     }
-    if (!m_data.show_taskbar_wnd_in_secondary_display)
+    if (m_data.show_taskbar_wnd_in_all_displays)
     {
         m_displays_combo.SetCurSel(0);
     }
+    else if (!m_data.show_taskbar_wnd_in_secondary_display)
+    {
+        m_displays_combo.SetCurSel(1);
+    }
     else
     {
-        int combo_index = m_data.secondary_display_index + 1;
+        int combo_index = m_data.secondary_display_index + 2;
         int combo_item_count = m_displays_combo.GetCount();
         if (combo_index >= combo_item_count)
             combo_index = combo_item_count - 1;
@@ -965,17 +970,22 @@ void CTaskBarSettingsDlg::OnBnClickedTaskbarWndInSecondaryDisplayCheck()
 
 void CTaskBarSettingsDlg::OnCbnSelchangeDisplayToShowTaskbarWndCombo()
 {
-    
     int combo_index = m_displays_combo.GetCurSel();
     if (combo_index == 0)
     {
+        m_data.show_taskbar_wnd_in_all_displays = true;
+        m_data.show_taskbar_wnd_in_secondary_display = false;
+    }
+    else if (combo_index == 1)
+    {
+        m_data.show_taskbar_wnd_in_all_displays = false;
         m_data.show_taskbar_wnd_in_secondary_display = false;
     }
     else
     {
+        m_data.show_taskbar_wnd_in_all_displays = false;
         m_data.show_taskbar_wnd_in_secondary_display = true;
-        m_data.secondary_display_index = combo_index - 1;
-
+        m_data.secondary_display_index = combo_index - 2;
     }
 }
 

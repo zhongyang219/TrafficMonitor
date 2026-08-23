@@ -606,15 +606,21 @@ HWND CTaskBarDlg::FindTaskbarHandle(bool& is_scendary_display)
 {
     is_scendary_display = false;
     HWND hTaskbar = nullptr;
-    //显示在副显示器上
-    if (theApp.m_taskbar_data.show_taskbar_wnd_in_secondary_display && CWindowsSettingHelper::IsTaskbarShowingInAllDisplays())
+    //是否显示在副显示器上
+    bool show_in_secondary_display{ false };
+    if (theApp.m_taskbar_data.show_taskbar_wnd_in_all_displays)
+        show_in_secondary_display = (m_taskbar_display_index >= 0);
+    else
+        show_in_secondary_display = theApp.m_taskbar_data.show_taskbar_wnd_in_secondary_display;
+    if (show_in_secondary_display && CWindowsSettingHelper::IsTaskbarShowingInAllDisplays())
     {
         //获取所有副显示器的任务栏
         std::vector<HWND> secondary_taskbars;
         CTaskbarHelper::GetAllSecondaryDisplayTaskbar(secondary_taskbars);
         if (!secondary_taskbars.empty())
         {
-            int index = theApp.m_taskbar_data.secondary_display_index;
+            //“所有显示器”模式下使用每个窗口自身指定的副显示器序号，否则使用设置中选定的副显示器序号
+            int index = (theApp.m_taskbar_data.show_taskbar_wnd_in_all_displays ? m_taskbar_display_index : theApp.m_taskbar_data.secondary_display_index);
             if (index < 0)
                 index = 0;
             if (index >= static_cast<int>(secondary_taskbars.size()))
@@ -1167,7 +1173,7 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
         }
     }
 
-    ::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_TASKBAR_MENU_POPED_UP, 0, 0); //通知主窗口菜单已弹出
+    ::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_TASKBAR_MENU_POPED_UP, (WPARAM)GetSafeHwnd(), 0); //通知主窗口菜单已弹出
 }
 
 BOOL CTaskBarDlg::PreTranslateMessage(MSG* pMsg)
@@ -1439,7 +1445,7 @@ void CTaskBarDlg::TryDrawGraph(IDrawCommon& drawer, const CRect& value_rect, Com
 void CTaskBarDlg::OnClose()
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
-    ::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_TASKBAR_WND_CLOSED, 0, 0);
+    ::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_TASKBAR_WND_CLOSED, (WPARAM)GetSafeHwnd(), 0);
 
     CDialogEx::OnClose();
 }

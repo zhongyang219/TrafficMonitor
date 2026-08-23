@@ -174,6 +174,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.display_item.FromInt(ini.GetInt(L"task_bar", L"tbar_display_item", DisplayItemSet{ TDI_UP, TDI_DOWN }.ToInt()));
     m_taskbar_data.show_taskbar_wnd_in_secondary_display = ini.GetBool(L"task_bar", L"show_taskbar_wnd_in_secondary_display", false);
     m_taskbar_data.secondary_display_index = ini.GetInt(L"task_bar", L"secondary_display_index", 0);
+    m_taskbar_data.show_taskbar_wnd_in_all_displays = ini.GetBool(L"task_bar", L"show_taskbar_wnd_in_all_displays", false);
 
     //不含温度监控的版本，不显示温度监控相关项目
 #ifdef WITHOUT_TEMPERATURE
@@ -377,6 +378,7 @@ void CTrafficMonitorApp::SaveConfig()
     //ini.WriteBool(L"task_bar", L"task_bar_swap_up_down", m_taskbar_data.swap_up_down);
     ini.WriteBool(L"task_bar", L"show_taskbar_wnd_in_secondary_display", m_taskbar_data.show_taskbar_wnd_in_secondary_display);
     ini.WriteInt(L"task_bar", L"secondary_display_index", m_taskbar_data.secondary_display_index);
+    ini.WriteBool(L"task_bar", L"show_taskbar_wnd_in_all_displays", m_taskbar_data.show_taskbar_wnd_in_all_displays);
 
     ini.SaveDisplayStr(L"task_bar", m_taskbar_data.disp_str);
     ini.SavePluginDisplayStr(L"plugin_display_str_taskbar_window", m_taskbar_data.disp_str);

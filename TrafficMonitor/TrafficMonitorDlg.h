@@ -56,6 +56,8 @@ protected:
     HICON m_hIcon;
     NOTIFYICONDATA m_ntIcon;    //通知区域图标
     CTaskBarDlg* m_tBarDlg{};     //任务栏窗口的指针
+    std::vector<CTaskBarDlg*> m_secondary_tbar_dlgs;    //副显示器上的任务栏窗口（“所有显示器”模式下使用）
+    CTaskBarDlg* m_last_clicked_taskbar_wnd{};   //最近一次弹出右键菜单的任务栏窗口
 
     vector<NetWorkConection> m_connections; //保存获取到的要显示到“选择网卡”菜单项中的所有网络连接
     MIB_IFTABLE* m_pIfTable;
@@ -163,6 +165,9 @@ protected:
 
     void CloseTaskBarWnd(); //关闭任务栏窗口
     void OpenTaskBarWnd();  //打开任务栏窗口
+    CTaskBarDlg* CreateTaskbarWindow(int taskbar_display_index);    //创建单个任务栏窗口，taskbar_display_index为-1时显示在主显示器上
+    std::vector<CTaskBarDlg*> GetAllTaskbarWindows() const;         //获取所有任务栏窗口（主显示器+副显示器）
+    void NotifyTaskbarWindowsWidthChanged();    //通知所有任务栏窗口宽度改变
 
     void AddNotifyIcon();       //添加通知区图标
     void DeleteNotifyIcon();
