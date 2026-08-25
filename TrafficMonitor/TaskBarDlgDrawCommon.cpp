@@ -1197,6 +1197,11 @@ namespace TaskBarDlgUser32DrawTextHook
             {
                 return User32DrawTextManager::CUSTOM_SUCCESS;
             }
+            auto p_input_rect = std::get<lprc_index>(args_tuple);
+            if (p_input_rect == nullptr || ::IsRectEmpty(p_input_rect))
+            {
+                return (*p_original_function)(std::forward<DrawTextArgs>(draw_text_args)...);
+            }
             // https://stackoverflow.com/questions/42221322/how-to-draw-text-with-transparency-using-gdi
             if (p_original_function)
             {
