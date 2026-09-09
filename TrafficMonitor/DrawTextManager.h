@@ -120,7 +120,15 @@ private:
             reinterpret_cast<typename T::Function>(*p_found_function_pointer);
         T::BaseSettings::m_old_function_pointer = iat_function;
         //替换IAT中的函数
+        if (p_found_function_pointer == nullptr)
+        {
+            return;
+        }
         EnableWriteMemoryGuard enable_write{p_found_function_pointer};
+        if (!enable_write.GetState())
+        {
+            return;
+        }
         auto p_custom_function = T::GetFunction();
         //规避msvc扩展
         ::memcpy(p_found_function_pointer, &p_custom_function, sizeof(p_custom_function));
