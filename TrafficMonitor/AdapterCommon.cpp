@@ -85,13 +85,19 @@ void CAdapterCommon::GetIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTA
 		index = FindConnectionInIfTable(adapters[i].description, pIfTable);
 		if (index == -1)		//如果使用精确匹配的方式没有找到，则采用模糊匹配的方式再查找一次
 			index = FindConnectionInIfTableFuzzy(adapters[i].description, pIfTable);
-		//if (index != -1)
-		//{
 		adapters[i].index = index;
-		adapters[i].in_bytes = pIfTable->table[index].dwInOctets;
-		adapters[i].out_bytes = pIfTable->table[index].dwOutOctets;
-		adapters[i].description_2 = (const char*)pIfTable->table[index].bDescr;
-		//}
+		if (index != -1)		//没有匹配到任何一项时不能把index当作下标使用，否则会越界访问table[-1]
+		{
+			adapters[i].in_bytes = pIfTable->table[index].dwInOctets;
+			adapters[i].out_bytes = pIfTable->table[index].dwOutOctets;
+			adapters[i].description_2 = (const char*)pIfTable->table[index].bDescr;
+		}
+		else
+		{
+			//in_bytes和out_bytes没有默认初始值，这里必须显式清零，否则连接详情对话框会显示随机数据
+			adapters[i].in_bytes = 0;
+			adapters[i].out_bytes = 0;
+		}
 	}
 }
 
@@ -148,7 +154,9 @@ int CAdapterCommon::FindConnectionInIfTableFuzzy(string connection, MIB_IFTABLE*
 	}
 	//如果还是没有找到，则使用字符串匹配算法查找
 	double max_degree{};
-	int best_index{};
+	//没有找到时必须返回-1（本函数在头文件中的注释里即约定“找不到则返回-1”）。
+	//若返回0，调用方会把第0项当作匹配结果；当接口表为空时还会越界访问table[0]
+	int best_index{ -1 };
 	for (size_t i{}; i < pIfTable->dwNumEntries; i++)
 	{
 		string descr = (const char*)pIfTable->table[i].bDescr;
