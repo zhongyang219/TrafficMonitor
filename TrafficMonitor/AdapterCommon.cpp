@@ -76,6 +76,8 @@ void CAdapterCommon::RefreshIpAddress(vector<NetWorkConection>& adapters)
 
 void CAdapterCommon::GetIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTABLE* pIfTable)
 {
+	if (pIfTable == nullptr)
+		return;
 	//依次在IfTable里查找每个连接
 	for (size_t i{}; i < adapters.size(); i++)
 	{
@@ -88,6 +90,8 @@ void CAdapterCommon::GetIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTA
 		//if (index != -1)
 		//{
 		adapters[i].index = index;
+		if (index < 0 || static_cast<DWORD>(index) >= pIfTable->dwNumEntries)
+			continue;		//未找到对应的接口，避免以-1为下标访问table
 		adapters[i].in_bytes = pIfTable->table[index].dwInOctets;
 		adapters[i].out_bytes = pIfTable->table[index].dwOutOctets;
 		adapters[i].description_2 = (const char*)pIfTable->table[index].bDescr;
@@ -97,6 +101,8 @@ void CAdapterCommon::GetIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTA
 
 void CAdapterCommon::GetAllIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTABLE * pIfTable)
 {
+	if (pIfTable == nullptr)
+		return;
 	vector<NetWorkConection> adapters_tmp;
 	GetAdapterInfo(adapters_tmp);		//获取IP地址
 	adapters.clear();

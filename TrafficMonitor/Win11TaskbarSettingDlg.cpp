@@ -6,6 +6,7 @@
 #include "afxdialogex.h"
 #include "Win11TaskbarSettingDlg.h"
 #include "TaskBarDlg.h"
+#include "Win11TaskbarDlg.h"
 #include "WindowsSettingHelper.h"
 
 
@@ -84,6 +85,30 @@ BOOL CWin11TaskbarSettingDlg::OnInitDialog()
     m_window_offset_left_edit.SetRange(-800, 800);
     m_window_offset_left_edit.SetValue(m_data.window_offset_left);
     CheckDlgButton(IDC_AVOID_OVERLAP_RIGHT_WIDGETS_CHECK, m_data.avoid_overlap_with_widgets);
+    CheckDlgButton(IDC_RESERVE_TASKBAR_SPACE_CHECK, m_data.reserve_taskbar_space);
+
+    //竖向任务栏上没法预留空间，把开关置灰，而不是留一个勾了也没反应的选项。
+    //这里不改m_data，用户原来的设置要原样保留：任务栏摆回上下时它应当继续生效。
+    //Space cannot be reserved on a vertical taskbar, so grey the option out rather than leaving
+    //a checkbox that silently does nothing. m_data is deliberately left alone so the user's
+    //setting survives untouched and takes effect again once the taskbar goes back to top/bottom.
+    const bool taskbar_vertical = CWin11TaskbarDlg::IsTaskbarVertical();
+    EnableDlgCtrl(IDC_RESERVE_TASKBAR_SPACE_CHECK, !taskbar_vertical);
+    if (taskbar_vertical)
+    {
+        //置灰的控件收不到鼠标消息，提示框永远弹不出来，所以把原因直接接在标签后面
+        //A disabled control receives no mouse messages, so a tooltip would never show on it -
+        //append the reason to the label instead.
+        CString text;
+        GetDlgItemText(IDC_RESERVE_TASKBAR_SPACE_CHECK, text);
+        text.AppendFormat(_T(" %s"), CCommon::LoadText(IDS_RESERVE_TASKBAR_SPACE_VERTICAL).GetString());
+        SetDlgItemText(IDC_RESERVE_TASKBAR_SPACE_CHECK, text);
+    }
+
+    m_toolTip.Create(this);
+    m_toolTip.SetMaxTipWidth(theApp.DPI(300));
+    m_toolTip.AddTool(GetDlgItem(IDC_RESERVE_TASKBAR_SPACE_CHECK),
+        CCommon::LoadText(IDS_RESERVE_TASKBAR_SPACE_TIP));
     //EnableDlgCtrl(IDC_AVOID_OVERLAP_RIGHT_WIDGETS_CHECK, CWindowsSettingHelper::IsTaskbarWidgetsBtnShown());
     m_widgets_width_edit.SetRange(0, 300);
     m_widgets_width_edit.SetValue(m_data.taskbar_left_space_win11);
@@ -91,6 +116,15 @@ BOOL CWin11TaskbarSettingDlg::OnInitDialog()
 
     return TRUE;  // return TRUE unless you set the focus to a control
     // 异常: OCX 属性页应返回 FALSE
+}
+
+
+BOOL CWin11TaskbarSettingDlg::PreTranslateMessage(MSG* pMsg)
+{
+    if (pMsg->message == WM_MOUSEMOVE)
+        m_toolTip.RelayEvent(pMsg);
+
+    return CBaseDialog::PreTranslateMessage(pMsg);
 }
 
 
@@ -104,6 +138,7 @@ void CWin11TaskbarSettingDlg::OnOK()
     m_data.ValidWindowOffsetLeft();
 
     m_data.avoid_overlap_with_widgets = (IsDlgButtonChecked(IDC_AVOID_OVERLAP_RIGHT_WIDGETS_CHECK) != 0);
+    m_data.reserve_taskbar_space = (IsDlgButtonChecked(IDC_RESERVE_TASKBAR_SPACE_CHECK) != 0);
 
     m_data.taskbar_left_space_win11 = m_widgets_width_edit.GetValue();
     if (m_data.taskbar_left_space_win11 < 0)

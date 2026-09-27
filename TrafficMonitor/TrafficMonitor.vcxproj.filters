@@ -529,6 +529,9 @@
     <ClInclude Include="Win11TaskbarDlg.h">
       <Filter>源文件和头文件\TaskBarDlg</Filter>
     </ClInclude>
+    <ClInclude Include="TaskbarButtonSpacer.h">
+      <Filter>源文件和头文件\TaskBarDlg</Filter>
+    </ClInclude>
     <ClInclude Include="TaskbarHelper.h">
       <Filter>源文件和头文件\TaskBarDlg</Filter>
     </ClInclude>
@@ -808,6 +811,9 @@
       <Filter>源文件和头文件\TaskBarDlg</Filter>
     </ClCompile>
     <ClCompile Include="Win11TaskbarDlg.cpp">
+      <Filter>源文件和头文件\TaskBarDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskbarButtonSpacer.cpp">
       <Filter>源文件和头文件\TaskBarDlg</Filter>
     </ClCompile>
     <ClCompile Include="TaskbarHelper.cpp">

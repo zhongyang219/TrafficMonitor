@@ -23,6 +23,7 @@ private:
     CSpinEdit m_window_offset_top_edit;
     CSpinEdit m_window_offset_left_edit;
     CSpinEdit m_widgets_width_edit;
+    CToolTipCtrl m_toolTip;
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
@@ -34,6 +35,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
     virtual BOOL OnInitDialog();
+    virtual BOOL PreTranslateMessage(MSG* pMsg);
     virtual void OnOK();
     afx_msg void OnBnClickedRestoreDefaultButton();
 };

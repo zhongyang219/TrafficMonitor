@@ -86,6 +86,9 @@ protected:
     virtual void ResetTaskbarPos() = 0;
     virtual void CheckTaskbarOnTopOrBottom() = 0;		//检查任务栏是否在屏幕的顶部或底部，并将结果保存在m_taskbar_on_top_or_bottom中
     virtual HWND GetParentHwnd() = 0;
+    //Some placements provide their own outer padding. In that case item_space should only
+    //separate items, rather than also widening both edges of the taskbar window.
+    virtual bool UseCompactOuterMargins() const { return false; }
 
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 

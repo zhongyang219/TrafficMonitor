@@ -831,11 +831,16 @@ void CTaskBarDlg::CalculateWindowSize()
                 index++;
             }
             m_window_width += DPI(theApp.m_taskbar_data.item_space) * item_count;   //加上每个标签间的空隙
+            //The compact tray-reserved layout supplies its own edge padding. The item rects
+            //already contain every inter-item gap, so discard the otherwise unused trailing one.
+            if (UseCompactOuterMargins() && item_count > 0)
+                m_window_width -= DPI(theApp.m_taskbar_data.item_space);
         }
         else        //非水平排列时，每两个一组排列
         {
-            int current_x = DPI(theApp.m_taskbar_data.item_space); // 初始 X 坐标为左侧空隙
             int item_space = DPI(theApp.m_taskbar_data.item_space);
+            const bool compact_outer_margins = UseCompactOuterMargins();
+            int current_x = compact_outer_margins ? 0 : item_space;
 
             //计算两个一组时上下区域的垂直位置
             int item_height = m_window_height / 2;
@@ -913,6 +918,11 @@ void CTaskBarDlg::CalculateWindowSize()
 
             // 保存总宽度
             m_window_width = current_x;
+            //Each completed column advances past its own width by item_space, leaving a trailing
+            //margin. The reserved-tray path already pads the content, so keep only the gaps
+            //between columns and do not count either outer margin as readout width.
+            if (compact_outer_margins && item_count > 0)
+                m_window_width -= item_space;
         }
     }
     else        //任务栏在桌面两侧时

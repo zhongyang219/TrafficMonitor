@@ -240,6 +240,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.ValidWindowOffsetTop();
     m_taskbar_data.ValidWindowOffsetLeft();
     m_taskbar_data.avoid_overlap_with_widgets = ini.GetBool(_T("task_bar"), _T("avoid_overlap_with_widgets"), false);
+    m_taskbar_data.reserve_taskbar_space = ini.GetBool(L"task_bar", L"reserve_taskbar_space", false);
     m_taskbar_data.taskbar_left_space_win11 = ini.GetInt(L"task_bar", L"taskbar_left_space_win11", 160);
     m_taskbar_data.taskbar_right_space_win11 = ini.GetInt(L"task_bar", L"taskbar_right_space_win11", 280);
 
@@ -404,6 +405,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"task_bar", L"window_offset_top", m_taskbar_data.window_offset_top);
     ini.WriteInt(L"task_bar", L"window_offset_left", m_taskbar_data.window_offset_left);
     ini.WriteBool(L"task_bar", L"avoid_overlap_with_widgets", m_taskbar_data.avoid_overlap_with_widgets);
+    ini.WriteBool(L"task_bar", L"reserve_taskbar_space", m_taskbar_data.reserve_taskbar_space);
     ini.WriteInt(L"task_bar", L"taskbar_left_space_win11", m_taskbar_data.taskbar_left_space_win11);
     ini.WriteInt(L"task_bar", L"taskbar_right_space_win11", m_taskbar_data.taskbar_right_space_win11);
 

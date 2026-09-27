@@ -866,6 +866,7 @@
     <ClInclude Include="UpdateHelper.h" />
     <ClInclude Include="WIC.h" />
     <ClInclude Include="Win11TaskbarDlg.h" />
+    <ClInclude Include="TaskbarButtonSpacer.h" />
     <ClInclude Include="Win11TaskbarSettingDlg.h" />
     <ClInclude Include="WindowsSettingHelper.h" />
     <ClInclude Include="WindowsWebExperienceDetector.h" />
@@ -988,6 +989,7 @@
     <ClCompile Include="UpdateHelper.cpp" />
     <ClCompile Include="WIC.cpp" />
     <ClCompile Include="Win11TaskbarDlg.cpp" />
+    <ClCompile Include="TaskbarButtonSpacer.cpp" />
     <ClCompile Include="Win11TaskbarSettingDlg.cpp" />
     <ClCompile Include="WindowsSettingHelper.cpp" />
     <ClCompile Include="WindowsWebExperienceDetector.cpp" />
