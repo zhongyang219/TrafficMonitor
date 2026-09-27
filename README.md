@@ -132,8 +132,15 @@ TrafficMonitor支持将信息显示到任务栏。但是TrafficMonitor默认只�
 
 **注意：硬件监控功能（包括温度监控和显卡使用率监控）可能存在一些问题，它可能会占用更多的CPU和内存。据部分用户反馈，开启温度功能后会导致程序崩溃和系统死机等问题，请在知晓以上风险后再决定开启硬件监控功能。否则，请不要使用硬件监控功能。**
 
-
-
 # 更新日志
 
 **[点击此处查看更新日志](./UpdateLog/update_log.md)**
+
+# 声明
+
+域名`www.trafficmonitor.cn`和作者本人**没有任何关系**，TrafficMonitor目前并没有官网，任何所谓的“TrafficMonitor官网”都是盗版网站，请不要访问此类网站，也不要通过此类网站下载TrafficMonitor。TrafficMonitor仅通过以下渠道向用户提供：
+
+* [GitHub页面（github.com/zhongyang219/TrafficMonitor）](https://github.com/zhongyang219/TrafficMonitor)
+* [Gitee页面（gitee.com/zhongyang219/TrafficMonitor）](https://gitee.com/zhongyang219/TrafficMonitor)
+* [作者本人的百度网盘共享链接](https://pan.baidu.com/s/15PMt7s-ASpyDwtS__4cUhg) 提取码：`ou0m`
+

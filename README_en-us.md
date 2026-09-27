@@ -144,3 +144,10 @@ It should also be noted that the temperature monitoring function is turned off b
 
 **[Click here to view the update log.](./UpdateLog/update_log_en-us.md)**
 
+# Disclaimer
+
+The domain `www.trafficmonitor.cn` has **no relation** to the author. TrafficMonitor currently does not have an official website. Any so-called "TrafficMonitor official site" is a pirated website. Please do not visit such sites, and do not download TrafficMonitor through them. TrafficMonitor is provided to users exclusively through the following channels:
+
+* [GitHub page (github.com/zhongyang219/TrafficMonitor)](https://github.com/zhongyang219/TrafficMonitor)  
+* [Gitee page (gitee.com/zhongyang219/TrafficMonitor)](https://gitee.com/zhongyang219/TrafficMonitor)  
+* [Author's Baidu Netdisk shared link](https://pan.baidu.com/s/15PMt7s-ASpyDwtS__4cUhg) Extraction code: `ou0m`
