@@ -393,20 +393,56 @@ void CTrafficMonitorDlg::AutoSelect()
     m_connection_change_flag = true;
 }
 
+//重新分配并填充m_pIfTable。
+//GetIfTable的pdwSize是输入输出参数：当它返回ERROR_INSUFFICIENT_BUFFER时，会把该参数改写成“所需大小”且不填充任何数据。
+//如果把这个被改写过的值留在m_dwSize中，就会形成“声明的缓冲区大于实际分配”的失配状态，
+//下一次调用GetIfTable时它会按过大的值向较小的堆块写入，造成堆越界写，
+//最终在某个无关的free()里触发0xC0000374（STATUS_HEAP_CORRUPTION）而崩溃。
+//网卡数量可能在“探测大小”与“填充数据”之间发生变化（例如从休眠恢复后网卡陆续上线），
+//因此这里重试若干次，并且只在GetIfTable成功返回时才提交m_pIfTable和m_dwSize；
+//失败时保留原有内容不动，绝不制造失配状态。
+bool CTrafficMonitorDlg::ReloadIfTable()
+{
+    const int MAX_ATTEMPTS = 5;
+    for (int attempt{}; attempt < MAX_ATTEMPTS; attempt++)
+    {
+        DWORD alloc_size = sizeof(MIB_IFTABLE);
+        MIB_IFTABLE* p_new_table = (MIB_IFTABLE*)malloc(alloc_size);
+        if (p_new_table == nullptr)
+            return false;
+
+        DWORD size = alloc_size;    //必须使用局部变量，不能直接传&m_dwSize
+        DWORD rtn = GetIfTable(p_new_table, &size, FALSE);
+        if (rtn == ERROR_INSUFFICIENT_BUFFER)   //缓冲区不够，此时size已被改写为所需大小
+        {
+            free(p_new_table);
+            //额外留一些余量，以容忍探测与填充之间网卡数量的抖动
+            alloc_size = size + sizeof(MIB_IFROW) * 2;
+            p_new_table = (MIB_IFTABLE*)malloc(alloc_size);
+            if (p_new_table == nullptr)
+                return false;
+            size = alloc_size;
+            rtn = GetIfTable(p_new_table, &size, FALSE);  //这里的返回值必须检查，不能丢弃
+        }
+
+        if (rtn == NO_ERROR)
+        {
+            free(m_pIfTable);
+            m_pIfTable = p_new_table;
+            m_dwSize = alloc_size;  //始终记录实际分配的字节数
+            return true;
+        }
+        free(p_new_table);  //期间网卡数量又发生了变化，重试
+    }
+    return false;
+}
+
 void CTrafficMonitorDlg::IniConnection()
 {
-    //为m_pIfTable开辟所需大小的内存
-    free(m_pIfTable);
-    m_dwSize = sizeof(MIB_IFTABLE);
-    m_pIfTable = (MIB_IFTABLE*)malloc(m_dwSize);
-    int rtn;
-    rtn = GetIfTable(m_pIfTable, &m_dwSize, FALSE);
-    if (rtn == ERROR_INSUFFICIENT_BUFFER)	//如果函数返回值为ERROR_INSUFFICIENT_BUFFER，说明m_pIfTable的大小不够
-    {
-        free(m_pIfTable);
-        m_pIfTable = (MIB_IFTABLE*)malloc(m_dwSize);	//用新的大小重新开辟一块内存
-    }
-    GetIfTable(m_pIfTable, &m_dwSize, FALSE);
+    //为m_pIfTable开辟所需大小的内存并填充
+    ReloadIfTable();
+    if (m_pIfTable == nullptr)
+        return;     //无法获取接口表，此时不做任何处理，避免后续访问空指针
 
     //获取当前所有的连接，并保存到m_connections容器中
     if (!theApp.m_general_data.show_all_interface)
@@ -1204,22 +1240,29 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     //获取网络连接速度
     int rtn{};
     auto getLfTable = [&]() {
+        if (m_pIfTable == nullptr)  //尚未成功获取过接口表
+        {
+            rtn = ERROR_INSUFFICIENT_BUFFER;    //交给后面的恢复分支调用IniConnection()
+            return;
+        }
+        //必须使用局部变量接收GetIfTable改写后的大小：失败时它会被写成“所需大小”且不填充数据，
+        //若直接传&m_dwSize，就会使m_dwSize大于m_pIfTable实际分配的字节数，
+        //导致后续调用按过大的值向较小的堆块写入，造成堆越界写
+        DWORD size = m_dwSize;
         __try
         {
-            rtn = GetIfTable(m_pIfTable, &m_dwSize, FALSE);
+            rtn = GetIfTable(m_pIfTable, &size, FALSE);
         }
         __except (EXCEPTION_EXECUTE_HANDLER)
         {
-            free(m_pIfTable);
-            m_dwSize = sizeof(MIB_IFTABLE);
-            m_pIfTable = (MIB_IFTABLE*)malloc(m_dwSize);
-            rtn = GetIfTable(m_pIfTable, &m_dwSize, FALSE);
-            if (rtn == ERROR_INSUFFICIENT_BUFFER)	//如果函数返回值为ERROR_INSUFFICIENT_BUFFER，说明m_pIfTable的大小不够
-            {
-                free(m_pIfTable);
-                m_pIfTable = (MIB_IFTABLE*)malloc(m_dwSize);	//用新的大小重新开辟一块内存
-            }
-            GetIfTable(m_pIfTable, &m_dwSize, FALSE);
+            rtn = ERROR_INTERNAL_ERROR;
+        }
+        if (rtn != NO_ERROR)
+        {
+            //接口数量发生了变化，或调用出现异常：丢弃已被改写的size，
+            //m_dwSize保持不变（始终等于实际分配大小），
+            //统一按ERROR_INSUFFICIENT_BUFFER处理，由后面的恢复分支调用IniConnection()重新分配
+            rtn = ERROR_INSUFFICIENT_BUFFER;
         }
     };
 
@@ -2126,6 +2169,8 @@ void CTrafficMonitorDlg::OnNetworkInfo()
 {
     // TODO: 在此添加命令处理程序代码
     //弹出“连接详情”对话框
+    if (m_pIfTable == nullptr)
+        return;     //尚未成功获取到接口表
     CNetworkInfoDlg aDlg(m_connections, m_pIfTable->table, m_connection_selected);
     ////向CNetworkInfoDlg类传递自启动以来已发送和接收的字节数
     //aDlg.m_in_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwInOctets - m_connections[m_connection_selected].in_bytes;
