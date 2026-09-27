@@ -1146,11 +1146,13 @@ void CTrafficMonitorApp::InitOpenHardwareLibInThread()
 void CTrafficMonitorApp::UpdateOpenHardwareMonitorEnableState()
 {
 #ifndef WITHOUT_TEMPERATURE
+    m_is_on_battery_power = CCommon::IsSystemOnBatteryPower();
     if (m_pMonitor != nullptr)
     {
         CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
         m_pMonitor->SetCpuEnable(m_general_data.IsHardwareEnable(HI_CPU));
-        m_pMonitor->SetGpuEnable(m_general_data.IsHardwareEnable(HI_GPU));
+        //电池供电时暂停独显监控（释放NVML/ADL句柄并停止NVAPI轮询），让独立显卡能够正常休眠/下线
+        m_pMonitor->SetGpuEnable(m_general_data.IsHardwareEnable(HI_GPU) && !m_is_on_battery_power);
         m_pMonitor->SetHddEnable(m_general_data.IsHardwareEnable(HI_HDD));
         m_pMonitor->SetMainboardEnable(m_general_data.IsHardwareEnable(HI_MBD));
     }
