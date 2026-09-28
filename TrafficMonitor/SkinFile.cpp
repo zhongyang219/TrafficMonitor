@@ -622,7 +622,31 @@ void CSkinFile::DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font) 
     for (const auto& display_item : AllDisplayItems)
     {
         if (!m_layout_info.no_label)
-            map_str[display_item].label = theApp.m_main_wnd_data.disp_str.GetConst(display_item).c_str();
+        {
+            // 为上传/下载处理交换标签逻辑
+            if (display_item == TDI_UP || display_item == TDI_DOWN)
+            {
+                // 如果启用了交换，则从相反项读取标签
+                DisplayItem src_item = display_item;
+                if (theApp.m_main_wnd_data.swap_up_down)
+                    src_item = (display_item == TDI_UP) ? TDI_DOWN : TDI_UP;
+
+                const std::wstring& cfg_label = theApp.m_main_wnd_data.disp_str.GetConst(src_item);
+                if (cfg_label.empty())
+                    map_str[display_item].label = CommonDisplayItem(src_item).DefaultString(true).c_str();
+                else
+                    map_str[display_item].label = cfg_label.c_str();
+            }
+            else
+            {
+                const std::wstring& cfg_label = theApp.m_main_wnd_data.disp_str.GetConst(display_item);
+                if (cfg_label.empty())
+                    map_str[display_item].label = CommonDisplayItem(display_item).DefaultString(true).c_str();
+                else
+                    map_str[display_item].label = cfg_label.c_str();
+            }
+        }
+
         map_str[display_item].value = CommonDisplayItem(display_item).GetItemValueText(true);
     }
 
