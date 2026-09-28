@@ -150,6 +150,7 @@ public:
     bool IsCheckingForUpdate() const { return m_checking_update; }      //是否正在检查更新
 
     void InitOpenHardwareLibInThread();     //开启一个后台线程初始化OpenHardwareMonitor
+    bool InitOpenHardwareLib();             //初始化OpenHardwareMonitor，成功返回true
     void UpdateOpenHardwareMonitorEnableState();    //更新硬件监控的启用/禁用状态
 
     //void UpdateTaskbarWndMenu();      //更新任务栏窗口右键菜单
