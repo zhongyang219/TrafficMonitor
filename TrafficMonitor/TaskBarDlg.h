@@ -43,6 +43,7 @@ public:
 
     UINT GetDPI() const;
     void SetDPI(UINT dpi);
+    void SetTaskbarDisplayIndex(int index) { m_taskbar_display_index = index; }
     UINT DPI(UINT pixel) const;
     int DPI(int pixel) const;
     LONG DPI(LONG pixel) const;
@@ -148,6 +149,7 @@ protected:
     int m_error_code{};
     bool m_menu_popuped{ false };               //指示当前是否有菜单处于弹出状态
     bool m_is_secondary_display{ false };       //是否显示在副显示器中
+    int m_taskbar_display_index{ -1 };          //在“所有显示器”模式下，该窗口所显示的副显示器序号（-1表示主显示器）
     bool m_is_width_changed{ false };
 
     UINT m_taskbar_dpi{};//TaskBarDlg自身专用dpi
