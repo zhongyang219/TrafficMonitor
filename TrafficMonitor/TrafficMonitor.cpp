@@ -264,6 +264,8 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.netspeed_figure_max_value = ini.GetInt(L"task_bar", L"netspeed_figure_max_value", 10);
     m_taskbar_data.netspeed_figure_max_value_unit = ini.GetInt(L"task_bar", L"netspeed_figure_max_value_unit", 1);
     m_taskbar_data.graph_color_following_system = ini.GetBool(L"task_bar", L"graph_color_following_system", true);
+    m_taskbar_data.specify_each_item_graph_color = ini.GetBool(L"task_bar", L"specify_each_item_graph_color", false);
+    ini.LoadTaskbarWndGraphColors(L"task_bar_graph_color", m_taskbar_data.graph_colors);
 
     if (CTaskBarDlgDrawCommonSupport::CheckSupport())
         m_taskbar_data.disable_d2d = ini.GetBool(L"task_bar", L"disable_d2d", true);
@@ -420,6 +422,8 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"task_bar", L"netspeed_figure_max_value", m_taskbar_data.netspeed_figure_max_value);
     ini.WriteInt(L"task_bar", L"netspeed_figure_max_value_unit", m_taskbar_data.netspeed_figure_max_value_unit);
     ini.WriteBool(L"task_bar", L"graph_color_following_system", m_taskbar_data.graph_color_following_system);
+    ini.WriteBool(L"task_bar", L"specify_each_item_graph_color", m_taskbar_data.specify_each_item_graph_color);
+    ini.SaveTaskbarWndGraphColors(L"task_bar_graph_color", m_taskbar_data.graph_colors);
 
     ini.WriteBool(L"task_bar", L"disable_d2d", m_taskbar_data.disable_d2d);
     ini.WriteBool(L"task_bar", L"enable_colorful_emoji", m_taskbar_data.enable_colorful_emoji);

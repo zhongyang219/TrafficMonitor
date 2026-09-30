@@ -37,6 +37,7 @@ protected:
     CColorStatic m_back_color_static;
     CColorStatic m_trans_color_static;
     CColorStatic m_status_bar_color_static;
+    CColorStatic m_graph_color_static;
     CToolTipCtrl m_toolTip;
     CComboBox2 m_unit_combo;
     CButton m_hide_unit_chk;
@@ -89,6 +90,7 @@ protected:
     afx_msg LRESULT OnStaticClicked(WPARAM wParam, LPARAM lParam);
 public:
     afx_msg void OnBnClickedSpecifyEachItemColorCheck();
+    afx_msg void OnBnClickedSpecifyEachItemGraphColorCheck();
     afx_msg void OnCbnSelchangeDoubleClickCombo();
     afx_msg void OnBnClickedHorizontalArrangeCheck();
     afx_msg void OnBnClickedShowStatusBarCheck();

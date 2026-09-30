@@ -51,6 +51,9 @@ void CTaskbarDefaultStyle::LoadConfig()
         m_default_style[i].transparent_color = ini.GetInt(L"taskbar_default_style", (key_name + L"transparent_color").c_str(), default_transparent_color);
         m_default_style[i].status_bar_color = ini.GetInt(L"taskbar_default_style", (key_name + L"status_bar_color").c_str(), default_status_bar_color);
         m_default_style[i].specify_each_item_color = ini.GetBool(L"taskbar_default_style", (key_name + L"specify_each_item_color").c_str(), specify_each_item_color_default);
+		m_default_style[i].graph_colors.clear();
+		ini.LoadTaskbarWndGraphColors((L"taskbar_default_style_graph_color_" + std::to_wstring(i + 1)).c_str(), m_default_style[i].graph_colors);
+		m_default_style[i].specify_each_item_graph_color = ini.GetBool(L"taskbar_default_style", (key_name + L"specify_each_item_graph_color").c_str(), false);
 	}
 }
 
@@ -69,6 +72,8 @@ void CTaskbarDefaultStyle::SaveConfig() const
             ini.WriteInt(L"taskbar_default_style", (key_name + L"transparent_color").c_str(), m_default_style[i].transparent_color);
             ini.WriteInt(L"taskbar_default_style", (key_name + L"status_bar_color").c_str(), m_default_style[i].status_bar_color);
             ini.WriteBool(L"taskbar_default_style", (key_name + L"specify_each_item_color").c_str(), m_default_style[i].specify_each_item_color);
+            ini.SaveTaskbarWndGraphColors((L"taskbar_default_style_graph_color_" + std::to_wstring(i + 1)).c_str(), m_default_style[i].graph_colors);
+            ini.WriteBool(L"taskbar_default_style", (key_name + L"specify_each_item_graph_color").c_str(), m_default_style[i].specify_each_item_graph_color);
         }
         else
         {
@@ -98,6 +103,8 @@ void CTaskbarDefaultStyle::ApplyDefaultStyle(int index, TaskBarSettingData & dat
 		data.transparent_color = m_default_style[index].transparent_color;
 		data.status_bar_color = m_default_style[index].status_bar_color;
 		data.specify_each_item_color = m_default_style[index].specify_each_item_color;
+		data.graph_colors = m_default_style[index].graph_colors;
+		data.specify_each_item_graph_color = m_default_style[index].specify_each_item_graph_color;
 		if (data.transparent_color == data.back_color)
 		{
 			CCommon::TransparentColorConvert(data.back_color);
@@ -128,6 +135,8 @@ void CTaskbarDefaultStyle::ModifyDefaultStyle(int index, TaskBarSettingData & da
 	m_default_style[index].transparent_color = data.transparent_color;
 	m_default_style[index].status_bar_color = data.status_bar_color;
 	m_default_style[index].specify_each_item_color = data.specify_each_item_color;
+	m_default_style[index].graph_colors = data.graph_colors;
+	m_default_style[index].specify_each_item_graph_color = data.specify_each_item_graph_color;
 }
 
 bool CTaskbarDefaultStyle::IsTaskBarStyleDataValid(const TaskBarStyleData& data)

@@ -27,7 +27,7 @@ public:
     CToolTipCtrl m_tool_tips;
 
     void ShowInfo(CDC* pDC); 	//将信息绘制到控件上
-    void TryDrawStatusBar(IDrawCommon& drawer, const CRect& rect_bar, int usage_percent); //绘制CPU/内存状态条
+    void TryDrawStatusBar(IDrawCommon& drawer, const CRect& rect_bar, CommonDisplayItem item, int usage_percent); //绘制CPU/内存状态条
 
     void TryDrawGraph(IDrawCommon& drawer, const CRect& value_rect, CommonDisplayItem item_type);		// 绘制CPU/内存动态图
 

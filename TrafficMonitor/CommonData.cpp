@@ -293,6 +293,17 @@ COLORREF TaskBarSettingData::GetUsageGraphColor() const
     }
 }
 
+COLORREF TaskBarSettingData::GetUsageGraphColor(CommonDisplayItem item) const
+{
+    if (specify_each_item_graph_color)
+    {
+        auto iter = graph_colors.find(item);
+        if (iter != graph_colors.end())
+            return iter->second;
+    }
+    return GetUsageGraphColor();
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool LanguageInfo::operator==(const LanguageInfo& another) const
 {

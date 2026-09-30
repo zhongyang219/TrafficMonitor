@@ -11,10 +11,13 @@ class CTaskbarColorDlg : public CBaseDialog
 	DECLARE_DYNAMIC(CTaskbarColorDlg)
 
 public:
-	CTaskbarColorDlg(const std::map<CommonDisplayItem, TaskbarItemColor>& colors, CWnd* pParent = NULL);   // 标准构造函数
+	CTaskbarColorDlg(const std::map<CommonDisplayItem, TaskbarItemColor>& colors,
+        const std::map<CommonDisplayItem, COLORREF>& graph_colors, COLORREF default_graph_color,
+        bool enable_text_colors, bool enable_graph_colors, CWnd* pParent = NULL);   // 标准构造函数
 	virtual ~CTaskbarColorDlg();
 
     const std::map<CommonDisplayItem, TaskbarItemColor>& GetColors() const { return m_colors; }
+    const std::map<CommonDisplayItem, COLORREF>& GetGraphColors() const { return m_graph_colors; }
 
 	// 对话框数据
 #ifdef AFX_DESIGN_TIME
@@ -23,6 +26,10 @@ public:
 
 protected:
     std::map<CommonDisplayItem, TaskbarItemColor> m_colors;
+    std::map<CommonDisplayItem, COLORREF> m_graph_colors;
+    COLORREF m_default_graph_color{};
+    bool m_enable_text_colors{};
+    bool m_enable_graph_colors{};
     CColorSettingListCtrl m_list_ctrl;
 
     virtual CString GetDialogName() const override;

@@ -292,7 +292,7 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
             }
             else
             {
-                TryDrawStatusBar(drawer, rect, figure_value);
+                TryDrawStatusBar(drawer, rect, type, figure_value);
             }
         }
     }
@@ -333,7 +333,7 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
             //柱状图
             else
             {
-                TryDrawStatusBar(drawer, rect, figure_value);
+                TryDrawStatusBar(drawer, rect, item, figure_value);
             }
         }
     }
@@ -442,14 +442,14 @@ void CTaskBarDlg::DisableRenderFeatureIfNecessary(CSupportedRenderEnums& ref_sup
     }
 }
 
-void CTaskBarDlg::TryDrawStatusBar(IDrawCommon& drawer, const CRect& rect_bar, int usage_percent)
+void CTaskBarDlg::TryDrawStatusBar(IDrawCommon& drawer, const CRect& rect_bar, CommonDisplayItem item, int usage_percent)
 {
     //限制范围
     if (usage_percent > 100)
         usage_percent = 100;
     if (usage_percent < 0)
         usage_percent = 0;
-    COLORREF graph_color = theApp.m_taskbar_data.GetUsageGraphColor();
+    COLORREF graph_color = theApp.m_taskbar_data.GetUsageGraphColor(item);
     CSize fill_size = CSize(rect_bar.Width() * usage_percent / 100, rect_bar.Height());
     CRect rect_fill(rect_bar.TopLeft(), fill_size);
     if (theApp.m_taskbar_data.show_graph_dashed_box)
@@ -1413,7 +1413,7 @@ bool CTaskBarDlg::CheckClickedItem(CPoint point)
 void CTaskBarDlg::TryDrawGraph(IDrawCommon& drawer, const CRect& value_rect, CommonDisplayItem item_type)
 {
     std::list<int>& list = m_map_history_data[item_type];
-    COLORREF graph_color = theApp.m_taskbar_data.GetUsageGraphColor();
+    COLORREF graph_color = theApp.m_taskbar_data.GetUsageGraphColor(item_type);
     if (theApp.m_taskbar_data.show_graph_dashed_box)
         drawer.DrawRectOutLine(value_rect, graph_color, 1, true);
     int i{ -1 };

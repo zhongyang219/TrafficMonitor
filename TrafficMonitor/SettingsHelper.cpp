@@ -116,6 +116,22 @@ void CSettingsHelper::SaveTaskbarWndColors(const wchar_t* AppName, const wchar_t
     _WriteString(AppName, KeyName, wstring(str));
 }
 
+void CSettingsHelper::LoadTaskbarWndGraphColors(const wchar_t* AppName, std::map<CommonDisplayItem, COLORREF>& graph_colors)
+{
+    for (const auto& item : theApp.m_plugins.AllDisplayItemsWithPlugins())
+    {
+        std::wstring color_str;
+        if (GetString(AppName, item.GetItemIniKeyName(), color_str))
+            graph_colors[item] = _wtoi(color_str.c_str());
+    }
+}
+
+void CSettingsHelper::SaveTaskbarWndGraphColors(const wchar_t* AppName, const std::map<CommonDisplayItem, COLORREF>& graph_colors)
+{
+    for (const auto& item : graph_colors)
+        WriteInt(AppName, item.first.GetItemIniKeyName(), item.second);
+}
+
 void CSettingsHelper::LoadDisplayStr(const wchar_t* AppName, DispStrings& disp_str, bool is_main_window) const
 {
     for (auto display_item : AllDisplayItems)

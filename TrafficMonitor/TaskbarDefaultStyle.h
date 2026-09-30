@@ -11,10 +11,12 @@ public:
 	struct TaskBarStyleData
 	{
         std::map<CommonDisplayItem, TaskbarItemColor> text_colors{};
+		std::map<CommonDisplayItem, COLORREF> graph_colors{};
 		COLORREF back_color{};
 		COLORREF transparent_color{};
 		COLORREF status_bar_color{};
 		bool specify_each_item_color{};
+		bool specify_each_item_graph_color{};
 	};
 
 	CTaskbarDefaultStyle();

@@ -37,6 +37,8 @@ bool CTaskBarSettingsDlg::IsStyleModified()
     modified |= (theApp.m_taskbar_data.transparent_color != m_data.transparent_color);
     modified |= (theApp.m_taskbar_data.status_bar_color != m_data.status_bar_color);
     modified |= (theApp.m_taskbar_data.specify_each_item_color != m_data.specify_each_item_color);
+    modified |= (theApp.m_taskbar_data.graph_colors != m_data.graph_colors);
+    modified |= (theApp.m_taskbar_data.specify_each_item_graph_color != m_data.specify_each_item_graph_color);
     return modified && m_style_modified;
 }
 
@@ -66,6 +68,25 @@ void CTaskBarSettingsDlg::DrawStaticColor()
     m_back_color_static.SetFillColor(m_data.back_color);
     //m_trans_color_static.SetFillColor(m_data.transparent_color);
     m_status_bar_color_static.SetFillColor(m_data.GetUsageGraphColor());
+    if (m_data.specify_each_item_graph_color && !m_data.graph_colors.empty())
+    {
+        int color_num{ static_cast<int>(m_data.graph_colors.size()) };
+        if (color_num > 16)
+            color_num = 16;
+        m_graph_color_static.SetColorNum(color_num);
+        int i{};
+        for (const auto& item : m_data.graph_colors)
+        {
+            if (i >= color_num)
+                break;
+            m_graph_color_static.SetFillColor(i++, item.second);
+        }
+        m_graph_color_static.Invalidate();
+    }
+    else
+    {
+        m_graph_color_static.SetFillColor(m_data.GetUsageGraphColor());
+    }
 }
 
 void CTaskBarSettingsDlg::IniUnitCombo()
@@ -90,7 +111,9 @@ void CTaskBarSettingsDlg::ApplyDefaultStyle(int index)
     theApp.m_taskbar_default_style.ApplyDefaultStyle(index, m_data);
     DrawStaticColor();
     ((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->SetCheck(m_data.specify_each_item_color);
+    ((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_GRAPH_COLOR_CHECK))->SetCheck(m_data.specify_each_item_graph_color);
     m_background_transparent_chk.SetCheck(m_data.IsTaskbarTransparent());
+    EnableControl();
 }
 
 void CTaskBarSettingsDlg::ModifyDefaultStyle(int index)
@@ -106,7 +129,9 @@ void CTaskBarSettingsDlg::EnableControl()
     ShowDlgCtrl(IDC_BROWSE_BUTTON, exe_path_enable);
     EnableDlgCtrl(IDC_AUTO_ADAPT_SETTINGS_BUTTON, m_data.auto_adapt_light_theme);
     EnableDlgCtrl(IDC_SHOW_DASHED_BOX, m_data.show_status_bar || m_data.show_netspeed_figure);
+    EnableDlgCtrl(IDC_SPECIFY_EACH_ITEM_GRAPH_COLOR_CHECK, m_data.show_status_bar || m_data.show_netspeed_figure);
     m_status_bar_color_static.EnableWindow(m_data.show_status_bar || m_data.show_netspeed_figure);
+    m_graph_color_static.EnableWindow((m_data.show_status_bar || m_data.show_netspeed_figure) && m_data.specify_each_item_graph_color);
     EnableDlgCtrl(IDC_CM_GRAPH_BAR_RADIO, m_data.show_status_bar || m_data.show_netspeed_figure);
     EnableDlgCtrl(IDC_CM_GRAPH_PLOT_RADIO, m_data.show_status_bar || m_data.show_netspeed_figure);
     EnableDlgCtrl(IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, m_data.show_netspeed_figure);
@@ -196,6 +221,10 @@ bool CTaskBarSettingsDlg::InitializeControls()
         { CtrlTextInfo::C0, IDC_USAGE_GRAPH_FOLLOW_SYSTEM_CHECK, CtrlTextInfo::W16 }
         });
     RepositionTextBasedControls({
+        { CtrlTextInfo::L2, IDC_SPECIFY_EACH_ITEM_GRAPH_COLOR_CHECK, CtrlTextInfo::W16 },
+        { CtrlTextInfo::L1, IDC_GRAPH_COLOR_STATIC }
+        });
+    RepositionTextBasedControls({
         { CtrlTextInfo::L4, IDC_GRAPH_DISPLAY_MODE_STATIC },
         { CtrlTextInfo::L3, IDC_CM_GRAPH_BAR_RADIO, CtrlTextInfo::W16 },
         { CtrlTextInfo::L2, IDC_CM_GRAPH_PLOT_RADIO, CtrlTextInfo::W16 }
@@ -209,6 +238,7 @@ void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_TEXT_COLOR_STATIC1, m_text_color_static);
     DDX_Control(pDX, IDC_TEXT_COLOR_STATIC2, m_back_color_static);
     DDX_Control(pDX, IDC_TEXT_COLOR_STATIC3, m_status_bar_color_static);
+    DDX_Control(pDX, IDC_GRAPH_COLOR_STATIC, m_graph_color_static);
     CTabDlg::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_UNIT_COMBO, m_unit_combo);
     DDX_Control(pDX, IDC_HIDE_UNIT_CHECK, m_hide_unit_chk);
@@ -238,6 +268,7 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_HIDE_PERCENTAGE_CHECK, &CTaskBarSettingsDlg::OnBnClickedHidePercentageCheck)
     ON_MESSAGE(WM_STATIC_CLICKED, &CTaskBarSettingsDlg::OnStaticClicked)
     ON_BN_CLICKED(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK, &CTaskBarSettingsDlg::OnBnClickedSpecifyEachItemColorCheck)
+    ON_BN_CLICKED(IDC_SPECIFY_EACH_ITEM_GRAPH_COLOR_CHECK, &CTaskBarSettingsDlg::OnBnClickedSpecifyEachItemGraphColorCheck)
     ON_CBN_SELCHANGE(IDC_DOUBLE_CLICK_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeDoubleClickCombo)
     ON_BN_CLICKED(IDC_HORIZONTAL_ARRANGE_CHECK, &CTaskBarSettingsDlg::OnBnClickedHorizontalArrangeCheck)
     ON_BN_CLICKED(IDC_SHOW_STATUS_BAR_CHECK, &CTaskBarSettingsDlg::OnBnClickedShowStatusBarCheck)
@@ -314,6 +345,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     m_back_color_static.SetLinkCursor();
     //m_trans_color_static.SetLinkCursor();
     m_status_bar_color_static.SetLinkCursor();
+    m_graph_color_static.SetLinkCursor();
     DrawStaticColor();
 
 #ifdef COMPILE_FOR_WINXP
@@ -347,6 +379,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     }
     ((CButton*)GetDlgItem(IDC_HIDE_PERCENTAGE_CHECK))->SetCheck(m_data.hide_percent);
     ((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->SetCheck(m_data.specify_each_item_color);
+    ((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_GRAPH_COLOR_CHECK))->SetCheck(m_data.specify_each_item_graph_color);
     m_background_transparent_chk.SetCheck(m_data.IsTaskbarTransparent());
     m_atuo_adapt_light_theme_chk.SetCheck(m_data.auto_adapt_light_theme);
     m_auto_set_back_color_chk.SetCheck(m_data.auto_set_background_color);
@@ -607,10 +640,12 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
         //设置文本颜色
         if (m_data.specify_each_item_color)
         {
-            CTaskbarColorDlg colorDlg(m_data.text_colors);
+            CTaskbarColorDlg colorDlg(m_data.text_colors, m_data.graph_colors, m_data.GetUsageGraphColor(),
+                m_data.specify_each_item_color, m_data.specify_each_item_graph_color);
             if (colorDlg.DoModal() == IDOK)
             {
                 m_data.text_colors = colorDlg.GetColors();
+                m_data.graph_colors = colorDlg.GetGraphColors();
                 DrawStaticColor();
                 m_style_modified = true;
             }
@@ -676,6 +711,22 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
         }
         break;
     }
+    case IDC_GRAPH_COLOR_STATIC:        //点击“每个项目的占用图颜色”时
+    {
+        if (m_data.specify_each_item_graph_color)
+        {
+            CTaskbarColorDlg colorDlg(m_data.text_colors, m_data.graph_colors, m_data.GetUsageGraphColor(),
+                m_data.specify_each_item_color, m_data.specify_each_item_graph_color);
+            if (colorDlg.DoModal() == IDOK)
+            {
+                m_data.text_colors = colorDlg.GetColors();
+                m_data.graph_colors = colorDlg.GetGraphColors();
+                DrawStaticColor();
+                m_style_modified = true;
+            }
+        }
+        break;
+    }
     default:
         break;
     }
@@ -688,6 +739,23 @@ void CTaskBarSettingsDlg::OnBnClickedSpecifyEachItemColorCheck()
     // TODO: 在此添加控件通知处理程序代码
     m_data.specify_each_item_color = (((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->GetCheck() != 0);
     DrawStaticColor();
+    m_style_modified = true;
+}
+
+void CTaskBarSettingsDlg::OnBnClickedSpecifyEachItemGraphColorCheck()
+{
+    m_data.specify_each_item_graph_color = (((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_GRAPH_COLOR_CHECK))->GetCheck() != 0);
+    if (m_data.specify_each_item_graph_color)
+    {
+        COLORREF default_color = m_data.GetUsageGraphColor();
+        for (const auto& item : theApp.m_plugins.AllDisplayItemsWithPlugins())
+        {
+            if (m_data.graph_colors.find(item) == m_data.graph_colors.end())
+                m_data.graph_colors.emplace(item, default_color);
+        }
+    }
+    DrawStaticColor();
+    EnableControl();
     m_style_modified = true;
 }
 
