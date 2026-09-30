@@ -16,7 +16,8 @@ private:
     HWND m_hStart;      //开始按钮的句柄
     CRect m_rcNotify;   //任务栏通知区域的矩形区域
     CRect m_rcStart;     //开始按钮的矩形区域
-    int m_last_notify_width{};
+    int m_last_notify_size{};
+    int m_last_notify_pos{};
     int m_last_start_pos{};
 
     // 通过 CTaskBarDlg 继承

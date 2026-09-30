@@ -192,7 +192,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
             if (iter->IsPlugin())
                 DrawPluginItem(draw, iter->PluginItem(), item_rect, iter->item_width.label_width, iter->is_double_line);
             else
-                DrawDisplayItem(draw, iter->ItemType(), item_rect, iter->item_width.label_width, iter->is_double_line);
+                DrawDisplayItem(draw, iter->ItemType(), item_rect, iter->item_width.label_width, iter->is_double_line, iter->is_compact_speed);
         }
     }
 
@@ -204,7 +204,7 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 #endif
 }
 
-void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical)
+void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical, bool compact_speed)
 {
     //设置要绘制的文本颜色
     COLORREF label_color{};
@@ -295,6 +295,18 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
                 TryDrawStatusBar(drawer, rect, figure_value);
             }
         }
+    }
+
+    if (compact_speed)
+    {
+        PublicSettingData compact_settings = theApp.m_taskbar_data;
+        compact_settings.speed_short_mode = true;
+        compact_settings.separate_value_unit_with_space = false;
+        const unsigned long long speed = type == TDI_UP ? theApp.m_out_speed : theApp.m_in_speed;
+        CString text = theApp.m_taskbar_data.disp_str.GetConst(type).c_str();
+        text += CCommon::DataSizeToString(speed, compact_settings);
+        drawer.DrawWindowText(rect, text, text_color, IDrawCommon::Alignment::CENTER);
+        return;
     }
 
     //绘制标签
@@ -468,11 +480,14 @@ bool CTaskBarDlg::AdjustWindowPos(bool force_adjust)
     if (force_adjust)
         ResetTaskbarPos();
 
+    const CRect previous_taskbar_rect{ m_rcTaskbar };
     ::GetWindowRect(m_hTaskbar, m_rcTaskbar);   //获得任务栏的矩形区域
+    const bool win11_taskbar_size_changed = theApp.IsWindows11Taskbar() &&
+        (m_rcTaskbar.Width() != previous_taskbar_rect.Width() || m_rcTaskbar.Height() != previous_taskbar_rect.Height());
 
     static bool last_taskbar_on_top_or_bottom;
     CheckTaskbarOnTopOrBottom();
-    if (force_adjust || m_taskbar_on_top_or_bottom != last_taskbar_on_top_or_bottom)
+    if (force_adjust || win11_taskbar_size_changed || m_taskbar_on_top_or_bottom != last_taskbar_on_top_or_bottom)
     {
         CalculateWindowSize();
         last_taskbar_on_top_or_bottom = m_taskbar_on_top_or_bottom;
@@ -808,7 +823,37 @@ void CTaskBarDlg::CalculateWindowSize()
     auto last_window_height{ m_window_height };
 
     //计算窗口总宽度/高度和矩形区域
-    if (IsTasksbarOnTopOrBottom())  //任务栏在桌面的顶部或底部时
+    bool side_horizontal_arrange = !m_taskbar_on_top_or_bottom && theApp.IsWindows11Taskbar() &&
+        m_rcTaskbar.Width() > DPI(64) && theApp.m_taskbar_data.horizontal_arrange;
+    int side_horizontal_width = DPI(4);
+    if (side_horizontal_arrange)
+    {
+        for (size_t i = 0; i < m_item_widths.size(); ++i)
+        {
+            const auto& item = m_item_widths[i];
+            if (item.IsDoubleLineExclusive())
+                side_horizontal_arrange = false;
+            side_horizontal_width += item.item_width.TotalWidth();
+            if (i > 0)
+                side_horizontal_width += DPI(theApp.m_taskbar_data.item_space);
+        }
+        if (side_horizontal_width > m_rcTaskbar.Width() - DPI(4))
+            side_horizontal_arrange = false;
+    }
+
+    if (side_horizontal_arrange)
+    {
+        //宽版竖向任务栏有足够空间时，尊重“水平排列”选项。
+        m_window_width = side_horizontal_width;
+        m_window_height = TASKBAR_WND_HEIGHT * 2 / 3;
+        int current_x = DPI(2);
+        for (auto& item : m_item_widths)
+        {
+            m_item_rects[item].SetRect(current_x, 0, current_x + item.item_width.TotalWidth(), m_window_height);
+            current_x += item.item_width.TotalWidth() + DPI(theApp.m_taskbar_data.item_space);
+        }
+    }
+    else if (IsTasksbarOnTopOrBottom())  //任务栏在桌面的顶部或底部时
     {
         if (!horizontal_arrange)
             m_window_height = TASKBAR_WND_HEIGHT;
@@ -917,17 +962,38 @@ void CTaskBarDlg::CalculateWindowSize()
     }
     else        //任务栏在桌面两侧时
     {
+        const bool win11_vertical = theApp.IsWindows11Taskbar();
+        const int available_width = max(1, m_rcTaskbar.Width() - DPI(4));
         m_window_width = 0;
         m_window_height = 0;
+        //Win11 的竖向任务栏通常较窄，单行放不下时将标签和值分成上下两行。
+        if (win11_vertical)
+        {
+            for (auto& item : m_item_widths)
+            {
+                item.is_compact_speed = available_width <= DPI(64) && !item.IsPlugin() &&
+                    (item.ItemType() == TDI_UP || item.ItemType() == TDI_DOWN) &&
+                    theApp.m_taskbar_data.disp_str.GetConst(item.ItemType()).size() <= 1;
+                if (item.is_compact_speed)
+                {
+                    m_window_width = available_width;
+                    continue;
+                }
+                item.is_double_line = item.IsDoubleLineExclusive() || item.item_width.TotalWidth() > available_width;
+                const int width = item.is_double_line ? item.item_width.MaxWidth() : item.item_width.TotalWidth();
+                m_window_width = max(m_window_width, width);
+            }
+            m_window_width = min(m_window_width, available_width);
+        }
         CRect item_rect;
         for (auto iter = m_item_widths.begin(); iter != m_item_widths.end(); ++iter)
         {
             //所有标签中最大的宽度即为窗口宽度
-            if (m_window_width < iter->item_width.TotalWidth())
+            if (!win11_vertical && m_window_width < iter->item_width.TotalWidth())
                 m_window_width = iter->item_width.TotalWidth();
 
             int item_height = TASKBAR_WND_HEIGHT / 2;
-            if (iter->IsDoubleLineExclusive())
+            if (iter->IsDoubleLineExclusive() || (win11_vertical && iter->is_double_line))
                 item_height = TASKBAR_WND_HEIGHT;
 
             //计算矩形区域
@@ -939,7 +1005,7 @@ void CTaskBarDlg::CalculateWindowSize()
             m_item_rects[*iter] = item_rect;
 
             m_window_height += item_height;
-            m_window_height += DPI(theApp.m_taskbar_data.item_space);
+            m_window_height += win11_vertical && iter->is_compact_speed ? min(DPI(theApp.m_taskbar_data.item_space), DPI(2)) : DPI(theApp.m_taskbar_data.item_space);
         }
     }
 
