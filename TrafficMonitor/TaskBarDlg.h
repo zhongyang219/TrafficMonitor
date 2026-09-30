@@ -127,6 +127,7 @@ protected:
     {
         ItemWidth item_width;
         bool is_double_line{};  //项目是否占两行
+        bool is_compact_speed{}; //窄版 Win11 竖向任务栏中的单行网速
 
         ItemWidthInfo()
         {}
@@ -174,7 +175,7 @@ protected:
     //  rect: 绘制矩形区域
     //  label_width: 标签区域的宽度
     //  vertical: 如果为true，则标签和数值上下显示
-    void DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical = false);
+    void DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical = false, bool compact_speed = false);
 
     //绘制任务栏窗口中的一个插件项目
    //  drawer: 绘图类的对象
