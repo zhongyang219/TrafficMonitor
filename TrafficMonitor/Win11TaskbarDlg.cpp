@@ -4,17 +4,44 @@
 
 void CWin11TaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
 {
-    ::GetWindowRect(m_hNotify, m_rcNotify);
-    ::GetWindowRect(m_hStart, m_rcStart);
-    m_rcStart.MoveToXY(m_rcStart.left - m_rcTaskbar.left, m_rcStart.top - m_rcTaskbar.top);
+    if (::GetWindowRect(m_hNotify, m_rcNotify))
+        m_rcNotify.OffsetRect(-m_rcTaskbar.left, -m_rcTaskbar.top);
+    else
+        m_rcNotify.SetRectEmpty();
+    if (::GetWindowRect(m_hStart, m_rcStart))
+        m_rcStart.OffsetRect(-m_rcTaskbar.left, -m_rcTaskbar.top);
+    else
+        m_rcStart.SetRectEmpty();
 
     //设置窗口大小
     m_rect.right = m_rect.left + m_window_width;
     m_rect.bottom = m_rect.top + m_window_height;
-    if (force_adjust || m_rcNotify.Width() != m_last_notify_width || m_rcStart.left != m_last_start_pos)   //如果最小化窗口的宽度改变了，重新设置任务栏窗口的位置
+    if (force_adjust || m_rcNotify != m_last_rc_notify || m_rcStart != m_last_rc_start || m_rcTaskbar != m_last_rc_taskbar)
     {
-        m_last_notify_width = m_rcNotify.Width();
-        m_last_start_pos = m_rcStart.left;
+        m_last_rc_notify = m_rcNotify;
+        m_last_rc_start = m_rcStart;
+        m_last_rc_taskbar = m_rcTaskbar;
+
+        if (!m_taskbar_on_top_or_bottom)
+        {
+            // Windows 11 的侧边任务栏：TrafficMonitor 使用垂直单列布局，
+            // 底边始终紧贴通知区域顶部（“显示隐藏图标”区域的上边界）。
+            int x_pos = (m_rcTaskbar.Width() - m_rect.Width()) / 2;
+            int y_pos = !m_rcNotify.IsRectEmpty()
+                ? m_rcNotify.top - m_rect.Height()
+                : m_rcTaskbar.Height() - m_rect.Height();
+
+            x_pos += DPI(theApp.m_taskbar_data.window_offset_left);
+            y_pos += DPI(theApp.m_taskbar_data.window_offset_top);
+
+            // 子窗口超出 Shell_TrayWnd 客户区后会被直接裁剪，因此必须限制坐标。
+            x_pos = max(0, min(x_pos, max(0, m_rcTaskbar.Width() - m_rect.Width())));
+            y_pos = max(0, min(y_pos, max(0, m_rcTaskbar.Height() - m_rect.Height())));
+            m_rect.MoveToXY(x_pos, y_pos);
+            MoveWindow(m_rect);
+            return;
+        }
+
         //任务窗口显示在右侧时，或者Windows11下任务栏左对齐时
         //（Windows11下，如果任务栏设置为左对齐，即使在“任务栏窗口设置”中设置了任务窗口显示在左边，窗口仍然显示在右边）
         if (!theApp.m_taskbar_data.tbar_wnd_on_left || !CWindowsSettingHelper::IsTaskbarCenterAlign())
@@ -30,7 +57,7 @@ void CWin11TaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
             //通知区窗口的水平位置
             int notify_x_pos = m_rcNotify.left;
             //没有获取到通知区位置的情况
-            if (notify_x_pos == 0)
+            if (m_rcNotify.IsRectEmpty())
             {
                 //Win11副屏没有通知区窗口，这里使用固定的值（88像素的系统时间区域）
                 if (m_is_secondary_display)
@@ -65,22 +92,16 @@ void CWin11TaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
         }
         //水平偏移
         m_rect.MoveToX(m_rect.left + DPI(theApp.m_taskbar_data.window_offset_left));
-        ////确保水平方向不超出屏幕边界
-        //if (m_rect.left < 0)
-        //    m_rect.MoveToX(0);
-        //if (m_rcTaskbar.Width() > m_rect.Width() && m_rect.right > m_rcTaskbar.Width())
-        //    m_rect.MoveToX(m_rcTaskbar.Width() - m_rect.Width());
+        //确保水平方向不超出任务栏客户区
+        m_rect.MoveToX(max(0, min(m_rect.left, max(0, m_rcTaskbar.Width() - m_rect.Width()))));
 
         //设置任务栏窗口的垂直位置
         //注：这里加上(m_rcTaskbar.Height() - rcStart.Height())用于修正Windows11 build 22621版本后触屏设备任务栏窗口位置不正确的问题。
         //在这种情况下m_rcTaskbar的高度要大于m_rcBar的高度，正常情况下，它们的高度相同
         //但是当任务栏上没有任何图标时，m_rcBar的高度会变为0，因此使用rcStart代替
         m_rect.MoveToY((m_rcStart.Height() - m_rect.Height()) / 2 + (m_rcTaskbar.Height() - m_rcStart.Height()) + DPI(theApp.m_taskbar_data.window_offset_top));
-        ////确保垂直方向不超出屏幕边界
-        //if (m_rect.top < 0)
-        //    m_rect.MoveToY(0);
-        //if (m_rcTaskbar.Height() > m_rect.Height() && m_rect.bottom > m_rcTaskbar.Height())
-        //    m_rect.MoveToY(m_rcTaskbar.Height() - m_rect.Height());
+        //确保垂直方向不超出任务栏客户区
+        m_rect.MoveToY(max(0, min(m_rect.top, max(0, m_rcTaskbar.Height() - m_rect.Height()))));
 
         MoveWindow(m_rect);
     }
@@ -90,7 +111,8 @@ void CWin11TaskbarDlg::InitTaskbarWnd()
 {
     m_hNotify = ::FindWindowEx(m_hTaskbar, 0, L"TrayNotifyWnd", NULL);
     m_hStart = ::FindWindowEx(m_hTaskbar, nullptr, L"Start", NULL);
-    ::GetWindowRect(m_hNotify, m_rcNotify);
+    if (!::GetWindowRect(m_hNotify, m_rcNotify))
+        m_rcNotify.SetRectEmpty();
 }
 
 void CWin11TaskbarDlg::ResetTaskbarPos()
@@ -104,5 +126,14 @@ HWND CWin11TaskbarDlg::GetParentHwnd()
 
 void CWin11TaskbarDlg::CheckTaskbarOnTopOrBottom()
 {
-    m_taskbar_on_top_or_bottom = true;
+    if (m_hTaskbar != nullptr)
+    {
+        CRect rect;
+        ::GetWindowRect(m_hTaskbar, rect);
+        m_taskbar_on_top_or_bottom = rect.Width() >= rect.Height();
+    }
+    else
+    {
+        m_taskbar_on_top_or_bottom = true;
+    }
 }

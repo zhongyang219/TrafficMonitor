@@ -13,6 +13,47 @@
 #include "WindowsWebExperienceDetector.h"
 #include "TaskbarHelper.h"
 
+namespace
+{
+    CString GetCompactTaskbarLabel(CString text)
+    {
+        text.Trim();
+        while (!text.IsEmpty())
+        {
+            const wchar_t last_char = text[text.GetLength() - 1];
+            if (last_char != L':' && last_char != L'：')
+                break;
+            text.Delete(text.GetLength() - 1);
+            text.TrimRight();
+        }
+        if (!text.IsEmpty())
+            text += L' ';
+        return text;
+    }
+
+    CString GetCompactTaskbarValue(CString text)
+    {
+        text.Remove(L' ');
+        text.Replace(L"KB/s", L"K");
+        text.Replace(L"MB/s", L"M");
+        text.Replace(L"GB/s", L"G");
+        text.Replace(L"TB/s", L"T");
+        text.Replace(L"Kb/s", L"k");
+        text.Replace(L"Mb/s", L"m");
+        text.Replace(L"Gb/s", L"g");
+        text.Replace(L"/s", L"");
+        text.Replace(L"KB", L"K");
+        text.Replace(L"MB", L"M");
+        text.Replace(L"GB", L"G");
+        text.Replace(L"TB", L"T");
+        text.Replace(L"GHz", L"G");
+        text.Replace(L"MHz", L"M");
+        text.Replace(L"°C", L"");
+        text.Replace(L"%", L"");
+        return text;
+    }
+}
+
 #ifdef DEBUG
 // DX调试信息捕获
 #include "dxgi1_3.h"
@@ -301,7 +342,10 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
     if (label_width > 0)
     {
         wstring str_label = theApp.m_taskbar_data.disp_str.GetConst(type);
-        drawer.DrawWindowText(rect_label, str_label.c_str(), label_color, (vertical ? IDrawCommon::Alignment::CENTER : IDrawCommon::Alignment::LEFT));
+        CString label_text{ str_label.c_str() };
+        if (vertical && !m_taskbar_on_top_or_bottom)
+            label_text = GetCompactTaskbarLabel(label_text);
+        drawer.DrawWindowText(rect_label, label_text, label_color, (vertical ? IDrawCommon::Alignment::CENTER : IDrawCommon::Alignment::LEFT));
     }
 
     //绘制数值
@@ -309,6 +353,8 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
     if (vertical)
         value_alignment = IDrawCommon::Alignment::CENTER;
     CString str_value = CommonDisplayItem(type).GetItemValueText(false);
+    if (vertical && !m_taskbar_on_top_or_bottom)
+        str_value = GetCompactTaskbarValue(str_value);
     drawer.DrawWindowText(rect_value, str_value, text_color, value_alignment);
 }
 
@@ -410,6 +456,8 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
         }
         //画标签
         CString lable_text = theApp.m_taskbar_data.disp_str.GetConst(item).c_str();
+        if (vertical && !m_taskbar_on_top_or_bottom)
+            lable_text = GetCompactTaskbarLabel(lable_text);
         drawer.DrawWindowText(rect_label, lable_text, label_text_color, (vertical ? IDrawCommon::Alignment::CENTER : IDrawCommon::Alignment::LEFT));
         //画数值
         IDrawCommon::Alignment value_alignment{ theApp.m_taskbar_data.value_right_align ? IDrawCommon::Alignment::RIGHT : IDrawCommon::Alignment::LEFT };      //数值的对齐方式
@@ -751,45 +799,58 @@ void CTaskBarDlg::CalculateWindowSize()
         theApp.m_taskbar_data.display_item.Add(TDI_UP);        //至少显示一项
 
     m_item_widths.clear();
+    m_item_rects.clear();
     //显示项目的宽度
     std::map<CommonDisplayItem, ItemWidth> item_widths;
 
-    m_pDC->SelectObject(&m_font);
-    //计算标签和数值的宽度
-    //const auto& item_map = theApp.m_taskbar_data.disp_str.GetAllItems();
-    for (auto iter = theApp.m_plugins.AllDisplayItemsWithPlugins().begin(); iter != theApp.m_plugins.AllDisplayItemsWithPlugins().end(); ++iter)
+    auto calculate_item_widths = [&]()
     {
-        if (iter->IsPlugin())
+        item_widths.clear();
+        //计算标签和数值的宽度
+        for (auto iter = theApp.m_plugins.AllDisplayItemsWithPlugins().begin(); iter != theApp.m_plugins.AllDisplayItemsWithPlugins().end(); ++iter)
         {
-            auto plugin = iter->PluginItem();
-            if (plugin != nullptr && theApp.m_taskbar_data.plugin_display_item.Contains(plugin->GetItemId()))
+            if (iter->IsPlugin())
             {
-                //标签宽度
-                int& label_width{ item_widths[*iter].label_width };
-                //数值宽度
-                int& value_width{ item_widths[plugin].value_width };
-                if (plugin->IsCustomDraw())
+                auto plugin = iter->PluginItem();
+                if (plugin != nullptr && theApp.m_taskbar_data.plugin_display_item.Contains(plugin->GetItemId()))
                 {
-                    label_width = 0;
-                    value_width = theApp.m_plugins.GetItemWidth(plugin, m_pDC);
-                }
-                else
-                {
-                    CString lable_text = theApp.m_taskbar_data.disp_str.GetConst(plugin).c_str();
-                    label_width = m_pDC->GetTextExtent(lable_text).cx;
-                    value_width = m_pDC->GetTextExtent(plugin->GetItemValueSampleText()).cx;
+                    //标签宽度
+                    int& label_width{ item_widths[*iter].label_width };
+                    //数值宽度
+                    int& value_width{ item_widths[plugin].value_width };
+                    if (plugin->IsCustomDraw())
+                    {
+                        label_width = 0;
+                        value_width = theApp.m_plugins.GetItemWidth(plugin, m_pDC);
+                    }
+                    else
+                    {
+                        CString lable_text = theApp.m_taskbar_data.disp_str.GetConst(plugin).c_str();
+                        if (!m_taskbar_on_top_or_bottom)
+                            lable_text = GetCompactTaskbarLabel(lable_text);
+                        label_width = m_pDC->GetTextExtent(lable_text).cx;
+                        value_width = m_pDC->GetTextExtent(plugin->GetItemValueSampleText()).cx;
+                    }
                 }
             }
+            else
+            {
+                //标签宽度
+                CString label_text = theApp.m_taskbar_data.disp_str.GetConst(*iter).c_str();
+                if (!m_taskbar_on_top_or_bottom)
+                    label_text = GetCompactTaskbarLabel(label_text);
+                item_widths[*iter].label_width = m_pDC->GetTextExtent(label_text).cx;
+                //数值宽度
+                CString sample_str = iter->GetItemValueSampleText(false);
+                if (!m_taskbar_on_top_or_bottom)
+                    sample_str = GetCompactTaskbarValue(sample_str);
+                item_widths[*iter].value_width = m_pDC->GetTextExtent(sample_str).cx;
+            }
         }
-        else
-        {
-            //标签宽度
-            item_widths[*iter].label_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.GetConst(*iter).c_str()).cx;
-            //数值宽度
-            CString sample_str = iter->GetItemValueSampleText(false);
-            item_widths[*iter].value_width = m_pDC->GetTextExtent(sample_str).cx;
-        }
-    }
+    };
+
+    m_pDC->SelectObject(&m_font);
+    calculate_item_widths();
 
     auto item_order{ theApp.m_taskbar_data.item_order.GetAllDisplayItemsWithOrder() };
     for (const auto& item : item_order)
@@ -917,30 +978,35 @@ void CTaskBarDlg::CalculateWindowSize()
     }
     else        //任务栏在桌面两侧时
     {
-        m_window_width = 0;
+        // 侧边任务栏使用正常字号的单行紧凑布局，例如“↑: 0.2K/s”显示为
+        // “↑ 0.2K”，所有项目垂直单列排列。
+        const int horizontal_margin = DPI(2);
+        const int available_width = max(1, m_rcTaskbar.Width() - horizontal_margin * 2);
+        int expected_max_width = 0;
+        for (const auto& item : m_item_widths)
+            expected_max_width = max(expected_max_width, item.item_width.TotalWidth());
+
+        m_window_width = min(expected_max_width, available_width);
+        if (m_window_width <= 0)
+            m_window_width = available_width;
         m_window_height = 0;
-        CRect item_rect;
+
+        const int item_height = TASKBAR_WND_HEIGHT / 2;
+        const int item_space = DPI(theApp.m_taskbar_data.item_space);
+
         for (auto iter = m_item_widths.begin(); iter != m_item_widths.end(); ++iter)
         {
-            //所有标签中最大的宽度即为窗口宽度
-            if (m_window_width < iter->item_width.TotalWidth())
-                m_window_width = iter->item_width.TotalWidth();
-
-            int item_height = TASKBAR_WND_HEIGHT / 2;
-            if (iter->IsDoubleLineExclusive())
-                item_height = TASKBAR_WND_HEIGHT;
-
-            //计算矩形区域
-            item_rect.top = m_window_height;
-            item_rect.bottom = item_rect.top + item_height;
-            int item_width = min(m_window_width, m_rcTaskbar.Width() - DPI(2));
-            item_rect.left = 0;
-            item_rect.right = item_rect.left + item_width;
-            m_item_rects[*iter] = item_rect;
+            // 所有项目各占一行，整体垂直单列排列。
+            iter->is_double_line = false;
+            m_item_rects[*iter].SetRect(0, m_window_height, m_window_width, m_window_height + item_height);
 
             m_window_height += item_height;
-            m_window_height += DPI(theApp.m_taskbar_data.item_space);
+            m_window_height += item_space;
         }
+
+        // 最后一项后面不需要额外的项目间距。
+        if (!m_item_widths.empty())
+            m_window_height -= item_space;
     }
 
     // 如果窗口尺寸发生变化，则重新调整任务栏窗口位置
