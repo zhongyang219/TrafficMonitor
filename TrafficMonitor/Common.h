@@ -109,6 +109,9 @@ public:
     //获取从1970年1月1日到现在的毫秒数
     static ULONGLONG GetCurrentTimeSinceEpochMilliseconds();
 
+    //获取系统开机时长文本
+    static CString GetSystemUpTimeString();
+
     //获取当前程序的目录
     static wstring GetModuleDir();
 

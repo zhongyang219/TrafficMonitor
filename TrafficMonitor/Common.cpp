@@ -663,6 +663,18 @@ ULONGLONG CCommon::GetCurrentTimeSinceEpochMilliseconds()
     return millisecondsSince1970;
 }
 
+CString CCommon::GetSystemUpTimeString()
+{
+    const ULONGLONG total_seconds{ GetTickCount64() / 1000 };
+    const int total_hours{ static_cast<int>(total_seconds / 3600) };
+    const int minutes{ static_cast<int>((total_seconds % 3600) / 60) };
+    const int seconds{ static_cast<int>(total_seconds % 60) };
+
+    CString up_time;
+    up_time.Format(LoadText(IDS_HOUR_MINUTE_SECOND), total_hours, minutes, seconds);
+    return up_time;
+}
+
 wstring CCommon::GetModuleDir()
 {
     wchar_t path[MAX_PATH];
