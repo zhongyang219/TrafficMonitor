@@ -109,6 +109,7 @@ void CHistoryTrafficFile::SaveTodayOnly() const
 
 	// 读取文件剩余行（第3行及之后），用于增量更新
 	vector<string> remaining_lines;
+	string second_line_in_file;	//文件当前的第2行
 	ifstream in_file{ m_file_path };
 	if (in_file.is_open())
 	{
@@ -117,12 +118,31 @@ void CHistoryTrafficFile::SaveTodayOnly() const
 		while (std::getline(in_file, line))
 		{
 			line_num++;
-			if (line_num > 2) // 跳过前两行
+			if (line_num == 2)
+			{
+				second_line_in_file = line;
+			}
+			else if (line_num > 2) // 跳过前两行
 			{
 				remaining_lines.push_back(line);
 			}
 		}
 		in_file.close();
+	}
+
+	//下面的增量写入会丢弃文件中现有的第2行，因此必须先确认第2行确实是今天的记录。
+	//如果程序在跨天之后才启动（例如停机数日后重新打开），文件第2行仍是上一次的“今天”，
+	//直接增量保存会把那一天的记录永久丢失，此时必须退回完整保存。
+	SYSTEMTIME today_st{};
+	GetLocalTime(&today_st);
+	char today_buff[16];
+	sprintf_s(today_buff, "%.4d/%.2d/%.2d", today_st.wYear, today_st.wMonth, today_st.wDay);
+	const string today_str{ today_buff };
+	if (second_line_in_file.size() < today_str.size() ||
+		second_line_in_file.compare(0, today_str.size(), today_str) != 0)
+	{
+		Save();
+		return;
 	}
 
 	// 写入更新后的文件
