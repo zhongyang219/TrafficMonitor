@@ -58,9 +58,17 @@ protected:
     CTaskBarDlg* m_tBarDlg{};     //任务栏窗口的指针
 
     vector<NetWorkConection> m_connections; //保存获取到的要显示到“选择网卡”菜单项中的所有网络连接
-    MIB_IFTABLE* m_pIfTable;
-    DWORD m_dwSize{};	//m_pIfTable的大小
+    MIB_IFTABLE* m_pIfTable{};
+    DWORD m_dwSize{};	//m_pIfTable实际分配的字节数。GetIfTable失败时会把所需大小写回它的size参数，
+                        //所以调用GetIfTable时必须使用局部变量，不能直接传&m_dwSize
     int m_connection_selected{ 0 }; //要显示流量的连接的序号
+    //保护 m_pIfTable / m_dwSize / m_connections / m_connection_selected 的临界区。
+    //IniConnection() 会被 UI 线程（OnPowerBroadcast 的定时器、菜单、OnInitDialog）和监控线程
+    //（DoMonitorAcquisition 的恢复分支）并发调用，而这些成员原先没有任何同步保护，
+    //并发时会产生 double-free / use-after-free，进而导致 0xC0000374 堆损坏崩溃。
+    //CRITICAL_SECTION 可重入，因此 IniConnection 内部再调用 GetConnection/AutoSelect/
+    //IniConnectionMenu 等同样加锁的函数是安全的。
+    CCriticalSection m_conn_critical;
     unsigned __int64 m_in_bytes{};        //当前已接收的字节数
     unsigned __int64 m_out_bytes{};   //当前已发送的字节数
     unsigned __int64 m_last_in_bytes{}; //上次已接收的字节数
@@ -153,6 +161,7 @@ protected:
     //void UpdateConnections();
     //自动选择连接
     void IniConnection();   //初始化连接
+    bool ReloadIfTable();   //重新分配并填充m_pIfTable，只在成功时提交，保证m_dwSize始终等于实际分配大小
 
     MIB_IFROW GetConnectIfTable(int connection_index);    //获取当前选择的网络连接的MIB_IFROW对象。connection_index为m_connections中的索引
     NetWorkConection GetConnection(int connection_index); //获取当前选择的网络连接的NetWorkConection对象。connection_index为m_connections中的索引
