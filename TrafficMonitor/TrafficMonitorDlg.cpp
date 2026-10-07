@@ -371,6 +371,7 @@ void CTrafficMonitorDlg::GetScreenSize()
 
 void CTrafficMonitorDlg::AutoSelect()
 {
+    CSingleLock sync(&m_conn_critical, TRUE);   //读取 m_connections、写入 m_connection_selected
     unsigned __int64 max_in_out_bytes{};
     unsigned __int64 in_out_bytes;
     //m_connection_selected = m_connections[0].index;
@@ -401,6 +402,8 @@ void CTrafficMonitorDlg::AutoSelect()
 //网卡数量可能在“探测大小”与“填充数据”之间发生变化（例如从休眠恢复后网卡陆续上线），
 //因此这里重试若干次，并且只在GetIfTable成功返回时才提交m_pIfTable和m_dwSize；
 //失败时保留原有内容不动，绝不制造失配状态。
+//注意：本函数会释放并替换 m_pIfTable，调用方必须持有 m_conn_critical
+//（目前只有 IniConnection() 调用它，已在函数入口处持锁）。
 bool CTrafficMonitorDlg::ReloadIfTable()
 {
     const int MAX_ATTEMPTS = 5;
@@ -439,6 +442,11 @@ bool CTrafficMonitorDlg::ReloadIfTable()
 
 void CTrafficMonitorDlg::IniConnection()
 {
+    //本函数会释放并重新分配 m_pIfTable、重建 m_connections，而它可能被 UI 线程
+    //（OnPowerBroadcast 的定时器、菜单命令、OnInitDialog）与监控线程
+    //（DoMonitorAcquisition 的恢复分支）并发调用，因此必须全程持锁
+    CSingleLock sync(&m_conn_critical, TRUE);
+
     //为m_pIfTable开辟所需大小的内存并填充
     ReloadIfTable();
     if (m_pIfTable == nullptr)
@@ -533,6 +541,7 @@ void CTrafficMonitorDlg::IniConnection()
 
 MIB_IFROW CTrafficMonitorDlg::GetConnectIfTable(int connection_index)
 {
+    CSingleLock sync(&m_conn_critical, TRUE);   //读取 m_connections 与 m_pIfTable
     if (connection_index >= 0 && connection_index < static_cast<int>(m_connections.size()))
     {
         int index = m_connections[connection_index].index;
@@ -544,6 +553,9 @@ MIB_IFROW CTrafficMonitorDlg::GetConnectIfTable(int connection_index)
 
 NetWorkConection CTrafficMonitorDlg::GetConnection(int connection_index)
 {
+    //按值返回会拷贝 NetWorkConection 内的 std::string，若此时另一线程正在
+    //IniConnection() 里 clear/push_back 该 vector，拷贝就会读到已释放的字符串缓冲区
+    CSingleLock sync(&m_conn_critical, TRUE);
     if (connection_index >= 0 && connection_index < static_cast<int>(m_connections.size()))
         return m_connections[connection_index];
     else
@@ -552,6 +564,7 @@ NetWorkConection CTrafficMonitorDlg::GetConnection(int connection_index)
 
 void CTrafficMonitorDlg::IniConnectionMenu(CMenu* pMenu)
 {
+    CSingleLock sync(&m_conn_critical, TRUE);   //遍历 m_connections 构建菜单项
     ASSERT(pMenu != nullptr);
     if (pMenu != nullptr)
     {
@@ -584,6 +597,7 @@ void CTrafficMonitorDlg::IniTaskBarConnectionMenu()
 
 void CTrafficMonitorDlg::SetConnectionMenuState(CMenu* pMenu)
 {
+    CSingleLock sync(&m_conn_critical, TRUE);   //读取 m_connections.size() 与 m_connection_selected
     if (theApp.m_cfg_data.m_select_all)
         pMenu->CheckMenuRadioItem(0, m_connections.size() + 1, 1, MF_BYPOSITION | MF_CHECKED);
     else if (theApp.m_cfg_data.m_auto_select)       //m_auto_select为true时为自动选择，选中菜单的第1项
@@ -1240,23 +1254,31 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     //获取网络连接速度
     int rtn{};
     auto getLfTable = [&]() {
-        if (m_pIfTable == nullptr)  //尚未成功获取过接口表
-        {
-            rtn = ERROR_INSUFFICIENT_BUFFER;    //交给后面的恢复分支调用IniConnection()
-            return;
-        }
+        //本 lambda 含 __try，不能在其中定义需要析构的对象（否则触发 C2712），
+        //所以这里显式加解锁，并保证只有一个出口。
+        //持锁原因：GetIfTable 会把接口表写进 m_pIfTable 指向的缓冲区，若此时 UI 线程
+        //正在 IniConnection() 里释放并替换该缓冲区，就构成 use-after-free 写。
+        m_conn_critical.Lock();
         //必须使用局部变量接收GetIfTable改写后的大小：失败时它会被写成“所需大小”且不填充数据，
         //若直接传&m_dwSize，就会使m_dwSize大于m_pIfTable实际分配的字节数，
         //导致后续调用按过大的值向较小的堆块写入，造成堆越界写
         DWORD size = m_dwSize;
-        __try
+        if (m_pIfTable != nullptr)
         {
-            rtn = GetIfTable(m_pIfTable, &size, FALSE);
+            __try
+            {
+                rtn = GetIfTable(m_pIfTable, &size, FALSE);
+            }
+            __except (EXCEPTION_EXECUTE_HANDLER)
+            {
+                rtn = ERROR_INTERNAL_ERROR;
+            }
         }
-        __except (EXCEPTION_EXECUTE_HANDLER)
+        else
         {
-            rtn = ERROR_INTERNAL_ERROR;
+            rtn = ERROR_INSUFFICIENT_BUFFER;    //尚未成功获取过接口表
         }
+        m_conn_critical.Unlock();
         if (rtn != NO_ERROR)
         {
             //接口数量发生了变化，或调用出现异常：丢弃已被改写的size，
@@ -1268,6 +1290,10 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
 
     getLfTable();
 
+    //下面这段读取 m_connections / m_connection_selected，必须持锁：若监控线程正在遍历
+    //vector 的同时 UI 线程在 IniConnection() 里 clear/push_back，vector 会重新分配并析构
+    //元素，遍历方将读到已释放的 std::string 缓冲区。
+    CSingleLock conn_sync(&m_conn_critical, TRUE);
     if (!theApp.m_cfg_data.m_select_all)        //获取当前选中连接的网速
     {
         auto table = GetConnectIfTable(m_connection_selected);
@@ -1288,6 +1314,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
             m_out_bytes += table.dwOutOctets;
         }
     }
+    conn_sync.Unlock();     //后续采集不再访问共享的连接状态，尽早释放锁
 
     unsigned __int64 cur_in_speed{}, cur_out_speed{};       //本次监控时间间隔内的上传和下载速度
 
@@ -2169,9 +2196,23 @@ void CTrafficMonitorDlg::OnNetworkInfo()
 {
     // TODO: 在此添加命令处理程序代码
     //弹出“连接详情”对话框
-    if (m_pIfTable == nullptr)
-        return;     //尚未成功获取到接口表
-    CNetworkInfoDlg aDlg(m_connections, m_pIfTable->table, m_connection_selected);
+    //CNetworkInfoDlg 以引用方式持有连接列表、以裸指针持有接口表，而它是模态对话框、
+    //存活时间很长；期间监控线程可能调用 IniConnection() 释放并重新分配 m_pIfTable、
+    //重建 m_connections，使对话框持有悬垂引用/指针。因此这里在锁内做一次快照拷贝，
+    //快照的生命周期覆盖整个 DoModal()。
+    vector<NetWorkConection> connections_snapshot;
+    vector<MIB_IFROW> if_rows_snapshot;
+    int connection_selected{};
+    {
+        CSingleLock sync(&m_conn_critical, TRUE);
+        if (m_pIfTable == nullptr)
+            return;     //尚未成功获取到接口表
+        connections_snapshot = m_connections;
+        if_rows_snapshot.assign(m_pIfTable->table, m_pIfTable->table + m_pIfTable->dwNumEntries);
+        connection_selected = m_connection_selected;
+    }
+    CNetworkInfoDlg aDlg(connections_snapshot, if_rows_snapshot.data(),
+        static_cast<int>(if_rows_snapshot.size()), connection_selected);
     ////向CNetworkInfoDlg类传递自启动以来已发送和接收的字节数
     //aDlg.m_in_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwInOctets - m_connections[m_connection_selected].in_bytes;
     //aDlg.m_out_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwOutOctets - m_connections[m_connection_selected].out_bytes;
@@ -2270,15 +2311,19 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
         theApp.SaveConfig();
         m_connection_change_flag = true;
     }
-    if (uMsg > ID_SELECT_ALL_CONNECTION && uMsg <= ID_SELECT_ALL_CONNECTION + m_connections.size()) //选择了一个网络连接
     {
-        m_connection_selected = uMsg - ID_SELECT_ALL_CONNECTION - 1;
-        theApp.m_cfg_data.m_connection_name = GetConnection(m_connection_selected).description_2;
-        m_connection_name_preferd = theApp.m_cfg_data.m_connection_name;
-        theApp.m_cfg_data.m_auto_select = false;
-        theApp.m_cfg_data.m_select_all = false;
-        theApp.SaveConfig();
-        m_connection_change_flag = true;
+        //读取 m_connections.size() 并写入 m_connection_selected，需要持锁
+        CSingleLock sync(&m_conn_critical, TRUE);
+        if (uMsg > ID_SELECT_ALL_CONNECTION && uMsg <= ID_SELECT_ALL_CONNECTION + m_connections.size()) //选择了一个网络连接
+        {
+            m_connection_selected = uMsg - ID_SELECT_ALL_CONNECTION - 1;
+            theApp.m_cfg_data.m_connection_name = GetConnection(m_connection_selected).description_2;
+            m_connection_name_preferd = theApp.m_cfg_data.m_connection_name;
+            theApp.m_cfg_data.m_auto_select = false;
+            theApp.m_cfg_data.m_select_all = false;
+            theApp.SaveConfig();
+            m_connection_change_flag = true;
+        }
     }
 #ifdef DEBUG
     if (uMsg == ID_CMD_TEST)
@@ -3139,7 +3184,12 @@ UINT CTrafficMonitorDlg::OnPowerBroadcast(UINT nPowerEvent, LPARAM nEventData)
             CCommon::WriteLog(info, theApp.m_log_path.c_str());
 
             //如果连接为空，定时器继续运行，每隔一段时间重新初始化连接
-            if (pThis->m_connections.size() == 0)
+            size_t connection_count{};
+            {
+                CSingleLock sync(&pThis->m_conn_critical, TRUE);   //读取 m_connections 需要持锁
+                connection_count = pThis->m_connections.size();
+            }
+            if (connection_count == 0)
             {
                 //超过20次，结束定时器
                 if (check_times >= 20)

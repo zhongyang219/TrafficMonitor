@@ -12,7 +12,7 @@ class CNetworkInfoDlg : public CBaseDialog
     DECLARE_DYNAMIC(CNetworkInfoDlg)
 
 public:
-    CNetworkInfoDlg(vector<NetWorkConection>& adapters, MIB_IFROW* pIfRow, int connection_selected, CWnd* pParent = NULL);   // 标准构造函数
+    CNetworkInfoDlg(vector<NetWorkConection>& adapters, MIB_IFROW* pIfRow, int if_row_count, int connection_selected, CWnd* pParent = NULL);   // 标准构造函数
     virtual ~CNetworkInfoDlg();
 
     // 对话框数据
@@ -26,6 +26,7 @@ protected:
 
     vector<NetWorkConection>& m_connections;
     MIB_IFROW* m_pIfRow;
+    int m_if_row_count{};		//m_pIfRow所指数组的元素个数，用于边界检查
     int m_connection_selected;		//当前对话框显示的连接
     int m_current_connection;		//初始选择的连接
 
