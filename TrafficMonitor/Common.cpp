@@ -375,6 +375,32 @@ CString CCommon::UsageToString(int usage, const PublicSettingData& cfg)
     return str_val;
 }
 
+CString CCommon::PingToString(int delay, const PublicSettingData& cfg)
+{
+    CString str_val;
+    if (delay < 0)
+        str_val = _T("--");
+    else
+        str_val.Format(_T("%d"), delay);
+    if (cfg.separate_value_unit_with_space)
+        str_val += _T(' ');
+    str_val += _T("ms");
+    return str_val;
+}
+
+wstring CCommon::GetPingIP(const GeneralSettingData& cfg)
+{
+    switch (cfg.ping_target)
+    {
+    case 1:
+        return PING_TARGET_FOREIGN;
+    case 2:
+        return cfg.ping_custom_ip;
+    default:
+        return PING_TARGET_DOMESTIC;
+    }
+}
+
 CString CCommon::FreqToString(float freq, const PublicSettingData& cfg)
 {
     CString str_val;

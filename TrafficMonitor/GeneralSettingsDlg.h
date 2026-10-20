@@ -44,6 +44,8 @@ protected:
     CComboBox2 m_language_combo;
     CToolTipCtrl m_toolTip;
     CSpinEdit m_monitor_span_edit;
+    CComboBox2 m_ping_target_combo;
+    CSpinEdit m_ping_interval_edit;
     CSpinEdit m_cpu_temp_tip_edit;
     CSpinEdit m_gpu_temp_tip_edit;
     CSpinEdit m_hdd_temp_tip_edit;
@@ -75,6 +77,7 @@ public:
     afx_msg void OnBnClickedCheckNowButton();
     afx_msg void OnBnClickedCheckUpdateCheck();
     afx_msg void OnBnClickedAutoRunCheck();
+    afx_msg void OnCbnSelchangePingTargetCombo();
     virtual void OnOK();
     afx_msg void OnBnClickedTodayTrafficTipCheck();
     afx_msg void OnBnClickedMemoryUsageTipCheck();

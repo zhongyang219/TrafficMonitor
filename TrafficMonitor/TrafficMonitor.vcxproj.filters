@@ -310,6 +310,9 @@
     <ClInclude Include="PictureStatic.h">
       <Filter>源文件和头文件\派生的控件类\PictureStatic</Filter>
     </ClInclude>
+    <ClInclude Include="PingHelper.h">
+      <Filter>源文件和头文件</Filter>
+    </ClInclude>
     <ClInclude Include="CSkinPreviewView.h">
       <Filter>源文件和头文件\对话框类\SkinDlg</Filter>
     </ClInclude>
@@ -608,6 +611,9 @@
     </ClCompile>
     <ClCompile Include="PictureStatic.cpp">
       <Filter>源文件和头文件\派生的控件类\PictureStatic</Filter>
+    </ClCompile>
+    <ClCompile Include="PingHelper.cpp">
+      <Filter>源文件和头文件</Filter>
     </ClCompile>
     <ClCompile Include="CSkinPreviewView.cpp">
       <Filter>源文件和头文件\对话框类\SkinDlg</Filter>
