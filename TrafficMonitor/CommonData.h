@@ -406,7 +406,7 @@ struct GeneralSettingData
     StringSet connections_hide;     //用于保存哪些网络要从“选择网络连接”子菜单项中隐藏
 
     //网络延迟（ping）设置
-    int ping_target{ 0 };                       //监控目标。0:国内(223.5.5.5); 1:国外(8.8.8.8); 2:自定义
+    int ping_target{ 0 };                       //监控目标。0:阿里DNS(223.5.5.5); 1:谷歌DNS(8.8.8.8); 2:自定义
     std::wstring ping_custom_ip{ L"223.5.5.5" }; //自定义的IP地址
     int ping_interval{ 15 };                    //ping的间隔（秒），默认15秒
 };
@@ -420,8 +420,8 @@ struct GeneralSettingData
 #define PING_INTERVAL_MAX 3600
 
 //网络延迟的预设监控目标
-#define PING_TARGET_DOMESTIC L"223.5.5.5"
-#define PING_TARGET_FOREIGN L"8.8.8.8"
+#define PING_TARGET_ALIDNS L"223.5.5.5"
+#define PING_TARGET_GOOGLEDNS L"8.8.8.8"
 
 //通过构造函数传递一个bool变量的引用，在构造时将其置为true，析构时置为false
 class CFlagLocker

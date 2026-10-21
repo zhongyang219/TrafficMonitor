@@ -348,11 +348,6 @@
 #define IDC_MBD_TEMP_TIP_EDIT           1219
 #define IDC_AUTO_RUN_METHOD_REGESTRY_RADIO 1220
 #define IDC_AUTO_RUN_METHOD_TASK_SCHEDULE_RADIO 1221
-#define IDS_NETWORK_DELAY               380
-#define IDS_PING_DISP                   381
-#define IDS_PING_TARGET_DOMESTIC        382
-#define IDS_PING_TARGET_FOREIGN         383
-#define IDS_PING_TARGET_CUSTOM          384
 #define IDC_PING_TARGET_COMBO           1222
 #define IDC_PING_IP_EDIT                1223
 #define IDC_PING_INTERVAL_EDIT          1224

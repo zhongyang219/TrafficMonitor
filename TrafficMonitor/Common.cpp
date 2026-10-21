@@ -393,11 +393,11 @@ wstring CCommon::GetPingIP(const GeneralSettingData& cfg)
     switch (cfg.ping_target)
     {
     case 1:
-        return PING_TARGET_FOREIGN;
+        return PING_TARGET_GOOGLEDNS;
     case 2:
         return cfg.ping_custom_ip;
     default:
-        return PING_TARGET_DOMESTIC;
+        return PING_TARGET_ALIDNS;
     }
 }
 

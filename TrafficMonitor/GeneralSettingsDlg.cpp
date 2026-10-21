@@ -457,8 +457,8 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     m_plugin_manager_btn.SetIcon(theApp.GetMenuIcon(IDI_PLUGINS));
 
     //初始化网络延迟监控的控件
-    m_ping_target_combo.AddString(CCommon::LoadText(L"TXT_PING_TARGET_DOMESTIC"));
-    m_ping_target_combo.AddString(CCommon::LoadText(L"TXT_PING_TARGET_FOREIGN"));
+    m_ping_target_combo.AddString(CCommon::LoadText(L"TXT_PING_TARGET_ALIDNS"));
+    m_ping_target_combo.AddString(CCommon::LoadText(L"TXT_PING_TARGET_GOOGLEDNS"));
     m_ping_target_combo.AddString(CCommon::LoadText(L"TXT_PING_TARGET_CUSTOM"));
     if (m_data.ping_target < 0 || m_data.ping_target > 2)
         m_data.ping_target = 0;
@@ -502,9 +502,9 @@ void CGeneralSettingsDlg::OnCbnSelchangePingTargetCombo()
     int target = m_ping_target_combo.GetCurSel();
     EnableDlgCtrl(IDC_PING_IP_EDIT, target == 2);
     if (target == 0)
-        SetDlgItemText(IDC_PING_IP_EDIT, PING_TARGET_DOMESTIC);
+        SetDlgItemText(IDC_PING_IP_EDIT, PING_TARGET_ALIDNS);
     else if (target == 1)
-        SetDlgItemText(IDC_PING_IP_EDIT, PING_TARGET_FOREIGN);
+        SetDlgItemText(IDC_PING_IP_EDIT, PING_TARGET_GOOGLEDNS);
 }
 
 void CGeneralSettingsDlg::OnOK()
@@ -579,7 +579,7 @@ void CGeneralSettingsDlg::OnOK()
     {
         m_data.ping_custom_ip = theApp.m_general_data.ping_custom_ip;
         if (!CPingHelper::IsValidIP(m_data.ping_custom_ip))
-            m_data.ping_custom_ip = PING_TARGET_DOMESTIC;
+            m_data.ping_custom_ip = PING_TARGET_ALIDNS;
     }
     m_data.ping_interval = m_ping_interval_edit.GetValue();
     if (m_data.ping_interval < PING_INTERVAL_MIN) m_data.ping_interval = PING_INTERVAL_MIN;
