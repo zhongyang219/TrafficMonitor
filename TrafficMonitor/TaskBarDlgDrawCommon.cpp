@@ -842,20 +842,16 @@ bool CD2D1DeviceContextWindowSupport::CDCompositionHelper::HandleDeviceRecreatio
 auto CD2D1DeviceContextWindowSupport::CDCompositionHelper::Resize(const D2D1_SIZE_U size)
     -> Microsoft::WRL::ComPtr<IDXGISurface>
 {
-    if (!m_p_swap_chain1 || m_size.height == 0 || m_size.width == 0)
+    if (!m_p_swap_chain1 || m_size.width != size.width || m_size.height != size.height)
     {
+        //尺寸变化时直接重建swap chain，而不是调用ResizeBuffers。
+        //ResizeBuffers要求调用前释放所有对后台缓冲区的引用（包括composition visual持有的引用），
+        //稍有遗漏就会返回DXGI_ERROR_INVALID_CALL；重建swap chain不受这个约束。
+        //任务栏窗口尺寸变化属于低频操作，重建的开销可以接受。
+        if (m_p_visual)
+            m_p_visual->SetContent(nullptr);
+        m_p_swap_chain1.Reset();
         InitializeSwapChain(size);
-    }
-    else
-    {
-        ThrowIfFailed<CDxgiException>(
-            m_p_swap_chain1->ResizeBuffers(
-                0,
-                size.width,
-                size.height,
-                DXGI_FORMAT_UNKNOWN,
-                0),
-            TRAFFICMONITOR_ERROR_STR("Resize composition swap chain failed."));
     }
 
     RebindSwapChain(m_p_swap_chain1);

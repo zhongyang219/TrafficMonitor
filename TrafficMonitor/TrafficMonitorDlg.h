@@ -130,6 +130,9 @@ protected:
     string m_connection_name_preferd{ theApp.m_cfg_data.m_connection_name };          //保存用户手动选择的网络连接名称
 
     void DoMonitorAcquisition();    //获取一次监控信息
+    static UINT PingThreadCallback(LPVOID dwUser);  //独立的ping线程
+    bool m_is_ping_thread_exit{ false };    //ping线程退出标志
+    CCriticalSection m_ping_data_lock;      //保护ping线程读取的显示项目设置
     static UINT MonitorThreadCallback(LPVOID dwUser);   //获取监控信息的线程函数
     bool m_monitor_data_required{ false };          //线程中需要获取监控数据标志，当需要获取监控数据时置为true，获取到一次监控数据时置为false
     bool m_is_thread_exit{ false }; //线程退出标志

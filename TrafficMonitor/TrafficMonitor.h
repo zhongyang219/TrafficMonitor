@@ -53,6 +53,7 @@ public:
     int m_total_memory{};   //物理内存总量（单位为KB）
     float m_cpu_temperature{ -1 };  //CPU温度
     float m_cpu_freq{ -1 };  //CPU 频率
+    int m_ping_delay{ -1 };     //网络延迟（单位：毫秒），-1表示超时或未知
     float m_gpu_temperature{ -1 };  //显卡温度
     float m_hdd_temperature{ -1 };  //硬盘温度
     float m_main_board_temperature{ -1 };    //主板温度

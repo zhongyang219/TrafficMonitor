@@ -348,6 +348,9 @@
 #define IDC_MBD_TEMP_TIP_EDIT           1219
 #define IDC_AUTO_RUN_METHOD_REGESTRY_RADIO 1220
 #define IDC_AUTO_RUN_METHOD_TASK_SCHEDULE_RADIO 1221
+#define IDC_PING_TARGET_COMBO           1222
+#define IDC_PING_IP_EDIT                1223
+#define IDC_PING_INTERVAL_EDIT          1224
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -470,7 +473,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        349
 #define _APS_NEXT_COMMAND_VALUE         33666
-#define _APS_NEXT_CONTROL_VALUE         1221
+#define _APS_NEXT_CONTROL_VALUE         1225
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

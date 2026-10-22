@@ -6,6 +6,7 @@
 #include "TrafficMonitorDlg.h"
 #include "GeneralSettingsDlg.h"
 #include "PluginManagerDlg.h"
+#include "PingHelper.h"
 #include "SelectConnectionsDlg.h"
 
 
@@ -195,6 +196,8 @@ void CGeneralSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_SELECT_CPU_COMBO, m_select_cpu_combo);
     DDX_Control(pDX, IDC_PLUGIN_MANAGE_BUTTON, m_plugin_manager_btn);
     DDX_Control(pDX, IDC_SELECT_CONNECTIONS_BUTTON, m_select_connection_btn);
+    DDX_Control(pDX, IDC_PING_TARGET_COMBO, m_ping_target_combo);
+    DDX_Control(pDX, IDC_PING_INTERVAL_EDIT, m_ping_interval_edit);
 }
 
 void CGeneralSettingsDlg::SetControlEnable()
@@ -250,6 +253,7 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_MESSAGE(WM_SPIN_EDIT_POS_CHANGED, &CGeneralSettingsDlg::OnSpinEditPosChanged)
     ON_BN_CLICKED(IDC_AUTO_RUN_METHOD_REGESTRY_RADIO, &CGeneralSettingsDlg::OnBnClickedAutoRunMethodRegestryRadio)
     ON_BN_CLICKED(IDC_AUTO_RUN_METHOD_TASK_SCHEDULE_RADIO, &CGeneralSettingsDlg::OnBnClickedAutoRunMethodTaskScheduleRadio)
+    ON_CBN_SELCHANGE(IDC_PING_TARGET_COMBO, &CGeneralSettingsDlg::OnCbnSelchangePingTargetCombo)
 END_MESSAGE_MAP()
 
 
@@ -451,6 +455,18 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
 #endif
 
     m_plugin_manager_btn.SetIcon(theApp.GetMenuIcon(IDI_PLUGINS));
+
+    //初始化网络延迟监控的控件
+    m_ping_target_combo.AddString(CCommon::LoadText(L"TXT_PING_TARGET_ALIDNS"));
+    m_ping_target_combo.AddString(CCommon::LoadText(L"TXT_PING_TARGET_GOOGLEDNS"));
+    m_ping_target_combo.AddString(CCommon::LoadText(L"TXT_PING_TARGET_CUSTOM"));
+    if (m_data.ping_target < 0 || m_data.ping_target > 2)
+        m_data.ping_target = 0;
+    m_ping_target_combo.SetCurSel(m_data.ping_target);
+    SetDlgItemText(IDC_PING_IP_EDIT, m_data.ping_custom_ip.c_str());
+    m_ping_interval_edit.SetRange(PING_INTERVAL_MIN, PING_INTERVAL_MAX);
+    m_ping_interval_edit.SetValue(m_data.ping_interval);
+    EnableDlgCtrl(IDC_PING_IP_EDIT, m_data.ping_target == 2);
     m_select_connection_btn.SetIcon(theApp.GetMenuIcon(IDI_CONNECTION));
 
     return TRUE;  // return TRUE unless you set the focus to a control
@@ -480,6 +496,16 @@ void CGeneralSettingsDlg::OnBnClickedAutoRunCheck()
     SetControlEnable();
 }
 
+
+void CGeneralSettingsDlg::OnCbnSelchangePingTargetCombo()
+{
+    int target = m_ping_target_combo.GetCurSel();
+    EnableDlgCtrl(IDC_PING_IP_EDIT, target == 2);
+    if (target == 0)
+        SetDlgItemText(IDC_PING_IP_EDIT, PING_TARGET_ALIDNS);
+    else if (target == 1)
+        SetDlgItemText(IDC_PING_IP_EDIT, PING_TARGET_GOOGLEDNS);
+}
 
 void CGeneralSettingsDlg::OnOK()
 {
@@ -540,6 +566,20 @@ void CGeneralSettingsDlg::OnOK()
     }
 
     //m_taskbar_item_modified = (theApp.m_taskbar_data.display_item != taskbar_displat_item_ori);
+
+    //获取网络延迟监控的设置
+    m_data.ping_target = m_ping_target_combo.GetCurSel();
+    CString ping_ip;
+    GetDlgItemText(IDC_PING_IP_EDIT, ping_ip);
+    m_data.ping_custom_ip = ping_ip.GetString();
+    CCommon::StringNormalize(m_data.ping_custom_ip);
+    if (!CPingHelper::IsValidIP(m_data.ping_custom_ip))     //如果自定义的IP无效，则保留上一次的有效值
+    {
+        m_data.ping_custom_ip = theApp.m_general_data.ping_custom_ip;
+        if (!CPingHelper::IsValidIP(m_data.ping_custom_ip))
+            m_data.ping_custom_ip = PING_TARGET_ALIDNS;
+    }
+    m_data.ping_interval = m_ping_interval_edit.GetValue();
 
     CTabDlg::OnOK();
 }

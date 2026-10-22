@@ -80,6 +80,11 @@ void CTrafficMonitorApp::LoadConfig()
     m_general_data.hard_disk_name = ini.GetString(L"general", L"hard_disk_name", L"");
     m_general_data.cpu_core_name = ini.GetString(L"general", L"cpu_core_name", L"Core Average");
     m_general_data.hardware_monitor_item = ini.GetInt(L"general", L"hardware_monitor_item", 0);
+    m_general_data.ping_target = ini.GetInt(L"general", L"ping_target", 0);
+    if (m_general_data.ping_target < 0 || m_general_data.ping_target > 2)
+        m_general_data.ping_target = 0;
+    m_general_data.ping_custom_ip = ini.GetString(L"general", L"ping_custom_ip", PING_TARGET_ALIDNS);
+    m_general_data.ping_interval = ini.GetInt(L"general", L"ping_interval", 15);
     std::vector<std::wstring> connections_hide;
     ini.GetStringList(L"general", L"connections_hide", connections_hide, std::vector<std::wstring>{});
     m_general_data.connections_hide.FromVector(connections_hide);
@@ -303,6 +308,9 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteString(L"general", L"hard_disk_name", m_general_data.hard_disk_name);
     ini.WriteString(L"general", L"cpu_core_name", m_general_data.cpu_core_name);
     ini.WriteInt(L"general", L"hardware_monitor_item", m_general_data.hardware_monitor_item);
+    ini.WriteInt(L"general", L"ping_target", m_general_data.ping_target);
+    ini.WriteString(L"general", L"ping_custom_ip", m_general_data.ping_custom_ip);
+    ini.WriteInt(L"general", L"ping_interval", m_general_data.ping_interval);
     ini.WriteStringList(L"general", L"connections_hide", m_general_data.connections_hide.ToVector());
 
     //主窗口设置

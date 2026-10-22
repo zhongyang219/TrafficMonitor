@@ -18,6 +18,7 @@
 #include "WineTaskbarDlg.h"
 #include "TaskbarHelper.h"
 #include "SkinManager.h"
+#include "PingHelper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -186,6 +187,11 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
     if (!skin_layout.GetItem(TDI_CPU_FREQ).show && theApp.m_cpu_freq >= 0)
     {
         temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_FREQ), CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_main_wnd_data));
+        tip_info += temp;
+    }
+    if (!skin_layout.GetItem(TDI_PING).show && theApp.m_ping_delay >= 0)
+    {
+        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(L"TXT_NETWORK_DELAY"), CCommon::PingToString(theApp.m_ping_delay, theApp.m_main_wnd_data));
         tip_info += temp;
     }
     if (!skin_layout.GetItem(TDI_GPU_USAGE).show && theApp.m_gpu_usage >= 0)
@@ -789,9 +795,14 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
         );
     bool is_skin_data_changed = (theApp.m_main_wnd_data.ToSkinSettingData() != optionsDlg.m_tab1_dlg.m_data.ToSkinSettingData());
 
-    theApp.m_main_wnd_data = optionsDlg.m_tab1_dlg.m_data;
-    theApp.m_taskbar_data = optionsDlg.m_tab2_dlg.m_data;
-    theApp.m_general_data = optionsDlg.m_tab3_dlg.m_data;
+    {
+        //整体赋值设置数据时必须和ping线程互斥，
+        //否则ping线程可能在遍历std::set、读取std::wstring时遇到正在被释放的对象
+        CSingleLock lock(&m_ping_data_lock, TRUE);
+        theApp.m_main_wnd_data = optionsDlg.m_tab1_dlg.m_data;
+        theApp.m_taskbar_data = optionsDlg.m_tab2_dlg.m_data;
+        theApp.m_general_data = optionsDlg.m_tab3_dlg.m_data;
+    }
     theApp.SendSettingsToPlugin();
 
     CGeneralSettingsDlg::CheckTaskbarDisplayItem();
@@ -1152,6 +1163,8 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 
     SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, NULL);
     AfxBeginThread(MonitorThreadCallback, (LPVOID)this);
+    //启动独立的ping线程（ping是阻塞操作，不能放在采集线程或界面线程中）
+    AfxBeginThread(PingThreadCallback, (LPVOID)this);
 
     //初始化窗口位置
     SetItemPosition();
@@ -1578,6 +1591,52 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
 
     //发送监控信息更新消息
     SendMessage(WM_MONITOR_INFO_UPDATED);
+
+}
+
+UINT CTrafficMonitorDlg::PingThreadCallback(LPVOID dwUser)
+{
+    CTrafficMonitorDlg* pThis = static_cast<CTrafficMonitorDlg*>(dwUser);
+    //独立的ping线程：IcmpSendEcho是阻塞操作，放在采集线程中会推迟WM_MONITOR_INFO_UPDATED，
+    //导致界面刷新卡顿，因此单独用一个线程来做。
+    while (!pThis->m_is_ping_thread_exit)
+    {
+        //在锁内读取设置。主线程应用选项设置时会整体赋值theApp.m_taskbar_data，
+        //如果此时ping线程正在遍历其中的std::set，会访问到已经释放的节点而破坏堆。
+        bool need_ping{};
+        int interval{};
+        std::wstring target_ip;
+        {
+            CSingleLock lock(&pThis->m_ping_data_lock, TRUE);
+            need_ping = theApp.m_cfg_data.m_show_task_bar_wnd
+                && theApp.m_taskbar_data.display_item.Contains(TDI_PING);
+            interval = theApp.m_general_data.ping_interval;
+            //检测目标。0:阿里DNS; 1:谷歌DNS; 2:自定义
+            switch (theApp.m_general_data.ping_target)
+            {
+            case 1: target_ip = PING_TARGET_GOOGLEDNS; break;
+            case 2: target_ip = theApp.m_general_data.ping_custom_ip; break;
+            default: target_ip = PING_TARGET_ALIDNS; break;
+            }
+        }
+        if (interval < PING_INTERVAL_MIN) interval = PING_INTERVAL_MIN;
+        if (interval > PING_INTERVAL_MAX) interval = PING_INTERVAL_MAX;
+
+        if (need_ping)
+        {
+            theApp.m_ping_delay = CPingHelper::Ping(target_ip);
+        }
+        else
+        {
+            theApp.m_ping_delay = -1;
+        }
+
+        //按设定的间隔等待，期间响应退出请求
+        const int sleep_slice{ 100 };
+        for (int waited = 0; waited < interval * 1000 && !pThis->m_is_ping_thread_exit; waited += sleep_slice)
+            ::Sleep(sleep_slice);
+    }
+    return 0;
 }
 
 UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
@@ -1612,6 +1671,9 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
 
 void CTrafficMonitorDlg::ExitMonitorThread()
 {
+    // 通知ping线程退出
+    m_is_ping_thread_exit = true;
+
     // 通知线程退出
     m_is_thread_exit = true;
 

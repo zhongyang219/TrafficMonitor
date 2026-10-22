@@ -830,6 +830,7 @@
     <ClInclude Include="PdhHardwareQuery\DiskUsage.h" />
     <ClInclude Include="PdhHardwareQuery\PdhQuery.h" />
     <ClInclude Include="PictureStatic.h" />
+    <ClInclude Include="PingHelper.h" />
     <ClInclude Include="PluginInfoDlg.h" />
     <ClInclude Include="PluginManager.h" />
     <ClInclude Include="PluginManagerDlg.h" />
@@ -929,6 +930,7 @@
     <ClCompile Include="PdhHardwareQuery\DiskUsage.cpp" />
     <ClCompile Include="PdhHardwareQuery\PdhQuery.cpp" />
     <ClCompile Include="PictureStatic.cpp" />
+    <ClCompile Include="PingHelper.cpp" />
     <ClCompile Include="PluginInfoDlg.cpp" />
     <ClCompile Include="PluginManager.cpp" />
     <ClCompile Include="PluginManagerDlg.cpp" />

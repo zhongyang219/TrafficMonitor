@@ -753,6 +753,9 @@ string CSkinFile::GetDisplayItemXmlNodeName(DisplayItem display_item)
     case TDI_CPU_FREQ:
         return "cpu_freq";
         break;
+    case TDI_PING:
+        return "ping";
+        break;
     default:
         return string();
         break;
