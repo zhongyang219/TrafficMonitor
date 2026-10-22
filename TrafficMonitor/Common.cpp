@@ -379,7 +379,7 @@ CString CCommon::PingToString(int delay, const PublicSettingData& cfg)
 {
     CString str_val;
     if (delay < 0)
-        str_val = _T("--");
+        str_val = _T("NA");      //超时或未测出
     else
         str_val.Format(_T("%d"), delay);
     if (cfg.separate_value_unit_with_space)
