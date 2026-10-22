@@ -569,8 +569,6 @@ void CGeneralSettingsDlg::OnOK()
 
     //获取网络延迟监控的设置
     m_data.ping_target = m_ping_target_combo.GetCurSel();
-    if (m_data.ping_target < 0 || m_data.ping_target > 2)
-        m_data.ping_target = 0;
     CString ping_ip;
     GetDlgItemText(IDC_PING_IP_EDIT, ping_ip);
     m_data.ping_custom_ip = ping_ip.GetString();
@@ -582,8 +580,6 @@ void CGeneralSettingsDlg::OnOK()
             m_data.ping_custom_ip = PING_TARGET_ALIDNS;
     }
     m_data.ping_interval = m_ping_interval_edit.GetValue();
-    if (m_data.ping_interval < PING_INTERVAL_MIN) m_data.ping_interval = PING_INTERVAL_MIN;
-    if (m_data.ping_interval > PING_INTERVAL_MAX) m_data.ping_interval = PING_INTERVAL_MAX;
 
     CTabDlg::OnOK();
 }

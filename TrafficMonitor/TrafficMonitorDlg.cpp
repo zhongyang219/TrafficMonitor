@@ -18,6 +18,7 @@
 #include "WineTaskbarDlg.h"
 #include "TaskbarHelper.h"
 #include "SkinManager.h"
+#include "PingHelper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1610,7 +1611,13 @@ UINT CTrafficMonitorDlg::PingThreadCallback(LPVOID dwUser)
             need_ping = theApp.m_cfg_data.m_show_task_bar_wnd
                 && theApp.m_taskbar_data.display_item.Contains(TDI_PING);
             interval = theApp.m_general_data.ping_interval;
-            target_ip = CCommon::GetPingIP(theApp.m_general_data);
+            //检测目标。0:阿里DNS; 1:谷歌DNS; 2:自定义
+            switch (theApp.m_general_data.ping_target)
+            {
+            case 1: target_ip = PING_TARGET_GOOGLEDNS; break;
+            case 2: target_ip = theApp.m_general_data.ping_custom_ip; break;
+            default: target_ip = PING_TARGET_ALIDNS; break;
+            }
         }
         if (interval < PING_INTERVAL_MIN) interval = PING_INTERVAL_MIN;
         if (interval > PING_INTERVAL_MAX) interval = PING_INTERVAL_MAX;

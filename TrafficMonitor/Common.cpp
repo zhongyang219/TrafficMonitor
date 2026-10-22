@@ -388,19 +388,6 @@ CString CCommon::PingToString(int delay, const PublicSettingData& cfg)
     return str_val;
 }
 
-wstring CCommon::GetPingIP(const GeneralSettingData& cfg)
-{
-    switch (cfg.ping_target)
-    {
-    case 1:
-        return PING_TARGET_GOOGLEDNS;
-    case 2:
-        return cfg.ping_custom_ip;
-    default:
-        return PING_TARGET_ALIDNS;
-    }
-}
-
 CString CCommon::FreqToString(float freq, const PublicSettingData& cfg)
 {
     CString str_val;

@@ -85,10 +85,6 @@ void CTrafficMonitorApp::LoadConfig()
         m_general_data.ping_target = 0;
     m_general_data.ping_custom_ip = ini.GetString(L"general", L"ping_custom_ip", PING_TARGET_ALIDNS);
     m_general_data.ping_interval = ini.GetInt(L"general", L"ping_interval", 15);
-    if (m_general_data.ping_interval < PING_INTERVAL_MIN)
-        m_general_data.ping_interval = PING_INTERVAL_MIN;
-    if (m_general_data.ping_interval > PING_INTERVAL_MAX)
-        m_general_data.ping_interval = PING_INTERVAL_MAX;
     std::vector<std::wstring> connections_hide;
     ini.GetStringList(L"general", L"connections_hide", connections_hide, std::vector<std::wstring>{});
     m_general_data.connections_hide.FromVector(connections_hide);

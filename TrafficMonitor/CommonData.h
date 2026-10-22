@@ -346,6 +346,10 @@ struct TaskBarSettingData : public PublicSettingData
     bool is_windows_web_experience_detected{ false }; //是否检测到Windows Web Experience小组件安装信息
 };
 
+//网络延迟的预设监控目标
+#define PING_TARGET_ALIDNS L"223.5.5.5"
+#define PING_TARGET_GOOGLEDNS L"8.8.8.8"
+
 //选项设置中“常规设置”的数据
 struct GeneralSettingData
 {
@@ -407,7 +411,7 @@ struct GeneralSettingData
 
     //网络延迟（ping）设置
     int ping_target{ 0 };                       //监控目标。0:阿里DNS(223.5.5.5); 1:谷歌DNS(8.8.8.8); 2:自定义
-    std::wstring ping_custom_ip{ L"223.5.5.5" }; //自定义的IP地址
+    std::wstring ping_custom_ip{ PING_TARGET_ALIDNS }; //自定义的IP地址
     int ping_interval{ 15 };                    //ping的间隔（秒），默认15秒
 };
 
@@ -418,10 +422,6 @@ struct GeneralSettingData
 //定义网络延迟检测间隔有效的最大值和最小值（单位：秒）
 #define PING_INTERVAL_MIN 1
 #define PING_INTERVAL_MAX 3600
-
-//网络延迟的预设监控目标
-#define PING_TARGET_ALIDNS L"223.5.5.5"
-#define PING_TARGET_GOOGLEDNS L"8.8.8.8"
 
 //通过构造函数传递一个bool变量的引用，在构造时将其置为true，析构时置为false
 class CFlagLocker

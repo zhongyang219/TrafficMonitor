@@ -351,8 +351,6 @@
 #define IDC_PING_TARGET_COMBO           1222
 #define IDC_PING_IP_EDIT                1223
 #define IDC_PING_INTERVAL_EDIT          1224
-#define IDC_PING_SETTINGS_STATIC        1225
-#define IDC_PING_IP_STATIC              1226
 #define ID_32771                        32771
 #define ID_NETWORK_INFO                 32772
 #define ID_32773                        32773
@@ -467,7 +465,6 @@
 #define ID_PLUGIN_OPTIONS_TASKBAR       33407
 #define ID_PLUGIN_COMMAND_START         33408
 #define ID_PLUGIN_COMMAND_MAX           33664
-#define ID_SHOW_PING                    33666
 #define ID_RESTORE_DEFAULT              33665
 
 // Next default values for new objects
@@ -475,8 +472,8 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        349
-#define _APS_NEXT_COMMAND_VALUE         33667
-#define _APS_NEXT_CONTROL_VALUE         1227
+#define _APS_NEXT_COMMAND_VALUE         33666
+#define _APS_NEXT_CONTROL_VALUE         1225
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
