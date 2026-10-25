@@ -14,10 +14,8 @@ private:
 
     HWND m_hNotify;     //任务栏通知区域的句柄
     HWND m_hStart;      //开始按钮的句柄
-    CRect m_rcNotify;   //任务栏通知区域的矩形区域
-    CRect m_rcStart;     //开始按钮的矩形区域
-    int m_last_notify_width{};
-    int m_last_start_pos{};
+    CRect m_rcNotify;   //任务栏通知区域的矩形区域（相对于任务栏左上角）
+    CRect m_rcStart;     //开始按钮的矩形区域（相对于任务栏左上角）
 
     // 通过 CTaskBarDlg 继承
     void CheckTaskbarOnTopOrBottom() override;
