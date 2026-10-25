@@ -11,6 +11,40 @@ void CWin11TaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
     //设置窗口大小
     m_rect.right = m_rect.left + m_window_width;
     m_rect.bottom = m_rect.top + m_window_height;
+
+    //===== 任务栏在屏幕左侧或右侧（竖排）时的定位 =====
+    if (!m_taskbar_on_top_or_bottom)
+    {
+        if (force_adjust || m_rcNotify.Height() != m_last_notify_height || m_rcStart.top != m_last_start_top)
+        {
+            m_last_notify_height = m_rcNotify.Height();
+            m_last_start_top = m_rcStart.top;
+
+            //通知区域相对任务栏的顶部位置（m_rcNotify 为屏幕坐标，需减去任务栏原点）
+            int notify_top = m_rcNotify.top - m_rcTaskbar.top;
+            //m_rcStart 已在上面转换为任务栏相对坐标，直接用其 bottom 作为开始按钮下边缘
+            int start_bottom = m_rcStart.bottom;
+
+            if (!theApp.m_taskbar_data.tbar_wnd_on_left)   //靠近通知区域（竖排时的底部）
+                m_rect.MoveToY(notify_top - m_rect.Height() - 2);
+            else                                            //靠近开始按钮（竖排时的顶部）
+                m_rect.MoveToY(start_bottom + 2);
+
+            //垂直偏移
+            m_rect.MoveToY(m_rect.top + DPI(theApp.m_taskbar_data.window_offset_top));
+
+            //水平方向在任务栏内居中，并确保不越界
+            m_rect.MoveToX((m_rcTaskbar.Width() - m_rect.Width()) / 2);
+            if (m_rect.left < DPI(2))
+                m_rect.MoveToX(DPI(2));
+            if (m_rect.top < DPI(2))
+                m_rect.MoveToY(DPI(2));
+
+            MoveWindow(m_rect);
+        }
+        return;
+    }
+
     if (force_adjust || m_rcNotify.Width() != m_last_notify_width || m_rcStart.left != m_last_start_pos)   //如果最小化窗口的宽度改变了，重新设置任务栏窗口的位置
     {
         m_last_notify_width = m_rcNotify.Width();
@@ -104,5 +138,14 @@ HWND CWin11TaskbarDlg::GetParentHwnd()
 
 void CWin11TaskbarDlg::CheckTaskbarOnTopOrBottom()
 {
-    m_taskbar_on_top_or_bottom = true;
+    CRect rect;
+    if (m_hTaskbar != 0)
+    {
+        ::GetWindowRect(m_hTaskbar, rect);
+        m_taskbar_on_top_or_bottom = (rect.Width() >= rect.Height());
+    }
+    else
+    {
+        m_taskbar_on_top_or_bottom = true;
+    }
 }
