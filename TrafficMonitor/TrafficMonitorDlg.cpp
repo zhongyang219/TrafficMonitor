@@ -26,7 +26,7 @@ namespace ClockSideOverlay
 {
     constexpr int kWidth = 172;
     constexpr int kHeight = 34;
-    constexpr int kClockReserve = 116;
+    constexpr COLORREF kTransparentKey = RGB(1, 2, 3);
     constexpr wchar_t kClassName[] = L"TrafficMonitorClockSideOverlay";
     struct Overlay { HMONITOR monitor{}; HWND window{}; };
     static std::vector<Overlay> windows;
@@ -45,7 +45,7 @@ namespace ClockSideOverlay
             HDC hdc = BeginPaint(hwnd, &ps);
             RECT rect{};
             GetClientRect(hwnd, &rect);
-            HBRUSH background = CreateSolidBrush(RGB(32, 36, 43));
+            HBRUSH background = CreateSolidBrush(kTransparentKey);
             FillRect(hdc, &rect, background);
             DeleteObject(background);
             SetBkMode(hdc, TRANSPARENT);
@@ -111,7 +111,7 @@ namespace ClockSideOverlay
             MONITORINFO mi{};
             mi.cbSize = sizeof(mi);
             if (!GetMonitorInfo(monitor, &mi)) continue;
-            // Windows taskbars are shell-managed. Reserve space for the clock; never cover it.
+            // Keep the original TrafficMonitor taskbar region rather than forcing clock-side placement.
             const bool bottomTaskbar = mi.rcWork.bottom < mi.rcMonitor.bottom;
             if (!bottomTaskbar) continue;
             HWND hwnd = nullptr;
@@ -120,14 +120,18 @@ namespace ClockSideOverlay
             if (!hwnd)
             {
                 hwnd = CreateWindowExW(WS_EX_TOPMOST | WS_EX_TOOLWINDOW |
-                    WS_EX_NOACTIVATE | WS_EX_TRANSPARENT, kClassName, L"",
+                    WS_EX_NOACTIVATE | WS_EX_TRANSPARENT | WS_EX_LAYERED, kClassName, L"",
                     WS_POPUP, 0, 0, kWidth, kHeight, nullptr, nullptr,
                     AfxGetInstanceHandle(), nullptr);
                 if (!hwnd) continue;
+                SetLayeredWindowAttributes(hwnd, kTransparentKey, 0, LWA_COLORKEY);
                 windows.push_back({monitor, hwnd});
             }
             int taskbarHeight = mi.rcMonitor.bottom - mi.rcWork.bottom;
-            int x = mi.rcMonitor.right - kClockReserve - kWidth - 8;
+            // Follow the configured taskbar right spacing used by the original taskbar widget.
+            int x = mi.rcMonitor.right - theApp.m_taskbar_data.taskbar_right_space_win11 - kWidth
+                - theApp.m_taskbar_data.window_offset_left;
+            if (x < mi.rcMonitor.left) x = mi.rcMonitor.left;
             int y = mi.rcMonitor.bottom - (taskbarHeight + kHeight) / 2;
             SetWindowPos(hwnd, HWND_TOPMOST, x, y, kWidth, kHeight,
                 SWP_NOACTIVATE | SWP_SHOWWINDOW);
