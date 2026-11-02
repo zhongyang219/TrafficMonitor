@@ -84,6 +84,58 @@ namespace ClockSideOverlay
         return TRUE;
     }
 
+    struct ClockSearch
+    {
+        HWND candidate{};
+        RECT rect{};
+        bool found{};
+    };
+
+    static BOOL CALLBACK FindClockChild(HWND child, LPARAM context)
+    {
+        auto* target = reinterpret_cast<ClockSearch*>(context);
+        wchar_t name[128]{};
+        GetClassNameW(child, name, 128);
+        if (wcscmp(name, L"TrayClockWClass") != 0 &&
+            wcscmp(name, L"ClockButton") != 0)
+            return TRUE;
+        RECT rect{};
+        if (!IsWindowVisible(child) || !GetWindowRect(child, &rect) ||
+            rect.right <= rect.left)
+            return TRUE;
+        if (!target->found || rect.left > target->rect.left)
+        {
+            target->candidate = child;
+            target->rect = rect;
+            target->found = true;
+        }
+        return TRUE;
+    }
+
+    static HWND TaskbarForMonitor(HMONITOR monitor, bool primary)
+    {
+        if (primary)
+        {
+            HWND shell = FindWindowW(L"Shell_TrayWnd", nullptr);
+            return shell && MonitorFromWindow(shell, MONITOR_DEFAULTTONEAREST) == monitor
+                ? shell : nullptr;
+        }
+        struct Finder { HMONITOR monitor; HWND found; } finder{monitor, nullptr};
+        EnumWindows([](HWND window, LPARAM data) -> BOOL {
+            auto* f = reinterpret_cast<Finder*>(data);
+            wchar_t cls[100]{};
+            GetClassNameW(window, cls, 100);
+            if (wcscmp(cls, L"Shell_SecondaryTrayWnd") == 0 &&
+                MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST) == f->monitor)
+            {
+                f->found = window;
+                return FALSE;
+            }
+            return TRUE;
+        }, reinterpret_cast<LPARAM>(&finder));
+        return finder.found;
+    }
+
     static void Update()
     {
         static bool registered = false;
@@ -135,9 +187,33 @@ namespace ClockSideOverlay
             const UINT dpi = GetDpiForWindow(hwnd);
             const int width = MulDiv(kWidth, dpi ? dpi : 96, 96);
             const int height = min(MulDiv(kHeight, dpi ? dpi : 96, 96), taskbarHeight);
-            const int originalRightSpacing = theApp.m_taskbar_data.taskbar_right_space_win11;
-            int x = mi.rcMonitor.right - originalRightSpacing - width
-                - theApp.m_taskbar_data.window_offset_left;
+            const bool primary = (mi.dwFlags & MONITORINFOF_PRIMARY) != 0;
+            const HWND taskbar = TaskbarForMonitor(monitor, primary);
+            // Anchor to the left edge of the notification area on the primary taskbar
+            // (before the hidden-icons chevron) and to the clock on secondary taskbars.
+            int anchorX = 0;
+            if (taskbar && primary)
+            {
+                HWND notify = FindWindowExW(taskbar, nullptr, L"TrayNotifyWnd", nullptr);
+                RECT notifyRect{};
+                if (notify && GetWindowRect(notify, &notifyRect))
+                    anchorX = notifyRect.left;
+            }
+            if (taskbar && !primary)
+            {
+                ClockSearch clock{};
+                EnumChildWindows(taskbar, FindClockChild, reinterpret_cast<LPARAM>(&clock));
+                if (clock.found) anchorX = clock.rect.left;
+            }
+            // Some Windows 11 shells hide the clock/notification HWNDs. Use a
+            // conservative fallback and never position the overlay over the clock.
+            if (!anchorX)
+            {
+                const int reserve = MulDiv(primary ? 330 : 110, dpi ? dpi : 96, 96);
+                anchorX = mi.rcMonitor.right - reserve;
+            }
+            const int gap = MulDiv(8, dpi ? dpi : 96, 96);
+            int x = anchorX - width - gap;
             if (x < mi.rcMonitor.left) x = mi.rcMonitor.left;
             int y = mi.rcMonitor.bottom - (taskbarHeight + height) / 2;
             SetWindowPos(hwnd, HWND_TOPMOST, x, y, width, height,
