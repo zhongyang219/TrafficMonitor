@@ -49,7 +49,20 @@ namespace ClockSideOverlay
         switch (message)
         {
         case WM_NCHITTEST:
-            return HTTRANSPARENT;
+            return HTCLIENT;
+        case WM_RBUTTONUP:
+        {
+            // Reuse TrafficMonitor's original menu and command handlers.
+            HWND mainWindow = theApp.m_pMainWnd ? theApp.m_pMainWnd->GetSafeHwnd() : nullptr;
+            if (mainWindow) PostMessage(mainWindow, WM_RBUTTONUP, 0, MAKELPARAM(0, 0));
+            return 0;
+        }
+        case WM_LBUTTONDBLCLK:
+        {
+            HWND mainWindow = theApp.m_pMainWnd ? theApp.m_pMainWnd->GetSafeHwnd() : nullptr;
+            if (mainWindow) PostMessage(mainWindow, WM_LBUTTONDBLCLK, 0, MAKELPARAM(0, 0));
+            return 0;
+        }
         case WM_ERASEBKGND:
             return 1;
         case WM_PAINT:
@@ -65,7 +78,7 @@ namespace ClockSideOverlay
             // Scale glyphs with the target taskbar instead of using a fixed 14px font.
             const UINT dpi = GetDpiForWindow(hwnd);
             const int fontHeight = -MulDiv(15, dpi ? dpi : 96, 96);
-            HFONT font = CreateFontW(fontHeight, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE,
+            HFONT font = CreateFontW(fontHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
                 DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
                 CLEARTYPE_QUALITY, DEFAULT_PITCH, L"Segoe UI");
             HGDIOBJ previous = SelectObject(hdc, font);
@@ -156,6 +169,7 @@ namespace ClockSideOverlay
         {
             WNDCLASSW wc{};
             wc.lpfnWndProc = WindowProc;
+            wc.style = CS_DBLCLKS;
             wc.hInstance = AfxGetInstanceHandle();
             wc.lpszClassName = kClassName;
             if (!RegisterClassW(&wc) && GetLastError() != ERROR_CLASS_ALREADY_EXISTS)
@@ -188,7 +202,7 @@ namespace ClockSideOverlay
             if (!hwnd)
             {
                 hwnd = CreateWindowExW(WS_EX_TOPMOST | WS_EX_TOOLWINDOW |
-                    WS_EX_NOACTIVATE | WS_EX_TRANSPARENT | WS_EX_LAYERED, kClassName, L"",
+                    WS_EX_NOACTIVATE | WS_EX_LAYERED, kClassName, L"",
                     WS_POPUP, 0, 0, kWidth, kHeight, nullptr, nullptr,
                     AfxGetInstanceHandle(), nullptr);
                 if (!hwnd) continue;
