@@ -19,6 +19,243 @@
 #include "TaskbarHelper.h"
 #include "SkinManager.h"
 
+#include <algorithm>
+#include <vector>
+
+namespace ClockSideOverlay
+{
+    constexpr int kWidth = 128;
+    constexpr int kHeight = 38;
+    constexpr COLORREF kTransparentKey = RGB(1, 2, 3);
+    static COLORREF ItemColor(DisplayItem item, bool value)
+    {
+        const auto& cfg = theApp.m_taskbar_data;
+        if (cfg.text_colors.empty()) return RGB(0, 0, 0);
+        if (cfg.specify_each_item_color)
+        {
+            auto found = cfg.text_colors.find(item);
+            if (found != cfg.text_colors.end())
+                return value ? found->second.value : found->second.label;
+        }
+        auto first = cfg.text_colors.begin();
+        return value ? first->second.value : first->second.label;
+    }
+    constexpr wchar_t kClassName[] = L"TrafficMonitorClockSideOverlay";
+    struct Overlay { HMONITOR monitor{}; HWND window{}; };
+    static std::vector<Overlay> windows;
+
+    static LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wp, LPARAM lp)
+    {
+        switch (message)
+        {
+        case WM_NCHITTEST:
+            return HTCLIENT;
+        case WM_RBUTTONUP:
+        {
+            // Reuse TrafficMonitor's original menu and command handlers.
+            HWND mainWindow = theApp.m_pMainWnd ? theApp.m_pMainWnd->GetSafeHwnd() : nullptr;
+            if (mainWindow) PostMessage(mainWindow, WM_RBUTTONUP, 0, MAKELPARAM(0, 0));
+            return 0;
+        }
+        case WM_LBUTTONDBLCLK:
+        {
+            HWND mainWindow = theApp.m_pMainWnd ? theApp.m_pMainWnd->GetSafeHwnd() : nullptr;
+            if (mainWindow) PostMessage(mainWindow, WM_LBUTTONDBLCLK, 0, MAKELPARAM(0, 0));
+            return 0;
+        }
+        case WM_ERASEBKGND:
+            return 1;
+        case WM_PAINT:
+        {
+            PAINTSTRUCT ps{};
+            HDC hdc = BeginPaint(hwnd, &ps);
+            RECT rect{};
+            GetClientRect(hwnd, &rect);
+            HBRUSH background = CreateSolidBrush(kTransparentKey);
+            FillRect(hdc, &rect, background);
+            DeleteObject(background);
+            SetBkMode(hdc, TRANSPARENT);
+            // Scale glyphs with the target taskbar instead of using a fixed 14px font.
+            const UINT dpi = GetDpiForWindow(hwnd);
+            const int fontHeight = -MulDiv(15, dpi ? dpi : 96, 96);
+            HFONT font = CreateFontW(fontHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+                DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+                CLEARTYPE_QUALITY, DEFAULT_PITCH, L"Segoe UI");
+            HGDIOBJ previous = SelectObject(hdc, font);
+            CString upload = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data);
+            CString download = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data);
+            CString line;
+            RECT upper{6, 1, rect.right - 2, rect.bottom / 2};
+            RECT lower{6, rect.bottom / 2, rect.right - 2, rect.bottom - 1};
+            SetTextColor(hdc, ItemColor(TDI_UP, true));
+            line.Format(_T("↑ %s/s"), static_cast<LPCTSTR>(upload));
+            DrawText(hdc, line, -1, &upper, DT_SINGLELINE | DT_RIGHT | DT_VCENTER);
+            SetTextColor(hdc, ItemColor(TDI_DOWN, true));
+            line.Format(_T("↓ %s/s"), static_cast<LPCTSTR>(download));
+            DrawText(hdc, line, -1, &lower, DT_SINGLELINE | DT_RIGHT | DT_VCENTER);
+            SelectObject(hdc, previous);
+            DeleteObject(font);
+            EndPaint(hwnd, &ps);
+            return 0;
+        }
+        default:
+            return DefWindowProc(hwnd, message, wp, lp);
+        }
+    }
+
+    static BOOL CALLBACK Enumerate(HMONITOR monitor, HDC, LPRECT, LPARAM user)
+    {
+        auto* monitors = reinterpret_cast<std::vector<HMONITOR>*>(user);
+        monitors->push_back(monitor);
+        return TRUE;
+    }
+
+    struct ClockSearch
+    {
+        HWND candidate{};
+        RECT rect{};
+        bool found{};
+    };
+
+    static BOOL CALLBACK FindClockChild(HWND child, LPARAM context)
+    {
+        auto* target = reinterpret_cast<ClockSearch*>(context);
+        wchar_t name[128]{};
+        GetClassNameW(child, name, 128);
+        if (wcscmp(name, L"TrayClockWClass") != 0 &&
+            wcscmp(name, L"ClockButton") != 0)
+            return TRUE;
+        RECT rect{};
+        if (!IsWindowVisible(child) || !GetWindowRect(child, &rect) ||
+            rect.right <= rect.left)
+            return TRUE;
+        if (!target->found || rect.left > target->rect.left)
+        {
+            target->candidate = child;
+            target->rect = rect;
+            target->found = true;
+        }
+        return TRUE;
+    }
+
+    static HWND TaskbarForMonitor(HMONITOR monitor, bool primary)
+    {
+        if (primary)
+        {
+            HWND shell = FindWindowW(L"Shell_TrayWnd", nullptr);
+            return shell && MonitorFromWindow(shell, MONITOR_DEFAULTTONEAREST) == monitor
+                ? shell : nullptr;
+        }
+        struct Finder { HMONITOR monitor; HWND found; } finder{monitor, nullptr};
+        EnumWindows([](HWND window, LPARAM data) -> BOOL {
+            auto* f = reinterpret_cast<Finder*>(data);
+            wchar_t cls[100]{};
+            GetClassNameW(window, cls, 100);
+            if (wcscmp(cls, L"Shell_SecondaryTrayWnd") == 0 &&
+                MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST) == f->monitor)
+            {
+                f->found = window;
+                return FALSE;
+            }
+            return TRUE;
+        }, reinterpret_cast<LPARAM>(&finder));
+        return finder.found;
+    }
+
+    static void Update()
+    {
+        static bool registered = false;
+        if (!registered)
+        {
+            WNDCLASSW wc{};
+            wc.lpfnWndProc = WindowProc;
+            wc.style = CS_DBLCLKS;
+            wc.hInstance = AfxGetInstanceHandle();
+            wc.lpszClassName = kClassName;
+            if (!RegisterClassW(&wc) && GetLastError() != ERROR_CLASS_ALREADY_EXISTS)
+                return;
+            registered = true;
+        }
+
+        std::vector<HMONITOR> monitors;
+        EnumDisplayMonitors(nullptr, nullptr, Enumerate, reinterpret_cast<LPARAM>(&monitors));
+        for (auto it = windows.begin(); it != windows.end(); )
+        {
+            if (std::find(monitors.begin(), monitors.end(), it->monitor) == monitors.end())
+            {
+                DestroyWindow(it->window);
+                it = windows.erase(it);
+            }
+            else ++it;
+        }
+        for (auto monitor : monitors)
+        {
+            MONITORINFO mi{};
+            mi.cbSize = sizeof(mi);
+            if (!GetMonitorInfo(monitor, &mi)) continue;
+            // Keep the original TrafficMonitor taskbar region rather than forcing clock-side placement.
+            const bool bottomTaskbar = mi.rcWork.bottom < mi.rcMonitor.bottom;
+            if (!bottomTaskbar) continue;
+            HWND hwnd = nullptr;
+            for (const auto& entry : windows)
+                if (entry.monitor == monitor) { hwnd = entry.window; break; }
+            if (!hwnd)
+            {
+                hwnd = CreateWindowExW(WS_EX_TOPMOST | WS_EX_TOOLWINDOW |
+                    WS_EX_NOACTIVATE | WS_EX_LAYERED, kClassName, L"",
+                    WS_POPUP, 0, 0, kWidth, kHeight, nullptr, nullptr,
+                    AfxGetInstanceHandle(), nullptr);
+                if (!hwnd) continue;
+                SetLayeredWindowAttributes(hwnd, kTransparentKey, 0, LWA_COLORKEY);
+                windows.push_back({monitor, hwnd});
+            }
+            int taskbarHeight = mi.rcMonitor.bottom - mi.rcWork.bottom;
+            // Follow the configured taskbar right spacing used by the original taskbar widget.
+            const UINT dpi = GetDpiForWindow(hwnd);
+            const int width = MulDiv(kWidth, dpi ? dpi : 96, 96);
+            const int height = min(MulDiv(kHeight, dpi ? dpi : 96, 96), taskbarHeight);
+            const bool primary = (mi.dwFlags & MONITORINFOF_PRIMARY) != 0;
+            const HWND taskbar = TaskbarForMonitor(monitor, primary);
+            // Anchor to the left edge of the notification area on the primary taskbar
+            // (before the hidden-icons chevron) and to the clock on secondary taskbars.
+            int anchorX = 0;
+            if (taskbar && primary)
+            {
+                HWND notify = FindWindowExW(taskbar, nullptr, L"TrayNotifyWnd", nullptr);
+                RECT notifyRect{};
+                if (notify && GetWindowRect(notify, &notifyRect))
+                    anchorX = notifyRect.left;
+            }
+            if (taskbar && !primary)
+            {
+                ClockSearch clock{};
+                EnumChildWindows(taskbar, FindClockChild, reinterpret_cast<LPARAM>(&clock));
+                if (clock.found) anchorX = clock.rect.left;
+            }
+            // Some Windows 11 shells hide the clock/notification HWNDs. Use a
+            // conservative fallback and never position the overlay over the clock.
+            if (!anchorX)
+            {
+                const int reserve = MulDiv(primary ? 325 : 90, dpi ? dpi : 96, 96);
+                anchorX = mi.rcMonitor.right - reserve;
+            }
+            const int gap = MulDiv(3, dpi ? dpi : 96, 96);
+            int x = anchorX - width - gap;
+            if (x < mi.rcMonitor.left) x = mi.rcMonitor.left;
+            int y = mi.rcMonitor.bottom - (taskbarHeight + height) / 2;
+            SetWindowPos(hwnd, HWND_TOPMOST, x, y, width, height,
+                SWP_NOACTIVATE | SWP_SHOWWINDOW);
+            InvalidateRect(hwnd, nullptr, FALSE);
+        }
+    }
+
+    static void Close()
+    {
+        for (auto& overlay : windows) DestroyWindow(overlay.window);
+        windows.clear();
+    }
+}
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -576,6 +813,9 @@ void CTrafficMonitorDlg::CloseTaskBarWnd()
 
 void CTrafficMonitorDlg::OpenTaskBarWnd()
 {
+    // Multi-display overlay replaces the original single-taskbar window.
+    ClockSideOverlay::Update();
+    return;
     // 强制初始化theApp.m_is_windows11_taskbar的值
     theApp.CheckWindows11Taskbar();
     if (theApp.m_win_version.IsWine())
@@ -1271,7 +1511,19 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     ULONGLONG net_speed_time = CCommon::GetCurrentTimeSinceEpochMilliseconds();
     int time_span = theApp.m_general_data.monitor_time_span;
     if (last_net_speed_time != 0)
-        time_span = static_cast<int>(net_speed_time - last_net_speed_time);
+    {
+        const ULONGLONG elapsed = net_speed_time - last_net_speed_time;
+        if (elapsed > 30000 || elapsed == 0)
+        {
+            cur_in_speed = 0;
+            cur_out_speed = 0;
+            m_connection_change_flag = true;
+        }
+        else
+            time_span = static_cast<int>(elapsed);
+    }
+    if (time_span <= 0)
+        time_span = 1000;
     last_net_speed_time = net_speed_time;
 
     //将当前监控时间间隔的流量转换成每秒时间间隔内的流量
@@ -1588,6 +1840,23 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         //获取一次监控数据
         if (pThis->m_monitor_data_required)
         {
+            if (pThis->m_resume_reinitialize.exchange(false))
+            {
+                pThis->IniConnection();
+                bool operational = false;
+                for (size_t i = 0; i < pThis->m_connections.size(); ++i)
+                {
+                    if (pThis->GetConnectIfTable(static_cast<int>(i)).dwOperStatus == IF_OPER_STATUS_OPERATIONAL)
+                    {
+                        operational = true;
+                        break;
+                    }
+                }
+                pThis->m_resume_adapter_operational = operational;
+                pThis->m_connection_change_flag = true;
+                pThis->m_last_in_bytes = 0;
+                pThis->m_last_out_bytes = 0;
+            }
             pThis->DoMonitorAcquisition();
             //获取到监控数据后重置flag
             pThis->m_monitor_data_required = false;
@@ -1622,6 +1891,21 @@ void CTrafficMonitorDlg::ExitMonitorThread()
 
 void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 {
+    if (nIDEvent == INIT_CONNECT_TIMER)
+    {
+        const bool operational = m_resume_adapter_operational.load();
+        if (operational || ++m_resume_retry_count > 30)
+        {
+            KillTimer(INIT_CONNECT_TIMER);
+            m_resume_retry_count = 0;
+        }
+        else
+        {
+            m_resume_reinitialize = true;
+            m_monitor_data_required = true;
+        }
+        return;
+    }
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     if (nIDEvent == MONITOR_TIMER)
     {
@@ -1631,6 +1915,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
     if (nIDEvent == MAIN_TIMER)
     {
+        ClockSideOverlay::Update();
         m_timer_cnt++;
         if (m_first_start)      //这个if语句在程序启动后1秒执行
         {
@@ -2466,6 +2751,7 @@ void CTrafficMonitorDlg::OnShowNotifyIcon()
 
 void CTrafficMonitorDlg::OnDestroy()
 {
+    ClockSideOverlay::Close();
     CDialog::OnDestroy();
 
     //程序退出时删除通知栏图标
@@ -3078,35 +3364,27 @@ void CTrafficMonitorDlg::OnPluginDetailTaksbar()
 
 UINT CTrafficMonitorDlg::OnPowerBroadcast(UINT nPowerEvent, LPARAM nEventData)
 {
-    // 系统从休眠恢复
-    if (nPowerEvent == PBT_APMRESUMESUSPEND)
+    if (nPowerEvent == PBT_APMSUSPEND)
     {
-        //延迟一段时间后重新初始化网络连接
         KillTimer(INIT_CONNECT_TIMER);
-        static CTrafficMonitorDlg* pThis = this;
-        static int check_times = 0;
-        SetTimer(INIT_CONNECT_TIMER, 10000, [](HWND, UINT, UINT_PTR, DWORD) {
-            pThis->IniConnection();
-            check_times++;
-
-            //写入日志
-            CString info = CCommon::LoadTextFormat(IDS_RESTORE_FROM_SLEEP_LOG, {pThis->m_restart_cnt });
-            CCommon::WriteLog(info, theApp.m_log_path.c_str());
-
-            //如果连接为空，定时器继续运行，每隔一段时间重新初始化连接
-            if (pThis->m_connections.size() == 0)
-            {
-                //超过20次，结束定时器
-                if (check_times >= 20)
-                    pThis->KillTimer(INIT_CONNECT_TIMER);
-            }
-            //成功获取到连接，结束定时器
-            else
-            {
-                pThis->KillTimer(INIT_CONNECT_TIMER);
-                check_times = 0;
-            }
-        });
+        m_resume_retry_count = 0;
+        KillTimer(MONITOR_TIMER);
+        m_monitor_data_required = false;
+    }
+    else if (nPowerEvent == PBT_APMRESUMEAUTOMATIC ||
+             nPowerEvent == PBT_APMRESUMESUSPEND ||
+             nPowerEvent == PBT_APMRESUMECRITICAL)
+    {
+        if (m_resume_retry_count == 0)
+        {
+            m_resume_retry_count = 1;
+            m_resume_adapter_operational = false;
+            m_resume_reinitialize = true;
+            m_monitor_data_required = true;
+            SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, nullptr);
+            KillTimer(INIT_CONNECT_TIMER);
+            SetTimer(INIT_CONNECT_TIMER, 10000, nullptr);
+        }
     }
     return CDialog::OnPowerBroadcast(nPowerEvent, nEventData);
 }

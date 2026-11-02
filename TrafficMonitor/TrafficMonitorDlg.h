@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <atomic>
 #pragma comment (lib, "iphlpapi.lib")
 
 #include "NetworkInfoDlg.h"
@@ -58,7 +59,7 @@ protected:
     CTaskBarDlg* m_tBarDlg{};     //任务栏窗口的指针
 
     vector<NetWorkConection> m_connections; //保存获取到的要显示到“选择网卡”菜单项中的所有网络连接
-    MIB_IFTABLE* m_pIfTable;
+    MIB_IFTABLE* m_pIfTable{};
     DWORD m_dwSize{};	//m_pIfTable的大小
     int m_connection_selected{ 0 }; //要显示流量的连接的序号
     unsigned __int64 m_in_bytes{};        //当前已接收的字节数
@@ -131,6 +132,9 @@ protected:
 
     void DoMonitorAcquisition();    //获取一次监控信息
     static UINT MonitorThreadCallback(LPVOID dwUser);   //获取监控信息的线程函数
+    std::atomic<bool> m_resume_reinitialize{ false };
+    std::atomic<bool> m_resume_adapter_operational{ false };
+    unsigned int m_resume_retry_count{};
     bool m_monitor_data_required{ false };          //线程中需要获取监控数据标志，当需要获取监控数据时置为true，获取到一次监控数据时置为false
     bool m_is_thread_exit{ false }; //线程退出标志
     CEvent m_threadExitEvent;       //用于通知主线程工作线程已退出
