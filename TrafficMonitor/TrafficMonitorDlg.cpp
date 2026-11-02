@@ -19,6 +19,129 @@
 #include "TaskbarHelper.h"
 #include "SkinManager.h"
 
+#include <algorithm>
+#include <vector>
+
+namespace ClockSideOverlay
+{
+    constexpr int kWidth = 172;
+    constexpr int kHeight = 34;
+    constexpr int kClockReserve = 116;
+    constexpr wchar_t kClassName[] = L"TrafficMonitorClockSideOverlay";
+    struct Overlay { HMONITOR monitor{}; HWND window{}; };
+    static std::vector<Overlay> windows;
+
+    static LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wp, LPARAM lp)
+    {
+        switch (message)
+        {
+        case WM_NCHITTEST:
+            return HTTRANSPARENT;
+        case WM_ERASEBKGND:
+            return 1;
+        case WM_PAINT:
+        {
+            PAINTSTRUCT ps{};
+            HDC hdc = BeginPaint(hwnd, &ps);
+            RECT rect{};
+            GetClientRect(hwnd, &rect);
+            HBRUSH background = CreateSolidBrush(RGB(32, 36, 43));
+            FillRect(hdc, &rect, background);
+            DeleteObject(background);
+            SetBkMode(hdc, TRANSPARENT);
+            HFONT font = CreateFontW(-14, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE,
+                DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+                CLEARTYPE_QUALITY, DEFAULT_PITCH, L"Segoe UI");
+            HGDIOBJ previous = SelectObject(hdc, font);
+            CString upload = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data);
+            CString download = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data);
+            CString line;
+            RECT upper{8, 2, kWidth - 5, 17};
+            RECT lower{8, 17, kWidth - 5, 33};
+            SetTextColor(hdc, RGB(125, 235, 175));
+            line.Format(_T("↑ %s/s"), static_cast<LPCTSTR>(upload));
+            DrawText(hdc, line, -1, &upper, DT_SINGLELINE | DT_LEFT | DT_VCENTER);
+            SetTextColor(hdc, RGB(145, 198, 250));
+            line.Format(_T("↓ %s/s"), static_cast<LPCTSTR>(download));
+            DrawText(hdc, line, -1, &lower, DT_SINGLELINE | DT_LEFT | DT_VCENTER);
+            SelectObject(hdc, previous);
+            DeleteObject(font);
+            EndPaint(hwnd, &ps);
+            return 0;
+        }
+        default:
+            return DefWindowProc(hwnd, message, wp, lp);
+        }
+    }
+
+    static BOOL CALLBACK Enumerate(HMONITOR monitor, HDC, LPRECT, LPARAM user)
+    {
+        auto* monitors = reinterpret_cast<std::vector<HMONITOR>*>(user);
+        monitors->push_back(monitor);
+        return TRUE;
+    }
+
+    static void Update()
+    {
+        static bool registered = false;
+        if (!registered)
+        {
+            WNDCLASSW wc{};
+            wc.lpfnWndProc = WindowProc;
+            wc.hInstance = AfxGetInstanceHandle();
+            wc.lpszClassName = kClassName;
+            if (!RegisterClassW(&wc) && GetLastError() != ERROR_CLASS_ALREADY_EXISTS)
+                return;
+            registered = true;
+        }
+
+        std::vector<HMONITOR> monitors;
+        EnumDisplayMonitors(nullptr, nullptr, Enumerate, reinterpret_cast<LPARAM>(&monitors));
+        for (auto it = windows.begin(); it != windows.end(); )
+        {
+            if (std::find(monitors.begin(), monitors.end(), it->monitor) == monitors.end())
+            {
+                DestroyWindow(it->window);
+                it = windows.erase(it);
+            }
+            else ++it;
+        }
+        for (auto monitor : monitors)
+        {
+            MONITORINFO mi{};
+            mi.cbSize = sizeof(mi);
+            if (!GetMonitorInfo(monitor, &mi)) continue;
+            // Windows taskbars are shell-managed. Reserve space for the clock; never cover it.
+            const bool bottomTaskbar = mi.rcWork.bottom < mi.rcMonitor.bottom;
+            if (!bottomTaskbar) continue;
+            HWND hwnd = nullptr;
+            for (const auto& entry : windows)
+                if (entry.monitor == monitor) { hwnd = entry.window; break; }
+            if (!hwnd)
+            {
+                hwnd = CreateWindowExW(WS_EX_TOPMOST | WS_EX_TOOLWINDOW |
+                    WS_EX_NOACTIVATE | WS_EX_TRANSPARENT, kClassName, L"",
+                    WS_POPUP, 0, 0, kWidth, kHeight, nullptr, nullptr,
+                    AfxGetInstanceHandle(), nullptr);
+                if (!hwnd) continue;
+                windows.push_back({monitor, hwnd});
+            }
+            int taskbarHeight = mi.rcMonitor.bottom - mi.rcWork.bottom;
+            int x = mi.rcMonitor.right - kClockReserve - kWidth - 8;
+            int y = mi.rcMonitor.bottom - (taskbarHeight + kHeight) / 2;
+            SetWindowPos(hwnd, HWND_TOPMOST, x, y, kWidth, kHeight,
+                SWP_NOACTIVATE | SWP_SHOWWINDOW);
+            InvalidateRect(hwnd, nullptr, FALSE);
+        }
+    }
+
+    static void Close()
+    {
+        for (auto& overlay : windows) DestroyWindow(overlay.window);
+        windows.clear();
+    }
+}
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -576,6 +699,9 @@ void CTrafficMonitorDlg::CloseTaskBarWnd()
 
 void CTrafficMonitorDlg::OpenTaskBarWnd()
 {
+    // Multi-display overlay replaces the original single-taskbar window.
+    ClockSideOverlay::Update();
+    return;
     // 强制初始化theApp.m_is_windows11_taskbar的值
     theApp.CheckWindows11Taskbar();
     if (theApp.m_win_version.IsWine())
@@ -1675,6 +1801,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
     if (nIDEvent == MAIN_TIMER)
     {
+        ClockSideOverlay::Update();
         m_timer_cnt++;
         if (m_first_start)      //这个if语句在程序启动后1秒执行
         {
@@ -2510,6 +2637,7 @@ void CTrafficMonitorDlg::OnShowNotifyIcon()
 
 void CTrafficMonitorDlg::OnDestroy()
 {
+    ClockSideOverlay::Close();
     CDialog::OnDestroy();
 
     //程序退出时删除通知栏图标
