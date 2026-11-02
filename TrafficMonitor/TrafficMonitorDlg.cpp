@@ -24,9 +24,22 @@
 
 namespace ClockSideOverlay
 {
-    constexpr int kWidth = 150;
+    constexpr int kWidth = 128;
     constexpr int kHeight = 38;
     constexpr COLORREF kTransparentKey = RGB(1, 2, 3);
+    static COLORREF ItemColor(int item, bool value)
+    {
+        const auto& cfg = theApp.m_taskbar_data;
+        if (cfg.text_colors.empty()) return RGB(0, 0, 0);
+        if (cfg.specify_each_item_color)
+        {
+            auto found = cfg.text_colors.find(item);
+            if (found != cfg.text_colors.end())
+                return value ? found->second.value : found->second.label;
+        }
+        auto first = cfg.text_colors.begin();
+        return value ? first->second.value : first->second.label;
+    }
     constexpr wchar_t kClassName[] = L"TrafficMonitorClockSideOverlay";
     struct Overlay { HMONITOR monitor{}; HWND window{}; };
     static std::vector<Overlay> windows;
@@ -61,12 +74,12 @@ namespace ClockSideOverlay
             CString line;
             RECT upper{6, 1, rect.right - 2, rect.bottom / 2};
             RECT lower{6, rect.bottom / 2, rect.right - 2, rect.bottom - 1};
-            SetTextColor(hdc, RGB(125, 235, 175));
+            SetTextColor(hdc, ItemColor(TDI_UP, true));
             line.Format(_T("↑ %s/s"), static_cast<LPCTSTR>(upload));
-            DrawText(hdc, line, -1, &upper, DT_SINGLELINE | DT_LEFT | DT_VCENTER);
-            SetTextColor(hdc, RGB(145, 198, 250));
+            DrawText(hdc, line, -1, &upper, DT_SINGLELINE | DT_RIGHT | DT_VCENTER);
+            SetTextColor(hdc, ItemColor(TDI_DOWN, true));
             line.Format(_T("↓ %s/s"), static_cast<LPCTSTR>(download));
-            DrawText(hdc, line, -1, &lower, DT_SINGLELINE | DT_LEFT | DT_VCENTER);
+            DrawText(hdc, line, -1, &lower, DT_SINGLELINE | DT_RIGHT | DT_VCENTER);
             SelectObject(hdc, previous);
             DeleteObject(font);
             EndPaint(hwnd, &ps);
@@ -209,10 +222,10 @@ namespace ClockSideOverlay
             // conservative fallback and never position the overlay over the clock.
             if (!anchorX)
             {
-                const int reserve = MulDiv(primary ? 330 : 110, dpi ? dpi : 96, 96);
+                const int reserve = MulDiv(primary ? 325 : 90, dpi ? dpi : 96, 96);
                 anchorX = mi.rcMonitor.right - reserve;
             }
-            const int gap = MulDiv(8, dpi ? dpi : 96, 96);
+            const int gap = MulDiv(3, dpi ? dpi : 96, 96);
             int x = anchorX - width - gap;
             if (x < mi.rcMonitor.left) x = mi.rcMonitor.left;
             int y = mi.rcMonitor.bottom - (taskbarHeight + height) / 2;
