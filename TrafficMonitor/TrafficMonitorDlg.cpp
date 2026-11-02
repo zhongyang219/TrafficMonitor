@@ -27,7 +27,7 @@ namespace ClockSideOverlay
     constexpr int kWidth = 128;
     constexpr int kHeight = 38;
     constexpr COLORREF kTransparentKey = RGB(1, 2, 3);
-    static COLORREF ItemColor(int item, bool value)
+    static COLORREF ItemColor(DisplayItem item, bool value)
     {
         const auto& cfg = theApp.m_taskbar_data;
         if (cfg.text_colors.empty()) return RGB(0, 0, 0);
