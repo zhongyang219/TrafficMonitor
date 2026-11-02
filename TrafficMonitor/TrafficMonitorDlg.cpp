@@ -24,8 +24,8 @@
 
 namespace ClockSideOverlay
 {
-    constexpr int kWidth = 172;
-    constexpr int kHeight = 34;
+    constexpr int kWidth = 150;
+    constexpr int kHeight = 38;
     constexpr COLORREF kTransparentKey = RGB(1, 2, 3);
     constexpr wchar_t kClassName[] = L"TrafficMonitorClockSideOverlay";
     struct Overlay { HMONITOR monitor{}; HWND window{}; };
@@ -49,15 +49,18 @@ namespace ClockSideOverlay
             FillRect(hdc, &rect, background);
             DeleteObject(background);
             SetBkMode(hdc, TRANSPARENT);
-            HFONT font = CreateFontW(-14, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE,
+            // Scale glyphs with the target taskbar instead of using a fixed 14px font.
+            const UINT dpi = GetDpiForWindow(hwnd);
+            const int fontHeight = -MulDiv(15, dpi ? dpi : 96, 96);
+            HFONT font = CreateFontW(fontHeight, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE,
                 DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
                 CLEARTYPE_QUALITY, DEFAULT_PITCH, L"Segoe UI");
             HGDIOBJ previous = SelectObject(hdc, font);
             CString upload = CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data);
             CString download = CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_main_wnd_data);
             CString line;
-            RECT upper{8, 2, kWidth - 5, 17};
-            RECT lower{8, 17, kWidth - 5, 33};
+            RECT upper{6, 1, rect.right - 2, rect.bottom / 2};
+            RECT lower{6, rect.bottom / 2, rect.right - 2, rect.bottom - 1};
             SetTextColor(hdc, RGB(125, 235, 175));
             line.Format(_T("↑ %s/s"), static_cast<LPCTSTR>(upload));
             DrawText(hdc, line, -1, &upper, DT_SINGLELINE | DT_LEFT | DT_VCENTER);
@@ -129,11 +132,15 @@ namespace ClockSideOverlay
             }
             int taskbarHeight = mi.rcMonitor.bottom - mi.rcWork.bottom;
             // Follow the configured taskbar right spacing used by the original taskbar widget.
-            int x = mi.rcMonitor.right - theApp.m_taskbar_data.taskbar_right_space_win11 - kWidth
+            const UINT dpi = GetDpiForWindow(hwnd);
+            const int width = MulDiv(kWidth, dpi ? dpi : 96, 96);
+            const int height = min(MulDiv(kHeight, dpi ? dpi : 96, 96), taskbarHeight);
+            const int originalRightSpacing = theApp.m_taskbar_data.taskbar_right_space_win11;
+            int x = mi.rcMonitor.right - originalRightSpacing - width
                 - theApp.m_taskbar_data.window_offset_left;
             if (x < mi.rcMonitor.left) x = mi.rcMonitor.left;
-            int y = mi.rcMonitor.bottom - (taskbarHeight + kHeight) / 2;
-            SetWindowPos(hwnd, HWND_TOPMOST, x, y, kWidth, kHeight,
+            int y = mi.rcMonitor.bottom - (taskbarHeight + height) / 2;
+            SetWindowPos(hwnd, HWND_TOPMOST, x, y, width, height,
                 SWP_NOACTIVATE | SWP_SHOWWINDOW);
             InvalidateRect(hwnd, nullptr, FALSE);
         }
