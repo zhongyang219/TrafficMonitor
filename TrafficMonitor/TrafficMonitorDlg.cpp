@@ -1271,7 +1271,19 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     ULONGLONG net_speed_time = CCommon::GetCurrentTimeSinceEpochMilliseconds();
     int time_span = theApp.m_general_data.monitor_time_span;
     if (last_net_speed_time != 0)
-        time_span = static_cast<int>(net_speed_time - last_net_speed_time);
+    {
+        const ULONGLONG elapsed = net_speed_time - last_net_speed_time;
+        if (elapsed > 30000 || elapsed == 0)
+        {
+            cur_in_speed = 0;
+            cur_out_speed = 0;
+            m_connection_change_flag = true;
+        }
+        else
+            time_span = static_cast<int>(elapsed);
+    }
+    if (time_span <= 0)
+        time_span = 1000;
     last_net_speed_time = net_speed_time;
 
     //将当前监控时间间隔的流量转换成每秒时间间隔内的流量
@@ -1588,6 +1600,23 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
         //获取一次监控数据
         if (pThis->m_monitor_data_required)
         {
+            if (pThis->m_resume_reinitialize.exchange(false))
+            {
+                pThis->IniConnection();
+                bool operational = false;
+                for (size_t i = 0; i < pThis->m_connections.size(); ++i)
+                {
+                    if (pThis->GetConnectIfTable(static_cast<int>(i)).dwOperStatus == IF_OPER_STATUS_OPERATIONAL)
+                    {
+                        operational = true;
+                        break;
+                    }
+                }
+                pThis->m_resume_adapter_operational = operational;
+                pThis->m_connection_change_flag = true;
+                pThis->m_last_in_bytes = 0;
+                pThis->m_last_out_bytes = 0;
+            }
             pThis->DoMonitorAcquisition();
             //获取到监控数据后重置flag
             pThis->m_monitor_data_required = false;
@@ -1622,6 +1651,21 @@ void CTrafficMonitorDlg::ExitMonitorThread()
 
 void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 {
+    if (nIDEvent == INIT_CONNECT_TIMER)
+    {
+        const bool operational = m_resume_adapter_operational.load();
+        if (operational || ++m_resume_retry_count > 30)
+        {
+            KillTimer(INIT_CONNECT_TIMER);
+            m_resume_retry_count = 0;
+        }
+        else
+        {
+            m_resume_reinitialize = true;
+            m_monitor_data_required = true;
+        }
+        return;
+    }
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     if (nIDEvent == MONITOR_TIMER)
     {
@@ -3078,35 +3122,27 @@ void CTrafficMonitorDlg::OnPluginDetailTaksbar()
 
 UINT CTrafficMonitorDlg::OnPowerBroadcast(UINT nPowerEvent, LPARAM nEventData)
 {
-    // 系统从休眠恢复
-    if (nPowerEvent == PBT_APMRESUMESUSPEND)
+    if (nPowerEvent == PBT_APMSUSPEND)
     {
-        //延迟一段时间后重新初始化网络连接
         KillTimer(INIT_CONNECT_TIMER);
-        static CTrafficMonitorDlg* pThis = this;
-        static int check_times = 0;
-        SetTimer(INIT_CONNECT_TIMER, 10000, [](HWND, UINT, UINT_PTR, DWORD) {
-            pThis->IniConnection();
-            check_times++;
-
-            //写入日志
-            CString info = CCommon::LoadTextFormat(IDS_RESTORE_FROM_SLEEP_LOG, {pThis->m_restart_cnt });
-            CCommon::WriteLog(info, theApp.m_log_path.c_str());
-
-            //如果连接为空，定时器继续运行，每隔一段时间重新初始化连接
-            if (pThis->m_connections.size() == 0)
-            {
-                //超过20次，结束定时器
-                if (check_times >= 20)
-                    pThis->KillTimer(INIT_CONNECT_TIMER);
-            }
-            //成功获取到连接，结束定时器
-            else
-            {
-                pThis->KillTimer(INIT_CONNECT_TIMER);
-                check_times = 0;
-            }
-        });
+        m_resume_retry_count = 0;
+        KillTimer(MONITOR_TIMER);
+        m_monitor_data_required = false;
+    }
+    else if (nPowerEvent == PBT_APMRESUMEAUTOMATIC ||
+             nPowerEvent == PBT_APMRESUMESUSPEND ||
+             nPowerEvent == PBT_APMRESUMECRITICAL)
+    {
+        if (m_resume_retry_count == 0)
+        {
+            m_resume_retry_count = 1;
+            m_resume_adapter_operational = false;
+            m_resume_reinitialize = true;
+            m_monitor_data_required = true;
+            SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, nullptr);
+            KillTimer(INIT_CONNECT_TIMER);
+            SetTimer(INIT_CONNECT_TIMER, 10000, nullptr);
+        }
     }
     return CDialog::OnPowerBroadcast(nPowerEvent, nEventData);
 }

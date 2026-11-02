@@ -7,11 +7,20 @@ on:
 jobs:
 
   x64_build:
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
     - uses: actions/checkout@v3
       
+    - name: Install Visual C++ MFC libraries
+      shell: pwsh
+      run: |
+        $vs = & "${env:ProgramFiles(x86)}\\Microsoft Visual Studio\\Installer\\vswhere.exe" -latest -products * -property installationPath
+        if (-not $vs) { throw "Visual Studio installation not found" }
+        $installer = "${env:ProgramFiles(x86)}\\Microsoft Visual Studio\\Installer\\vs_installer.exe"
+        & $installer modify --installPath "$vs" --add Microsoft.VisualStudio.Component.VC.ATLMFC --quiet --norestart --wait
+        if ($LASTEXITCODE -ne 0) { throw "MFC installation failed: $LASTEXITCODE" }
+
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
       
@@ -40,11 +49,20 @@ jobs:
         path: Bin/x64/Release (lite)/*.pdb
 
   x86_build:
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
     - uses: actions/checkout@v3
       
+    - name: Install Visual C++ MFC libraries
+      shell: pwsh
+      run: |
+        $vs = & "${env:ProgramFiles(x86)}\\Microsoft Visual Studio\\Installer\\vswhere.exe" -latest -products * -property installationPath
+        if (-not $vs) { throw "Visual Studio installation not found" }
+        $installer = "${env:ProgramFiles(x86)}\\Microsoft Visual Studio\\Installer\\vs_installer.exe"
+        & $installer modify --installPath "$vs" --add Microsoft.VisualStudio.Component.VC.ATLMFC --quiet --norestart --wait
+        if ($LASTEXITCODE -ne 0) { throw "MFC installation failed: $LASTEXITCODE" }
+
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
       
@@ -73,11 +91,20 @@ jobs:
         path: Bin/Release (lite)/*.pdb
 
   arm64ec_build:
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
     - uses: actions/checkout@v3
       
+    - name: Install Visual C++ MFC libraries
+      shell: pwsh
+      run: |
+        $vs = & "${env:ProgramFiles(x86)}\\Microsoft Visual Studio\\Installer\\vswhere.exe" -latest -products * -property installationPath
+        if (-not $vs) { throw "Visual Studio installation not found" }
+        $installer = "${env:ProgramFiles(x86)}\\Microsoft Visual Studio\\Installer\\vs_installer.exe"
+        & $installer modify --installPath "$vs" --add Microsoft.VisualStudio.Component.VC.ATLMFC --quiet --norestart --wait
+        if ($LASTEXITCODE -ne 0) { throw "MFC installation failed: $LASTEXITCODE" }
+
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
       
