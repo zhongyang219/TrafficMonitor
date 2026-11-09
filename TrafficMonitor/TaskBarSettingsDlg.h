@@ -120,7 +120,6 @@ public:
     afx_msg void OnBnClickedEnableColorEmojiCheck();
     afx_msg void OnCbnSelchangeDigitNumberCombo();
     afx_msg void OnBnClickedWin11SettingsButton();
-    afx_msg void OnBnClickedTaskbarWndInSecondaryDisplayCheck();
     afx_msg void OnCbnSelchangeDisplayToShowTaskbarWndCombo();
     afx_msg void OnBnClickedUsageGraphFollowSystemCheck();
     afx_msg void OnEnChangeFontSizeEdit1();

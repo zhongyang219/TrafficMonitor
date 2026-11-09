@@ -268,7 +268,6 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_ENABLE_COLOR_EMOJI_CHECK, &CTaskBarSettingsDlg::OnBnClickedEnableColorEmojiCheck)
     ON_CBN_SELCHANGE(IDC_DIGIT_NUMBER_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeDigitNumberCombo)
     ON_BN_CLICKED(IDC_WIN11_SETTINGS_BUTTON, &CTaskBarSettingsDlg::OnBnClickedWin11SettingsButton)
-    ON_BN_CLICKED(IDC_TASKBAR_WND_IN_SECONDARY_DISPLAY_CHECK, &CTaskBarSettingsDlg::OnBnClickedTaskbarWndInSecondaryDisplayCheck)
     ON_CBN_SELCHANGE(IDC_DISPLAY_TO_SHOW_TASKBAR_WND_COMBO, &CTaskBarSettingsDlg::OnCbnSelchangeDisplayToShowTaskbarWndCombo)
     ON_BN_CLICKED(IDC_USAGE_GRAPH_FOLLOW_SYSTEM_CHECK, &CTaskBarSettingsDlg::OnBnClickedUsageGraphFollowSystemCheck)
     ON_EN_CHANGE(IDC_FONT_SIZE_EDIT1, &CTaskBarSettingsDlg::OnEnChangeFontSizeEdit1)
@@ -307,8 +306,6 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     ((CButton*)GetDlgItem(IDC_SHOW_STATUS_BAR_CHECK))->SetCheck(m_data.show_status_bar);
     ((CButton*)GetDlgItem(IDC_SEPARATE_VALUE_UNIT_CHECK))->SetCheck(m_data.separate_value_unit_with_space);
     ((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->SetCheck(m_data.show_tool_tip);
-
-    CheckDlgButton(IDC_TASKBAR_WND_IN_SECONDARY_DISPLAY_CHECK, m_data.show_taskbar_wnd_in_secondary_display);
 
     m_text_color_static.SetLinkCursor();
     m_back_color_static.SetLinkCursor();
@@ -421,26 +418,24 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     m_default_style_menu.AppendMenu(MF_SEPARATOR);
     m_default_style_menu.AppendMenu(MF_POPUP | MF_STRING, (UINT)m_modify_default_style_menu.m_hMenu, CCommon::LoadText(IDS_MODIFY_PRESET));
 
-    //获取副显示器的数量
-    std::vector<HWND> secondary_displays;
-    CTaskbarHelper::GetAllSecondaryDisplayTaskbar(secondary_displays);
-    //初始化“显示任务栏窗口的显示器”下拉列表
-    m_displays_combo.AddString(CCommon::LoadText(IDS_PRIMARY_DISPLAY));
-    for (size_t i = 0; i < secondary_displays.size(); i++)
+    //获取系统中所有显示器（包括主显示器和副显示器）的信息
+    std::vector<MonitorDisplayInfo> displays;
+    CTaskbarHelper::GetAllDisplayInfo(displays);
+    //初始化“显示任务栏窗口的显示器”下拉列表，列表项中包含显示器的编号、分辨率和名称
+    m_displays_combo.ResetContent();
+    for (const auto& display : displays)
     {
-        m_displays_combo.AddString(CCommon::LoadTextFormat(IDS_SECONDARY_DISPLAY, { i + 1 }));
+        m_displays_combo.AddString(CTaskbarHelper::GetDisplayDescription(display));
     }
-    if (!m_data.show_taskbar_wnd_in_secondary_display)
+    //恢复之前选中的显示器，如果之前的配置无效（比如显示器已经被断开）则选中主显示器
+    int cur_display_index = m_data.taskbar_display_index;
+    if (cur_display_index < 0 || cur_display_index >= static_cast<int>(displays.size()))
     {
-        m_displays_combo.SetCurSel(0);
+        cur_display_index = 0;
     }
-    else
+    if (!displays.empty())
     {
-        int combo_index = m_data.secondary_display_index + 1;
-        int combo_item_count = m_displays_combo.GetCount();
-        if (combo_index >= combo_item_count)
-            combo_index = combo_item_count - 1;
-        m_displays_combo.SetCurSel(combo_index);
+        m_displays_combo.SetCurSel(cur_display_index);
     }
 
     //设置是否禁用D2D
@@ -957,25 +952,13 @@ void CTaskBarSettingsDlg::OnBnClickedWin11SettingsButton()
 }
 
 
-void CTaskBarSettingsDlg::OnBnClickedTaskbarWndInSecondaryDisplayCheck()
-{
-    m_data.show_taskbar_wnd_in_secondary_display = (IsDlgButtonChecked(IDC_TASKBAR_WND_IN_SECONDARY_DISPLAY_CHECK) != FALSE);
-}
-
-
 void CTaskBarSettingsDlg::OnCbnSelchangeDisplayToShowTaskbarWndCombo()
 {
-    
+    //下拉列表中各项的顺序与显示器编号的顺序一致
     int combo_index = m_displays_combo.GetCurSel();
-    if (combo_index == 0)
+    if (combo_index >= 0)
     {
-        m_data.show_taskbar_wnd_in_secondary_display = false;
-    }
-    else
-    {
-        m_data.show_taskbar_wnd_in_secondary_display = true;
-        m_data.secondary_display_index = combo_index - 1;
-
+        m_data.taskbar_display_index = combo_index;
     }
 }
 

@@ -607,6 +607,54 @@ void CTrafficMonitorDlg::OpenTaskBarWnd()
     //IniTaskBarConnectionMenu();
 }
 
+void CTrafficMonitorDlg::CheckTaskbarHost()
+{
+    if (!theApp.m_cfg_data.m_show_task_bar_wnd)
+        return;
+
+    //获取目标显示器的状态
+    std::vector<MonitorDisplayInfo> displays;
+    CTaskbarHelper::GetAllDisplayInfo(displays);
+    int display_index = theApp.m_taskbar_data.taskbar_display_index;
+    const MonitorDisplayInfo* p_target_display = CTaskbarHelper::FindDisplayByIndex(displays, display_index);
+
+    TargetDisplayState target_display_state = TargetDisplayState::NORMAL;
+    if (display_index != 0)
+    {
+        //目标显示器已经被断开
+        if (p_target_display == nullptr)
+            target_display_state = TargetDisplayState::DISCONNECTED;
+        //目标显示器上没有任务栏（比如用户没有开启“在所有显示器上显示任务栏”）
+        else if (!p_target_display->has_taskbar)
+            target_display_state = TargetDisplayState::NO_TASKBAR;
+    }
+
+    //目标显示器的状态发生变化时提示用户（只提示一次，避免反复弹出）
+    if (target_display_state != m_target_display_state)
+    {
+        m_target_display_state = target_display_state;
+        if (target_display_state == TargetDisplayState::DISCONNECTED)
+        {
+            ::MessageBox(GetSafeHwnd(), CCommon::LoadText(IDS_DISPLAY_DISCONNECTED_TIP), NULL, MB_OK | MB_ICONWARNING);
+        }
+        else if (target_display_state == TargetDisplayState::NO_TASKBAR)
+        {
+            ::MessageBox(GetSafeHwnd(), CCommon::LoadText(IDS_DISPLAY_NO_TASKBAR_TIP), NULL, MB_OK | MB_ICONWARNING);
+        }
+    }
+
+    if (!IsTaskbarWndValid())
+    {
+        //任务栏窗口已经被销毁（比如宿主任务栏被系统重建），重新创建任务栏窗口
+        CloseTaskBarWnd();
+        OpenTaskBarWnd();
+        return;
+    }
+
+    //如果宿主任务栏窗口发生了变化（比如用户切换了目标显示器），则重新挂载任务栏窗口
+    m_tBarDlg->UpdateTaskbarHost();
+}
+
 void CTrafficMonitorDlg::AddNotifyIcon()
 {
     if (theApp.m_cfg_data.m_show_task_bar_wnd)
@@ -781,8 +829,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     bool is_connections_hide_changed = (optionsDlg.m_tab3_dlg.m_data.connections_hide.data() != theApp.m_general_data.connections_hide.data());
     bool d2d_turned_on = (theApp.m_taskbar_data.disable_d2d && !optionsDlg.m_tab2_dlg.m_data.disable_d2d);
     //需要重新关闭再打开任务栏窗口的情况
-    bool taskbar_changed = (theApp.m_taskbar_data.show_taskbar_wnd_in_secondary_display != optionsDlg.m_tab2_dlg.m_data.show_taskbar_wnd_in_secondary_display
-        || theApp.m_taskbar_data.secondary_display_index != optionsDlg.m_tab2_dlg.m_data.secondary_display_index
+    bool taskbar_changed = (theApp.m_taskbar_data.taskbar_display_index != optionsDlg.m_tab2_dlg.m_data.taskbar_display_index
         || theApp.m_taskbar_data.disable_d2d != optionsDlg.m_tab2_dlg.m_data.disable_d2d
         || theApp.m_taskbar_data.IsTaskbarTransparent() != optionsDlg.m_tab2_dlg.m_data.IsTaskbarTransparent()
         || theApp.m_taskbar_data.auto_set_background_color != optionsDlg.m_tab2_dlg.m_data.auto_set_background_color
@@ -1984,21 +2031,11 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
     if (nIDEvent == TASKBAR_TIMER)
     {
         ++m_taskbar_timer_cnt;
-        if (m_taskbar_timer_cnt % 5 == 0 && theApp.m_cfg_data.m_show_task_bar_wnd && theApp.m_taskbar_data.show_taskbar_wnd_in_secondary_display)
+        //定期检查任务栏窗口的宿主任务栏是否发生了变化
+        //（比如显示器配置发生变化后，任务栏窗口被重建，或者用户切换了目标显示器）
+        if (m_taskbar_timer_cnt % 5 == 0 && theApp.m_cfg_data.m_show_task_bar_wnd)
         {
-            static int last_taskbar_num = 0;
-            int taskbar_num = CTaskbarHelper::GetSecondaryTaskbarNum();
-            //如果副显示器的任务栏数量发生变化，则重启任务栏窗口
-            if (last_taskbar_num != taskbar_num)
-            {
-                last_taskbar_num = taskbar_num;
-                //延迟一段时间后重启任务栏窗口
-                KillTimer(RESTART_TASKBAR_TIMER);
-                SetTimer(RESTART_TASKBAR_TIMER, 500, [](HWND, UINT, UINT_PTR, DWORD) {
-                    theApp.m_pMainWnd->SendMessage(WM_REOPEN_TASKBAR_WND);
-                    ::KillTimer(theApp.m_pMainWnd->GetSafeHwnd(), RESTART_TASKBAR_TIMER);
-                });
-            }
+            CheckTaskbarHost();
         }
 
         if (IsTaskbarWndValid())
@@ -2022,6 +2059,12 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             m_tBarDlg->AdjustWindowPos();
             m_tBarDlg->Invalidate(FALSE);
         }
+    }
+
+    if (nIDEvent == CHECK_TASKBAR_HOST_TIMER)
+    {
+        KillTimer(CHECK_TASKBAR_HOST_TIMER);
+        CheckTaskbarHost();
     }
 
     if (nIDEvent == DELETE_NOTIFY_ICON_TIMER)
@@ -2907,6 +2950,10 @@ LRESULT CTrafficMonitorDlg::OnDisplaychange(WPARAM wParam, LPARAM lParam)
 {
     GetScreenSize();
     CheckWindowPos(true);
+    //显示器配置发生变化后（比如分辨率改变或者显示器断开重连），任务栏窗口可能会被系统重建，
+    //或者目标显示器上的任务栏会发生变化，因此延迟一段时间后再检查并重新挂载任务栏窗口
+    KillTimer(CHECK_TASKBAR_HOST_TIMER);
+    SetTimer(CHECK_TASKBAR_HOST_TIMER, 1000, nullptr);
     return 0;
 }
 

@@ -34,6 +34,11 @@ public:
     bool AdjustWindowPos(bool force_adjust = false);	//设置窗口在任务栏中的位置（如果force_adjust为true，则会强制调整一次任务栏窗口的位置）
     void ApplyWindowTransparentColor();
 
+    //检查任务栏窗口的宿主窗口（即所嵌入的任务栏）是否发生了变化，
+    //如果发生变化（例如显示器配置改变后任务栏窗口被重新创建，或者用户切换了目标显示器），
+    //则重新设置父窗口并刷新任务栏窗口的位置和大小。返回true表示宿主窗口发生了变化并已重新挂载
+    bool UpdateTaskbarHost();
+
     //bool IsTaskbarChanged();
 
     void WidthChanged();    //调用此函数通知任务栏窗口宽度改变以强制调整一次任务栏窗口位置
@@ -86,6 +91,8 @@ protected:
     virtual void ResetTaskbarPos() = 0;
     virtual void CheckTaskbarOnTopOrBottom() = 0;		//检查任务栏是否在屏幕的顶部或底部，并将结果保存在m_taskbar_on_top_or_bottom中
     virtual HWND GetParentHwnd() = 0;
+    //切换任务栏宿主窗口后调用，用于清除与原宿主窗口相关的状态
+    virtual void OnTaskbarHostChanged() {}
 
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 

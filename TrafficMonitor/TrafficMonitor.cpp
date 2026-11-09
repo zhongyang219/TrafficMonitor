@@ -172,8 +172,16 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.specify_each_item_color = ini.GetBool(L"task_bar", L"specify_each_item_color", false);
     //m_cfg_data.m_tbar_show_cpu_memory = ini.GetBool(_T("task_bar"), _T("task_bar_show_cpu_memory"), false);
     m_taskbar_data.display_item.FromInt(ini.GetInt(L"task_bar", L"tbar_display_item", DisplayItemSet{ TDI_UP, TDI_DOWN }.ToInt()));
-    m_taskbar_data.show_taskbar_wnd_in_secondary_display = ini.GetBool(L"task_bar", L"show_taskbar_wnd_in_secondary_display", false);
-    m_taskbar_data.secondary_display_index = ini.GetInt(L"task_bar", L"secondary_display_index", 0);
+    //任务栏窗口显示的显示器（0为主显示器，其余按显示器编号依次排列）
+    //如果配置文件中不存在该项，则从旧版本的配置项迁移
+    int taskbar_display_index = ini.GetInt(L"task_bar", L"taskbar_display_index", -1);
+    if (taskbar_display_index < 0)
+    {
+        bool show_in_secondary_display = ini.GetBool(L"task_bar", L"show_taskbar_wnd_in_secondary_display", false);
+        int secondary_display_index = ini.GetInt(L"task_bar", L"secondary_display_index", 0);
+        taskbar_display_index = show_in_secondary_display ? (secondary_display_index + 1) : 0;
+    }
+    m_taskbar_data.taskbar_display_index = taskbar_display_index;
 
     //不含温度监控的版本，不显示温度监控相关项目
 #ifdef WITHOUT_TEMPERATURE
@@ -375,8 +383,10 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"task_bar", L"tbar_display_item", m_taskbar_data.display_item.ToInt());
     ini.SaveFontData(L"task_bar", m_taskbar_data.font);
     //ini.WriteBool(L"task_bar", L"task_bar_swap_up_down", m_taskbar_data.swap_up_down);
-    ini.WriteBool(L"task_bar", L"show_taskbar_wnd_in_secondary_display", m_taskbar_data.show_taskbar_wnd_in_secondary_display);
-    ini.WriteInt(L"task_bar", L"secondary_display_index", m_taskbar_data.secondary_display_index);
+    ini.WriteInt(L"task_bar", L"taskbar_display_index", m_taskbar_data.taskbar_display_index);
+    //同时写入旧版本的配置项，以便降级到旧版本时依然可以正常使用
+    ini.WriteBool(L"task_bar", L"show_taskbar_wnd_in_secondary_display", m_taskbar_data.taskbar_display_index > 0);
+    ini.WriteInt(L"task_bar", L"secondary_display_index", (std::max)(0, m_taskbar_data.taskbar_display_index - 1));
 
     ini.SaveDisplayStr(L"task_bar", m_taskbar_data.disp_str);
     ini.SavePluginDisplayStr(L"plugin_display_str_taskbar_window", m_taskbar_data.disp_str);
