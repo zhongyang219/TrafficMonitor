@@ -17,7 +17,7 @@ namespace OpenHardwareMonitorApi {
         COpenHardwareMonitor();
         virtual ~COpenHardwareMonitor();
 
-        virtual void GetHardwareInfo() override;
+        virtual bool GetHardwareInfo(bool reset) override;
         virtual float CpuTemperature() override;
         virtual float GpuTemperature() override;
         virtual float HDDTemperature() override;

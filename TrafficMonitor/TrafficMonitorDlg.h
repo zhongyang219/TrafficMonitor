@@ -129,6 +129,10 @@ protected:
 
     string m_connection_name_preferd{ theApp.m_cfg_data.m_connection_name };          //保存用户手动选择的网络连接名称
 
+#ifndef WITHOUT_TEMPERATURE
+    ULONGLONG m_next_hardware_sample{};
+    bool TrySampleHardware();
+#endif
     void DoMonitorAcquisition();    //获取一次监控信息
     static UINT MonitorThreadCallback(LPVOID dwUser);   //获取监控信息的线程函数
     bool m_monitor_data_required{ false };          //线程中需要获取监控数据标志，当需要获取监控数据时置为true，获取到一次监控数据时置为false
