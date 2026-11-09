@@ -124,3 +124,10 @@ void CClassicalTaskbarDlg::CheckTaskbarOnTopOrBottom()
     }
 }
 
+void CClassicalTaskbarDlg::OnTaskbarHostChanged()
+{
+    //清除上一个宿主任务栏中保存的最小化窗口的矩形区域，
+    //避免在新的宿主任务栏上错误地恢复旧任务栏中最小化窗口的大小
+    m_rcMinOri.SetRectEmpty();
+}
+

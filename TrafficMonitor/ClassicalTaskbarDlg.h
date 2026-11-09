@@ -21,10 +21,11 @@ private:
     CRect m_rcBar;		//初始状态时任务栏窗口的矩形区域
     CRect m_rcMin;		//最小化窗口的矩形区域
 
-    int m_last_width;	//用于检测宽度变化的上一次的宽度
-    int m_last_height;	//用于检测高度变化的上一次的高度（用于任务栏在屏幕左侧或右侧时）
+    int m_last_width{ 0 };	//用于检测宽度变化的上一次的宽度
+    int m_last_height{ 0 };	//用于检测高度变化的上一次的高度（用于任务栏在屏幕左侧或右侧时）
 
     // 通过 CTaskBarDlg 继承
     void CheckTaskbarOnTopOrBottom() override;
+    void OnTaskbarHostChanged() override;
 };
 

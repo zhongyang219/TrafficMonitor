@@ -605,29 +605,93 @@ UINT CTaskBarDlg::ClassCheckWindowMonitorDPIAndHandle::dpi_y{0};
 HWND CTaskBarDlg::FindTaskbarHandle(bool& is_scendary_display)
 {
     is_scendary_display = false;
-    HWND hTaskbar = nullptr;
-    //显示在副显示器上
-    if (theApp.m_taskbar_data.show_taskbar_wnd_in_secondary_display && CWindowsSettingHelper::IsTaskbarShowingInAllDisplays())
-    {
-        //获取所有副显示器的任务栏
-        std::vector<HWND> secondary_taskbars;
-        CTaskbarHelper::GetAllSecondaryDisplayTaskbar(secondary_taskbars);
-        if (!secondary_taskbars.empty())
-        {
-            int index = theApp.m_taskbar_data.secondary_display_index;
-            if (index < 0)
-                index = 0;
-            if (index >= static_cast<int>(secondary_taskbars.size()))
-                index = static_cast<int>(secondary_taskbars.size()) - 1;
-            hTaskbar = secondary_taskbars[index];
-            if (hTaskbar != nullptr)
-                is_scendary_display = true;
-        }
-    }
+
+    //枚举系统中所有的显示器
+    std::vector<MonitorDisplayInfo> displays;
+    CTaskbarHelper::GetAllDisplayInfo(displays);
+    if (displays.empty())
+        return ::FindWindow(_T("Shell_TrayWnd"), NULL);
+
+    //获取目标显示器
+    const MonitorDisplayInfo* p_target_display = CTaskbarHelper::FindDisplayByIndex(displays, theApp.m_taskbar_data.taskbar_display_index);
+    //目标显示器不存在（比如已经被断开）或者该显示器上没有任务栏（比如用户没有开启“在所有显示器上显示任务栏”）时，回退到主显示器
+    if (p_target_display == nullptr || !p_target_display->has_taskbar)
+        p_target_display = CTaskbarHelper::FindDisplayByIndex(displays, 0);
+
+    HWND hTaskbar = (p_target_display != nullptr) ? p_target_display->hTaskbar : nullptr;
     if (hTaskbar == nullptr)
+    {
+        //找不到目标显示器的任务栏，回退到主显示器的任务栏
         hTaskbar = ::FindWindow(_T("Shell_TrayWnd"), NULL);
+        is_scendary_display = false;
+    }
+    else
+    {
+        is_scendary_display = !p_target_display->is_primary;
+    }
 
     return hTaskbar;
+}
+
+bool CTaskBarDlg::UpdateTaskbarHost()
+{
+    if (m_hWnd == nullptr || !IsWindow(m_hWnd))
+        return false;
+
+    bool is_secondary_display = false;
+    HWND hTaskbar = FindTaskbarHandle(is_secondary_display);
+    //宿主窗口没有发生变化，不需要重新挂载
+    if (hTaskbar == nullptr || hTaskbar == m_hTaskbar)
+        return false;
+
+    //恢复原来宿主任务栏中最小化窗口的大小
+    ResetTaskbarPos();
+    //清除与原宿主任务栏相关的状态
+    OnTaskbarHostChanged();
+
+    //切换宿主任务栏
+    m_hTaskbar = hTaskbar;
+    m_is_secondary_display = is_secondary_display;
+    ::GetWindowRect(m_hTaskbar, m_rcTaskbar);   //获得新的任务栏的矩形区域
+
+    //重新获取宿主任务栏中的子窗口句柄
+    InitTaskbarWnd();
+
+    //把程序窗口设置成新的任务栏的子窗口
+    if (!::SetParent(this->m_hWnd, GetParentHwnd()))
+    {
+        m_connot_insert_to_task_bar = true;
+        return false;
+    }
+    m_connot_insert_to_task_bar = false;
+
+    //重新计算所在显示器的DPI
+    if (theApp.m_win_version.IsWindows8Point1OrLater())
+    {
+        UINT dpi_x, dpi_y;
+        if (theApp.DPIFromRect(GetRectForDpiCheck(), &dpi_x, &dpi_y))
+            SetDPI(dpi_x);
+        else
+            SetDPI(theApp.GetDpi());
+    }
+    else
+    {
+        SetDPI(theApp.GetDpi());
+    }
+
+    //重新设置字体并计算窗口大小
+    SetTextFont();
+    m_pDC->SelectObject(&m_font);
+    CalculateWindowSize();
+    m_rect.SetRectEmpty();
+    m_rect.bottom = m_window_height;
+    m_rect.right = m_rect.left + m_window_width;
+
+    //强制重新调整任务栏窗口的位置
+    AdjustWindowPos(true);
+    Invalidate(FALSE);
+
+    return true;
 }
 
 CString CTaskBarDlg::GetMouseTipsInfo()

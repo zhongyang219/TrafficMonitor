@@ -125,6 +125,15 @@ protected:
     bool m_is_foreground_fullscreen{ false };   //指示前台窗口是否正在全局显示
     bool m_menu_popuped{ false };               //指示当前是否有菜单处于弹出状态
 
+    //任务栏窗口目标显示器的状态
+    enum class TargetDisplayState
+    {
+        NORMAL,        //正常
+        DISCONNECTED,  //目标显示器已经被断开
+        NO_TASKBAR     //目标显示器上没有任务栏
+    };
+    TargetDisplayState m_target_display_state{ TargetDisplayState::NORMAL };    //目标显示器的状态
+
     HDC m_desktop_dc;
 
     string m_connection_name_preferd{ theApp.m_cfg_data.m_connection_name };          //保存用户手动选择的网络连接名称
@@ -163,6 +172,9 @@ protected:
 
     void CloseTaskBarWnd(); //关闭任务栏窗口
     void OpenTaskBarWnd();  //打开任务栏窗口
+
+    //检查任务栏窗口的宿主任务栏是否发生了变化，如果发生变化则重新挂载任务栏窗口
+    void CheckTaskbarHost();
 
     void AddNotifyIcon();       //添加通知区图标
     void DeleteNotifyIcon();
