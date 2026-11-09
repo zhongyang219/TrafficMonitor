@@ -1199,6 +1199,62 @@ static int GetMonitorTimerCount(int second)
 }
 
 
+#ifndef WITHOUT_TEMPERATURE
+static DWORD ReadHardwareSample(OpenHardwareMonitorApi::IOpenHardwareMonitor& monitor, bool reset, bool& success)
+{
+    __try
+    {
+        success = monitor.GetHardwareInfo(reset);
+        return ERROR_SUCCESS;
+    }
+    __except (EXCEPTION_EXECUTE_HANDLER)
+    {
+        return GetExceptionCode();
+    }
+}
+
+bool CTrafficMonitorDlg::TrySampleHardware()
+{
+    if (GetTickCount64() < m_next_hardware_sample)
+        return false;
+
+    const bool recovering = m_next_hardware_sample != 0;
+    constexpr ULONGLONG hardware_retry_delay_ms = 10000;
+    bool success = false;
+    const DWORD exception = ReadHardwareSample(*theApp.m_pMonitor, recovering, success);
+    if (success)
+    {
+        m_next_hardware_sample = 0;
+        if (recovering)
+            CCommon::WriteLog("Hardware monitoring recovered", theApp.m_log_path.c_str());
+        return true;
+    }
+
+    m_next_hardware_sample = GetTickCount64() + hardware_retry_delay_ms;
+    if (!recovering)
+    {
+        try
+        {
+            CString error;
+            if (exception != ERROR_SUCCESS)
+                error.Format(L"Hardware monitoring sample failed (0x%08lX)", exception);
+            else
+                error.Format(L"Hardware monitoring sample failed: %s", OpenHardwareMonitorApi::GetErrorMessage().c_str());
+            CCommon::WriteLog(error, theApp.m_log_path.c_str());
+        }
+        catch (CMemoryException* error)
+        {
+            error->Delete();
+        }
+        catch (const std::bad_alloc&)
+        {
+            // 低内存时日志也可能写入失败，仍保留重试状态。
+        }
+    }
+    return false;
+}
+#endif
+
 void CTrafficMonitorDlg::DoMonitorAcquisition()
 {
     //获取网络连接速度
@@ -1403,7 +1459,8 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
 #endif
 
     bool cpu_freq_acquired = false;
-    bool gpu_usage_acquired = false;
+    theApp.m_gpu_usage = -1;
+    theApp.m_hdd_usage = -1;
     m_get_disk_usage_by_pdh = false;
 
     //获取CPU使用率
@@ -1417,13 +1474,8 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     //}
 
     //获取GPU利用率
-    if (lite_version /*|| is_arm64ec*/ || !theApp.m_general_data.IsHardwareEnable(HI_GPU))
-    {
-        if (m_gpu_usage_helper.GetGpuUsage(theApp.m_gpu_usage))
-            gpu_usage_acquired = true;
-        else
-            theApp.m_gpu_usage = -1;
-    }
+    if (lite_version || !theApp.m_general_data.IsHardwareEnable(HI_GPU))
+        m_gpu_usage_helper.GetGpuUsage(theApp.m_gpu_usage);
 
     //获取硬盘利用率
     if (lite_version /*|| is_arm64ec*/ || !theApp.m_general_data.IsHardwareEnable(HI_HDD))
@@ -1463,34 +1515,20 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     theApp.m_total_memory = static_cast<int>(statex.ullTotalPhys / 1024);
 
 #ifndef WITHOUT_TEMPERATURE
-    //获取温度
-    if (IsTemperatureNeeded() && theApp.m_pMonitor != nullptr)
+    // 采样失败或等待重试时，将传感器读数标为不可用。
+    theApp.m_cpu_temperature = -1;
+    theApp.m_gpu_temperature = -1;
+    theApp.m_hdd_temperature = -1;
+    theApp.m_main_board_temperature = -1;
+    if (!cpu_freq_acquired)
+        theApp.m_cpu_freq = -1;
+
+    if (CSingleLock sync(&theApp.m_minitor_lib_critical);
+        IsTemperatureNeeded() && sync.Lock() && theApp.m_pMonitor != nullptr && TrySampleHardware())
     {
-        CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
-        CString error_info = CCommon::LoadText(IDS_HARDWARE_INFO_ACQUIRE_FAILED_ERROR);
-
-        auto getHardwareInfo = [&]() {
-            __try
-            {
-                theApp.m_pMonitor->GetHardwareInfo();
-            }
-            __except (EXCEPTION_EXECUTE_HANDLER)
-            {
-                AfxMessageBox(error_info, MB_ICONERROR | MB_OK);
-            }
-        };
-
-        getHardwareInfo();
-        auto monitor_error_message{ OpenHardwareMonitorApi::GetErrorMessage() };
-        if (!monitor_error_message.empty())
-        {
-            AfxMessageBox(monitor_error_message.c_str(), MB_ICONERROR | MB_OK);
-        }
-        //theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
         theApp.m_gpu_temperature = theApp.m_pMonitor->GpuTemperature();
-        //theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
         theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
-        if (!gpu_usage_acquired)
+        if (theApp.m_general_data.IsHardwareEnable(HI_GPU))
             theApp.m_gpu_usage = theApp.m_pMonitor->GpuUsage();
         if (!cpu_freq_acquired)
             theApp.m_cpu_freq = theApp.m_pMonitor->CpuFreq();
@@ -1512,10 +1550,6 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
                 theApp.m_cpu_temperature = iter->second;
             }
         }
-        else
-        {
-            theApp.m_cpu_temperature = -1;
-        }
         //获取硬盘温度
         if (!theApp.m_pMonitor->AllHDDTemperature().empty())
         {
@@ -1526,10 +1560,6 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
                 theApp.m_general_data.hard_disk_name = iter->first;
             }
             theApp.m_hdd_temperature = iter->second;
-        }
-        else
-        {
-            theApp.m_hdd_temperature = -1;
         }
         //获取硬盘利用率
         if (!m_get_disk_usage_by_pdh)
@@ -1543,10 +1573,6 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
                     theApp.m_general_data.hard_disk_name = iter->first;
                 }
                 theApp.m_hdd_usage = iter->second;
-            }
-            else
-            {
-                theApp.m_hdd_usage = -1;
             }
         }
     }

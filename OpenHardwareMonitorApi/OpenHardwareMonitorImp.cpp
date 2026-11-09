@@ -4,6 +4,7 @@
 
 #include "OpenHardwareMonitorImp.h"
 #include <vector>
+#include <vcclr.h>
 
 namespace OpenHardwareMonitorApi
 {
@@ -18,10 +19,8 @@ namespace OpenHardwareMonitorApi
         }
         else
         {
-            const wchar_t* chars = (const wchar_t*)(Runtime::InteropServices::Marshal::StringToHGlobalUni(str)).ToPointer();
-            std::wstring os = chars;
-            Runtime::InteropServices::Marshal::FreeHGlobal(IntPtr((void*)chars));
-            return os;
+            pin_ptr<const wchar_t> chars = PtrToStringChars(str);
+            return std::wstring(chars, str->Length);
         }
     }
 
@@ -139,6 +138,8 @@ namespace OpenHardwareMonitorApi
         float sum{};
         for (auto i : m_all_cpu_clock)
             sum += i.second;
+        if (m_all_cpu_clock.empty())
+            return false;
         freq = sum / m_all_cpu_clock.size() / 1000.0;
         return true;
     }
@@ -300,6 +301,7 @@ namespace OpenHardwareMonitorApi
         m_gpu_intel_usage = -1;
         m_all_hdd_temperature.clear();
         m_all_hdd_usage.clear();
+        m_all_cpu_temperature.clear();
         m_cpu_freq = -1;
         m_cpu_usage = -1;
     }
@@ -331,13 +333,18 @@ namespace OpenHardwareMonitorApi
         }
     }
 
-    void COpenHardwareMonitor::GetHardwareInfo()
+    bool COpenHardwareMonitor::GetHardwareInfo(bool reset)
     {
         ResetAllValues();
         error_message.clear();
         try
         {
             auto computer = MonitorGlobal::Instance()->computer;
+            if (reset)
+            {
+                m_all_cpu_clock.clear();
+                computer->Reset();
+            }
             computer->Accept(MonitorGlobal::Instance()->updateVisitor);
             for (int i = 0; i < computer->Hardware->Count; i++)
             {
@@ -395,8 +402,11 @@ namespace OpenHardwareMonitorApi
         }
         catch (System::Exception^ e)
         {
+            ResetAllValues();
             error_message = ClrStringToStdWstring(e->Message);
+            return false;
         }
+        return true;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
