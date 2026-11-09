@@ -1459,8 +1459,9 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
 #endif
 
     bool cpu_freq_acquired = false;
-    theApp.m_gpu_usage = -1;
-    theApp.m_hdd_usage = -1;
+    int gpu_usage = -1;
+    int hdd_usage = -1;
+    float cpu_freq = theApp.m_cpu_freq;
     m_get_disk_usage_by_pdh = false;
 
     //获取CPU使用率
@@ -1469,13 +1470,13 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     //获取CPU频率
     //if (lite_version || is_arm64ec || !theApp.m_general_data.IsHardwareEnable(HI_CPU))
     //{
-    if (m_cpu_freq_helper.GetCpuFreq(theApp.m_cpu_freq))
+    if (m_cpu_freq_helper.GetCpuFreq(cpu_freq))
         cpu_freq_acquired = true;
     //}
 
     //获取GPU利用率
     if (lite_version || !theApp.m_general_data.IsHardwareEnable(HI_GPU))
-        m_gpu_usage_helper.GetGpuUsage(theApp.m_gpu_usage);
+        m_gpu_usage_helper.GetGpuUsage(gpu_usage);
 
     //获取硬盘利用率
     if (lite_version /*|| is_arm64ec*/ || !theApp.m_general_data.IsHardwareEnable(HI_HDD))
@@ -1500,10 +1501,10 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
                 }
             }
         }
-        if (m_disk_usage_helper.GetDiskUsage(disk_index, theApp.m_hdd_usage))
+        if (m_disk_usage_helper.GetDiskUsage(disk_index, hdd_usage))
             m_get_disk_usage_by_pdh = true;
         else
-            theApp.m_hdd_usage = -1;
+            hdd_usage = -1;
     }
 
     //获取内存利用率
@@ -1515,29 +1516,29 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     theApp.m_total_memory = static_cast<int>(statex.ullTotalPhys / 1024);
 
 #ifndef WITHOUT_TEMPERATURE
-    // 采样失败或等待重试时，将传感器读数标为不可用。
-    theApp.m_cpu_temperature = -1;
-    theApp.m_gpu_temperature = -1;
-    theApp.m_hdd_temperature = -1;
-    theApp.m_main_board_temperature = -1;
+    // 采样失败或等待重试时，将本轮传感器读数标为不可用。
+    float cpu_temperature = -1;
+    float gpu_temperature = -1;
+    float hdd_temperature = -1;
+    float main_board_temperature = -1;
     if (!cpu_freq_acquired)
-        theApp.m_cpu_freq = -1;
+        cpu_freq = -1;
 
     if (CSingleLock sync(&theApp.m_minitor_lib_critical);
         IsTemperatureNeeded() && sync.Lock() && theApp.m_pMonitor != nullptr && TrySampleHardware())
     {
-        theApp.m_gpu_temperature = theApp.m_pMonitor->GpuTemperature();
-        theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
+        gpu_temperature = theApp.m_pMonitor->GpuTemperature();
+        main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
         if (theApp.m_general_data.IsHardwareEnable(HI_GPU))
-            theApp.m_gpu_usage = theApp.m_pMonitor->GpuUsage();
+            gpu_usage = theApp.m_pMonitor->GpuUsage();
         if (!cpu_freq_acquired)
-            theApp.m_cpu_freq = theApp.m_pMonitor->CpuFreq();
+            cpu_freq = theApp.m_pMonitor->CpuFreq();
         //获取CPU温度
         if (!theApp.m_pMonitor->AllCpuTemperature().empty())
         {
             if (theApp.m_general_data.cpu_core_name == CCommon::LoadText(IDS_AVREAGE_TEMPERATURE).GetString())  //如果选择了平均温度
             {
-                theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
+                cpu_temperature = theApp.m_pMonitor->CpuTemperature();
             }
             else
             {
@@ -1547,7 +1548,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
                     iter = theApp.m_pMonitor->AllCpuTemperature().begin();
                     theApp.m_general_data.cpu_core_name = iter->first;
                 }
-                theApp.m_cpu_temperature = iter->second;
+                cpu_temperature = iter->second;
             }
         }
         //获取硬盘温度
@@ -1559,7 +1560,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
                 iter = theApp.m_pMonitor->AllHDDTemperature().begin();
                 theApp.m_general_data.hard_disk_name = iter->first;
             }
-            theApp.m_hdd_temperature = iter->second;
+            hdd_temperature = iter->second;
         }
         //获取硬盘利用率
         if (!m_get_disk_usage_by_pdh)
@@ -1572,11 +1573,22 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
                     iter = theApp.m_pMonitor->AllHDDUsage().begin();
                     theApp.m_general_data.hard_disk_name = iter->first;
                 }
-                theApp.m_hdd_usage = iter->second;
+                hdd_usage = iter->second;
             }
         }
     }
 #endif
+
+    // 采样完成后再更新显示读数，避免重绘读到采样中的临时值。
+#ifndef WITHOUT_TEMPERATURE
+    theApp.m_cpu_temperature = cpu_temperature;
+    theApp.m_gpu_temperature = gpu_temperature;
+    theApp.m_hdd_temperature = hdd_temperature;
+    theApp.m_main_board_temperature = main_board_temperature;
+#endif
+    theApp.m_cpu_freq = cpu_freq;
+    theApp.m_gpu_usage = gpu_usage;
+    theApp.m_hdd_usage = hdd_usage;
 
     //通知插件获取数据，以及向插件传递监控数据
     for (const auto& plugin_info : theApp.m_plugins.GetPlugins())
