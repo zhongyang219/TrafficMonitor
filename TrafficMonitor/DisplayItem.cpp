@@ -399,10 +399,11 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
         //流量
         case TDI_TODAY_TRAFFIC:
         {
+            //流量达到1000MB以上时单位仍然是MB，这里使用4位整数作为示例文本，避免数值显示不全
             if (theApp.m_taskbar_data.separate_value_unit_with_space)
-                sample_str = _T("999.99 MB");
+                sample_str = _T("1023.99 MB");
             else
-                sample_str = _T("999.99MB");
+                sample_str = _T("1023.99MB");
         }
             break;
         }
