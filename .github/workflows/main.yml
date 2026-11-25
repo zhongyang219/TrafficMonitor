@@ -123,7 +123,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Ensure MSVC v143 ARM64 tools
+    - name: Select ARM64 toolset that has MFC
+      id: toolset
       shell: pwsh
       run: |
         $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
@@ -133,31 +134,48 @@ jobs:
         if (-not (Test-Path $vswhere)) { throw "vswhere.exe was not found." }
         $installPath = & $vswhere -latest -products * -property installationPath
         if (-not $installPath) { throw "Visual Studio was not found." }
-        # v143 is the 14.44 toolset. windows-11-arm now ships VS 2026 (v145) by default.
-        # A v145 cl.exe must not satisfy this project.
-        $cl = Get-ChildItem -Path $installPath -Recurse -Filter cl.exe -ErrorAction SilentlyContinue |
-          Where-Object { $_.FullName -match '\\VC\\Tools\\MSVC\\14\.44\.[^\\]+\\bin\\Host(arm64|x64)\\arm64\\cl\.exe$' } |
-          Select-Object -First 1
-        $mfc = Get-ChildItem -Path $installPath -Recurse -Filter mfc140u.lib -ErrorAction SilentlyContinue |
-          Where-Object { $_.FullName -match '\\VC\\Tools\\MSVC\\14\.44\.[^\\]+\\atlmfc\\lib\\arm64\\mfc140u\.lib$' } |
-          Select-Object -First 1
-        if ($cl -and $mfc) {
-          Write-Host "ARM64 compiler: $($cl.FullName)"
-          Write-Host "ARM64 MFC: $($mfc.FullName)"
-          return
+        function Find-Arm64MfcToolset([string]$Root) {
+          $found = @()
+          foreach ($dir in @(Get-ChildItem "$Root\VC\Tools\MSVC" -Directory -ErrorAction SilentlyContinue)) {
+            $cl = @(
+              "$($dir.FullName)\bin\Hostarm64\arm64\cl.exe",
+              "$($dir.FullName)\bin\Hostx64\arm64\cl.exe"
+            ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+            $mfc = "$($dir.FullName)\atlmfc\lib\arm64\mfc140u.lib"
+            if (-not $cl -or -not (Test-Path $mfc)) { continue }
+            $toolset = if ($dir.Name -like "14.44.*") { "v143" } elseif ($dir.Name -like "14.5*") { "v145" } else { $null }
+            if ($toolset) {
+              $found += [pscustomobject]@{ Version = $dir.Name; Toolset = $toolset; Cl = $cl; Mfc = $mfc }
+            }
+          }
+          $preferred = $found | Where-Object Toolset -eq "v143" | Select-Object -First 1
+          if ($preferred) { return $preferred }
+          return $found | Sort-Object Version -Descending | Select-Object -First 1
         }
-        $setup = Join-Path (Split-Path $vswhere) "setup.exe"
-        & $setup modify --installPath $installPath --quiet --norestart `
-          --add Microsoft.VisualStudio.Component.VC.14.44.17.14.ARM64 `
-          --add Microsoft.VisualStudio.Component.VC.14.44.17.14.MFC.ARM64 `
-          --add Microsoft.VisualStudio.Component.VC.14.44.17.14.ATL.ARM64
-        if ($LASTEXITCODE -ne 0) { throw "Installing the v143 ARM64 toolset failed with exit code $LASTEXITCODE." }
+        $selected = Find-Arm64MfcToolset $installPath
+        if (-not $selected) {
+          $setup = Join-Path (Split-Path $vswhere) "setup.exe"
+          $proc = Start-Process -FilePath $setup -Wait -PassThru -NoNewWindow -ArgumentList @(
+            "modify", "--installPath", $installPath, "--quiet", "--norestart",
+            "--add", "Microsoft.VisualStudio.Component.VC.Tools.ARM64",
+            "--add", "Microsoft.VisualStudio.Component.VC.MFC.ARM64",
+            "--add", "Microsoft.VisualStudio.Component.VC.14.44.17.14.ARM64",
+            "--add", "Microsoft.VisualStudio.Component.VC.14.44.17.14.MFC.ARM64"
+          )
+          if ($proc.ExitCode -ne 0) { throw "Installing ARM64 MFC failed with exit code $($proc.ExitCode)." }
+          $selected = Find-Arm64MfcToolset $installPath
+        }
+        if (-not $selected) { throw "No MSVC toolset with ARM64 MFC was found under $installPath." }
+        Write-Host "ARM64 compiler: $($selected.Cl)"
+        Write-Host "ARM64 MFC: $($selected.Mfc)"
+        Write-Host "PlatformToolset: $($selected.Toolset)"
+        "PLATFORM_TOOLSET=$($selected.Toolset)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
 
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
 
     - name: Run msbuild
-      run: msbuild TrafficMonitor_Lite.sln -p:Configuration="Release (lite)" -p:Platform=ARM64 -p:PlatformToolset=v143
+      run: msbuild TrafficMonitor_Lite.sln -p:Configuration="Release (lite)" -p:Platform=ARM64 -p:PlatformToolset=${{ env.PLATFORM_TOOLSET }}
 
     - name: Verify PE machine
       shell: pwsh
