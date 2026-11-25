@@ -155,7 +155,7 @@ public:
     //void UpdateTaskbarWndMenu();      //更新任务栏窗口右键菜单
     bool IsForceShowNotifyIcon();       //是否需要强制显示通知区图标
 
-    std::wstring GetPlauginTooltipInfo() const;
+    std::wstring GetPlauginTooltipInfo(const ITMPlugin* exclude_plugin = nullptr) const;
     bool IsTaksbarItemDisplayed(CommonDisplayItem item) const;
 
     void SendSettingsToPlugin();    //向所有插件发送当前的选项设置
@@ -206,6 +206,8 @@ private:
     double GetMonitorValue(MonitorItem item) override;
     virtual const wchar_t* GetMonitorValueString(MonitorItem item, int is_main_window = false) override;
     virtual const wchar_t* GetStringRes(const wchar_t* key, const wchar_t* section) override;
+    bool CopyTooltipText(TooltipTarget target, const ITMPlugin* exclude_plugin,
+                         wchar_t* buffer, int capacity) override;
 public:
     void ShowNotifyMessage(const wchar_t* strMsg) override;
     unsigned short GetLanguageId() const override;

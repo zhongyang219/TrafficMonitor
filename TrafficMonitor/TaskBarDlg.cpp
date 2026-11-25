@@ -695,7 +695,7 @@ HWND CTaskBarDlg::FindTaskbarHandle(bool& is_scendary_display)
     return hTaskbar;
 }
 
-CString CTaskBarDlg::GetMouseTipsInfo()
+CString CTaskBarDlg::GetMouseTipsInfo(const ITMPlugin* exclude_plugin)
 {
     CString tip_info;
     CString temp;
@@ -787,7 +787,7 @@ CString CTaskBarDlg::GetMouseTipsInfo()
     }
 
     //添加插件项目的鼠标提示
-    tip_info += theApp.GetPlauginTooltipInfo().c_str();
+    tip_info += theApp.GetPlauginTooltipInfo(exclude_plugin).c_str();
 
     return tip_info;
 }

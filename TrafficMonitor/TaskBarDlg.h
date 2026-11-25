@@ -158,7 +158,8 @@ protected:
     //查找任务栏的句柄
     //is_scendary_display：找到的是否为副显示器的任务栏
     HWND FindTaskbarHandle(bool& is_scendary_display);
-    CString GetMouseTipsInfo();		//获取鼠标提示
+    CString GetMouseTipsInfo(const ITMPlugin* exclude_plugin = nullptr);
+    friend class CTrafficMonitorApp;
 
     void AddHisToList(CommonDisplayItem item_type, int current_usage_percent);		//将当前利用率数值添加进链表
 

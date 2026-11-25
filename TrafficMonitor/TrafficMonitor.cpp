@@ -1206,12 +1206,12 @@ bool CTrafficMonitorApp::IsForceShowNotifyIcon()
         && (m_cfg_data.m_hide_main_window || m_main_wnd_data.m_mouse_penetrate));    //如果没有显示任务栏窗口，且隐藏了主窗口或设置了鼠标穿透，则禁用“显示通知区图标”菜单项
 }
 
-std::wstring CTrafficMonitorApp::GetPlauginTooltipInfo() const
+std::wstring CTrafficMonitorApp::GetPlauginTooltipInfo(const ITMPlugin* exclude_plugin) const
 {
     std::wstring tip_info;
     for (const auto& item : m_plugins.GetPlugins())
     {
-        if (item.plugin != nullptr && item.plugin->GetAPIVersion() >= 2)
+        if (item.plugin != nullptr && item.plugin != exclude_plugin && item.plugin->GetAPIVersion() >= 2)
         {
             std::wstring plugin_tooltip = item.plugin->GetTooltipInfo();
             CCommon::StringNormalize(plugin_tooltip);
@@ -1390,7 +1390,7 @@ int CTrafficMonitorApp::ExitInstance()
 
 int CTrafficMonitorApp::GetAPIVersion()
 {
-    return 0;
+    return 2;
 }
 
 const wchar_t* CTrafficMonitorApp::GetVersion()
@@ -1495,4 +1495,35 @@ int CTrafficMonitorApp::GetDPI(DPIType type) const
 const wchar_t* CTrafficMonitorApp::GetStringRes(const wchar_t* key, const wchar_t* section)
 {
     return m_str_table.LoadText(key, section).c_str();
+}
+
+bool CTrafficMonitorApp::CopyTooltipText(TooltipTarget target, const ITMPlugin* exclude_plugin,
+                                         wchar_t* buffer, int capacity)
+{
+    if (buffer == nullptr || capacity <= 0)
+        return false;
+    buffer[0] = L'\0';
+    auto* main = CTrafficMonitorDlg::Instance();
+    if (main == nullptr || !::IsWindow(main->GetSafeHwnd()))
+        return false;
+
+    CString text;
+    if (target == TT_MAIN_WINDOW)
+        text = main->GetMouseTipsInfo(exclude_plugin);
+    else if (target == TT_TASKBAR)
+    {
+        auto* taskbar = main->GetTaskbarWindow();
+        if (taskbar == nullptr)
+            return false;
+        text = taskbar->GetMouseTipsInfo(exclude_plugin);
+    }
+    else
+        return false;
+
+    int length = (std::min)(text.GetLength(), capacity - 1);
+    if (length > 0 && text[length - 1] >= 0xD800 && text[length - 1] <= 0xDBFF)
+        --length;
+    wmemcpy(buffer, text.GetString(), length);
+    buffer[length] = L'\0';
+    return true;
 }

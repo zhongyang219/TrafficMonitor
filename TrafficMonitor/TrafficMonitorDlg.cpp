@@ -130,7 +130,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
 END_MESSAGE_MAP()
 
 
-CString CTrafficMonitorDlg::GetMouseTipsInfo()
+CString CTrafficMonitorDlg::GetMouseTipsInfo(const ITMPlugin* exclude_plugin)
 {
     CString tip_info;
     CString temp;
@@ -214,7 +214,7 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
 }
 
     //添加插件项目的鼠标提示
-    tip_info += theApp.GetPlauginTooltipInfo().c_str();
+    tip_info += theApp.GetPlauginTooltipInfo(exclude_plugin).c_str();
 
     //if (IsTaskbarWndValid())
     //{

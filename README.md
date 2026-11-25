@@ -1,5 +1,21 @@
 **简体中文 | [English](./README_en-us.md)**
 
+# TrafficMonitor V1.86：ProcessNetMonitor 鼠标提示支持
+
+本 fork 基于上游 [TrafficMonitor V1.86](https://github.com/zhongyang219/TrafficMonitor/tree/V1.86)（`02a817a`），目的是改善 [ProcessNetMonitor 插件](https://github.com/WaterCry/ProcessNetMonitor-hourly-history-chart/tree/feature/hourly-history-chart)的悬停显示。原先插件浮窗展示进程网速排行，而 TrafficMonitor 的统计信息和其他插件的提示另在原生提示框里。为了让用户在同一个浮窗里查看这些信息，宿主需要提供一个只读接口，让插件能取得原生鼠标提示文本。
+
+## Fork 后的修改
+
+- 在插件宿主接口 `ITrafficMonitor` 中新增 `CopyTooltipText()`，宿主接口版本提升至 `2`。插件可按主窗口或任务栏窗口读取对应的鼠标提示文本，并排除自身的提示，避免重复显示。
+- 接口只复制文本，不显示或隐藏原生提示，不修改配置。TrafficMonitor 原有的「显示鼠标提示」设置和默认行为保持不变。
+- 双栏布局由 ProcessNetMonitor 绘制：左栏仍是进程网速排行，右栏「◆ 其他插件数据」显示宿主和其他插件的提示。TrafficMonitor 本身不新增双栏界面。
+
+## 与 ProcessNetMonitor 配合使用
+
+同时使用包含 `CopyTooltipText()` 的 TrafficMonitor 构建和支持该接口的 ProcessNetMonitor 插件，并在插件选项中保留默认开启的「在浮窗中显示 TrafficMonitor 鼠标提示」。上游 V1.86 不包含本 fork 新增的接口；宿主不支持时，插件仍可显示原有单栏浮窗。
+
+如果只想看到插件浮窗，可在 TrafficMonitor 的「主窗口设置」或「任务栏设置」中自行关闭对应的「显示鼠标提示」。以下保留的是上游介绍和使用说明，其中下载链接指向上游构建，不包含本 fork 新增的接口。
+
 [![Badge](https://img.shields.io/badge/link-996.icu-%23FF4D5B.svg?style=flat-square)](https://996.icu/#/en_US)
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg?style=flat-square)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/zhongyang219/TrafficMonitor/main.yml?branch=master&label=Release%20CI&logo=github&style=flat-square)](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI")
@@ -13,7 +29,7 @@ Traffic Monitor是一款用于Windows平台的网速监控悬浮窗软件，可�
 
 # 相关链接：
 
-请[点击此处](https://github.com/zhongyang219/TrafficMonitor/releases/latest)下载TrafficMonitor的最新版本。
+请[点击此处](https://github.com/zhongyang219/TrafficMonitor/releases/latest)下载上游 TrafficMonitor 的最新版本。
 
 备用链接：[百度网盘下载](https://pan.baidu.com/s/15PMt7s-ASpyDwtS__4cUhg) 提取码：`ou0m`
 

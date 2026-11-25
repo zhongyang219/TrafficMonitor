@@ -420,6 +420,12 @@ public:
      * @return 
      */
     virtual const wchar_t* GetStringRes(const wchar_t* key, const wchar_t* section) = 0;
+
+    // Host API v2. Call on the host UI thread. Capacity includes the terminator.
+    // Long text is truncated. Returns false for an unavailable target or invalid buffer.
+    enum TooltipTarget { TT_MAIN_WINDOW, TT_TASKBAR };
+    virtual bool CopyTooltipText(TooltipTarget target, const ITMPlugin* exclude_plugin,
+                                 wchar_t* buffer, int capacity) = 0;
 };
 
 

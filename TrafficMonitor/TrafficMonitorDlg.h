@@ -138,7 +138,7 @@ public:
     void ExitMonitorThread();       //停止监控线程
 
 protected:
-    CString GetMouseTipsInfo();     //获取鼠标提示信息
+    CString GetMouseTipsInfo(const ITMPlugin* exclude_plugin = nullptr);
     void SetTransparency();         //根据m_transparency的值设置窗口透明度
     void SetTransparency(int transparency);
 public:
@@ -187,6 +187,7 @@ protected:
 
 public:
     bool IsTaskbarWndValid() const;
+    friend class CTrafficMonitorApp;
 protected:
 
     void TaskbarShowHideItem(DisplayItem type);
