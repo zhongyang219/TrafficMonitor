@@ -12,13 +12,18 @@
 
 ## 与 ProcessNetMonitor 配合使用
 
-同时使用包含 `CopyTooltipText()` 的 TrafficMonitor 构建和支持该接口的 ProcessNetMonitor 插件，并在插件选项中保留默认开启的「在浮窗中显示 TrafficMonitor 鼠标提示」。上游 V1.86 不包含本 fork 新增的接口；宿主不支持时，插件仍可显示原有单栏浮窗。
+同时使用包含 `CopyTooltipText()` 的 [TrafficMonitor](https://github.com/WaterCry/ProcessNetMonitor-hourly-history-chart/tree/feature/hourly-history-chart) 构建和支持该接口的 ProcessNetMonitor 插件，并在插件选项中保留默认开启的「在浮窗中显示 TrafficMonitor 鼠标提示」。上游 V1.86 不包含本 fork 新增的接口；宿主不支持时，插件仍可显示原有单栏浮窗。
 
 如果只想看到插件浮窗，可在 TrafficMonitor 的「主窗口设置」或「任务栏设置」中自行关闭对应的「显示鼠标提示」。以下保留的是上游介绍和使用说明，其中下载链接指向上游构建，不包含本 fork 新增的接口。
 
+![隐藏鼠标显示](images/1795606884413.png)
+
+![显示鼠标显示](images/1795606859379.png)
+
+
 [![Badge](https://img.shields.io/badge/link-996.icu-%23FF4D5B.svg?style=flat-square)](https://996.icu/#/en_US)
-[![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg?style=flat-square)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/zhongyang219/TrafficMonitor/main.yml?branch=master&label=Release%20CI&logo=github&style=flat-square)](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI")
+[![LICENSE](<https://img.shields.io/badge/license-Anti%20996-blue.svg?style=flat-square>)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
+[![GitHub Workflow Status](<https://img.shields.io/github/actions/workflow/status/zhongyang219/TrafficMonitor/main.yml?branch=master&label=Release%20CI&logo=github&style=flat-square>)](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:)
 [![GitHub release](https://img.shields.io/github/release/zhongyang219/TrafficMonitor.svg?style=flat-square)](https://github.com/zhongyang219/TrafficMonitor/releases/latest)
 
 <a href="https://hellogithub.com/repository/5ef48af2b2794d4798b17d6539ec7305" target="_blank"><img src="https://api.hellogithub.com/v1/widgets/recommend.svg?rid=5ef48af2b2794d4798b17d6539ec7305&claim_uid=CeVqou2T1dIvfQP" alt="Featured｜HelloGitHub" style="width: 250px; height: 54px;" width="250" height="54" /></a>
@@ -37,7 +42,7 @@ Traffic Monitor是一款用于Windows平台的网速监控悬浮窗软件，可�
 
 如果遇到问题，请[点击此处](./Help.md)查看常见问题。
 
-你也可以[点击此处](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:"Release+CI")下载TrafficMonitor的预发行构建版本。
+你也可以[点击此处](https://github.com/zhongyang219/TrafficMonitor/actions?query=workflow:)下载TrafficMonitor的预发行构建版本。
 
 从1.80版本开始，TrafficMonitor加入了温度监控功能，如果你不需要温度监控功能，并且在使用1.80以上版本中遇到了问题，建议下载不含温度监控的版本（Lite版本）。（在Release页面找到文件名包含`Lite`的版本。）
 
@@ -55,15 +60,15 @@ TrafficMonitor提供了标准版和Lite版两种版本可用。标准版包含�
 
 | 功能                          | 标准版 | Lite版 |
 | ----------------------------- | ------ | ------ |
-| 网速监控                      | ✔      | ✔      |
-| CPU、内存利用率          | ✔      | ✔      |
-| CPU、显卡、硬盘、主板温度监控  | ✔      | ❌      |
-| CPU频率监控 | ✔ | ✔ |
-| 显卡利用率监控                | ✔      | ❌      |
-| 硬盘利用率监控                | ✔      | ❌      |
-| 网络详细信息                  | ✔      | ✔      |
-| 插件系统                      | ✔      | ✔      |
-| 主窗口更换皮肤                | ✔      | ✔      |
+| 网速监控                      | ✔     | ✔     |
+| CPU、内存利用率               | ✔     | ✔     |
+| CPU、显卡、硬盘、主板温度监控 | ✔     | ❌     |
+| CPU频率监控                   | ✔     | ✔     |
+| 显卡利用率监控                | ✔     | ❌     |
+| 硬盘利用率监控                | ✔     | ❌     |
+| 网络详细信息                  | ✔     | ✔     |
+| 插件系统                      | ✔     | ✔     |
+| 主窗口更换皮肤                | ✔     | ✔     |
 | 需要管理员权限                | 是     | 否     |
 
 # 主要特性
@@ -76,6 +81,7 @@ TrafficMonitor提供了标准版和Lite版两种版本可用。标准版包含�
 * 历史流量统计
 * 硬件信息监控
 * 插件系统
+
 # 使用说明
 
 **[点击这里](https://github.com/zhongyang219/TrafficMonitor/wiki)转到Wiki页面查看关于TrafficMonitor的详细说明文档。**
@@ -93,9 +99,9 @@ TrafficMonitor提供了标准版和Lite版两种版本可用。标准版包含�
 ![](./Screenshots/taskbar.PNG)
 
 多彩皮肤：
-<img src="./Screenshots/skins.PNG" style="zoom:80%;" />
 
 # 如何使用
+
 程序启动后在会在屏幕中显示一个显示网速的悬浮窗。在悬浮窗上点击鼠标右键可以弹出右键菜单。
 
 TrafficMonitor支持将信息显示到任务栏。但是TrafficMonitor默认只显示主窗口（悬浮窗），如果需要让它嵌入到任务栏显示，请在右键菜单中选择“显示任务栏窗口”命令。
@@ -105,6 +111,7 @@ TrafficMonitor支持将信息显示到任务栏。但是TrafficMonitor默认只�
 <img src="./Screenshots/taskbar_item_settings.png" style="zoom:80%;" />
 
 # 自定义皮肤
+
 <img src="./Screenshots/selecte_skin.png" style="zoom:80%;" />
 
 在主窗口或通知区图标右键菜单上选择“其他功能”——“更换皮肤”可以打开更换皮肤界面。[点击此处](https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md)可以下载更多皮肤。用户还可以根据自己的需要编辑自己的皮肤。
@@ -122,6 +129,7 @@ TrafficMonitor支持将信息显示到任务栏。但是TrafficMonitor默认只�
 [皮肤制作教程 · zhongyang219/TrafficMonitor Wiki (github.com)](https://github.com/zhongyang219/TrafficMonitor/wiki/皮肤制作教程)
 
 # 选项设置
+
 <img src="./Screenshots/option.jpg" style="zoom:80%;" />
 
 在右键菜单选择“选项...”可以进入选项设置。在选项设置对话框中，可以单独设置主窗口和任务栏窗口的文本颜色、字体、背景颜色、网速单位、显示的文本等。
