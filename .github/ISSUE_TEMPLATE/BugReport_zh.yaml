@@ -20,6 +20,18 @@ body:
       label: 您当前使用的操作系统版本
     validations: 
       required: true
+  - type: dropdown
+    attributes:
+      label: 程序架构
+      description: 关于对话框版本号后面的括号，例如 (x64)、(ARM64)、(Arm64EC)。
+      options:
+        - x64
+        - x86
+        - ARM64
+        - Arm64EC
+        - 不确定
+    validations:
+      required: true
   - type: textarea
     attributes:
       label: 发生了什么?

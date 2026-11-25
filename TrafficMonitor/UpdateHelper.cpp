@@ -83,19 +83,22 @@ void CUpdateHelper::ParseUpdateInfo(wstring version_info)
     }
 
     wstring str_source_tag = (m_update_source == UpdateSource::GitHubSource ? L"GitHub" : L"Gitee");
-    wstring str_link_tag, str_link_tag_x64, str_link_tag_arm64ec;
+    wstring str_link_tag, str_link_tag_x64, str_link_tag_arm64ec, str_link_tag_arm64;
 #ifdef WITHOUT_TEMPERATURE
     str_link_tag = L"link_without_temperature";
     str_link_tag_x64 = L"link_without_temperature_x64";
     str_link_tag_arm64ec = L"link_without_temperature_arm64ec";
+    str_link_tag_arm64 = L"link_without_temperature_arm64";
 #else
     str_link_tag = L"link";
     str_link_tag_x64 = L"link_x64";
     str_link_tag_arm64ec = L"link_arm64ec";
+    str_link_tag_arm64 = L"link_arm64";
 #endif
     m_link64 = version_xml.GetNode(str_link_tag_x64.c_str(), str_source_tag.c_str());
     m_link = version_xml.GetNode(str_link_tag.c_str(), str_source_tag.c_str());
     m_link_arm64ec = version_xml.GetNode(str_link_tag_arm64ec.c_str(), str_source_tag.c_str());
+    m_link_arm64 = version_xml.GetNode(str_link_tag_arm64.c_str(), str_source_tag.c_str());
 
     // Validate all download URLs: must use HTTPS and originate from a trusted domain.
     // This prevents a network-level attacker from injecting plain-HTTP or off-domain
@@ -112,13 +115,14 @@ void CUpdateHelper::ParseUpdateInfo(wstring version_info)
                 host.compare(0, 10, L"gitee.com/") == 0);
     };
 
-    if (!IsValidDownloadUrl(m_link) || !IsValidDownloadUrl(m_link64) || !IsValidDownloadUrl(m_link_arm64ec))
+    if (!IsValidDownloadUrl(m_link) || !IsValidDownloadUrl(m_link64) || !IsValidDownloadUrl(m_link_arm64ec) || !IsValidDownloadUrl(m_link_arm64))
     {
         // Clear all update data to prevent MITM-injected URLs from being acted upon
         m_version.clear();
         m_link.clear();
         m_link64.clear();
         m_link_arm64ec.clear();
+        m_link_arm64.clear();
         return;
     }
 
@@ -151,6 +155,11 @@ const std::wstring& CUpdateHelper::GetLink64() const
 const std::wstring& CUpdateHelper::GetLinkArm64ec() const
 {
     return m_link_arm64ec;
+}
+
+const std::wstring& CUpdateHelper::GetLinkArm64() const
+{
+    return m_link_arm64;
 }
 
 const std::wstring& CUpdateHelper::GetContentsEn() const

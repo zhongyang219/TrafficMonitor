@@ -25,7 +25,9 @@ Traffic Monitor是一款用于Windows平台的网速监控悬浮窗软件，可�
 
 从1.80版本开始，TrafficMonitor加入了温度监控功能，如果你不需要温度监控功能，并且在使用1.80以上版本中遇到了问题，建议下载不含温度监控的版本（Lite版本）。（在Release页面找到文件名包含`Lite`的版本。）
 
-TrafficMonitor依赖于Microsoft Visual C++ 运行环境，如果程序启动时提示“找不到MSVC*.dll”，请点击以下链接下载并安装Microsoft Visual C++ 运行环境。
+Windows 11 ARM64 请下载文件名包含 `arm64` 的原生版本（Machine 为 AA64）。它不能加载 x64 或 ARM64EC 插件。ARM64EC 包仍可在 Windows 11 ARM 上运行，并可以加载 x64 插件，但不是原生进程。
+
+TrafficMonitor依赖于Microsoft Visual C++ 运行环境，如果程序启动时提示“找不到MSVC*.dll”，请点击以下链接下载并安装对应处理器架构的 Microsoft Visual C++ 运行环境。ARM64 版本需要 ARM64 可再发行组件。
 
 [最新支持的 Visual C++ 可再发行程序包下载 | Microsoft Docs](https://docs.microsoft.com/zh-CN/cpp/windows/latest-supported-vc-redist?view=msvc-170)
 

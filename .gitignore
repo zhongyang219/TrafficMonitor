@@ -300,3 +300,5 @@ __pycache__/
 !/TrafficMonitor/language/*.ini
 *.diagsession
 enc_temp*
+temp/
+.codegraph/

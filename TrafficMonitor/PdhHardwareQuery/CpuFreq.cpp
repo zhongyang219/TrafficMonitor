@@ -36,6 +36,9 @@ bool CPdhCpuFreq::GetCpuFreq(float& freq)
     double value{};
     if (QueryValue(value))
     {
+        // 部分 ARM SoC 的 ProcessorInformation.MaxMhz 为 0。此时不能把频率报成 0。
+        if (max_cpu_freq <= 0)
+            return false;
         freq = value / 100 * max_cpu_freq;
         return true;
     }

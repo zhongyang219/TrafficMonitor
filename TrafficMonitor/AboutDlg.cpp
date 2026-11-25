@@ -108,9 +108,11 @@ BOOL CAboutDlg::OnInitDialog()
     version_info += _T(" (For WinXP)");
 #endif // COMPILE_FOR_WINXP
 
-#ifdef _M_ARM64EC
+#if defined _M_ARM64EC
     version_info += _T(" (Arm64EC)");
-#elif _M_X64
+#elif defined _M_ARM64
+    version_info += _T(" (ARM64)");
+#elif defined _M_X64
     version_info += _T(" (x64)");
 #endif
 

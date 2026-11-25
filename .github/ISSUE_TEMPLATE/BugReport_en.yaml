@@ -20,6 +20,18 @@ body:
       label: Current Operating System Version
     validations: 
       required: true
+  - type: dropdown
+    attributes:
+      label: Program architecture
+      description: The text in parentheses after the version in the About dialog, for example (x64), (ARM64), or (Arm64EC).
+      options:
+        - x64
+        - x86
+        - ARM64
+        - Arm64EC
+        - Not sure
+    validations:
+      required: true
   - type: textarea
     attributes:
       label: What happened?

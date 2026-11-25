@@ -32,6 +32,67 @@ static wstring WcharArrayToWString(const wchar_t* str)
         return wstring(str);
 }
 
+#ifndef IMAGE_FILE_MACHINE_ARM64
+#define IMAGE_FILE_MACHINE_ARM64 0xAA64
+#endif
+#ifndef IMAGE_FILE_MACHINE_ARM64EC
+#define IMAGE_FILE_MACHINE_ARM64EC 0xA641
+#endif
+
+// 读取 PE Machine。失败时不阻止 LoadLibrary，由系统返回加载错误。
+static bool ReadPeMachine(const wchar_t* path, WORD& machine)
+{
+    HANDLE file = ::CreateFileW(path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+        nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (file == INVALID_HANDLE_VALUE)
+        return false;
+
+    struct FileCloser
+    {
+        HANDLE handle;
+        ~FileCloser()
+        {
+            if (handle != INVALID_HANDLE_VALUE)
+                ::CloseHandle(handle);
+        }
+    } closer{ file };
+
+    IMAGE_DOS_HEADER dos{};
+    DWORD read = 0;
+    if (!::ReadFile(file, &dos, sizeof(dos), &read, nullptr) || read != sizeof(dos))
+        return false;
+    if (dos.e_magic != IMAGE_DOS_SIGNATURE || dos.e_lfanew <= 0)
+        return false;
+    if (::SetFilePointer(file, dos.e_lfanew, nullptr, FILE_BEGIN) == INVALID_SET_FILE_POINTER)
+        return false;
+
+    DWORD signature = 0;
+    if (!::ReadFile(file, &signature, sizeof(signature), &read, nullptr) || read != sizeof(signature))
+        return false;
+    if (signature != IMAGE_NT_SIGNATURE)
+        return false;
+
+    IMAGE_FILE_HEADER header{};
+    if (!::ReadFile(file, &header, sizeof(header), &read, nullptr) || read != sizeof(header))
+        return false;
+    machine = header.Machine;
+    return true;
+}
+
+static bool IsPluginMachineCompatible(WORD machine)
+{
+#if defined _M_ARM64EC
+    // ARM64EC 进程可以加载 x64 与 ARM64EC DLL，不能加载纯 ARM64 DLL。
+    return machine == IMAGE_FILE_MACHINE_AMD64 || machine == IMAGE_FILE_MACHINE_ARM64EC;
+#elif defined _M_ARM64
+    return machine == IMAGE_FILE_MACHINE_ARM64;
+#elif defined _M_X64
+    return machine == IMAGE_FILE_MACHINE_AMD64;
+#else
+    return machine == IMAGE_FILE_MACHINE_I386;
+#endif
+}
+
 void CPluginManager::LoadPlugins()
 {
     //从plugins目录下加载插件
@@ -54,6 +115,12 @@ void CPluginManager::LoadPlugins()
         if (theApp.m_cfg_data.plugin_disabled.Contains(file_name))
         {
             plugin_info.state = PluginState::PS_DISABLE;
+            continue;
+        }
+        WORD plugin_machine = 0;
+        if (ReadPeMachine(plugin_info.file_path.c_str(), plugin_machine) && !IsPluginMachineCompatible(plugin_machine))
+        {
+            plugin_info.state = PluginState::PS_ARCHITECTURE_MISMATCH;
             continue;
         }
         //载入dll
