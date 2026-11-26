@@ -150,6 +150,9 @@ BOOL CPluginManagerDlg::OnInitDialog()
         case CPluginManager::PluginState::PS_MUDULE_LOAD_FAILED:
             status = CCommon::LoadTextFormat(IDS_PLUGIN_MODULE_LOAD_FAILED, { error_info });
             break;
+        case CPluginManager::PluginState::PS_ARCHITECTURE_MISMATCH:
+            status = CCommon::LoadText(IDS_PLUGIN_ARCH_MISMATCH);
+            break;
         case CPluginManager::PluginState::PS_FUNCTION_GET_FAILED:
             status = CCommon::LoadTextFormat(IDS_PLUGIN_FUNCTION_GET_FAILED, { error_info });
             break;

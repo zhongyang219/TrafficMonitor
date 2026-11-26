@@ -167,7 +167,9 @@ Click the link below to download and install the Microsoft Visual C++ runtime en
 
 ### I want to have more hardware information on the taskbar, such an fan speed, power, etc
 
-The Hardware Monitor plug in is now available. It can display all the monitoring items in LibreHardwareMonitor.
+The Hardware Monitor plug in is now available. It can display all the monitoring items in LibreHardwareMonitor. A plug-in DLL must use the same processor architecture as TrafficMonitor. The native ARM64 build loads only ARM64 plug-ins.
+
+The native ARM64 build reads CPU, GPU and disk utilization from system performance counters. LibreHardwareMonitor's kernel driver has no ARM64 build, so do not replace files in an ARM64 installation with the x64 `OpenHardwareMonitorApi.dll`.
 
 ![](images/420555677-53bd3ac9-1c55-4212-aa68-1fe5711e9fbc.png)
 

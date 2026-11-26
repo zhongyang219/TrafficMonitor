@@ -7,25 +7,29 @@ on:
 jobs:
 
   x64_build:
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
-    - uses: actions/checkout@v3
-      
+    - uses: actions/checkout@v4
+
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
-      
+
     - name: Run msbuild
-      run: msbuild TrafficMonitor_Lite.sln -p:configuration="Release (lite)" -p:platform=x64 -p:platformToolset=v143
-      
+      run: msbuild TrafficMonitor_Lite.sln -p:Configuration="Release (lite)" -p:Platform=x64 -p:PlatformToolset=v143
+
+    - name: Verify PE machine
+      shell: pwsh
+      run: .github/scripts/verify-pe-machine.ps1 -Root "Bin/x64/Release (lite)" -Expected AMD64
+
     - name: Get current time
       uses: josStorer/get-current-time@v2.0.2
       id: current-time
       with:
         format: YYYYMMDD_HHmmss
         utcOffset: "+08:00"
-      
-    - name : Upload artifact
+
+    - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: x64_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
@@ -33,57 +37,65 @@ jobs:
           Bin/x64/Release (lite)/TrafficMonitor.exe
           Bin/x64/Release (lite)/*.dll
 
-    - name : Upload pdb files
+    - name: Upload pdb files
       uses: actions/upload-artifact@v4
       with:
         name: x64_${{ steps.current-time.outputs.formattedTime }}_pdb
         path: Bin/x64/Release (lite)/*.pdb
 
   x86_build:
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
-    - uses: actions/checkout@v3
-      
+    - uses: actions/checkout@v4
+
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
-      
+
     - name: Run msbuild
-      run: msbuild TrafficMonitor_Lite.sln -p:configuration="Release (lite)" -p:platform=x86 -p:platformToolset=v143
-      
+      run: msbuild TrafficMonitor_Lite.sln -p:Configuration="Release (lite)" -p:Platform=x86 -p:PlatformToolset=v143
+
+    - name: Verify PE machine
+      shell: pwsh
+      run: .github/scripts/verify-pe-machine.ps1 -Root "Bin/Release (lite)" -Expected I386
+
     - name: Get current time
       uses: josStorer/get-current-time@v2.0.2
       id: current-time
       with:
         format: YYYYMMDD_HHmmss
         utcOffset: "+08:00"
-      
-    - name : Upload artifact
+
+    - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: x86_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
         path: |
           Bin/Release (lite)/TrafficMonitor.exe
           Bin/Release (lite)/*.dll
-      
-    - name : Upload pdb files
+
+    - name: Upload pdb files
       uses: actions/upload-artifact@v4
       with:
         name: x86_${{ steps.current-time.outputs.formattedTime }}_pdb
         path: Bin/Release (lite)/*.pdb
 
   arm64ec_build:
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
-    - uses: actions/checkout@v3
-      
+    - uses: actions/checkout@v4
+
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
-      
+
     - name: Run msbuild
-      run: msbuild TrafficMonitor_Lite.sln -p:configuration="Release (lite)" -p:platform=ARM64EC -p:platformToolset=v143
-      
+      run: msbuild TrafficMonitor_Lite.sln -p:Configuration="Release (lite)" -p:Platform=ARM64EC -p:PlatformToolset=v143
+
+    - name: Verify PE machine
+      shell: pwsh
+      run: .github/scripts/verify-pe-machine.ps1 -Root "Bin/ARM64EC/Release (lite)" -Expected ARM64EC
+
     - name: Get current time
       uses: josStorer/get-current-time@v2.0.2
       id: current-time
@@ -91,10 +103,7 @@ jobs:
         format: YYYYMMDD_HHmmss
         utcOffset: "+08:00"
 
-    # - name: Move dll file path 
-    #   run: mv Bin/x64/Release/*.dll  Bin/ARM64EC/Release/
-
-    - name : Upload artifact
+    - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: arm64EC_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
@@ -102,8 +111,97 @@ jobs:
           Bin/ARM64EC/Release (lite)/TrafficMonitor.exe
           Bin/ARM64EC/Release (lite)/*.dll
 
-    - name : Upload pdb files
+    - name: Upload pdb files
       uses: actions/upload-artifact@v4
       with:
         name: arm64EC_${{ steps.current-time.outputs.formattedTime }}_pdb
         path: Bin/ARM64EC/Release (lite)/*.pdb
+
+  arm64_build:
+    runs-on: windows-11-arm
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Select ARM64 toolset that has MFC
+      id: toolset
+      shell: pwsh
+      run: |
+        $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+        if (-not (Test-Path $vswhere)) {
+          $vswhere = "${env:ProgramFiles}\Microsoft Visual Studio\Installer\vswhere.exe"
+        }
+        if (-not (Test-Path $vswhere)) { throw "vswhere.exe was not found." }
+        $installPath = & $vswhere -latest -products * -property installationPath
+        if (-not $installPath) { throw "Visual Studio was not found." }
+        function Find-Arm64MfcToolset([string]$Root) {
+          $found = @()
+          foreach ($dir in @(Get-ChildItem "$Root\VC\Tools\MSVC" -Directory -ErrorAction SilentlyContinue)) {
+            $cl = @(
+              "$($dir.FullName)\bin\Hostarm64\arm64\cl.exe",
+              "$($dir.FullName)\bin\Hostx64\arm64\cl.exe"
+            ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+            $mfc = "$($dir.FullName)\atlmfc\lib\arm64\mfc140u.lib"
+            if (-not $cl -or -not (Test-Path $mfc)) { continue }
+            $toolset = if ($dir.Name -like "14.44.*") { "v143" } elseif ($dir.Name -like "14.5*") { "v145" } else { $null }
+            if ($toolset) {
+              $found += [pscustomobject]@{ Version = $dir.Name; Toolset = $toolset; Cl = $cl; Mfc = $mfc }
+            }
+          }
+          $preferred = $found | Where-Object Toolset -eq "v143" | Select-Object -First 1
+          if ($preferred) { return $preferred }
+          return $found | Sort-Object Version -Descending | Select-Object -First 1
+        }
+        $selected = Find-Arm64MfcToolset $installPath
+        if (-not $selected) {
+          $setup = Join-Path (Split-Path $vswhere) "setup.exe"
+          $proc = Start-Process -FilePath $setup -Wait -PassThru -NoNewWindow -ArgumentList @(
+            "modify", "--installPath", $installPath, "--quiet", "--norestart",
+            "--add", "Microsoft.VisualStudio.Component.VC.Tools.ARM64",
+            "--add", "Microsoft.VisualStudio.Component.VC.MFC.ARM64",
+            "--add", "Microsoft.VisualStudio.Component.VC.14.44.17.14.ARM64",
+            "--add", "Microsoft.VisualStudio.Component.VC.14.44.17.14.MFC.ARM64"
+          )
+          if ($proc.ExitCode -ne 0) { throw "Installing ARM64 MFC failed with exit code $($proc.ExitCode)." }
+          $selected = Find-Arm64MfcToolset $installPath
+        }
+        if (-not $selected) { throw "No MSVC toolset with ARM64 MFC was found under $installPath." }
+        Write-Host "ARM64 compiler: $($selected.Cl)"
+        Write-Host "ARM64 MFC: $($selected.Mfc)"
+        Write-Host "PlatformToolset: $($selected.Toolset)"
+        "PLATFORM_TOOLSET=$($selected.Toolset)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Run msbuild
+      run: msbuild TrafficMonitor_Lite.sln -p:Configuration="Release (lite)" -p:Platform=ARM64 -p:PlatformToolset=${{ env.PLATFORM_TOOLSET }}
+
+    - name: Verify PE machine
+      shell: pwsh
+      run: |
+        .github/scripts/verify-pe-machine.ps1 -Root "Bin/ARM64/Release (lite)" -Expected ARM64
+        if (Test-Path "Bin/ARM64/Release") {
+          .github/scripts/verify-pe-machine.ps1 -Root "Bin/ARM64/Release" -Expected ARM64
+        }
+
+    - name: Get current time
+      uses: josStorer/get-current-time@v2.0.2
+      id: current-time
+      with:
+        format: YYYYMMDD_HHmmss
+        utcOffset: "+08:00"
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: arm64_${{ steps.current-time.outputs.formattedTime }}_TrafficMonitor
+        path: |
+          Bin/ARM64/Release (lite)/TrafficMonitor.exe
+          Bin/ARM64/Release (lite)/*.dll
+
+    - name: Upload pdb files
+      uses: actions/upload-artifact@v4
+      with:
+        name: arm64_${{ steps.current-time.outputs.formattedTime }}_pdb
+        path: Bin/ARM64/Release (lite)/*.pdb

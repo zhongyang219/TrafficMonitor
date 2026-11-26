@@ -1,6 +1,13 @@
 **[简体中文](./update_log.md) | [繁體中文](./update_log_zh-tw.md) | English**
 
 # TrafficMonitor Update log
+
+## Unreleased
+
+* Added a native Windows 11 ARM64 build. The package name contains `arm64`, and the About dialog shows `(ARM64)`.
+* Fixed the Arm64EC build opening the x64 download when checking for updates, and reporting its architecture as x64 in crash information.
+* Plug-in loading now reports a clear status when a DLL was built for a different processor architecture.
+
 ## V1.86(2026/03/29)
 
 **New Features**

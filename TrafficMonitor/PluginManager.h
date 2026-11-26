@@ -17,7 +17,8 @@ public:
         PS_MUDULE_LOAD_FAILED,  //dll加载失败
         PS_FUNCTION_GET_FAILED, //插件函数获取失败
         PS_VERSION_NOT_SUPPORT, //插件版本不被支持
-        PS_DISABLE              //已禁用
+        PS_DISABLE,             //已禁用
+        PS_ARCHITECTURE_MISMATCH //插件处理器架构与主程序不一致
     };
 
     //插件信息

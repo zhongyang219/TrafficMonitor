@@ -191,7 +191,9 @@ TrafficMonitor的温度监控功能依赖第三方开源库[LibreHardwareMonitor
 
 ### 我希望在任务栏上显示更多硬件信息，比如风扇转速、功率等
 
-现在推出了硬件监控插件，可以显示LibreHardwareMonitor中所有监控项目。
+现在推出了硬件监控插件，可以显示LibreHardwareMonitor中所有监控项目。插件 DLL 必须和主程序是同一种处理器架构。原生 ARM64 版只能加载 ARM64 插件，不能把 x64 插件放进 `plugins` 目录。
+
+原生 ARM64 版使用系统性能计数器读取 CPU、显卡和硬盘利用率。LibreHardwareMonitor 目前依赖的内核驱动没有 ARM64 版本，因此不要用 x64 的 `OpenHardwareMonitorApi.dll` 替换 ARM64 程序目录中的文件。
 
 ![](Screenshots/420555677-53bd3ac9-1c55-4212-aa68-1fe5711e9fbc.png)
 

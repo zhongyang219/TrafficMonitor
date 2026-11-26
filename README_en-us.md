@@ -25,7 +25,9 @@ You can also [click here](https://github.com/zhongyang219/TrafficMonitor/actions
 
 For version 1.80 and later, the temperature monitoring function has been added. If the user does not need the temperature monitoring function and encounters problems with version 1.80 or later, it is recommended to download the earlier version without the temperature monitor (Lite version). (You can find the `Lite` version on the Release page.)
 
-TrafficMonitor relies on the Microsoft Visual C++ operrating environment. If an error prompts "Cannot find MSVC*.dll" when the program starts, please click the link below to download and install the Microsoft Visual C++ operating environment.
+On Windows 11 ARM64, download the native build whose file name contains `arm64` (PE machine AA64). That process cannot load x64 or ARM64EC plug-ins. The ARM64EC package still runs on Windows 11 ARM and can load x64 plug-ins, but it is not a native ARM64 process.
+
+TrafficMonitor relies on the Microsoft Visual C++ operrating environment. If an error prompts "Cannot find MSVC*.dll" when the program starts, please click the link below to download and install the Visual C++ redistributable for the same processor architecture. The ARM64 build needs the ARM64 redistributable.
 
 [Download the latest supported version of Visual C++ Redistributable Package | Microsoft Docs](https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)
 

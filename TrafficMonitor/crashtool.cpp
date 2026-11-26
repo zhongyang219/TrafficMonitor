@@ -90,16 +90,17 @@ public:
         stackFrame.AddrPC.Offset = context.Eip;    // x86 使用 EIP
         stackFrame.AddrFrame.Offset = context.Ebp; // x86 使用 EBP
         stackFrame.AddrStack.Offset = context.Esp; // x86 使用 ESP
-//#elif defined _M_ARM64EC
-//        DWORD machineType = IMAGE_FILE_MACHINE_ARM64;
-//        stackFrame.AddrPC.Offset = context.Pc;     // ARM64 使用 PC
-//        stackFrame.AddrFrame.Offset = context.Fp;  // ARM64 使用 FP
-//        stackFrame.AddrStack.Offset = context.Sp;  // ARM64 使用 SP
+#elif defined _M_ARM64
+        // 纯 ARM64。ARM64EC 的 CONTEXT 仍是 x64 布局（Rip 对应 PC），走下面的分支。
+        DWORD machineType = IMAGE_FILE_MACHINE_ARM64;
+        stackFrame.AddrPC.Offset = context.Pc;
+        stackFrame.AddrFrame.Offset = context.Fp;
+        stackFrame.AddrStack.Offset = context.Sp;
 #else
         DWORD machineType = IMAGE_FILE_MACHINE_AMD64;
-        stackFrame.AddrPC.Offset = context.Rip;    // x64 使用 RIP
-        stackFrame.AddrFrame.Offset = context.Rbp; // x64 使用 RBP
-        stackFrame.AddrStack.Offset = context.Rsp; // x64 使用 RSP
+        stackFrame.AddrPC.Offset = context.Rip;    // x64 / ARM64EC 使用 RIP
+        stackFrame.AddrFrame.Offset = context.Rbp; // x64 / ARM64EC 使用 RBP
+        stackFrame.AddrStack.Offset = context.Rsp; // x64 / ARM64EC 使用 RSP
 #endif
         stackFrame.AddrPC.Mode = AddrModeFlat;
         stackFrame.AddrFrame.Mode = AddrModeFlat;

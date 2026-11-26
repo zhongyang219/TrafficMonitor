@@ -550,10 +550,12 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
         return;
     }
     version = update_helper.GetVersion();
-#ifdef _M_X64
-    link = update_helper.GetLink64();
-#elif defined _M_ARM64EC
+#if defined _M_ARM64EC
     link = update_helper.GetLinkArm64ec();
+#elif defined _M_ARM64
+    link = update_helper.GetLinkArm64();
+#elif defined _M_X64
+    link = update_helper.GetLink64();
 #else
     link = update_helper.GetLink();
 #endif
@@ -762,10 +764,12 @@ CString CTrafficMonitorApp::GetSystemInfoString()
     info += _T("Version: ");
     info += VERSION;
     info += _T(" ");
-#ifdef _M_X64
-    info += _T("x64");
-#elif defined _M_ARM64EC
+#if defined _M_ARM64EC
     info += _T("Arm64EC");
+#elif defined _M_ARM64
+    info += _T("ARM64");
+#elif defined _M_X64
+    info += _T("x64");
 #else
     info += _T("x86");
 #endif
