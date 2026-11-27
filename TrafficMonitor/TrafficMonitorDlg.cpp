@@ -373,6 +373,7 @@ void CTrafficMonitorDlg::AutoSelect()
 {
     unsigned __int64 max_in_out_bytes{};
     unsigned __int64 in_out_bytes;
+    CSingleLock sync(&m_conn_critical, TRUE);
     //m_connection_selected = m_connections[0].index;
     m_connection_selected = 0;
     //自动选择连接时，查找已发送和已接收字节数之和最多的那个连接，并将其设置为当前查看的连接
@@ -395,6 +396,8 @@ void CTrafficMonitorDlg::AutoSelect()
 
 void CTrafficMonitorDlg::IniConnection()
 {
+    //IniConnection会释放并重新创建m_pIfTable、重建m_connections，必须在主线程中调用，并且与监控线程互斥
+    CSingleLock sync(&m_conn_critical, TRUE);
     //为m_pIfTable开辟所需大小的内存
     free(m_pIfTable);
     m_dwSize = sizeof(MIB_IFTABLE);
@@ -485,6 +488,8 @@ void CTrafficMonitorDlg::IniConnection()
         m_connection_selected = 0;
     theApp.m_cfg_data.m_connection_name = GetConnection(m_connection_selected).description_2;
 
+    sync.Unlock();
+
     //根据已获取到的连接在菜单中添加相应项目
     IniConnectionMenu(theApp.m_main_menu.GetSubMenu(0)->GetSubMenu(0));      //向“选择网络连接”子菜单项添加项目
     IniConnectionMenu(theApp.m_main_menu_plugin.GetSubMenu(0)->GetSubMenu(0));      //向“选择网络连接”子菜单项添加项目
@@ -497,6 +502,7 @@ void CTrafficMonitorDlg::IniConnection()
 
 MIB_IFROW CTrafficMonitorDlg::GetConnectIfTable(int connection_index)
 {
+    CSingleLock sync(&m_conn_critical, TRUE);
     if (connection_index >= 0 && connection_index < static_cast<int>(m_connections.size()))
     {
         int index = m_connections[connection_index].index;
@@ -508,6 +514,7 @@ MIB_IFROW CTrafficMonitorDlg::GetConnectIfTable(int connection_index)
 
 NetWorkConection CTrafficMonitorDlg::GetConnection(int connection_index)
 {
+    CSingleLock sync(&m_conn_critical, TRUE);
     if (connection_index >= 0 && connection_index < static_cast<int>(m_connections.size()))
         return m_connections[connection_index];
     else
@@ -1201,6 +1208,9 @@ static int GetMonitorTimerCount(int second)
 
 void CTrafficMonitorDlg::DoMonitorAcquisition()
 {
+    //网络连接相关的数据（m_pIfTable、m_connections）可能被主线程中的IniConnection重建，这里加锁，直到网络部分处理完毕
+    CSingleLock net_sync(&m_conn_critical, TRUE);
+
     //获取网络连接速度
     int rtn{};
     auto getLfTable = [&]() {
@@ -1348,7 +1358,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
 
     if (rtn == ERROR_INSUFFICIENT_BUFFER)
     {
-        IniConnection();
+        InterlockedExchange(&m_ini_connection_pending, 1);  //由主线程重新初始化连接
         CString info = CCommon::LoadText(IDS_INSUFFICIENT_BUFFER);
         info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt));
         CCommon::WriteLog(info, theApp.m_log_path.c_str());
@@ -1370,7 +1380,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
                 info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt + 1));
                 CCommon::WriteLog(info, theApp.m_log_path.c_str());
             }
-            IniConnection();
+            InterlockedExchange(&m_ini_connection_pending, 1);  //由主线程重新初始化连接
             last_interface_num = interface_num;
         }
 
@@ -1390,12 +1400,14 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
                 CCommon::WriteLog(log_str, (theApp.m_config_dir + L".\\connections.log").c_str());
             }
 
-            IniConnection();
+            InterlockedExchange(&m_ini_connection_pending, 1);  //由主线程重新初始化连接
             CString info = CCommon::LoadText(IDS_CONNECTION_NOT_MATCH);
             info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_restart_cnt));
             CCommon::WriteLog(info, theApp.m_log_path.c_str());
         }
     }
+
+    net_sync.Unlock();
 
     bool lite_version = false;
 #ifdef WITHOUT_TEMPERATURE
@@ -1632,6 +1644,9 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
     if (nIDEvent == MAIN_TIMER)
     {
         m_timer_cnt++;
+        //监控线程检测到连接变化时只设置标志，由主线程执行重新初始化
+        if (InterlockedExchange(&m_ini_connection_pending, 0) != 0)
+            IniConnection();
         if (m_first_start)      //这个if语句在程序启动后1秒执行
         {
             //将设置窗口置顶的处理放在这里是用于解决
