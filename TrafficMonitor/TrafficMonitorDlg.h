@@ -60,6 +60,8 @@ protected:
     vector<NetWorkConection> m_connections; //保存获取到的要显示到“选择网卡”菜单项中的所有网络连接
     MIB_IFTABLE* m_pIfTable;
     DWORD m_dwSize{};	//m_pIfTable的大小
+    CCriticalSection m_conn_critical;   //保护m_pIfTable、m_dwSize和m_connections，防止监控线程与主线程同时访问
+    LONG m_ini_connection_pending{ 0 }; //监控线程请求主线程重新初始化连接的标志（IniConnection只能在主线程中调用）
     int m_connection_selected{ 0 }; //要显示流量的连接的序号
     unsigned __int64 m_in_bytes{};        //当前已接收的字节数
     unsigned __int64 m_out_bytes{};   //当前已发送的字节数
